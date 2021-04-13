@@ -400,6 +400,18 @@ public class Android {
             });
         }
 
+        public void usingTransformStyle() {
+            TransformStyle.INSTANCE.setMessageListStyleTransformer(defaultMessageListViewStyle -> {
+                // Modify default MessageListView style
+                return defaultMessageListViewStyle;
+            });
+
+            TransformStyle.INSTANCE.setMessageListItemStyleTransformer(defaultMessageListItemStyle -> {
+                // Modify default MessageListItem style
+                return defaultMessageListItemStyle;
+            });
+        }
+
         public void setNewMessageBehaviour() {
             messageListView.setNewMessagesBehaviour(
                     MessageListView.NewMessagesBehaviour.COUNT_UPDATE

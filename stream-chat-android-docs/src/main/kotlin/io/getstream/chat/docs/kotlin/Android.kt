@@ -363,6 +363,18 @@ class Android {
             }
         }
 
+        fun usingTransformStyle() {
+            TransformStyle.messageListStyleTransformer = StyleTransformer { defaultMessageListViewStyle ->
+                // Modify default MessageListView style
+                defaultMessageListViewStyle.copy()
+            }
+
+            TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultMessageListItemStyle ->
+                // Modify default MessageListItem style
+                defaultMessageListItemStyle.copy()
+            }
+        }
+
         fun setNewMessageBehaviour() {
             messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
         }

@@ -9,8 +9,34 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
 import java.io.Serializable
 
+/**
+ * Style for [MessageListView].
+ * Use this class together with [TransformStyle.messageListStyleTransformer] to change [MessageListView] styles programmatically.
+ *
+ * @property scrollButtonViewStyle - style for [ScrollButtonView]
+ * @property itemStyle - style for message list view holders
+ * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
+ * @property backgroundColor - [MessageListView] background color. Default - [R.color.stream_ui_white_snow]
+ * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
+ * @property replyIcon - icon for reply option. Default - [R.drawable.stream_ui_ic_arrow_curve_left]
+ * @property replyEnabled - enables/disables reply feature. Enabled by default
+ * @property threadReplyIcon - icon for thread option. Default - [R.drawable.stream_ui_ic_thread_reply]
+ * @property threadsEnabled - enables/disables threads feature. Enabled by default
+ * @property retryIcon - icon for retry option. Default - [R.drawable.stream_ui_ic_send]
+ * @property copyIcon - icon for copy option. Default - [R.drawable.stream_ui_ic_copy]
+ * @property editMessageEnabled - enables/disables edit message feature. Enabled by default
+ * @property editIcon - icon for edit message option. Default - [R.drawable.stream_ui_ic_edit]
+ * @property flagIcon - icon for flag message option. Default - [R.drawable.stream_ui_ic_flag]
+ * @property muteIcon - icon for mute option. Default - [R.drawable.stream_ui_ic_mute]
+ * @property blockIcon - icon for block option. Default - [R.drawable.stream_ui_ic_user_block]
+ * @property deleteIcon - icon for delete message option. Default - [R.drawable.stream_ui_ic_delete]
+ * @property deleteMessageEnabled - enables/disables delete message feature. Enabled by default
+ * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
+ * @property deleteConfirmationEnabled - enables/disables showing confirmation dialog before deleting message. Enabled by default
+ */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
