@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
+import android.widget.PopupWindow
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
@@ -11,7 +12,7 @@ import java.util.regex.Pattern
 
 internal class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
-    private val dismissListener: SuggestionListDismissListener,
+    private val dismissListener: PopupWindow.OnDismissListener,
 ) {
     var commands: List<Command> = emptyList()
         set(value) {
@@ -60,7 +61,7 @@ internal class SuggestionListController(
 
     fun hideSuggestionList() {
         suggestionListUi.hideSuggestionList()
-        dismissListener.onDismissed()
+        dismissListener.onDismiss()
     }
 
     fun isSuggestionListVisible(): Boolean {
@@ -76,10 +77,6 @@ internal class SuggestionListController(
         return commands
             .filter { it.name.startsWith(commandPattern) }
             .let { SuggestionListView.Suggestions.CommandSuggestions(it) }
-    }
-
-    internal fun interface SuggestionListDismissListener {
-        fun onDismissed()
     }
 
     companion object {
