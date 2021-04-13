@@ -14,7 +14,7 @@ ext {
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
 }
 
-apply from: "${rootDir}/scripts/publish-mavencentral.gradle"
+apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 
