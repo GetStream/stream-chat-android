@@ -28,6 +28,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClient::updateChannelPartial` and `ChannelClient::updatePartial` methods for partial updates of channel data.
 
 ### ⚠️ Changed
 
@@ -82,6 +83,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed compatibility with latest Dagger Hilt versions
 
 ### ⬆️ Improved
 

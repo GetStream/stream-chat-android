@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -458,6 +459,20 @@ internal class MoshiChatApi(
             channelId = channelId,
             connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage?.toDto()),
+        ).map(this::flattenChannel)
+    }
+
+    override fun updateChannelPartial(
+        channelType: String,
+        channelId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Channel> {
+        return channelApi.updateChannelPartial(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+            body = UpdateChannelPartialRequest(set, unset),
         ).map(this::flattenChannel)
     }
 

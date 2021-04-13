@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.SendEventRequest
 import io.getstream.chat.android.client.api.models.TranslateMessageRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
@@ -383,6 +384,20 @@ internal class GsonChatApi(
             channelId = channelId,
             connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage)
+        ).map { flattenChannel(it) }
+    }
+
+    override fun updateChannelPartial(
+        channelType: String,
+        channelId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Channel> {
+        return retrofitApi.updateChannelPartial(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+            body = UpdateChannelPartialRequest(set, unset)
         ).map { flattenChannel(it) }
     }
 

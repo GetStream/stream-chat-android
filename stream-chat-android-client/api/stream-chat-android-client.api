@@ -141,6 +141,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun unpinMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun updateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUsers (Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
@@ -673,6 +675,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient : io/g
 	public final fun unpinMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public fun update (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public fun updatePartial (Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public fun watch ()Lio/getstream/chat/android/client/call/Call;
 	public fun watch (Lio/getstream/chat/android/client/api/models/WatchChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public fun watch (Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
@@ -738,6 +741,7 @@ public abstract interface class io/getstream/chat/android/client/controllers/Cha
 	public abstract fun unmuteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun update (Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun updatePartial (Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watch ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watch (Lio/getstream/chat/android/client/api/models/WatchChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun watch (Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
@@ -750,6 +754,7 @@ public final class io/getstream/chat/android/client/controllers/ChannelControlle
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/controllers/ChannelController;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/controllers/ChannelController;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun update$default (Lio/getstream/chat/android/client/controllers/ChannelController;Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun updatePartial$default (Lio/getstream/chat/android/client/controllers/ChannelController;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
