@@ -13,8 +13,9 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.internal.CommandsAdapter
 import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
+import io.getstream.chat.android.ui.suggestion.internal.SuggestionListUi
 
-public class SuggestionListView : FrameLayout {
+public class SuggestionListView : FrameLayout, SuggestionListUi {
 
     internal val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
         StreamUiSuggestionListViewBinding.inflate(it, this)
@@ -41,14 +42,14 @@ public class SuggestionListView : FrameLayout {
         }
     }
 
-    public fun showSuggestionList(suggestions: Suggestions) {
+    override fun showSuggestionList(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {
                 if (suggestions.users.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    mentionsAdapter.submitList(suggestions.users)
+                    mentionsAdapter.setItems(suggestions.users)
                     binding.commandsTitleTextView.isVisible = false
                 }
             }
@@ -56,14 +57,14 @@ public class SuggestionListView : FrameLayout {
                 if (suggestions.commands.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    commandsAdapter.submitList(suggestions.commands)
+                    commandsAdapter.setItems(suggestions.commands)
                     binding.commandsTitleTextView.isVisible = true
                 }
             }
         }
     }
 
-    public fun isSuggestionListVisible(): Boolean {
+    override fun isSuggestionListVisible(): Boolean {
         return binding.suggestionsCardView.isVisible
     }
 
@@ -91,10 +92,10 @@ public class SuggestionListView : FrameLayout {
         this.listener = listener
     }
 
-    public fun hideSuggestionList() {
+    override fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
-            commandsAdapter.submitList(emptyList())
-            mentionsAdapter.submitList(emptyList())
+            commandsAdapter.clear()
+            mentionsAdapter.clear()
             binding.suggestionsCardView.isVisible = false
         }
     }
@@ -106,6 +107,14 @@ public class SuggestionListView : FrameLayout {
     }
 
     public sealed class Suggestions {
+
+        public fun hasSuggestions(): Boolean {
+            return when (this) {
+                is CommandSuggestions -> commands.isNotEmpty()
+                is MentionSuggestions -> users.isNotEmpty()
+            }
+        }
+
         public data class MentionSuggestions(val users: List<User>) : Suggestions()
         public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
     }

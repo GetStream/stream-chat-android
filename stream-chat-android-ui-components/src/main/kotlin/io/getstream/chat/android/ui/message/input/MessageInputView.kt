@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
+import io.getstream.chat.android.ui.message.input.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import kotlinx.coroutines.flow.collect
@@ -143,7 +144,6 @@ public class MessageInputView : ConstraintLayout {
             "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
             "io.getstream.chat.android.client.models.Member"
         ),
-
     )
     public fun setMembers(members: List<Member>) {
         setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
@@ -185,7 +185,15 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
+    @Deprecated(
+        message = "Setting external SuggestionListView is no longer necessary to display suggestions popup",
+        level = DeprecationLevel.WARNING,
+    )
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
+        setSuggestionListViewInternal(suggestionListView, popupWindow = false)
+    }
+
+    private fun setSuggestionListViewInternal(suggestionListView: SuggestionListView, popupWindow: Boolean = true) {
         suggestionListView.configStyle(style)
 
         suggestionListView.setOnSuggestionClickListener(
@@ -202,7 +210,12 @@ public class MessageInputView : ConstraintLayout {
 
         suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
-        suggestionListController = SuggestionListController(suggestionListView) {
+        val suggestionListUi = if (popupWindow) {
+            SuggestionListPopupWindow(suggestionListView, this)
+        } else {
+            suggestionListView
+        }
+        suggestionListController = SuggestionListController(suggestionListUi) {
             binding.commandsButton.isSelected = false
         }.also {
             it.mentionsEnabled = mentionsEnabled
@@ -254,6 +267,7 @@ public class MessageInputView : ConstraintLayout {
         binding.dismissInputMode.setOnClickListener { dismissInputMode(inputMode) }
         setMentionsEnabled(style.mentionsEnabled)
         setCommandsEnabled(style.commandsEnabled)
+        setSuggestionListViewInternal(SuggestionListView(context))
         binding.messageInputFieldView.setAttachmentMaxFileMb(style.attachmentMaxFileSize)
         val horizontalPadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_tiny)
         updatePadding(left = horizontalPadding, right = horizontalPadding)

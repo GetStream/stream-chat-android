@@ -1578,14 +1578,14 @@ public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchView
 	public static final fun bind (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel;Lio/getstream/chat/android/ui/search/list/SearchResultListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView : android/widget/FrameLayout {
+public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView : android/widget/FrameLayout, io/getstream/chat/android/ui/suggestion/internal/SuggestionListUi {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun hideSuggestionList ()V
-	public final fun isSuggestionListVisible ()Z
+	public fun hideSuggestionList ()V
+	public fun isSuggestionListVisible ()Z
 	public final fun setOnSuggestionClickListener (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener;)V
-	public final fun showSuggestionList (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions;)V
+	public fun showSuggestionList (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener {
@@ -1594,6 +1594,7 @@ public abstract interface class io/getstream/chat/android/ui/suggestion/list/Sug
 }
 
 public abstract class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions {
+	public final fun hasSuggestions ()Z
 }
 
 public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$CommandSuggestions : io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions {

@@ -26,15 +26,6 @@
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
         />
 
-    <io.getstream.chat.android.ui.suggestion.list.SuggestionListView
-        android:id="@+id/suggestionListView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/messageInputView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
     <io.getstream.chat.android.ui.message.input.MessageInputView
         android:id="@+id/messageInputView"
         android:layout_width="0dp"
