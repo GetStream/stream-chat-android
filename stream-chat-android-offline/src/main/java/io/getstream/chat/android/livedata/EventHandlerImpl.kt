@@ -215,6 +215,8 @@ internal class EventHandlerImpl(
                     event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
                     event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
+                    domainImpl.repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
+                        ?.let(batch::addChannel)
                 }
                 is MessageDeletedEvent -> {
                     event.message.enrichWithCid(event.cid)
@@ -231,6 +233,7 @@ internal class EventHandlerImpl(
                     event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
                     event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
+                    batch.addChannel(event.channel.copy(hidden = false))
                 }
                 is NotificationAddedToChannelEvent -> {
                     batch.addChannel(event.channel)

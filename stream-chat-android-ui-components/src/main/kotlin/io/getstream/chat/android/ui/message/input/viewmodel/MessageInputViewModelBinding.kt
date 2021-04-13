@@ -17,8 +17,10 @@ import java.io.File
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
+    val handler = MessageInputView.DefaultUserLookupHandler(emptyList())
+    view.setUserLookupHandler(handler)
     members.observe(lifecycleOwner) { members ->
-        view.setUserLookupHandler(MessageInputView.DefaultUserLookupHandler(members.map(Member::user)))
+        handler.users = members.map(Member::user)
     }
     commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
