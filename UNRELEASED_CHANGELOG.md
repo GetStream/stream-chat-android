@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed: local cached hidden channels stay hidden even though new message is received.
 
 ### ⬆️ Improved
 
