@@ -174,11 +174,11 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_delete
                 )
 
-                val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageOptionEnabled, true)
+                val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
 
-                val muteEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiMuteUserOptionEnabled, true)
+                val muteEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiMuteUserEnabled, true)
 
-                val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserOptionEnabled, true)
+                val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserEnabled, true)
 
                 val copyTextEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 

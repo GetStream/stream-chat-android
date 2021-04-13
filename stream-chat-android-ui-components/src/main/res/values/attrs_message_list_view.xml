@@ -170,11 +170,11 @@
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiFlagOptionIcon" format="reference" />
-        <attr name="streamUiFlagMessageOptionEnabled" format="boolean" />
+        <attr name="streamUiFlagMessageEnabled" format="boolean" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
-        <attr name="streamUiMuteUserOptionEnabled" format="boolean" />
+        <attr name="streamUiMuteUserEnabled" format="boolean" />
         <attr name="streamUiBlockOptionIcon" format="reference" />
-        <attr name="streamUiBlockUserOptionEnabled" format="boolean" />
+        <attr name="streamUiBlockUserEnabled" format="boolean" />
         <attr name="streamUiDeleteOptionIcon" format="reference" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
         <attr name="streamUiDeleteMessageEnabled" format="boolean" />
