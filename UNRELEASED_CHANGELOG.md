@@ -83,6 +83,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed compatibility with latest Dagger Hilt versions
 
 ### ⬆️ Improved
 
