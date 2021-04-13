@@ -601,7 +601,7 @@ public class MessageInputView : ConstraintLayout {
         public suspend fun handleUserLookup(query: String): List<User>
     }
 
-    public class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
+    public class DefaultUserLookupHandler(public var users: List<User>) : UserLookupHandler {
         override suspend fun handleUserLookup(query: String): List<User> {
             return users.filter { it.name.contains(query, true) }
         }
