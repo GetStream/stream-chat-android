@@ -48,6 +48,8 @@ internal data class ChannelEntity(
     val extraData: Map<String, Any>,
     /** if the channel has been synced to the servers */
     val syncStatus: SyncStatus,
+    /** channel's team */
+    val team: String,
 ) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)

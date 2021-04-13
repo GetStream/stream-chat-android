@@ -44,7 +44,7 @@ class AddChannelViewModel : ViewModel() {
             _state.value = State.Loading
         }
         latestSearchCall?.cancel()
-        latestSearchCall = chatDomain.useCases.searchUsersByName.invoke(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall = chatDomain.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
         latestSearchCall?.enqueue { result ->
             if (result.isSuccess) {
                 val users = result.data()
@@ -70,8 +70,8 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val result = ChatClient.instance()
-                .createChannel(
+            val result = chatDomain
+                .createDistinctChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map { it.id } + chatDomain.currentUser.id,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)

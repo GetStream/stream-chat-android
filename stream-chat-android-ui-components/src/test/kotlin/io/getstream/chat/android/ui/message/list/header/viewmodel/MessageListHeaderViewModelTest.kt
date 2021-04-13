@@ -13,8 +13,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.usecase.WatchChannel
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.ui.createMember
@@ -34,8 +32,6 @@ private val CURRENT_USER = createUser(online = true)
 internal class MessageListHeaderViewModelTest {
 
     private val chatDomain: ChatDomain = mock()
-    private val useCases: UseCaseHelper = mock()
-    private val watchChannel: WatchChannel = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelControllerCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
@@ -43,9 +39,7 @@ internal class MessageListHeaderViewModelTest {
     @BeforeEach
     fun setup() {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
-        whenever(chatDomain.useCases) doReturn useCases
-        whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(watchChannel.invoke(CID, 0)) doReturn channelControllerCall
+        whenever(chatDomain.watchChannel(CID, 0)) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController
     }

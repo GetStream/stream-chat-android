@@ -13,13 +13,13 @@ import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
-internal class AvatarFetcher() : Fetcher<Avatar> {
+internal class AvatarFetcher : Fetcher<Avatar> {
 
     override suspend fun fetch(
         pool: BitmapPool,
         data: Avatar,
         size: Size,
-        options: Options
+        options: Options,
     ): FetchResult {
         val targetSize = size.let { if (it is PixelSize) it.width else 0 }
         val resources = options.context.resources

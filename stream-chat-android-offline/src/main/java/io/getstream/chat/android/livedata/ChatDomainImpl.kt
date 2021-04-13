@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -20,9 +21,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
@@ -35,8 +38,11 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
@@ -55,6 +61,7 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -64,6 +71,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -139,6 +147,7 @@ internal class ChatDomainImpl internal constructor(
     private val _banned = MutableStateFlow(false)
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MediatorLiveData<TypingEvent>()
+    private val useCaseProvider: UseCaseHelper = UseCaseHelper(this)
 
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
@@ -378,7 +387,7 @@ internal class ChatDomainImpl internal constructor(
         return result
     }
 
-    suspend fun createChannel(c: Channel): Result<Channel> =
+    internal suspend fun createNewChannel(c: Channel): Result<Channel> =
         try {
             val online = isOnline()
             c.createdAt = c.createdAt ?: Date()
@@ -448,6 +457,14 @@ internal class ChatDomainImpl internal constructor(
 
     fun setTotalUnreadCount(newCount: Int) {
         _totalUnreadCount.value = newCount
+    }
+
+    override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
+        validateCid(cid)
+        val channelController = channel(cid)
+        return CoroutineCall(scope) {
+            channelController.removeMembers(*userIds)
+        }
     }
 
     private fun storeBgSyncDataWhenUserConnects() {
@@ -585,7 +602,7 @@ internal class ChatDomainImpl internal constructor(
      *
      * @param cid ensures that the channel with this id is active
      */
-    suspend fun replayEventsForActiveChannels(cid: String? = null): Result<List<ChatEvent>> {
+    internal suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> {
         // wait for the active channel info to load
         initJob?.join()
         // make a list of all channel ids
@@ -840,6 +857,141 @@ internal class ChatDomainImpl internal constructor(
     override fun getChannelConfig(channelType: String): Config {
         return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
     }
+
+    // region use-case functions
+    override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
+        useCaseProvider.replayEventsForActiveChannels.invoke(cid)
+
+    override fun getChannelController(cid: String): Call<ChannelController> =
+        useCaseProvider.getChannelController.invoke(cid)
+
+    override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
+        useCaseProvider.watchChannel.invoke(cid, messageLimit)
+
+    override fun queryChannels(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int,
+        messageLimit: Int,
+    ): Call<QueryChannelsController> = useCaseProvider.queryChannels.invoke(filter, sort, limit, messageLimit)
+
+    override fun getThread(cid: String, parentId: String): Call<ThreadController> =
+        useCaseProvider.getThread.invoke(cid, parentId)
+
+    override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
+        useCaseProvider.loadOlderMessages.invoke(cid, messageLimit)
+
+    override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
+        useCaseProvider.loadNewerMessages.invoke(cid, messageLimit)
+
+    override fun loadMessageById(
+        cid: String,
+        messageId: String,
+        olderMessagesOffset: Int,
+        newerMessagesOffset: Int,
+    ): Call<Message> = useCaseProvider.loadMessageById.invoke(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+
+    override fun queryChannelsLoadMore(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        limit: Int,
+        messageLimit: Int,
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort, limit, messageLimit)
+
+    override fun queryChannelsLoadMore(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        messageLimit: Int,
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort, messageLimit)
+
+    override fun queryChannelsLoadMore(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+    ): Call<List<Channel>> = useCaseProvider.queryChannelsLoadMore.invoke(filter, sort)
+
+    override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
+        useCaseProvider.threadLoadMore.invoke(cid, parentId, messageLimit)
+
+    override fun createChannel(channel: Channel): Call<Channel> = useCaseProvider.createChannel.invoke(channel)
+
+    override fun sendMessage(message: Message): Call<Message> = useCaseProvider.sendMessage.invoke(message)
+
+    override fun sendMessage(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
+    ): Call<Message> = useCaseProvider.sendMessage.invoke(message, attachmentTransformer)
+
+    override fun cancelMessage(message: Message): Call<Boolean> = useCaseProvider.cancelMessage.invoke(message)
+
+    override fun shuffleGiphy(message: Message): Call<Message> = useCaseProvider.shuffleGiphy.invoke(message)
+
+    override fun sendGiphy(message: Message): Call<Message> = useCaseProvider.sendGiphy.invoke(message)
+
+    override fun editMessage(message: Message): Call<Message> = useCaseProvider.editMessage.invoke(message)
+
+    override fun deleteMessage(message: Message): Call<Message> = useCaseProvider.deleteMessage.invoke(message)
+
+    override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
+        useCaseProvider.sendReaction.invoke(cid, reaction, enforceUnique)
+
+    override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
+        useCaseProvider.deleteReaction.invoke(cid, reaction)
+
+    override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
+        useCaseProvider.keystroke.invoke(cid, parentId)
+
+    override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
+        useCaseProvider.stopTyping.invoke(cid, parentId)
+
+    override fun markRead(cid: String): Call<Boolean> = useCaseProvider.markRead.invoke(cid)
+
+    override fun markAllRead(): Call<Boolean> = useCaseProvider.markAllRead.invoke()
+
+    override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
+        useCaseProvider.hideChannel.invoke(cid, keepHistory)
+
+    override fun showChannel(cid: String): Call<Unit> = useCaseProvider.showChannel.invoke(cid)
+
+    override fun leaveChannel(cid: String): Call<Unit> = useCaseProvider.leaveChannel.invoke(cid)
+
+    override fun deleteChannel(cid: String): Call<Unit> = useCaseProvider.deleteChannel.invoke(cid)
+
+    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
+        useCaseProvider.setMessageForReply.invoke(cid, message)
+
+    override fun downloadAttachment(attachment: Attachment): Call<Unit> =
+        useCaseProvider.downloadAttachment.invoke(attachment)
+
+    override fun searchUsersByName(
+        querySearch: String,
+        offset: Int,
+        userLimit: Int,
+        userPresence: Boolean,
+    ): Call<List<User>> = useCaseProvider.searchUsersByName.invoke(querySearch, offset, userLimit, userPresence)
+
+    override fun queryMembers(
+        cid: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort<Member>,
+        members: List<Member>,
+    ): Call<List<Member>> = useCaseProvider.queryMembers.invoke(cid, offset, limit, filter, sort, members)
+
+    override fun createDistinctChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>,
+    ): Call<Channel> {
+        return CoroutineCall(scope) {
+            client.createChannel(channelType, members, extraData).execute().also {
+                if (it.isSuccess) {
+                    repos.insertChannel(it.data())
+                }
+            }
+        }
+    }
+    // end region
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {

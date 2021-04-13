@@ -35,7 +35,7 @@ class ChatInfoViewModel(
             channelClient = chatClient.channel(cid)
             _state.value = State()
             viewModelScope.launch {
-                val channelControllerResult = chatDomain.useCases.getChannelController(cid).await()
+                val channelControllerResult = chatDomain.getChannelController(cid).await()
                 if (channelControllerResult.isSuccess) {
                     val channelController = channelControllerResult.data()
                     val canDeleteChannel = channelController.members.value.isCurrentUserOwnerOrAdmin()
@@ -156,7 +156,7 @@ class ChatInfoViewModel(
     private fun deleteChannel() {
         val cid = requireNotNull(cid)
         viewModelScope.launch {
-            val result = chatDomain.useCases.deleteChannel(cid).await()
+            val result = chatDomain.deleteChannel(cid).await()
             if (result.isSuccess) {
                 _channelDeletedState.value = true
             }

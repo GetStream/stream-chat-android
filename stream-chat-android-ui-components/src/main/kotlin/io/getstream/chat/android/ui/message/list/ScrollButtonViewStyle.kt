@@ -11,7 +11,20 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
+import java.io.Serializable
 
+/**
+ * Style for [ScrollButtonView]
+ *
+ * @property scrollButtonEnabled - enables/disables view which allows to scroll to the latest messages. Default - enabled.
+ * @property scrollButtonUnreadEnabled - enables/disables unread label. Default - enabled
+ * @property scrollButtonColor - [ScrollButtonView] background color. Default - [R.color.stream_ui_white].
+ * @property scrollButtonRippleColor - [ScrollButtonView] ripple color. Default - [R.color.stream_ui_white_smoke]
+ * @property scrollButtonBadgeColor - unread label background color. Default - [R.color.stream_ui_accent_blue]
+ * @property scrollButtonIcon - [ScrollButtonView] icon. Default - [R.drawable.stream_ui_ic_down]
+ * @property scrollButtonBadgeTextStyle - appearance for unread label
+ */
 public data class ScrollButtonViewStyle(
     public val scrollButtonEnabled: Boolean,
     public val scrollButtonUnreadEnabled: Boolean,
@@ -20,7 +33,7 @@ public data class ScrollButtonViewStyle(
     @ColorInt public val scrollButtonBadgeColor: Int,
     public val scrollButtonIcon: Drawable?,
     public val scrollButtonBadgeTextStyle: TextStyle
-) {
+) : Serializable {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false

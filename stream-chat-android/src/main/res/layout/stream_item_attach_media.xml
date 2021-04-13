@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="@dimen/stream_attach_image_height"
+    android:minWidth="@dimen/stream_attach_min_width"
     >
 
     <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
         android:id="@+id/iv_media_thumb"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_attach_image_height"
+        android:minWidth="@dimen/stream_attach_min_width"
         android:layout_marginStart="1px"
         android:layout_marginTop="1px"
         android:layout_marginEnd="1px"
@@ -27,11 +30,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <TextView
+    <ImageView
         android:id="@+id/tv_media_play"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/stream_ic_videoplay"
+        android:src="@drawable/stream_ic_videoplay"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"

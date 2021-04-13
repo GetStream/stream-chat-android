@@ -15,7 +15,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
     init {
-        chatDomain.useCases.getChannelController(cid).enqueue { result ->
+        chatDomain.getChannelController(cid).enqueue { result ->
             if (result.isSuccess) {
                 channelController = result.data()
             }

@@ -63,7 +63,7 @@ internal class ChatDomainImplTest {
         testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = User())
 
-            val result = sut.createChannel(newChannel)
+            val result = sut.createNewChannel(newChannel)
 
             result.isSuccess shouldBeEqualTo true
             result.data().createdBy shouldBeEqualTo sut.currentUser
