@@ -249,6 +249,7 @@ public class MessageInputView : ConstraintLayout {
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
+        suggestionListController?.hideSuggestionList()
         super.onDetachedFromWindow()
     }
 
