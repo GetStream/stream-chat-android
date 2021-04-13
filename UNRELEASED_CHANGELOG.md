@@ -97,6 +97,8 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
+- `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
