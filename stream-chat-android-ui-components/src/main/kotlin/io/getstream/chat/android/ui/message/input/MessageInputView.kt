@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
+import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -25,8 +26,8 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
-import io.getstream.chat.android.ui.message.input.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
+import io.getstream.chat.android.ui.suggestion.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import kotlinx.coroutines.flow.collect
 import java.io.File
@@ -210,14 +211,15 @@ public class MessageInputView : ConstraintLayout {
 
         suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
+        val dismissListener = PopupWindow.OnDismissListener {
+            binding.commandsButton.isSelected = false
+        }
         val suggestionListUi = if (popupWindow) {
-            SuggestionListPopupWindow(suggestionListView, this)
+            SuggestionListPopupWindow(suggestionListView, this, dismissListener)
         } else {
             suggestionListView
         }
-        suggestionListController = SuggestionListController(suggestionListUi) {
-            binding.commandsButton.isSelected = false
-        }.also {
+        suggestionListController = SuggestionListController(suggestionListUi, dismissListener).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
         }
@@ -249,6 +251,7 @@ public class MessageInputView : ConstraintLayout {
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
+        suggestionListController?.hideSuggestionList()
         super.onDetachedFromWindow()
     }
 
@@ -598,7 +601,7 @@ public class MessageInputView : ConstraintLayout {
         public suspend fun handleUserLookup(query: String): List<User>
     }
 
-    public class DefaultUserLookupHandler(private val users: List<User>) : UserLookupHandler {
+    public class DefaultUserLookupHandler(public var users: List<User>) : UserLookupHandler {
         override suspend fun handleUserLookup(query: String): List<User> {
             return users.filter { it.name.contains(query, true) }
         }
