@@ -61,6 +61,9 @@ internal class MessageOptionsView : FrameLayout {
         binding.blockTV.configureListItem(style.blockIcon, iconsTint)
         binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
+        configureBlock(configuration, style, iconsTint)
+        configureMute(configuration, style, iconsTint)
+        configureFlag(configuration, style, iconsTint)
     }
 
     private fun configureMineMessage(
@@ -124,6 +127,30 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
+    private fun configureFlag(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+        if (configuration.flagEnabled) {
+            binding.flagTV.configureListItem(style.replyIcon, iconTint)
+        } else {
+            binding.flagTV.isVisible = false
+        }
+    }
+
+    private fun configureMute(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+        if (configuration.muteEnabled) {
+            binding.muteTV.configureListItem(style.replyIcon, iconTint)
+        } else {
+            binding.muteTV.isVisible = false
+        }
+    }
+
+    private fun configureBlock(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+        if (configuration.blockEnabled) {
+            binding.blockTV.configureListItem(style.replyIcon, iconTint)
+        } else {
+            binding.blockTV.isVisible = false
+        }
+    }
+
     private fun configureCopyMessage(iconsTint: Int, configuration: Configuration, style: MessageListViewStyle) {
         if (configuration.copyTextEnabled) {
             binding.copyTV.isVisible = true
@@ -153,6 +180,9 @@ internal class MessageOptionsView : FrameLayout {
         val copyTextEnabled: Boolean,
         val deleteConfirmationEnabled: Boolean,
         val reactionsEnabled: Boolean,
+        val flagEnabled: Boolean,
+        val muteEnabled: Boolean,
+        val blockEnabled: Boolean,
     ) : Serializable {
         internal companion object {
             operator fun invoke(viewStyle: MessageListViewStyle, channelConfig: Config, suppressThreads: Boolean = false) =
@@ -163,7 +193,10 @@ internal class MessageOptionsView : FrameLayout {
                     deleteMessageEnabled = viewStyle.deleteMessageEnabled,
                     copyTextEnabled = viewStyle.copyTextEnabled,
                     deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
-                    reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled
+                    reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled,
+                    flagEnabled = viewStyle.flagEnabled,
+                    muteEnabled = viewStyle.muteEnabled,
+                    blockEnabled = viewStyle.blockEnabled,
                 )
         }
     }
