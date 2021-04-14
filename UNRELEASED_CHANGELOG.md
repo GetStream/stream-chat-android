@@ -98,6 +98,7 @@
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
 - `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+- Fixed doubled command prefix when the command contains user mention
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
