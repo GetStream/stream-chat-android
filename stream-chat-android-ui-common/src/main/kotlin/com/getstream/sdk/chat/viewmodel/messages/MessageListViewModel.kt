@@ -7,16 +7,20 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.utils.Event
 import kotlin.properties.Delegates
 
 /**
@@ -58,6 +62,9 @@ public class MessageListViewModel @JvmOverloads constructor(
      */
     public val state: LiveData<State> = stateMerger
     public val currentUser: User = domain.currentUser
+
+    private val _uiEvents: MutableLiveData<io.getstream.chat.android.livedata.utils.Event<UiEvent>> = MutableLiveData()
+    public val uiEvents: LiveData<io.getstream.chat.android.livedata.utils.Event<UiEvent>> = _uiEvents
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
@@ -182,7 +189,9 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.deleteMessage(event.message).enqueue()
             }
             is Event.FlagMessage -> {
-                client.flagMessage(event.message.id).enqueue()
+                client.flagMessage(event.message.id).enqueue { result ->
+                    _uiEvents.value = Event(UiEvent.HandleFlagMessageResult(result))
+                }
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
@@ -195,6 +204,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.MuteUser -> {
                 client.muteUser(event.user.id).enqueue()
+            }
+            is Event.UnmuteUser -> {
+                client.unmuteUser(event.user.id).enqueue()
             }
             is Event.BlockUser -> {
                 val channelClient = client.channel(cid)
@@ -378,7 +390,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             val reactionType: String,
             val enforceUnique: Boolean,
         ) : Event()
+
         public data class MuteUser(val user: User) : Event()
+        public data class UnmuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
@@ -390,6 +404,10 @@ public class MessageListViewModel @JvmOverloads constructor(
     public sealed class Mode {
         public data class Thread(val parentMessage: Message) : Mode()
         public object Normal : Mode()
+    }
+
+    public sealed class UiEvent {
+        public data class HandleFlagMessageResult(val result: Result<Flag>) : UiEvent()
     }
 
     public fun interface DateSeparatorHandler {

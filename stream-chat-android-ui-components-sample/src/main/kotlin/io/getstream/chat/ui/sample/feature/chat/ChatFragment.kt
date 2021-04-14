@@ -13,7 +13,9 @@ import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
@@ -192,11 +194,27 @@ class ChatFragment : Fragment() {
                 }
             }
         }
-        binding.messageListView.setConfirmDeleteMessageHandler { message: Message, confirmCallback: () -> Unit ->
-            ConfirmationDialogFragment.newDeleteMessageInstance(requireContext())
-                .apply {
-                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
-                }.show(parentFragmentManager, null)
+        binding.messageListView.apply {
+            setConfirmDeleteMessageHandler { _, confirmCallback: () -> Unit ->
+                ConfirmationDialogFragment.newDeleteMessageInstance(requireContext())
+                    .apply {
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
+                    }.show(parentFragmentManager, null)
+            }
+
+            setConfirmFlagMessageHandler { _, confirmCallback: () -> Unit ->
+                ConfirmationDialogFragment.newFlagMessageInstance(requireContext())
+                    .apply {
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
+                    }.show(parentFragmentManager, null)
+            }
+
+            setFlagMessageResultHandler { result ->
+                if (result.isSuccess || result.isAlreadyExistsError()) {
+                    ConfirmationDialogFragment.newMessageFlaggedInstance(requireContext())
+                        .show(parentFragmentManager, null)
+                }
+            }
         }
     }
 
@@ -211,4 +229,7 @@ class ChatFragment : Fragment() {
         }
         return previousYear != year || previousDayOfYear != dayOfYear
     }
+
+    private fun Result<Flag>.isAlreadyExistsError(): Boolean =
+        isError && error().message?.contains("flag already exists") == true
 }

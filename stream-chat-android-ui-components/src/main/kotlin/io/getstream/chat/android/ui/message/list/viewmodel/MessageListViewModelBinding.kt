@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView
 
@@ -41,6 +42,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         onEvent(MessageReaction(message, reactionType, enforceUnique = true))
     }
     view.setUserMuteHandler { onEvent(MuteUser(it)) }
+    view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setAttachmentDownloadHandler { attachment -> onEvent(DownloadAttachment(attachment)) }
@@ -64,6 +66,15 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
+
+    uiEvents.observe(
+        lifecycleOwner,
+        EventObserver { uiEvent ->
+            when (uiEvent) {
+                is MessageListViewModel.UiEvent.HandleFlagMessageResult -> view.handleFlagMessageResult(uiEvent.result)
+            }
+        }
+    )
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))
