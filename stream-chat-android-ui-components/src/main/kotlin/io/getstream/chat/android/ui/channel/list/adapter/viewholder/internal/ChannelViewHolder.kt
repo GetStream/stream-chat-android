@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.EXTRA_DATA_MUTED
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChatDomain
@@ -182,7 +183,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureUnreadCountBadge()
                 }
 
-                muteIcon.isVisible = channel.extraData[Channel.MUTED] as? Boolean? == true
+                muteIcon.isVisible = channel.extraData[EXTRA_DATA_MUTED] as? Boolean? == true
             }
         }
     }

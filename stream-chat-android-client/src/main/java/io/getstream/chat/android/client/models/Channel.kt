@@ -6,6 +6,8 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
+public const val EXTRA_DATA_MUTED: String = "mutedChannel"
+
 public data class Channel(
     var cid: String = "",
     var id: String = "",
@@ -60,8 +62,4 @@ public data class Channel(
 
     val lastUpdated: Date?
         get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
-
-    public companion object {
-        public const val MUTED: String = "mutedChannel"
-    }
 }

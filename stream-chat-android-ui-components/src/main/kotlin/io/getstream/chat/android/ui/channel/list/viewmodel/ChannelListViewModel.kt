@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
+import io.getstream.chat.android.client.models.EXTRA_DATA_MUTED
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
@@ -67,7 +68,7 @@ public class ChannelListViewModel(
                                     .filterNot { it.hidden == true || it.isDraft }
                                     .map { channel ->
                                         channel.apply {
-                                            extraData[Channel.MUTED] = channelMutesIds.contains(id)
+                                            extraData[EXTRA_DATA_MUTED] = channelMutesIds.contains(id)
                                         }
                                     }
 
