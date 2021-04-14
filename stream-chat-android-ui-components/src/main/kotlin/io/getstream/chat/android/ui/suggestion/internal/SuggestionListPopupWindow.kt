@@ -16,6 +16,7 @@ internal class SuggestionListPopupWindow(
     init {
         isOutsideTouchable = true
         setOnDismissListener(dismissListener)
+        inputMethodMode = INPUT_METHOD_NEEDED
     }
 
     override fun showSuggestionList(suggestions: SuggestionListView.Suggestions) {
