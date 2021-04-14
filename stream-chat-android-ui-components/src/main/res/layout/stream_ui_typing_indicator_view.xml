@@ -12,7 +12,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lv_animating_dots"
         android:layout_width="20dp"
-        android:layout_height="18dp"
+        android:layout_height="17dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/stream_ui_typing_dots"
