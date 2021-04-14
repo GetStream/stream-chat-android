@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import io.getstream.chat.android.ui.suggestion.Suggestions
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
@@ -46,7 +46,7 @@ internal class SuggestionListController(
     ) {
         val suggestions = withContext(DispatcherProvider.IO) {
             userLookupHandler?.handleUserLookup(messageText.substringAfterLast("@"))
-                ?.let(SuggestionListView.Suggestions::MentionSuggestions)
+                ?.let(Suggestions::MentionSuggestions)
         }
         withContext(DispatcherProvider.Main) {
             suggestions?.let(suggestionListUi::showSuggestionList)
@@ -55,7 +55,7 @@ internal class SuggestionListController(
 
     fun showAvailableCommands() {
         if (commandsEnabled) {
-            suggestionListUi.showSuggestionList(SuggestionListView.Suggestions.CommandSuggestions(commands))
+            suggestionListUi.showSuggestionList(Suggestions.CommandSuggestions(commands))
         }
     }
 
@@ -72,11 +72,11 @@ internal class SuggestionListController(
 
     private fun String.isMentionMessage() = MENTION_PATTERN.matcher(this).find()
 
-    private fun String.getCommandSuggestions(): SuggestionListView.Suggestions.CommandSuggestions {
+    private fun String.getCommandSuggestions(): Suggestions.CommandSuggestions {
         val commandPattern = removePrefix("/")
         return commands
             .filter { it.name.startsWith(commandPattern) }
-            .let { SuggestionListView.Suggestions.CommandSuggestions(it) }
+            .let { Suggestions.CommandSuggestions(it) }
     }
 
     companion object {

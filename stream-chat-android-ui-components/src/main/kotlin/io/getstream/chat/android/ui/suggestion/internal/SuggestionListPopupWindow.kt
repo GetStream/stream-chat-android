@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.suggestion.Suggestions
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 
 internal class SuggestionListPopupWindow(
@@ -19,7 +20,7 @@ internal class SuggestionListPopupWindow(
         inputMethodMode = INPUT_METHOD_NEEDED
     }
 
-    override fun showSuggestionList(suggestions: SuggestionListView.Suggestions) {
+    override fun showSuggestionList(suggestions: Suggestions) {
         suggestionListView.showSuggestionList(suggestions)
 
         if (suggestions.hasSuggestions()) {

@@ -1591,6 +1591,36 @@ public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchView
 	public static final fun bind (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel;Lio/getstream/chat/android/ui/search/list/SearchResultListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
+public abstract class io/getstream/chat/android/ui/suggestion/Suggestions {
+	public final fun hasSuggestions ()Z
+}
+
+public final class io/getstream/chat/android/ui/suggestion/Suggestions$CommandSuggestions : io/getstream/chat/android/ui/suggestion/Suggestions {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/suggestion/Suggestions$CommandSuggestions;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestion/Suggestions$CommandSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestion/Suggestions$CommandSuggestions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCommands ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/suggestion/Suggestions$EmptySuggestions : io/getstream/chat/android/ui/suggestion/Suggestions {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/suggestion/Suggestions$EmptySuggestions;
+}
+
+public final class io/getstream/chat/android/ui/suggestion/Suggestions$MentionSuggestions : io/getstream/chat/android/ui/suggestion/Suggestions {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/suggestion/Suggestions$MentionSuggestions;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestion/Suggestions$MentionSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestion/Suggestions$MentionSuggestions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUsers ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView : android/widget/FrameLayout, io/getstream/chat/android/ui/suggestion/internal/SuggestionListUi {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -1598,38 +1628,12 @@ public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListVi
 	public fun hideSuggestionList ()V
 	public fun isSuggestionListVisible ()Z
 	public final fun setOnSuggestionClickListener (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener;)V
-	public fun showSuggestionList (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions;)V
+	public fun showSuggestionList (Lio/getstream/chat/android/ui/suggestion/Suggestions;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener {
 	public abstract fun onCommandClick (Lio/getstream/chat/android/client/models/Command;)V
 	public abstract fun onMentionClick (Lio/getstream/chat/android/client/models/User;)V
-}
-
-public abstract class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions {
-	public final fun hasSuggestions ()Z
-}
-
-public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$CommandSuggestions : io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$CommandSuggestions;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$CommandSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$CommandSuggestions;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCommands ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$MentionSuggestions : io/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions {
-	public fun <init> (Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$MentionSuggestions;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$MentionSuggestions;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$Suggestions$MentionSuggestions;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUsers ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : android/widget/FrameLayout {

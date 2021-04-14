@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import io.getstream.chat.android.ui.suggestion.Suggestions
 
 internal interface SuggestionListUi {
 
-    fun showSuggestionList(suggestions: SuggestionListView.Suggestions)
+    fun showSuggestionList(suggestions: Suggestions)
 
     fun hideSuggestionList()
 
