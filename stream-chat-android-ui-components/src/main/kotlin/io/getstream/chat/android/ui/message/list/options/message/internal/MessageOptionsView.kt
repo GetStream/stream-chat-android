@@ -41,6 +41,7 @@ internal class MessageOptionsView : FrameLayout {
         } else {
             configureMineMessage(configuration, style, syncStatus)
         }
+        binding.blockTV.isVisible = false
     }
 
     private fun configureTheirsMessage(configuration: Configuration, style: MessageListViewStyle) {

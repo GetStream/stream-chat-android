@@ -84,7 +84,8 @@ class ChatInfoFragment : Fragment() {
 
                 if (state.member != null) {
                     add(ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted))
-                    add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
+                    // TODO disable block until we improve this feature
+                    // add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
                 }
             }
 
