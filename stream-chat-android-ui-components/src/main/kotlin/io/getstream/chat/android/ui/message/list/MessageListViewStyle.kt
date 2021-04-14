@@ -30,8 +30,11 @@ import java.io.Serializable
  * @property editMessageEnabled - enables/disables edit message feature. Enabled by default
  * @property editIcon - icon for edit message option. Default - [R.drawable.stream_ui_ic_edit]
  * @property flagIcon - icon for flag message option. Default - [R.drawable.stream_ui_ic_flag]
+ * @property flagEnabled - enables/disables "flag message" option
  * @property muteIcon - icon for mute option. Default - [R.drawable.stream_ui_ic_mute]
+ * @property muteEnabled - enables/disables "mute user" option
  * @property blockIcon - icon for block option. Default - [R.drawable.stream_ui_ic_user_block]
+ * @property blockEnabled - enables/disables "block user" option
  * @property deleteIcon - icon for delete message option. Default - [R.drawable.stream_ui_ic_delete]
  * @property deleteMessageEnabled - enables/disables delete message feature. Enabled by default
  * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
@@ -52,8 +55,11 @@ public data class MessageListViewStyle(
     val editMessageEnabled: Boolean,
     val editIcon: Int,
     val flagIcon: Int,
+    val flagEnabled: Boolean,
     val muteIcon: Int,
+    val muteEnabled: Boolean,
     val blockIcon: Int,
+    val blockEnabled: Boolean,
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
@@ -168,6 +174,12 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_delete
                 )
 
+                val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
+
+                val muteEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiMuteUserEnabled, true)
+
+                val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserEnabled, true)
+
                 val copyTextEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
                 val deleteConfirmationEnabled =
@@ -193,8 +205,11 @@ public data class MessageListViewStyle(
                     copyIcon = copyIcon,
                     editIcon = editIcon,
                     flagIcon = flagIcon,
+                    flagEnabled = flagEnabled,
                     muteIcon = muteIcon,
+                    muteEnabled = muteEnabled,
                     blockIcon = blockIcon,
+                    blockEnabled = blockEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
                     deleteConfirmationEnabled = deleteConfirmationEnabled,

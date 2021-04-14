@@ -102,6 +102,19 @@
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
+- Added methods and attrs to `MessageListView` that allow to customize visibility of message options:
+    * `MessageListView::setDeleteMessageConfirmationEnabled`
+    * `MessageListView::setCopyMessageEnabled`
+    * `MessageListView::setBlockUserEnabled`
+    * `MessageListView::setMuteUserEnabled`
+    * `MessageListView::setMessageFlagEnabled`
+    * `MessageListView::setReactionsEnabled`
+    * `MessageListView::setRepliesEnabled`
+    * `MessageListView::setThreadsEnabled`
+    * `MessageListView.streamUiFlagMessageOptionEnabled`
+    * `MessageListView.streamUiMuteUserOptionEnabled`
+    * `MessageListView.streamUiBlockUserOptionEnabled`
+    * `MessageListView.streamUiCopyMessageActionEnabled`
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
