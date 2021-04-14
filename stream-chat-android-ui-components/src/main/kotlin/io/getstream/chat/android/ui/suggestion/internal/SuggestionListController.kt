@@ -5,13 +5,21 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.suggestion.Suggestions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
+import kotlin.properties.Delegates
 
 internal class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
 ) {
+    private val scope = CoroutineScope(DispatcherProvider.Main)
+    private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
+        scope.launch { renderSuggestions(newSuggestions) }
+    }
+
     var commands: List<Command> = emptyList()
         set(value) {
             field = value
@@ -29,7 +37,7 @@ internal class SuggestionListController(
         this.messageText = messageText
         when {
             commandsEnabled && messageText.isCommandMessage() -> {
-                suggestionListUi.renderSuggestions(messageText.getCommandSuggestions())
+                currentSuggestions = messageText.getCommandSuggestions()
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
                 handleUserLookup(userLookupHandler, messageText)
@@ -42,27 +50,27 @@ internal class SuggestionListController(
         userLookupHandler: MessageInputView.UserLookupHandler?,
         messageText: String,
     ) {
-        val suggestions = withContext(DispatcherProvider.IO) {
+        currentSuggestions = withContext(DispatcherProvider.IO) {
             userLookupHandler?.handleUserLookup(messageText.substringAfterLast("@"))
                 ?.let(Suggestions::MentionSuggestions)
-        }
-        withContext(DispatcherProvider.Main) {
-            suggestions?.let(suggestionListUi::renderSuggestions)
+                ?: Suggestions.EmptySuggestions
         }
     }
 
     fun showAvailableCommands() {
-        if (commandsEnabled) {
-            suggestionListUi.renderSuggestions(Suggestions.CommandSuggestions(commands))
-        }
+        currentSuggestions = Suggestions.CommandSuggestions(commands).takeIf { commandsEnabled } ?: Suggestions.EmptySuggestions
     }
 
     fun hideSuggestionList() {
-        suggestionListUi.renderSuggestions(Suggestions.EmptySuggestions)
+        currentSuggestions = Suggestions.EmptySuggestions
     }
 
     fun isSuggestionListVisible(): Boolean {
         return suggestionListUi.isSuggestionListVisible()
+    }
+
+    private suspend fun renderSuggestions(suggestions: Suggestions) = withContext(DispatcherProvider.Main) {
+        suggestionListUi.renderSuggestions(suggestions)
     }
 
     private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
