@@ -12,11 +12,14 @@ public fun User.getLastSeenText(context: Context): String {
         return context.getString(R.string.stream_ui_message_list_header_online)
     }
 
-    return (updatedAt ?: lastActive ?: createdAt)?.let {
-        val date = when {
-            it.isInLastMinute() -> context.getString(R.string.stream_ui_message_list_header_just_now)
-            else -> DateUtils.getRelativeTimeSpanString(it.time).toString()
+    return (lastActive ?: updatedAt ?: createdAt)?.let {
+        if (it.isInLastMinute()) {
+            context.getString(R.string.stream_ui_message_list_header_last_seen_just_now)
+        } else {
+            context.getString(
+                R.string.stream_ui_message_list_header_last_seen_template,
+                DateUtils.getRelativeTimeSpanString(it.time).toString()
+            )
         }
-        context.getString(R.string.stream_ui_message_list_header_last_seen, date)
     } ?: String.EMPTY
 }

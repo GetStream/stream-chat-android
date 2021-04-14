@@ -98,6 +98,7 @@
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
 - `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+- Fixed incorrect "last seen" text
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
