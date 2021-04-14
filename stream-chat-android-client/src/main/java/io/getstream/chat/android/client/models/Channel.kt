@@ -60,4 +60,8 @@ public data class Channel(
 
     val lastUpdated: Date?
         get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
+
+    public companion object {
+        public const val MUTED: String = "mutedChannel"
+    }
 }

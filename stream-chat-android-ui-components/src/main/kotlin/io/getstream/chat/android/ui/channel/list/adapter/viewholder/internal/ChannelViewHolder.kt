@@ -102,7 +102,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
-        configureForeground(diff)
+        configureForeground(diff, channel)
         configureBackground()
 
         listener?.onRestoreSwipePosition(this, absoluteAdapterPosition)
@@ -158,7 +158,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         this.optionsCount = optionsCount
     }
 
-    private fun configureForeground(diff: ChannelListPayloadDiff) {
+    private fun configureForeground(diff: ChannelListPayloadDiff, channel: Channel) {
         binding.itemForegroundView.apply {
             diff.run {
                 if (nameChanged) {
@@ -181,6 +181,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                 if (unreadCountChanged) {
                     configureUnreadCountBadge()
                 }
+
+                muteIcon.isVisible = channel.extraData[Channel.MUTED] as? Boolean? == true
             }
         }
     }
@@ -277,5 +279,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         style.lastMessageDateText.apply(lastMessageTimeLabel)
         style.unreadMessageCounterText.apply(unreadCountBadge)
         unreadCountBadge.backgroundTintList = ColorStateList.valueOf(style.unreadMessageCounterBackgroundColor)
+        muteIcon.setImageDrawable(
+            style.mutedChannelIcon.apply { setTint(style.mutedChannelIconTint) }
+        )
     }
 }

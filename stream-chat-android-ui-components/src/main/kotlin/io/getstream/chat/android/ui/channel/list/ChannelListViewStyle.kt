@@ -50,6 +50,8 @@ public data class ChannelListViewStyle(
     @ColorInt public val foregroundLayoutColor: Int,
     public val unreadMessageCounterText: TextStyle,
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
+    public val mutedChannelIcon: Drawable,
+    @ColorInt public val mutedChannelIconTint: Int
 ) {
 
     internal companion object {
@@ -182,6 +184,15 @@ public data class ChannelListViewStyle(
                     context.getColorCompat(R.color.stream_ui_accent_red)
                 )
 
+                val mutedChannelIcon = a.getDrawable(
+                    R.styleable.ChannelListView_streamUiMutedChannelIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute)!!
+
+                val mutedChannelIconTint = a.getColor(
+                    R.styleable.ChannelListView_streamUiMutedChannelIconTint,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -197,7 +208,9 @@ public data class ChannelListViewStyle(
                     indicatorPendingSyncIcon = indicatorPendingSyncIcon,
                     foregroundLayoutColor = foregroundLayoutColor,
                     unreadMessageCounterText = unreadMessageCounterText,
-                    unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor
+                    unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor,
+                    mutedChannelIcon = mutedChannelIcon,
+                    mutedChannelIconTint = mutedChannelIconTint
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

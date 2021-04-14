@@ -59,10 +59,23 @@ public class ChannelListViewModel(
                                 isLoading = false,
                                 channels = emptyList(),
                             )
-                            is QueryChannelsController.ChannelsState.Result -> currentState.copy(
-                                isLoading = false,
-                                channels = channelState.channels.filterNot { it.hidden == true || it.isDraft },
-                            )
+                            is QueryChannelsController.ChannelsState.Result -> {
+                                val channelMutesIds = chatDomain.currentUser.channelMutes.map { it.channel.id }
+
+                                val channels = channelState
+                                    .channels
+                                    .filterNot { it.hidden == true || it.isDraft }
+                                    .map { channel ->
+                                        channel.apply {
+                                            extraData[Channel.MUTED] = channelMutesIds.contains(id)
+                                        }
+                                    }
+
+                                currentState.copy(
+                                    isLoading = false,
+                                    channels = channels
+                                )
+                            }
                         }
                     }
                 ) { state -> stateMerger.value = state }
