@@ -614,7 +614,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
     public fun setDeleteMessageConfirmationEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(deleteConfirmationEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(deleteConfirmationEnabled = enabled)
     }
 
     /**
@@ -623,7 +623,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if copying a message is enabled, false otherwise.
      */
     public fun setCopyMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(copyTextEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(copyTextEnabled = enabled)
     }
 
     /**
@@ -632,7 +632,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user blocking is enabled, false otherwise.
      */
     public fun setBlockUserEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(blockEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(blockEnabled = enabled)
     }
 
     /**
@@ -641,7 +641,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setMuteUserEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(muteEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(muteEnabled = enabled)
     }
 
     /**
@@ -650,7 +650,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setMessageFlagEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(flagEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(flagEnabled = enabled)
     }
 
     /**
@@ -659,19 +659,10 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(
             reactionsEnabled = enabled,
-            itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
+            itemStyle = StylesHolder.messageListViewStyle!!.itemStyle.copy(reactionsEnabled = enabled)
         )
-    }
-
-    /**
-     * Enables or disables the message reply feature.
-     *
-     * @param enabled True if user muting is enabled, false otherwise.
-     */
-    public fun setRepliesEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
     }
 
     /**
@@ -680,7 +671,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setThreadsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(threadsEnabled = enabled)
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
@@ -907,19 +898,8 @@ public class MessageListView : ConstraintLayout {
         this._attachmentDeleteOptionHandler = handler
     }
 
-    public fun setReactionsEnabled(enabled: Boolean) {
-        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(
-            reactionsEnabled = enabled,
-            itemStyle = StylesHolder.messageListViewStyle!!.itemStyle.copy(reactionsEnabled = enabled)
-        )
-    }
-
     public fun setRepliesEnabled(enabled: Boolean) {
         StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(replyEnabled = enabled)
-    }
-
-    public fun setThreadsEnabled(enabled: Boolean) {
-        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle?.copy(threadsEnabled = enabled)
     }
 
     //endregion
