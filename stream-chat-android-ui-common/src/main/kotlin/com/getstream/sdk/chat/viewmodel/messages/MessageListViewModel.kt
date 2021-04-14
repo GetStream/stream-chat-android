@@ -186,7 +186,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue { result ->
-                    event.resultHandler?.invoke(result)
+                    event.resultHandler(result)
                 }
             }
             is Event.GiphyActionSelected -> {
@@ -378,7 +378,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object LastMessageRead : Event()
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
         public data class DeleteMessage(val message: Message) : Event()
-        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit)? = null) : Event()
+        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(
