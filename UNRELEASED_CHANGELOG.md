@@ -117,5 +117,6 @@
     * `MessageListView.streamUiCopyMessageActionEnabled`
 
 ### ⚠️ Changed
+- Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
 
 ### ❌ Removed
