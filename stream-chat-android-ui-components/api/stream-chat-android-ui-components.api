@@ -1381,7 +1381,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public final synthetic fun onLinkPreviewClick (Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : androidx/constraintlayout/widget/ConstraintLayout {
+public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
