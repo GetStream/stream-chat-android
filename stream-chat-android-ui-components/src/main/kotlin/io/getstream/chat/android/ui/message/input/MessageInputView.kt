@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
@@ -212,22 +213,24 @@ public class MessageInputView : ConstraintLayout {
         suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
         val dismissListener = PopupWindow.OnDismissListener {
-            binding.commandsButton.isSelected = false
+            binding.commandsButton.postDelayed(CLICK_DELAY) { binding.commandsButton.isSelected = false }
         }
         val suggestionListUi = if (popupWindow) {
             SuggestionListPopupWindow(suggestionListView, this, dismissListener)
         } else {
             suggestionListView
         }
-        suggestionListController = SuggestionListController(suggestionListUi, dismissListener).also {
+        suggestionListController = SuggestionListController(suggestionListUi).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
+            it.userLookupHandler = userLookupHandler
         }
         refreshControlsState()
     }
 
     public fun setUserLookupHandler(handler: UserLookupHandler) {
         this.userLookupHandler = handler
+        suggestionListController?.userLookupHandler = handler
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
@@ -340,7 +343,7 @@ public class MessageInputView : ConstraintLayout {
             style.commandsButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
-                    if (it.isSuggestionListVisible()) {
+                    if (isSelected || it.isSuggestionListVisible()) {
                         it.hideSuggestionList()
                     } else {
                         isSelected = true
@@ -380,9 +383,7 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    messageInputDebouncer?.submitSuspendable {
-                        suggestionListController?.showSuggestions(messageText, userLookupHandler)
-                    }
+                    messageInputDebouncer?.submitSuspendable { suggestionListController?.onNewMessageText(messageText) }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
@@ -492,6 +493,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private companion object {
+        private const val CLICK_DELAY = 100L
         private const val TYPING_DEBOUNCE_MS = 300L
         val EMPTY_MESSAGE_SEND_HANDLER = object : MessageSendHandler {
             override fun sendMessage(messageText: String, messageReplyTo: Message?) {
