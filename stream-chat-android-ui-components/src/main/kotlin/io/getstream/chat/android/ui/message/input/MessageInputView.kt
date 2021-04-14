@@ -212,14 +212,14 @@ public class MessageInputView : ConstraintLayout {
         suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
         val dismissListener = PopupWindow.OnDismissListener {
-            binding.commandsButton.isSelected = false
+            binding.commandsButton.post { binding.commandsButton.isSelected = false }
         }
         val suggestionListUi = if (popupWindow) {
             SuggestionListPopupWindow(suggestionListView, this, dismissListener)
         } else {
             suggestionListView
         }
-        suggestionListController = SuggestionListController(suggestionListUi, dismissListener).also {
+        suggestionListController = SuggestionListController(suggestionListUi).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
         }
@@ -340,7 +340,7 @@ public class MessageInputView : ConstraintLayout {
             style.commandsButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 suggestionListController?.let {
-                    if (it.isSuggestionListVisible()) {
+                    if (isSelected && it.isSuggestionListVisible()) {
                         it.hideSuggestionList()
                     } else {
                         isSelected = true

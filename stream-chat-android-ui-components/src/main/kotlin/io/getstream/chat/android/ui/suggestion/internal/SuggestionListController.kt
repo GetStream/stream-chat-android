@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
-import android.widget.PopupWindow
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
@@ -12,7 +11,6 @@ import java.util.regex.Pattern
 
 internal class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
-    private val dismissListener: PopupWindow.OnDismissListener,
 ) {
     var commands: List<Command> = emptyList()
         set(value) {
@@ -31,7 +29,7 @@ internal class SuggestionListController(
         this.messageText = messageText
         when {
             commandsEnabled && messageText.isCommandMessage() -> {
-                suggestionListUi.showSuggestionList(messageText.getCommandSuggestions())
+                suggestionListUi.renderSuggestions(messageText.getCommandSuggestions())
             }
             mentionsEnabled && messageText.isMentionMessage() -> {
                 handleUserLookup(userLookupHandler, messageText)
@@ -49,19 +47,18 @@ internal class SuggestionListController(
                 ?.let(Suggestions::MentionSuggestions)
         }
         withContext(DispatcherProvider.Main) {
-            suggestions?.let(suggestionListUi::showSuggestionList)
+            suggestions?.let(suggestionListUi::renderSuggestions)
         }
     }
 
     fun showAvailableCommands() {
         if (commandsEnabled) {
-            suggestionListUi.showSuggestionList(Suggestions.CommandSuggestions(commands))
+            suggestionListUi.renderSuggestions(Suggestions.CommandSuggestions(commands))
         }
     }
 
     fun hideSuggestionList() {
-        suggestionListUi.hideSuggestionList()
-        dismissListener.onDismiss()
+        suggestionListUi.renderSuggestions(Suggestions.EmptySuggestions)
     }
 
     fun isSuggestionListVisible(): Boolean {

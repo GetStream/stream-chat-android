@@ -1625,10 +1625,9 @@ public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListVi
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public fun hideSuggestionList ()V
 	public fun isSuggestionListVisible ()Z
+	public fun renderSuggestions (Lio/getstream/chat/android/ui/suggestion/Suggestions;)V
 	public final fun setOnSuggestionClickListener (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener;)V
-	public fun showSuggestionList (Lio/getstream/chat/android/ui/suggestion/Suggestions;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListView$OnSuggestionClickListener {

@@ -20,8 +20,8 @@ internal class SuggestionListPopupWindow(
         inputMethodMode = INPUT_METHOD_NEEDED
     }
 
-    override fun showSuggestionList(suggestions: Suggestions) {
-        suggestionListView.showSuggestionList(suggestions)
+    override fun renderSuggestions(suggestions: Suggestions) {
+        suggestionListView.renderSuggestions(suggestions)
 
         if (suggestions.hasSuggestions()) {
             suggestionListView.measure(
@@ -39,9 +39,9 @@ internal class SuggestionListPopupWindow(
         }
     }
 
-    override fun hideSuggestionList() {
-        dismiss()
-        suggestionListView.hideSuggestionList()
+    override fun dismiss() {
+        super.dismiss()
+        suggestionListView.renderSuggestions(Suggestions.EmptySuggestions)
     }
 
     override fun isSuggestionListVisible(): Boolean {

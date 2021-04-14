@@ -44,7 +44,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         }
     }
 
-    override fun showSuggestionList(suggestions: Suggestions) {
+    override fun renderSuggestions(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {
@@ -95,7 +95,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         this.listener = listener
     }
 
-    override fun hideSuggestionList() {
+    private fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
             commandsAdapter.clear()
             mentionsAdapter.clear()
