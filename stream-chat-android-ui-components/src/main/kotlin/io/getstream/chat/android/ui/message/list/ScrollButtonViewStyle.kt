@@ -12,7 +12,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
-import java.io.Serializable
 
 /**
  * Style for [ScrollButtonView]
