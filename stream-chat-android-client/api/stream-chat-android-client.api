@@ -2108,6 +2108,8 @@ public final class io/getstream/chat/android/client/models/BannedUsersSort {
 }
 
 public final class io/getstream/chat/android/client/models/Channel : io/getstream/chat/android/client/models/CustomObject {
+	public static final field Companion Lio/getstream/chat/android/client/models/Channel$Companion;
+	public static final field MUTED Ljava/lang/String;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/models/Config;Lio/getstream/chat/android/client/models/User;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/models/Config;Lio/getstream/chat/android/client/models/User;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2188,6 +2190,9 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun setWatcherCount (I)V
 	public final fun setWatchers (Ljava/util/List;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/Channel$Companion {
 }
 
 public final class io/getstream/chat/android/client/models/ChannelMute {
