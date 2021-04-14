@@ -7,7 +7,6 @@ import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.suggestion.Suggestions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -19,41 +18,37 @@ internal class SuggestionListController(
     private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
         scope.launch { renderSuggestions(newSuggestions) }
     }
+    var userLookupHandler: MessageInputView.UserLookupHandler
+        by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }
+    var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }
+    var mentionsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+    var commandsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+    private var messageText: String by Delegates.observable(String.EMPTY) { _, _, _ -> computeSuggestions() }
 
-    var commands: List<Command> = emptyList()
-        set(value) {
-            field = value
-            runBlocking { showSuggestions(messageText) }
-        }
-    var mentionsEnabled: Boolean = true
-    var commandsEnabled: Boolean = true
+    fun onNewMessageText(newMessageText: String) {
+        messageText = newMessageText
+    }
 
-    private var messageText: String = String.EMPTY
-
-    suspend fun showSuggestions(
-        messageText: String,
-        userLookupHandler: MessageInputView.UserLookupHandler? = null,
-    ) {
-        this.messageText = messageText
-        when {
-            commandsEnabled && messageText.isCommandMessage() -> {
-                currentSuggestions = messageText.getCommandSuggestions()
+    private fun computeSuggestions() {
+        scope.launch {
+            when {
+                commandsEnabled && messageText.isCommandMessage() -> {
+                    currentSuggestions = messageText.getCommandSuggestions()
+                }
+                mentionsEnabled && messageText.isMentionMessage() -> {
+                    handleUserLookup(userLookupHandler, messageText)
+                }
+                else -> hideSuggestionList()
             }
-            mentionsEnabled && messageText.isMentionMessage() -> {
-                handleUserLookup(userLookupHandler, messageText)
-            }
-            else -> hideSuggestionList()
         }
     }
 
     private suspend fun handleUserLookup(
-        userLookupHandler: MessageInputView.UserLookupHandler?,
+        userLookupHandler: MessageInputView.UserLookupHandler,
         messageText: String,
     ) {
         currentSuggestions = withContext(DispatcherProvider.IO) {
-            userLookupHandler?.handleUserLookup(messageText.substringAfterLast("@"))
-                ?.let(Suggestions::MentionSuggestions)
-                ?: Suggestions.EmptySuggestions
+            Suggestions.MentionSuggestions(userLookupHandler.handleUserLookup(messageText.substringAfterLast("@")))
         }
     }
 

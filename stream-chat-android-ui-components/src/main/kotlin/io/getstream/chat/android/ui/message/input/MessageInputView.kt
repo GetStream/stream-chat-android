@@ -222,12 +222,14 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController = SuggestionListController(suggestionListUi).also {
             it.mentionsEnabled = mentionsEnabled
             it.commandsEnabled = commandsEnabled
+            it.userLookupHandler = userLookupHandler
         }
         refreshControlsState()
     }
 
     public fun setUserLookupHandler(handler: UserLookupHandler) {
         this.userLookupHandler = handler
+        suggestionListController?.userLookupHandler = handler
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
@@ -380,9 +382,7 @@ public class MessageInputView : ConstraintLayout {
                 override fun onMessageTextChanged(messageText: String) {
                     refreshControlsState()
                     handleKeyStroke()
-                    messageInputDebouncer?.submitSuspendable {
-                        suggestionListController?.showSuggestions(messageText, userLookupHandler)
-                    }
+                    messageInputDebouncer?.submitSuspendable { suggestionListController?.onNewMessageText(messageText) }
                 }
 
                 override fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>) {
