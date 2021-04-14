@@ -3,13 +3,12 @@ package io.getstream.chat.android.ui.suggestion.internal
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.suggestion.Suggestions
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 
 internal class SuggestionListPopupWindow(
     private val suggestionListView: SuggestionListView,
-    private val messageInputView: MessageInputView,
+    private val anchor: View,
     dismissListener: OnDismissListener,
 ) : PopupWindow(suggestionListView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
     SuggestionListUi {
@@ -28,11 +27,11 @@ internal class SuggestionListPopupWindow(
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             )
-            val popupWindowOffset: Int = suggestionListView.measuredHeight + messageInputView.height
+            val popupWindowOffset: Int = suggestionListView.measuredHeight + anchor.height
             if (isShowing) {
-                update(messageInputView, 0, -popupWindowOffset, -1, -1)
+                update(anchor, 0, -popupWindowOffset, -1, -1)
             } else {
-                showAsDropDown(messageInputView, 0, -popupWindowOffset)
+                showAsDropDown(anchor, 0, -popupWindowOffset)
             }
         } else {
             dismiss()
