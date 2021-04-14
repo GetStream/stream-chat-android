@@ -1874,7 +1874,6 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getMode ()Landroidx/lifecycle/MutableLiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
-	public final fun getUiEvents ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V
 	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
 	public final fun setThreadDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
@@ -1931,12 +1930,15 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;
+	public final fun component2 ()Lkotlin/jvm/functions/Function1;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getResultHandler ()Lkotlin/jvm/functions/Function1;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2103,20 +2105,6 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$Result;Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$Result;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessageListItem ()Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent {
-}
-
-public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent$HandleFlagMessageResult : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent {
-	public fun <init> (Lio/getstream/chat/android/client/utils/Result;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/utils/Result;
-	public final fun copy (Lio/getstream/chat/android/client/utils/Result;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent$HandleFlagMessageResult;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent$HandleFlagMessageResult;Lio/getstream/chat/android/client/utils/Result;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$UiEvent$HandleFlagMessageResult;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getResult ()Lio/getstream/chat/android/client/utils/Result;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

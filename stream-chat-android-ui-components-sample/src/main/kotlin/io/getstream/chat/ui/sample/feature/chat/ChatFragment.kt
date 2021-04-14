@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -230,6 +231,11 @@ class ChatFragment : Fragment() {
         return previousYear != year || previousDayOfYear != dayOfYear
     }
 
-    private fun Result<Flag>.isAlreadyExistsError(): Boolean =
-        isError && error().message?.contains("flag already exists") == true
+    private fun Result<Flag>.isAlreadyExistsError(): Boolean {
+        if (!isError) {
+            return false
+        }
+        val chatError = error() as ChatNetworkError
+        return chatError.statusCode == 400
+    }
 }

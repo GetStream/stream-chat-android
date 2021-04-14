@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
-import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView
 
@@ -33,7 +32,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
-    view.setMessageFlagHandler { onEvent(FlagMessage(it)) }
+    view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
     view.setGiphySendHandler { message, giphyAction ->
         onEvent(GiphyActionSelected(message, giphyAction))
     }
@@ -66,15 +65,6 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
-
-    uiEvents.observe(
-        lifecycleOwner,
-        EventObserver { uiEvent ->
-            when (uiEvent) {
-                is MessageListViewModel.UiEvent.HandleFlagMessageResult -> view.handleFlagMessageResult(uiEvent.result)
-            }
-        }
-    )
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))

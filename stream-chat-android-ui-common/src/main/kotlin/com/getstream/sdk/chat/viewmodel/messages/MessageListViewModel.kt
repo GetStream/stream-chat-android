@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.Event
 import kotlin.properties.Delegates
 
 /**
@@ -62,9 +61,6 @@ public class MessageListViewModel @JvmOverloads constructor(
      */
     public val state: LiveData<State> = stateMerger
     public val currentUser: User = domain.currentUser
-
-    private val _uiEvents: MutableLiveData<io.getstream.chat.android.livedata.utils.Event<UiEvent>> = MutableLiveData()
-    public val uiEvents: LiveData<io.getstream.chat.android.livedata.utils.Event<UiEvent>> = _uiEvents
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
@@ -190,7 +186,7 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue { result ->
-                    _uiEvents.value = Event(UiEvent.HandleFlagMessageResult(result))
+                    event.resultHandler?.invoke(result)
                 }
             }
             is Event.GiphyActionSelected -> {
@@ -382,7 +378,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object LastMessageRead : Event()
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
         public data class DeleteMessage(val message: Message) : Event()
-        public data class FlagMessage(val message: Message) : Event()
+        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit)? = null) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(
@@ -404,10 +400,6 @@ public class MessageListViewModel @JvmOverloads constructor(
     public sealed class Mode {
         public data class Thread(val parentMessage: Message) : Mode()
         public object Normal : Mode()
-    }
-
-    public sealed class UiEvent {
-        public data class HandleFlagMessageResult(val result: Result<Flag>) : UiEvent()
     }
 
     public fun interface DateSeparatorHandler {
