@@ -11,7 +11,6 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import java.io.Serializable
 
 public data class EditReactionsViewStyle(
     @ColorInt public val bubbleColorMine: Int,
@@ -27,7 +26,7 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
-) : Serializable {
+) {
 
     internal data class Builder(private val array: TypedArray, private val context: Context) {
         @ColorInt

@@ -10,7 +10,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
-import java.io.Serializable
 
 /**
  * Style for [MessageListView].
@@ -64,7 +63,7 @@ public data class MessageListViewStyle(
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
-) : Serializable {
+) {
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow

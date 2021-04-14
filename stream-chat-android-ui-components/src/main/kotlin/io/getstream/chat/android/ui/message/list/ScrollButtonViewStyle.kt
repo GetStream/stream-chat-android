@@ -33,7 +33,7 @@ public data class ScrollButtonViewStyle(
     @ColorInt public val scrollButtonBadgeColor: Int,
     public val scrollButtonIcon: Drawable?,
     public val scrollButtonBadgeTextStyle: TextStyle
-) : Serializable {
+) {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false

@@ -29,7 +29,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
-) : Serializable {
+) {
 
     internal companion object {
         private val DEFAULT_BUBBLE_BORDER_COLOR = R.color.stream_ui_grey_whisper
