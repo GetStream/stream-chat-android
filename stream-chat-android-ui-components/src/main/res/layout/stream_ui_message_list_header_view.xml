@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/stream_ui_default_header_height"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/back_button_container"
+        android:id="@+id/backButtonContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/stream_ui_spacing_small"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,12 +21,12 @@
         >
 
         <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginLeft="8dp"
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stream_ui_content_description_back_button"
+            android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -34,55 +35,63 @@
             />
 
         <TextView
-            android:id="@+id/back_button_badge"
+            android:id="@+id/backButtonBadge"
             style="@style/StreamUiBadgeStyle"
             android:layout_marginStart="22dp"
             android:layout_marginBottom="20dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/back_button"
-            app:layout_constraintStart_toStartOf="@+id/back_button"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toStartOf="@+id/backButton"
             tools:text="2"
             tools:visibility="visible"
             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:lineSpacingExtra="5sp"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        app:layout_constraintEnd_toStartOf="@+id/avatar"
-        app:layout_constraintStart_toEndOf="@+id/back_button_container"
+        app:layout_constraintBottom_toTopOf="@+id/subtitleContainer"
+        app:layout_constraintEnd_toStartOf="@+id/avatarView"
+        app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="User"
         />
 
     <FrameLayout
         android:id="@+id/subtitleContainer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/back_button_container"
-        app:layout_constraintRight_toRightOf="@+id/avatar"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        app:layout_constraintVertical_chainStyle="packed"
         >
 
         <LinearLayout
-            android:id="@+id/searching_for_network_container"
+            android:id="@+id/connectingContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
-            android:layout_marginBottom="8dp"
             >
 
             <ProgressBar
-                android:id="@+id/searching_for_network_progressbar"
+                android:id="@+id/connectingProgressBar"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginLeft="4dp"
@@ -90,7 +99,7 @@
                 />
 
             <TextView
-                android:id="@+id/searching_for_network_text"
+                android:id="@+id/connectingTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_searching_for_network"
@@ -100,17 +109,17 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/offline_container"
+            android:id="@+id/offlineContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
-            android:layout_marginBottom="8dp"
             >
 
             <TextView
-                android:id="@+id/offline_text"
+                android:id="@+id/offlineTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stream_ui_message_list_header_offline"
@@ -118,7 +127,7 @@
                 />
 
             <TextView
-                android:id="@+id/offline_retry_button"
+                android:id="@+id/offlineRetryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
@@ -129,52 +138,34 @@
                 />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/typing_container"
+
+        <io.getstream.chat.android.ui.typing.TypingIndicatorView
+            android:id="@+id/typingIndicatorView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
+            android:layout_gravity="center"
             android:visibility="gone"
-            android:layout_marginBottom="8dp"
-            >
+            />
 
-            <io.getstream.chat.android.ui.typing.TypingIndicatorView
-                android:id="@+id/typingView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/online_container"
+        <TextView
+            android:id="@+id/onlineTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp"
-            >
-
-            <TextView
-                android:id="@+id/online_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/StreamUiTextAppearance.Footnote"
-                tools:text="Online for 10 mins"
-                />
-
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+            tools:text="Online for 10 mins"
+            />
 
     </FrameLayout>
 
     <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatar"
+        android:id="@+id/avatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_width="@dimen/stream_ui_avatar_size_medium"
         android:layout_height="@dimen/stream_ui_avatar_size_medium"
-        android:layout_marginEnd="8dp"
+        android:layout_margin="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -188,4 +179,4 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-</merge>
+</androidx.constraintlayout.widget.ConstraintLayout>

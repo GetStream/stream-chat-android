@@ -37,18 +37,21 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomChannel())
+            showOnlineStateSubtitle()
         }
         binding.headerOnlineLongBadge.apply {
             showBackButtonBadge("2334")
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomChannel())
+            showOnlineStateSubtitle()
         }
         binding.headerOnlineNoBadgeStatus.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomChannel(listOf(randomMember())))
             showBackButtonBadge("")
+            showOnlineStateSubtitle()
         }
         binding.headerOnlineAvatar.apply {
             setTitle("Chat title")
@@ -58,11 +61,13 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
                 members = listOf(Member(user = randomUser(isOnline = true)))
             }
             setAvatar(channel)
+            showOnlineStateSubtitle()
         }
         binding.headerOfflineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
             setAvatar(randomChannel(listOf(randomMember())))
+            showOnlineStateSubtitle()
         }
         binding.headerSearchingForNetwork.apply {
             setTitle("Chat title")
