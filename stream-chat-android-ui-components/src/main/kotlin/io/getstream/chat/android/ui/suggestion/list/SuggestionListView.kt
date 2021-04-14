@@ -9,8 +9,10 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
+import io.getstream.chat.android.ui.suggestion.Suggestions
 import io.getstream.chat.android.ui.suggestion.internal.CommandsAdapter
 import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListUi
@@ -42,7 +44,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         }
     }
 
-    override fun showSuggestionList(suggestions: Suggestions) {
+    override fun renderSuggestions(suggestions: Suggestions) {
         binding.suggestionsCardView.isVisible = true
         when (suggestions) {
             is Suggestions.MentionSuggestions -> {
@@ -61,7 +63,8 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
                     binding.commandsTitleTextView.isVisible = true
                 }
             }
-        }
+            is Suggestions.EmptySuggestions -> hideSuggestionList()
+        }.exhaustive
     }
 
     override fun isSuggestionListVisible(): Boolean {
@@ -92,7 +95,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         this.listener = listener
     }
 
-    override fun hideSuggestionList() {
+    private fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
             commandsAdapter.clear()
             mentionsAdapter.clear()
@@ -104,18 +107,5 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         public fun onMentionClick(user: User)
 
         public fun onCommandClick(command: Command)
-    }
-
-    public sealed class Suggestions {
-
-        public fun hasSuggestions(): Boolean {
-            return when (this) {
-                is CommandSuggestions -> commands.isNotEmpty()
-                is MentionSuggestions -> users.isNotEmpty()
-            }
-        }
-
-        public data class MentionSuggestions(val users: List<User>) : Suggestions()
-        public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
     }
 }
