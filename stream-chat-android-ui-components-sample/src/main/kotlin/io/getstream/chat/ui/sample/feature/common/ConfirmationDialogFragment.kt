@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
@@ -23,6 +24,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
     private val description: String by lazy { requireArguments().getString(ARG_DESCRIPTION)!! }
     private val confirmText: String by lazy { requireArguments().getString(ARG_CONFIRM_TEXT)!! }
     private val cancelText: String by lazy { requireArguments().getString(ARG_CANCEL_TEXT)!! }
+    private val hasConfirmButton: Boolean by lazy { requireArguments().getBoolean(ARG_HAS_CONFIRM_BUTTON, true) }
 
     private var _binding: ConfirmationDialogFragmentBinding? = null
     private val binding get() = _binding!!
@@ -52,12 +54,19 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             }
             titleTextView.text = title
             descriptionTextView.text = description
-            confirmButton.text = confirmText
             cancelButton.text = cancelText
             cancelButton.setOnClickListener { dismiss() }
-            confirmButton.setOnClickListener {
-                confirmClickListener?.onClick()
-                dismiss()
+            if (hasConfirmButton) {
+                confirmButton.apply {
+                    isVisible = true
+                    text = confirmText
+                    setOnClickListener {
+                        confirmClickListener?.onClick()
+                        dismiss()
+                    }
+                }
+            } else {
+                confirmButton.isVisible = false
             }
         }
     }
@@ -79,6 +88,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_DESCRIPTION = "description"
         private const val ARG_CONFIRM_TEXT = "confirm_text"
         private const val ARG_CANCEL_TEXT = "cancel_text"
+        private const val ARG_HAS_CONFIRM_BUTTON = "has_confirm_button"
 
         fun newDeleteMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.ic_delete,
@@ -107,6 +117,25 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             cancelText = context.getString(R.string.cancel),
         )
 
+        fun newFlagMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.stream_ui_ic_flag,
+            iconTintResId = R.color.red,
+            title = context.getString(R.string.stream_ui_message_option_flag),
+            description = context.getString(R.string.stream_ui_message_option_flag_confirmation_message),
+            confirmText = context.getString(R.string.stream_ui_message_option_flag_positive_button),
+            cancelText = context.getString(R.string.cancel),
+        )
+
+        fun newMessageFlaggedInstance(context: Context): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.stream_ui_ic_flag,
+            iconTintResId = R.color.red,
+            title = context.getString(R.string.message_flagged_title),
+            description = context.getString(R.string.message_flagged_description),
+            confirmText = context.getString(R.string.ok),
+            cancelText = context.getString(R.string.ok),
+            hasConfirmButton = false
+        )
+
         fun newInstance(
             @DrawableRes iconResId: Int,
             @ColorRes iconTintResId: Int,
@@ -114,6 +143,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             description: String,
             confirmText: String,
             cancelText: String,
+            hasConfirmButton: Boolean = true,
         ): ConfirmationDialogFragment = ConfirmationDialogFragment().apply {
             arguments = bundleOf(
                 ARG_ICON_RES_ID to iconResId,
@@ -122,6 +152,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
                 ARG_DESCRIPTION to description,
                 ARG_CONFIRM_TEXT to confirmText,
                 ARG_CANCEL_TEXT to cancelText,
+                ARG_HAS_CONFIRM_BUTTON to hasConfirmButton,
             )
         }
     }

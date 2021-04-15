@@ -20,7 +20,7 @@ public data class Flag(
     @SerializedName("reviewed_at")
     val reviewedAt: Date,
     @SerializedName("reviewed_by")
-    val approvedAt: Date,
+    val approvedAt: Date?,
     @SerializedName("rejected_at")
     val rejectedAt: Date
 )

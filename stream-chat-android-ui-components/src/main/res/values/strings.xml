@@ -49,8 +49,8 @@
     <string name="stream_ui_message_list_header_try_again">Try Again</string>
     <string name="stream_ui_message_list_header_typing">is typing</string>
     <string name="stream_ui_message_list_header_online">Online</string>
-    <string name="stream_ui_message_list_header_last_seen">Last seen %s</string>
-    <string name="stream_ui_message_list_header_just_now">just now</string>
+    <string name="stream_ui_message_list_header_last_seen_template">Last seen %s</string>
+    <string name="stream_ui_message_list_header_last_seen_just_now">Last seen just now</string>
     <string name="stream_ui_message_list_header_group_member_count_with_online">%s, %d Online</string>
     <plurals name="stream_ui_message_list_header_group_member_count">
         <item quantity="one">%1d Member</item>
@@ -93,13 +93,18 @@
     <string name="stream_ui_message_option_copy">Copy Message</string>
     <string name="stream_ui_message_option_edit">Edit Message</string>
     <string name="stream_ui_message_option_flag">Flag Message</string>
-    <string name="stream_ui_message_option_mute">Mute</string>
+    <string name="stream_ui_message_option_mute">Mute User</string>
+    <string name="stream_ui_message_option_unmute">Unmute User</string>
     <string name="stream_ui_message_option_block_user">Block user</string>
     <string name="stream_ui_message_option_delete_user">Delete Message</string>
     <string name="stream_ui_message_option_delete_confirmation_title">Delete Message</string>
     <string name="stream_ui_message_option_delete_confirmation_message">Are you sure you want to permanently delete this message?</string>
     <string name="stream_ui_message_option_delete_positive_button">Delete</string>
     <string name="stream_ui_message_option_delete_negative_button">Cancel</string>
+    <string name="stream_ui_message_option_flag_confirmation_title">Flag Message</string>
+    <string name="stream_ui_message_option_flag_confirmation_message">Do you want to send a copy of this message to a moderator for further investigation?</string>
+    <string name="stream_ui_message_option_flag_positive_button">Flag</string>
+    <string name="stream_ui_message_option_flag_negative_button">Cancel</string>
 
     <!-- Attachment options -->
     <string name="stream_ui_attachment_option_reply">Reply</string>
