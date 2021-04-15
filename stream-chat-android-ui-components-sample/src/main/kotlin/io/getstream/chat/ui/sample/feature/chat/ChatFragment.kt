@@ -236,6 +236,6 @@ class ChatFragment : Fragment() {
             return false
         }
         val chatError = error() as ChatNetworkError
-        return chatError.statusCode == 400
+        return chatError.streamCode == 4
     }
 }
