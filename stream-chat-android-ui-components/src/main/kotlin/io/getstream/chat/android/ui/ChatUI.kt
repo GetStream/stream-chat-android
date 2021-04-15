@@ -52,4 +52,6 @@ public object ChatUI {
         set(value) {
             avatarBitmapFactoryOverride = value
         }
+
+    public var supportedReactions: SupportedReactions = SupportedReactions()
 }

@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.ReactionType
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserEditReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 
@@ -48,7 +49,7 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
             editReactionsView3.setMessage(
                 message = randomMessage().apply {
                     ownReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type)
+                        Reaction(type = LOVE)
                     )
                 },
                 isMyMessage = true
@@ -56,8 +57,8 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
             editReactionsView4.setMessage(
                 message = randomMessage().apply {
                     ownReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type),
-                        Reaction(type = ReactionType.WUT.type)
+                        Reaction(type = LOVE),
+                        Reaction(type = WUT)
                     )
                 },
                 isMyMessage = false
