@@ -100,6 +100,7 @@
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
 - `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+- Fixed doubled command prefix when the command contains user mention
 - Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
 
