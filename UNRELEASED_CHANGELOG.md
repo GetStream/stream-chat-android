@@ -124,5 +124,6 @@
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
+- Changed gallery background to black in dark mode
 
 ### ❌ Removed
