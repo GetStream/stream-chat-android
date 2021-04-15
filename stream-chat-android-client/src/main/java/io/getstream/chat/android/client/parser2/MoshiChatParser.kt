@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapt
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
+import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -99,6 +100,10 @@ internal class MoshiChatParser : ChatParser {
             @Suppress("UNCHECKED_CAST")
             return parseSocketError(raw) as T
         }
+        if (clazz == ErrorResponse::class.java) {
+            @Suppress("UNCHECKED_CAST")
+            return parseErrorResponse(raw) as T
+        }
 
         val adapter = moshi.adapter(clazz)
         return adapter.fromJson(raw)!!
@@ -109,6 +114,13 @@ internal class MoshiChatParser : ChatParser {
     @Suppress("UNCHECKED_CAST")
     private fun parseSocketError(raw: String): SocketErrorMessage {
         return socketErrorResponseAdapter.fromJson(raw)!!.toDomain()
+    }
+
+    private val errorResponseAdapter = moshi.adapter(SocketErrorResponse.ErrorResponse::class.java)
+
+    @Suppress("UNCHECKED_CAST")
+    private fun parseErrorResponse(raw: String): ErrorResponse {
+        return errorResponseAdapter.fromJson(raw)!!.toDomain()
     }
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
