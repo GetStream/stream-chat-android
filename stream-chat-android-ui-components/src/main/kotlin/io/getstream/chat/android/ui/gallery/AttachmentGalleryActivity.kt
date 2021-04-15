@@ -194,7 +194,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         with(binding) {
             toolbar.isVisible = false
             bottomBar.isVisible = false
-            galleryViewPager.setBackgroundColor(getColorCompat(R.color.stream_ui_black))
+            galleryViewPager.setBackgroundColor(getColorCompat(R.color.stream_ui_literal_black))
             ConstraintSet().apply {
                 constrainViewToParentBySide(galleryViewPager, ConstraintSet.TOP)
                 constrainViewToParentBySide(galleryViewPager, ConstraintSet.BOTTOM)
