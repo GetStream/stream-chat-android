@@ -43,11 +43,11 @@ public class EditReactionsView : RecyclerView {
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
 
-        val reactionItems = ChatUI.supportedReactions.reactions.map { (type, drawableRes) ->
+        val reactionItems = ChatUI.supportedReactions.reactions.map { (type, reactionDrawable) ->
             ReactionItem(
                 type = type,
                 isMine = message.ownReactions.any { it.type == type },
-                iconDrawableRes = drawableRes
+                reactionDrawable = reactionDrawable
             )
         }
         reactionsAdapter.submitList(reactionItems)

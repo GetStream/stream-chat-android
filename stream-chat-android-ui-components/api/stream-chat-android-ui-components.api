@@ -54,9 +54,11 @@ public abstract interface class io/getstream/chat/android/ui/StyleTransformer {
 }
 
 public final class io/getstream/chat/android/ui/SupportedReactions {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/util/Map;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getReactionDrawable (Ljava/lang/String;)Lio/getstream/chat/android/ui/SupportedReactions$ReactionDrawable;
+	public final fun getReactionIconStateActive (Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
+	public final fun getReactionIconStateInactive (Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
 	public final fun getReactions ()Ljava/util/Map;
 	public final fun getTypes ()Ljava/util/List;
 }
@@ -68,6 +70,12 @@ public final class io/getstream/chat/android/ui/SupportedReactions$DefaultReacti
 	public static final field THUMBS_DOWN Ljava/lang/String;
 	public static final field THUMBS_UP Ljava/lang/String;
 	public static final field WUT Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawable {
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
+	public final fun getActiveDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getInactiveDrawable ()Landroid/graphics/drawable/Drawable;
 }
 
 public final class io/getstream/chat/android/ui/TransformStyle {

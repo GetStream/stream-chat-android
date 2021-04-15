@@ -1,25 +1,35 @@
 package io.getstream.chat.android.ui
 
-import androidx.annotation.DrawableRes
+import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.lolDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.loveDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.thumbsDownDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.thumbsUpDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.wutDrawable
 
 /**
  * Class allowing to define set of supported reactions
  */
 public class SupportedReactions(
+    private val context: Context,
     /**
-     * Map with keys corresponding to reaction type, value corresponding to Drawable Int
+     * Map with keys corresponding to reaction type, value corresponding to Drawable Int.
+     * By default it's filled with standard reactions. You can
      */
-    public val reactions: Map<String, Int> = mapOf(
-        LOVE to R.drawable.stream_ui_ic_reaction_love,
-        THUMBS_UP to R.drawable.stream_ui_ic_reaction_thumbs_up,
-        THUMBS_DOWN to R.drawable.stream_ui_ic_reaction_thumbs_down,
-        LOL to R.drawable.stream_ui_ic_reaction_lol,
-        WUT to R.drawable.stream_ui_ic_reaction_wut,
+    public val reactions: Map<String, ReactionDrawable> = mapOf(
+        LOVE to loveDrawable(context),
+        THUMBS_UP to thumbsUpDrawable(context),
+        THUMBS_DOWN to thumbsDownDrawable(context),
+        LOL to lolDrawable(context),
+        WUT to wutDrawable(context),
     )
 ) {
     public val types: List<String> = reactions.keys.toList()
@@ -28,13 +38,22 @@ public class SupportedReactions(
         return reactions.keys.contains(type)
     }
 
-    @DrawableRes
-    internal fun getReactionIcon(type: String): Int? {
+    public fun getReactionIconStateInactive(type: String): Drawable? {
+        return reactions[type]?.inactiveDrawable
+    }
+
+    public fun getReactionIconStateActive(type: String): Drawable? {
+        return reactions[type]?.activeDrawable
+    }
+
+    public fun getReactionDrawable(type: String): ReactionDrawable? {
         return reactions[type]
     }
 
+    public class ReactionDrawable(public val inactiveDrawable: Drawable?, public val activeDrawable: Drawable?)
+
     /**
-     * Default reaction types provided by Stream SDK
+     * Default reaction types
      */
     public object DefaultReactionTypes {
         public const val LOVE: String = "love"
@@ -42,5 +61,51 @@ public class SupportedReactions(
         public const val THUMBS_DOWN: String = "sad"
         public const val LOL: String = "haha"
         public const val WUT: String = "wow"
+    }
+
+    /**
+     * Default reaction drawables
+     */
+    private object DefaultReactions {
+        fun loveDrawable(context: Context): ReactionDrawable {
+            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)
+            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)?.apply {
+                @ColorInt val tintColor: Int = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
+                setTint(tintColor)
+            }
+            return ReactionDrawable(drawableInactive, drawableActive)
+        }
+        fun thumbsUpDrawable(context: Context): ReactionDrawable {
+            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)
+            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)?.apply {
+                @ColorInt val tintColor: Int = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
+                setTint(tintColor)
+            }
+            return ReactionDrawable(drawableInactive, drawableActive)
+        }
+        fun thumbsDownDrawable(context: Context): ReactionDrawable {
+            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)
+            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)?.apply {
+                @ColorInt val tintColor: Int = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
+                setTint(tintColor)
+            }
+            return ReactionDrawable(drawableInactive, drawableActive)
+        }
+        fun lolDrawable(context: Context): ReactionDrawable {
+            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)
+            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_lol)?.apply {
+                @ColorInt val tintColor: Int = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
+                setTint(tintColor)
+            }
+            return ReactionDrawable(drawableInactive, drawableActive)
+        }
+        fun wutDrawable(context: Context): ReactionDrawable {
+            val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)
+            val drawableActive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_wut)?.apply {
+                @ColorInt val tintColor: Int = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
+                setTint(tintColor)
+            }
+            return ReactionDrawable(drawableInactive, drawableActive)
+        }
     }
 }

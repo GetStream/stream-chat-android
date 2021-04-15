@@ -39,7 +39,7 @@ internal class SingleReactionView : FrameLayout {
         // according to the design, current user reactions have the same style
         // as reactions on the current user messages in the message list
         this.isMyMessage = !userReactionItem.isMine
-        binding.reactionIcon.setImageResource(userReactionItem.iconDrawableRes)
+        binding.reactionIcon.setImageDrawable(userReactionItem.drawable)
         invalidate()
     }
 
@@ -60,6 +60,6 @@ internal class SingleReactionView : FrameLayout {
 
         setWillNotDraw(false)
         minimumHeight = reactionsViewStyle.totalHeight
-        binding.reactionIcon.setColorFilter(context.getColorCompat(R.color.stream_ui_accent_blue))
+        binding.reactionIcon.setColorFilter(context.getColorCompat(R.color.stream_ui_accent_blue)) // TODO: remove this
     }
 }

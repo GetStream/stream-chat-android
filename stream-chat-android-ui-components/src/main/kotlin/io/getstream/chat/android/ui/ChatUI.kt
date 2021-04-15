@@ -53,5 +53,11 @@ public object ChatUI {
             avatarBitmapFactoryOverride = value
         }
 
-    public var supportedReactions: SupportedReactions = SupportedReactions()
+    private var supportedReactionsOverride: SupportedReactions? = null
+    private val defaultSupportedReactions: SupportedReactions by lazy { SupportedReactions(appContext) }
+    public var supportedReactions: SupportedReactions
+        get() = supportedReactionsOverride ?: defaultSupportedReactions
+        set(value) {
+            supportedReactionsOverride = value
+        }
 }

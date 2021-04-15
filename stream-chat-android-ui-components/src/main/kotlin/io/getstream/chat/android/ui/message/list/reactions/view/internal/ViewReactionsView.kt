@@ -88,11 +88,11 @@ public class ViewReactionsView : RecyclerView {
     private fun createReactionItems(message: Message): List<ReactionItem> {
         return message.supportedReactionCounts.keys
             .mapNotNull { type ->
-                ChatUI.supportedReactions.getReactionIcon(type)?.let {
+                ChatUI.supportedReactions.getReactionDrawable(type)?.let {
                     ReactionItem(
                         type = type,
                         isMine = message.ownReactions.any { it.type == type },
-                        iconDrawableRes = it
+                        reactionDrawable = it
                     )
                 }
             }.sortedBy { if (isMyMessage) it.isMine else !it.isMine }
