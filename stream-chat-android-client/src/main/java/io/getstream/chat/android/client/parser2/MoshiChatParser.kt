@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -39,6 +40,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class MoshiChatParser : ChatParser {
+
+    val logger = ChatLogger.get("NEW_SERIALIZATION_ERROR")
 
     private val moshi: Moshi by lazy {
         Moshi.Builder()
@@ -92,21 +95,26 @@ internal class MoshiChatParser : ChatParser {
     }
 
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
-        if (clazz == ChatEvent::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return parseAndProcessEvent(raw) as T
-        }
-        if (clazz == SocketErrorMessage::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return parseSocketError(raw) as T
-        }
-        if (clazz == ErrorResponse::class.java) {
-            @Suppress("UNCHECKED_CAST")
-            return parseErrorResponse(raw) as T
-        }
+        try {
+            if (clazz == ChatEvent::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                return parseAndProcessEvent(raw) as T
+            }
+            if (clazz == SocketErrorMessage::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                return parseSocketError(raw) as T
+            }
+            if (clazz == ErrorResponse::class.java) {
+                @Suppress("UNCHECKED_CAST")
+                return parseErrorResponse(raw) as T
+            }
 
-        val adapter = moshi.adapter(clazz)
-        return adapter.fromJson(raw)!!
+            val adapter = moshi.adapter(clazz)
+            return adapter.fromJson(raw)!!
+        } catch (e: Exception) {
+            logger.logE(e)
+            throw e
+        }
     }
 
     private val socketErrorResponseAdapter = moshi.adapter(SocketErrorResponse::class.java)
