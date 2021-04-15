@@ -13,6 +13,6 @@ internal data class DownstreamFlagDto(
     val approved_at: Date,
     val updated_at: Date,
     val reviewed_at: Date,
-    val reviewed_by: Date,
+    val reviewed_by: Date?,
     val rejected_at: Date,
 )

@@ -61,6 +61,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private var reactionClickHandler: ReactionClickHandler? = null
     private var confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler? = null
+    private var confirmFlagMessageClickHandler: ConfirmFlagMessageClickHandler? = null
     private var messageOptionsHandlers: MessageOptionsHandlers? = null
 
     override fun onCreateView(
@@ -95,6 +96,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         super.onDestroy()
         reactionClickHandler = null
         messageOptionsHandlers = null
+        confirmDeleteMessageClickHandler = null
+        confirmFlagMessageClickHandler = null
     }
 
     fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
@@ -103,6 +106,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     fun setConfirmDeleteMessageClickHandler(confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler) {
         this.confirmDeleteMessageClickHandler = confirmDeleteMessageClickHandler
+    }
+
+    fun setConfirmFlagMessageClickHandler(confirmFlagMessageClickHandler: ConfirmFlagMessageClickHandler) {
+        this.confirmFlagMessageClickHandler = confirmFlagMessageClickHandler
     }
 
     fun setMessageOptionsHandlers(messageOptionsHandlers: MessageOptionsHandlers) {
@@ -173,18 +180,37 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
+    private fun isMessageAuthorMuted(): Boolean {
+        return currentUser.mutes.any { mute -> mute.target.id == message.user.id }
+    }
+
     private fun setupMessageOptions() {
         with(binding.messageOptionsView) {
             isVisible = true
-            configure(configuration, style, messageItem.isTheirs, messageItem.message.syncStatus)
+            val isMessageAuthorMuted = isMessageAuthorMuted()
+            configure(
+                configuration = configuration,
+                style = style,
+                isMessageTheirs = messageItem.isTheirs,
+                syncStatus = messageItem.message.syncStatus,
+                isMessageAuthorMuted = isMessageAuthorMuted,
+            )
             updateLayoutParams<LinearLayout.LayoutParams> {
                 gravity = if (messageItem.isMine) Gravity.END else Gravity.START
             }
-            messageOptionsHandlers?.let(::setupOptionsClickListeners)
+            messageOptionsHandlers?.let { messageOptionsHandlers ->
+                setupOptionsClickListeners(
+                    messageOptionsHandlers = messageOptionsHandlers,
+                    isMessageAuthorMuted = isMessageAuthorMuted,
+                )
+            }
         }
     }
 
-    private fun setupOptionsClickListeners(messageOptionsHandlers: MessageOptionsHandlers) {
+    private fun setupOptionsClickListeners(
+        messageOptionsHandlers: MessageOptionsHandlers,
+        isMessageAuthorMuted: Boolean,
+    ) {
         binding.messageOptionsView.run {
             setThreadListener {
                 messageOptionsHandlers.threadReplyHandler.onStartThread(message)
@@ -203,11 +229,21 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 dismiss()
             }
             setFlagMessageListener {
-                messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
+                if (style.deleteConfirmationEnabled) {
+                    confirmFlagMessageClickHandler?.onConfirmFlagMessage(message) {
+                        messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
+                    }
+                } else {
+                    messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
+                }
                 dismiss()
             }
             setMuteUserListener {
-                messageOptionsHandlers.muteClickHandler.onUserMute(message.user)
+                if (isMessageAuthorMuted) {
+                    messageOptionsHandlers.unmuteClickHandler.onUserUnmute(message.user)
+                } else {
+                    messageOptionsHandlers.muteClickHandler.onUserMute(message.user)
+                }
                 dismiss()
             }
             setBlockUserListener {
@@ -266,12 +302,17 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
+    internal fun interface ConfirmFlagMessageClickHandler {
+        fun onConfirmFlagMessage(message: Message, confirmCallback: () -> Unit)
+    }
+
     internal class MessageOptionsHandlers(
         val threadReplyHandler: MessageListView.ThreadStartHandler,
         val retryHandler: MessageListView.MessageRetryHandler,
         val editClickHandler: MessageListView.MessageEditHandler,
         val flagClickHandler: MessageListView.MessageFlagHandler,
         val muteClickHandler: MessageListView.UserMuteHandler,
+        val unmuteClickHandler: MessageListView.UserUnmuteHandler,
         val blockClickHandler: MessageListView.UserBlockHandler,
         val deleteClickHandler: MessageListView.MessageDeleteHandler,
         val replyClickHandler: MessageListView.MessageReplyHandler,
@@ -311,7 +352,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             optionsMode: OptionsMode,
             message: Message,
             style: MessageListViewStyle,
-            configuration: MessageOptionsView.Configuration
+            configuration: MessageOptionsView.Configuration,
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(

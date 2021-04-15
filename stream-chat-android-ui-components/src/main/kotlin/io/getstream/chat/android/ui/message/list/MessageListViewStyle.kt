@@ -39,6 +39,7 @@ import java.io.Serializable
  * @property deleteMessageEnabled - enables/disables delete message feature. Enabled by default
  * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
  * @property deleteConfirmationEnabled - enables/disables showing confirmation dialog before deleting message. Enabled by default
+ * @property flagMessageConfirmationEnabled - enables/disables showing confirmation dialog before flagging message. Disabled by default
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -57,6 +58,7 @@ public data class MessageListViewStyle(
     val flagIcon: Int,
     val flagEnabled: Boolean,
     val muteIcon: Int,
+    val unmuteIcon: Int,
     val muteEnabled: Boolean,
     val blockIcon: Int,
     val blockEnabled: Boolean,
@@ -64,6 +66,7 @@ public data class MessageListViewStyle(
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
+    val flagMessageConfirmationEnabled: Boolean,
 ) : Serializable {
 
     internal companion object {
@@ -164,6 +167,11 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_mute
                 )
 
+                val unmuteIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiUnmuteOptionIcon,
+                    R.drawable.stream_ui_ic_umnute
+                )
+
                 val blockIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiBlockOptionIcon,
                     R.drawable.stream_ui_ic_user_block
@@ -185,6 +193,8 @@ public data class MessageListViewStyle(
                 val deleteConfirmationEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
 
+                val flagMessageConfirmationEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageConfirmationEnabled, false)
                 val deleteMessageEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
 
@@ -207,12 +217,14 @@ public data class MessageListViewStyle(
                     flagIcon = flagIcon,
                     flagEnabled = flagEnabled,
                     muteIcon = muteIcon,
+                    unmuteIcon = unmuteIcon,
                     muteEnabled = muteEnabled,
                     blockIcon = blockIcon,
                     blockEnabled = blockEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
                     deleteConfirmationEnabled = deleteConfirmationEnabled,
+                    flagMessageConfirmationEnabled = flagMessageConfirmationEnabled,
                     deleteMessageEnabled = deleteMessageEnabled,
                     editMessageEnabled = editMessageEnabled,
                     threadsEnabled = threadsEnabled,
