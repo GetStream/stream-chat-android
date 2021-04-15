@@ -171,7 +171,9 @@
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiFlagOptionIcon" format="reference" />
         <attr name="streamUiFlagMessageEnabled" format="boolean" />
+        <attr name="streamUiFlagMessageConfirmationEnabled" format="boolean" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
+        <attr name="streamUiUnmuteOptionIcon" format="reference" />
         <attr name="streamUiMuteUserEnabled" format="boolean" />
         <attr name="streamUiBlockOptionIcon" format="reference" />
         <attr name="streamUiBlockUserEnabled" format="boolean" />

@@ -25,6 +25,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed: local cached hidden channels stay hidden even though new message is received.
+- Make `Flag::approvedAt` nullable
 
 ### ⬆️ Improved
 
@@ -99,6 +100,7 @@
 - Fixed not perfectly rounded avatars
 - `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
 - Fixed doubled command prefix when the command contains user mention
+- Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
 
 ### ⬆️ Improved
@@ -117,6 +119,9 @@
     * `MessageListView.streamUiMuteUserOptionEnabled`
     * `MessageListView.streamUiBlockUserOptionEnabled`
     * `MessageListView.streamUiCopyMessageActionEnabled`
+- Added confirmation dialog for flagging message option:
+  * Added `MessageListView::flagMessageConfirmationEnabled` attribute
+- Added `MessageListView::setFlagMessageResultHandler` which allows to handle flag message result
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!

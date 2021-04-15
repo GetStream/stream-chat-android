@@ -7,13 +7,16 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
@@ -182,7 +185,9 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.deleteMessage(event.message).enqueue()
             }
             is Event.FlagMessage -> {
-                client.flagMessage(event.message.id).enqueue()
+                client.flagMessage(event.message.id).enqueue { result ->
+                    event.resultHandler(result)
+                }
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
@@ -195,6 +200,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             }
             is Event.MuteUser -> {
                 client.muteUser(event.user.id).enqueue()
+            }
+            is Event.UnmuteUser -> {
+                client.unmuteUser(event.user.id).enqueue()
             }
             is Event.BlockUser -> {
                 val channelClient = client.channel(cid)
@@ -370,7 +378,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         public object LastMessageRead : Event()
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
         public data class DeleteMessage(val message: Message) : Event()
-        public data class FlagMessage(val message: Message) : Event()
+        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(
@@ -378,7 +386,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             val reactionType: String,
             val enforceUnique: Boolean,
         ) : Event()
+
         public data class MuteUser(val user: User) : Event()
+        public data class UnmuteUser(val user: User) : Event()
         public data class BlockUser(val user: User, val cid: String) : Event()
         public data class ReplyMessage(val cid: String, val repliedMessage: Message) : Event()
         public data class ReplyAttachment(val cid: String, val repliedMessageId: String) : Event()
