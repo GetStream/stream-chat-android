@@ -26,6 +26,7 @@
 ### 🐞 Fixed
 - Fixed: local cached hidden channels stay hidden even though new message is received.
 - Make `Flag::approvedAt` nullable
+- Fixed error event parsing with new serialization implementation
 
 ### ⬆️ Improved
 
@@ -125,5 +126,6 @@
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
+- Changed gallery background to black in dark mode
 
 ### ❌ Removed

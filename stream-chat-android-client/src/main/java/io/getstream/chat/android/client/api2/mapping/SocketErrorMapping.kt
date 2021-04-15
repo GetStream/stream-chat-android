@@ -6,14 +6,17 @@ import io.getstream.chat.android.client.socket.SocketErrorMessage
 
 internal fun SocketErrorResponse.toDomain(): SocketErrorMessage {
     return SocketErrorMessage(
-        error = error?.let {
-            ErrorResponse(
-                code = error.code,
-                message = error.message,
-                statusCode = error.StatusCode,
-            ).apply {
-                duration = error.duration
-            }
-        }
+        error = error?.toDomain()
     )
+}
+
+internal fun SocketErrorResponse.ErrorResponse.toDomain(): ErrorResponse {
+    val dto = this
+    return ErrorResponse(
+        code = dto.code,
+        message = dto.message,
+        statusCode = dto.StatusCode,
+    ).apply {
+        duration = dto.duration
+    }
 }
