@@ -32,26 +32,20 @@ internal interface ChatParser {
         return try {
             // Try to parse default Stream error body
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
-            val error = toError(body)
 
-            if (error == null) {
+            if (body.isEmpty()) {
                 ChatNetworkError.create(ChatErrorCode.NO_ERROR_BODY, statusCode = statusCode)
             } else {
+                val error = try {
+                    fromJson(body, ErrorResponse::class.java)
+                } catch (t: Throwable) {
+                    ErrorResponse().apply { message = body }
+                }
                 ChatNetworkError.create(error.code, error.message, statusCode)
             }
         } catch (t: Throwable) {
             ChatLogger.instance.logE(TAG, t)
             ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
-        }
-    }
-
-    private fun toError(body: String?): ErrorResponse? {
-        if (body.isNullOrEmpty()) return ErrorResponse(message = "Body is null or empty")
-
-        return try {
-            fromJson(body, ErrorResponse::class.java)
-        } catch (t: Throwable) {
-            ErrorResponse().apply { message = body }
         }
     }
 }

@@ -26,6 +26,7 @@
 ### 🐞 Fixed
 - Fixed: local cached hidden channels stay hidden even though new message is received.
 - Make `Flag::approvedAt` nullable
+- Fixed error event parsing with new serialization implementation
 
 ### ⬆️ Improved
 
