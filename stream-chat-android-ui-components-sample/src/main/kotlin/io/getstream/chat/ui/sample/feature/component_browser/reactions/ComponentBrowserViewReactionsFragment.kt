@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserViewReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 
@@ -36,10 +39,10 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView1.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 1,
+                        LOVE to 1,
                     )
                     ownReactions = mutableListOf(
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.LOVE),
+                        Reaction(type = LOVE),
                     )
                 },
                 isMyMessage = true
@@ -47,10 +50,10 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView2.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 1,
+                        LOVE to 1,
                     )
                     ownReactions = mutableListOf(
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.LOVE),
+                        Reaction(type = LOVE),
                     )
                 },
                 isMyMessage = false
@@ -58,7 +61,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView3.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 1,
+                        LOVE to 1,
                     )
                     ownReactions = mutableListOf()
                 },
@@ -67,7 +70,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView4.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 1,
+                        LOVE to 1,
                     )
                     ownReactions = mutableListOf()
                 },
@@ -76,14 +79,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView5.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 10,
-                        SupportedReactions.DefaultReactionTypes.WUT to 20,
-                        SupportedReactions.DefaultReactionTypes.LOL to 20,
-                        SupportedReactions.DefaultReactionTypes.THUMBS_UP to 20
+                        LOVE to 10,
+                        WUT to 20,
+                        LOL to 20,
+                        THUMBS_UP to 20
                     )
                     ownReactions = mutableListOf(
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.LOVE),
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.WUT)
+                        Reaction(type = LOVE),
+                        Reaction(type = WUT)
                     )
                 },
                 isMyMessage = true
@@ -91,14 +94,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             viewReactionsView6.setMessage(
                 message = randomMessage().apply {
                     reactionCounts = mutableMapOf(
-                        SupportedReactions.DefaultReactionTypes.LOVE to 10,
-                        SupportedReactions.DefaultReactionTypes.WUT to 20,
-                        SupportedReactions.DefaultReactionTypes.LOL to 20,
-                        SupportedReactions.DefaultReactionTypes.THUMBS_UP to 20
+                        LOVE to 10,
+                        WUT to 20,
+                        LOL to 20,
+                        THUMBS_UP to 20
                     )
                     ownReactions = mutableListOf(
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.LOVE),
-                        Reaction(type = SupportedReactions.DefaultReactionTypes.WUT)
+                        Reaction(type = LOVE),
+                        Reaction(type = WUT)
                     )
                 },
                 isMyMessage = false
