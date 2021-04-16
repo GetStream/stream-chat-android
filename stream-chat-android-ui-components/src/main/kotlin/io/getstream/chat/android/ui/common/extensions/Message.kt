@@ -17,7 +17,11 @@ public fun Message.isInThread(): Boolean = !parentId.isNullOrEmpty()
 
 public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
+public fun Message.isRegular(): Boolean = type == ModelType.message_regular
+
 public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
+
+public fun Message.isSystem(): Boolean = type == ModelType.message_system
 
 public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
 

@@ -58,9 +58,10 @@ internal class MessageInputFieldView : FrameLayout {
     var messageText: String
         get() {
             val text = binding.messageEditText.text?.toString() ?: String.EMPTY
-            return mode.let {
-                when (it) {
-                    is Mode.CommandMode -> "/${it.command.name} $text"
+            return mode.let { messageMode ->
+                when (messageMode) {
+                    is Mode.CommandMode -> text.substringAfter("/${messageMode.command.name} ")
+                        .let { "/${messageMode.command.name} $it" }
                     else -> text
                 }
             }
