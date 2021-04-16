@@ -1,6 +1,6 @@
 import com.getstream.sdk.chat.Configuration
 
-static Boolean existsGit() {
+static Boolean gitIsAvailable() {
     try {
         "git --version".execute()
         return true
@@ -11,7 +11,7 @@ static Boolean existsGit() {
 
 ext["sampleAppVersionCode"] = 1
 ext["sampleAppVersionName"] = Configuration.versionName
-if (existsGit()) {
+if (gitIsAvailable()) {
     apply plugin: 'com.pascalwelsch.gitversioner'
     gitVersioner {
         def branches = ['develop', 'main']
