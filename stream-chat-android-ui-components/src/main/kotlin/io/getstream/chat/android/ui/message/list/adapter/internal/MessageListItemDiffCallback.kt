@@ -23,7 +23,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                     oldItem.message.deletedAt == newItem.message.deletedAt &&
                     oldItem.positions == newItem.positions &&
                     oldItem.isMessageRead == newItem.isMessageRead &&
-                    oldItem.isThreadMode == newItem.isThreadMode
+                    oldItem.isThreadMode == newItem.isThreadMode &&
+                    oldItem.message.extraData == newItem.message.extraData
             }
             is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
