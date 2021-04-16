@@ -21,7 +21,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 public class SupportedReactions(
     context: Context,
     /**
-     * Map with keys corresponding to reaction type, value corresponding to Drawable Int.
+     * Map with keys corresponding to reaction type, value corresponding to [ReactionDrawable] object.
      * By default it's initialized with standard reactions. You can customize reactions by providing your own
      * @property reactions: Map<String, ReactionDrawable> instance.
      */
