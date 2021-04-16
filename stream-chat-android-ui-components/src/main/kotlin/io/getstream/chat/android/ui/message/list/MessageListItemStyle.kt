@@ -94,7 +94,7 @@ public data class MessageListItemStyle(
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
-    public val textStyleSystemMessage: TextStyle
+    public val textStyleSystemMessage: TextStyle,
 ) : Serializable {
 
     @ColorInt
