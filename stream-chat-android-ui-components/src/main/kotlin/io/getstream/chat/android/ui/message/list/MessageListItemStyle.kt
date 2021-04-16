@@ -470,7 +470,7 @@ public data class MessageListItemStyle(
                 messageStrokeWidthMine = messageStrokeWidthMine,
                 messageStrokeColorTheirs = messageStrokeColorTheirs,
                 messageStrokeWidthTheirs = messageStrokeWidthTheirs,
-                textStyleSystemMessage = textStyleSystemMessage
+                textStyleSystemMessage = textStyleSystemMessage,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
