@@ -15,12 +15,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -41,7 +41,7 @@ internal class QueryChannelsControllerTest {
             val newChannel = randomChannel(
                 members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
             )
-            val channelController = mock<ChannelControllerImpl>()
+            val channelController = mock<ChannelController>()
             val sut = Fixture()
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
@@ -56,7 +56,7 @@ internal class QueryChannelsControllerTest {
 
             sut.addChannelIfFilterMatches(newChannel)
 
-            verify(channelController).updateLiveDataFromChannel(eq(newChannel))
+            verify(channelController).updateDataFromChannel(eq(newChannel))
         }
 
     @Test
@@ -193,7 +193,7 @@ internal class QueryChannelsControllerTest {
     @Test
     fun `when a new message arrives in a new channel, it should update the channels`() =
         runBlockingTest {
-            val channelController: ChannelControllerImpl = mock()
+            val channelController: ChannelController = mock()
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -201,14 +201,14 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = channel))
 
-            verify(channelController).updateLiveDataFromChannel(eq(channel))
+            verify(channelController).updateDataFromChannel(eq(channel))
         }
 
     @Test
     fun `when a new message arrives in a new channel, it NOT should update the channels when it is already there`() =
         runBlockingTest {
             val cid = randomString()
-            val channelController: ChannelControllerImpl = mock()
+            val channelController: ChannelController = mock()
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -216,7 +216,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
-            verify(channelController, never()).updateLiveDataFromChannel(any())
+            verify(channelController, never()).updateDataFromChannel(any())
         }
 }
 
@@ -240,8 +240,8 @@ private class Fixture {
         whenever(chatDomainImpl.currentUser) doReturn currentUser!!
     }
 
-    fun givenNewChannelControllerForChannel(channelControllerImpl: ChannelControllerImpl = mock()): Fixture = apply {
-        whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelControllerImpl
+    fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {
+        whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelController
     }
 
     fun givenFilterObject(filterObject: FilterObject): Fixture = apply {
@@ -260,7 +260,7 @@ private class Fixture {
         withCurrentUserAsChannelMember: Boolean = false,
     ): Fixture = apply {
         whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelControllerImpl> {
+            mock<ChannelController> {
                 on { toChannel() } doReturn randomChannel(
                     cid = invocation.arguments[0] as String,
                     type = channelType,
@@ -275,6 +275,5 @@ private class Fixture {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
-    fun get(): QueryChannelsController =
-        QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
+    fun get(): QueryChannelsController = QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
 }

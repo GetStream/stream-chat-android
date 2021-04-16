@@ -13,11 +13,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.CoroutineScope
@@ -202,13 +202,13 @@ internal class WhenQuery {
         suspend fun givenDBChannels(dbChannels: List<Channel>) = apply {
             whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
                 val cid = invocationOnMock.arguments[0] as String
-                mock<ChannelControllerImpl> {
+                mock<ChannelController> {
                     on { toChannel() } doReturn dbChannels.first { it.cid == cid }
                 }
             }
             whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
-                mock<ChannelControllerImpl> {
+                mock<ChannelController> {
                     on { toChannel() } doReturn channel
                 }
             }
@@ -220,13 +220,13 @@ internal class WhenQuery {
 
             whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
                 val cid = invocationOnMock.arguments[0] as String
-                mock<ChannelControllerImpl> {
+                mock<ChannelController> {
                     on { toChannel() } doReturn channels.first { it.cid == cid }
                 }
             }
             whenever(chatDomainImpl.channel(any<Channel>())) doAnswer { invocationOnMock ->
                 val channel = invocationOnMock.arguments[0] as Channel
-                mock<ChannelControllerImpl> {
+                mock<ChannelController> {
                     on { toChannel() } doReturn channel
                 }
             }

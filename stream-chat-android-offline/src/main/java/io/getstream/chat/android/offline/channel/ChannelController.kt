@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.channel
 
 import android.webkit.MimeTypeMap
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -90,7 +91,8 @@ public class ChannelController internal constructor(
     public val channelType: String,
     public val channelId: String,
     private val client: ChatClient,
-    private val domainImpl: ChatDomainImpl,
+    @VisibleForTesting
+    internal val domainImpl: ChatDomainImpl,
     private val messageHelper: MessageHelper = MessageHelper(),
 ) {
     private val editJobs = mutableMapOf<String, Job>()
