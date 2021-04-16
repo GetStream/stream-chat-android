@@ -21,7 +21,8 @@ public class SupportedReactions(
     context: Context,
     /**
      * Map with keys corresponding to reaction type, value corresponding to Drawable Int.
-     * By default it's filled with standard reactions. You can
+     * By default it's initialized with standard reactions. You can customize reactions by providing your own
+     * @property reactions: Map<String, ReactionDrawable> instance.
      */
     public val reactions: Map<String, ReactionDrawable> = mapOf(
         LOVE to loveDrawable(context),
