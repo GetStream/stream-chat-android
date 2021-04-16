@@ -12,8 +12,8 @@ apply from: "${rootDir}/scripts/android.gradle"
 android {
     defaultConfig {
         applicationId "io.getstream.chat.ui.sample"
-        versionCode gitVersioner.versionCode
-        versionName gitVersioner.versionName
+        versionCode sampleAppVersionCode
+        versionName sampleAppVersionName
         ndkVersion "21.3.6528147"
     }
 
