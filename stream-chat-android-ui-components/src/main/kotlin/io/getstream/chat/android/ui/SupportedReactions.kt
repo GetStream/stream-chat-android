@@ -3,16 +3,16 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.lolDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.loveDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.thumbsDownDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.thumbsUpDrawable
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.wutDrawable
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.lolDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.loveDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.thumbsDownDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.thumbsUpDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.wutDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 
 /**
@@ -65,7 +65,7 @@ public class SupportedReactions(
     /**
      * Default reaction drawables
      */
-    private object DefaultReactions {
+    private object DefaultReactionDrawables {
         fun loveDrawable(context: Context): ReactionDrawable {
             val drawableInactive = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply {
                 setTint(context.getColorCompat(R.color.stream_ui_grey))
