@@ -1,11 +1,11 @@
 import com.getstream.sdk.chat.Dependencies
 
-apply plugin: 'com.pascalwelsch.gitversioner'
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
+apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 
 buildscript {
     repositories {
@@ -66,15 +66,6 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-gitVersioner {
-    def branches = ['develop', 'main']
-    baseBranch branchName in branches ? branchName : branches[0]
-    yearFactor 100
-    formatter = { gitVersioner ->
-        "1.${gitVersioner.versionCode}.${gitVersioner.featureBranchCommitCount}.${gitVersioner.currentSha1Short}"
-    }
 }
 
 dependencyUpdates {
