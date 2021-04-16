@@ -1,12 +1,9 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -38,11 +35,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.controller.ThreadController
+import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
@@ -57,11 +50,14 @@ import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.offline.thread.ThreadController
+import io.getstream.chat.android.offline.usecase.UseCaseHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -69,14 +65,17 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import io.getstream.chat.android.offline.ChatDomainImpl as ChatDomainStateFlowImpl
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 private const val MESSAGE_LIMIT = 30
@@ -117,8 +116,7 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-) :
-    ChatDomain {
+) : ChatDomain {
     internal constructor(
         client: ChatClient,
         handler: Handler,
@@ -139,18 +137,6 @@ internal class ChatDomainImpl internal constructor(
         appContext
     )
 
-    internal val chatDomainStateFlowImpl: ChatDomainStateFlowImpl = ChatDomainStateFlowImpl(
-        client,
-        userOverwrite,
-        db,
-        mainHandler,
-        offlineEnabled,
-        recoveryEnabled,
-        userPresence,
-        backgroundSyncEnabled,
-        appContext
-    )
-
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
 
@@ -159,12 +145,15 @@ internal class ChatDomainImpl internal constructor(
     private val _errorEvent = MutableStateFlow<Event<ChatError>?>(null)
     private val _banned = MutableStateFlow(false)
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
-    private val _typingChannels = MediatorLiveData<TypingEvent>()
+    private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
     private val useCaseProvider: UseCaseHelper = UseCaseHelper(this)
 
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(appContext) }
+
+    internal val job = SupervisorJob()
+    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(this)
@@ -173,33 +162,33 @@ internal class ChatDomainImpl internal constructor(
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
     /** if the client connection has been initialized */
-    override val initialized: LiveData<Boolean> = _initialized.asLiveData()
+    override val initialized: StateFlow<Boolean> = _initialized
 
     /**
-     * LiveData<Boolean> that indicates if we are currently online
+     * StateFlow<Boolean> that indicates if we are currently online
      */
-    override val online: LiveData<Boolean> = _online.asLiveData()
+    override val online: StateFlow<Boolean> = _online
 
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    override val totalUnreadCount: LiveData<Int> = _totalUnreadCount.asLiveData()
+    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
 
     /**
      * the number of unread channels for the current user
      */
-    override val channelUnreadCount: LiveData<Int> = _channelUnreadCount.asLiveData()
+    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
 
     /**
      * list of users that you've muted
      */
-    override val muted: LiveData<List<Mute>> = _mutedUsers.asLiveData()
+    override val muted: StateFlow<List<Mute>> = _mutedUsers
 
     /**
      * if the current user is banned or not
      */
-    override val banned: LiveData<Boolean> = _banned.asLiveData()
+    override val banned: StateFlow<Boolean> = _banned
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occur.
@@ -210,17 +199,18 @@ internal class ChatDomainImpl internal constructor(
      *   })
      *
      */
-    override val errorEvents: LiveData<Event<ChatError>> = _errorEvent.filterNotNull().asLiveData()
+    override val errorEvents: StateFlow<Event<ChatError>> =
+        _errorEvent.filterNotNull().stateIn(scope, SharingStarted.Eagerly, Event(ChatError()))
 
     /** the event subscription */
     private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
     /** stores the mapping from cid to ChannelController */
-    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
 
-    override val typingUpdates: LiveData<TypingEvent> = _typingChannels
+    override val typingUpdates: StateFlow<TypingEvent> = _typingChannels
 
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsController> = ConcurrentHashMap()
 
     @VisibleForTesting
     internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
@@ -298,9 +288,6 @@ internal class ChatDomainImpl internal constructor(
         startListening()
         initClean()
     }
-
-    internal val job = SupervisorJob()
-    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
@@ -415,7 +402,7 @@ internal class ChatDomainImpl internal constructor(
 
             // update livedata
             val channelController = channel(c.cid)
-            channelController.updateLiveDataFromChannel(c)
+            channelController.updateDataFromChannel(c)
 
             // Update Room State
             repos.insertChannel(c)
@@ -520,11 +507,11 @@ internal class ChatDomainImpl internal constructor(
         eventSubscription.dispose()
     }
 
-    internal fun channel(c: Channel): ChannelControllerImpl {
+    internal fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }
 
-    internal fun channel(cid: String): ChannelControllerImpl {
+    internal fun channel(cid: String): ChannelController {
         if (!CHANNEL_CID_REGEX.matches(cid)) {
             throw IllegalArgumentException("Received invalid cid, expected format messaging:123, got $cid")
         }
@@ -535,33 +522,31 @@ internal class ChatDomainImpl internal constructor(
     internal fun channel(
         channelType: String,
         channelId: String,
-    ): ChannelControllerImpl {
+    ): ChannelController {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController =
-                ChannelControllerImpl(
+                ChannelController(
                     channelType,
                     channelId,
                     client,
                     this
                 )
             activeChannelMapImpl[cid] = channelController
-            scope.launch(DispatcherProvider.Main) {
-                addTypingChannel(channelController)
-            }
+            addTypingChannel(channelController)
         }
         return activeChannelMapImpl.getValue(cid)
     }
 
-    internal fun allActiveChannels(): List<ChannelControllerImpl> =
+    internal fun allActiveChannels(): List<ChannelController> =
         activeChannelMapImpl.values.toList()
 
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }
 
-    private fun addTypingChannel(channelController: ChannelControllerImpl) {
-        _typingChannels.addSource(channelController.typing, _typingChannels::postValue)
+    private fun addTypingChannel(channelController: ChannelController) {
+        scope.launch { _typingChannels.emitAll(channelController.typing) }
     }
 
     internal fun setOffline() {
@@ -584,7 +569,7 @@ internal class ChatDomainImpl internal constructor(
         return _initialized.value
     }
 
-    override fun getActiveQueries(): List<QueryChannelsControllerImpl> {
+    override fun getActiveQueries(): List<QueryChannelsController> {
         return activeQueryMapImpl.values.toList()
     }
 
@@ -596,9 +581,9 @@ internal class ChatDomainImpl internal constructor(
     fun queryChannels(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): QueryChannelsControllerImpl =
+    ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            QueryChannelsControllerImpl(
+            QueryChannelsController(
                 filter,
                 sort,
                 client,
@@ -705,7 +690,7 @@ internal class ChatDomainImpl internal constructor(
                 val foundChannelIds = channels.map { it.id }
                 for (c in channels) {
                     val channelController = this.channel(c)
-                    channelController.updateLiveDataFromChannel(c)
+                    channelController.updateDataFromChannel(c)
                 }
                 missingChannelIds = cids.filterNot { foundChannelIds.contains(it) }
                 storeStateForChannels(channels)

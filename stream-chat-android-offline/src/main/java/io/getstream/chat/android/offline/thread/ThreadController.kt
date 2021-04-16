@@ -4,8 +4,8 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.wasCreatedAfterOrAt
+import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-internal class ThreadController(
-    val threadId: String,
+public class ThreadController internal constructor(
+    public val threadId: String,
     private val channelControllerImpl: ChannelController,
     domain: ChatDomainImpl,
 ) {
@@ -33,17 +33,17 @@ internal class ThreadController(
     }.stateIn(domain.scope, SharingStarted.Eagerly, emptyList())
 
     /** the sorted list of messages for this thread */
-    val messages: StateFlow<List<Message>> = sortedVisibleMessages
+    public val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
     /** if we are currently loading older messages */
-    val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
+    public val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
 
     /** if we've reached the earliest point in this thread */
-    val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
+    public val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
 
-    fun getMessagesSorted(): List<Message> = messages.value
+    public fun getMessagesSorted(): List<Message> = messages.value
 
-    suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
+    public suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
         // TODO: offline storage for thread load more
         if (_loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."

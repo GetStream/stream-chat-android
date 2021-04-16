@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.utils.`should be equal to result`
+import io.getstream.chat.android.offline.usecase.SendMessageWithAttachmentsImpl
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomFiles

@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.extensions.users
@@ -24,6 +23,7 @@ import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import io.getstream.chat.android.livedata.utils.filter
+import io.getstream.chat.android.offline.ChatDomainImpl
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,15 +38,15 @@ private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
-internal class QueryChannelsController(
-    val filter: FilterObject,
-    val sort: QuerySort<Channel>,
+public class QueryChannelsController internal constructor(
+    public val filter: FilterObject,
+    public val sort: QuerySort<Channel>,
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
 ) {
-    var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
+    internal var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
         { channel, filterObject -> filterObject.filter(channel) }
-    var recoveryNeeded: Boolean = false
+    internal var recoveryNeeded: Boolean = false
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
@@ -73,7 +73,7 @@ internal class QueryChannelsController(
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
-    fun loadMoreRequest(
+    internal fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT,
@@ -97,7 +97,7 @@ internal class QueryChannelsController(
     internal fun addChannelIfFilterMatches(channel: Channel) {
         if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
-            channelControllerImpl.updateLiveDataFromChannel(channel)
+            channelControllerImpl.updateDataFromChannel(channel)
             addToQueryResult(listOf(channel.cid))
         }
     }
@@ -133,7 +133,7 @@ internal class QueryChannelsController(
 
             if (!queryChannelsSpec.cids.contains(channel.cid) && newChannelEventFilter(channel, filter)) {
                 val channelControllerImpl = domainImpl.channel(channel)
-                channelControllerImpl.updateLiveDataFromChannel(channel)
+                channelControllerImpl.updateDataFromChannel(channel)
             }
         }
 
@@ -187,7 +187,7 @@ internal class QueryChannelsController(
      *
      * @see addToQueryResult
      */
-    fun refreshChannel(cId: String) {
+    public fun refreshChannel(cId: String) {
         refreshChannels(listOf(cId))
     }
 
@@ -253,7 +253,7 @@ internal class QueryChannelsController(
         }
     }
 
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
+    internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val loading = if (pagination.isFirstPage) {
             _loading
         } else {
@@ -292,7 +292,7 @@ internal class QueryChannelsController(
         return output
     }
 
-    suspend fun query(
+    public suspend fun query(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT,
@@ -325,7 +325,7 @@ internal class QueryChannelsController(
             // initialize channel repos for all of these channels
             for (c in channels) {
                 val channelController = domainImpl.channel(c)
-                channelController.updateLiveDataFromChannel(c)
+                channelController.updateDataFromChannel(c)
             }
             // if it's the first page, we replace the current results
             if (isFirstPage) {
@@ -336,7 +336,7 @@ internal class QueryChannelsController(
         }
     }
 
-    suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
+    internal suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val request = pagination.toQueryChannelsRequest(filter, domainImpl.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
@@ -370,7 +370,7 @@ internal class QueryChannelsController(
             if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
     }
 
-    suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
+    internal suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
         val query = domainImpl.repos.selectById(queryChannelsSpec.id)
             ?: return null
 
