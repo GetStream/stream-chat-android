@@ -19,7 +19,7 @@ import io.getstream.chat.android.ui.SupportedReactions.DefaultReactions.wutDrawa
  * Class allowing to define set of supported reactions
  */
 public class SupportedReactions(
-    private val context: Context,
+    context: Context,
     /**
      * Map with keys corresponding to reaction type, value corresponding to Drawable Int.
      * By default it's filled with standard reactions. You can
