@@ -11,10 +11,8 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.isDeleted
-import io.getstream.chat.android.ui.common.extensions.isEphemeral
-import io.getstream.chat.android.ui.common.extensions.isFailed
-import io.getstream.chat.android.ui.common.extensions.isInThread
+import io.getstream.chat.android.ui.common.extensions.isRegular
+import io.getstream.chat.android.ui.common.extensions.isSystem
 import io.getstream.chat.android.ui.common.internal.ModelType
 
 internal fun Channel.getLastMessage(): Message? =
@@ -23,17 +21,8 @@ internal fun Channel.getLastMessage(): Message? =
         .filter { it.deletedAt == null }
         .filter { !it.silent }
         .filter { it.user.isCurrentUser() || !it.shadowed }
-        .filter { it.type == ModelType.message_regular }
+        .filter { it.isRegular() || it.isSystem() }
         .maxByOrNull { it.getCreatedAtOrThrow() }
-
-internal fun Channel.getLastMessageByUserId(userId: String): Message? =
-    messages.lastOrNull {
-        it.user.id == userId &&
-            !it.isFailed() &&
-            !it.isDeleted() &&
-            !it.isInThread() &&
-            !it.isEphemeral()
-    }
 
 internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
     ChannelListPayloadDiff(
@@ -57,30 +46,35 @@ internal fun Channel.getLastMessagePreviewText(
     isDirectMessaging: Boolean = false,
 ): SpannableStringBuilder? {
     return getLastMessage()?.let { message ->
-        val sender = message.getSenderDisplayName(context, isDirectMessaging)
+        if (message.isSystem()) {
+            SpannableStringBuilder(message.text.trim().italicize())
+        } else {
+            val sender = message.getSenderDisplayName(context, isDirectMessaging)
 
-        // bold mentions of the current user
-        val currentUserMention = ChatDomain.instance().currentUser.asMention(context)
-        val previewText: SpannableString = message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
+            // bold mentions of the current user
+            val currentUserMention = ChatDomain.instance().currentUser.asMention(context)
+            val previewText: SpannableString =
+                message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
 
-        val attachments: SpannableString? = message.attachments
-            .takeIf { it.isNotEmpty() }
-            ?.mapNotNull { attachment ->
-                attachment.title?.let { title ->
-                    val prefix = getAttachmentPrefix(attachment)
-                    if (prefix != null) {
-                        "$prefix $title"
-                    } else {
-                        title
-                    }
-                } ?: attachment.name
-            }
-            ?.joinToString()
-            ?.italicize()
+            val attachments: SpannableString? = message.attachments
+                .takeIf { it.isNotEmpty() }
+                ?.mapNotNull { attachment ->
+                    attachment.title?.let { title ->
+                        val prefix = getAttachmentPrefix(attachment)
+                        if (prefix != null) {
+                            "$prefix $title"
+                        } else {
+                            title
+                        }
+                    } ?: attachment.name
+                }
+                ?.joinToString()
+                ?.italicize()
 
-        listOf(sender, previewText, attachments)
-            .filterNot { it.isNullOrEmpty() }
-            .joinTo(SpannableStringBuilder(), ": ")
+            listOf(sender, previewText, attachments)
+                .filterNot { it.isNullOrEmpty() }
+                .joinTo(SpannableStringBuilder(), ": ")
+        }
     }
 }
 

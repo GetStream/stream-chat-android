@@ -157,6 +157,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- System message text style -->
+        <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
+        <attr name="streamUiSystemMessageTextColor" format="color" />
+        <attr name="streamUiSystemMessageTextFont" format="reference" />
+        <attr name="streamUiSystemMessageTextFontAssets" format="string" />
+        <attr name="streamUiSystemMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiMessageStrokeColorMine" format="color" />
         <attr name="streamUiMessageStrokeWidthMine" format="dimension|reference" />
         <attr name="streamUiMessageStrokeColorTheirs" format="color" />
