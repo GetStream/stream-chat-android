@@ -25,9 +25,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
  */
 public class SupportedReactions(
     context: Context,
-    /**
-
-     */
     public val reactions: Map<String, ReactionDrawable> = mapOf(
         LOVE to loveDrawable(context),
         THUMBS_UP to thumbsUpDrawable(context),
