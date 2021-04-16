@@ -16,14 +16,17 @@ import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 
 /**
- * Class allowing to define set of supported reactions
+ * Class allowing to define set of supported reactions.
+ * You can customize reactions by providing your own implementation of this class to [ChatUI.supportedReactions].
+ *
+ * @property reactions: Map<String, ReactionDrawable> instance. Map with keys corresponding to reaction type, and
+ * value corresponding to [ReactionDrawable] object. By default it's initialized with standard reactions.
+ *
  */
 public class SupportedReactions(
     context: Context,
     /**
-     * Map with keys corresponding to reaction type, value corresponding to [ReactionDrawable] object.
-     * By default it's initialized with standard reactions. You can customize reactions by providing your own
-     * @property reactions: Map<String, ReactionDrawable> instance.
+
      */
     public val reactions: Map<String, ReactionDrawable> = mapOf(
         LOVE to loveDrawable(context),
