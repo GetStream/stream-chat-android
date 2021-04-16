@@ -123,6 +123,13 @@
 - Added confirmation dialog for flagging message option:
   * Added `MessageListView::flagMessageConfirmationEnabled` attribute
 - Added `MessageListView::setFlagMessageResultHandler` which allows to handle flag message result
+- Added support for system messages
+- Added attrs to `MessageListView` that allow to customize system message text style:
+    * `streamUiSystemMessageTextSize`
+    * `streamUiSystemMessageTextColor`
+    * `streamUiSystemMessageTextFont`
+    * `streamUiSystemMessageTextFontAssets`
+    * `streamUiSystemMessageTextStyle`
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
