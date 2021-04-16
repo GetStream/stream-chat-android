@@ -58,6 +58,7 @@ import java.io.Serializable
  * @property messageStrokeWidthMine - stroke width for message sent by the current user. Default - [MESSAGE_STROKE_WIDTH_MINE]
  * @property messageStrokeColorTheirs - stroke color for message sent by other user. Default - [MESSAGE_STROKE_COLOR_THEIRS]
  * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
+ * @property textStyleSystemMessage - appearance for system message text
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -93,6 +94,7 @@ public data class MessageListItemStyle(
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
+    public val textStyleSystemMessage: TextStyle
 ) : Serializable {
 
     @ColorInt
@@ -420,6 +422,22 @@ public data class MessageListItemStyle(
                     MESSAGE_STROKE_WIDTH_THEIRS
                 )
 
+            val textStyleSystemMessage = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiSystemMessageTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiSystemMessageTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiSystemMessageTextFontAssets,
+                    R.styleable.MessageListView_streamUiSystemMessageTextFont,
+                )
+                .style(R.styleable.MessageListView_streamUiSystemMessageTextStyle, Typeface.BOLD)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -452,6 +470,7 @@ public data class MessageListItemStyle(
                 messageStrokeWidthMine = messageStrokeWidthMine,
                 messageStrokeColorTheirs = messageStrokeColorTheirs,
                 messageStrokeWidthTheirs = messageStrokeWidthTheirs,
+                textStyleSystemMessage = textStyleSystemMessage
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
