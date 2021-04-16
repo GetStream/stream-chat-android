@@ -5,5 +5,7 @@ import io.getstream.chat.android.ui.SupportedReactions
 internal data class ReactionItem(
     val type: String,
     val isMine: Boolean,
-    val reactionDrawable: SupportedReactions.ReactionDrawable,
-)
+    private val reactionDrawable: SupportedReactions.ReactionDrawable,
+) {
+    val drawable = reactionDrawable.getDrawable(isMine)
+}

@@ -10,9 +10,5 @@ internal data class UserReactionItem(
     val isMine: Boolean,
     private val reactionDrawable: SupportedReactions.ReactionDrawable,
 ) {
-    val drawable = if (isMine) {
-        reactionDrawable.activeDrawable
-    } else {
-        reactionDrawable.inactiveDrawable
-    }
+    val drawable = reactionDrawable.getDrawable(isMine)
 }

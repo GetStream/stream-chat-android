@@ -44,13 +44,7 @@ internal class ReactionsAdapter(
 
         fun bind(reactionItem: ReactionItem) {
             this.reactionItem = reactionItem
-
-            val drawable = if (reactionItem.isMine) {
-                reactionItem.reactionDrawable.activeDrawable
-            } else {
-                reactionItem.reactionDrawable.inactiveDrawable
-            }
-            binding.reactionIcon.setImageDrawable(drawable)
+            binding.reactionIcon.setImageDrawable(reactionItem.drawable)
         }
     }
 }
