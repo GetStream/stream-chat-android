@@ -70,21 +70,37 @@ internal class QueryChannelsController(
             when {
                 loading -> QueryChannelsController.ChannelsState.Loading
                 channels.isEmpty() -> QueryChannelsController.ChannelsState.OfflineNoResults
-                else -> QueryChannelsController.ChannelsState.Result(channels)
+                else -> {
+                    val channelMutes = domainImpl.currentUser.channelMutes
+                    QueryChannelsController.ChannelsState.Result(updateMutedState(channels, channelMutes))
+                }
             }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
 
-    private fun updateMutedState(channelMutes: List<ChannelMute>) {
+    private fun updateMutedState(
+        channelsMap: Map<String, Channel>,
+        channelMutes: List<ChannelMute>,
+    ): Map<String, Channel> {
         val channelMutesIds = channelMutes.map { it.channel.id }
 
-        val newState = _channels.value
-            .mapValues { (_, channel) ->
-                channel.copy().apply {
-                    isMuted = channelMutesIds.contains(id)
-                }
+        return channelsMap.mapValues { (_, channel) ->
+            channel.copy().apply {
+                isMuted = channelMutesIds.contains(id)
             }
+        }
+    }
 
-        _channels.value = newState
+    private fun updateMutedState(
+        channelsMap: List<Channel>,
+        channelMutes: List<ChannelMute>,
+    ): List<Channel> {
+        val channelMutesIds = channelMutes.map { it.channel.id }
+
+        return channelsMap.map { channel ->
+            channel.copy().apply {
+                isMuted = channelMutesIds.contains(id)
+            }
+        }
     }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
@@ -158,7 +174,7 @@ internal class QueryChannelsController(
         }
 
         if (event is NotificationChannelMutesUpdatedEvent) {
-            updateMutedState(event.me.channelMutes)
+            _channels.value = updateMutedState(_channels.value, event.me.channelMutes)
         }
 
         if (event is CidEvent) {
