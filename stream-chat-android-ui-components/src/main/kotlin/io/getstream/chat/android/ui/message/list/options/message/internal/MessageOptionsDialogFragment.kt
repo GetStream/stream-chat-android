@@ -19,6 +19,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
 import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
@@ -26,7 +27,6 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListLis
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
-import io.getstream.chat.android.ui.style.StylesHolder
 import java.io.Serializable
 
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
@@ -40,7 +40,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
-    private val style by lazy { StylesHolder.messageListViewStyle }
+    private val style by lazy { messageListViewStyle!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -87,6 +87,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        messageListViewStyle = null
         _binding = null
     }
 
@@ -326,6 +327,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
+
+        internal var messageListViewStyle: MessageListViewStyle? = null
 
         var messageArg: Message? = null
 
