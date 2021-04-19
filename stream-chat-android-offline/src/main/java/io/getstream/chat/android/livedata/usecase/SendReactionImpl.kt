@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.usecase.SendReaction as OfflineSendReaction
 
 public interface SendReaction {
     /**
@@ -20,13 +18,7 @@ public interface SendReaction {
     public operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction>
 }
 
-internal class SendReactionImpl(private val domainImpl: ChatDomainImpl) : SendReaction {
-    override operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.sendReaction(reaction, enforceUnique)
-        }
-    }
+internal class SendReactionImpl(private val offlineSendReaction: OfflineSendReaction) : SendReaction {
+    override operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
+        offlineSendReaction.invoke(cid, reaction, enforceUnique)
 }

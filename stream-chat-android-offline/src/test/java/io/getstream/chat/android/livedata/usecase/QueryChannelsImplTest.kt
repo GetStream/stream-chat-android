@@ -9,8 +9,9 @@ import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.offline.usecase.QueryChannelsImpl
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -28,7 +29,7 @@ internal class QueryChannelsImplTest {
     }
 
     private lateinit var domain: ChatDomainImpl
-    private lateinit var queryChannelsController: QueryChannelsControllerImpl
+    private lateinit var queryChannelsController: QueryChannelsController
 
     private lateinit var queryChannels: QueryChannelsImpl
 
@@ -47,7 +48,7 @@ internal class QueryChannelsImplTest {
 
         val result = queryChannels.invoke(anyFilter, QuerySort()).execute()
 
-        Truth.assertThat(result.data()).isInstanceOf(QueryChannelsControllerImpl::class.java)
+        Truth.assertThat(result.data()).isInstanceOf(QueryChannelsController::class.java)
         Truth.assertThat(result.isSuccess).isTrue()
     }
 

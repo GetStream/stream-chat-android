@@ -1,30 +1,21 @@
 package io.getstream.chat.android.livedata.controller
 
-import androidx.lifecycle.Observer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.atLeastOnce
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChannelData
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomChannelDeletedEvent
 import io.getstream.chat.android.livedata.randomChannelUpdatedEvent
+import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomMemberAddedEvent
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageReadEvent
@@ -36,6 +27,8 @@ import io.getstream.chat.android.livedata.randomReactionNewEvent
 import io.getstream.chat.android.livedata.randomTypingStartEvent
 import io.getstream.chat.android.livedata.randomTypingStopEvent
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
@@ -50,7 +43,7 @@ private const val CURRENT_USER_ID = "currentUserId"
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
-internal class ChannelControllerImplEventNewTest {
+internal class ChannelControllerEventNewTest {
 
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
@@ -63,7 +56,7 @@ internal class ChannelControllerImplEventNewTest {
     }
     private val messageHelper: MessageHelper = mock()
 
-    private lateinit var channelControllerImpl: ChannelControllerImpl
+    private lateinit var channelController: ChannelController
 
     @BeforeEach
     fun setUp() {
@@ -71,7 +64,7 @@ internal class ChannelControllerImplEventNewTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelControllerImpl = ChannelControllerImpl(
+        channelController = ChannelController(
             channelType = "type1",
             channelId = channelId,
             client = chatClient,
@@ -96,43 +89,31 @@ internal class ChannelControllerImplEventNewTest {
 
         val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
-        channelControllerImpl.handleEvent(userStartWatchingEvent)
+        channelController.handleEvent(userStartWatchingEvent)
 
-        Truth.assertThat(channelControllerImpl.toChannel().lastMessageAt).isEqualTo(newDate)
+        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(newDate)
     }
 
     // New message event
     @Test
     fun `when new message event arrives, messages should be propagated correctly`() {
-        val updatedAt = Date()
         val user = User(id = CURRENT_USER_ID)
         val message = randomMessage(
-            updatedAt = updatedAt,
+            createdAt = Date(1000L),
+            updatedAt = Date(3000L),
             user = user,
             silent = false,
             showInChannel = true
         )
-
         val newMessageEvent = randomNewMessageEvent(user = user, message = message)
-
-        val messageObserver: Observer<List<Message>> = mock()
-        val unreadCountObserver: Observer<Int?> = mock()
-
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
-
         whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        channelControllerImpl.handleEvent(newMessageEvent)
+        channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        verify(messageObserver).onChanged(listOf(message))
-
+        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
         // Unread count should not be propagated, because it is a message form the same user
-        verify(unreadCountObserver, never()).onChanged(1)
-
-        // Last message is updated
-        channelControllerImpl.toChannel().lastMessageAt = updatedAt
+        Truth.assertThat(channelController.unreadCount.value).isEqualTo(0)
     }
 
     @Test
@@ -147,22 +128,16 @@ internal class ChannelControllerImplEventNewTest {
 
         val newMessageEvent = randomNewMessageEvent(message = message)
 
-        val messageObserver: Observer<List<Message>> = mock()
-        val unreadCountObserver: Observer<Int?> = mock()
-
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.unreadCount.observeForever(unreadCountObserver)
-
-        channelControllerImpl.handleEvent(newMessageEvent)
+        channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        verify(messageObserver).onChanged(listOf(message))
+        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
 
         // Unread count should be propagated, because it is a message form another user
-        verify(unreadCountObserver).onChanged(1)
+        Truth.assertThat(channelController.unreadCount.value).isEqualTo(1)
 
         // Last message is updated
-        channelControllerImpl.toChannel().lastMessageAt = updatedAt
+        channelController.toChannel().lastMessageAt = updatedAt
     }
 
     // Message update
@@ -177,79 +152,59 @@ internal class ChannelControllerImplEventNewTest {
         )
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
-        val messageObserver: Observer<List<Message>> = mock()
 
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.handleEvent(messageUpdateEvent)
+        channelController.handleEvent(messageUpdateEvent)
 
-        verify(messageObserver, atLeastOnce()).onChanged(
-            argThat { messageList ->
-                if (messageList.isNotEmpty()) {
-                    messageList.first().id == messageId
-                } else {
-                    true
-                }
-            }
-        )
+        Truth.assertThat(channelController.messages.value.first()).isEqualTo(message)
     }
 
     @Test
     fun `when a message update event is outdated, it should be ignored`() {
+        val messageId = randomString()
         val recentMessage = randomMessage(
+            id = messageId,
             user = User(id = "otherUserId"),
             updatedAt = Date(),
             silent = false,
             showInChannel = true
         )
         val oldMessage = randomMessage(
+            id = messageId,
             user = User(id = "otherUserId"),
             updatedAt = Date(Long.MIN_VALUE),
             silent = false,
             showInChannel = true
         )
+        channelController.upsertMessage(recentMessage)
+        val messageUpdateEvent = randomMessageUpdateEvent(message = oldMessage)
 
-        val messageUpdateEvent = randomMessageUpdateEvent()
+        channelController.handleEvent(messageUpdateEvent)
 
-        channelControllerImpl.upsertMessage(recentMessage)
-
-        val messageObserver: Observer<List<Message>> = mock()
-
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.handleEvent(messageUpdateEvent)
-
-        // No message is added
-        verify(messageObserver, never()).onChanged(listOf(oldMessage))
+        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(recentMessage))
+        Truth.assertThat(channelController.messages.value).isNotEqualTo(listOf(oldMessage))
     }
 
     // New message notification event
     @Test
     fun `when a new message notification event comes, watchers should be incremented accordingly`() {
         val watcherCount = randomInt()
-
         val notificationEvent = randomNotificationMessageNewEvent(watcherCount = watcherCount)
 
-        val watchersCountObserver: Observer<Int> = mock()
+        channelController.handleEvent(notificationEvent)
 
-        channelControllerImpl.watcherCount.observeForever(watchersCountObserver)
-        channelControllerImpl.handleEvent(notificationEvent)
-
-        verify(watchersCountObserver).onChanged(watcherCount)
+        Truth.assertThat(channelController.watcherCount.value).isEqualTo(watcherCount)
     }
 
     // Member added event
     @Test
     fun `when member is added, it should be propagated`() {
         val user = randomUser()
-        val member = Member(user = user)
-
+        val member = randomMember(user = user)
         val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
 
-        val membersCountObserver: Observer<List<Member>> = mock()
+        channelController.handleEvent(memberAddedEvent)
 
-        channelControllerImpl.members.observeForever(membersCountObserver)
-        channelControllerImpl.handleEvent(memberAddedEvent)
-
-        verify(membersCountObserver).onChanged(listOf(member))
+        Truth.assertThat(channelController.members.value).isEqualTo(listOf(member))
     }
 
     // Typing events
@@ -262,19 +217,15 @@ internal class ChannelControllerImplEventNewTest {
         val typingStartEvent2 = randomTypingStartEvent(user = user2, channelId = channelId)
         val typingStopEvent = randomTypingStopEvent(user = user2, channelId = channelId)
 
-        val typingStartObserver: Observer<TypingEvent> = mock()
-
-        channelControllerImpl.run {
-            typing.observeForever(typingStartObserver)
+        channelController.run {
             handleEvent(typingStartEvent1)
-            handleEvent(typingStartEvent2)
-            handleEvent(typingStopEvent)
-        }
+            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1))
 
-        inOrder(typingStartObserver).run {
-            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
-            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1, user2)))
-            verify(typingStartObserver).onChanged(TypingEvent(channelId, listOf(user1)))
+            handleEvent(typingStartEvent2)
+            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1, user2))
+
+            handleEvent(typingStopEvent)
+            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1))
         }
     }
 
@@ -283,12 +234,10 @@ internal class ChannelControllerImplEventNewTest {
     fun `when read notification event arrives, it should be correctly propagated`() {
         val readEvent = randomNotificationMarkReadEvent(user = currentUser)
 
-        val readObserver: Observer<List<ChannelUserRead>> = mock()
+        channelController.handleEvent(readEvent)
 
-        channelControllerImpl.reads.observeForever(readObserver)
-        channelControllerImpl.handleEvent(readEvent)
-
-        verify(readObserver).onChanged(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+        Truth.assertThat(channelController.reads.value)
+            .isEqualTo(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
     }
 
     // Read event notification
@@ -296,12 +245,10 @@ internal class ChannelControllerImplEventNewTest {
     fun `when read event arrives, it should be correctly propagated`() {
         val readEvent = randomMessageReadEvent(user = currentUser)
 
-        val readObserver: Observer<List<ChannelUserRead>> = mock()
+        channelController.handleEvent(readEvent)
 
-        channelControllerImpl.reads.observeForever(readObserver)
-        channelControllerImpl.handleEvent(readEvent)
-
-        verify(readObserver).onChanged(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+        Truth.assertThat(channelController.reads.value)
+            .isEqualTo(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
     }
 
     // Reaction event
@@ -312,16 +259,12 @@ internal class ChannelControllerImplEventNewTest {
             silent = false,
         )
         val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-
-        val messageObserver: Observer<List<Message>> = mock()
-
         whenever(messageHelper.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.handleEvent(reactionEvent)
+        channelController.handleEvent(reactionEvent)
 
         // Message is propagated
-        verify(messageObserver).onChanged(listOf(message))
+        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
     }
 
     // Channel deleted event
@@ -329,32 +272,22 @@ internal class ChannelControllerImplEventNewTest {
     fun `when channel is deleted, messages are deleted too`() {
         val deleteChannelEvent = randomChannelDeletedEvent()
 
-        val messageObserver: Observer<List<Message>> = mock()
+        channelController.handleEvent(deleteChannelEvent)
 
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.handleEvent(deleteChannelEvent)
+        Truth.assertThat(channelController.messages.value).isEmpty()
     }
 
     @Test
     fun `when channel is deleted, the status is updated`() {
         val channel = randomChannel()
-
         val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
         val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
 
-        val messageObserver: Observer<List<Message>> = mock()
-        val channelObserver: Observer<ChannelData> = mock()
+        channelController.handleEvent(updateChannelEvent)
+        channelController.handleEvent(deleteChannelEvent)
 
-        channelControllerImpl.messages.observeForever(messageObserver)
-        channelControllerImpl.channelData.observeForever(channelObserver)
-
-        channelControllerImpl.handleEvent(updateChannelEvent)
-        channelControllerImpl.handleEvent(deleteChannelEvent)
-
-        verify(channelObserver).onChanged(
-            argThat { channelData ->
-                channelData.channelId == channel.id && channelData.deletedAt == deleteChannelEvent.createdAt
-            }
-        )
+        val channelFlowValue = channelController.channelData.value
+        Truth.assertThat(channelFlowValue.channelId).isEqualTo(channel.id)
+        Truth.assertThat(channelFlowValue.deletedAt).isEqualTo(deleteChannelEvent.createdAt)
     }
 }

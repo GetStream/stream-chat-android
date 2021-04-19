@@ -455,7 +455,6 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/Repla
 }
 
 public final class io/getstream/chat/android/livedata/usecase/SearchUsersByName {
-	public static final field Companion Lio/getstream/chat/android/livedata/usecase/SearchUsersByName$Companion;
 	public final fun invoke (Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
 }
 

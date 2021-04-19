@@ -42,7 +42,7 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
             }
 
             // 2. Update the channel1 by newMessageEvent and check that second live data's value sorted properly.
-            chatDomainImpl.eventHandler.handleEvent(
+            chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(
                 data.newMessageEvent.copy(
                     cid = channel1.cid,
                     message = data.newMessageEvent.message.copy(

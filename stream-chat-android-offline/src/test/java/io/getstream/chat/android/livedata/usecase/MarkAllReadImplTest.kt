@@ -9,8 +9,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.usecase.MarkAllReadImpl
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runBlockingTest
@@ -29,7 +30,7 @@ internal class MarkAllReadImplTest {
     private lateinit var chatDomain: ChatDomainImpl
     private lateinit var markAllRead: MarkAllReadImpl
     private lateinit var chatClient: ChatClient
-    private lateinit var activeChannels: List<ChannelControllerImpl>
+    private lateinit var activeChannels: List<ChannelController>
 
     @BeforeEach
     fun before() {

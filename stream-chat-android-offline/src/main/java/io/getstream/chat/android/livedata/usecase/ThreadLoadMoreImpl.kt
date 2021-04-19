@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.usecase.ThreadLoadMore as OfflineThreadLoadMore
 
 public interface ThreadLoadMore {
     /**
@@ -19,16 +17,7 @@ public interface ThreadLoadMore {
     public operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 }
 
-internal class ThreadLoadMoreImpl(private val domainImpl: ChatDomainImpl) : ThreadLoadMore {
-    override operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
-        validateCid(cid)
-        require(parentId.isNotEmpty()) { "parentId can't be empty" }
-
-        val channelController = domainImpl.channel(cid)
-        val threadController = channelController.getThread(parentId)
-
-        return CoroutineCall(domainImpl.scope) {
-            threadController.loadOlderMessages(messageLimit)
-        }
-    }
+internal class ThreadLoadMoreImpl(private val offlineThreadLoadMore: OfflineThreadLoadMore) : ThreadLoadMore {
+    override operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
+        offlineThreadLoadMore.invoke(cid, parentId, messageLimit)
 }

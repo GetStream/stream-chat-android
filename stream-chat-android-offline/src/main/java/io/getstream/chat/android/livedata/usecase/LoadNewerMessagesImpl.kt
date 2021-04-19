@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.usecase.LoadNewerMessages as OfflineLoadNewerMessages
 
 public interface LoadNewerMessages {
     /**
@@ -18,13 +16,8 @@ public interface LoadNewerMessages {
     public operator fun invoke(cid: String, messageLimit: Int): Call<Channel>
 }
 
-internal class LoadNewerMessagesImpl(private val domainImpl: ChatDomainImpl) : LoadNewerMessages {
-    override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.loadNewerMessages(messageLimit)
-        }
-    }
+internal class LoadNewerMessagesImpl(private val offlineLoadNewerMessages: OfflineLoadNewerMessages) :
+    LoadNewerMessages {
+    override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> =
+        offlineLoadNewerMessages.invoke(cid, messageLimit)
 }

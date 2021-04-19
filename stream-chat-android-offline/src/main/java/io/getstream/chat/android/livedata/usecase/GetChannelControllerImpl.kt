@@ -2,11 +2,10 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.offline.usecase.GetChannelController as OfflineGetChannelController
 
 public interface GetChannelController {
     /**
@@ -20,13 +19,8 @@ public interface GetChannelController {
     public operator fun invoke(cid: String): Call<ChannelController>
 }
 
-internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) : GetChannelController {
-    override operator fun invoke(cid: String): Call<ChannelController> {
-        validateCid(cid)
-
-        val channelControllerImpl = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            Result(channelControllerImpl)
-        }
-    }
+internal class GetChannelControllerImpl(private val offlineGetChannelController: OfflineGetChannelController) :
+    GetChannelController {
+    override operator fun invoke(cid: String): Call<ChannelController> =
+        offlineGetChannelController.invoke(cid).map(::ChannelControllerImpl)
 }

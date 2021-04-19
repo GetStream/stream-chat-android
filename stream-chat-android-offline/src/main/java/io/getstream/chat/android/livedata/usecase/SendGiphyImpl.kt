@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.usecase.SendGiphy as OfflineSendGiphy
 
 public interface SendGiphy {
     /**
@@ -19,14 +17,6 @@ public interface SendGiphy {
     public operator fun invoke(message: Message): Call<Message>
 }
 
-internal class SendGiphyImpl(private val domainImpl: ChatDomainImpl) : SendGiphy {
-    override operator fun invoke(message: Message): Call<Message> {
-        val cid = message.cid
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.sendGiphy(message)
-        }
-    }
+internal class SendGiphyImpl(private val offlineSendGiphy: OfflineSendGiphy) : SendGiphy {
+    override operator fun invoke(message: Message): Call<Message> = offlineSendGiphy.invoke(message)
 }

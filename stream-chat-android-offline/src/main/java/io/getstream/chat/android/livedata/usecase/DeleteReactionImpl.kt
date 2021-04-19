@@ -2,11 +2,9 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.offline.usecase.DeleteReaction as OfflineDeleteReaction
 
 public interface DeleteReaction {
     /**
@@ -19,13 +17,7 @@ public interface DeleteReaction {
     public operator fun invoke(cid: String, reaction: Reaction): Call<Message>
 }
 
-internal class DeleteReactionImpl(private val domainImpl: ChatDomainImpl) : DeleteReaction {
-    override operator fun invoke(cid: String, reaction: Reaction): Call<Message> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.deleteReaction(reaction)
-        }
-    }
+internal class DeleteReactionImpl(private val offlineDeleteReaction: OfflineDeleteReaction) : DeleteReaction {
+    override operator fun invoke(cid: String, reaction: Reaction): Call<Message> =
+        offlineDeleteReaction.invoke(cid, reaction)
 }

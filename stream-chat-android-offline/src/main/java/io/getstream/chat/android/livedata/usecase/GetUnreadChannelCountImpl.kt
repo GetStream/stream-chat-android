@@ -2,10 +2,11 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.client.call.map
+import kotlinx.coroutines.flow.StateFlow
+import io.getstream.chat.android.offline.usecase.GetUnreadChannelCount as OfflineGetUnreadChannelCount
 
 @Deprecated(
     message = "Use ChatDomain::channelUnreadCount instead",
@@ -24,10 +25,6 @@ public interface GetUnreadChannelCount {
     public operator fun invoke(): Call<LiveData<Int>>
 }
 
-internal class GetUnreadChannelCountImpl(private val domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
-    override operator fun invoke(): Call<LiveData<Int>> {
-        return CoroutineCall(domainImpl.scope) {
-            Result(domainImpl.channelUnreadCount)
-        }
-    }
+internal class GetUnreadChannelCountImpl(private val domainImpl: OfflineGetUnreadChannelCount) : GetUnreadChannelCount {
+    override operator fun invoke(): Call<LiveData<Int>> = domainImpl.invoke().map(StateFlow<Int>::asLiveData)
 }

@@ -36,15 +36,15 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 2, changed = 0, inserted = 1))
 
         // adding a new channel, should trigger 1 "insert" operation
-        chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
+        chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 3, changed = 0, inserted = 2))
 
         // adding a new message, should trigger 1 "changed" operation
-        chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
+        chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(data.newMessageFromUser2)
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
 
         // updating the last message, should should trigger 1 "changed" operation
-        chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
+        chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 5, changed = 2, inserted = 2))
     }
 

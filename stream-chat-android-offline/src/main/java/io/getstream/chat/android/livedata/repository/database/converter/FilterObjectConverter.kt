@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.gson
+import io.getstream.chat.android.offline.gson
 import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
