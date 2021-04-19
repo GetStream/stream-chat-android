@@ -1897,6 +1897,8 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
