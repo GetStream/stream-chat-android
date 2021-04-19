@@ -103,6 +103,7 @@
 - Fixed doubled command prefix when the command contains user mention
 - Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
