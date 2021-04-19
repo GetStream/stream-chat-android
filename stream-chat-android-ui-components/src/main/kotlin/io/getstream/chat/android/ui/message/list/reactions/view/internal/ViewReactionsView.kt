@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.UiUtils
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.supportedReactionCounts
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
@@ -88,11 +88,11 @@ public class ViewReactionsView : RecyclerView {
     private fun createReactionItems(message: Message): List<ReactionItem> {
         return message.supportedReactionCounts.keys
             .mapNotNull { type ->
-                UiUtils.getReactionIcon(type)?.let {
+                ChatUI.supportedReactions.getReactionDrawable(type)?.let {
                     ReactionItem(
                         type = type,
                         isMine = message.ownReactions.any { it.type == type },
-                        iconDrawableRes = it
+                        reactionDrawable = it
                     )
                 }
             }.sortedBy { if (isMyMessage) it.isMine else !it.isMine }
