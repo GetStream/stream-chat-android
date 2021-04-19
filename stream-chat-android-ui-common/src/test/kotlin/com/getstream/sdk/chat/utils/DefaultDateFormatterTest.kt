@@ -1,12 +1,14 @@
 package com.getstream.sdk.chat.utils
 
 import com.google.common.truth.Truth
-import com.squareup.burst.BurstJUnit4
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
-@RunWith(BurstJUnit4::class)
+@RunWith(TestParameterInjector::class)
 internal class DefaultDateFormatterTest {
 
     companion object {
@@ -24,8 +26,8 @@ internal class DefaultDateFormatterTest {
         override fun dateTimePattern(): String = dateTimePattern
     }
 
-    @org.junit.Test
-    fun `Date formatting is correct`(testCase: TestCase) {
+    @Test
+    fun `Date formatting is correct`(@TestParameter testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
             TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern)
         )

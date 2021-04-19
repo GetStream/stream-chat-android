@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.ReactionType
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserUserReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomUser
@@ -38,7 +42,7 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
             userReactionsView1.setMessage(
                 message = randomMessage().apply {
                     latestReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
+                        Reaction(type = LOVE, user = currentUser),
                     )
                 },
                 currentUser = currentUser
@@ -46,8 +50,8 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
             userReactionsView2.setMessage(
                 message = randomMessage().apply {
                     latestReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                        Reaction(type = ReactionType.LOVE.type, user = randomUser()),
+                        Reaction(type = LOVE, user = currentUser),
+                        Reaction(type = LOVE, user = randomUser()),
                     )
                 },
                 currentUser = currentUser
@@ -55,9 +59,9 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
             userReactionsView3.setMessage(
                 message = randomMessage().apply {
                     latestReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
-                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
+                        Reaction(type = LOVE, user = currentUser),
+                        Reaction(type = WUT, user = randomUser()),
+                        Reaction(type = LOL, user = randomUser()),
                     )
                 },
                 currentUser = currentUser
@@ -65,21 +69,21 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
             userReactionsView4.setMessage(
                 message = randomMessage().apply {
                     latestReactions = mutableListOf(
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                        Reaction(type = ReactionType.THUMBS_UP.type, user = randomUser()),
-                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
-                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
-                        Reaction(type = ReactionType.WUT.type, user = currentUser),
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                        Reaction(type = ReactionType.THUMBS_UP.type, user = randomUser()),
-                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
-                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
-                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
-                        Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                        Reaction(type = ReactionType.THUMBS_UP.type, user = currentUser),
-                        Reaction(type = ReactionType.THUMBS_DOWN.type, user = randomUser()),
-                        Reaction(type = ReactionType.LOL.type, user = randomUser()),
-                        Reaction(type = ReactionType.WUT.type, user = randomUser()),
+                        Reaction(type = LOVE, user = currentUser),
+                        Reaction(type = THUMBS_UP, user = randomUser()),
+                        Reaction(type = THUMBS_DOWN, user = randomUser()),
+                        Reaction(type = LOL, user = randomUser()),
+                        Reaction(type = WUT, user = currentUser),
+                        Reaction(type = LOVE, user = currentUser),
+                        Reaction(type = THUMBS_UP, user = randomUser()),
+                        Reaction(type = THUMBS_DOWN, user = randomUser()),
+                        Reaction(type = LOL, user = randomUser()),
+                        Reaction(type = WUT, user = randomUser()),
+                        Reaction(type = LOVE, user = currentUser),
+                        Reaction(type = THUMBS_UP, user = currentUser),
+                        Reaction(type = THUMBS_DOWN, user = randomUser()),
+                        Reaction(type = LOL, user = randomUser()),
+                        Reaction(type = WUT, user = randomUser()),
                     )
                 },
                 currentUser = currentUser

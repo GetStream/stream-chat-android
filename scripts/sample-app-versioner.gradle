@@ -1,0 +1,27 @@
+import com.getstream.sdk.chat.Configuration
+
+static Boolean gitIsAvailable() {
+    try {
+        "git --version".execute()
+        return true
+    } catch (Throwable ignored) {
+        return false
+    }
+}
+def isCI = System.getenv('CI')
+ext["sampleAppVersionCode"] = 1
+ext["sampleAppVersionName"] = Configuration.versionName
+if (isCI && gitIsAvailable()) {
+    apply plugin: 'com.pascalwelsch.gitversioner'
+    gitVersioner {
+        def branches = ['develop', 'main']
+        baseBranch branchName in branches ? branchName : branches[0]
+        yearFactor 100
+        formatter = { gitVersioner ->
+            "1.${gitVersioner.versionCode}.${gitVersioner.featureBranchCommitCount}.${gitVersioner.currentSha1Short}"
+        }
+    }
+
+    ext["sampleAppVersionCode"] = gitVersioner.versionCode
+    ext["sampleAppVersionName"] = gitVersioner.versionName
+}

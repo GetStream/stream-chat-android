@@ -88,7 +88,7 @@ dependencies {
     testImplementation Dependencies.threeTenBp
 
     testImplementation Dependencies.androidxArchCoreTest
-    testImplementation Dependencies.burst
+    testImplementation Dependencies.testParameterInjector
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin

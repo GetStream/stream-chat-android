@@ -8,8 +8,8 @@ import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.UiUtils
 import io.getstream.chat.android.ui.common.extensions.supportedLatestReactions
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
 
@@ -47,13 +47,13 @@ public class UserReactionsView : FrameLayout {
     private fun bindReactionList(message: Message, currentUser: User) {
         val userReactionItems = message.supportedLatestReactions.mapNotNull {
             val user = it.user
-            val iconDrawableRes = UiUtils.getReactionIcon(it.type)
-            if (user != null && iconDrawableRes != null) {
+            val reactionDrawable = ChatUI.supportedReactions.getReactionDrawable(it.type)
+            if (user != null && reactionDrawable != null) {
                 UserReactionItem(
                     user = user,
                     reaction = it,
                     isMine = user.id == currentUser.id,
-                    iconDrawableRes = iconDrawableRes
+                    reactionDrawable = reactionDrawable
                 )
             } else {
                 null
