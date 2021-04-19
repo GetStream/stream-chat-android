@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.ReactionType
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
+import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
@@ -102,14 +105,14 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.viewReactionsView.setMessage(
             message = randomMessage().apply {
                 reactionCounts = mutableMapOf(
-                    ReactionType.LOVE.type to 10,
-                    ReactionType.WUT.type to 20,
-                    ReactionType.LOL.type to 20,
-                    ReactionType.THUMBS_UP.type to 20
+                    LOVE to 10,
+                    WUT to 20,
+                    LOL to 20,
+                    THUMBS_UP to 20
                 )
                 ownReactions = mutableListOf(
-                    Reaction(type = ReactionType.LOVE.type),
-                    Reaction(type = ReactionType.WUT.type)
+                    Reaction(type = LOVE),
+                    Reaction(type = WUT)
                 )
             },
             isMyMessage = true
@@ -123,8 +126,8 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.editReactionsView.setMessage(
             message = randomMessage().apply {
                 ownReactions = mutableListOf(
-                    Reaction(type = ReactionType.LOVE.type),
-                    Reaction(type = ReactionType.WUT.type)
+                    Reaction(type = LOVE),
+                    Reaction(type = WUT)
                 )
             },
             isMyMessage = false
@@ -139,8 +142,8 @@ class ComponentBrowserHomeFragment : Fragment() {
         binding.userReactionsView.setMessage(
             message = randomMessage().apply {
                 latestReactions = mutableListOf(
-                    Reaction(type = ReactionType.LOVE.type, user = currentUser),
-                    Reaction(type = ReactionType.LOVE.type, user = randomUser()),
+                    Reaction(type = LOVE, user = currentUser),
+                    Reaction(type = WUT, user = randomUser()),
                 )
             },
             currentUser = currentUser

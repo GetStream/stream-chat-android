@@ -35,16 +35,25 @@ internal class MessageOptionsView : FrameLayout {
         style: MessageListViewStyle,
         isMessageTheirs: Boolean,
         syncStatus: SyncStatus,
+        isMessageAuthorMuted: Boolean,
     ) {
         if (isMessageTheirs) {
-            configureTheirsMessage(configuration, style)
+            configureTheirsMessage(
+                configuration = configuration,
+                style = style,
+                isMessageAuthorMuted = isMessageAuthorMuted,
+            )
         } else {
-            configureMineMessage(configuration, style, syncStatus)
+            configureMineMessage(configuration = configuration, style = style, syncStatus = syncStatus)
         }
         binding.blockTV.isVisible = false
     }
 
-    private fun configureTheirsMessage(configuration: Configuration, style: MessageListViewStyle) {
+    private fun configureTheirsMessage(
+        configuration: Configuration,
+        style: MessageListViewStyle,
+        isMessageAuthorMuted: Boolean,
+    ) {
         val iconsTint = style.iconsTint
 
         configureReply(configuration, style, iconsTint)
@@ -62,9 +71,14 @@ internal class MessageOptionsView : FrameLayout {
         binding.blockTV.configureListItem(style.blockIcon, iconsTint)
         binding.editTV.isVisible = false
         binding.deleteTV.isVisible = false
-        configureBlock(configuration, style, iconsTint)
-        configureMute(configuration, style, iconsTint)
-        configureFlag(configuration, style, iconsTint)
+        configureBlock(configuration = configuration, style = style, iconTint = iconsTint)
+        configureMute(
+            configuration = configuration,
+            style = style,
+            iconTint = iconsTint,
+            isMessageAuthorMuted = isMessageAuthorMuted,
+        )
+        configureFlag(configuration = configuration, style = style, iconTint = iconsTint)
     }
 
     private fun configureMineMessage(
@@ -130,15 +144,21 @@ internal class MessageOptionsView : FrameLayout {
 
     private fun configureFlag(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
         if (configuration.flagEnabled) {
-            binding.flagTV.configureListItem(style.replyIcon, iconTint)
+            binding.flagTV.configureListItem(style.flagIcon, iconTint)
         } else {
             binding.flagTV.isVisible = false
         }
     }
 
-    private fun configureMute(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+    private fun configureMute(
+        configuration: Configuration,
+        style: MessageListViewStyle,
+        iconTint: Int,
+        isMessageAuthorMuted: Boolean,
+    ) {
         if (configuration.muteEnabled) {
-            binding.muteTV.configureListItem(style.replyIcon, iconTint)
+            binding.muteTV.configureListItem(if (isMessageAuthorMuted) style.unmuteIcon else style.muteIcon, iconTint)
+            binding.muteTV.setText(if (isMessageAuthorMuted) R.string.stream_ui_message_option_unmute else R.string.stream_ui_message_option_mute)
         } else {
             binding.muteTV.isVisible = false
         }
@@ -186,7 +206,11 @@ internal class MessageOptionsView : FrameLayout {
         val blockEnabled: Boolean,
     ) : Serializable {
         internal companion object {
-            operator fun invoke(viewStyle: MessageListViewStyle, channelConfig: Config, suppressThreads: Boolean = false) =
+            operator fun invoke(
+                viewStyle: MessageListViewStyle,
+                channelConfig: Config,
+                suppressThreads: Boolean = false,
+            ) =
                 Configuration(
                     replyEnabled = viewStyle.replyEnabled && channelConfig.isRepliesEnabled,
                     threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isRepliesEnabled,

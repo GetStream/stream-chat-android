@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
@@ -21,6 +22,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Dat
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
 
@@ -76,6 +78,7 @@ public open class MessageListItemViewHolderFactory {
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
+            SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -133,5 +136,11 @@ public open class MessageListItemViewHolderFactory {
             BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
+    }
+
+    protected fun createSystemMessageItemViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return SystemMessageViewHolder(parentView, style)
     }
 }

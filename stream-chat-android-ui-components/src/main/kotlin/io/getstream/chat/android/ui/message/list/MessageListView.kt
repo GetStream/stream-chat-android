@@ -27,8 +27,10 @@ import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -135,6 +137,9 @@ public class MessageListView : ConstraintLayout {
     private var messageFlagHandler = MessageFlagHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
+    private var flagMessageResultHandler = FlagMessageResultHandler {
+        // no-op
+    }
     private var giphySendHandler = GiphySendHandler { _, _ ->
         throw IllegalStateException("onSendGiphyHandler must be set.")
     }
@@ -146,6 +151,9 @@ public class MessageListView : ConstraintLayout {
     }
     private var userMuteHandler = UserMuteHandler {
         throw IllegalStateException("onMuteUserHandler must be set.")
+    }
+    private var userUnmuteHandler = UserUnmuteHandler {
+        throw IllegalStateException("onUnmuteUserHandler must be set.")
     }
     private var userBlockHandler = UserBlockHandler { _, _ ->
         throw IllegalStateException("onBlockUserHandler must be set.")
@@ -166,6 +174,20 @@ public class MessageListView : ConstraintLayout {
                 confirmCallback()
             }
             .setNegativeButton(R.string.stream_ui_message_option_delete_negative_button) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private var confirmFlagMessageHandler = ConfirmFlagMessageHandler { _, confirmCallback ->
+        AlertDialog.Builder(context)
+            .setTitle(R.string.stream_ui_message_option_flag_confirmation_title)
+            .setMessage(R.string.stream_ui_message_option_flag_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_option_flag_positive_button) { dialog, _ ->
+                dialog.dismiss()
+                confirmCallback()
+            }
+            .setNegativeButton(R.string.stream_ui_message_option_flag_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -244,6 +266,9 @@ public class MessageListView : ConstraintLayout {
                                 callback::onConfirmDeleteMessage
                             )
                         }
+                        setConfirmFlagMessageClickHandler { message, callback ->
+                            confirmFlagMessageHandler.onConfirmFlagMessage(message, callback)
+                        }
                         setMessageOptionsHandlers(
                             MessageOptionsDialogFragment.MessageOptionsHandlers(
                                 threadReplyHandler = threadStartHandler,
@@ -251,6 +276,7 @@ public class MessageListView : ConstraintLayout {
                                 editClickHandler = messageEditHandler,
                                 flagClickHandler = messageFlagHandler,
                                 muteClickHandler = userMuteHandler,
+                                unmuteClickHandler = userUnmuteHandler,
                                 blockClickHandler = userBlockHandler,
                                 deleteClickHandler = messageDeleteHandler,
                                 replyClickHandler = messageReplyHandler,
@@ -698,6 +724,10 @@ public class MessageListView : ConstraintLayout {
         this.attachmentViewFactory = attachmentViewFactory
     }
 
+    public fun handleFlagMessageResult(result: Result<Flag>) {
+        flagMessageResultHandler.onHandleResult(result)
+    }
+
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
             val filteredList = listItem.items.filter(messageListItemPredicate::predicate)
@@ -850,6 +880,10 @@ public class MessageListView : ConstraintLayout {
         this.messageFlagHandler = messageFlagHandler
     }
 
+    public fun setFlagMessageResultHandler(flagMessageResultHandler: FlagMessageResultHandler) {
+        this.flagMessageResultHandler = flagMessageResultHandler
+    }
+
     public fun setGiphySendHandler(giphySendHandler: GiphySendHandler) {
         this.giphySendHandler = giphySendHandler
     }
@@ -866,6 +900,10 @@ public class MessageListView : ConstraintLayout {
         this.userMuteHandler = userMuteHandler
     }
 
+    public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
+        this.userUnmuteHandler = userUnmuteHandler
+    }
+
     public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
         this.userBlockHandler = userBlockHandler
     }
@@ -880,6 +918,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun setConfirmDeleteMessageHandler(confirmDeleteMessageHandler: ConfirmDeleteMessageHandler) {
         this.confirmDeleteMessageHandler = confirmDeleteMessageHandler
+    }
+
+    public fun setConfirmFlagMessageHandler(confirmFlagMessageHandler: ConfirmFlagMessageHandler) {
+        this.confirmFlagMessageHandler = confirmFlagMessageHandler
     }
 
     public fun setAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
@@ -978,6 +1020,14 @@ public class MessageListView : ConstraintLayout {
         public fun onMessageFlag(message: Message)
     }
 
+    public fun interface FlagMessageResultHandler {
+        public fun onHandleResult(result: Result<Flag>)
+    }
+
+    public fun interface ConfirmFlagMessageHandler {
+        public fun onConfirmFlagMessage(message: Message, confirmCallback: () -> Unit)
+    }
+
     public fun interface MessageRetryHandler {
         public fun onMessageRetry(message: Message)
     }
@@ -1000,6 +1050,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface UserMuteHandler {
         public fun onUserMute(user: User)
+    }
+
+    public fun interface UserUnmuteHandler {
+        public fun onUserUnmute(user: User)
     }
 
     public fun interface UserBlockHandler {

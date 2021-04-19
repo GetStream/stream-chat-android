@@ -157,6 +157,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- System message text style -->
+        <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
+        <attr name="streamUiSystemMessageTextColor" format="color" />
+        <attr name="streamUiSystemMessageTextFont" format="reference" />
+        <attr name="streamUiSystemMessageTextFontAssets" format="string" />
+        <attr name="streamUiSystemMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiMessageStrokeColorMine" format="color" />
         <attr name="streamUiMessageStrokeWidthMine" format="dimension|reference" />
         <attr name="streamUiMessageStrokeColorTheirs" format="color" />
@@ -171,7 +182,9 @@
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiFlagOptionIcon" format="reference" />
         <attr name="streamUiFlagMessageEnabled" format="boolean" />
+        <attr name="streamUiFlagMessageConfirmationEnabled" format="boolean" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
+        <attr name="streamUiUnmuteOptionIcon" format="reference" />
         <attr name="streamUiMuteUserEnabled" format="boolean" />
         <attr name="streamUiBlockOptionIcon" format="reference" />
         <attr name="streamUiBlockUserEnabled" format="boolean" />

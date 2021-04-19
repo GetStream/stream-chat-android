@@ -25,6 +25,8 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed: local cached hidden channels stay hidden even though new message is received.
+- Make `Flag::approvedAt` nullable
+- Fixed error event parsing with new serialization implementation
 
 ### ⬆️ Improved
 
@@ -98,11 +100,15 @@
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
 - `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+- Fixed doubled command prefix when the command contains user mention
+- Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
+- Added `ChatUI.supportedReactions: SupportedReactions` property, also introduced `SupportedReactions`, and `ReactionDrawable` class. 
+It allows defining a set of supported reactions by passing a `Map<String, ReactionDrawable>` in constructor. `ReactionDrawable` is a wrapping class holding two `Drawable` instances - for active and inactive reaction states.
 - Added methods and attrs to `MessageListView` that allow to customize visibility of message options:
     * `MessageListView::setDeleteMessageConfirmationEnabled`
     * `MessageListView::setCopyMessageEnabled`
@@ -116,8 +122,19 @@
     * `MessageListView.streamUiMuteUserOptionEnabled`
     * `MessageListView.streamUiBlockUserOptionEnabled`
     * `MessageListView.streamUiCopyMessageActionEnabled`
+- Added confirmation dialog for flagging message option:
+  * Added `MessageListView::flagMessageConfirmationEnabled` attribute
+- Added `MessageListView::setFlagMessageResultHandler` which allows to handle flag message result
+- Added support for system messages
+- Added attrs to `MessageListView` that allow to customize system message text style:
+    * `streamUiSystemMessageTextSize`
+    * `streamUiSystemMessageTextColor`
+    * `streamUiSystemMessageTextFont`
+    * `streamUiSystemMessageTextFontAssets`
+    * `streamUiSystemMessageTextStyle`
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
+- Changed gallery background to black in dark mode
 
 ### ❌ Removed

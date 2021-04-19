@@ -32,7 +32,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
-    view.setMessageFlagHandler { onEvent(FlagMessage(it)) }
+    view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
     view.setGiphySendHandler { message, giphyAction ->
         onEvent(GiphyActionSelected(message, giphyAction))
     }
@@ -41,6 +41,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         onEvent(MessageReaction(message, reactionType, enforceUnique = true))
     }
     view.setUserMuteHandler { onEvent(MuteUser(it)) }
+    view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
     view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setAttachmentDownloadHandler { attachment -> onEvent(DownloadAttachment(attachment)) }
