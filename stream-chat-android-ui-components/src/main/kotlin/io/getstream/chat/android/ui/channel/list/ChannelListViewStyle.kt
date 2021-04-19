@@ -33,6 +33,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property foregroundLayoutColor - foreground color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_snow]
  * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
  * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
+ * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute]
+ * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
