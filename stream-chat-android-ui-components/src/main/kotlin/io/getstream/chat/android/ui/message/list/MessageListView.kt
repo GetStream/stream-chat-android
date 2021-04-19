@@ -853,6 +853,16 @@ public class MessageListView : ConstraintLayout {
     public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
         this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
     }
+
+    /**
+     * Enables or disables the message threading feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setRepliesEnabled(enabled: Boolean) {
+        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle.copy(replyEnabled = enabled)
+    }
+
     //endregion
 
     //region Handler setters
@@ -938,10 +948,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
-    }
-
-    public fun setRepliesEnabled(enabled: Boolean) {
-        StylesHolder.messageListViewStyle = StylesHolder.messageListViewStyle.copy(replyEnabled = enabled)
     }
 
     //endregion
