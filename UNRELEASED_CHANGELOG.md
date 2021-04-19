@@ -12,6 +12,7 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 
