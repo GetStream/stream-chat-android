@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageOptionsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/stream_ui_white"
@@ -87,7 +88,6 @@
             android:id="@+id/deleteTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_option_delete_user"
-            app:drawableTint="@color/stream_ui_accent_red"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />
 

@@ -1,38 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userReactionsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/stream_ui_shape_user_reactions_background"
-    android:orientation="vertical"
-    android:padding="@dimen/stream_ui_spacing_medium"
+    app:cardBackgroundColor="@color/stream_ui_white"
+    app:cardCornerRadius="@dimen/stream_ui_options_menu_corner_radius"
     >
 
-    <TextView
-        android:id="@+id/messageMembersTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:singleLine="true"
-        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        tools:text="12 Message reactions"
-        />
+        android:orientation="vertical"
+        android:padding="@dimen/stream_ui_spacing_medium"
+        >
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/stream_ui_spacing_small"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingStart="@dimen/stream_ui_spacing_small"
-        android:paddingEnd="@dimen/stream_ui_spacing_small"
-        android:scrollbars="none"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/stream_ui_item_user_reaction"
-        tools:spanCount="4"
-        />
+        <TextView
+            android:id="@+id/userReactionsTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:singleLine="true"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            tools:text="12 Message reactions"
+            />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/stream_ui_spacing_small"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingStart="@dimen/stream_ui_spacing_small"
+            android:paddingEnd="@dimen/stream_ui_spacing_small"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:listitem="@layout/stream_ui_item_user_reaction"
+            tools:spanCount="4"
+            />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

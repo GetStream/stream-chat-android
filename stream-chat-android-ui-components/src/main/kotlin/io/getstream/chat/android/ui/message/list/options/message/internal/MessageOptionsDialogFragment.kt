@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.options.message.internal
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -132,6 +133,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(style.optionsOverlayDimColor))
+    }
+
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
             applyStyle(style.itemStyle.editReactionsViewStyle)
@@ -176,6 +182,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupUserReactionsView() {
         with(binding.userReactionsView) {
             isVisible = true
+            configure(style)
             setMessage(message, currentUser)
         }
     }
