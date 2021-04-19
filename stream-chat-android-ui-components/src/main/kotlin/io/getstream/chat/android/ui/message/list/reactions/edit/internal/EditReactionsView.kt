@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.ReactionType
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
@@ -43,11 +43,11 @@ public class EditReactionsView : RecyclerView {
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
 
-        val reactionItems = ReactionType.values().map { reactionType ->
+        val reactionItems = ChatUI.supportedReactions.reactions.map { (type, reactionDrawable) ->
             ReactionItem(
-                type = reactionType.type,
-                isMine = message.ownReactions.any { it.type == reactionType.type },
-                iconDrawableRes = reactionType.iconRes
+                type = type,
+                isMine = message.ownReactions.any { it.type == type },
+                reactionDrawable = reactionDrawable
             )
         }
         reactionsAdapter.submitList(reactionItems)

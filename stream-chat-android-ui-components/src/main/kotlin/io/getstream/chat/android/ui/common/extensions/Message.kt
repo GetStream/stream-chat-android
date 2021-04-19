@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.common.extensions
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.ui.common.UiUtils
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.internal.ModelType
 import java.util.Date
 
@@ -48,7 +48,7 @@ public val Message.supportedLatestReactions: List<Reaction>
         return if (latestReactions.isEmpty()) {
             latestReactions
         } else {
-            latestReactions.filter { UiUtils.isReactionTypeSupported(it.type) }
+            latestReactions.filter { ChatUI.supportedReactions.isReactionTypeSupported(it.type) }
         }
     }
 
@@ -57,7 +57,7 @@ public val Message.supportedReactionCounts: Map<String, Int>
         return if (reactionCounts.isEmpty()) {
             reactionCounts
         } else {
-            reactionCounts.filterKeys { UiUtils.isReactionTypeSupported(it) }
+            reactionCounts.filterKeys { ChatUI.supportedReactions.isReactionTypeSupported(it) }
         }
     }
 

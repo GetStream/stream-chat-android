@@ -5,8 +5,6 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import com.getstream.sdk.chat.utils.extensions.inflater
-import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsBubbleDrawer
@@ -39,7 +37,7 @@ internal class SingleReactionView : FrameLayout {
         // according to the design, current user reactions have the same style
         // as reactions on the current user messages in the message list
         this.isMyMessage = !userReactionItem.isMine
-        binding.reactionIcon.setImageResource(userReactionItem.iconDrawableRes)
+        binding.reactionIcon.setImageDrawable(userReactionItem.drawable)
         invalidate()
     }
 
@@ -60,6 +58,5 @@ internal class SingleReactionView : FrameLayout {
 
         setWillNotDraw(false)
         minimumHeight = reactionsViewStyle.totalHeight
-        binding.reactionIcon.setColorFilter(context.getColorCompat(R.color.stream_ui_accent_blue))
     }
 }

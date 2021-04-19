@@ -107,6 +107,8 @@
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
+- Added `ChatUI.supportedReactions: SupportedReactions` property, also introduced `SupportedReactions`, and `ReactionDrawable` class. 
+It allows defining a set of supported reactions by passing a `Map<String, ReactionDrawable>` in constructor. `ReactionDrawable` is a wrapping class holding two `Drawable` instances - for active and inactive reaction states.
 - Added methods and attrs to `MessageListView` that allow to customize visibility of message options:
     * `MessageListView::setDeleteMessageConfirmationEnabled`
     * `MessageListView::setCopyMessageEnabled`
