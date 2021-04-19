@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.EXTRA_DATA_MUTED
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
@@ -67,9 +68,20 @@ internal class QueryChannelsController(
             when {
                 loading -> QueryChannelsController.ChannelsState.Loading
                 channels.isEmpty() -> QueryChannelsController.ChannelsState.OfflineNoResults
-                else -> QueryChannelsController.ChannelsState.Result(channels)
+                else -> QueryChannelsController.ChannelsState.Result(markMutedChannels(channels))
             }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
+
+    private fun markMutedChannels(channels: List<Channel>) : List<Channel>{
+        val channelMutesIds = domainImpl.currentUser.channelMutes.map { it.channel.id }
+
+        return channels
+            .map { channel ->
+                channel.apply {
+                    extraData[EXTRA_DATA_MUTED] = channelMutesIds.contains(id)
+                }
+            }
+    }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 

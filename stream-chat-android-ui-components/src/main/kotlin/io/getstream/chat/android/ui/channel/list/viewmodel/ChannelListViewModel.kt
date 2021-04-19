@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.utils.extensions.isDraft
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.EXTRA_DATA_MUTED
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.TypingEvent
@@ -60,23 +59,10 @@ public class ChannelListViewModel(
                                 isLoading = false,
                                 channels = emptyList(),
                             )
-                            is QueryChannelsController.ChannelsState.Result -> {
-                                val channelMutesIds = chatDomain.currentUser.channelMutes.map { it.channel.id }
-
-                                val channels = channelState
-                                    .channels
-                                    .filterNot { it.hidden == true || it.isDraft }
-                                    .map { channel ->
-                                        channel.apply {
-                                            extraData[EXTRA_DATA_MUTED] = channelMutesIds.contains(id)
-                                        }
-                                    }
-
-                                currentState.copy(
-                                    isLoading = false,
-                                    channels = channels
-                                )
-                            }
+                            is QueryChannelsController.ChannelsState.Result -> currentState.copy(
+                                isLoading = false,
+                                channels = channelState.channels.filterNot { it.hidden == true || it.isDraft },
+                            )
                         }
                     }
                 ) { state -> stateMerger.value = state }
