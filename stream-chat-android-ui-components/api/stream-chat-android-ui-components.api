@@ -992,7 +992,7 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/MessageListItemStyle : java/io/Serializable {
+public final class io/getstream/chat/android/ui/message/list/MessageListItemStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/MessageListItemStyle$Companion;
 	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIZZILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Ljava/lang/Integer;
@@ -1260,7 +1260,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 	public abstract fun onUserUnmute (Lio/getstream/chat/android/client/models/User;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle : java/io/Serializable {
+public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/MessageListViewStyle$Companion;
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;ZIIIZIZIIZIIZIIZIZIZZZZ)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
@@ -1320,7 +1320,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle : java/io/Serializable {
+public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle {
 	public fun <init> (ZZIIILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
@@ -1476,7 +1476,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/reacti
 	public abstract fun onReactionClick (Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle : java/io/Serializable {
+public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion;
 	public fun <init> (IIIIIIIIIIIII)V
 	public final fun component1 ()I
@@ -1515,7 +1515,7 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
 }
 
-public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle : java/io/Serializable {
+public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle$Companion;
 	public fun <init> (IIIIIIIIIIIIII)V
 	public final fun component1 ()I
