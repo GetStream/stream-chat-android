@@ -472,8 +472,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         binding.scrollToBottomButton.setScrollButtonViewStyle(messageListViewStyle.scrollButtonViewStyle)
-        scrollHelper.scrollToBottomButtonEnabled =
-            messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
+        scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
             tArray.getInt(
@@ -536,9 +535,8 @@ public class MessageListView : ConstraintLayout {
         initAdapter()
 
         messageListViewStyle = messageListViewStyle.copy(
-            replyEnabled = messageListViewStyle.replyEnabled == true && channel.config.isRepliesEnabled,
-            threadsEnabled = messageListViewStyle.threadsEnabled == true &&
-                channel.config.isRepliesEnabled,
+            replyEnabled = messageListViewStyle.replyEnabled && channel.config.isRepliesEnabled,
+            threadsEnabled = messageListViewStyle.threadsEnabled && channel.config.isRepliesEnabled,
         )
     }
 
