@@ -44,6 +44,7 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
     /**
      * Returns a livedata object for the number of channels with unread messages
      */
+    @Suppress("DEPRECATION_ERROR")
     public val getUnreadChannelCount: GetUnreadChannelCount = GetUnreadChannelCountImpl(chatDomainImpl)
 
     // loading more
@@ -104,7 +105,7 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
      */
     public val sendGiphy: SendGiphy = SendGiphyImpl(chatDomainImpl)
-    
+
     /**
      * Edit a message. This message is immediately updated in local storage.
      * The API call to edit the message is retried using the retry policy
