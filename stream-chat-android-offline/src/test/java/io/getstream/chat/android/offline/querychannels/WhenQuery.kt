@@ -12,11 +12,13 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
@@ -45,7 +47,12 @@ internal class WhenQuery {
 
     @Test
     fun `Given DB with query channels Should invoke selectAndEnrichChannels in ChatDomain`() = runBlockingTest {
-        val chatDomainImpl = mock<ChatDomainImpl>()
+        val user: User = randomUser()
+
+        val chatDomainImpl: ChatDomainImpl = mock {
+            on(it.currentUser) doReturn user
+        }
+        
         val sut = Fixture()
             .givenChatDomain(chatDomainImpl)
             .givenFailedNetworkRequest()
@@ -171,8 +178,13 @@ internal class WhenQuery {
         private var chatClient: ChatClient = mock()
         private var repositories: RepositoryFacade = mock()
         private var scope: CoroutineScope = TestCoroutineScope()
-        private var chatDomainImpl: ChatDomainImpl = mock()
         private var querySort: QuerySort<Channel> = QuerySort()
+
+        private val user: User = randomUser()
+
+        private var chatDomainImpl: ChatDomainImpl = mock {
+            on(it.currentUser) doReturn user
+        }
 
         fun givenQuerySort(querySort: QuerySort<Channel>) = apply {
             this.querySort = querySort
