@@ -88,7 +88,8 @@
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.useCases`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `ChatDomain` use case functions instead.
-- Deprecated `GetUnreadChannelCount`  
+- Deprecated `GetUnreadChannelCount`
+- Deprecated `GetTotalUnreadCount`
 
 ### ❌ Removed
 

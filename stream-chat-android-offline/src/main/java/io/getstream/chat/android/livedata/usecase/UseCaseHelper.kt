@@ -35,10 +35,10 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
      */
     public val getThread: GetThread = GetThreadImpl(chatDomainImpl)
 
-    // unread counts
     /**
      * Returns a livedata object for the total number of unread messages
      */
+    @Suppress("DEPRECATION_ERROR")
     public val getTotalUnreadCount: GetTotalUnreadCount = GetTotalUnreadCountImpl(chatDomainImpl)
 
     /**

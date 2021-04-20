@@ -11,7 +11,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
 | `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.25 ⌛ | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleMine::colorOrNull() instead |
 | `com.getstream.sdk.chat.ChatUI`<br/>*ui-components* | 2021.03.19<br/>4.8.0 | 2021.04.19 ⌛ | 2021.05.19 ⌛ | Use the new ChatUI implementation `io.getstream.chat.android.ui.ChatUI`
-| `GetTotalUnreadCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.17 ⌛ | 2021.05.17 ⌛ | Use ChatDomain::totalUnreadCount instead |
+| `GetTotalUnreadCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.21<br/>4.9.0 | 2021.05.17 ⌛ | Use ChatDomain::totalUnreadCount instead |
 | `GetUnreadChannelCount#invoke`<br/> | 2021.03.17<br/>4.7.2  | 2021.04.21<br/>4.9.0 | 2021.05.17 ⌛ | Use ChatDomain::channelUnreadCount instead |
 | `ChatClient#unMuteChannel`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.05.15 ⌛ | Use the `unmuteChannel` method instead |
 | `ChatClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.05.15 ⌛ | Use the `unbanUser` method instead |
