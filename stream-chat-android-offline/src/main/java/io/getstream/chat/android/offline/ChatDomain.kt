@@ -33,9 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
- * The ChatDomain is the main entry point for all livedata & offline operations on chat
- *
- * Use cases are exposed via chatDomain.useCases
+ * The ChatDomain is the main entry point for all flow & offline operations on chat
  */
 public interface ChatDomain {
 
@@ -52,7 +50,7 @@ public interface ChatDomain {
     public val initialized: StateFlow<Boolean>
 
     /**
-     * LiveData<Boolean> that indicates if we are currently online
+     * StateFlow<Boolean> that indicates if we are currently online
      */
     public val online: StateFlow<Boolean>
 
@@ -68,13 +66,12 @@ public interface ChatDomain {
     public val channelUnreadCount: StateFlow<Int>
 
     /**
-     * The error event livedata object is triggered when errors in the underlying components occure.
+     * The error event state flow object is triggered when errors in the underlying components occur.
      * The following example shows how to observe these errors
      *
-     *  repo.errorEvent.observe(this, EventObserver {
+     *  repo.errorEvent.collect {
      *       // create a toast
-     *   })
-     *
+     *   }
      */
     public val errorEvents: StateFlow<Event<ChatError>>
 
@@ -148,7 +145,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtaining [ChannelController]
      *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
+     * @see io.getstream.chat.android.offline.channel.ChannelController
      */
     public fun getChannelController(cid: String): Call<ChannelController>
 
@@ -160,7 +157,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtaining [ChannelController]
      *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
+     * @see io.getstream.chat.android.offline.channel.ChannelController
      */
     public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
@@ -175,7 +172,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtaining [QueryChannelsController]
      *
-     * @see io.getstream.chat.android.livedata.controller.QueryChannelsController
+     * @see io.getstream.chat.android.offline.querychannels.QueryChannelsController
      * @see io.getstream.chat.android.client.utils.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
