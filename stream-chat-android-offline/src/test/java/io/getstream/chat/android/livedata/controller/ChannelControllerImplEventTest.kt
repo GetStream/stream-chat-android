@@ -100,7 +100,6 @@ internal class ChannelControllerEventNewTest {
         val user = User(id = CURRENT_USER_ID)
         val message = randomMessage(
             createdAt = Date(1000L),
-            updatedAt = Date(3000L),
             user = user,
             silent = false,
             showInChannel = true
@@ -114,13 +113,15 @@ internal class ChannelControllerEventNewTest {
         Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
         // Unread count should not be propagated, because it is a message form the same user
         Truth.assertThat(channelController.unreadCount.value).isEqualTo(0)
+        // Last message is updated
+        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(Date(1000L))
     }
 
     @Test
     fun `when new message event arrives from other user, unread number should be updated`() {
-        val updatedAt = Date()
+        val createdAt = Date()
         val message = randomMessage(
-            updatedAt = updatedAt,
+            createdAt = createdAt,
             user = User(id = "otherUserId"),
             silent = false,
             showInChannel = true
@@ -137,7 +138,7 @@ internal class ChannelControllerEventNewTest {
         Truth.assertThat(channelController.unreadCount.value).isEqualTo(1)
 
         // Last message is updated
-        channelController.toChannel().lastMessageAt = updatedAt
+        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(createdAt)
     }
 
     // Message update
