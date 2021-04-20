@@ -187,7 +187,14 @@ public class ChatClient internal constructor(
     /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      *
-     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases
+     * @param user Instance of [User] type.
+     * @param token Instance of JWT token. It must be unique for each user.
+     * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
+     * Also visit [this site](https://jwt.io) to find more about Json Web Token standard.
+     * You can generate the JWT token on using one of the available libraries or use our manual
+     * [tool](https://getstream.io/chat/docs/react/token_generator/) for token generation.
+     *
+     * @see ChatClient.connectUser with [TokenProvider] parameter for advanced use cases.
      */
     @CheckResult
     public fun connectUser(user: User, token: String): Call<ConnectionData> {
