@@ -63,6 +63,8 @@ public interface QueryChannelsController {
      */
     public val loadingMore: LiveData<Boolean>
 
+    public val mutedChannelIds: LiveData<List<String>>
+
     public sealed class ChannelsState {
         /** The QueryChannelsController is initialized but no query is currently running.
          * If you know that a query will be started you typically want to display a loading icon.

@@ -52,7 +52,6 @@ internal class WhenQuery {
         val chatDomainImpl: ChatDomainImpl = mock {
             on(it.currentUser) doReturn user
         }
-        
         val sut = Fixture()
             .givenChatDomain(chatDomainImpl)
             .givenFailedNetworkRequest()

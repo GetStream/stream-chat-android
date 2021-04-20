@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -59,11 +58,13 @@ internal class QueryChannelsController(
     private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    private val _channelMutes = MutableStateFlow(domainImpl.currentUser.channelMutes.toChannelsId())
 
     internal val loading: StateFlow<Boolean> = _loading
     internal val loadingMore: StateFlow<Boolean> = _loadingMore
     internal val endOfChannels: StateFlow<Boolean> = _endOfChannels
     internal val channels: StateFlow<List<Channel>> = _sortedChannels
+    internal val channelMutes: StateFlow<List<String>> = _channelMutes
 
     internal val channelsState: StateFlow<QueryChannelsController.ChannelsState> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
@@ -73,32 +74,6 @@ internal class QueryChannelsController(
                 else -> QueryChannelsController.ChannelsState.Result(channels)
             }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
-
-    private fun updateMutedState(
-        channelsMap: Map<String, Channel>,
-        channelMutes: List<ChannelMute>,
-    ): Map<String, Channel> {
-        val channelMutesIds = channelMutes.map { it.channel.id }
-
-        return channelsMap.mapValues { (_, channel) ->
-            channel.copy().apply {
-                isMuted = channelMutesIds.contains(id)
-            }
-        }
-    }
-
-    private fun updateMutedState(
-        channelsMap: List<Channel>,
-        channelMutes: List<ChannelMute>,
-    ): List<Channel> {
-        val channelMutesIds = channelMutes.map { it.channel.id }
-
-        return channelsMap.map { channel ->
-            channel.copy().apply {
-                isMuted = channelMutesIds.contains(id)
-            }
-        }
-    }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -171,7 +146,7 @@ internal class QueryChannelsController(
         }
 
         if (event is NotificationChannelMutesUpdatedEvent) {
-            _channels.value = updateMutedState(_channels.value, event.me.channelMutes)
+            _channelMutes.value = event.me.channelMutes.toChannelsId()
         }
 
         if (event is CidEvent) {
@@ -251,11 +226,7 @@ internal class QueryChannelsController(
         val cIdsInQuery = queryChannelsSpec.cids.intersect(cIds)
 
         // update the channels
-        val newChannels = cIdsInQuery
-            .map { domainImpl.channel(it).toChannel() }
-            .let { channelList ->
-                updateMutedState(channelList, domainImpl.currentUser.channelMutes)
-            }
+        val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
 
         val existingChannelMap = _channels.value.toMutableMap()
 
@@ -432,4 +403,6 @@ internal class QueryChannelsController(
         queryChannelsSpec.cids = cIds
         refreshChannels(cIds)
     }
+
+    private fun List<ChannelMute>.toChannelsId() = map { channelMute -> channelMute.channel.id }
 }

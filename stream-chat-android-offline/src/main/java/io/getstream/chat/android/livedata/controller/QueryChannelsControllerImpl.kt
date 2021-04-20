@@ -57,6 +57,8 @@ internal class QueryChannelsControllerImpl(
 
     override val channelsState = queryChannels.channelsState.asLiveData()
 
+    override val mutedChannelIds: LiveData<List<String>> = queryChannels.channelMutes.asLiveData()
+
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.isDraft
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
@@ -40,6 +41,8 @@ public class ChannelListViewModel(
     public val typingEvents: LiveData<TypingEvent>
         get() = chatDomain.typingUpdates
 
+    public val mutedChannelsState: LiveData<List<String>>? = null
+
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
@@ -61,11 +64,21 @@ public class ChannelListViewModel(
                             )
                             is QueryChannelsController.ChannelsState.Result -> currentState.copy(
                                 isLoading = false,
-                                channels = channelState.channels.filterNot { it.hidden == true || it.isDraft },
+                                channels = parseMutedChannels(
+                                    channelState.channels.filterNot { it.hidden == true || it.isDraft },
+                                    queryChannelsController.mutedChannelIds.value
+                                ),
                             )
                         }
                     }
                 ) { state -> stateMerger.value = state }
+
+                stateMerger.addSource(queryChannelsController.mutedChannelIds) { mutedChannels ->
+                    stateMerger.value?.let { state ->
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                    }
+                }
+
                 paginationStateMerger.addSource(queryChannelsController.loadingMore) { loadingMore ->
                     setPaginationState { copy(loadingMore = loadingMore) }
                 }
@@ -127,5 +140,16 @@ public class ChannelListViewModel(
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
 
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
+    }
+
+    private fun parseMutedChannels(
+        channelsMap: List<Channel>,
+        channelMutesIds: List<String>?,
+    ): List<Channel> {
+        return channelsMap.map { channel ->
+            channel.copy().apply {
+                isMuted = channelMutesIds?.contains(channel.id) ?: false
+            }
+        }
     }
 }
