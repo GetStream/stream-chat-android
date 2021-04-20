@@ -21,7 +21,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
+- Removed deprecated `MessageListView::setViewHolderFactory` method
 
 ## stream-chat-android-client
 ### 🐞 Fixed

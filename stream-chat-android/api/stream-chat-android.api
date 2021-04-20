@@ -558,7 +558,6 @@ public final class com/getstream/sdk/chat/view/MessageListView : androidx/constr
 	public final fun setScrollButtonIconResource (I)V
 	public final fun setUnseenButtonEnabled (Z)V
 	public final fun setUserClickListener (Lcom/getstream/sdk/chat/view/MessageListView$UserClickListener;)V
-	public final fun setViewHolderFactory (Lcom/getstream/sdk/chat/adapter/MessageViewHolderFactory;)V
 	public final fun showEmptyStateView ()V
 	public final fun showLoadingView ()V
 }
