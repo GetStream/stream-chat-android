@@ -86,21 +86,21 @@ private const val CHANNEL_LIMIT = 30
 internal val gson = StreamGson.gson
 
 /**
- * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
+ * The Chat Domain exposes StateFlow objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.
  * Offline storage is handled using Room
  *
  * A different Room database is used for different users. That's why it's mandatory to specify the user id when
  * initializing the ChatRepository
  *
- * chatDomain.channel(type, id) returns a controller object with channel specific livedata objects
- * chatDomain.queryChannels(query) returns a livedata object for the specific queryChannels query
+ * chatDomain.channel(type, id) returns a controller object with channel specific state flow objects
+ * chatDomain.queryChannels(query) returns a state flow object for the specific queryChannels query
  *
- * chatDomain.online livedata object indicates if you're online or not
- * chatDomain.totalUnreadCount livedata object returns the current unread count for this user
+ * chatDomain.online state flow object indicates if you're online or not
+ * chatDomain.totalUnreadCount state flow object returns the current unread count for this user
  * chatDomain.muted the list of muted users
  * chatDomain.banned if the current user is banned or not
- * chatDomain.channelUnreadCount livedata object returns the number of unread channels for this user
+ * chatDomain.channelUnreadCount state flow object returns the number of unread channels for this user
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
@@ -191,13 +191,7 @@ internal class ChatDomainImpl internal constructor(
     override val banned: StateFlow<Boolean> = _banned
 
     /**
-     * The error event livedata object is triggered when errors in the underlying components occur.
-     * The following example shows how to observe these errors
-     *
-     *  channelController.errorEvent.observe(this) {
-     *       // create a toast
-     *   })
-     *
+     * The error event state flow object is triggered when errors in the underlying components occur.
      */
     override val errorEvents: StateFlow<Event<ChatError>> =
         _errorEvent.filterNotNull().stateIn(scope, SharingStarted.Eagerly, Event(ChatError()))
@@ -400,7 +394,6 @@ internal class ChatDomainImpl internal constructor(
                 c.createdBy = currentUser
             }
 
-            // update livedata
             val channelController = channel(c.cid)
             channelController.updateDataFromChannel(c)
 
