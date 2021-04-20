@@ -23,6 +23,7 @@ import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import io.getstream.chat.android.livedata.utils.filter
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +45,14 @@ public class QueryChannelsController internal constructor(
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
 ) {
+
+    internal constructor(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        client: ChatClient,
+        domain: ChatDomain,
+    ) : this(filter, sort, client, domain as ChatDomainImpl)
+
     internal var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
         { channel, filterObject -> filterObject.filter(channel) }
     internal var recoveryNeeded: Boolean = false

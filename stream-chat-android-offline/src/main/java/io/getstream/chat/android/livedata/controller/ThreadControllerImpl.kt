@@ -22,7 +22,7 @@ internal class ThreadControllerImpl(private val threadControllerStateFlow: Threa
         threadId: String,
         channelControllerImpl: ChannelController,
         domain: ChatDomainImpl,
-    ) : this(ThreadControllerStateFlow(threadId, channelControllerImpl, domain.chatDomainStateFlowImpl))
+    ) : this(ThreadControllerStateFlow(threadId, channelControllerImpl, domain.chatDomainStateFlow))
 
     override val threadId: String = threadControllerStateFlow.threadId
 

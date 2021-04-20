@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.extensions.wasCreatedAfterOrAt
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,12 @@ public class ThreadController internal constructor(
     private val channelControllerImpl: ChannelController,
     domain: ChatDomainImpl,
 ) {
+    internal constructor(
+        threadId: String,
+        channelControllerImpl: ChannelController,
+        domain: ChatDomain,
+    ) : this(threadId, channelControllerImpl, domain as ChatDomainImpl)
+
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
     private var firstMessage: Message? = null

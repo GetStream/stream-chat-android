@@ -35,7 +35,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
             channelType,
             channelId,
             client,
-            domainImpl.chatDomainStateFlowImpl,
+            domainImpl.chatDomainStateFlow,
             messageHelper
         )
     )

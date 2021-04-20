@@ -25,7 +25,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         sort: QuerySort<Channel>,
         client: ChatClient,
         domainImpl: ChatDomainImpl,
-    ) : this(QueryChannelsControllerStateFlow(filter, sort, client, domainImpl.chatDomainStateFlowImpl))
+    ) : this(QueryChannelsControllerStateFlow(filter, sort, client, domainImpl.chatDomainStateFlow))
 
     override val filter: FilterObject
         get() = queryChannels.filter

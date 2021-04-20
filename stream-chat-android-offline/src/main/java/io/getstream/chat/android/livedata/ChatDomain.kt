@@ -26,8 +26,8 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import java.io.File
+import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
-import io.getstream.chat.android.offline.ChatDomainImpl as OfflineChatDomainImpl
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -586,7 +586,8 @@ public interface ChatDomain {
             this.user = user
         }
 
-        private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client, user)
+        private val offlineChatDomainBuilder: OfflineChatDomainBuilder =
+            OfflineChatDomainBuilder(appContext, client, user)
 
         private var database: ChatDatabase? = null
 
@@ -627,12 +628,12 @@ public interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            val offlineChatDomain = offlineChatDomainBuilder.build() as OfflineChatDomainImpl
+            val offlineChatDomain = offlineChatDomainBuilder.build()
             ChatDomain.instance = buildImpl(offlineChatDomain)
             return ChatDomain.instance()
         }
 
-        internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomainImpl): ChatDomainImpl {
+        internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomain): ChatDomainImpl {
             return ChatDomainImpl(offlineChatDomainBuilder)
         }
     }

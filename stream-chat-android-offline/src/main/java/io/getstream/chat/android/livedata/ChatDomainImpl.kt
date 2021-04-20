@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -18,21 +17,17 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
-import io.getstream.chat.android.livedata.model.SyncState
-import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.Deferred
 import java.io.File
-import io.getstream.chat.android.offline.ChatDomainImpl as ChatDomainStateFlowImpl
+import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 
 /**
  * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
@@ -53,59 +48,56 @@ import io.getstream.chat.android.offline.ChatDomainImpl as ChatDomainStateFlowIm
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
-internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlowImpl: ChatDomainStateFlowImpl) :
+internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlow: ChatDomainStateFlow) :
     ChatDomain {
 
     override var offlineEnabled: Boolean
-        get() = chatDomainStateFlowImpl.offlineEnabled
+        get() = chatDomainStateFlow.offlineEnabled
         set(value) {
-            chatDomainStateFlowImpl.offlineEnabled = value
+            chatDomainStateFlow.offlineEnabled = value
         }
     override var userPresence: Boolean
-        get() = chatDomainStateFlowImpl.userPresence
+        get() = chatDomainStateFlow.userPresence
         set(value) {
-            chatDomainStateFlowImpl.userPresence = value
+            chatDomainStateFlow.userPresence = value
         }
     override var currentUser: User
-        get() = chatDomainStateFlowImpl.currentUser
+        get() = chatDomainStateFlow.currentUser
         set(value) {
-            chatDomainStateFlowImpl.currentUser = value
+            chatDomainStateFlow.currentUser = value
         }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    override val useCases: UseCaseHelper = UseCaseHelper(chatDomainStateFlowImpl.useCases)
-
-    @VisibleForTesting
-    val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
+    override val useCases: UseCaseHelper = UseCaseHelper(chatDomainStateFlow.useCases)
 
     /** if the client connection has been initialized */
-    override val initialized: LiveData<Boolean> = chatDomainStateFlowImpl.initialized.asLiveData()
+    override val initialized: LiveData<Boolean> = chatDomainStateFlow.initialized.asLiveData()
 
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    override val online: LiveData<Boolean> = chatDomainStateFlowImpl.online.asLiveData()
+    override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
 
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    override val totalUnreadCount: LiveData<Int> = chatDomainStateFlowImpl.totalUnreadCount.asLiveData()
+    override val totalUnreadCount: LiveData<Int> = chatDomainStateFlow.totalUnreadCount.asLiveData()
 
     /**
      * the number of unread channels for the current user
      */
-    override val channelUnreadCount: LiveData<Int> = chatDomainStateFlowImpl.channelUnreadCount.asLiveData()
+    override val channelUnreadCount: LiveData<Int> = chatDomainStateFlow.channelUnreadCount.asLiveData()
 
     /**
      * list of users that you've muted
      */
-    override val muted: LiveData<List<Mute>> = chatDomainStateFlowImpl.muted.asLiveData()
+    override val muted: LiveData<List<Mute>> = chatDomainStateFlow.muted.asLiveData()
 
     /**
      * if the current user is banned or not
      */
-    override val banned: LiveData<Boolean> = chatDomainStateFlowImpl.banned.asLiveData()
+    override val banned: LiveData<Boolean> = chatDomainStateFlow.banned.asLiveData()
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occur.
@@ -116,138 +108,43 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
      *   })
      *
      */
-    override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlowImpl.errorEvents.asLiveData()
-    override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlowImpl.typingUpdates.asLiveData()
-
-    internal var repos: RepositoryFacade
-        get() = chatDomainStateFlowImpl.repos
-        set(value) {
-            chatDomainStateFlowImpl.repos = value
-        }
-    internal val initJob: Deferred<SyncState?>?
-        get() = chatDomainStateFlowImpl.initJob
-
+    override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlow.errorEvents.asLiveData()
+    override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy
-        get() = chatDomainStateFlowImpl.retryPolicy
+        get() = chatDomainStateFlow.retryPolicy
         set(value) {
-            chatDomainStateFlowImpl.retryPolicy = value
+            chatDomainStateFlow.retryPolicy = value
         }
 
-    internal fun setUser(user: User) = chatDomainStateFlowImpl.setUser(user)
-
-    internal val job = chatDomainStateFlowImpl.job
-    internal var scope
-        get() = chatDomainStateFlowImpl.scope
-        set(value) {
-            chatDomainStateFlowImpl.scope = value
-        }
-
-    internal suspend fun updateCurrentUser(me: User) = chatDomainStateFlowImpl.updateCurrentUser(me)
-    internal suspend fun storeSyncState(): SyncState? = chatDomainStateFlowImpl.storeSyncState()
-    override suspend fun disconnect() = chatDomainStateFlowImpl.disconnect()
-    override fun getVersion(): String = chatDomainStateFlowImpl.getVersion()
-
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> =
-        chatDomainStateFlowImpl.runAndRetry(runnable)
-
-    internal suspend fun createNewChannel(c: Channel): Result<Channel> = chatDomainStateFlowImpl.createNewChannel(c)
-
-    fun addError(error: ChatError) = chatDomainStateFlowImpl.addError(error)
-
-    fun isActiveChannel(cid: String): Boolean = chatDomainStateFlowImpl.isActiveChannel(cid)
-
-    fun setChannelUnreadCount(newCount: Int) = chatDomainStateFlowImpl.setChannelUnreadCount(newCount)
-
-    fun setBanned(newBanned: Boolean) = chatDomainStateFlowImpl.setBanned(newBanned)
-
-    fun setTotalUnreadCount(newCount: Int) = chatDomainStateFlowImpl.setTotalUnreadCount(newCount)
+    override suspend fun disconnect() = chatDomainStateFlow.disconnect()
+    override fun getVersion(): String = chatDomainStateFlow.getVersion()
 
     override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> =
-        chatDomainStateFlowImpl.removeMembers(cid, *userIds)
+        chatDomainStateFlow.removeMembers(cid, *userIds)
 
-    internal fun channel(c: Channel): ChannelControllerImpl = ChannelControllerImpl(chatDomainStateFlowImpl.channel(c))
+    override fun isOnline(): Boolean = chatDomainStateFlow.isOnline()
 
-    internal fun channel(cid: String): ChannelControllerImpl =
-        ChannelControllerImpl(chatDomainStateFlowImpl.channel(cid))
+    override fun isOffline(): Boolean = chatDomainStateFlow.isOffline()
 
-    internal fun channel(
-        channelType: String,
-        channelId: String,
-    ): ChannelControllerImpl = ChannelControllerImpl(chatDomainStateFlowImpl.channel(channelType, channelId))
-
-    internal fun allActiveChannels(): List<ChannelControllerImpl> =
-        chatDomainStateFlowImpl.allActiveChannels().map(::ChannelControllerImpl)
-
-    fun generateMessageId(): String = chatDomainStateFlowImpl.generateMessageId()
-
-    internal fun setOffline() = chatDomainStateFlowImpl.setOffline()
-
-    internal fun setOnline() = chatDomainStateFlowImpl.setOnline()
-
-    internal fun setInitialized() = chatDomainStateFlowImpl.setInitialized()
-
-    override fun isOnline(): Boolean = chatDomainStateFlowImpl.isOnline()
-
-    override fun isOffline(): Boolean = chatDomainStateFlowImpl.isOffline()
-
-    override fun isInitialized(): Boolean = chatDomainStateFlowImpl.isInitialized()
+    override fun isInitialized(): Boolean = chatDomainStateFlow.isInitialized()
 
     override fun getActiveQueries(): List<QueryChannelsControllerImpl> =
-        chatDomainStateFlowImpl.getActiveQueries().map(::QueryChannelsControllerImpl)
+        chatDomainStateFlow.getActiveQueries().map(::QueryChannelsControllerImpl)
 
-    /**
-     * queryChannels
-     * - first read the current results from Room
-     * - if we are online make the API call to update results
-     */
-    fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-    ): QueryChannelsControllerImpl = QueryChannelsControllerImpl(chatDomainStateFlowImpl.queryChannels(filter, sort))
+    override fun clean() = chatDomainStateFlow.clean()
 
-    /**
-     * replay events for all active channels
-     * ensures that the cid you provide is active
-     *
-     * @param cid ensures that the channel with this id is active
-     */
-    internal suspend fun replayEvents(cid: String? = null): Result<List<ChatEvent>> =
-        chatDomainStateFlowImpl.replayEvents(cid)
-
-    /**
-     * There are several scenarios in which we need to recover events
-     * - Connection is lost and comes back (everything should be considered stale, so use recover all)
-     * - App goes to the background and comes back (everything should be considered stale, so use recover all)
-     * - We run a queryChannels or channel.watch call and encounter an offline state/or API error (should recover just that query or channel)
-     * - A reaction, message or channel fails to be created. We should retry this every health check (30 seconds or so)
-     *
-     * Calling connectionRecovered triggers:
-     * - queryChannels for the active query (at most 3) that need recovery
-     * - queryChannels for any channels that need recovery
-     * - channel.watch for channels that are not returned by the server
-     * - event recovery for those channels
-     * - API calls to create local channels, messages and reactions
-     */
-    suspend fun connectionRecovered(recoverAll: Boolean = false) =
-        chatDomainStateFlowImpl.connectionRecovered(recoverAll)
-
-    @VisibleForTesting
-    internal suspend fun retryChannels(): List<Channel> = chatDomainStateFlowImpl.retryChannels()
-
-    override fun clean() = chatDomainStateFlowImpl.clean()
-
-    override fun getChannelConfig(channelType: String): Config = chatDomainStateFlowImpl.getChannelConfig(channelType)
+    override fun getChannelConfig(channelType: String): Config = chatDomainStateFlow.getChannelConfig(channelType)
 
     // region use-case functions
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
-        chatDomainStateFlowImpl.replayEventsForActiveChannels(cid)
+        chatDomainStateFlow.replayEventsForActiveChannels(cid)
 
     override fun getChannelController(cid: String): Call<ChannelController> =
-        chatDomainStateFlowImpl.getChannelController(cid).map(::ChannelControllerImpl)
+        chatDomainStateFlow.getChannelController(cid).map(::ChannelControllerImpl)
 
     override fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController> =
-        chatDomainStateFlowImpl.watchChannel(cid, messageLimit).map(::ChannelControllerImpl)
+        chatDomainStateFlow.watchChannel(cid, messageLimit).map(::ChannelControllerImpl)
 
     override fun queryChannels(
         filter: FilterObject,
@@ -255,101 +152,101 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         limit: Int,
         messageLimit: Int,
     ): Call<QueryChannelsController> =
-        chatDomainStateFlowImpl.queryChannels(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
+        chatDomainStateFlow.queryChannels(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
 
     override fun getThread(cid: String, parentId: String): Call<ThreadController> =
-        chatDomainStateFlowImpl.getThread(cid, parentId).map(::ThreadControllerImpl)
+        chatDomainStateFlow.getThread(cid, parentId).map(::ThreadControllerImpl)
 
     override fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> =
-        chatDomainStateFlowImpl.loadOlderMessages(cid, messageLimit)
+        chatDomainStateFlow.loadOlderMessages(cid, messageLimit)
 
     override fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel> =
-        chatDomainStateFlowImpl.loadNewerMessages(cid, messageLimit)
+        chatDomainStateFlow.loadNewerMessages(cid, messageLimit)
 
     override fun loadMessageById(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> = chatDomainStateFlowImpl.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
+    ): Call<Message> = chatDomainStateFlow.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlowImpl.queryChannelsLoadMore(filter, sort, limit, messageLimit)
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, limit, messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         messageLimit: Int,
-    ): Call<List<Channel>> = chatDomainStateFlowImpl.queryChannelsLoadMore(filter, sort, messageLimit)
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort, messageLimit)
 
     override fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
-    ): Call<List<Channel>> = chatDomainStateFlowImpl.queryChannelsLoadMore(filter, sort)
+    ): Call<List<Channel>> = chatDomainStateFlow.queryChannelsLoadMore(filter, sort)
 
     override fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        chatDomainStateFlowImpl.threadLoadMore(cid, parentId, messageLimit)
+        chatDomainStateFlow.threadLoadMore(cid, parentId, messageLimit)
 
-    override fun createChannel(channel: Channel): Call<Channel> = chatDomainStateFlowImpl.createChannel(channel)
+    override fun createChannel(channel: Channel): Call<Channel> = chatDomainStateFlow.createChannel(channel)
 
-    override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlowImpl.sendMessage(message)
+    override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlow.sendMessage(message)
 
     override fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = chatDomainStateFlowImpl.sendMessage(message, attachmentTransformer)
+    ): Call<Message> = chatDomainStateFlow.sendMessage(message, attachmentTransformer)
 
-    override fun cancelMessage(message: Message): Call<Boolean> = chatDomainStateFlowImpl.cancelMessage(message)
+    override fun cancelMessage(message: Message): Call<Boolean> = chatDomainStateFlow.cancelMessage(message)
 
-    override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlowImpl.shuffleGiphy(message)
+    override fun shuffleGiphy(message: Message): Call<Message> = chatDomainStateFlow.shuffleGiphy(message)
 
-    override fun sendGiphy(message: Message): Call<Message> = chatDomainStateFlowImpl.sendGiphy(message)
+    override fun sendGiphy(message: Message): Call<Message> = chatDomainStateFlow.sendGiphy(message)
 
-    override fun editMessage(message: Message): Call<Message> = chatDomainStateFlowImpl.editMessage(message)
+    override fun editMessage(message: Message): Call<Message> = chatDomainStateFlow.editMessage(message)
 
-    override fun deleteMessage(message: Message): Call<Message> = chatDomainStateFlowImpl.deleteMessage(message)
+    override fun deleteMessage(message: Message): Call<Message> = chatDomainStateFlow.deleteMessage(message)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
-        chatDomainStateFlowImpl.sendReaction(cid, reaction, enforceUnique)
+        chatDomainStateFlow.sendReaction(cid, reaction, enforceUnique)
 
     override fun deleteReaction(cid: String, reaction: Reaction): Call<Message> =
-        chatDomainStateFlowImpl.deleteReaction(cid, reaction)
+        chatDomainStateFlow.deleteReaction(cid, reaction)
 
     override fun keystroke(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlowImpl.keystroke(cid, parentId)
+        chatDomainStateFlow.keystroke(cid, parentId)
 
     override fun stopTyping(cid: String, parentId: String?): Call<Boolean> =
-        chatDomainStateFlowImpl.stopTyping(cid, parentId)
+        chatDomainStateFlow.stopTyping(cid, parentId)
 
-    override fun markRead(cid: String): Call<Boolean> = chatDomainStateFlowImpl.markRead(cid)
+    override fun markRead(cid: String): Call<Boolean> = chatDomainStateFlow.markRead(cid)
 
-    override fun markAllRead(): Call<Boolean> = chatDomainStateFlowImpl.markAllRead()
+    override fun markAllRead(): Call<Boolean> = chatDomainStateFlow.markAllRead()
 
     override fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit> =
-        chatDomainStateFlowImpl.hideChannel(cid, keepHistory)
+        chatDomainStateFlow.hideChannel(cid, keepHistory)
 
-    override fun showChannel(cid: String): Call<Unit> = chatDomainStateFlowImpl.showChannel(cid)
+    override fun showChannel(cid: String): Call<Unit> = chatDomainStateFlow.showChannel(cid)
 
-    override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlowImpl.leaveChannel(cid)
+    override fun leaveChannel(cid: String): Call<Unit> = chatDomainStateFlow.leaveChannel(cid)
 
-    override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlowImpl.deleteChannel(cid)
+    override fun deleteChannel(cid: String): Call<Unit> = chatDomainStateFlow.deleteChannel(cid)
 
     override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        chatDomainStateFlowImpl.setMessageForReply(cid, message)
+        chatDomainStateFlow.setMessageForReply(cid, message)
 
     override fun downloadAttachment(attachment: Attachment): Call<Unit> =
-        chatDomainStateFlowImpl.downloadAttachment(attachment)
+        chatDomainStateFlow.downloadAttachment(attachment)
 
     override fun searchUsersByName(
         querySearch: String,
         offset: Int,
         userLimit: Int,
         userPresence: Boolean,
-    ): Call<List<User>> = chatDomainStateFlowImpl.searchUsersByName(querySearch, offset, userLimit, userPresence)
+    ): Call<List<User>> = chatDomainStateFlow.searchUsersByName(querySearch, offset, userLimit, userPresence)
 
     override fun queryMembers(
         cid: String,
@@ -358,12 +255,12 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         filter: FilterObject,
         sort: QuerySort<Member>,
         members: List<Member>,
-    ): Call<List<Member>> = chatDomainStateFlowImpl.queryMembers(cid, offset, limit, filter, sort, members)
+    ): Call<List<Member>> = chatDomainStateFlow.queryMembers(cid, offset, limit, filter, sort, members)
 
     override fun createDistinctChannel(
         channelType: String,
         members: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> = chatDomainStateFlowImpl.createDistinctChannel(channelType, members, extraData)
+    ): Call<Channel> = chatDomainStateFlow.createDistinctChannel(channelType, members, extraData)
     // end region
 }

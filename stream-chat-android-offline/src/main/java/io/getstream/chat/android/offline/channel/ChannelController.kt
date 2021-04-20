@@ -66,6 +66,7 @@ import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
 import io.getstream.chat.android.livedata.extensions.wasCreatedBeforeOrAt
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
@@ -95,6 +96,14 @@ public class ChannelController internal constructor(
     internal val domainImpl: ChatDomainImpl,
     private val messageHelper: MessageHelper = MessageHelper(),
 ) {
+    internal constructor(
+        channelType: String,
+        channelId: String,
+        client: ChatClient,
+        domain: ChatDomain,
+        messageHelper: MessageHelper = MessageHelper(),
+    ) : this(channelType, channelId, client, domain as ChatDomainImpl, messageHelper)
+
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
