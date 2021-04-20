@@ -6,10 +6,13 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.livedata.utils.MessageDiffCallback
 import io.getstream.chat.android.livedata.utils.UpdateOperationCounts
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,11 +37,11 @@ internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 2, changed = 0, inserted = 1))
 
         // adding a message, should trigger 1 "insert" operation
-        chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(data.newMessageFromUser2)
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 3, changed = 0, inserted = 2))
 
         // updating a message, should trigger 1 "changed" operation
-        chatDomainImpl.chatDomainStateFlowImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
+        chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
     }
 
@@ -62,15 +65,17 @@ internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
             return this
         }
 
-        fun withCounter(counter: DiffUtilOperationCounter<Message>): Fixture {
-            channelController.messages.observeForever { messages ->
-                val messageIds = messages.map { it.id }
-                println("Message ids is now equal to $messageIds")
-                counter.onEvent(messages)
+        suspend fun withCounter(counter: DiffUtilOperationCounter<Message>): Fixture {
+            chatDomainImpl.scope.launch {
+                channelController.messages.collect { messages ->
+                    val messageIds = messages.map { it.id }
+                    println("Message ids is now equal to $messageIds")
+                    counter.onEvent(messages)
+                }
             }
             return this
         }
 
-        fun get(): ChannelControllerImpl = channelController
+        fun get(): ChannelController = channelController
     }
 }

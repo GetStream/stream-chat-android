@@ -10,10 +10,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest.Companion.data
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be`
@@ -35,7 +34,7 @@ internal class DeleteMessageImplTest : BaseConnectedMockedTest() {
             chatDomain.useCases.sendMessage(message).execute()
             chatDomain.useCases.deleteMessage(message).execute()
 
-            val deletedMessage = channelController.messages.getOrAwaitValue().last()
+            val deletedMessage = channelController.messages.value.last()
 
             deletedMessage.id `should be equal to` message.id
             deletedMessage.deletedAt `should not be` null

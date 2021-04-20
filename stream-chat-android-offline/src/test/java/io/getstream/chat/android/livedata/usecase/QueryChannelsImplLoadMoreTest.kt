@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -25,7 +24,7 @@ internal class QueryChannelsImplLoadMoreTest : BaseConnectedIntegrationTest() {
             chatDomain.useCases.queryChannelsLoadMore(data.filter1, QuerySort(), 1).execute()
         assertSuccess(loadMoreResult)
 
-        val channels = queryChannelsController.channels.getOrAwaitValue()
+        val channels = queryChannelsController.channels.value
         Truth.assertThat(channels.size).isEqualTo(1)
     }
 }

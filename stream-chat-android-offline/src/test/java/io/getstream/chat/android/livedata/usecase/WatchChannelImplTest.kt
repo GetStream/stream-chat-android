@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -21,11 +20,11 @@ internal class WatchChannelImplTest : BaseConnectedIntegrationTest() {
         val channelController = result0.data()
         val result = chatDomain.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
         assertSuccess(result)
-        var messages = channelController.messages.getOrAwaitValue()
+        var messages = channelController.messages.value
         Truth.assertThat(messages.size).isGreaterThan(0)
         val result2 = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result2)
-        messages = channelController.messages.getOrAwaitValue()
+        messages = channelController.messages.value
         Truth.assertThat(messages.last()).isEqualTo(message1)
     }
 }

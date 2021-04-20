@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.test.getOrAwaitValue
+import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
@@ -26,7 +26,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     lateinit var threadMessage: Message
     lateinit var threadReply: Message
     lateinit var channelMessages: MutableStateFlow<List<Message>>
-    lateinit var threadController: ThreadControllerImpl
+    lateinit var threadController: ThreadController
 
     @Before
     override fun setup() {
@@ -38,24 +38,25 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         channelMessages = MutableStateFlow(listOf(data.message1, threadMessage, threadReply))
         whenever(channelControllerMock.unfilteredMessages) doReturn channelMessages
         whenever(channelControllerMock.hideMessagesBefore) doReturn null
-        threadController = ThreadControllerImpl(threadId, channelControllerMock, chatDomainImpl)
+        threadController = ThreadController(threadId, channelControllerMock, chatDomainImpl)
     }
 
     @Test
-    fun `the correct messages on the channelController should be shown on the thread`() = testCoroutines.scope.runBlockingTest {
-        val messages = threadController.messages.getOrAwaitValue()
+    fun `the correct messages on the channelController should be shown on the thread`() =
+        testCoroutines.scope.runBlockingTest {
+            val messages = threadController.messages.value
 
-        // verify we see the correct 2 messages
-        val expectedMessages = listOf(threadMessage, threadReply)
-        Truth.assertThat(messages).isEqualTo(expectedMessages)
-    }
+            // verify we see the correct 2 messages
+            val expectedMessages = listOf(threadMessage, threadReply)
+            Truth.assertThat(messages).isEqualTo(expectedMessages)
+        }
 
     @Test
     fun `new messages on the channel controller should show up on the thread`() = testCoroutines.scope.runBlockingTest {
         // add an extra message
         val threadReply2 = data.createMessage().apply { parentId = threadId }
         channelMessages.value = listOf(data.message1, threadMessage, threadReply, threadReply2)
-        val messages = threadController.messages.getOrAwaitValue()
+        val messages = threadController.messages.value
 
         // verify we see the correct 3 messages
         val expectedMessages = listOf(threadMessage, threadReply, threadReply2)
@@ -63,26 +64,31 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `removing messages on the channel controller should remove them from the thread`() = testCoroutines.scope.runBlockingTest {
-        // remove a message
-        channelMessages.value = listOf(data.message1, threadMessage)
-        val messages = threadController.messages.getOrAwaitValue()
+    fun `removing messages on the channel controller should remove them from the thread`() =
+        testCoroutines.scope.runBlockingTest {
+            // remove a message
+            channelMessages.value = listOf(data.message1, threadMessage)
+            val messages = threadController.messages.value
 
-        // verify we see the correct message
-        val expectedMessages = listOf(threadMessage)
-        Truth.assertThat(messages).isEqualTo(expectedMessages)
-    }
+            // verify we see the correct message
+            val expectedMessages = listOf(threadMessage)
+            Truth.assertThat(messages).isEqualTo(expectedMessages)
+        }
 
     @Test
     fun `loading more should set loading and endReached variables`() = testCoroutines.scope.runBlockingTest {
         // mock the loadOlderThreadMessages to return 1 result when asking for 2 messages
         val threadReply2 = data.createMessage().apply { parentId = threadId }
-        whenever(channelControllerMock.loadOlderThreadMessages(any(), any(), eq(null))) doReturn Result(listOf(threadReply2))
+        whenever(channelControllerMock.loadOlderThreadMessages(any(), any(), eq(null))) doReturn Result(
+            listOf(
+                threadReply2
+            )
+        )
         threadController.loadOlderMessages(2)
 
         // verify that loading is false and end reached is true
-        val loading = threadController.loadingOlderMessages.getOrAwaitValue()
-        val endReached = threadController.endOfOlderMessages.getOrAwaitValue()
+        val loading = threadController.loadingOlderMessages.value
+        val endReached = threadController.endOfOlderMessages.value
         Truth.assertThat(loading).isEqualTo(false)
         Truth.assertThat(endReached).isEqualTo(true)
     }

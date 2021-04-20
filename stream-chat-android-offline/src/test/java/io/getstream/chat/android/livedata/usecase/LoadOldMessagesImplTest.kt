@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.failedCall
-import io.getstream.chat.android.test.getOrAwaitValue
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -37,10 +36,10 @@ internal class LoadOldMessagesImplTest : BaseDomainTest2() {
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val result = chatDomainImpl.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        val messages1: List<Message> = channelState.messages.getOrAwaitValue()
+        val messages1: List<Message> = channelState.messages.value
         chatDomain.useCases.sendMessage(newMessage).execute()
 
-        val messages2 = channelState.messages.getOrAwaitValue()
+        val messages2 = channelState.messages.value
 
         Truth.assertThat(messages2).isNotEqualTo(messages1)
         Truth.assertThat(messages2.last()).isEqualTo(newMessage)

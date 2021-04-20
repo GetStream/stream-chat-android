@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +32,7 @@ internal class ThreadLoadMoreImplTest : BaseConnectedIntegrationTest() {
         // ask for more results than we have
         val result4 = chatDomain.useCases.threadLoadMore(data.channel1.cid, parentId, 100).execute()
         assertSuccess(result4)
-        val endReached = threadController.endOfOlderMessages.getOrAwaitValue()
+        val endReached = threadController.endOfOlderMessages.value
         Truth.assertThat(endReached).isTrue()
     }
 }

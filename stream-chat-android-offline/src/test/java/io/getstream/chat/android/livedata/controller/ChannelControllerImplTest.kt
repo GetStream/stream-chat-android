@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import junit.framework.Assert.assertEquals
@@ -40,12 +41,12 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
     private val channelType: String = randomString()
     private val channelId: String = randomString()
     private val call: Call<String> = mock()
-    private lateinit var channelController: ChannelControllerImpl
+    private lateinit var channelController: ChannelController
 
     override fun setup() {
         super.setup()
         channelController =
-            ChannelControllerImpl(channelType, channelId, chatClient, chatDomainImpl)
+            ChannelController(channelType, channelId, chatClient, chatDomainImpl)
     }
 
     @Test

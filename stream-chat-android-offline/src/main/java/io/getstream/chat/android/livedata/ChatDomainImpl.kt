@@ -1,11 +1,8 @@
 package io.getstream.chat.android.livedata
 
-import android.content.Context
-import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -30,13 +27,13 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.model.SyncState
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import kotlinx.coroutines.Deferred
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomainImpl as ChatDomainStateFlowImpl
+
 /**
  * The Chat Domain exposes livedata objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.
@@ -56,59 +53,24 @@ import io.getstream.chat.android.offline.ChatDomainImpl as ChatDomainStateFlowIm
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
-internal class ChatDomainImpl internal constructor(
-    internal var client: ChatClient,
-    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
-    // the userOverwrite field is here for backwards compatibility
-    internal var userOverwrite: User? = null,
-    internal var db: ChatDatabase? = null,
-    private val mainHandler: Handler,
-    override var offlineEnabled: Boolean = true,
-    internal var recoveryEnabled: Boolean = true,
-    override var userPresence: Boolean = false,
-    internal var backgroundSyncEnabled: Boolean = false,
-    internal var appContext: Context,
-) :
+internal class ChatDomainImpl internal constructor(internal val chatDomainStateFlowImpl: ChatDomainStateFlowImpl) :
     ChatDomain {
-    internal constructor(
-        client: ChatClient,
-        handler: Handler,
-        offlineEnabled: Boolean,
-        recoveryEnabled: Boolean,
-        userPresence: Boolean,
-        backgroundSyncEnabled: Boolean,
-        appContext: Context,
-    ) : this(
-        client,
-        null,
-        null,
-        handler,
-        offlineEnabled,
-        recoveryEnabled,
-        userPresence,
-        backgroundSyncEnabled,
-        appContext
-    )
 
-    internal val chatDomainStateFlowImpl: ChatDomainStateFlowImpl = ChatDomainStateFlowImpl(
-        client,
-        userOverwrite,
-        db,
-        mainHandler,
-        offlineEnabled,
-        recoveryEnabled,
-        userPresence,
-        backgroundSyncEnabled,
-        appContext
-    )
-
+    override var offlineEnabled: Boolean
+        get() = chatDomainStateFlowImpl.offlineEnabled
+        set(value) {
+            chatDomainStateFlowImpl.offlineEnabled = value
+        }
+    override var userPresence: Boolean
+        get() = chatDomainStateFlowImpl.userPresence
+        set(value) {
+            chatDomainStateFlowImpl.userPresence = value
+        }
     override var currentUser: User
         get() = chatDomainStateFlowImpl.currentUser
         set(value) {
             chatDomainStateFlowImpl.currentUser = value
         }
-
-    lateinit var database: ChatDatabase
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(chatDomainStateFlowImpl.useCases)
@@ -269,8 +231,6 @@ internal class ChatDomainImpl internal constructor(
      */
     suspend fun connectionRecovered(recoverAll: Boolean = false) =
         chatDomainStateFlowImpl.connectionRecovered(recoverAll)
-
-    internal suspend fun retryFailedEntities() = chatDomainStateFlowImpl.retryFailedEntities()
 
     @VisibleForTesting
     internal suspend fun retryChannels(): List<Channel> = chatDomainStateFlowImpl.retryChannels()

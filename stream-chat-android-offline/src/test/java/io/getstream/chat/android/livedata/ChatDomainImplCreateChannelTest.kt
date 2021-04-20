@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope

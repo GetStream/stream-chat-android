@@ -9,11 +9,13 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.NoRetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
+import io.getstream.chat.android.offline.ChatDomainImpl
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -57,11 +59,11 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         chatDomain = chatDomainImpl
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
-        chatDomainImpl.errorEvents.observeForever(
-            EventObserver {
+        chatDomainImpl.scope.launch {
+            chatDomainImpl.errorEvents.collect {
                 println("error event$it")
             }
-        )
+        }
         return chatDomainImpl
     }
 
@@ -89,7 +91,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             // setup channel controller and query controllers for tests
             runBlocking { chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-            channelControllerImpl.updateLiveDataFromChannel(data.channel1)
+            channelControllerImpl.updateDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())

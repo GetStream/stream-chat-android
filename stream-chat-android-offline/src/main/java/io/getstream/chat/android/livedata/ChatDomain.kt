@@ -1,8 +1,6 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -20,17 +18,16 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
-import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
-import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import java.io.File
+import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
+import io.getstream.chat.android.offline.ChatDomainImpl as OfflineChatDomainImpl
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -589,86 +586,54 @@ public interface ChatDomain {
             this.user = user
         }
 
+        private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client, user)
+
         private var database: ChatDatabase? = null
 
-        private var userPresence: Boolean = false
-        private var storageEnabled: Boolean = true
-        private var recoveryEnabled: Boolean = true
-        private var backgroundSyncEnabled: Boolean = true
-        private val syncModule by lazy { SyncProvider(appContext) }
-
-        internal fun database(db: ChatDatabase): Builder {
-            this.database = db
-            return this
+        internal fun database(db: ChatDatabase) = apply {
+            offlineChatDomainBuilder.database(db)
         }
 
-        public fun enableBackgroundSync(): Builder {
-            backgroundSyncEnabled = true
-            return this
+        public fun enableBackgroundSync(): Builder = apply {
+            offlineChatDomainBuilder.enableBackgroundSync()
         }
 
-        public fun disableBackgroundSync(): Builder {
-            backgroundSyncEnabled = false
-            return this
+        public fun disableBackgroundSync(): Builder = apply {
+            offlineChatDomainBuilder.disableBackgroundSync()
         }
 
-        public fun offlineEnabled(): Builder {
-            this.storageEnabled = true
-            return this
+        public fun offlineEnabled(): Builder = apply {
+            offlineChatDomainBuilder.offlineEnabled()
         }
 
-        public fun offlineDisabled(): Builder {
-            this.storageEnabled = false
-            return this
+        public fun offlineDisabled(): Builder = apply {
+            offlineChatDomainBuilder.offlineDisabled()
         }
 
-        public fun recoveryEnabled(): Builder {
-            this.recoveryEnabled = true
-            return this
+        public fun recoveryEnabled(): Builder = apply {
+            offlineChatDomainBuilder.recoveryEnabled()
         }
 
-        public fun recoveryDisabled(): Builder {
-            this.recoveryEnabled = false
-            return this
+        public fun recoveryDisabled(): Builder = apply {
+            offlineChatDomainBuilder.recoveryDisabled()
         }
 
-        public fun userPresenceEnabled(): Builder {
-            this.userPresence = true
-            return this
+        public fun userPresenceEnabled(): Builder = apply {
+            offlineChatDomainBuilder.userPresenceEnabled()
         }
 
-        public fun userPresenceDisabled(): Builder {
-            this.userPresence = false
-            return this
+        public fun userPresenceDisabled(): Builder = apply {
+            offlineChatDomainBuilder.userPresenceDisabled()
         }
 
         public fun build(): ChatDomain {
-            storeNotificationConfig(client.notificationHandler.config)
-            ChatDomain.instance = buildImpl()
+            val offlineChatDomain = offlineChatDomainBuilder.build() as OfflineChatDomainImpl
+            ChatDomain.instance = buildImpl(offlineChatDomain)
             return ChatDomain.instance()
         }
 
-        internal fun buildImpl(): ChatDomainImpl {
-            val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(
-                client,
-                user,
-                database,
-                handler,
-                storageEnabled,
-                recoveryEnabled,
-                userPresence,
-                backgroundSyncEnabled,
-                appContext
-            )
-        }
-
-        private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
-            if (NotificationConfigUnavailable != notificationConfig) {
-                syncModule.notificationConfigStore.apply {
-                    put(notificationConfig)
-                }
-            }
+        internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomainImpl): ChatDomainImpl {
+            return ChatDomainImpl(offlineChatDomainBuilder)
         }
     }
 

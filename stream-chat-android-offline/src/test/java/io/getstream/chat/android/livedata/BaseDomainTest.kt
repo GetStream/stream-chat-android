@@ -31,18 +31,22 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.model.ChannelConfig
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
-import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.NoRetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -56,9 +60,9 @@ internal open class BaseDomainTest {
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
     lateinit var client: ChatClient
-    lateinit var channelControllerImpl: io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+    lateinit var channelControllerImpl: ChannelController
     lateinit var db: ChatDatabase
-    lateinit var queryControllerImpl: QueryChannelsControllerImpl
+    lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
@@ -231,16 +235,16 @@ internal open class BaseDomainTest {
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 
-        chatDomainImpl.errorEvents.observeForever(
-            EventObserver {
+        chatDomainImpl.scope.launch {
+            chatDomainImpl.errorEvents.collect {
                 println("error event$it")
             }
-        )
+        }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         chatDomainImpl.repos.insertUsers(data.userMap.values.toList())
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-        channelControllerImpl.updateLiveDataFromChannel(data.channel1)
+        channelControllerImpl.updateDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
 
