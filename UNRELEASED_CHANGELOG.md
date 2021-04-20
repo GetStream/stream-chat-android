@@ -12,6 +12,7 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 
@@ -103,6 +104,7 @@
 - Fixed doubled command prefix when the command contains user mention
 - Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
@@ -132,6 +134,23 @@ It allows defining a set of supported reactions by passing a `Map<String, Reacti
     * `streamUiSystemMessageTextFont`
     * `streamUiSystemMessageTextFontAssets`
     * `streamUiSystemMessageTextStyle`
+- Added attrs to `MessageListView` that allow to customize message option text style:
+      * `streamUiMessageOptionsTextSize`
+      * `streamUiMessageOptionsTextColor`
+      * `streamUiMessageOptionsTextFont`
+      * `streamUiMessageOptionsTextFontAssets`
+      * `streamUiMessageOptionsTextStyle`
+- Added attrs to `MessageListView` that allow to customize user reactions title text style:
+      * `streamUiUserReactionsTitleTextSize`
+      * `streamUiUserReactionsTitleTextColor`
+      * `streamUiUserReactionsTitleTextFont`
+      * `streamUiUserReactionsTitleTextFontAssets`
+      * `streamUiUserReactionsTitleTextStyle`
+- Added attrs to `MessageListView` that allow to customize colors of message options background, user reactions card background, overlay dim color and warning actions color:
+      * `streamUiMessageOptionBackgroundColor`
+      * `streamUiUserReactionsBackgroundColor`
+      * `streamUiOptionsOverlayDimColor`
+      * `streamUiWarningActionsTintColor`
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!

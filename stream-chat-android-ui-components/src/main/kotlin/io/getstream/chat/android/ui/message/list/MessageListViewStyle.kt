@@ -1,14 +1,17 @@
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
 import java.io.Serializable
 
@@ -40,6 +43,12 @@ import java.io.Serializable
  * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
  * @property deleteConfirmationEnabled - enables/disables showing confirmation dialog before deleting message. Enabled by default
  * @property flagMessageConfirmationEnabled - enables/disables showing confirmation dialog before flagging message. Disabled by default
+ * @property warningActionsTintColor - color of dangerous option such as delete. Default - [R.color.stream_ui_accent_red].
+ * @property messageOptionsText - text appearance of message option items
+ * @property messageOptionsBackgroundColor - background color of message options. Default - [R.color.stream_ui_white]
+ * @property userReactionsBackgroundColor - background color of user reactions card. Default - [R.color.stream_ui_white]
+ * @property userReactionsTitleText - text appearance of of user reactions card title
+ * @property optionsOverlayDimColor - overlay dim color. Default - [R.color.stream_ui_literal_transparent]
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -67,6 +76,12 @@ public data class MessageListViewStyle(
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
+    @ColorInt val warningActionsTintColor: Int,
+    val messageOptionsText: TextStyle,
+    @ColorInt val messageOptionsBackgroundColor: Int,
+    @ColorInt val userReactionsBackgroundColor: Int,
+    val userReactionsTitleText: TextStyle,
+    @ColorInt val optionsOverlayDimColor: Int,
 ) : Serializable {
 
     internal companion object {
@@ -188,7 +203,8 @@ public data class MessageListViewStyle(
 
                 val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserEnabled, true)
 
-                val copyTextEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+                val copyTextEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
                 val deleteConfirmationEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteConfirmationEnabled, true)
@@ -198,9 +214,68 @@ public data class MessageListViewStyle(
                 val deleteMessageEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiDeleteMessageEnabled, true)
 
-                val editMessageEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
+                val editMessageEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
 
                 val threadsEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
+
+                val warningActionsTintColor = attributes.getColor(
+                    R.styleable.MessageListView_streamUiWarningActionsTintColor,
+                    context.getColorCompat(R.color.stream_ui_accent_red)
+                )
+
+                val messageOptionsText = TextStyle.Builder(attributes)
+                    .size(
+                        R.styleable.MessageListView_streamUiMessageOptionsTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageListView_streamUiMessageOptionsTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageListView_streamUiMessageOptionsTextFontAssets,
+                        R.styleable.MessageListView_streamUiMessageOptionsTextFont
+                    )
+                    .style(
+                        R.styleable.MessageListView_streamUiMessageOptionsTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val messageOptionsBackgroundColor = attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageOptionBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
+                val userReactionsBackgroundColor = attributes.getColor(
+                    R.styleable.MessageListView_streamUiUserReactionsBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
+                val userReactionsTitleText = TextStyle.Builder(attributes)
+                    .size(
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextFontAssets,
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextFont
+                    )
+                    .style(
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val optionsOverlayDimColor = attributes.getColor(
+                    R.styleable.MessageListView_streamUiOptionsOverlayDimColor,
+                    context.getColorCompat(R.color.stream_ui_literal_transparent)
+                )
 
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
@@ -228,6 +303,12 @@ public data class MessageListViewStyle(
                     deleteMessageEnabled = deleteMessageEnabled,
                     editMessageEnabled = editMessageEnabled,
                     threadsEnabled = threadsEnabled,
+                    warningActionsTintColor = warningActionsTintColor,
+                    messageOptionsText = messageOptionsText,
+                    messageOptionsBackgroundColor = messageOptionsBackgroundColor,
+                    userReactionsBackgroundColor = userReactionsBackgroundColor,
+                    userReactionsTitleText = userReactionsTitleText,
+                    optionsOverlayDimColor = optionsOverlayDimColor
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
