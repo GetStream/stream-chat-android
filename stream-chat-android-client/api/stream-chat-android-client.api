@@ -36,7 +36,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun disconnect ()V
 	public final fun disconnectSocket ()V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
-	public final fun events ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
@@ -606,7 +605,6 @@ public final class io/getstream/chat/android/client/channel/ChannelClient : io/g
 	public fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public fun disableSlowMode ()Lio/getstream/chat/android/client/call/Call;
 	public fun enableSlowMode (I)Lio/getstream/chat/android/client/call/Call;
-	public fun events ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
 	public fun getCid ()Ljava/lang/String;
@@ -697,7 +695,6 @@ public abstract interface class io/getstream/chat/android/client/controllers/Cha
 	public abstract fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun disableSlowMode ()Lio/getstream/chat/android/client/call/Call;
 	public abstract fun enableSlowMode (I)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun events ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
 	public abstract fun getChannelId ()Ljava/lang/String;
 	public abstract fun getChannelType ()Ljava/lang/String;
 	public abstract fun getCid ()Ljava/lang/String;
@@ -2958,25 +2955,8 @@ public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public final fun provideCurrentTimeInSeconds ()J
 }
 
-public abstract interface class io/getstream/chat/android/client/utils/observable/ChatObservable {
-	public abstract fun filter (Ljava/lang/String;)Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public abstract fun filter (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public abstract fun filter ([Ljava/lang/Class;)Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public abstract fun first ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public abstract fun ignoreInitState ()Lio/getstream/chat/android/client/utils/observable/ChatObservable;
-	public abstract fun subscribe (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Subscription;
-	public abstract fun unsubscribe (Lio/getstream/chat/android/client/utils/observable/Subscription;)V
-}
-
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {
 	public abstract fun dispose ()V
 	public abstract fun isDisposed ()Z
-}
-
-public final class io/getstream/chat/android/client/utils/observable/Subscription {
-	public fun <init> (Lio/getstream/chat/android/client/utils/observable/ChatObservable;Lkotlin/jvm/functions/Function1;Ljava/util/List;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/utils/observable/ChatObservable;Lkotlin/jvm/functions/Function1;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun onNext (Lio/getstream/chat/android/client/events/ChatEvent;)V
-	public final fun unsubscribe ()V
 }
 

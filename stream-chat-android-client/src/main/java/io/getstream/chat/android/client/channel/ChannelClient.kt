@@ -78,7 +78,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
@@ -99,10 +98,6 @@ public class ChannelClient internal constructor(
     @CheckResult
     override fun create(extraData: Map<String, Any>): Call<Channel> {
         return client.createChannel(channelType, channelId, extraData)
-    }
-
-    override fun events(): ChatObservable {
-        return client.events().filter(this::isRelevantForChannel)
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")

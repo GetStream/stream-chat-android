@@ -17,7 +17,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
@@ -122,13 +121,6 @@ public interface ChannelController {
 
     @CheckResult
     public fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
-
-    @Deprecated(
-        message = "Use subscribe() on the controller directly instead",
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("DEPRECATION_ERROR")
-    public fun events(): ChatObservable
 
     public fun subscribe(listener: (ChatEvent) -> Unit): Disposable
 

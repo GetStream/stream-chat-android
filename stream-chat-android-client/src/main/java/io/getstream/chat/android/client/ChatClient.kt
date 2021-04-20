@@ -68,7 +68,6 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
-import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -424,15 +423,6 @@ public class ChatClient internal constructor(
 
     public fun removeSocketListener(listener: SocketListener) {
         socket.removeListener(listener)
-    }
-
-    @Deprecated(
-        message = "Use subscribe() on the client directly instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    public fun events(): ChatObservable {
-        return socket.events()
     }
 
     @Deprecated(
