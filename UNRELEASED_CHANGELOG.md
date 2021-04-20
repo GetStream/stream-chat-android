@@ -38,6 +38,7 @@
 ### ⚠️ Changed
 - Deprecated `ChannelClient::unBanUser` method
 - Deprecated `ChatClient::unBanUser` method
+- Deprecated `ChatClient::unMuteChannel` method
 
 ### ❌ Removed
 - Removed deprecated `ChatObservable` class and all its uses

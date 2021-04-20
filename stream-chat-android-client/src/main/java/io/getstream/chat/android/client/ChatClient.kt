@@ -1060,7 +1060,8 @@ public class ChatClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "Use the unmuteChannel(channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)")
+        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unmuteChannel(channelType, channelId)
