@@ -39,6 +39,7 @@
 
 ### ❌ Removed
 - Removed deprecated `ChatObservable` class and all its uses
+- Removed deprecated `ChannelControler` interface
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
