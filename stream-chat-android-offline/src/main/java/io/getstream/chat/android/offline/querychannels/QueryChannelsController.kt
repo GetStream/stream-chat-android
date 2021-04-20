@@ -70,10 +70,7 @@ internal class QueryChannelsController(
             when {
                 loading -> QueryChannelsController.ChannelsState.Loading
                 channels.isEmpty() -> QueryChannelsController.ChannelsState.OfflineNoResults
-                else -> {
-                    val channelMutes = domainImpl.currentUser.channelMutes
-                    QueryChannelsController.ChannelsState.Result(updateMutedState(channels, channelMutes))
-                }
+                else -> QueryChannelsController.ChannelsState.Result(channels)
             }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
 
@@ -254,7 +251,12 @@ internal class QueryChannelsController(
         val cIdsInQuery = queryChannelsSpec.cids.intersect(cIds)
 
         // update the channels
-        val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
+        val newChannels = cIdsInQuery
+            .map { domainImpl.channel(it).toChannel() }
+            .let { channelList ->
+                updateMutedState(channelList, domainImpl.currentUser.channelMutes)
+            }
+
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
@@ -266,6 +268,7 @@ internal class QueryChannelsController(
                 }
             }
         }
+
         _channels.value = existingChannelMap
     }
 
