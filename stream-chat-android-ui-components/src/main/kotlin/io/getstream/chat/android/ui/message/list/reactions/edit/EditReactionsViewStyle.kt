@@ -31,17 +31,16 @@ public data class EditReactionsViewStyle(
     internal data class Builder(private val array: TypedArray, private val context: Context) {
         @ColorInt
         private var bubbleColorMine: Int = context.getColorCompat(R.color.stream_ui_white)
+
         @ColorInt
         private var bubbleColorTheirs: Int = context.getColorCompat(R.color.stream_ui_white)
 
         fun bubbleColorMine(@StyleableRes bubbleColorMineResId: Int) = apply {
-            val bubbleColorMine =
-                array.getColor(bubbleColorMineResId, context.getColorCompat(R.color.stream_ui_white))
+            bubbleColorMine = array.getColor(bubbleColorMineResId, context.getColorCompat(R.color.stream_ui_white))
         }
 
         fun bubbleColorTheirs(@StyleableRes bubbleColorTheirsResId: Int) = apply {
-            val bubbleColorMine =
-                array.getColor(bubbleColorTheirsResId, context.getColorCompat(R.color.stream_ui_white))
+            bubbleColorTheirs = array.getColor(bubbleColorTheirsResId, context.getColorCompat(R.color.stream_ui_white))
         }
 
         fun build(): EditReactionsViewStyle {

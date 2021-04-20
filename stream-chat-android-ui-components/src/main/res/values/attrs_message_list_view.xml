@@ -194,5 +194,33 @@
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionIconColor" format="color" />
+        <attr name="streamUiWarningActionsTintColor" format="color" />
+        <attr name="streamUiMessageOptionBackgroundColor" format="color" />
+
+        <attr name="streamUiMessageOptionsTextSize" format="dimension|reference" />
+        <attr name="streamUiMessageOptionsTextColor" format="color|reference" />
+        <attr name="streamUiMessageOptionsTextFont" format="reference" />
+        <attr name="streamUiMessageOptionsTextFontAssets" format="string" />
+        <attr name="streamUiMessageOptionsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- User reactions card -->
+        <attr name="streamUiUserReactionsBackgroundColor" format="color" />
+
+        <attr name="streamUiUserReactionsTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiUserReactionsTitleTextColor" format="color|reference" />
+        <attr name="streamUiUserReactionsTitleTextFont" format="reference" />
+        <attr name="streamUiUserReactionsTitleTextFontAssets" format="string" />
+        <attr name="streamUiUserReactionsTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Options overly dialog -->
+        <attr name="streamUiOptionsOverlayDimColor" format="color" />
     </declare-styleable>
 </resources>
