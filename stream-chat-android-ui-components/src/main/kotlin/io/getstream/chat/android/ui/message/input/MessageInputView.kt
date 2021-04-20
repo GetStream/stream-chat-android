@@ -140,12 +140,13 @@ public class MessageInputView : ConstraintLayout {
     }
 
     @Deprecated(
-        "Use setUserLookupHandler instead of manually passing the list of users",
+        message = "Use setUserLookupHandler instead of manually passing the list of users",
         ReplaceWith(
             "setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))",
             "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
             "io.getstream.chat.android.client.models.Member"
         ),
+        level = DeprecationLevel.ERROR,
     )
     public fun setMembers(members: List<Member>) {
         setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
