@@ -58,7 +58,7 @@ internal class QueryChannelsController(
     private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-    private val _channelMutes = MutableStateFlow(domainImpl.currentUser.channelMutes.toChannelsId())
+    private val _channelMutes = MutableStateFlow<List<String>>(emptyList())
 
     internal val loading: StateFlow<Boolean> = _loading
     internal val loadingMore: StateFlow<Boolean> = _loadingMore
