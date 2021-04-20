@@ -362,7 +362,8 @@ public class ChannelClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "Use the unbanUser(targetId) method instead",
-        replaceWith = ReplaceWith("this.unbanUser(targetId)")
+        replaceWith = ReplaceWith("this.unbanUser(targetId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun unBanUser(targetId: String): Call<Unit> {
         return client.unbanUser(

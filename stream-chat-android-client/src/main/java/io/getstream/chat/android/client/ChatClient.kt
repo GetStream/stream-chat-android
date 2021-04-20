@@ -1115,7 +1115,8 @@ public class ChatClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "Use the unbanUser(targetId, channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)")
+        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun unBanUser(
         targetId: String,

@@ -36,6 +36,8 @@
 - Added `ChatClient::updateChannelPartial` and `ChannelClient::updatePartial` methods for partial updates of channel data.
 
 ### ⚠️ Changed
+- Deprecated `ChannelClient::unBanUser` method
+- Deprecated `ChatClient::unBanUser` method
 
 ### ❌ Removed
 - Removed deprecated `ChatObservable` class and all its uses
