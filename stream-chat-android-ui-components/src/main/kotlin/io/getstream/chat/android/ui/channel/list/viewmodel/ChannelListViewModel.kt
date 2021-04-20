@@ -40,9 +40,7 @@ public class ChannelListViewModel(
     public val state: LiveData<State> = stateMerger
     public val typingEvents: LiveData<TypingEvent>
         get() = chatDomain.typingUpdates
-
-    public val mutedChannelsState: LiveData<List<String>>? = null
-
+    
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
