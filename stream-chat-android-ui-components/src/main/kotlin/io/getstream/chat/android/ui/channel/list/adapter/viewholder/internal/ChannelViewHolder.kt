@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
+import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -102,7 +103,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
-        configureForeground(diff)
+        configureForeground(diff, channel)
         configureBackground()
 
         listener?.onRestoreSwipePosition(this, absoluteAdapterPosition)
@@ -158,7 +159,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         this.optionsCount = optionsCount
     }
 
-    private fun configureForeground(diff: ChannelListPayloadDiff) {
+    private fun configureForeground(diff: ChannelListPayloadDiff, channel: Channel) {
         binding.itemForegroundView.apply {
             diff.run {
                 if (nameChanged) {
@@ -181,6 +182,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                 if (unreadCountChanged) {
                     configureUnreadCountBadge()
                 }
+
+                muteIcon.isVisible = channel.isMuted
             }
         }
     }
@@ -277,5 +280,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         style.lastMessageDateText.apply(lastMessageTimeLabel)
         style.unreadMessageCounterText.apply(unreadCountBadge)
         unreadCountBadge.backgroundTintList = ColorStateList.valueOf(style.unreadMessageCounterBackgroundColor)
+        muteIcon.setImageDrawable(
+            style.mutedChannelIcon.apply { setTint(style.mutedChannelIconTint) }
+        )
     }
 }
