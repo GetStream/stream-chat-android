@@ -34,9 +34,7 @@
             app:iconGravity="textStart"
             app:iconPadding="0dp"
             app:iconTint="@color/stream_ui_accent_blue"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="end|center_vertical"
             />
     </io.getstream.chat.android.ui.message.list.header.MessageListHeaderView>
 
