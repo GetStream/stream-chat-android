@@ -50,8 +50,10 @@ import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClick
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
+import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
 import io.getstream.chat.android.ui.message.list.MessageListView.LastMessageReadHandler
@@ -71,6 +73,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHand
 import io.getstream.chat.android.ui.message.list.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.UserUnmuteHandler
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
@@ -256,7 +259,7 @@ public class MessageListView : ConstraintLayout {
                             channelConfig = channel.config,
                             suppressThreads = adapter.isThread || message.isInThread()
                         ),
-                        messageListViewStyle,
+                        messageListViewStyle
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -352,7 +355,7 @@ public class MessageListView : ConstraintLayout {
                         viewStyle = messageListViewStyle,
                         channelConfig = channel.config,
                     ),
-                    messageListViewStyle,
+                    messageListViewStyle
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -561,7 +564,7 @@ public class MessageListView : ConstraintLayout {
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
-        messageListItemViewHolderFactory.setMessageListItemStyle(this.messageListViewStyle.itemStyle)
+        messageListItemViewHolderFactory.setMessageListItemStyle(messageListViewStyle.itemStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -690,15 +693,6 @@ public class MessageListView : ConstraintLayout {
             reactionsEnabled = enabled,
             itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
         )
-    }
-
-    /**
-     * Enables or disables the message reply feature.
-     *
-     * @param enabled True if user muting is enabled, false otherwise.
-     */
-    public fun setRepliesEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
     }
 
     /**
@@ -863,6 +857,16 @@ public class MessageListView : ConstraintLayout {
     public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
         this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
     }
+
+    /**
+     * Enables or disables the message threading feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
+    }
+
     //endregion
 
     //region Handler setters

@@ -11,8 +11,6 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-import java.io.Serializable
 
 public data class ViewReactionsViewStyle(
     @ColorInt public val bubbleBorderColor: Int,
@@ -29,7 +27,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleCy: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
-) : Serializable {
+) {
 
     internal companion object {
         private val DEFAULT_BUBBLE_BORDER_COLOR = R.color.stream_ui_grey_whisper

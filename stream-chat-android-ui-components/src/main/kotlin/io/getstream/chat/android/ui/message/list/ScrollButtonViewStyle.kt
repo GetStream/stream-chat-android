@@ -12,7 +12,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
-import java.io.Serializable
 
 /**
  * Style for [ScrollButtonView]
@@ -33,7 +32,7 @@ public data class ScrollButtonViewStyle(
     @ColorInt public val scrollButtonBadgeColor: Int,
     public val scrollButtonIcon: Drawable?,
     public val scrollButtonBadgeTextStyle: TextStyle
-) : Serializable {
+) {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false
