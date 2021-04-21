@@ -20,12 +20,12 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 internal class ChatNotifications private constructor(
     val handler: ChatNotificationHandler,
     private val client: ChatApi,
-    private val context: Context
+    private val context: Context,
 ) {
-
-    private val showedNotifications = mutableSetOf<String>()
     private val logger = ChatLogger.get("ChatNotifications")
 
+    private val pushTokenRepository = PushTokenRepository(context, handler)
+    private val showedNotifications = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     private fun init() {
@@ -45,17 +45,7 @@ internal class ChatNotifications private constructor(
     }
 
     fun setFirebaseToken(firebaseToken: String) {
-        logger.logI("setFirebaseToken: $firebaseToken")
-
-        client.addDevice(firebaseToken).enqueue { result ->
-            if (result.isSuccess) {
-                handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
-                logger.logI("DeviceRegisteredSuccess")
-            } else {
-                handler.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
-                logger.logE("Error register device ${result.error().message}")
-            }
-        }
+        pushTokenRepository.updateTokenIfNecessary(firebaseToken)
     }
 
     fun onFirebaseMessage(message: RemoteMessage) {
@@ -167,7 +157,7 @@ internal class ChatNotifications private constructor(
         fun create(
             handler: ChatNotificationHandler,
             client: ChatApi,
-            context: Context
+            context: Context,
         ) = ChatNotifications(handler, client, context).apply(ChatNotifications::init)
     }
 }

@@ -23,6 +23,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Optimized the number of `ChatClient::addDevice` API calls
 
 ### ⬆️ Improved
 
