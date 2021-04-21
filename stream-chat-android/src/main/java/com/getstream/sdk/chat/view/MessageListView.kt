@@ -534,18 +534,6 @@ public class MessageListView : ConstraintLayout {
         this.messageViewHolderFactory = messageViewHolderFactory
     }
 
-    /**
-     * Use the more explicit [setMessageViewHolderFactory] method instead.
-     */
-    @Deprecated(
-        message = "Use the more explicit setMessageViewHolderFactory method instead.",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
-    )
-    public fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
-        setMessageViewHolderFactory(messageViewHolderFactory)
-    }
-
     public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
