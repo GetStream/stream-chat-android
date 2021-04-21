@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
+internal class ReplyDecorator(private val getCurrentUser: () -> User) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -28,7 +28,7 @@ internal class ReplyDecorator(private val currentUser: User) : BaseDecorator() {
         val replyToMessage = data.message.replyTo
         if (replyToMessage != null) {
             replyView.isVisible = true
-            replyView.setMessage(replyToMessage, if (data.isMine) false else currentUser == replyToMessage.user)
+            replyView.setMessage(replyToMessage, if (data.isMine) false else getCurrentUser() == replyToMessage.user)
         } else {
             replyView.isVisible = false
         }
