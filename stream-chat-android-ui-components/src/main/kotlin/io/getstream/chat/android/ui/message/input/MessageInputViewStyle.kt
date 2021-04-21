@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -84,6 +85,12 @@ public data class MessageInputViewStyle(
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
+    public val pictureAttachmentIcon: Drawable,
+    public val pictureAttachmentIconTint: ColorStateList?,
+    public val fileAttachmentIcon: Drawable,
+    public val fileAttachmentIconTint: ColorStateList?,
+    public val cameraAttachmentIcon: Drawable,
+    public val cameraAttachmentIconTint: ColorStateList?,
 ) {
 
     internal companion object {
@@ -370,6 +377,30 @@ public data class MessageInputViewStyle(
                     DEFAULT_ATTACHMENT_MAX_SIZE_MB
                 )
 
+                val pictureAttachmentIcon = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiPictureAttachmentIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+
+                val pictureAttachmentIconTint = a.getColorStateList(
+                    R.styleable.MessageInputView_streamUiPictureAttachmentIconTint
+                )
+
+                val fileAttachmentIcon = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiFileAttachmentIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+
+                val fileAttachmentIconTint = a.getColorStateList(
+                    R.styleable.MessageInputView_streamUiFileAttachmentIconTint
+                )
+
+                val cameraAttachmentIcon = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCameraAttachmentIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+
+                val cameraAttachmentIconTint = a.getColorStateList(
+                    R.styleable.MessageInputView_streamUiCameraAttachmentIconTint
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -399,6 +430,12 @@ public data class MessageInputViewStyle(
                     customCursorDrawable = customCursorDrawable,
                     dividerBackground = dividerBackground,
                     attachmentMaxFileSize = attachmentMaxFileSize,
+                    pictureAttachmentIcon = pictureAttachmentIcon,
+                    pictureAttachmentIconTint = pictureAttachmentIconTint,
+                    fileAttachmentIcon = fileAttachmentIcon,
+                    fileAttachmentIconTint = fileAttachmentIconTint,
+                    cameraAttachmentIcon = cameraAttachmentIcon,
+                    cameraAttachmentIconTint = cameraAttachmentIconTint,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
