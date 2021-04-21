@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.call.Call
@@ -34,7 +35,8 @@ internal class ChannelListViewModelTest {
         viewModel.state.observeForever(mockObserver)
 
         // then
-        verify(mockObserver).onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
+        verify(mockObserver, times(2))
+            .onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
     }
 
     @Test
@@ -45,7 +47,8 @@ internal class ChannelListViewModelTest {
         viewModel.state.observeForever(mockObserver)
 
         // then
-        verify(mockObserver).onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
+        verify(mockObserver, times(2))
+            .onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
     }
 
     @Test
@@ -76,9 +79,11 @@ private class Fixture {
     private val user = createUser()
     private val chatDomain: ChatDomain = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
-    private val queryChannelsCall = TestCall<QueryChannelsController>(queryChannelsControllerResult)
+    private val queryChannelsCall = TestCall(queryChannelsControllerResult)
     private val queryChannelsLoadMoreCall: Call<List<Channel>> = mock()
-    private val queryChannelsController: QueryChannelsController = mock()
+    private val queryChannelsController: QueryChannelsController = mock {
+        on(it.mutedChannelIds) doReturn MutableLiveData(emptyList())
+    }
 
     private val channelsLiveData: MutableLiveData<List<Channel>> = MutableLiveData()
     private val channelsState = MutableLiveData<QueryChannelsController.ChannelsState>()
