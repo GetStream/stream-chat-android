@@ -36,16 +36,17 @@ public class UseCaseHelper internal constructor(offlineUseCaseHelper: OfflineUse
      */
     public val getThread: GetThread = GetThreadImpl(offlineUseCaseHelper.getThread)
 
-    // unread counts
     /**
      * Returns a livedata object for the total number of unread messages
      */
+    @Suppress("DEPRECATION_ERROR")
     public val getTotalUnreadCount: GetTotalUnreadCount =
         GetTotalUnreadCountImpl(offlineUseCaseHelper.getTotalUnreadCount)
 
     /**
      * Returns a livedata object for the number of channels with unread messages
      */
+    @Suppress("DEPRECATION_ERROR")
     public val getUnreadChannelCount: GetUnreadChannelCount =
         GetUnreadChannelCountImpl(offlineUseCaseHelper.getUnreadChannelCount)
 
@@ -108,13 +109,6 @@ public class UseCaseHelper internal constructor(offlineUseCaseHelper: OfflineUse
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
      */
     public val sendGiphy: SendGiphy = SendGiphyImpl(offlineUseCaseHelper.sendGiphy)
-
-    /**
-     * Send a message with attachments.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    public val sendMessageWithAttachments: SendMessageWithAttachments =
-        SendMessageWithAttachmentsImpl(offlineUseCaseHelper.sendMessageWithAttachments)
 
     /**
      * Edit a message. This message is immediately updated in local storage.
