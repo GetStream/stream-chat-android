@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomChannelDeletedEvent
 import io.getstream.chat.android.livedata.randomChannelUpdatedEvent
@@ -29,6 +28,7 @@ import io.getstream.chat.android.livedata.randomTypingStopEvent
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.channel.MessageHelper
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore

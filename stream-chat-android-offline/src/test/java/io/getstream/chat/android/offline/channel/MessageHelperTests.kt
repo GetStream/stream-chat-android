@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller.helper
+package io.getstream.chat.android.offline.channel
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock

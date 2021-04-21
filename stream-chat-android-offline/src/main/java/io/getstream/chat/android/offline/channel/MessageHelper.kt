@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller.helper
+package io.getstream.chat.android.offline.channel
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.models.Attachment
