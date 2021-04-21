@@ -1,9 +1,26 @@
-package io.getstream.chat.android.ui.common
+package io.getstream.chat.android.ui
 
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.message.input.attachment.file.internal.FileAttachmentAdapter
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 
-public object UiUtils {
+/**
+ * A class that provides icons for file attachments.
+ *
+ * @see [FileAttachmentAdapter.FileAttachmentViewHolder]
+ * @see [SelectedFileAttachmentAdapter.SelectedFileAttachmentViewHolder]
+ */
+public fun interface MimeTypeIconProvider {
+    /**
+     * Return icon drawable resource for the given MIME type.
+     *
+     * @param mimeType mimeType A MIME type (i.e. application/pdf)
+     * @return The drawable resource for the given MIME type
+     */
+    public fun getIconRes(mimeType: String?): Int
+}
+
+public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
 
     private val mimeTypesToIconResMap: Map<String, Int> = mapOf(
         ModelType.attach_mime_pdf to R.drawable.stream_ui_ic_file_pdf,
@@ -29,7 +46,7 @@ public object UiUtils {
         ModelType.attach_mime_mp3 to R.drawable.stream_ui_ic_file_mp3,
     )
 
-    public fun getIcon(mimeType: String?): Int {
+    public override fun getIconRes(mimeType: String?): Int {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }

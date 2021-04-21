@@ -17,8 +17,8 @@ import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.UiUtils
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -187,7 +187,7 @@ internal class MessageReplyView : FrameLayout {
             logoContainer.isVisible = true
             fileTypeImageView.isVisible = true
             thumbImageView.isVisible = false
-            fileTypeImageView.setImageResource(UiUtils.getIcon(mimeType))
+            fileTypeImageView.setImageResource(ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
         }
     }
 
