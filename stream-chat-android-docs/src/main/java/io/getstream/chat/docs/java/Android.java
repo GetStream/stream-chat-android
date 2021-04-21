@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.java;
 
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -818,6 +819,8 @@ public class Android {
                     Typeface.DEFAULT
             );
 
+            int colorBlack = ContextCompat.getColor(getContext(), R.color.stream_ui_black);
+
             Drawable genericDrawable =
                     ContextCompat.getDrawable(getContext(), R.drawable.stream_ui_ic_command);
 
@@ -829,8 +832,8 @@ public class Android {
                                 true,
                                 genericDrawable,
                                 requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
-                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
-                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                colorBlack,
+                                colorBlack,
                                 textStyleGeneric,
                                 true,
                                 true,
@@ -846,12 +849,18 @@ public class Android {
                                 textStyleGeneric,
                                 textStyleGeneric,
                                 genericDrawable,
-                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
-                                ContextCompat.getColor(getContext(), R.color.stream_ui_black),
+                                colorBlack,
+                                colorBlack,
                                 genericDrawable,
                                 genericDrawable,
                                 20,
-                                genericDrawable
+                                genericDrawable,
+                                genericDrawable,
+                                ColorStateList.valueOf(colorBlack),
+                                genericDrawable,
+                                ColorStateList.valueOf(colorBlack),
+                                genericDrawable,
+                                ColorStateList.valueOf(colorBlack)
                         )
 
             );
