@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.querychannels
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any

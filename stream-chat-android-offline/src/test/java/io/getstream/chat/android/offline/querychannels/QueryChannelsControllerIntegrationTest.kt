@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.querychannels
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -8,11 +8,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.ChannelDiffCallback
 import io.getstream.chat.android.livedata.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.livedata.utils.UpdateOperationCounts
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

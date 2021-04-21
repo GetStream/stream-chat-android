@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.channel.controller
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -38,7 +38,7 @@ import org.robolectric.Shadows
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
-internal class SendMessagesTest {
+internal class WhenSendMessage {
 
     @get:Rule
     val testCoroutines = TestCoroutineRule()

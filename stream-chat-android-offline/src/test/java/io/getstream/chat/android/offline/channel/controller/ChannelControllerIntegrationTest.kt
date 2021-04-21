@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.channel.controller
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
