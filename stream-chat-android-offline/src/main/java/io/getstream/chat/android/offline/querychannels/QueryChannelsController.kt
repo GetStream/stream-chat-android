@@ -8,12 +8,14 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
@@ -65,11 +67,13 @@ public class QueryChannelsController internal constructor(
     private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+    private val _channelMutes = MutableStateFlow<List<String>>(emptyList())
 
     internal val loading: StateFlow<Boolean> = _loading
     internal val loadingMore: StateFlow<Boolean> = _loadingMore
     internal val endOfChannels: StateFlow<Boolean> = _endOfChannels
     internal val channels: StateFlow<List<Channel>> = _sortedChannels
+    internal val channelMutes: StateFlow<List<String>> = _channelMutes
 
     internal val channelsState: StateFlow<QueryChannelsController.ChannelsState> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
@@ -150,6 +154,10 @@ public class QueryChannelsController internal constructor(
             refreshAllChannels()
         }
 
+        if (event is NotificationChannelMutesUpdatedEvent) {
+            _channelMutes.value = event.me.channelMutes.toChannelsId()
+        }
+
         if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
@@ -228,6 +236,7 @@ public class QueryChannelsController internal constructor(
 
         // update the channels
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
+
         val existingChannelMap = _channels.value.toMutableMap()
 
         newChannels.forEach { channel ->
@@ -239,6 +248,7 @@ public class QueryChannelsController internal constructor(
                 }
             }
         }
+
         _channels.value = existingChannelMap
     }
 
@@ -402,4 +412,6 @@ public class QueryChannelsController internal constructor(
         queryChannelsSpec.cids = cIds
         refreshChannels(cIds)
     }
+
+    private fun List<ChannelMute>.toChannelsId() = map { channelMute -> channelMute.channel.id }
 }

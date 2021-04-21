@@ -212,6 +212,7 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Qu
 	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public abstract fun getLoading ()Landroidx/lifecycle/LiveData;
 	public abstract fun getLoadingMore ()Landroidx/lifecycle/LiveData;
+	public abstract fun getMutedChannelIds ()Landroidx/lifecycle/LiveData;
 	public abstract fun getNewChannelEventFilter ()Lkotlin/jvm/functions/Function2;
 	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;

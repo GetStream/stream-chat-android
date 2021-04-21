@@ -41,9 +41,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
-    private val style by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_ITEM_STYLE) as MessageListViewStyle
-    }
+    private val style by lazy { messageListViewStyle!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -90,6 +88,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        messageListViewStyle = null
         _binding = null
     }
 
@@ -335,7 +334,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
-        private const val ARG_OPTIONS_ITEM_STYLE = "optionsMessageItemStyle"
+
+        internal var messageListViewStyle: MessageListViewStyle? = null
 
         var messageArg: Message? = null
 
@@ -344,7 +344,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, style, configuration)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style)
         }
 
         fun newMessageOptionsInstance(
@@ -352,19 +352,19 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, style, configuration)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
-            style: MessageListViewStyle,
             configuration: MessageOptionsView.Configuration,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
+            messageListViewStyle = style
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_OPTIONS_ITEM_STYLE to style,
                     ARG_OPTIONS_CONFIG to configuration
                 )
                 // pass message via static field

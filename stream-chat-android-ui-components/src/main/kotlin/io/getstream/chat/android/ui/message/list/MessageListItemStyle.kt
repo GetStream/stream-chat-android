@@ -23,7 +23,6 @@ import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsVie
 import io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
-import java.io.Serializable
 
 /**
  * Style for view holders used inside [MessageListView].
@@ -101,7 +100,7 @@ public data class MessageListItemStyle(
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
     public val textStyleSystemMessage: TextStyle,
-) : Serializable {
+) {
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {

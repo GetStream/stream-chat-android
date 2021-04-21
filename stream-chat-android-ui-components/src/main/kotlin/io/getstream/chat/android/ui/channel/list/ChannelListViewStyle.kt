@@ -33,6 +33,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property foregroundLayoutColor - foreground color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_snow]
  * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
  * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
+ * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute]
+ * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -50,6 +52,8 @@ public data class ChannelListViewStyle(
     @ColorInt public val foregroundLayoutColor: Int,
     public val unreadMessageCounterText: TextStyle,
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
+    public val mutedChannelIcon: Drawable,
+    @ColorInt public val mutedChannelIconTint: Int
 ) {
 
     internal companion object {
@@ -182,6 +186,15 @@ public data class ChannelListViewStyle(
                     context.getColorCompat(R.color.stream_ui_accent_red)
                 )
 
+                val mutedChannelIcon = a.getDrawable(
+                    R.styleable.ChannelListView_streamUiMutedChannelIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute)!!
+
+                val mutedChannelIconTint = a.getColor(
+                    R.styleable.ChannelListView_streamUiMutedChannelIconTint,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -197,7 +210,9 @@ public data class ChannelListViewStyle(
                     indicatorPendingSyncIcon = indicatorPendingSyncIcon,
                     foregroundLayoutColor = foregroundLayoutColor,
                     unreadMessageCounterText = unreadMessageCounterText,
-                    unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor
+                    unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor,
+                    mutedChannelIcon = mutedChannelIcon,
+                    mutedChannelIconTint = mutedChannelIconTint
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

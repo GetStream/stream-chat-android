@@ -59,5 +59,8 @@
         </attr>
 
         <attr name="streamUiUnreadMessageCounterBackgroundColor" format="color|reference" />
+
+        <attr name="streamUiMutedChannelIcon" format="reference"/>
+        <attr name="streamUiMutedChannelIconTint" format="color|reference"/>
     </declare-styleable>
 </resources>
