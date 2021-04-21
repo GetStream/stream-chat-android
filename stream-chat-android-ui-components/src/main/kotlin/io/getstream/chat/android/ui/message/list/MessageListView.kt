@@ -251,8 +251,6 @@ public class MessageListView : ConstraintLayout {
     private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                MessageOptionsDialogFragment.messageListViewStyle = messageListViewStyle
-
                 MessageOptionsDialogFragment
                     .newMessageOptionsInstance(
                         message,
@@ -260,7 +258,8 @@ public class MessageListView : ConstraintLayout {
                             viewStyle = messageListViewStyle,
                             channelConfig = channel.config,
                             suppressThreads = adapter.isThread || message.isInThread()
-                        )
+                        ),
+                        messageListViewStyle
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -356,6 +355,7 @@ public class MessageListView : ConstraintLayout {
                         viewStyle = messageListViewStyle,
                         channelConfig = channel.config,
                     ),
+                    messageListViewStyle
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)

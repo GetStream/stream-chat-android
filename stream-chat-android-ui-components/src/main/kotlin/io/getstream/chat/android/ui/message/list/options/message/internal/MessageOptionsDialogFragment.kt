@@ -342,22 +342,26 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         fun newReactionOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style)
         }
 
         private fun newInstance(
             optionsMode: OptionsMode,
             message: Message,
-            configuration: MessageOptionsView.Configuration
+            configuration: MessageOptionsView.Configuration,
+            style: MessageListViewStyle,
         ): MessageOptionsDialogFragment {
+            messageListViewStyle = style
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
