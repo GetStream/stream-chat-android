@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 
-@Suppress("DEPRECATION_ERROR")
 internal class FakeChatSocket : ChatSocket {
 
     private val listeners = mutableSetOf<SocketListener>()
@@ -14,10 +13,6 @@ internal class FakeChatSocket : ChatSocket {
     }
 
     override fun connectAnonymously() {
-    }
-
-    override fun events(): ChatObservable {
-        error("not implemented")
     }
 
     override fun addListener(listener: SocketListener) {
