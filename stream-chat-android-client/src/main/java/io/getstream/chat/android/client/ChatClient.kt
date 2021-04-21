@@ -68,7 +68,6 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
-import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -424,15 +423,6 @@ public class ChatClient internal constructor(
 
     public fun removeSocketListener(listener: SocketListener) {
         socket.removeListener(listener)
-    }
-
-    @Deprecated(
-        message = "Use subscribe() on the client directly instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    public fun events(): ChatObservable {
-        return socket.events()
     }
 
     @Deprecated(
@@ -1070,7 +1060,8 @@ public class ChatClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "Use the unmuteChannel(channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)")
+        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unmuteChannel(channelType, channelId)
@@ -1125,7 +1116,8 @@ public class ChatClient internal constructor(
     @CheckResult
     @Deprecated(
         message = "Use the unbanUser(targetId, channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)")
+        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun unBanUser(
         targetId: String,

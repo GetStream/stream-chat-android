@@ -14,8 +14,8 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.UiUtils
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -42,7 +42,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
                         transformation = FILE_THUMB_TRANSFORMATION
                     )
                 } else {
-                    load(data = UiUtils.getIcon(actualMimeType))
+                    load(data = ChatUI.mimeTypeIconProvider.getIconRes(actualMimeType))
                 }
             }
         }
@@ -57,7 +57,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData) {
                 transformation = FILE_THUMB_TRANSFORMATION
             )
             ModelType.attach_image -> load(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
-            else -> load(data = UiUtils.getIcon(mimeType))
+            else -> load(data = ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
         }
     }
 }

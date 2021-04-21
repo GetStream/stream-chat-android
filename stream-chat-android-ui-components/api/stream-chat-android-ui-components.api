@@ -36,6 +36,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
+	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
@@ -43,10 +44,20 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
+	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 	public final fun setUrlSigner (Lio/getstream/chat/android/ui/common/UrlSigner;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
+	public abstract fun getIconRes (Ljava/lang/String;)I
+}
+
+public final class io/getstream/chat/android/ui/MimeTypeIconProviderImpl : io/getstream/chat/android/ui/MimeTypeIconProvider {
+	public fun <init> ()V
+	public fun getIconRes (Ljava/lang/String;)I
 }
 
 public abstract interface class io/getstream/chat/android/ui/StyleTransformer {
@@ -471,11 +482,6 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/ui/common/UiUtils {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/UiUtils;
-	public final fun getIcon (Ljava/lang/String;)I
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/UrlSigner {

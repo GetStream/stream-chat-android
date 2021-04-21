@@ -60,4 +60,12 @@ public object ChatUI {
         set(value) {
             supportedReactionsOverride = value
         }
+
+    private var mimeTypeIconProviderOverride: MimeTypeIconProvider? = null
+    private val defaultMimeTypeIconProvider: MimeTypeIconProvider by lazy { MimeTypeIconProviderImpl() }
+    public var mimeTypeIconProvider: MimeTypeIconProvider
+        get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
+        set(value) {
+            mimeTypeIconProviderOverride = value
+        }
 }
