@@ -85,6 +85,11 @@
 - Added `ChatDomain::removeMembers` method
 - Added `ChatDomain::createDistinctChannel` A use-case for creating a channel based on its members.
 - Added `ChatDomain::removeMembers` method
+- Added new versions with API based on kotlin `StateFlow` for the following classes:
+  * `io.getstream.chat.android.offline.ChatDomain`
+  * `io.getstream.chat.android.offline.channel.ChannelController`
+  * `io.getstream.chat.android.offline.thread.ThreadController`
+  * `io.getstream.chat.android.offline.querychannels.QueryChannelsController`
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.useCases`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `ChatDomain` use case functions instead.
