@@ -62,9 +62,15 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
     @ColorInt public val messageBackgroundColorTheirs: Int?,
-    @Deprecated("Use MessageListItemStyle::textStyleMine::colorOrNull() instead")
+    @Deprecated(
+        message = "Use MessageListItemStyle::textStyleMine::colorOrNull() instead",
+        level = DeprecationLevel.ERROR,
+    )
     @ColorInt public val messageTextColorMine: Int?,
-    @Deprecated("Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead")
+    @Deprecated(
+        message = "Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead",
+        level = DeprecationLevel.ERROR,
+    )
     @ColorInt public val messageTextColorTheirs: Int?,
     @ColorInt public val messageLinkTextColorMine: Int?,
     @ColorInt public val messageLinkTextColorTheirs: Int?,

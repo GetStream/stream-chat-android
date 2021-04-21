@@ -5,56 +5,6 @@ public final class com/getstream/sdk/chat/BuildConfig {
 	public fun <init> ()V
 }
 
-public abstract interface class com/getstream/sdk/chat/Chat {
-	public static final field Companion Lcom/getstream/sdk/chat/Chat$Companion;
-	public abstract fun disconnect ()V
-	public abstract fun getCurrentUser ()Landroidx/lifecycle/LiveData;
-	public abstract fun getFonts ()Lcom/getstream/sdk/chat/style/ChatFonts;
-	public static fun getInstance ()Lcom/getstream/sdk/chat/Chat;
-	public abstract fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
-	public abstract fun getNavigator ()Lcom/getstream/sdk/chat/navigation/ChatNavigator;
-	public abstract fun getOnlineStatus ()Landroidx/lifecycle/LiveData;
-	public abstract fun getStrings ()Lcom/getstream/sdk/chat/utils/strings/ChatStrings;
-	public abstract fun getUnreadChannels ()Landroidx/lifecycle/LiveData;
-	public abstract fun getUnreadMessages ()Landroidx/lifecycle/LiveData;
-	public abstract fun getVersion ()Ljava/lang/String;
-	public static fun instance ()Lcom/getstream/sdk/chat/Chat;
-	public abstract fun setUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
-	public abstract fun urlSigner ()Lcom/getstream/sdk/chat/UrlSigner;
-}
-
-public final class com/getstream/sdk/chat/Chat$Builder {
-	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
-	public final fun build ()Lcom/getstream/sdk/chat/Chat;
-	public final fun getChatLogLevel ()Lio/getstream/chat/android/client/logger/ChatLogLevel;
-	public final fun getChatLoggerHandler ()Lio/getstream/chat/android/client/logger/ChatLoggerHandler;
-	public final fun getFileUploader ()Lio/getstream/chat/android/client/uploader/FileUploader;
-	public final fun getMarkdown ()Lcom/getstream/sdk/chat/ChatMarkdown;
-	public final fun getNavigationHandler ()Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;
-	public final fun getNotificationHandler ()Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;
-	public final fun getOfflineEnabled ()Z
-	public final fun getStyle ()Lcom/getstream/sdk/chat/style/ChatStyle;
-	public final fun getUrlSigner ()Lcom/getstream/sdk/chat/UrlSigner;
-	public final fun setChatLogLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)V
-	public final fun setChatLoggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)V
-	public final fun setFileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)V
-	public final fun setMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)V
-	public final fun setNavigationHandler (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)V
-	public final fun setNotificationHandler (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)V
-	public final fun setOfflineEnabled (Z)V
-	public final fun setStyle (Lcom/getstream/sdk/chat/style/ChatStyle;)V
-	public final fun setUrlSigner (Lcom/getstream/sdk/chat/UrlSigner;)V
-}
-
-public final class com/getstream/sdk/chat/Chat$Companion {
-	public final fun getInstance ()Lcom/getstream/sdk/chat/Chat;
-	public final fun instance ()Lcom/getstream/sdk/chat/Chat;
-}
-
-public final class com/getstream/sdk/chat/Chat$DefaultImpls {
-	public static synthetic fun setUser$default (Lcom/getstream/sdk/chat/Chat;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
-}
-
 public final class com/getstream/sdk/chat/ChatMarkdownImpl : com/getstream/sdk/chat/ChatMarkdown {
 	public fun <init> (Landroid/content/Context;)V
 	public fun setText (Landroid/widget/TextView;Ljava/lang/String;)V
@@ -558,7 +508,6 @@ public final class com/getstream/sdk/chat/view/MessageListView : androidx/constr
 	public final fun setScrollButtonIconResource (I)V
 	public final fun setUnseenButtonEnabled (Z)V
 	public final fun setUserClickListener (Lcom/getstream/sdk/chat/view/MessageListView$UserClickListener;)V
-	public final fun setViewHolderFactory (Lcom/getstream/sdk/chat/adapter/MessageViewHolderFactory;)V
 	public final fun showEmptyStateView ()V
 	public final fun showLoadingView ()V
 }

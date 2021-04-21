@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.common.extensions
 
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.internal.ModelType
 import java.util.Date
 
 public fun Message.isDeleted(): Boolean = deletedAt != null

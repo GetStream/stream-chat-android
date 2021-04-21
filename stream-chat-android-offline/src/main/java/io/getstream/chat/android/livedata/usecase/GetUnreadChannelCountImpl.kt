@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 
 @Deprecated(
     message = "Use ChatDomain::channelUnreadCount instead",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
 )
 public interface GetUnreadChannelCount {
     /**
@@ -24,6 +24,7 @@ public interface GetUnreadChannelCount {
     public operator fun invoke(): Call<LiveData<Int>>
 }
 
+@Suppress("DEPRECATION_ERROR")
 internal class GetUnreadChannelCountImpl(private val domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
     override operator fun invoke(): Call<LiveData<Int>> {
         return CoroutineCall(domainImpl.scope) {

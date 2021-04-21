@@ -12,6 +12,7 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 
@@ -20,7 +21,8 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
+- Removed deprecated `MessageListView::setViewHolderFactory` method
+- Removed deprecated `Chat` interface
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -34,8 +36,13 @@
 - Added `ChatClient::updateChannelPartial` and `ChannelClient::updatePartial` methods for partial updates of channel data.
 
 ### ⚠️ Changed
+- Deprecated `ChannelClient::unBanUser` method
+- Deprecated `ChatClient::unBanUser` method
+- Deprecated `ChatClient::unMuteChannel` method
 
 ### ❌ Removed
+- Removed deprecated `ChatObservable` class and all its uses
+- Removed deprecated `ChannelControler` interface
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -81,6 +88,8 @@
 
 ### ⚠️ Changed
 - Deprecated `ChatDomain.useCases`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `ChatDomain` use case functions instead.
+- Deprecated `GetUnreadChannelCount`
+- Deprecated `GetTotalUnreadCount`
 
 ### ❌ Removed
 
@@ -103,6 +112,7 @@
 - Fixed doubled command prefix when the command contains user mention
 - Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
+- Fixed multiline messages which were displayed in a single line
 
 ### ⬆️ Improved
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
@@ -149,6 +159,7 @@ It allows defining a set of supported reactions by passing a `Map<String, Reacti
       * `streamUiUserReactionsBackgroundColor`
       * `streamUiOptionsOverlayDimColor`
       * `streamUiWarningActionsTintColor`
+- Added `ChatUI.mimeTypeIconProvider: MimeTypeIconProvider` property which allows to customize file attachment icons.
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!

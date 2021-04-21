@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.common.markdown
 import android.content.Context
 import android.widget.TextView
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.image.ImagesPlugin
@@ -14,6 +15,7 @@ internal class ChatMarkdownImpl(context: Context) : ChatMarkdown {
         .usePlugin(LinkifyPlugin.create())
         .usePlugin(ImagesPlugin.create())
         .usePlugin(StrikethroughPlugin.create())
+        .usePlugin(SoftBreakAddsNewLinePlugin.create())
         .build()
 
     override fun setText(textView: TextView, text: String) {
