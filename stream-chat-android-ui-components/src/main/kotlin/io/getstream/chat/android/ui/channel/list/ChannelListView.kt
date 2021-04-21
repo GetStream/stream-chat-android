@@ -221,8 +221,10 @@ public class ChannelListView @JvmOverloads constructor(
 
         @Suppress("DEPRECATION")
         if (filteredChannels.isEmpty()) {
+            @Suppress("DEPRECATION_ERROR")
             showEmptyStateView()
         } else {
+            @Suppress("DEPRECATION_ERROR")
             hideEmptyStateView()
         }
 
@@ -234,6 +236,7 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun showLoadingView() {
+        @Suppress("DEPRECATION_ERROR")
         hideEmptyStateView()
         this.loadingView.isVisible = true
     }
@@ -251,7 +254,7 @@ public class ChannelListView @JvmOverloads constructor(
      * [setChannels] automatically.
      */
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "setChannels handles these changes automatically"
     )
     public fun showEmptyStateView() {
@@ -263,7 +266,7 @@ public class ChannelListView @JvmOverloads constructor(
      * [setChannels] automatically.
      */
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "setChannels handles these changes automatically"
     )
     public fun hideEmptyStateView() {

@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  * @see ChatFonts
  */
 @Deprecated(
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
     message = "Use new ChatUI implementation",
     replaceWith = ReplaceWith("ChatUI", "io.getstream.chat.android.ui.ChatUI"),
 )
@@ -75,6 +75,7 @@ public class ChatUI internal constructor(
             this.strings = strings
         }
 
+        @Suppress("DEPRECATION_ERROR")
         public fun build(): ChatUI {
             val chatStyle = style ?: ChatStyle()
             val fakeNavigator: ChatNavigator = ChatNavigator { }
@@ -119,9 +120,11 @@ public class ChatUI internal constructor(
     }
 
     public companion object {
+        @Suppress("DEPRECATION_ERROR")
         private var instance: ChatUI? = null
 
         @JvmStatic
+        @Suppress("DEPRECATION_ERROR")
         public fun instance(): ChatUI {
             return checkNotNull(instance) { "Be sure to call ChatUI.Builder().build() before using ChatUI.instance()" }
         }

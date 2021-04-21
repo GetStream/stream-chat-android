@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.common.extensions.internal
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -13,7 +14,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.isRegular
 import io.getstream.chat.android.ui.common.extensions.isSystem
-import io.getstream.chat.android.ui.common.internal.ModelType
 
 internal fun Channel.getLastMessage(): Message? =
     messages.asSequence()
