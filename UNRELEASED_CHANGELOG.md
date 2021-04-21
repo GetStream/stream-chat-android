@@ -159,6 +159,7 @@ It allows defining a set of supported reactions by passing a `Map<String, Reacti
       * `streamUiUserReactionsBackgroundColor`
       * `streamUiOptionsOverlayDimColor`
       * `streamUiWarningActionsTintColor`
+- Added `ChatUI.mimeTypeIconProvider: MimeTypeIconProvider` property which allows to customize file attachment icons.
 
 ### ⚠️ Changed
 - Now the "block user" feature is disabled. We're planning to improve the feature later. Stay tuned!
