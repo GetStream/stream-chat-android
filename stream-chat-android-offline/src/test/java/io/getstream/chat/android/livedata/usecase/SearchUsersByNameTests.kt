@@ -12,8 +12,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomBoolean

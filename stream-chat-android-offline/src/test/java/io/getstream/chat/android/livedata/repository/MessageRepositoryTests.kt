@@ -14,10 +14,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessageEntity
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.domain.message.MessageDao
-import io.getstream.chat.android.livedata.repository.domain.message.MessageRepository
-import io.getstream.chat.android.livedata.repository.domain.message.MessageRepositoryImpl
-import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.offline.repository.domain.message.MessageDao
+import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
+import io.getstream.chat.android.offline.repository.domain.message.MessageRepositoryImpl
+import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest

@@ -10,11 +10,11 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.livedata.randomChannelConfig
 import io.getstream.chat.android.livedata.randomConfig
-import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigDao
-import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigEntity
-import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigInnerEntity
-import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepository
-import io.getstream.chat.android.livedata.repository.domain.channelconfig.ChannelConfigRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigDao
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigEntity
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigInnerEntity
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
+import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before

@@ -9,10 +9,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.randomReaction
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionDao
-import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionRepository
-import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionRepositoryImpl
-import io.getstream.chat.android.livedata.repository.domain.reaction.toEntity
+import io.getstream.chat.android.offline.repository.domain.reaction.ReactionDao
+import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
+import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.reaction.toEntity
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

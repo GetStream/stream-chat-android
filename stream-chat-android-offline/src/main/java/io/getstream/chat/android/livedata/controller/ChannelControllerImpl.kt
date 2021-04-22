@@ -16,8 +16,8 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.channel.MessageHelper
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
 

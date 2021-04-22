@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomSyncStatus
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.utils.filter
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomIntBetween

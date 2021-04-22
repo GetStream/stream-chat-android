@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.launch
 

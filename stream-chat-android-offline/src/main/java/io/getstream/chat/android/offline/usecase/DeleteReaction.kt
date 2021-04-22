@@ -5,8 +5,8 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.utils.validateCid
 
 internal class DeleteReaction(private val domainImpl: ChatDomainImpl) {
     /**

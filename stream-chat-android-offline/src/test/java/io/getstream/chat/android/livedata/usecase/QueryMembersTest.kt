@@ -16,8 +16,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -7,8 +7,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.utils.validateCid
 import java.io.File
 
 internal class SendMessage(private val domainImpl: ChatDomainImpl) {

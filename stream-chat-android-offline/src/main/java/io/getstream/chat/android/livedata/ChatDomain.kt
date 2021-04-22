@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.utils.RetryPolicy
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder

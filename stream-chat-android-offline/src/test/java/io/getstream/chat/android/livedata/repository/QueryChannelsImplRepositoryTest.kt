@@ -13,10 +13,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.randomQueryChannelsSpec
-import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsDao
-import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsEntity
-import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsRepositoryImpl
-import io.getstream.chat.android.livedata.repository.domain.queryChannels.QueryChannelsWithSorts
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsWithSorts
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert

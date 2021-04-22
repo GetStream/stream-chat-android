@@ -24,8 +24,8 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.utils.RetryPolicy
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 

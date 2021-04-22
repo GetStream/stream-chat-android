@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.ui.common.extensions.isOwnerOrAdmin
 import io.getstream.chat.ui.sample.common.name
 import kotlinx.coroutines.launch

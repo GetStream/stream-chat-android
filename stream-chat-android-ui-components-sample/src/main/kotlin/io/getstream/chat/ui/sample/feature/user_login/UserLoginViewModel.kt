@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
