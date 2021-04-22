@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.event
+package io.getstream.chat.android.offline.event
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.EventHandlerImpl
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope

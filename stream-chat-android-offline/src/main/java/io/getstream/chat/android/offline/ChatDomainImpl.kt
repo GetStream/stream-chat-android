@@ -55,6 +55,7 @@ import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.CancelMessage

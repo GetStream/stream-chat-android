@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline
+package io.getstream.chat.android.offline.event
 
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -66,6 +66,7 @@ import io.getstream.chat.android.livedata.extensions.incrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.setMember
 import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.livedata.extensions.updateReads
+import io.getstream.chat.android.offline.ChatDomainImpl
 import kotlinx.coroutines.launch
 
 internal class EventHandlerImpl(

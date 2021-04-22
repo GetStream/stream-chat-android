@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.EventHandlerImpl
+import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
