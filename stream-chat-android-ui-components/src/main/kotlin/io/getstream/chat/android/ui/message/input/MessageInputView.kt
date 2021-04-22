@@ -331,7 +331,7 @@ public class MessageInputView : ConstraintLayout {
             style.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
-                    AttachmentDialogFragment.newInstance()
+                    AttachmentDialogFragment.newInstance(style.attachmentDialogStyle)
                         .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
                         .show(it, AttachmentDialogFragment.TAG)
                 }

@@ -103,6 +103,14 @@
 
         <!--Suggestions-->
         <attr name="streamUiSuggestionBackgroundColor" format="reference|color" />
+
+        <!--Attachment Dialog-->
+        <attr name="streamUiPictureAttachmentIcon" format="reference" />
+        <attr name="streamUiPictureAttachmentIconTint" format="color|reference" />
+        <attr name="streamUiFileAttachmentIcon" format="reference" />
+        <attr name="streamUiFileAttachmentIconTint" format="color|reference" />
+        <attr name="streamUiCameraAttachmentIcon" format="reference" />
+        <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
     </declare-styleable>
 
 </resources>
