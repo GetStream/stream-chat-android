@@ -10,6 +10,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -92,11 +93,11 @@ public data class MessageInputViewStyle(
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
     public val pictureAttachmentIcon: Drawable,
-    public val pictureAttachmentIconTint: ColorStateList?,
+    public val pictureAttachmentIconTint: ColorStateList,
     public val fileAttachmentIcon: Drawable,
-    public val fileAttachmentIconTint: ColorStateList?,
+    public val fileAttachmentIconTint: ColorStateList,
     public val cameraAttachmentIcon: Drawable,
-    public val cameraAttachmentIconTint: ColorStateList?,
+    public val cameraAttachmentIconTint: ColorStateList,
 ) {
 
     internal companion object {
@@ -389,7 +390,7 @@ public data class MessageInputViewStyle(
 
                 val pictureAttachmentIconTint = a.getColorStateList(
                     R.styleable.MessageInputView_streamUiPictureAttachmentIconTint
-                )
+                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
 
                 val fileAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiFileAttachmentIcon
@@ -397,7 +398,7 @@ public data class MessageInputViewStyle(
 
                 val fileAttachmentIconTint = a.getColorStateList(
                     R.styleable.MessageInputView_streamUiFileAttachmentIconTint
-                )
+                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
 
                 val cameraAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIcon
@@ -405,7 +406,7 @@ public data class MessageInputViewStyle(
 
                 val cameraAttachmentIconTint = a.getColorStateList(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIconTint
-                )
+                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
 
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,

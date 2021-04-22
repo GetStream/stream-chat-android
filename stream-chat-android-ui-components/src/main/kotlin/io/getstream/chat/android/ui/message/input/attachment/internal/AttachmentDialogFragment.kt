@@ -48,7 +48,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
             mediaAttachmentButton.run {
                 background = style.pictureAttachmentIcon
-                style.pictureAttachmentIconTint?.let(this::setBackgroundTintList)
+                backgroundTintList = style.pictureAttachmentIconTint
 
                 isChecked = true
                 setOnClickListener {
@@ -58,7 +58,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
             fileAttachmentButton.run {
                 background = style.fileAttachmentIcon
-                style.fileAttachmentIconTint?.let(this::setBackgroundTintList)
+                backgroundTintList = style.fileAttachmentIconTint
 
                 setOnClickListener {
                     setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
@@ -67,7 +67,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
             cameraAttachmentButton.run {
                 background = style.cameraAttachmentIcon
-                style.cameraAttachmentIconTint?.let(this::setBackgroundTintList)
+                backgroundTintList = style.cameraAttachmentIconTint
 
                 setOnClickListener {
                     setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)

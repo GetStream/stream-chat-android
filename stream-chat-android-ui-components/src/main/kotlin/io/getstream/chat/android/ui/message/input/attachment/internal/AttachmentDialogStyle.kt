@@ -6,11 +6,11 @@ import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 
 internal data class AttachmentDialogStyle(
     val pictureAttachmentIcon: Drawable,
-    val pictureAttachmentIconTint: ColorStateList?,
+    val pictureAttachmentIconTint: ColorStateList,
     val fileAttachmentIcon: Drawable,
-    val fileAttachmentIconTint: ColorStateList?,
+    val fileAttachmentIconTint: ColorStateList,
     val cameraAttachmentIcon: Drawable,
-    val cameraAttachmentIconTint: ColorStateList?,
+    val cameraAttachmentIconTint: ColorStateList,
 )
 
 internal fun MessageInputViewStyle.toAttachmentDialogStyle(): AttachmentDialogStyle {
