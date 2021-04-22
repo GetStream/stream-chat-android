@@ -20,6 +20,8 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
     private var attachmentSource: AttachmentSource = AttachmentSource.MEDIA
 
+    private val style by lazy { staticStyle!! }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) dismiss()
@@ -30,7 +32,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = StreamUiDialogAttachmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -44,16 +46,34 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
                 dismiss()
             }
 
-            mediaAttachmentButton.isChecked = true
-            mediaAttachmentButton.setOnClickListener {
-                setSelectedButton(mediaAttachmentButton, AttachmentDialogPagerAdapter.PAGE_MEDIA_ATTACHMENT)
+            mediaAttachmentButton.run {
+                background = style.pictureAttachmentIcon
+                backgroundTintList = style.pictureAttachmentIconTint
+
+                isChecked = true
+                setOnClickListener {
+                    setSelectedButton(this, AttachmentDialogPagerAdapter.PAGE_MEDIA_ATTACHMENT)
+                }
             }
-            fileAttachmentButton.setOnClickListener {
-                setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
+
+            fileAttachmentButton.run {
+                background = style.fileAttachmentIcon
+                backgroundTintList = style.fileAttachmentIconTint
+
+                setOnClickListener {
+                    setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
+                }
             }
-            cameraAttachmentButton.setOnClickListener {
-                setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)
+
+            cameraAttachmentButton.run {
+                background = style.cameraAttachmentIcon
+                backgroundTintList = style.cameraAttachmentIconTint
+
+                setOnClickListener {
+                    setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)
+                }
             }
+
             attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentDialogFragment)
             attachmentPager.isUserInputEnabled = false
         }
@@ -61,6 +81,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
     override fun onDestroyView() {
         super.onDestroyView()
+        staticStyle = null
         _binding = null
     }
 
@@ -124,6 +145,11 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
         const val BUNDLE_KEY = "bundle_attachments"
 
-        fun newInstance() = AttachmentDialogFragment()
+        var staticStyle: AttachmentDialogStyle? = null
+
+        fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentDialogFragment {
+            staticStyle = attachmentDialogStyle
+            return AttachmentDialogFragment()
+        }
     }
 }
