@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.MessageHelper
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
 
@@ -54,7 +55,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     override val read: LiveData<ChannelUserRead?> = channelControllerStateFlow.read.asLiveData()
     override val unreadCount: LiveData<Int?> = channelControllerStateFlow.unreadCount.asLiveData()
     override val members: LiveData<List<Member>> = channelControllerStateFlow.members.asLiveData()
-    override val channelData: LiveData<ChannelData> = channelControllerStateFlow.channelData.asLiveData()
+    override val channelData: LiveData<ChannelData> = channelControllerStateFlow.channelData.map(::ChannelData).asLiveData()
     override val hidden: LiveData<Boolean> = channelControllerStateFlow.hidden.asLiveData()
     override val muted: LiveData<Boolean> = channelControllerStateFlow.muted.asLiveData()
     override val loading: LiveData<Boolean> = channelControllerStateFlow.loading.asLiveData()
