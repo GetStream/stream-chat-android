@@ -26,7 +26,6 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
-import io.getstream.chat.android.ui.message.input.attachment.internal.toAttachmentDialogStyle
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.internal.SuggestionListPopupWindow
@@ -332,7 +331,7 @@ public class MessageInputView : ConstraintLayout {
             style.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
-                    AttachmentDialogFragment.newInstance(style.toAttachmentDialogStyle())
+                    AttachmentDialogFragment.newInstance(style.attachmentDialogStyle)
                         .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
                         .show(it, AttachmentDialogFragment.TAG)
                 }

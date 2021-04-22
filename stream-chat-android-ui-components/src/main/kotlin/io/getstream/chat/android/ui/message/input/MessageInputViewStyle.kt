@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -16,6 +15,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
@@ -92,12 +92,7 @@ public data class MessageInputViewStyle(
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
-    public val pictureAttachmentIcon: Drawable,
-    public val pictureAttachmentIconTint: ColorStateList,
-    public val fileAttachmentIcon: Drawable,
-    public val fileAttachmentIconTint: ColorStateList,
-    public val cameraAttachmentIcon: Drawable,
-    public val cameraAttachmentIconTint: ColorStateList,
+    public val attachmentDialogStyle: AttachmentDialogStyle
 ) {
 
     internal companion object {
@@ -408,6 +403,15 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIconTint
                 ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
 
+                val attachmentDialogStyle = AttachmentDialogStyle(
+                    pictureAttachmentIcon = pictureAttachmentIcon,
+                    pictureAttachmentIconTint = pictureAttachmentIconTint,
+                    fileAttachmentIcon = fileAttachmentIcon,
+                    fileAttachmentIconTint = fileAttachmentIconTint,
+                    cameraAttachmentIcon = cameraAttachmentIcon,
+                    cameraAttachmentIconTint = cameraAttachmentIconTint,
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -437,12 +441,7 @@ public data class MessageInputViewStyle(
                     customCursorDrawable = customCursorDrawable,
                     dividerBackground = dividerBackground,
                     attachmentMaxFileSize = attachmentMaxFileSize,
-                    pictureAttachmentIcon = pictureAttachmentIcon,
-                    pictureAttachmentIconTint = pictureAttachmentIconTint,
-                    fileAttachmentIcon = fileAttachmentIcon,
-                    fileAttachmentIconTint = fileAttachmentIconTint,
-                    cameraAttachmentIcon = cameraAttachmentIcon,
-                    cameraAttachmentIconTint = cameraAttachmentIconTint,
+                    attachmentDialogStyle = attachmentDialogStyle,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
