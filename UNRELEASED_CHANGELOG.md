@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing. 
 
 ### ✅ Added
 
@@ -58,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing. 
 
 ### ✅ Added
 
