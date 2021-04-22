@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalDateTime;
@@ -824,6 +825,15 @@ public class Android {
             Drawable genericDrawable =
                     ContextCompat.getDrawable(getContext(), R.drawable.stream_ui_ic_command);
 
+            AttachmentDialogStyle attachmentDialogStyle = new AttachmentDialogStyle(
+                    genericDrawable,
+                    ColorStateList.valueOf(colorBlack),
+                    genericDrawable,
+                    ColorStateList.valueOf(colorBlack),
+                    genericDrawable,
+                    ColorStateList.valueOf(colorBlack)
+            );
+
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
                     viewStyle ->
                         new MessageInputViewStyle(
@@ -855,12 +865,7 @@ public class Android {
                                 genericDrawable,
                                 20,
                                 genericDrawable,
-                                genericDrawable,
-                                ColorStateList.valueOf(colorBlack),
-                                genericDrawable,
-                                ColorStateList.valueOf(colorBlack),
-                                genericDrawable,
-                                ColorStateList.valueOf(colorBlack)
+                                attachmentDialogStyle
                         )
 
             );
