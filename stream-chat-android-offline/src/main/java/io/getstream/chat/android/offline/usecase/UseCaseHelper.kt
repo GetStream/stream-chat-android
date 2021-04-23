@@ -106,12 +106,6 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
     public val sendGiphy: SendGiphy = SendGiphyImpl(chatDomainImpl)
 
     /**
-     * Send a message with attachments.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    public val sendMessageWithAttachments: SendMessageWithAttachments = SendMessageWithAttachmentsImpl(chatDomainImpl)
-
-    /**
      * Edit a message. This message is immediately updated in local storage.
      * The API call to edit the message is retried using the retry policy
      */

@@ -861,14 +861,6 @@ public final class io/getstream/chat/android/offline/usecase/SendMessage$Default
 	public static fun invoke (Lio/getstream/chat/android/offline/usecase/SendMessage;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/SendMessageWithAttachments {
-	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/SendMessageWithAttachments$DefaultImpls {
-	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/SendMessageWithAttachments;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-}
-
 public abstract interface class io/getstream/chat/android/offline/usecase/SendReaction {
 	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 }
@@ -928,7 +920,6 @@ public final class io/getstream/chat/android/offline/usecase/UseCaseHelper {
 	public final fun getSearchUsersByName ()Lio/getstream/chat/android/offline/usecase/SearchUsersByName;
 	public final fun getSendGiphy ()Lio/getstream/chat/android/offline/usecase/SendGiphy;
 	public final fun getSendMessage ()Lio/getstream/chat/android/offline/usecase/SendMessage;
-	public final fun getSendMessageWithAttachments ()Lio/getstream/chat/android/offline/usecase/SendMessageWithAttachments;
 	public final fun getSendReaction ()Lio/getstream/chat/android/offline/usecase/SendReaction;
 	public final fun getSetMessageForReply ()Lio/getstream/chat/android/offline/usecase/SetMessageForReply;
 	public final fun getShowChannel ()Lio/getstream/chat/android/offline/usecase/ShowChannel;
