@@ -17,7 +17,7 @@ internal class MessageOptionsDecoratorProvider(style: MessageListItemStyle, curr
         TextDecorator(style),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
-        ReplyDecorator(currentUser),
+        ReplyDecorator { currentUser },
     )
 
     override val decorators: List<Decorator> = messageOptionsDecorators

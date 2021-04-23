@@ -235,7 +235,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
-    private lateinit var currentUser: User
+    private lateinit var getCurrentUser: () -> User
 
     /**
      * If you are allowed to scroll up or not
@@ -530,7 +530,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun init(channel: Channel, currentUser: User) {
-        this.currentUser = currentUser
+        init(channel) { currentUser }
+    }
+
+    public fun init(channel: Channel, getCurrentUser: () -> User) {
+        this.getCurrentUser = getCurrentUser
         this.channel = channel
         initAdapter()
 
@@ -556,9 +560,9 @@ public class MessageListView : ConstraintLayout {
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
-            currentUser = currentUser,
+            getCurrentUser = getCurrentUser,
             dateFormatter = messageDateFormatter,
-            isDirectMessage = channel.isDirectMessaging(),
+            isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle.itemStyle,
         )
 

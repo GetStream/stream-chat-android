@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
-    private val isDirectMessage: Boolean,
+    private val isDirectMessage: () -> Boolean,
     private val style: MessageListItemStyle,
 ) : BaseDecorator() {
 
@@ -142,7 +142,7 @@ internal class FootnoteDecorator(
         style: MessageListItemStyle,
     ) {
         when {
-            data.isBottomPosition() && !isDirectMessage && data.isTheirs -> {
+            data.isBottomPosition() && !isDirectMessage() && data.isTheirs -> {
                 textView.text = data.message.user.name
                 textView.isVisible = true
                 style.textStyleUserName.apply(textView)

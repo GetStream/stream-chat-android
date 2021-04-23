@@ -31,7 +31,7 @@ import java.util.Date
  * - Makes the MessageListItem immutable to prevent future bugs
  * - Improved test coverage
  *
- * @param currentUser the user who is currently authenticated
+ * @param getCurrentUserId lambda which lazily provides the user id who is currently authenticated
  * @param messages a livedata object with the messages
  * @param readsLd a livedata object with the read state per user
  * @param typingLd a livedata object with the users who are currently typing
@@ -50,7 +50,7 @@ import java.util.Date
  *
  */
 internal class MessageListItemLiveData(
-    private val currentUser: User,
+    private val getCurrentUserId: () -> String,
     messages: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
@@ -103,7 +103,7 @@ internal class MessageListItemLiveData(
      */
     @UiThread
     internal fun typingChanged(users: List<User>) {
-        val newTypingUsers = users.filter { it.id != currentUser.id }
+        val newTypingUsers = users.filter { it.id != getCurrentUserId() }
 
         if (newTypingUsers != typingUsers) {
             typingUsers = newTypingUsers
@@ -191,7 +191,7 @@ internal class MessageListItemLiveData(
                 MessageListItem.MessageItem(
                     message,
                     positions,
-                    isMine = message.user.id == currentUser.id,
+                    isMine = message.user.id == getCurrentUserId(),
                     isThreadMode = isThread,
                 )
             )
@@ -208,7 +208,7 @@ internal class MessageListItemLiveData(
     private fun addReads(messages: List<MessageListItem>, reads: List<ChannelUserRead>?): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter { it.user.id != currentUser.id }.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads.filter { it.user.id != getCurrentUserId() }.sortedBy { it.lastRead }.toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()
@@ -253,7 +253,7 @@ internal class MessageListItemLiveData(
         reads: List<ChannelUserRead>,
     ): List<MessageListItem> {
         val lastRead = reads
-            .filter { it.user.id != currentUser.id }
+            .filter { it.user.id != getCurrentUserId() }
             .mapNotNull { it.lastRead }
             .maxOrNull() ?: return messages
 
