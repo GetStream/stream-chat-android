@@ -35,6 +35,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed offline reactions sync
 
 ### ⬆️ Improved
 
