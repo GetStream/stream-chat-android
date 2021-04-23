@@ -24,7 +24,7 @@ internal class ChatNotifications private constructor(
 ) {
     private val logger = ChatLogger.get("ChatNotifications")
 
-    private val pushTokenRepository = PushTokenRepository(context, handler)
+    private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
     private val showedNotifications = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
@@ -45,7 +45,7 @@ internal class ChatNotifications private constructor(
     }
 
     fun setFirebaseToken(firebaseToken: String) {
-        pushTokenRepository.updateTokenIfNecessary(firebaseToken)
+        pushTokenUpdateHandler.updateTokenIfNecessary(firebaseToken)
     }
 
     fun onFirebaseMessage(message: RemoteMessage) {

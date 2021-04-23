@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
-internal class PushTokenRepository(
+internal class PushTokenUpdateHandler(
     context: Context,
     private val handler: ChatNotificationHandler,
 ) {
