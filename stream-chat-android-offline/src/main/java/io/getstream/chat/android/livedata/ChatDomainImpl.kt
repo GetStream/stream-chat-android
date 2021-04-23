@@ -220,7 +220,9 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    internal lateinit var repos: RepositoryFacade
+    internal val job = SupervisorJob()
+    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+    internal var repos: RepositoryFacade = createNoOpRepos()
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal var initJob: Deferred<SyncState?>? = null
 
@@ -236,6 +238,7 @@ internal class ChatDomainImpl internal constructor(
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
+        repos = createNoOpRepos()
     }
 
     private fun isTestRunner(): Boolean {
@@ -285,9 +288,6 @@ internal class ChatDomainImpl internal constructor(
         startListening()
         initClean()
     }
-
-    internal val job = SupervisorJob()
-    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
@@ -824,21 +824,12 @@ internal class ChatDomainImpl internal constructor(
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelPaginationRequest,
-    ): Channel? {
-        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
-        return if (!this::repos.isInitialized) {
-            null
-        } else {
-            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-        }
-    }
+    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelsPaginationRequest,
-    ): Channel? {
-        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-    }
+    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
@@ -850,9 +841,7 @@ internal class ChatDomainImpl internal constructor(
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest,
-    ): List<Channel> {
-        return repos.selectChannels(channelIds, pagination).applyPagination(pagination)
-    }
+    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     override fun clean() {
         for (channelController in activeChannelMapImpl.values.toList()) {
@@ -860,13 +849,8 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun getChannelConfig(channelType: String): Config {
-        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
-        if (!this::repos.isInitialized) {
-            return defaultConfig
-        }
-        return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
-    }
+    override fun getChannelConfig(channelType: String): Config =
+        repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
@@ -1002,6 +986,13 @@ internal class ChatDomainImpl internal constructor(
         }
     }
     // end region
+
+    private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
+        context(appContext)
+        scope(scope)
+        defaultConfig(defaultConfig)
+        setOfflineEnabled(false)
+    }.build()
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {
