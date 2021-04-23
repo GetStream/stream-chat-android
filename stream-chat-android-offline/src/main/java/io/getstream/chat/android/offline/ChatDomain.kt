@@ -103,8 +103,6 @@ public interface ChatDomain {
     public fun getVersion(): String
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
-    // region use-case functions
-
     /**
      * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
      *
@@ -120,7 +118,6 @@ public interface ChatDomain {
         extraData: Map<String, Any>,
     ): Call<Channel>
 
-    // replaying events
     /**
      * Adds the provided channel to the active channels and replays events for all active channels
      *
@@ -128,7 +125,6 @@ public interface ChatDomain {
      */
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
-    // getting controllers
     /**
      * Returns a ChannelController for given cid
      *
@@ -187,7 +183,6 @@ public interface ChatDomain {
      */
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
-    // loading more
     /**
      * Loads older messages for the channel
      *
@@ -291,7 +286,6 @@ public interface ChatDomain {
      */
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
-    // updating channel data
     /**
      * Creates a new channel. Will retry according to the retry policy if it fails
      *
@@ -550,8 +544,6 @@ public interface ChatDomain {
         sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
         members: List<Member> = emptyList(),
     ): Call<List<Member>>
-
-    // end region
 
     public data class Builder(
         private val appContext: Context,
