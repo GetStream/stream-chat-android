@@ -36,6 +36,10 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
     private val user: User by lazy {
         userData.toUser()
     }
+    private val isOwnerOrAdmin: Boolean by lazy {
+        requireArguments().getBoolean(ARG_IS_OWNER_OR_ADMIN)
+    }
+
     private val viewModel: GroupChatInfoMemberOptionsViewModel by viewModels {
         GroupChatInfoMemberOptionsViewModelFactory(cid, user.id)
     }
@@ -73,7 +77,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                 viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
             }
 
-            if (isAnonymousChannel(cid)) {
+            if (isAnonymousChannel(cid) || !isOwnerOrAdmin) {
                 optionRemove.isVisible = false
             } else {
                 optionRemove.setOnClickListener {
@@ -144,11 +148,17 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CID = "cid"
         private const val ARG_CHANNEL_NAME = "channel_name"
         private const val ARG_USER_DATA = "user_data"
+        private const val ARG_IS_OWNER_OR_ADMIN = "is_owner_or_admin"
 
-        fun newInstance(cid: String, channelName: String, user: User) =
+        fun newInstance(cid: String, channelName: String, user: User, isOwnerOrAdmin: Boolean) =
             GroupChatInfoMemberOptionsDialogFragment().apply {
                 arguments =
-                    bundleOf(ARG_CID to cid, ARG_CHANNEL_NAME to channelName, ARG_USER_DATA to user.toUserData())
+                    bundleOf(
+                        ARG_CID to cid,
+                        ARG_CHANNEL_NAME to channelName,
+                        ARG_USER_DATA to user.toUserData(),
+                        ARG_IS_OWNER_OR_ADMIN to isOwnerOrAdmin
+                    )
             }
     }
 }
