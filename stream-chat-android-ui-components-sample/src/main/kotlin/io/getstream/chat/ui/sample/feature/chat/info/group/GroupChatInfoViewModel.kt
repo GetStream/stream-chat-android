@@ -156,7 +156,7 @@ class GroupChatInfoViewModel(
             channelMuted = false,
             shouldExpandMembers = null,
             membersToShowCount = 0,
-            false
+            false,
         )
     }
 }
