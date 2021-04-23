@@ -304,11 +304,11 @@ internal class ChatDomainImpl internal constructor(
             client.preSetUserListeners.add {
                 setUser(it)
             }
-            // disconnect if the low level client disconnects
-            client.disconnectListeners.add {
-                scope.launch {
-                    disconnect()
-                }
+        }
+        // disconnect if the low level client disconnects
+        client.disconnectListeners.add {
+            scope.launch {
+                disconnect()
             }
         }
         storeBgSyncDataWhenUserConnects()
@@ -345,6 +345,7 @@ internal class ChatDomainImpl internal constructor(
         job.cancelChildren()
         stopListening()
         stopClean()
+        clearState()
     }
 
     override fun getVersion(): String {
