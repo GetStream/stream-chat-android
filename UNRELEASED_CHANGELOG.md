@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Optimized the number of `ChatClient::addDevice` API calls
 
 ### ⬆️ Improved
 
@@ -51,6 +52,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed crash related to accessing `ChatDomain::currentUser` in `MessageListViewModel` before user is connected
 
 ### ⬆️ Improved
 

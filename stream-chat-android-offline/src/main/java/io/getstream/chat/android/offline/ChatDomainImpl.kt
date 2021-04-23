@@ -841,7 +841,12 @@ internal class ChatDomainImpl internal constructor(
         channelId: String,
         pagination: QueryChannelPaginationRequest,
     ): Channel? {
-        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
+        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
+        return if (!this::repos.isInitialized) {
+            null
+        } else {
+            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
+        }
     }
 
     suspend fun selectAndEnrichChannel(
@@ -872,6 +877,10 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
+        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
+        if (!this::repos.isInitialized) {
+            return defaultConfig
+        }
         return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
     }
 

@@ -54,7 +54,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
@@ -62,7 +62,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -84,7 +84,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData({ currentUser.id }, messagesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     // livedata testing

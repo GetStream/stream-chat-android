@@ -16,9 +16,9 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
 
 internal class MessageListItemDecoratorProvider(
-    currentUser: User,
+    getCurrentUser: () -> User,
     dateFormatter: DateFormatter,
-    isDirectMessage: Boolean,
+    isDirectMessage: () -> Boolean,
     style: MessageListItemStyle,
 ) : DecoratorProvider {
 
@@ -30,7 +30,7 @@ internal class MessageListItemDecoratorProvider(
         AvatarDecorator(),
         FailedIndicatorDecorator(),
         ReactionsDecorator(style).takeIf { style.reactionsEnabled },
-        ReplyDecorator(currentUser),
+        ReplyDecorator(getCurrentUser),
         FootnoteDecorator(dateFormatter, isDirectMessage, style),
     )
 

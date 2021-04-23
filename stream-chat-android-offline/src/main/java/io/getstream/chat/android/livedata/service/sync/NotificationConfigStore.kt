@@ -2,8 +2,8 @@ package io.getstream.chat.android.livedata.service.sync
 
 import android.content.Context
 import android.content.SharedPreferences
+import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.livedata.utils.getNonNullString
 
 private const val NOTIFICATION_CONFIG_PREFS_NAME = "stream_notification_config_store"
 private const val KEY_ERROR_CONTENT = "key_error_content"
