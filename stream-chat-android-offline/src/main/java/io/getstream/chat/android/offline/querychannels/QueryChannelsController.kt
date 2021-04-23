@@ -55,9 +55,9 @@ public class QueryChannelsController internal constructor(
         domain: ChatDomain,
     ) : this(filter, sort, client, domain as ChatDomainImpl)
 
-    internal var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
+    public var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
         { channel, filterObject -> filterObject.filter(channel) }
-    internal var recoveryNeeded: Boolean = false
+    public var recoveryNeeded: Boolean = false
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
 
@@ -67,15 +67,15 @@ public class QueryChannelsController internal constructor(
     private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-    private val _channelMutes = MutableStateFlow<List<String>>(emptyList())
+    private val _mutedChannelIds = MutableStateFlow<List<String>>(emptyList())
 
-    internal val loading: StateFlow<Boolean> = _loading
-    internal val loadingMore: StateFlow<Boolean> = _loadingMore
-    internal val endOfChannels: StateFlow<Boolean> = _endOfChannels
-    internal val channels: StateFlow<List<Channel>> = _sortedChannels
-    internal val channelMutes: StateFlow<List<String>> = _channelMutes
+    public val loading: StateFlow<Boolean> = _loading
+    public val loadingMore: StateFlow<Boolean> = _loadingMore
+    public val endOfChannels: StateFlow<Boolean> = _endOfChannels
+    public val channels: StateFlow<List<Channel>> = _sortedChannels
+    public val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
 
-    internal val channelsState: StateFlow<QueryChannelsController.ChannelsState> =
+    public val channelsState: StateFlow<QueryChannelsController.ChannelsState> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
             when {
                 loading -> QueryChannelsController.ChannelsState.Loading
@@ -155,7 +155,7 @@ public class QueryChannelsController internal constructor(
         }
 
         if (event is NotificationChannelMutesUpdatedEvent) {
-            _channelMutes.value = event.me.channelMutes.toChannelsId()
+            _mutedChannelIds.value = event.me.channelMutes.toChannelsId()
         }
 
         if (event is CidEvent) {
