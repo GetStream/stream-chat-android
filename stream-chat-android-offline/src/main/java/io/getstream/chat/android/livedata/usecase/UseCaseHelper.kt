@@ -2,6 +2,11 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.offline.usecase.UseCaseHelper as OfflineUseCaseHelper
 
+@Deprecated(
+    message = "Do not use this class directly. Use cases are now exposed by ChatDomain directly as functions.",
+    replaceWith = ReplaceWith("Replace this property call by obtaining a specific use case directly from ChatDomain."),
+    level = DeprecationLevel.WARNING
+)
 public class UseCaseHelper internal constructor(offlineUseCaseHelper: OfflineUseCaseHelper) {
 
     // replaying events
