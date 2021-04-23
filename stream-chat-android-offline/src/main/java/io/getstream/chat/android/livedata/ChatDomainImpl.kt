@@ -150,7 +150,6 @@ internal class ChatDomainImpl internal constructor(
     private val useCaseProvider: UseCaseHelper = UseCaseHelper(this)
 
     override lateinit var currentUser: User
-    lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(appContext) }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
