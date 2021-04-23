@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.usecase.QueryChannelsImpl
+import io.getstream.chat.android.offline.usecase.QueryChannels
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -31,7 +31,7 @@ internal class QueryChannelsImplTest {
     private lateinit var domain: ChatDomainImpl
     private lateinit var queryChannelsController: QueryChannelsController
 
-    private lateinit var queryChannels: QueryChannelsImpl
+    private lateinit var queryChannels: QueryChannels
 
     @BeforeEach
     fun init() {
@@ -39,7 +39,7 @@ internal class QueryChannelsImplTest {
         domain = mock() { on { scope } doReturn testCoroutines.scope }
         whenever(domain.queryChannels(any(), any())) doReturn queryChannelsController
 
-        queryChannels = QueryChannelsImpl(domain)
+        queryChannels = QueryChannels(domain)
     }
 
     @Test

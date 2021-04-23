@@ -9,21 +9,17 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import kotlinx.coroutines.launch
 
-public interface WatchChannel {
+public class WatchChannel internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Watches the given channel and returns a ChannelController
      *
      * @param cid the full channel id. ie messaging:123
      * @param messageLimit how many messages to load on the first request
      *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
+     * @see io.getstream.chat.android.offline.channel.ChannelController
      */
     @CheckResult
-    public operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController>
-}
-
-internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchChannel {
-    override operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController> {
+    public operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

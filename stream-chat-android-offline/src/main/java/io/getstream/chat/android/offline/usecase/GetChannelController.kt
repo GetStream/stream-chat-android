@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 
-public interface GetChannelController {
+public class GetChannelController internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Returns a ChannelController for given cid
      *
@@ -17,11 +17,7 @@ public interface GetChannelController {
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
     @CheckResult
-    public operator fun invoke(cid: String): Call<ChannelController>
-}
-
-internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) : GetChannelController {
-    override operator fun invoke(cid: String): Call<ChannelController> {
+    public operator fun invoke(cid: String): Call<ChannelController> {
         validateCid(cid)
 
         val channelControllerImpl = domainImpl.channel(cid)

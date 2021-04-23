@@ -9,13 +9,9 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
-public interface MarkAllRead {
+public data class MarkAllRead internal constructor(private val domain: ChatDomainImpl) {
     @CheckResult
-    public operator fun invoke(): Call<Boolean>
-}
-
-internal data class MarkAllReadImpl(private val domain: ChatDomainImpl) : MarkAllRead {
-    override fun invoke(): Call<Boolean> = CoroutineCall(domain.scope) {
+    public fun invoke(): Call<Boolean> = CoroutineCall(domain.scope) {
         // update the UI first
         domain.allActiveChannels().map { channel ->
             domain.scope.async(DispatcherProvider.Main) {

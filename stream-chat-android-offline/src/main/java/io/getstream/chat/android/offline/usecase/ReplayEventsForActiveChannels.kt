@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface ReplayEventsForActiveChannels {
+public class ReplayEventsForActiveChannels internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Adds the specified channel to the active channels
      * Replays events for all active channels
@@ -16,13 +16,7 @@ public interface ReplayEventsForActiveChannels {
      * @param cid: the full channel id i. e. messaging:123
      */
     @CheckResult
-    public operator fun invoke(cid: String): Call<List<ChatEvent>>
-}
-
-internal class ReplayEventsForActiveChannelsImpl(
-    private val domainImpl: ChatDomainImpl,
-) : ReplayEventsForActiveChannels {
-    override operator fun invoke(cid: String): Call<List<ChatEvent>> {
+    public operator fun invoke(cid: String): Call<List<ChatEvent>> {
         validateCid(cid)
 
         return CoroutineCall(domainImpl.scope) {

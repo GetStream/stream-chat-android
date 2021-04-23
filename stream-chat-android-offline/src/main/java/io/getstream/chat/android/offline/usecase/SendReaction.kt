@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface SendReaction {
+public class SendReaction internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain
@@ -17,11 +17,7 @@ public interface SendReaction {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction>
-}
-
-internal class SendReactionImpl(private val domainImpl: ChatDomainImpl) : SendReaction {
-    override operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
+    public operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

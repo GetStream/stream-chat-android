@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.usecase.LoadNewerMessagesImpl
+import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomInt
@@ -31,14 +31,14 @@ internal class LoadNewerMessagesImplTest {
     }
 
     private lateinit var chatDomainImpl: ChatDomainImpl
-    private lateinit var sut: LoadNewerMessagesImpl
+    private lateinit var sut: LoadNewerMessages
 
     @BeforeEach
     fun before() {
         chatDomainImpl = mock {
             on { scope } doReturn testCoroutines.scope
         }
-        sut = LoadNewerMessagesImpl(chatDomainImpl)
+        sut = LoadNewerMessages(chatDomainImpl)
     }
 
     @Test

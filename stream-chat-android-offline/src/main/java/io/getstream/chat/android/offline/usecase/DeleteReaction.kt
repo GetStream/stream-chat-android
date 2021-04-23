@@ -4,27 +4,24 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface DeleteMessage {
+public class DeleteReaction internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
-     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain
-     * @param message the message to mark as deleted
+     * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
+     * @param cid the full channel id, ie messaging:123
+     * @param reaction the reaction to mark as deleted
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(message: Message): Call<Message>
-}
-
-internal class DeleteMessageImpl(private val domainImpl: ChatDomainImpl) : DeleteMessage {
-    override operator fun invoke(message: Message): Call<Message> {
-        val cid = message.cid
+    public operator fun invoke(cid: String, reaction: Reaction): Call<Message> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            channelController.deleteMessage(message)
+            channelController.deleteReaction(reaction)
         }
     }
 }

@@ -7,21 +7,22 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class CancelMessage internal constructor(private val domainImpl: ChatDomainImpl) {
+public class SendGiphy internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
-     * Cancels the message of "ephemeral" type. Removes the message from local storage.
+     * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
+     * Returns new "ephemeral" message with new giphy url.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
      * @param message the message to send
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(message: Message): Call<Boolean> {
+    public operator fun invoke(message: Message): Call<Message> {
         val cid = message.cid
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            channelController.cancelMessage(message)
+            channelController.sendGiphy(message)
         }
     }
 }

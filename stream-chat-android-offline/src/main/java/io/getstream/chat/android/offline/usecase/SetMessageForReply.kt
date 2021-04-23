@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface SetMessageForReply {
+public class SetMessageForReply internal constructor(private val chatDomain: ChatDomainImpl) {
     /**
      * Set the reply state for the channel.
      *
@@ -16,11 +16,7 @@ public interface SetMessageForReply {
      * @param message The message we want reply to. The null value means dismiss reply state.
      */
     @CheckResult
-    public operator fun invoke(cid: String, message: Message?): Call<Unit>
-}
-
-internal class SetMessageForReplyImpl(private val chatDomain: ChatDomainImpl) : SetMessageForReply {
-    override fun invoke(cid: String, message: Message?): Call<Unit> {
+    public operator fun invoke(cid: String, message: Message?): Call<Unit> {
         validateCid(cid)
 
         val channelController = chatDomain.channel(cid)

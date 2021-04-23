@@ -746,99 +746,92 @@ public final class io/getstream/chat/android/offline/thread/ThreadController {
 	public final fun getThreadId ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/CancelMessage {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/CancelMessage {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/CreateChannel {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/CreateChannel {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/DeleteChannel {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/DeleteChannel {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/DeleteMessage {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/DeleteMessage {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/DeleteReaction {
-	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/DeleteReaction {
+	public final fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/EditMessage {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/EditMessage {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/GetChannelController {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/GetChannelController {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/GetThread {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/GetThread {
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/GetTotalUnreadCount {
-	public abstract fun invoke ()Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/GetTotalUnreadCount {
+	public final fun invoke ()Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/GetUnreadChannelCount {
-	public abstract fun invoke ()Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/GetUnreadChannelCount {
+	public final fun invoke ()Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/HideChannel {
-	public abstract fun invoke (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/HideChannel {
+	public final fun invoke (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/Keystroke {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/Keystroke$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/Keystroke {
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/Keystroke;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/LeaveChannel {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/LeaveChannel {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/LoadMessageById {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/LoadMessageById$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/LoadMessageById {
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/LoadMessageById;Ljava/lang/String;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/LoadNewerMessages {
-	public abstract fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/LoadNewerMessages {
+	public final fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/LoadOlderMessages {
-	public abstract fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/LoadOlderMessages {
+	public final fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/MarkAllRead {
-	public abstract fun invoke ()Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/MarkAllRead {
+	public final fun copy (Lio/getstream/chat/android/offline/ChatDomainImpl;)Lio/getstream/chat/android/offline/usecase/MarkAllRead;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/usecase/MarkAllRead;Lio/getstream/chat/android/offline/ChatDomainImpl;ILjava/lang/Object;)Lio/getstream/chat/android/offline/usecase/MarkAllRead;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun invoke ()Lio/getstream/chat/android/client/call/Call;
+	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/MarkRead {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/MarkRead {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/QueryChannels {
-	public abstract fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/QueryChannels$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/QueryChannels {
+	public final fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/QueryChannels;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/QueryChannelsLoadMore {
-	public abstract fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/QueryChannelsLoadMore$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/QueryChannelsLoadMore {
+	public final fun invoke (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/QueryChannelsLoadMore;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
@@ -847,8 +840,8 @@ public final class io/getstream/chat/android/offline/usecase/QueryMembers {
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/QueryMembers;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/ReplayEventsForActiveChannels {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/ReplayEventsForActiveChannels {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/offline/usecase/SearchUsersByName {
@@ -856,49 +849,39 @@ public final class io/getstream/chat/android/offline/usecase/SearchUsersByName {
 	public final fun invoke (Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/SendGiphy {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/SendGiphy {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/SendMessage {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/SendMessage {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public final class io/getstream/chat/android/offline/usecase/SendMessage$DefaultImpls {
-	public static fun invoke (Lio/getstream/chat/android/offline/usecase/SendMessage;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public abstract interface class io/getstream/chat/android/offline/usecase/SendReaction {
-	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/SendReaction$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/SendReaction {
+	public final fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/SendReaction;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/SetMessageForReply {
-	public abstract fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/SetMessageForReply {
+	public final fun invoke (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/ShowChannel {
-	public abstract fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/ShowChannel {
+	public final fun invoke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/ShuffleGiphy {
-	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/ShuffleGiphy {
+	public final fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/StopTyping {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-}
-
-public final class io/getstream/chat/android/offline/usecase/StopTyping$DefaultImpls {
+public final class io/getstream/chat/android/offline/usecase/StopTyping {
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun invoke$default (Lio/getstream/chat/android/offline/usecase/StopTyping;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/ThreadLoadMore {
-	public abstract fun invoke (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/ThreadLoadMore {
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/offline/usecase/UseCaseHelper {
@@ -937,7 +920,7 @@ public final class io/getstream/chat/android/offline/usecase/UseCaseHelper {
 	public final fun getWatchChannel ()Lio/getstream/chat/android/offline/usecase/WatchChannel;
 }
 
-public abstract interface class io/getstream/chat/android/offline/usecase/WatchChannel {
-	public abstract fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
+public final class io/getstream/chat/android/offline/usecase/WatchChannel {
+	public final fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 

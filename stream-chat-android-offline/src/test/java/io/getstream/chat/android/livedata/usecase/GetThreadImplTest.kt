@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.utils.`should be equal to result`
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.GetThreadImpl
+import io.getstream.chat.android.offline.usecase.GetThread
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
@@ -28,7 +28,7 @@ internal class GetThreadImplTest {
     val chatDomain: ChatDomainImpl = mock()
     val channelController: ChannelController = mock()
     val threadControllerImpl: ThreadController = mock()
-    val getThreadImpl = GetThreadImpl(chatDomain)
+    val getThreadImpl = GetThread(chatDomain)
 
     @Before
     fun setup() {

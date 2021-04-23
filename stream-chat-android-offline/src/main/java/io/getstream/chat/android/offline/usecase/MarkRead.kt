@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface MarkRead {
+public class MarkRead internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Marks the messages on the specified channel as read
      *
@@ -17,11 +17,7 @@ public interface MarkRead {
      *         (i. e. the messages are already marked as read).
      */
     @CheckResult
-    public operator fun invoke(cid: String): Call<Boolean>
-}
-
-internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
-    override operator fun invoke(cid: String): Call<Boolean> {
+    public operator fun invoke(cid: String): Call<Boolean> {
         val channelController = domainImpl.channel(validateCid(cid))
 
         return CoroutineCall(domainImpl.scope) {

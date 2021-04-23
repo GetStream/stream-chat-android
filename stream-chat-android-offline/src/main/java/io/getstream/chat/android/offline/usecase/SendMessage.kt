@@ -11,7 +11,7 @@ import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 import java.io.File
 
-public interface SendMessage {
+public class SendMessage internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
@@ -31,13 +31,6 @@ public interface SendMessage {
      */
     @CheckResult
     public operator fun invoke(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message>
-}
-
-internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMessage {
-    override operator fun invoke(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
     ): Call<Message> {

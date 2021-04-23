@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface QueryChannelsLoadMore {
+public class QueryChannelsLoadMore internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Load more channels for this query
      * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
@@ -25,15 +25,6 @@ public interface QueryChannelsLoadMore {
         sort: QuerySort<Channel>,
         limit: Int = 30,
         messageLimit: Int = 10,
-    ): Call<List<Channel>>
-}
-
-internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
-    override operator fun invoke(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        limit: Int,
-        messageLimit: Int,
     ): Call<List<Channel>> {
         return CoroutineCall(domainImpl.scope) {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)

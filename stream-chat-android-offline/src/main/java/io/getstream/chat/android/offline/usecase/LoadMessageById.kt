@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public interface LoadMessageById {
+public class LoadMessageById internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Loads message for a given message id and channel id
      *
@@ -22,15 +22,6 @@ public interface LoadMessageById {
         messageId: String,
         olderMessagesOffset: Int = 0,
         newerMessagesOffset: Int = 0,
-    ): Call<Message>
-}
-
-internal class LoadMessageByIdImpl(private val domainImpl: ChatDomainImpl) : LoadMessageById {
-    override operator fun invoke(
-        cid: String,
-        messageId: String,
-        olderMessagesOffset: Int,
-        newerMessagesOffset: Int,
     ): Call<Message> {
         validateCid(cid)
 

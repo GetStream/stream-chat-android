@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.usecase.MarkReadImpl
+import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -40,7 +40,7 @@ internal class MarkReadImplTest {
     private lateinit var channelType: String
     private lateinit var channelId: String
 
-    private lateinit var sut: MarkReadImpl
+    private lateinit var sut: MarkRead
 
     @BeforeEach
     fun init() {
@@ -48,7 +48,7 @@ internal class MarkReadImplTest {
         chatDomain = mock {
             on { scope } doReturn testCoroutines.scope
         }
-        sut = MarkReadImpl(chatDomain)
+        sut = MarkRead(chatDomain)
         channelController = mock()
         setupChannelController(channelController)
     }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
     message = "Use ChatDomain::channelUnreadCount instead",
     level = DeprecationLevel.WARNING,
 )
-public interface GetUnreadChannelCount {
+public class GetUnreadChannelCount internal constructor(private val domainImpl: ChatDomainImpl) {
     /**
      * Returns the number of channels with unread messages for the given user.
      * You might also be interested in GetTotalUnreadCount
@@ -21,11 +21,7 @@ public interface GetUnreadChannelCount {
      * @see io.getstream.chat.android.offline.channel.ChannelController.unreadCount
      */
     @CheckResult
-    public operator fun invoke(): Call<StateFlow<Int>>
-}
-
-internal class GetUnreadChannelCountImpl(private val domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
-    override operator fun invoke(): Call<StateFlow<Int>> {
+    public operator fun invoke(): Call<StateFlow<Int>> {
         return CoroutineCall(domainImpl.scope) {
             Result(domainImpl.channelUnreadCount)
         }
