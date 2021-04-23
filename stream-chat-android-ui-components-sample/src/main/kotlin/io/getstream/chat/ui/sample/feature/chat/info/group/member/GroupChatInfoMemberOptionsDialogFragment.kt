@@ -157,7 +157,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         ARG_CID to cid,
                         ARG_CHANNEL_NAME to channelName,
                         ARG_USER_DATA to user.toUserData(),
-                        ARG_IS_OWNER_OR_ADMIN to isOwnerOrAdmin
+                        ARG_IS_OWNER_OR_ADMIN to isOwnerOrAdmin,
                     )
             }
     }
