@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class GroupChatInfoViewModel(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    chatClient: ChatClient = ChatClient.instance()
+    chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
@@ -52,7 +52,7 @@ class GroupChatInfoViewModel(
         }
     }
 
-    private fun getOwnerOrAdmin(members: List<Member>?) : Member? {
+    private fun getOwnerOrAdmin(members: List<Member>?): Member? {
         return members?.firstOrNull { member ->
             member.isOwnerOrAdmin
         }
@@ -130,7 +130,7 @@ class GroupChatInfoViewModel(
         val channelMuted: Boolean,
         val shouldExpandMembers: Boolean?,
         val membersToShowCount: Int,
-        val isCurrentUserOwnerOrAdmin: Boolean
+        val isCurrentUserOwnerOrAdmin: Boolean,
     )
 
     sealed class Action {
