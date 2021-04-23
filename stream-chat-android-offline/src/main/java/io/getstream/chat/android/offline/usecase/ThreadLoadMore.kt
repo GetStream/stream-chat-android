@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class ThreadLoadMore internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class ThreadLoadMore(private val domainImpl: ChatDomainImpl) {
     /**
      * Loads more messages for the specified thread
      *
@@ -16,7 +16,7 @@ public class ThreadLoadMore internal constructor(private val domainImpl: ChatDom
      * @param messageLimit: how many new messages to load
      */
     @CheckResult
-    public operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
+    operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
         validateCid(cid)
         require(parentId.isNotEmpty()) { "parentId can't be empty" }
 

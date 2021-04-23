@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.usecase.QueryChannelsLoadMore as OfflineQueryChannelsLoadMore
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface QueryChannelsLoadMore {
     /**
@@ -27,12 +27,12 @@ public interface QueryChannelsLoadMore {
     ): Call<List<Channel>>
 }
 
-internal class QueryChannelsLoadMoreImpl(private val offlineQueryChannelsLoadMore: OfflineQueryChannelsLoadMore) :
+internal class QueryChannelsLoadMoreImpl(private val chatDomain: ChatDomain) :
     QueryChannelsLoadMore {
     override operator fun invoke(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> = offlineQueryChannelsLoadMore.invoke(filter, sort, limit, messageLimit)
+    ): Call<List<Channel>> = chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit)
 }

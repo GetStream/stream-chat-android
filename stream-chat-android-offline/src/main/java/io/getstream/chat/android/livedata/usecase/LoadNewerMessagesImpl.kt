@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.usecase.LoadNewerMessages as OfflineLoadNewerMessages
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface LoadNewerMessages {
     /**
@@ -16,8 +16,7 @@ public interface LoadNewerMessages {
     public operator fun invoke(cid: String, messageLimit: Int): Call<Channel>
 }
 
-internal class LoadNewerMessagesImpl(private val offlineLoadNewerMessages: OfflineLoadNewerMessages) :
-    LoadNewerMessages {
+internal class LoadNewerMessagesImpl(private val chatDomain: ChatDomain) : LoadNewerMessages {
     override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> =
-        offlineLoadNewerMessages.invoke(cid, messageLimit)
+        chatDomain.loadNewerMessages(cid, messageLimit)
 }

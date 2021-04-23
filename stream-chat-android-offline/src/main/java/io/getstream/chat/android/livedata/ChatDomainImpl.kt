@@ -68,7 +68,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    override val useCases: UseCaseHelper = UseCaseHelper(chatDomainStateFlow.useCases)
+    override val useCases: UseCaseHelper = UseCaseHelper(this)
 
     /** if the client connection has been initialized */
     override val initialized: LiveData<Boolean> = chatDomainStateFlow.initialized.asLiveData()

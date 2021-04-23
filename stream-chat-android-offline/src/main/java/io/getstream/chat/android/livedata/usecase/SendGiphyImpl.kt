@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.SendGiphy as OfflineSendGiphy
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface SendGiphy {
     /**
@@ -17,6 +17,6 @@ public interface SendGiphy {
     public operator fun invoke(message: Message): Call<Message>
 }
 
-internal class SendGiphyImpl(private val offlineSendGiphy: OfflineSendGiphy) : SendGiphy {
-    override operator fun invoke(message: Message): Call<Message> = offlineSendGiphy.invoke(message)
+internal class SendGiphyImpl(private val chatDomain: ChatDomain) : SendGiphy {
+    override operator fun invoke(message: Message): Call<Message> = chatDomain.sendGiphy(message)
 }

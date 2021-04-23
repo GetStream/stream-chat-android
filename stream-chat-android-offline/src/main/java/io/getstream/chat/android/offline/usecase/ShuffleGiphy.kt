@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class ShuffleGiphy internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class ShuffleGiphy(private val domainImpl: ChatDomainImpl) {
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
@@ -16,7 +16,7 @@ public class ShuffleGiphy internal constructor(private val domainImpl: ChatDomai
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(message: Message): Call<Message> {
+    operator fun invoke(message: Message): Call<Message> {
         val cid = message.cid
         validateCid(cid)
 

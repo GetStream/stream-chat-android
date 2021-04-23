@@ -30,7 +30,7 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
             // check that current state is empty
             channelController.messages.value.size `should be equal to` 0
 
-            chatDomain.useCases.sendMessage(message).execute()
+            chatDomain.sendMessage(message).execute()
 
             channelController.messages.value.last() `should be equal to` message
         }
@@ -43,8 +43,7 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
         }
 
         fun get(): ChannelController {
-            return chatDomain.useCases
-                .watchChannel(data.channel1.cid, 10)
+            return chatDomain.watchChannel(data.channel1.cid, 10)
                 .execute()
                 .data()
         }

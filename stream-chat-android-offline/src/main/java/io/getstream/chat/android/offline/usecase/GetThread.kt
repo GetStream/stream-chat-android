@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.thread.ThreadController
 
-public class GetThread internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class GetThread(private val domainImpl: ChatDomainImpl) {
     /**
      * Returns a thread controller for the given channel and message id
      *
@@ -18,7 +18,7 @@ public class GetThread internal constructor(private val domainImpl: ChatDomainIm
      * @see io.getstream.chat.android.offline.thread.ThreadController
      */
     @CheckResult
-    public operator fun invoke(cid: String, parentId: String): Call<ThreadController> {
+    operator fun invoke(cid: String, parentId: String): Call<ThreadController> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

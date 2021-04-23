@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.MarkRead as OfflineMarkRead
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface MarkRead {
     /**
@@ -17,6 +17,6 @@ public interface MarkRead {
     public operator fun invoke(cid: String): Call<Boolean>
 }
 
-internal class MarkReadImpl(private val offlineMarkRead: OfflineMarkRead) : MarkRead {
-    override operator fun invoke(cid: String): Call<Boolean> = offlineMarkRead.invoke(cid)
+internal class MarkReadImpl(private val chatDomain: ChatDomain) : MarkRead {
+    override operator fun invoke(cid: String): Call<Boolean> = chatDomain.markRead(cid)
 }

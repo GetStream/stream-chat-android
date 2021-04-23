@@ -14,14 +14,14 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 
 @InternalStreamChatApi
-public class DownloadAttachment internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class DownloadAttachment(private val domainImpl: ChatDomainImpl) {
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
      *
      * @param attachment the attachment to download
      */
     @CheckResult
-    public operator fun invoke(attachment: Attachment): Call<Unit> {
+    operator fun invoke(attachment: Attachment): Call<Unit> {
         val result: Result<Unit> = try {
             val downloadManager = domainImpl.appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl

@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.offline.usecase.DeleteReaction as OfflineDeleteReaction
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface DeleteReaction {
     /**
@@ -17,7 +17,7 @@ public interface DeleteReaction {
     public operator fun invoke(cid: String, reaction: Reaction): Call<Message>
 }
 
-internal class DeleteReactionImpl(private val offlineDeleteReaction: OfflineDeleteReaction) : DeleteReaction {
+internal class DeleteReactionImpl(private val chatDomain: ChatDomain) : DeleteReaction {
     override operator fun invoke(cid: String, reaction: Reaction): Call<Message> =
-        offlineDeleteReaction.invoke(cid, reaction)
+        chatDomain.deleteReaction(cid, reaction)
 }

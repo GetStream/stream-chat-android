@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.DeleteMessage as OfflineDeleteMessage
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface DeleteMessage {
     /**
@@ -15,6 +15,6 @@ public interface DeleteMessage {
     public operator fun invoke(message: Message): Call<Message>
 }
 
-internal class DeleteMessageImpl(private val offlineDeleteMessage: OfflineDeleteMessage) : DeleteMessage {
-    override operator fun invoke(message: Message): Call<Message> = offlineDeleteMessage.invoke(message)
+internal class DeleteMessageImpl(private val chatDomain: ChatDomain) : DeleteMessage {
+    override operator fun invoke(message: Message): Call<Message> = chatDomain.deleteMessage(message)
 }

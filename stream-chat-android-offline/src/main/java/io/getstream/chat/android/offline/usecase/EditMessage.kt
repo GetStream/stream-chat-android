@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class EditMessage internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class EditMessage(private val domainImpl: ChatDomainImpl) {
     /**
      * Edits the specified message. Local storage is updated immediately
      * The API request is retried according to the retry policy specified on the chatDomain
@@ -15,7 +15,7 @@ public class EditMessage internal constructor(private val domainImpl: ChatDomain
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(message: Message): Call<Message> {
+    operator fun invoke(message: Message): Call<Message> {
         val cid = message.cid
         validateCid(cid)
 

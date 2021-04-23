@@ -4,8 +4,8 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.ChatDomain
 import java.io.File
-import io.getstream.chat.android.offline.usecase.SendMessage as OfflineSendMessage
 
 public interface SendMessage {
     /**
@@ -32,9 +32,9 @@ public interface SendMessage {
     ): Call<Message>
 }
 
-internal class SendMessageImpl(private val offlineSendMessage: OfflineSendMessage) : SendMessage {
+internal class SendMessageImpl(private val chatDomain: ChatDomain) : SendMessage {
     override operator fun invoke(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = offlineSendMessage.invoke(message, attachmentTransformer)
+    ): Call<Message> = chatDomain.sendMessage(message, attachmentTransformer)
 }

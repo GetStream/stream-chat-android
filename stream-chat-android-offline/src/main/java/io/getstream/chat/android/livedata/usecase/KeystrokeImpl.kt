@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.Keystroke as OfflineKeystroke
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface Keystroke {
     /**
@@ -18,6 +18,6 @@ public interface Keystroke {
     public operator fun invoke(cid: String, parentId: String? = null): Call<Boolean>
 }
 
-internal class KeystrokeImpl(private val offlineKeystroke: OfflineKeystroke) : Keystroke {
-    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> = offlineKeystroke.invoke(cid, parentId)
+internal class KeystrokeImpl(private val chatDomain: ChatDomain) : Keystroke {
+    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> = chatDomain.keystroke(cid, parentId)
 }

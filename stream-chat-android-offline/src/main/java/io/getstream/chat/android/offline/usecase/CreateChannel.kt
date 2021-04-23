@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class CreateChannel internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class CreateChannel(private val domainImpl: ChatDomainImpl) {
     /**
      * Creates a new channel. Will retry according to the retry policy if it fails
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -14,7 +14,7 @@ public class CreateChannel internal constructor(private val domainImpl: ChatDoma
      * @param channel the channel object
      */
     @CheckResult
-    public operator fun invoke(channel: Channel): Call<Channel> {
+    operator fun invoke(channel: Channel): Call<Channel> {
         return CoroutineCall(domainImpl.scope) {
             domainImpl.createNewChannel(channel)
         }

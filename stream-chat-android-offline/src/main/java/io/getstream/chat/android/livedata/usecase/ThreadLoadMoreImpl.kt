@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.ThreadLoadMore as OfflineThreadLoadMore
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ThreadLoadMore {
     /**
@@ -17,7 +17,7 @@ public interface ThreadLoadMore {
     public operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 }
 
-internal class ThreadLoadMoreImpl(private val offlineThreadLoadMore: OfflineThreadLoadMore) : ThreadLoadMore {
+internal class ThreadLoadMoreImpl(private val chatDomain: ChatDomain) : ThreadLoadMore {
     override operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> =
-        offlineThreadLoadMore.invoke(cid, parentId, messageLimit)
+        chatDomain.threadLoadMore(cid, parentId, messageLimit)
 }

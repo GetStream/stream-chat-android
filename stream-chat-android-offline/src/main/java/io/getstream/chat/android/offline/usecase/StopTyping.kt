@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class StopTyping internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class StopTyping(private val domainImpl: ChatDomainImpl) {
     /**
      * StopTyping should be called when the user submits the text and finishes typing
      *
@@ -16,7 +16,7 @@ public class StopTyping internal constructor(private val domainImpl: ChatDomainI
      * @return True when a typing event was sent, false if it wasn't sent.
      */
     @CheckResult
-    public operator fun invoke(cid: String, parentId: String? = null): Call<Boolean> {
+    operator fun invoke(cid: String, parentId: String? = null): Call<Boolean> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

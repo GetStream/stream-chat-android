@@ -31,8 +31,8 @@ internal class DeleteMessageImplTest : BaseConnectedMockedTest() {
                 .givenMockedDeleteMessageResponse(message)
                 .get()
 
-            chatDomain.useCases.sendMessage(message).execute()
-            chatDomain.useCases.deleteMessage(message).execute()
+            chatDomain.sendMessage(message).execute()
+            chatDomain.deleteMessage(message).execute()
 
             val deletedMessage = channelController.messages.value.last()
 
@@ -55,8 +55,7 @@ internal class DeleteMessageImplTest : BaseConnectedMockedTest() {
         }
 
         fun get(): ChannelController {
-            return chatDomain.useCases
-                .watchChannel(data.channel1.cid, 10)
+            return chatDomain.watchChannel(data.channel1.cid, 10)
                 .execute()
                 .data()
         }

@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.offline.usecase.ReplayEventsForActiveChannels as OfflineReplayEventsForActiveChannels
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ReplayEventsForActiveChannels {
     /**
@@ -17,8 +17,6 @@ public interface ReplayEventsForActiveChannels {
     public operator fun invoke(cid: String): Call<List<ChatEvent>>
 }
 
-internal class ReplayEventsForActiveChannelsImpl(
-    private val offlineReplayEventsForActiveChannels: OfflineReplayEventsForActiveChannels,
-) : ReplayEventsForActiveChannels {
-    override operator fun invoke(cid: String): Call<List<ChatEvent>> = offlineReplayEventsForActiveChannels.invoke(cid)
+internal class ReplayEventsForActiveChannelsImpl(private val chatDomain: ChatDomain) : ReplayEventsForActiveChannels {
+    override operator fun invoke(cid: String): Call<List<ChatEvent>> = chatDomain.replayEventsForActiveChannels(cid)
 }

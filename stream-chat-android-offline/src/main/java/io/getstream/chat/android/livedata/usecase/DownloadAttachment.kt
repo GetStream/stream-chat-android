@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.usecase.DownloadAttachment as OfflineDownloadAttachment
+import io.getstream.chat.android.livedata.ChatDomain
 
 @InternalStreamChatApi
 public interface DownloadAttachment {
@@ -17,7 +17,7 @@ public interface DownloadAttachment {
     public operator fun invoke(attachment: Attachment): Call<Unit>
 }
 
-internal class DownloadAttachmentImpl(private val offlineDownloadAttachment: OfflineDownloadAttachment) :
-    DownloadAttachment {
-    override operator fun invoke(attachment: Attachment): Call<Unit> = offlineDownloadAttachment.invoke(attachment)
+internal class DownloadAttachmentImpl(private val chatDomain: ChatDomain) : DownloadAttachment {
+    override operator fun invoke(attachment: Attachment): Call<Unit> =
+        chatDomain.downloadAttachment(attachment)
 }

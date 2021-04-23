@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.ShuffleGiphy as OfflineShuffleGiphy
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ShuffleGiphy {
     /**
@@ -17,6 +17,6 @@ public interface ShuffleGiphy {
     public operator fun invoke(message: Message): Call<Message>
 }
 
-internal class ShuffleGiphyImpl(private val offlineShuffleGiphy: OfflineShuffleGiphy) : ShuffleGiphy {
-    override operator fun invoke(message: Message): Call<Message> = offlineShuffleGiphy.invoke(message)
+internal class ShuffleGiphyImpl(private val chatDomain: ChatDomain) : ShuffleGiphy {
+    override operator fun invoke(message: Message): Call<Message> = chatDomain.shuffleGiphy(message)
 }

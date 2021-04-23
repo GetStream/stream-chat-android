@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
-import io.getstream.chat.android.offline.usecase.GetThread as OfflineGetThread
 
 public interface GetThread {
     /**
@@ -20,7 +18,7 @@ public interface GetThread {
     public operator fun invoke(cid: String, parentId: String): Call<ThreadController>
 }
 
-internal class GetThreadImpl(private val offlineGetThread: OfflineGetThread) : GetThread {
+internal class GetThreadImpl(private val chatDomain: ChatDomain) : GetThread {
     override operator fun invoke(cid: String, parentId: String): Call<ThreadController> =
-        offlineGetThread.invoke(cid, parentId).map(::ThreadControllerImpl)
+        chatDomain.getThread(cid, parentId)
 }

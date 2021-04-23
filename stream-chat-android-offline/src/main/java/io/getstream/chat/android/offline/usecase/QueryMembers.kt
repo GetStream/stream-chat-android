@@ -15,7 +15,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
  *
  * @property domainImpl instance of a ChatDomain
  */
-public class QueryMembers internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class QueryMembers(private val domainImpl: ChatDomainImpl) {
 
     /**
      * Obtains an executable coroutine call for querying members
@@ -28,7 +28,7 @@ public class QueryMembers internal constructor(private val domainImpl: ChatDomai
      * @param members
      * @return
      */
-    public operator fun invoke(
+    operator fun invoke(
         cid: String,
         offset: Int = 0,
         limit: Int = 0,

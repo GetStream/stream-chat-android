@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.SetMessageForReply as OfflineSetMessageForReply
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface SetMessageForReply {
     /**
@@ -16,7 +16,6 @@ public interface SetMessageForReply {
     public operator fun invoke(cid: String, message: Message?): Call<Unit>
 }
 
-internal class SetMessageForReplyImpl(private val offlineSetMessageForReplyImpl: OfflineSetMessageForReply) :
-    SetMessageForReply {
-    override fun invoke(cid: String, message: Message?): Call<Unit> = offlineSetMessageForReplyImpl.invoke(cid, message)
+internal class SetMessageForReplyImpl(private val chatDomain: ChatDomain) : SetMessageForReply {
+    override fun invoke(cid: String, message: Message?): Call<Unit> = chatDomain.setMessageForReply(cid, message)
 }

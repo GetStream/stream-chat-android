@@ -12,16 +12,16 @@ internal class SendReactionImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking {
-        val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        val channelState = chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
-        val result = chatDomain.useCases.sendMessage(message1).execute()
+        val result = chatDomain.sendMessage(message1).execute()
         assertSuccess(result)
         data.reaction1.messageId = result.data().id
         // go offline, reaction should still update state
         chatDomainImpl.setOffline()
         val oldMsg = channelState.getMessage(message1.id)
         val oldReactionCounts = oldMsg!!.reactionCounts
-        val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
+        val result2 = chatDomain.sendReaction(data.channel1.cid, data.reaction1, false).execute()
         assertSuccess(result2)
         Truth.assertThat(result2.isSuccess).isTrue()
         val msg = channelState.getMessage(message1.id)

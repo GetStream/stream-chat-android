@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.usecase.CreateChannel as OfflineCreateChannel
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface CreateChannel {
     /**
@@ -16,6 +16,6 @@ public interface CreateChannel {
     public operator fun invoke(channel: Channel): Call<Channel>
 }
 
-internal class CreateChannelImpl(private val offlineCreateChannel: OfflineCreateChannel) : CreateChannel {
-    override operator fun invoke(channel: Channel): Call<Channel> = offlineCreateChannel.invoke(channel)
+internal class CreateChannelImpl(private val chatDomain: ChatDomain) : CreateChannel {
+    override operator fun invoke(channel: Channel): Call<Channel> = chatDomain.createChannel(channel)
 }

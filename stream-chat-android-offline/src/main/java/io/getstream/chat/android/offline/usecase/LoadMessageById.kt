@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class LoadMessageById internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class LoadMessageById(private val domainImpl: ChatDomainImpl) {
     /**
      * Loads message for a given message id and channel id
      *
@@ -17,7 +17,7 @@ public class LoadMessageById internal constructor(private val domainImpl: ChatDo
      * @param newerMessagesOffset: how many new messages to load after the requested message
      */
     @CheckResult
-    public operator fun invoke(
+    operator fun invoke(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int = 0,

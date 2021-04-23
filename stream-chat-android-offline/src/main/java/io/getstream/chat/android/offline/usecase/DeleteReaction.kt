@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class DeleteReaction internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class DeleteReaction(private val domainImpl: ChatDomainImpl) {
     /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
      * @param cid the full channel id, ie messaging:123
@@ -16,7 +16,7 @@ public class DeleteReaction internal constructor(private val domainImpl: ChatDom
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public operator fun invoke(cid: String, reaction: Reaction): Call<Message> {
+    operator fun invoke(cid: String, reaction: Reaction): Call<Message> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

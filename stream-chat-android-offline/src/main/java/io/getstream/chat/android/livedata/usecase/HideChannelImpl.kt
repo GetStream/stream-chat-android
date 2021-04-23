@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.HideChannel as OfflineHideChannel
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface HideChannel {
     /**
@@ -17,7 +17,7 @@ public interface HideChannel {
     public operator fun invoke(cid: String, keepHistory: Boolean): Call<Unit>
 }
 
-internal class HideChannelImpl(private val offlineHideChannel: OfflineHideChannel) : HideChannel {
+internal class HideChannelImpl(private val chatDomain: ChatDomain) : HideChannel {
     override operator fun invoke(cid: String, keepHistory: Boolean): Call<Unit> =
-        offlineHideChannel.invoke(cid, keepHistory)
+        chatDomain.hideChannel(cid, keepHistory)
 }

@@ -9,7 +9,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import kotlinx.coroutines.launch
 
-public class WatchChannel internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class WatchChannel(private val domainImpl: ChatDomainImpl) {
     /**
      * Watches the given channel and returns a ChannelController
      *
@@ -19,7 +19,7 @@ public class WatchChannel internal constructor(private val domainImpl: ChatDomai
      * @see io.getstream.chat.android.offline.channel.ChannelController
      */
     @CheckResult
-    public operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController> {
+    operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

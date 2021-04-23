@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.ShowChannel as OfflineShowChannel
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ShowChannel {
     /**
@@ -16,6 +16,6 @@ public interface ShowChannel {
     public operator fun invoke(cid: String): Call<Unit>
 }
 
-internal class ShowChannelImpl(private val offlineShowChannel: OfflineShowChannel) : ShowChannel {
-    override operator fun invoke(cid: String): Call<Unit> = offlineShowChannel.invoke(cid)
+internal class ShowChannelImpl(private val chatDomain: ChatDomain) : ShowChannel {
+    override operator fun invoke(cid: String): Call<Unit> = chatDomain.showChannel(cid)
 }

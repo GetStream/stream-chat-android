@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should throw`
@@ -29,8 +28,6 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 internal class SendMessageWithFilesTest : BaseDomainTest2() {
-
-    val sendMessageWithFile: SendMessage by lazy { chatDomain.useCases.sendMessage }
 
     @Before
     override fun setup() {
@@ -102,7 +99,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploads(files)
 
-        val result = sendMessageWithFile(message).execute()
+        val result = chatDomain.sendMessage(message).execute()
         assertSuccess(result)
 
         Truth.assertThat(result).isEqualTo(expectedResult)
@@ -180,7 +177,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploadsFailure(files)
 
-        val result = sendMessageWithFile(message).execute()
+        val result = chatDomain.sendMessage(message).execute()
 
         Truth.assertThat(result).isEqualTo(expectedResult)
     }
@@ -216,7 +213,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
         message.cid = ""
 
         invoking {
-            sendMessageWithFile(message)
+            chatDomain.sendMessage(message)
         } `should throw` IllegalArgumentException::class `with message` "cid can not be empty"
     }
 
@@ -228,7 +225,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
             message.cid = "abc"
 
             invoking {
-                sendMessageWithFile(message)
+                chatDomain.sendMessage(message)
             } `should throw` IllegalArgumentException::class `with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
         }
 

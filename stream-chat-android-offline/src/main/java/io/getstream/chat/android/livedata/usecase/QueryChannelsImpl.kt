@@ -4,11 +4,9 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.offline.usecase.QueryChannels as OfflineQueryChannels
 
 public interface QueryChannels {
     /**
@@ -34,12 +32,11 @@ public interface QueryChannels {
     ): Call<QueryChannelsController>
 }
 
-internal class QueryChannelsImpl(private val offlineQueryChannels: OfflineQueryChannels) : QueryChannels {
+internal class QueryChannelsImpl(private val chatDomain: ChatDomain) : QueryChannels {
     override operator fun invoke(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<QueryChannelsController> =
-        offlineQueryChannels.invoke(filter, sort, limit, messageLimit).map(::QueryChannelsControllerImpl)
+    ): Call<QueryChannelsController> = chatDomain.queryChannels(filter, sort, limit, messageLimit)
 }

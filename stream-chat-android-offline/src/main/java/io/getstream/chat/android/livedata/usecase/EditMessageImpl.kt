@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.usecase.EditMessage as OfflineEditMessage
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface EditMessage {
     /**
@@ -16,6 +16,6 @@ public interface EditMessage {
     public operator fun invoke(message: Message): Call<Message>
 }
 
-internal class EditMessageImpl(private val offlineEditMessage: OfflineEditMessage) : EditMessage {
-    override operator fun invoke(message: Message): Call<Message> = offlineEditMessage.invoke(message)
+internal class EditMessageImpl(private val chatDomain: ChatDomain) : EditMessage {
+    override operator fun invoke(message: Message): Call<Message> = chatDomain.editMessage(message)
 }

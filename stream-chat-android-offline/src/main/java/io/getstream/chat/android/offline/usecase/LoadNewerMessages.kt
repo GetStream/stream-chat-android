@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-public class LoadNewerMessages internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class LoadNewerMessages(private val domainImpl: ChatDomainImpl) {
     /**
      * Loads newer messages for the channel
      *
@@ -15,7 +15,7 @@ public class LoadNewerMessages internal constructor(private val domainImpl: Chat
      * @param messageLimit: how many new messages to load
      */
     @CheckResult
-    public operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
+    operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)

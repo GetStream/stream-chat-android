@@ -15,7 +15,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
  * Use case for searching users by string-autocomplete filter. Performs online request if connected or local searching
  * in DB otherwise.
  */
-public class SearchUsersByName internal constructor(private val chatDomainImpl: ChatDomainImpl) {
+internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
 
     @VisibleForTesting
     internal val defaultUsersQueryFilter by lazy {
@@ -34,7 +34,7 @@ public class SearchUsersByName internal constructor(private val chatDomainImpl: 
      * @param userLimit The page size in the request.
      * @param userPresence Presence flag to obtain additional info such as last active date.
      */
-    public operator fun invoke(
+    operator fun invoke(
         querySearch: String,
         offset: Int,
         userLimit: Int,

@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.StopTyping as OfflineStopTyping
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface StopTyping {
     /**
@@ -17,7 +17,6 @@ public interface StopTyping {
     public operator fun invoke(cid: String, parentId: String? = null): Call<Boolean>
 }
 
-internal class StopTypingImpl(private val offlineStopTyping: OfflineStopTyping) : StopTyping {
-    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> =
-        offlineStopTyping.invoke(cid, parentId)
+internal class StopTypingImpl(private val chatDomain: ChatDomain) : StopTyping {
+    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> = chatDomain.stopTyping(cid, parentId)
 }

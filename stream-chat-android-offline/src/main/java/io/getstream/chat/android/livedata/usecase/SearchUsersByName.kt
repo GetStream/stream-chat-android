@@ -2,13 +2,13 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.usecase.SearchUsersByName as OfflineSearchUsersByName
+import io.getstream.chat.android.livedata.ChatDomain
 
 /**
  * Use case for searching users by string-autocomplete filter. Performs online request if connected or local searching
  * in DB otherwise.
  */
-public class SearchUsersByName internal constructor(private val offlineSearchUsersByName: OfflineSearchUsersByName) {
+public class SearchUsersByName internal constructor(private val chatDomain: ChatDomain) {
     /**
      * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
      * in local database.
@@ -23,5 +23,5 @@ public class SearchUsersByName internal constructor(private val offlineSearchUse
         offset: Int,
         userLimit: Int,
         userPresence: Boolean,
-    ): Call<List<User>> = offlineSearchUsersByName.invoke(querySearch, offset, userLimit, userPresence)
+    ): Call<List<User>> = chatDomain.searchUsersByName(querySearch, offset, userLimit, userPresence)
 }

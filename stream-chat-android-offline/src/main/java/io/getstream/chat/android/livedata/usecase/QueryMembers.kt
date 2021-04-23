@@ -5,14 +5,14 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.offline.usecase.QueryMembers as OfflineQueryMembers
+import io.getstream.chat.android.livedata.ChatDomain
 
 /**
  * UseCase for querying members of a channel
  *
  * @property domainImpl instance of a ChatDomain
  */
-public class QueryMembers internal constructor(private val offlineQueryMember: OfflineQueryMembers) {
+public class QueryMembers internal constructor(private val chatDomain: ChatDomain) {
 
     /**
      * Obtains an executable coroutine call for querying members
@@ -32,5 +32,5 @@ public class QueryMembers internal constructor(private val offlineQueryMember: O
         filter: FilterObject = NeutralFilterObject,
         sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
         members: List<Member> = emptyList(),
-    ): Call<List<Member>> = offlineQueryMember.invoke(cid, offset, limit, filter, sort, members)
+    ): Call<List<Member>> = chatDomain.queryMembers(cid, offset, limit, filter, sort, members)
 }

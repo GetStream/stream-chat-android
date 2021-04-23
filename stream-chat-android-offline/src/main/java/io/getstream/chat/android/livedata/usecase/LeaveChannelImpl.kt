@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.offline.usecase.LeaveChannel as OfflineLeaveChannel
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface LeaveChannel {
     /**
@@ -14,6 +14,6 @@ public interface LeaveChannel {
     public operator fun invoke(cid: String): Call<Unit>
 }
 
-internal class LeaveChannelImpl(private val offlineLeaveChannel: OfflineLeaveChannel) : LeaveChannel {
-    override operator fun invoke(cid: String): Call<Unit> = offlineLeaveChannel.invoke(cid)
+internal class LeaveChannelImpl(private val chatDomain: ChatDomain) : LeaveChannel {
+    override operator fun invoke(cid: String): Call<Unit> = chatDomain.leaveChannel(cid)
 }

@@ -28,7 +28,6 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.thread.ThreadController
-import io.getstream.chat.android.offline.usecase.UseCaseHelper
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
@@ -92,14 +91,6 @@ public interface ChatDomain {
      * Updates about currently typing users in active channels. See [TypingEvent].
      */
     public val typingUpdates: StateFlow<TypingEvent>
-
-    /** a helper object which lists all the initialized use cases for the chat domain */
-    @Deprecated(
-        level = DeprecationLevel.WARNING,
-        message = "This property is deprecated now. Use cases are now exposed by ChatDomain directly as functions.",
-        replaceWith = ReplaceWith("Replace this property call by obtaining a specific use case directly from ChatDomain."),
-    )
-    public val useCases: UseCaseHelper
 
     @Deprecated("Disconnecting from ChatClient will automatically disconnect from ChatDomain")
     public suspend fun disconnect()

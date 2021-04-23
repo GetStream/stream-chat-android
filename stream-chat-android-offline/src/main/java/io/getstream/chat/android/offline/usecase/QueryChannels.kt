@@ -11,7 +11,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.launch
 
-public class QueryChannels internal constructor(private val domainImpl: ChatDomainImpl) {
+internal class QueryChannels(private val domainImpl: ChatDomainImpl) {
     /**
      * Queries offline storage and the API for channels matching the filter
      * Returns a queryChannelsController
@@ -27,7 +27,7 @@ public class QueryChannels internal constructor(private val domainImpl: ChatDoma
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
     @CheckResult
-    public operator fun invoke(
+    operator fun invoke(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int = 30,
