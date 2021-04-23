@@ -50,7 +50,7 @@ public class ThreadController internal constructor(
 
     public fun getMessagesSorted(): List<Message> = messages.value
 
-    public suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
+    internal suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
         // TODO: offline storage for thread load more
         if (_loadingOlderMessages.value) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."

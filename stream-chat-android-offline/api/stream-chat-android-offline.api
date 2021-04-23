@@ -744,8 +744,6 @@ public final class io/getstream/chat/android/offline/thread/ThreadController {
 	public final fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessagesSorted ()Ljava/util/List;
 	public final fun getThreadId ()Ljava/lang/String;
-	public final fun loadOlderMessages (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun loadOlderMessages$default (Lio/getstream/chat/android/offline/thread/ThreadController;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/offline/usecase/CancelMessage {
