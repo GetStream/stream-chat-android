@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 internal class RepositoryFacadeBuilder {
     companion object {
@@ -30,14 +31,16 @@ internal class RepositoryFacadeBuilder {
     fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
 
-    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
+    private fun createDatabase(scope: CoroutineScope, context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
         ChatDatabase.getDatabase(context, user.id)
     } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
+        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
+            scope.launch { inMemoryDatabase.clearAllTables() }
+        }
     }
 
-    private fun getChatDatabase(): ChatDatabase {
-        return database ?: createDatabase(requireNotNull(context), requireNotNull(currentUser), isOfflineEnabled)
+    private fun getChatDatabase(scope: CoroutineScope): ChatDatabase {
+        return database ?: createDatabase(scope, requireNotNull(context), requireNotNull(currentUser), isOfflineEnabled)
     }
 
     fun build(): RepositoryFacade {
@@ -45,7 +48,7 @@ internal class RepositoryFacadeBuilder {
         val scope = requireNotNull(coroutineScope)
         val user = requireNotNull(currentUser)
 
-        val factory = RepositoryFactory(getChatDatabase(), user)
+        val factory = RepositoryFactory(getChatDatabase(scope), user)
 
         val userRepository = factory.createUserRepository()
         val getUser: suspend (userId: String) -> User = { userId ->
