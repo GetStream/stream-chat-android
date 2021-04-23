@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
@@ -27,6 +28,10 @@ internal fun Context.getIntArray(@ArrayRes id: Int): IntArray {
 @ColorInt
 internal fun Context.getColorCompat(@ColorRes color: Int): Int {
     return ContextCompat.getColor(this, color)
+}
+
+internal fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? {
+    return ContextCompat.getColorStateList(this, color)
 }
 
 internal fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {

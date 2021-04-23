@@ -60,7 +60,8 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @see State
      */
     public val state: LiveData<State> = stateMerger
-    public val currentUser: User = domain.currentUser
+    public val currentUser: User
+        get() = domain.currentUser
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
@@ -86,11 +87,13 @@ public class MessageListViewModel @JvmOverloads constructor(
         domain.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
-                _channel.addSource(MutableLiveData(channelController.toChannel())) { _channel.value = it }
+                _channel.addSource(channelController.channelData) {
+                    _channel.value = channelController.toChannel()
+                }
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
 
                 messageListData = MessageListItemLiveData(
-                    currentUser,
+                    { currentUser.id },
                     channelController.messages,
                     channelController.reads,
                     typingIds,
@@ -137,7 +140,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-            currentUser,
+            { currentUser.id },
             threadMessages,
             reads,
             null,
