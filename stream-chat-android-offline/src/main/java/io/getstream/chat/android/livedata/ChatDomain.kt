@@ -589,8 +589,6 @@ public interface ChatDomain {
         private val offlineChatDomainBuilder: OfflineChatDomainBuilder =
             OfflineChatDomainBuilder(appContext, client, user)
 
-        private var database: ChatDatabase? = null
-
         internal fun database(db: ChatDatabase) = apply {
             offlineChatDomainBuilder.database(db)
         }
