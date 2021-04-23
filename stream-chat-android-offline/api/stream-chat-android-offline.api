@@ -660,15 +660,11 @@ public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
 }
 
 public final class io/getstream/chat/android/offline/channel/ChannelController {
-	public final fun cancelMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun clean ()V
-	public final fun delete (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun deleteReaction (Lio/getstream/chat/android/client/models/Reaction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getChannelData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getChannelType ()Ljava/lang/String;
+	public final fun getCid ()Ljava/lang/String;
 	public final fun getEndOfNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getHidden ()Lkotlinx/coroutines/flow/StateFlow;
@@ -685,38 +681,11 @@ public final class io/getstream/chat/android/offline/channel/ChannelController {
 	public final fun getReads ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getRecoveryNeeded ()Z
 	public final fun getRepliedMessage ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getThread (Ljava/lang/String;)Lio/getstream/chat/android/offline/thread/ThreadController;
 	public final fun getTyping ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getUnfilteredMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getWatcherCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getWatchers ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun hide (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun isHidden ()Z
-	public final fun keystroke (Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
-	public final fun leave (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun loadNewerMessages (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun loadNewerMessages (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun loadNewerMessages$default (Lio/getstream/chat/android/offline/channel/ChannelController;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public final fun loadOlderMessages (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun loadOlderMessages (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun loadOlderMessages$default (Lio/getstream/chat/android/offline/channel/ChannelController;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public final fun removeMembers ([Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun sendFile (Ljava/io/File;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun sendGiphy (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun sendImage (Ljava/io/File;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/offline/channel/ChannelController;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public final fun sendReaction (Lio/getstream/chat/android/client/models/Reaction;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun setRecoveryNeeded (Z)V
-	public final fun setTyping (Ljava/lang/String;Lio/getstream/chat/android/client/events/ChatEvent;)V
-	public final fun show (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun stopTyping (Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
-	public final fun upsertMember (Lio/getstream/chat/android/client/models/Member;)V
-	public final fun upsertMembers (Ljava/util/List;)V
-	public final fun watch (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun watch$default (Lio/getstream/chat/android/offline/channel/ChannelController;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun toChannel ()Lio/getstream/chat/android/client/models/Channel;
 }
 
 public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController {

@@ -130,7 +130,7 @@ public class ChannelController internal constructor(
 
     public val repliedMessage: StateFlow<Message?> = _repliedMessage
     internal var hideMessagesBefore: Date? = null
-    public val unfilteredMessages: StateFlow<List<Message>> =
+    internal val unfilteredMessages: StateFlow<List<Message>> =
         _messages.map { it.values.toList() }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     /** a list of messages sorted by message.createdAt */
@@ -226,11 +226,12 @@ public class ChannelController internal constructor(
     public val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
 
     public var recoveryNeeded: Boolean = false
+        private set
     private var lastMarkReadEvent: Date? = null
     private var lastKeystrokeAt: Date? = null
     private var lastStartTypingEvent: Date? = null
     private val channelClient = client.channel(channelType, channelId)
-    internal val cid: String = "%s:%s".format(channelType, channelId)
+    public val cid: String = "%s:%s".format(channelType, channelId)
 
     private var keystrokeParentMessageId: String? = null
 
@@ -238,7 +239,7 @@ public class ChannelController internal constructor(
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
-    public fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
+    internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
         ThreadController(threadId, this, domainImpl)
             .also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
@@ -247,7 +248,7 @@ public class ChannelController internal constructor(
         return domainImpl.getChannelConfig(channelType)
     }
 
-    public fun keystroke(parentId: String?): Result<Boolean> {
+    internal fun keystroke(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
@@ -270,7 +271,7 @@ public class ChannelController internal constructor(
         return Result(false)
     }
 
-    public fun stopTyping(parentId: String?): Result<Boolean> {
+    internal fun stopTyping(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
@@ -352,7 +353,7 @@ public class ChannelController internal constructor(
         upsertMessages(recentMessages)
     }
 
-    public suspend fun hide(clearHistory: Boolean): Result<Unit> {
+    internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
         val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
@@ -369,7 +370,7 @@ public class ChannelController internal constructor(
         return result
     }
 
-    public suspend fun show(): Result<Unit> {
+    internal suspend fun show(): Result<Unit> {
         setHidden(false)
         val result = channelClient.show().execute()
         if (result.isSuccess) {
@@ -378,7 +379,7 @@ public class ChannelController internal constructor(
         return result
     }
 
-    public suspend fun leave(): Result<Unit> {
+    internal suspend fun leave(): Result<Unit> {
         val result = channelClient.removeMembers(domainImpl.currentUser.id).execute()
 
         return if (result.isSuccess) {
@@ -392,7 +393,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public suspend fun delete(): Result<Unit> {
+    internal suspend fun delete(): Result<Unit> {
         val result = channelClient.delete().execute()
 
         return if (result.isSuccess) {
@@ -409,7 +410,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public suspend fun watch(limit: Int = 30) {
+    internal suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
@@ -441,7 +442,7 @@ public class ChannelController internal constructor(
     /**
      *  Loads a list of messages before the oldest message in the current list.
      */
-    public suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
+    internal suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 getLoadMoreBaseMessageId(Pagination.LESS_THAN)?.let {
@@ -455,7 +456,7 @@ public class ChannelController internal constructor(
     /**
      *  Loads a list of messages after the newest message in the current list.
      */
-    public suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
+    internal suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 getLoadMoreBaseMessageId(Pagination.GREATER_THAN)?.let {
@@ -469,7 +470,7 @@ public class ChannelController internal constructor(
     /**
      *  Loads a list of messages before the message with particular message id.
      */
-    public suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
+    internal suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.LESS_THAN
@@ -481,7 +482,7 @@ public class ChannelController internal constructor(
     /**
      *  Loads a list of messages after the message with particular message id.
      */
-    public suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+    internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
         return runChannelQuery(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.GREATER_THAN
@@ -575,7 +576,7 @@ public class ChannelController internal constructor(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    public suspend fun sendMessage(
+    internal suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
@@ -795,7 +796,7 @@ public class ChannelController internal constructor(
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
      */
-    public suspend fun cancelMessage(message: Message): Result<Boolean> {
+    internal suspend fun cancelMessage(message: Message): Result<Boolean> {
         if ("ephemeral" != message.type) {
             throw IllegalArgumentException("Only ephemeral message can be canceled")
         }
@@ -805,7 +806,7 @@ public class ChannelController internal constructor(
         return Result(true)
     }
 
-    public suspend fun sendGiphy(message: Message): Result<Message> {
+    internal suspend fun sendGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
             message.id,
@@ -821,7 +822,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public suspend fun shuffleGiphy(message: Message): Result<Message> {
+    internal suspend fun shuffleGiphy(message: Message): Result<Message> {
         val request = SendActionRequest(
             message.cid,
             message.id,
@@ -843,11 +844,11 @@ public class ChannelController internal constructor(
         }
     }
 
-    public suspend fun sendImage(file: File): Result<String> {
+    internal suspend fun sendImage(file: File): Result<String> {
         return client.sendImage(channelType, channelId, file).await()
     }
 
-    public suspend fun sendFile(file: File): Result<String> {
+    internal suspend fun sendFile(file: File): Result<String> {
         return client.sendFile(channelType, channelId, file).await()
     }
 
@@ -862,7 +863,7 @@ public class ChannelController internal constructor(
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
-    public suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
+    internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
         val currentUser = domainImpl.currentUser
         reaction.apply {
             user = currentUser
@@ -917,7 +918,7 @@ public class ChannelController internal constructor(
         return Result(reaction)
     }
 
-    public suspend fun deleteReaction(reaction: Reaction): Result<Message> {
+    internal suspend fun deleteReaction(reaction: Reaction): Result<Message> {
         val online = domainImpl.isOnline()
         val currentUser = domainImpl.currentUser
         reaction.apply {
@@ -1075,7 +1076,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public fun setTyping(userId: String, event: ChatEvent?) {
+    internal fun setTyping(userId: String, event: ChatEvent?) {
         val copy = _typing.value.toMutableMap()
         if (event == null) {
             copy.remove(userId)
@@ -1096,7 +1097,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public fun isHidden(): Boolean {
+    internal fun isHidden(): Boolean {
         return _hidden.value
     }
 
@@ -1272,15 +1273,15 @@ public class ChannelController internal constructor(
         _members.value = _members.value - userId
     }
 
-    public fun upsertMembers(members: List<Member>) {
+    internal fun upsertMembers(members: List<Member>) {
         _members.value = _members.value + members.associateBy { it.user.id }
     }
 
-    public suspend fun removeMembers(vararg userIds: String): Result<Channel> {
+    internal suspend fun removeMembers(vararg userIds: String): Result<Channel> {
         return channelClient.removeMembers(*userIds).await()
     }
 
-    public fun upsertMember(member: Member) {
+    internal fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 
@@ -1388,7 +1389,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    public suspend fun editMessage(message: Message): Result<Message> {
+    internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
         var editedMessage = message.copy()
@@ -1441,7 +1442,7 @@ public class ChannelController internal constructor(
         return Result(editedMessage)
     }
 
-    public suspend fun deleteMessage(message: Message): Result<Message> {
+    internal suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
         message.deletedAt = Date()
         message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
@@ -1477,7 +1478,7 @@ public class ChannelController internal constructor(
         return Result(message)
     }
 
-    internal fun toChannel(): Channel {
+    public fun toChannel(): Channel {
         // recreate a channel object from the various observables.
         val channelData = _channelData.value ?: ChannelData(channelType, channelId)
 
