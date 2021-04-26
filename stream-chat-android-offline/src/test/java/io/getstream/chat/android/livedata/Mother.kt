@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -527,6 +528,27 @@ internal fun randomChannelUpdatedEvent(
         channelId = channelId,
         message = message,
         channel = channel,
+    )
+}
+
+internal fun randomChannelUpdatedByUserEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    channel: Channel = randomChannel(),
+    user: User = randomUser(),
+): ChannelUpdatedByUserEvent {
+    return ChannelUpdatedByUserEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        message = message,
+        channel = channel,
+        user = user,
     )
 }
 
