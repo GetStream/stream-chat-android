@@ -169,6 +169,8 @@ internal class ChatDomainImpl internal constructor(
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+    @VisibleForTesting
+    val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
 
     private val _initialized = MutableStateFlow(false)
@@ -177,15 +179,13 @@ internal class ChatDomainImpl internal constructor(
     private val _channelUnreadCount = MutableStateFlow(0)
     private val _errorEvent = MutableStateFlow<Event<ChatError>?>(null)
     private val _banned = MutableStateFlow(false)
-    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
 
+    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
+
     override lateinit var currentUser: User
 
     private val syncModule by lazy { SyncProvider(appContext) }
-
-    @VisibleForTesting
-    val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
     /** if the client connection has been initialized */
     override val initialized: StateFlow<Boolean> = _initialized
