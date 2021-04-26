@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
@@ -92,7 +93,7 @@ public interface ChatDomain {
      */
     public val typingUpdates: StateFlow<TypingEvent>
 
-    @Deprecated("Disconnecting from ChatClient will automatically disconnect from ChatDomain")
+    @InternalStreamChatApi
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
