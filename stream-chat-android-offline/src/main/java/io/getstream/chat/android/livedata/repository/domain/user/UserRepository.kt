@@ -18,11 +18,12 @@ internal interface UserRepository {
 
 internal class UserRepositoryImpl(
     private val userDao: UserDao,
-    private val currentUser: User,
+    currentUser: User?,
     cacheSize: Int = 100,
 ) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
+    private val currentUserMap: Map<String, User> = currentUser?.let { mapOf(it.id to it) } ?: emptyMap()
 
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
@@ -65,7 +66,7 @@ internal class UserRepositoryImpl(
     }
 
     override suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
-        selectUsers(userIds).associateBy(User::id) + (currentUser.id to currentUser)
+        selectUsers(userIds).associateBy(User::id) + currentUserMap
 
     override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> {
         return userDao.selectAllUser(limit, offset).map(::toModel)
