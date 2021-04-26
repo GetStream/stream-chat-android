@@ -4,6 +4,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -128,16 +130,22 @@ internal class QueryChannelsController(
     }
 
     internal fun handleEvent(event: ChatEvent) {
-        if (event is NotificationAddedToChannelEvent) {
-            // this is the only event that adds channels to the query
-            addChannelIfFilterMatches(event.channel)
-        } else if (event is NotificationMessageNewEvent) {
-            // It is necessary to add the channel only if it is not already present
-            val channel = event.channel
-
-            if (!queryChannelsSpec.cids.contains(channel.cid) && newChannelEventFilter(channel, filter)) {
-                val channelControllerImpl = domainImpl.channel(channel)
-                channelControllerImpl.updateLiveDataFromChannel(channel)
+        when (event) {
+            is NotificationAddedToChannelEvent -> addChannelIfFilterMatches(event.channel)
+            is ChannelUpdatedEvent -> {
+                if (!queryChannelsSpec.cids.contains(event.channel.cid)) {
+                    addChannelIfFilterMatches(event.channel)
+                }
+            }
+            is ChannelUpdatedByUserEvent -> {
+                if (!queryChannelsSpec.cids.contains(event.channel.cid)) {
+                    addChannelIfFilterMatches(event.channel)
+                }
+            }
+            is NotificationMessageNewEvent -> {
+                if (!queryChannelsSpec.cids.contains(event.channel.cid)) {
+                    addChannelIfFilterMatches(event.channel)
+                }
             }
         }
 

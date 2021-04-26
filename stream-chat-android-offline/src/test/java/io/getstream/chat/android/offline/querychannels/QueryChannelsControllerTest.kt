@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.querychannels
 
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -18,6 +19,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.randomChannel
+import io.getstream.chat.android.livedata.randomChannelUpdatedByUserEvent
+import io.getstream.chat.android.livedata.randomChannelUpdatedEvent
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
@@ -191,21 +194,24 @@ internal class QueryChannelsControllerTest {
         }
 
     @Test
-    fun `when a new message arrives in a new channel, it should update the channels`() =
+    fun `When a new message arrives in a new channel Should update the channels`() =
         runBlockingTest {
-            val channelController: ChannelControllerImpl = mock()
+            val channel = randomChannel()
+            val channelController: ChannelControllerImpl = mock {
+                on(mock.toChannel()) doReturn channel
+            }
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
-            val channel = randomChannel()
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = channel))
 
             verify(channelController).updateLiveDataFromChannel(eq(channel))
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
         }
 
     @Test
-    fun `when a new message arrives in a new channel, it NOT should update the channels when it is already there`() =
+    fun `When a new message arrives in a new channel Should not update the channels when it is already there`() =
         runBlockingTest {
             val cid = randomString()
             val channelController: ChannelControllerImpl = mock()
@@ -217,6 +223,38 @@ internal class QueryChannelsControllerTest {
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
             verify(channelController, never()).updateLiveDataFromChannel(any())
+        }
+
+    @Test
+    fun `When a channel updated arrives Should add the channel when filter matches and it wasn't added yet`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelControllerImpl = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated by user arrives Should add the channel when filter matches and it wasn't added yet`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelControllerImpl = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
         }
 }
 
@@ -242,6 +280,7 @@ private class Fixture {
 
     fun givenNewChannelControllerForChannel(channelControllerImpl: ChannelControllerImpl = mock()): Fixture = apply {
         whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelControllerImpl
+        whenever(chatDomainImpl.channel(any<String>())) doReturn channelControllerImpl
     }
 
     fun givenFilterObject(filterObject: FilterObject): Fixture = apply {
