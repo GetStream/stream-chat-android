@@ -8,8 +8,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.usecase.LoadNewerMessages
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomInt
@@ -30,14 +31,14 @@ internal class LoadNewerMessagesImplTest {
     }
 
     private lateinit var chatDomainImpl: ChatDomainImpl
-    private lateinit var sut: LoadNewerMessagesImpl
+    private lateinit var sut: LoadNewerMessages
 
     @BeforeEach
     fun before() {
         chatDomainImpl = mock {
             on { scope } doReturn testCoroutines.scope
         }
-        sut = LoadNewerMessagesImpl(chatDomainImpl)
+        sut = LoadNewerMessages(chatDomainImpl)
     }
 
     @Test
@@ -57,7 +58,7 @@ internal class LoadNewerMessagesImplTest {
     @Test
     fun `Given appropriate cid When invoke Should invoke load newer messages on channel controller`() =
         runBlockingTest {
-            val channelController = mock<ChannelControllerImpl>()
+            val channelController = mock<ChannelController>()
             val messageLimit = randomInt()
             val cid = randomCID()
             whenever(chatDomainImpl.channel(cid)) doReturn channelController
@@ -72,7 +73,7 @@ internal class LoadNewerMessagesImplTest {
         val channelMock = mock<Channel>()
         val cid = randomCID()
         val messageLimit = randomInt()
-        val channelController = mock<ChannelControllerImpl> {
+        val channelController = mock<ChannelController> {
             onBlocking { loadNewerMessages(limit = messageLimit) } doReturn Result(channelMock)
         }
         whenever(chatDomainImpl.channel(cid)) doReturn channelController
@@ -88,7 +89,7 @@ internal class LoadNewerMessagesImplTest {
         val errorMock = mock<ChatError>()
         val cid = randomCID()
         val messageLimit = randomInt()
-        val channelController = mock<ChannelControllerImpl> {
+        val channelController = mock<ChannelController> {
             onBlocking { loadNewerMessages(limit = messageLimit) } doReturn Result(errorMock)
         }
         whenever(chatDomainImpl.channel(cid)) doReturn channelController

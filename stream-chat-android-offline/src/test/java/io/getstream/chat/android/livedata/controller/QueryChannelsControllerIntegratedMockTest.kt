@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.TestObserver
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
@@ -23,10 +22,8 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
     @Test
     fun `Given some channels When received new message event Should return the same channels with proper orderings`() {
         runBlocking {
-            val observer = TestObserver<List<Channel>>()
             val queryChannelsController =
                 chatDomainImpl.queryChannels(data.filter1, QuerySort.desc(Channel::lastMessageAt))
-            queryChannelsController.channels.observeForever(observer)
             val channel1 = data.channel1.copy(lastMessageAt = Date(10000L))
             val channel2 = data.channel2.copy(lastMessageAt = Date(20000L))
             whenever(client.queryChannels(any())) doReturn TestCall(Result(listOf(channel1, channel2)))
@@ -34,7 +31,7 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
             // 1. Query channels and check that live data emits a proper sorted list.
             queryChannelsController.query()
 
-            val firstEmittedValue = observer.lastObservedValue.shouldNotBeNull()
+            val firstEmittedValue = queryChannelsController.channels.value.shouldNotBeNull()
             firstEmittedValue.size shouldBeEqualTo 2
             firstEmittedValue[0].run {
                 cid shouldBeEqualTo channel2.cid
@@ -51,7 +48,7 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
                 )
             )
 
-            val secondEmittedValue = observer.lastObservedValue.shouldNotBeNull()
+            val secondEmittedValue = queryChannelsController.channels.value.shouldNotBeNull()
 
             secondEmittedValue.size shouldBeEqualTo 2
             secondEmittedValue[0].run {

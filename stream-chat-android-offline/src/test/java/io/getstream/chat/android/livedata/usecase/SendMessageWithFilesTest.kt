@@ -29,8 +29,6 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
-    val sendMessageWithFile: SendMessage by lazy { chatDomain.useCases.sendMessage }
-
     @Before
     override fun setup() {
         super.setup()
@@ -101,7 +99,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploads(files)
 
-        val result = sendMessageWithFile(message).execute()
+        val result = chatDomain.sendMessage(message).execute()
         assertSuccess(result)
 
         Truth.assertThat(result).isEqualTo(expectedResult)
@@ -179,7 +177,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploadsFailure(files)
 
-        val result = sendMessageWithFile(message).execute()
+        val result = chatDomain.sendMessage(message).execute()
 
         Truth.assertThat(result).isEqualTo(expectedResult)
     }
@@ -215,7 +213,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
         message.cid = ""
 
         invoking {
-            sendMessageWithFile(message)
+            chatDomain.sendMessage(message)
         } `should throw` IllegalArgumentException::class `with message` "cid can not be empty"
     }
 
@@ -227,7 +225,7 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
             message.cid = "abc"
 
             invoking {
-                sendMessageWithFile(message)
+                chatDomain.sendMessage(message)
             } `should throw` IllegalArgumentException::class `with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
         }
 

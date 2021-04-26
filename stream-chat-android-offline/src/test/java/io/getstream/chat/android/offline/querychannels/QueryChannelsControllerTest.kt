@@ -16,14 +16,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.livedata.randomChannelUpdatedEvent
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -44,7 +44,7 @@ internal class QueryChannelsControllerTest {
             val newChannel = randomChannel(
                 members = List(positiveRandomInt(10)) { randomMember() } + randomMember(user = currentUser)
             )
-            val channelController = mock<ChannelControllerImpl>()
+            val channelController = mock<ChannelController>()
             val sut = Fixture()
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel(channelController)
@@ -59,7 +59,7 @@ internal class QueryChannelsControllerTest {
 
             sut.addChannelIfFilterMatches(newChannel)
 
-            verify(channelController).updateLiveDataFromChannel(eq(newChannel))
+            verify(channelController).updateDataFromChannel(eq(newChannel))
         }
 
     @Test
@@ -197,7 +197,7 @@ internal class QueryChannelsControllerTest {
     fun `When a new message arrives in a new channel Should update the channels`() =
         runBlockingTest {
             val channel = randomChannel()
-            val channelController: ChannelControllerImpl = mock {
+            val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture()
@@ -206,7 +206,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = channel))
 
-            verify(channelController).updateLiveDataFromChannel(eq(channel))
+            verify(channelController).updateDataFromChannel(eq(channel))
             Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
         }
 
@@ -214,7 +214,7 @@ internal class QueryChannelsControllerTest {
     fun `When a new message arrives in a new channel Should not update the channels when it is already there`() =
         runBlockingTest {
             val cid = randomString()
-            val channelController: ChannelControllerImpl = mock()
+            val channelController: ChannelController = mock()
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
@@ -222,14 +222,14 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
-            verify(channelController, never()).updateLiveDataFromChannel(any())
+            verify(channelController, never()).updateDataFromChannel(any())
         }
 
     @Test
     fun `When a channel updated arrives Should add the channel when filter matches and it wasn't added yet`() =
         runBlockingTest {
             val channel = randomChannel()
-            val channelController: ChannelControllerImpl = mock {
+            val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture()
@@ -245,7 +245,7 @@ internal class QueryChannelsControllerTest {
     fun `When a channel updated by user arrives Should add the channel when filter matches and it wasn't added yet`() =
         runBlockingTest {
             val channel = randomChannel()
-            val channelController: ChannelControllerImpl = mock {
+            val channelController: ChannelController = mock {
                 on(mock.toChannel()) doReturn channel
             }
             val queryController = Fixture()
@@ -278,9 +278,9 @@ private class Fixture {
         whenever(chatDomainImpl.currentUser) doReturn currentUser!!
     }
 
-    fun givenNewChannelControllerForChannel(channelControllerImpl: ChannelControllerImpl = mock()): Fixture = apply {
-        whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelControllerImpl
-        whenever(chatDomainImpl.channel(any<String>())) doReturn channelControllerImpl
+    fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {
+        whenever(chatDomainImpl.channel(any<Channel>())) doReturn channelController
+        whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
     }
 
     fun givenFilterObject(filterObject: FilterObject): Fixture = apply {
@@ -299,7 +299,7 @@ private class Fixture {
         withCurrentUserAsChannelMember: Boolean = false,
     ): Fixture = apply {
         whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelControllerImpl> {
+            mock<ChannelController> {
                 on { toChannel() } doReturn randomChannel(
                     cid = invocation.arguments[0] as String,
                     type = channelType,
@@ -314,6 +314,5 @@ private class Fixture {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
-    fun get(): QueryChannelsController =
-        QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
+    fun get(): QueryChannelsController = QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
 }

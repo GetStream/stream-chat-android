@@ -20,11 +20,12 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -54,7 +55,7 @@ internal class SendMessagesTest {
 
     private val channelType: String = randomString()
     private val channelId: String = randomString()
-    private lateinit var channelController: ChannelControllerImpl
+    private lateinit var channelController: ChannelController
 
     private val repos: RepositoryFacade = mock()
 
@@ -74,7 +75,7 @@ internal class SendMessagesTest {
     @Before
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
-        channelController = ChannelControllerImpl(channelType, channelId, chatClient, domainImpl)
+        channelController = ChannelController(channelType, channelId, chatClient, domainImpl)
     }
 
     @Test

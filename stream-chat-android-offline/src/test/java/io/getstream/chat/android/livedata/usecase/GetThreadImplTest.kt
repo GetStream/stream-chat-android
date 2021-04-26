@@ -5,11 +5,11 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.`should be equal to result`
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.thread.ThreadController
+import io.getstream.chat.android.offline.usecase.GetThread
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
@@ -26,9 +26,9 @@ internal class GetThreadImplTest {
     val cid = randomCID()
     val parentId = randomString()
     val chatDomain: ChatDomainImpl = mock()
-    val channelController: ChannelControllerImpl = mock()
-    val threadControllerImpl: ThreadControllerImpl = mock()
-    val getThreadImpl = GetThreadImpl(chatDomain)
+    val channelController: ChannelController = mock()
+    val threadControllerImpl: ThreadController = mock()
+    val getThreadImpl = GetThread(chatDomain)
 
     @Before
     fun setup() {

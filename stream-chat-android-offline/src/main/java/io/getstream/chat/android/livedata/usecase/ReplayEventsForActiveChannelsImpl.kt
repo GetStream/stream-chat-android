@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ReplayEventsForActiveChannels {
     /**
@@ -19,14 +17,6 @@ public interface ReplayEventsForActiveChannels {
     public operator fun invoke(cid: String): Call<List<ChatEvent>>
 }
 
-internal class ReplayEventsForActiveChannelsImpl(
-    private val domainImpl: ChatDomainImpl,
-) : ReplayEventsForActiveChannels {
-    override operator fun invoke(cid: String): Call<List<ChatEvent>> {
-        validateCid(cid)
-
-        return CoroutineCall(domainImpl.scope) {
-            domainImpl.replayEvents(cid)
-        }
-    }
+internal class ReplayEventsForActiveChannelsImpl(private val chatDomain: ChatDomain) : ReplayEventsForActiveChannels {
+    override operator fun invoke(cid: String): Call<List<ChatEvent>> = chatDomain.replayEventsForActiveChannels(cid)
 }

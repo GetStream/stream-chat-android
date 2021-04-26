@@ -1,7 +1,6 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.channel.controller
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.description
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
@@ -16,12 +15,11 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.extensions.addMyReaction
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -29,12 +27,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantTaskExecutorExtension::class)
-internal class ChannelControllerImplReactionsTest {
+internal class ChannelControllerReactionsTest {
 
     companion object {
         @JvmField
@@ -78,7 +74,7 @@ internal class ChannelControllerImplReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = false)
 
-            val result = sut.messages.getOrAwaitValue().first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` myReactions.size + 1
             result.ownReactions.contains(newReaction) `should be equal to` true
             result.latestReactions.size `should be equal to` myReactions.size + 1
@@ -95,7 +91,7 @@ internal class ChannelControllerImplReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.getOrAwaitValue().first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` 1
             result.ownReactions.first() `should be equal to` newReaction
             result.latestReactions.size `should be equal to` 1
@@ -112,7 +108,7 @@ internal class ChannelControllerImplReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.getOrAwaitValue().first()
+            val result = sut.messages.value.first()
             result.reactionCounts[newReaction.type] `should be equal to` 1
         }
 
@@ -126,7 +122,7 @@ internal class ChannelControllerImplReactionsTest {
 
             sut.sendReaction(newReaction, enforceUnique = true)
 
-            val result = sut.messages.getOrAwaitValue().first()
+            val result = sut.messages.value.first()
             result.reactionScores[newReaction.type] `should be equal to` newReaction.score
         }
 
@@ -142,7 +138,7 @@ internal class ChannelControllerImplReactionsTest {
 
             sut.deleteReaction(deletedReaction)
 
-            val result = sut.messages.getOrAwaitValue().first()
+            val result = sut.messages.value.first()
             result.ownReactions.size `should be equal to` myReactions.size - 1
             result.ownReactions.contains(deletedReaction) `should be equal to` false
             result.latestReactions.contains(deletedReaction) `should be equal to` false
@@ -241,7 +237,7 @@ internal class ChannelControllerImplReactionsTest {
 
     private class Fixture(scope: CoroutineScope, user: User) {
         private val repos: RepositoryFacade = mock()
-        private val channelControllerImpl: ChannelControllerImpl
+        private val channelControllerImpl: ChannelController
 
         val chatClient: ChatClient = mock()
         val chatDomainImpl: ChatDomainImpl = mock()
@@ -251,7 +247,7 @@ internal class ChannelControllerImplReactionsTest {
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
-            channelControllerImpl = ChannelControllerImpl("channelType", "channelId", chatClient, chatDomainImpl)
+            channelControllerImpl = ChannelController("channelType", "channelId", chatClient, chatDomainImpl)
         }
 
         fun givenMockedRepositories(): Fixture {
@@ -271,6 +267,6 @@ internal class ChannelControllerImplReactionsTest {
             return this
         }
 
-        fun get(): ChannelControllerImpl = channelControllerImpl
+        fun get(): ChannelController = channelControllerImpl
     }
 }

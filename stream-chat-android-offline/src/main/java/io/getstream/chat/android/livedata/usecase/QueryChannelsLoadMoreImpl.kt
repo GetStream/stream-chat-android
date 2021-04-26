@@ -4,9 +4,8 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface QueryChannelsLoadMore {
     /**
@@ -28,16 +27,12 @@ public interface QueryChannelsLoadMore {
     ): Call<List<Channel>>
 }
 
-internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
+internal class QueryChannelsLoadMoreImpl(private val chatDomain: ChatDomain) :
+    QueryChannelsLoadMore {
     override operator fun invoke(
         filter: FilterObject,
         sort: QuerySort<Channel>,
         limit: Int,
         messageLimit: Int,
-    ): Call<List<Channel>> {
-        return CoroutineCall(domainImpl.scope) {
-            val queryChannelsController = domainImpl.queryChannels(filter, sort)
-            queryChannelsController.loadMore(limit, messageLimit)
-        }
-    }
+    ): Call<List<Channel>> = chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit)
 }

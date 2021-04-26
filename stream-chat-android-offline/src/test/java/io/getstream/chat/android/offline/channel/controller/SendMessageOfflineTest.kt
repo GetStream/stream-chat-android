@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.controller
+package io.getstream.chat.android.offline.channel.controller
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
@@ -13,15 +13,14 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -29,11 +28,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantTaskExecutorExtension::class)
 internal class SendMessageOfflineTest {
 
     companion object {
@@ -56,7 +53,7 @@ internal class SendMessageOfflineTest {
         // the message should still show up after invocation
         sut.watch()
 
-        val result = sut.messages.getOrAwaitValue()
+        val result = sut.messages.value
 
         result.size `should be equal to` 1
         result.first().id `should be equal to` message.id
@@ -98,8 +95,8 @@ internal class SendMessageOfflineTest {
             return this
         }
 
-        fun get(): ChannelControllerImpl {
-            return ChannelControllerImpl("channelType", "channelId", chatClient, chatDomainImpl)
+        fun get(): ChannelController {
+            return ChannelController("channelType", "channelId", chatClient, chatDomainImpl)
         }
     }
 }

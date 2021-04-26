@@ -8,10 +8,13 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.ChannelDiffCallback
 import io.getstream.chat.android.livedata.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.livedata.utils.UpdateOperationCounts
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,15 +73,17 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             return this
         }
 
-        fun withCounter(counter: DiffUtilOperationCounter<Channel>): Fixture {
-            queryChannelsControllerImpl.channels.observeForever { channels ->
-                val ids = channels.map { it.cid }
-                println("Channel ids is now equal to $ids")
-                counter.onEvent(channels)
+        suspend fun withCounter(counter: DiffUtilOperationCounter<Channel>): Fixture {
+            chatDomainImpl.scope.launch {
+                queryChannelsControllerImpl.channels.collect { channels ->
+                    val ids = channels.map { it.cid }
+                    println("Channel ids is now equal to $ids")
+                    counter.onEvent(channels)
+                }
             }
             return this
         }
 
-        fun get(): QueryChannelsControllerImpl = queryChannelsControllerImpl
+        fun get(): QueryChannelsController = queryChannelsControllerImpl
     }
 }

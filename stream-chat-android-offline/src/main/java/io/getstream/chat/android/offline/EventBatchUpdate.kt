@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -31,7 +31,7 @@ internal class EventBatchUpdate private constructor(
     private val domainImpl: ChatDomainImpl,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
-    private val userMap: MutableMap<String, User>
+    private val userMap: MutableMap<String, User>,
 ) {
 
     fun addMessageData(cid: String, message: Message, isNewMessage: Boolean = false) {

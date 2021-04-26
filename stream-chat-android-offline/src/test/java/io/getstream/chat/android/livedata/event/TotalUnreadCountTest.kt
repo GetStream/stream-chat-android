@@ -6,10 +6,10 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.EventHandlerImpl
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.livedata.utils.TestDataHelper
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.EventHandlerImpl
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope

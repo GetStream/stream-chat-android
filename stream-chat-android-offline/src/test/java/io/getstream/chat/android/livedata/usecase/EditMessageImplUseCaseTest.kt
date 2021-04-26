@@ -8,11 +8,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
@@ -26,7 +24,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
-        var messages = channelControllerImpl.messages.getOrAwaitValue(10, TimeUnit.MILLISECONDS)
+        var messages = channelControllerImpl.messages.value
         val lastMessage = messages.last()
         Truth.assertThat(lastMessage.id).isEqualTo(originalMessage.id)
 
@@ -37,7 +35,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
-        messages = channelControllerImpl.messages.getOrAwaitValue(10, TimeUnit.MILLISECONDS)
+        messages = channelControllerImpl.messages.value
         val liveLastMessage = messages.last()
         Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
         Truth.assertThat(liveLastMessage.extraData).containsAtLeastEntriesIn(updatedMessage.extraData)
