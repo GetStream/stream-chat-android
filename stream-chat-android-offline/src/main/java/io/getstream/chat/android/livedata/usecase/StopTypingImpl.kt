@@ -2,9 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface StopTyping {
     /**
@@ -19,13 +17,6 @@ public interface StopTyping {
     public operator fun invoke(cid: String, parentId: String? = null): Call<Boolean>
 }
 
-internal class StopTypingImpl(private val domainImpl: ChatDomainImpl) : StopTyping {
-    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.stopTyping(parentId)
-        }
-    }
+internal class StopTypingImpl(private val chatDomain: ChatDomain) : StopTyping {
+    override operator fun invoke(cid: String, parentId: String?): Call<Boolean> = chatDomain.stopTyping(cid, parentId)
 }

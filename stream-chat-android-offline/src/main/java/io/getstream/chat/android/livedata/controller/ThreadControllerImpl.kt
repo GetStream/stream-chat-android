@@ -15,13 +15,16 @@ import io.getstream.chat.android.offline.thread.ThreadController as ThreadContro
  * * loadingOlderMessages: if we are currently loading older messages
  * * endOfOlderMessages: if we've reached the earliest point in this thread
  */
-internal class ThreadControllerImpl(
-    override val threadId: String,
-    val channelControllerImpl: ChannelController,
-    val domain: ChatDomainImpl,
-) : ThreadController {
+internal class ThreadControllerImpl(private val threadControllerStateFlow: ThreadControllerStateFlow) :
+    ThreadController {
 
-    private val threadControllerStateFlow = ThreadControllerStateFlow(threadId, channelControllerImpl, domain)
+    internal constructor(
+        threadId: String,
+        channelControllerImpl: ChannelController,
+        domain: ChatDomainImpl,
+    ) : this(ThreadControllerStateFlow(threadId, channelControllerImpl, domain.chatDomainStateFlow))
+
+    override val threadId: String = threadControllerStateFlow.threadId
 
     /** the sorted list of messages for this thread */
     override val messages = threadControllerStateFlow.messages.asLiveData()

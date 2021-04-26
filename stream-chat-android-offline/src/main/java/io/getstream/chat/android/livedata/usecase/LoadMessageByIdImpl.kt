@@ -2,10 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface LoadMessageById {
     /**
@@ -25,18 +23,11 @@ public interface LoadMessageById {
     ): Call<Message>
 }
 
-internal class LoadMessageByIdImpl(private val domainImpl: ChatDomainImpl) : LoadMessageById {
+internal class LoadMessageByIdImpl(private val chatDomain: ChatDomain) : LoadMessageById {
     override operator fun invoke(
         cid: String,
         messageId: String,
         olderMessagesOffset: Int,
         newerMessagesOffset: Int,
-    ): Call<Message> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.loadMessageById(messageId, newerMessagesOffset, olderMessagesOffset)
-        }
-    }
+    ): Call<Message> = chatDomain.loadMessageById(cid, messageId, olderMessagesOffset, newerMessagesOffset)
 }

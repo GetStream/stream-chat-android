@@ -2,9 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface CreateChannel {
     /**
@@ -17,10 +16,6 @@ public interface CreateChannel {
     public operator fun invoke(channel: Channel): Call<Channel>
 }
 
-internal class CreateChannelImpl(private val domainImpl: ChatDomainImpl) : CreateChannel {
-    override operator fun invoke(channel: Channel): Call<Channel> {
-        return CoroutineCall(domainImpl.scope) {
-            domainImpl.createNewChannel(channel)
-        }
-    }
+internal class CreateChannelImpl(private val chatDomain: ChatDomain) : CreateChannel {
+    override operator fun invoke(channel: Channel): Call<Channel> = chatDomain.createChannel(channel)
 }

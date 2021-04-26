@@ -2,11 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface GetThread {
     /**
@@ -21,16 +18,7 @@ public interface GetThread {
     public operator fun invoke(cid: String, parentId: String): Call<ThreadController>
 }
 
-internal class GetThreadImpl(private val domainImpl: ChatDomainImpl) : GetThread {
-    override operator fun invoke(cid: String, parentId: String): Call<ThreadController> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        val threadControllerImpl = channelController.getThread(parentId)
-        val threadController: ThreadController = threadControllerImpl
-
-        return CoroutineCall(domainImpl.scope) {
-            Result(threadController)
-        }
-    }
+internal class GetThreadImpl(private val chatDomain: ChatDomain) : GetThread {
+    override operator fun invoke(cid: String, parentId: String): Call<ThreadController> =
+        chatDomain.getThread(cid, parentId)
 }

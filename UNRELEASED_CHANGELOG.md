@@ -41,6 +41,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new versions with API based on kotlin `StateFlow` for the following classes:
+  * `io.getstream.chat.android.offline.ChatDomain`
+  * `io.getstream.chat.android.offline.channel.ChannelController`
+  * `io.getstream.chat.android.offline.thread.ThreadController`
+  * `io.getstream.chat.android.offline.querychannels.QueryChannelsController`
 
 ### ⚠️ Changed
 

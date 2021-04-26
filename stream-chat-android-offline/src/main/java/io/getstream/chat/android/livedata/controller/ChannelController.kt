@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.usecase.SetMessageForReply
+import io.getstream.chat.android.offline.usecase.SetMessageForReply
 
 /**
  * The Channel Controller exposes convenient livedata objects to build your chat interface

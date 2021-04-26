@@ -11,8 +11,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -34,12 +35,12 @@ internal class MarkReadImplTest {
 
     private lateinit var chatDomain: ChatDomainImpl
     private lateinit var client: ChatClient
-    private lateinit var channelController: ChannelControllerImpl
+    private lateinit var channelController: ChannelController
     private lateinit var cid: String
     private lateinit var channelType: String
     private lateinit var channelId: String
 
-    private lateinit var sut: MarkReadImpl
+    private lateinit var sut: MarkRead
 
     @BeforeEach
     fun init() {
@@ -47,12 +48,12 @@ internal class MarkReadImplTest {
         chatDomain = mock {
             on { scope } doReturn testCoroutines.scope
         }
-        sut = MarkReadImpl(chatDomain)
+        sut = MarkRead(chatDomain)
         channelController = mock()
         setupChannelController(channelController)
     }
 
-    private fun setupChannelController(channelController: ChannelControllerImpl) {
+    private fun setupChannelController(channelController: ChannelController) {
         channelType = "messaging"
         channelId = randomString()
         cid = randomCID()
@@ -82,7 +83,7 @@ internal class MarkReadImplTest {
 
     @Test
     fun `Given valid cid Should invoke markRead() on ChannelController`() = runBlockingTest {
-        val channelController = mock<ChannelControllerImpl>()
+        val channelController = mock<ChannelController>()
         val cid = randomCID()
         whenever(chatDomain.channel(cid)) doReturn channelController
 

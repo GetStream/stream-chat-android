@@ -2,9 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.validateCid
+import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ShowChannel {
     /**
@@ -18,13 +16,6 @@ public interface ShowChannel {
     public operator fun invoke(cid: String): Call<Unit>
 }
 
-internal class ShowChannelImpl(private val domainImpl: ChatDomainImpl) : ShowChannel {
-    override operator fun invoke(cid: String): Call<Unit> {
-        validateCid(cid)
-
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.show()
-        }
-    }
+internal class ShowChannelImpl(private val chatDomain: ChatDomain) : ShowChannel {
+    override operator fun invoke(cid: String): Call<Unit> = chatDomain.showChannel(cid)
 }

@@ -7,8 +7,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.usecase.Keystroke
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -20,12 +21,12 @@ import org.junit.jupiter.api.Test
 internal class KeystrokeImplTest {
 
     private lateinit var chatDomainImpl: ChatDomainImpl
-    private lateinit var sut: KeystrokeImpl
+    private lateinit var sut: Keystroke
 
     @BeforeEach
     fun before() {
         chatDomainImpl = mock()
-        sut = KeystrokeImpl(chatDomainImpl)
+        sut = Keystroke(chatDomainImpl)
     }
 
     @Test
@@ -44,7 +45,7 @@ internal class KeystrokeImplTest {
 
     @Test
     fun `Given appropriate cid When invoke Should invoke keystroke to channel controller`() {
-        val channelController = mock<ChannelControllerImpl>()
+        val channelController = mock<ChannelController>()
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
         whenever(chatDomainImpl.scope) doReturn TestCoroutineScope()
 
@@ -55,7 +56,7 @@ internal class KeystrokeImplTest {
 
     @Test
     fun `Given appropriate cid When invoke Should invoke keystroke to chat domain`() {
-        val channelController = mock<ChannelControllerImpl> {
+        val channelController = mock<ChannelController> {
             on { keystroke(null) } doReturn Result(true)
         }
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController

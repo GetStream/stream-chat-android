@@ -12,14 +12,14 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.livedata.repository.RepositoryFacade
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.runBlockingTest
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.Date
 
 @ExtendWith(InstantTaskExecutorExtension::class)
-internal class ChannelControllerImplTypingTest {
+internal class ChannelControllerTypingTests {
 
     companion object {
         @JvmField
@@ -68,9 +68,9 @@ internal class ChannelControllerImplTypingTest {
         sut.setTyping(user1.id, typingEvent1)
         sut.setTyping(user2.id, typingEvent2)
 
-        sut.typing.getOrAwaitValue().users.size `should be equal to` 2
+        sut.typing.value.users.size `should be equal to` 2
         sut.clean()
-        sut.typing.getOrAwaitValue().users.size `should be equal to` 1
+        sut.typing.value.users.size `should be equal to` 1
     }
 
     @Test
@@ -133,8 +133,8 @@ internal class ChannelControllerImplTypingTest {
             return this
         }
 
-        fun get(): ChannelControllerImpl {
-            return ChannelControllerImpl("channelType", "channelId", chatClient, chatDomainImpl)
+        fun get(): ChannelController {
+            return ChannelController("channelType", "channelId", chatClient, chatDomainImpl)
         }
     }
 }

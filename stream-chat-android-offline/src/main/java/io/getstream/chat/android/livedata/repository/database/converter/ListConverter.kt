@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.repository.database.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.livedata.gson
+import io.getstream.chat.android.offline.gson
 
 internal class ListConverter {
     @TypeConverter

@@ -8,10 +8,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest.Companion.data
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
@@ -29,11 +28,11 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
                 .get()
 
             // check that current state is empty
-            channelController.messages.getOrAwaitValue().size `should be equal to` 0
+            channelController.messages.value.size `should be equal to` 0
 
-            chatDomain.useCases.sendMessage(message).execute()
+            chatDomain.sendMessage(message).execute()
 
-            channelController.messages.getOrAwaitValue().last() `should be equal to` message
+            channelController.messages.value.last() `should be equal to` message
         }
     }
 
@@ -44,8 +43,7 @@ internal class SendMessageTest : BaseConnectedMockedTest() {
         }
 
         fun get(): ChannelController {
-            return chatDomain.useCases
-                .watchChannel(data.channel1.cid, 10)
+            return chatDomain.watchChannel(data.channel1.cid, 10)
                 .execute()
                 .data()
         }

@@ -17,14 +17,15 @@ private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
 private const val CHANNEL_LIMIT = 30
 
-internal class QueryChannelsControllerImpl(
-    filter: FilterObject,
-    sort: QuerySort<Channel>,
-    client: ChatClient,
-    domainImpl: ChatDomainImpl,
-) : QueryChannelsController {
-    private val queryChannels =
-        QueryChannelsControllerStateFlow(filter, sort, client, domainImpl)
+internal class QueryChannelsControllerImpl(private val queryChannels: QueryChannelsControllerStateFlow) :
+    QueryChannelsController {
+
+    internal constructor(
+        filter: FilterObject,
+        sort: QuerySort<Channel>,
+        client: ChatClient,
+        domainImpl: ChatDomainImpl,
+    ) : this(QueryChannelsControllerStateFlow(filter, sort, client, domainImpl.chatDomainStateFlow))
 
     override val filter: FilterObject
         get() = queryChannels.filter
@@ -57,7 +58,7 @@ internal class QueryChannelsControllerImpl(
 
     override val channelsState = queryChannels.channelsState.asLiveData()
 
-    override val mutedChannelIds: LiveData<List<String>> = queryChannels.channelMutes.asLiveData()
+    override val mutedChannelIds: LiveData<List<String>> = queryChannels.mutedChannelIds.asLiveData()
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,

@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.test.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Ignore
@@ -48,7 +47,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         // queryControllerImpl.handleEvent(data.messageUpdatedEvent)
 
         // verify that the last message is now updated
-        val channelMap = queryControllerImpl.channels.getOrAwaitValue().associateBy { it.cid }
+        val channelMap = queryControllerImpl.channels.value.associateBy { it.cid }
         val channel1 = channelMap[data.channel1.cid]
         Truth.assertThat(channel1!!.messages.last().text).isEqualTo(data.messageUpdatedEvent.message.text)
     }
@@ -65,7 +64,8 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `when you are added to a channel it should be stored in room`() = runBlocking {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        val channel = chatDomainImpl.repos.selectChannelWithoutMessages(data.notificationAddedToChannel2Event.channel.cid)
+        val channel =
+            chatDomainImpl.repos.selectChannelWithoutMessages(data.notificationAddedToChannel2Event.channel.cid)
         Truth.assertThat(channel).isNotNull()
     }
 
@@ -77,7 +77,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
-        val messages = channelController.messages.getOrAwaitValue()
+        val messages = channelController.messages.value
         Truth.assertThat(messages).isEmpty()
     }
 
@@ -89,7 +89,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
-        val messages = channelController.messages.getOrAwaitValue()
+        val messages = channelController.messages.value
         Truth.assertThat(messages).isEmpty()
     }
 
@@ -104,8 +104,8 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             Truth.assertThat(message).isNull()
             Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
             val channelController = chatDomainImpl.channel(data.channel1)
-            val messages = channelController.messages.getOrAwaitValue()
-            val channelData = channelController.channelData.getOrAwaitValue()
+            val messages = channelController.messages.value
+            val channelData = channelController.channelData.value
             Truth.assertThat(messages).isEmpty()
             Truth.assertThat(channelData.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
         }
@@ -123,15 +123,14 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     @Test
     fun `handle unread counts on the connect event`() = runBlocking {
         chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2)
-        Truth.assertThat(chatDomainImpl.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)
-        Truth.assertThat(chatDomainImpl.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
+        Truth.assertThat(chatDomainImpl.channelUnreadCount.value).isEqualTo(2)
+        Truth.assertThat(chatDomainImpl.totalUnreadCount.value).isEqualTo(3)
     }
 
     @Test
     fun `the mute user event should update the list of mutes users`() = runBlocking {
         chatDomainImpl.eventHandler.handleEvent(data.notificationMutesUpdated)
-        Truth.assertThat(chatDomainImpl.muted.getOrAwaitValue())
-            .isEqualTo(data.notificationMutesUpdated.me.mutes)
+        Truth.assertThat(chatDomainImpl.muted.value).isEqualTo(data.notificationMutesUpdated.me.mutes)
     }
 
     @Test

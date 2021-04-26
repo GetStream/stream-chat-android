@@ -21,15 +21,27 @@ import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
 
-internal class ChannelControllerImpl(
-    override val channelType: String,
-    override val channelId: String,
-    val client: ChatClient,
-    val domainImpl: ChatDomainImpl,
-    messageHelper: MessageHelper = MessageHelper(),
-) : ChannelController {
-    private val channelControllerStateFlow =
-        ChannelControllerStateFlow(channelType, channelId, client, domainImpl, messageHelper)
+internal class ChannelControllerImpl(private val channelControllerStateFlow: ChannelControllerStateFlow) :
+    ChannelController {
+
+    internal constructor(
+        channelType: String,
+        channelId: String,
+        client: ChatClient,
+        domainImpl: ChatDomainImpl,
+        messageHelper: MessageHelper = MessageHelper(),
+    ) : this(
+        ChannelControllerStateFlow(
+            channelType,
+            channelId,
+            client,
+            domainImpl.chatDomainStateFlow,
+            messageHelper
+        )
+    )
+
+    override val channelType: String = channelControllerStateFlow.channelType
+    override val channelId: String = channelControllerStateFlow.channelId
 
     override val repliedMessage: LiveData<Message?> = channelControllerStateFlow.repliedMessage.asLiveData()
     override val messages: LiveData<List<Message>> = channelControllerStateFlow.messages.asLiveData()
@@ -54,7 +66,9 @@ internal class ChannelControllerImpl(
     override var recoveryNeeded = channelControllerStateFlow.recoveryNeeded
     override val cid = channelControllerStateFlow.cid
 
-    fun getThread(threadId: String): ThreadControllerImpl = channelControllerStateFlow.getThread(threadId)
+    fun getThread(threadId: String): ThreadControllerImpl =
+        ThreadControllerImpl(channelControllerStateFlow.getThread(threadId))
+
     fun keystroke(parentId: String?): Result<Boolean> = channelControllerStateFlow.keystroke(parentId)
     fun stopTyping(parentId: String?): Result<Boolean> = channelControllerStateFlow.stopTyping(parentId)
     internal fun markRead(): Boolean = channelControllerStateFlow.markRead()
@@ -64,14 +78,17 @@ internal class ChannelControllerImpl(
     suspend fun leave(): Result<Unit> = channelControllerStateFlow.leave()
     suspend fun delete(): Result<Unit> = channelControllerStateFlow.delete()
     suspend fun watch(limit: Int = 30) = channelControllerStateFlow.watch(limit)
-    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> = channelControllerStateFlow.loadOlderMessages(limit)
+    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> =
+        channelControllerStateFlow.loadOlderMessages(limit)
+
     suspend fun loadOlderMessages(messageId: String, limit: Int): Result<Channel> =
         channelControllerStateFlow.loadOlderMessages(messageId, limit)
 
     suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> =
         channelControllerStateFlow.loadNewerMessages(messageId, limit)
 
-    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> = channelControllerStateFlow.loadNewerMessages(limit)
+    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> =
+        channelControllerStateFlow.loadNewerMessages(limit)
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> =
         channelControllerStateFlow.runChannelQuery(pagination)
@@ -90,7 +107,8 @@ internal class ChannelControllerImpl(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
         progressCallback: ProgressCallback? = null,
-    ): Result<Attachment> = channelControllerStateFlow.uploadAttachment(attachment, attachmentTransformer, progressCallback)
+    ): Result<Attachment> =
+        channelControllerStateFlow.uploadAttachment(attachment, attachmentTransformer, progressCallback)
 
     suspend fun sendGiphy(message: Message): Result<Message> = channelControllerStateFlow.sendGiphy(message)
     suspend fun shuffleGiphy(message: Message): Result<Message> = channelControllerStateFlow.shuffleGiphy(message)
@@ -101,7 +119,8 @@ internal class ChannelControllerImpl(
     suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> =
         channelControllerStateFlow.sendReaction(reaction, enforceUnique)
 
-    suspend fun deleteReaction(reaction: Reaction): Result<Message> = channelControllerStateFlow.deleteReaction(reaction)
+    suspend fun deleteReaction(reaction: Reaction): Result<Message> =
+        channelControllerStateFlow.deleteReaction(reaction)
 
     internal fun upsertMessage(message: Message) = channelControllerStateFlow.upsertMessage(message)
 
@@ -116,7 +135,8 @@ internal class ChannelControllerImpl(
 
     fun upsertMembers(members: List<Member>) = channelControllerStateFlow.upsertMembers(members)
     fun upsertMember(member: Member) = channelControllerStateFlow.upsertMember(member)
-    suspend fun removeMembers(vararg userIds: String): Result<Channel> = channelControllerStateFlow.removeMembers(*userIds)
+    suspend fun removeMembers(vararg userIds: String): Result<Channel> =
+        channelControllerStateFlow.removeMembers(*userIds)
 
     fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
 

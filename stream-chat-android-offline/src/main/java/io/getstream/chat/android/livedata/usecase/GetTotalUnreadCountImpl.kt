@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.ChatDomain
+import kotlinx.coroutines.CoroutineScope
 
 @Deprecated(
     message = "Use ChatDomain::totalUnreadCount instead",
@@ -25,10 +26,9 @@ public interface GetTotalUnreadCount {
 }
 
 @Suppress("DEPRECATION_ERROR")
-internal class GetTotalUnreadCountImpl(private val domainImpl: ChatDomainImpl) : GetTotalUnreadCount {
-    override operator fun invoke(): Call<LiveData<Int>> {
-        return CoroutineCall(domainImpl.scope) {
-            Result(domainImpl.totalUnreadCount)
-        }
+internal class GetTotalUnreadCountImpl(private val chatDomain: ChatDomain, private val scope: CoroutineScope) :
+    GetTotalUnreadCount {
+    override operator fun invoke(): Call<LiveData<Int>> = CoroutineCall(scope) {
+        Result(chatDomain.totalUnreadCount)
     }
 }
