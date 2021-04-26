@@ -58,6 +58,7 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageStrokeColorTheirs - stroke color for message sent by other user. Default - [MESSAGE_STROKE_COLOR_THEIRS]
  * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
  * @property textStyleSystemMessage - appearance for system message text
+ * @property textStyleErrorMessage - appearance for error message text
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -100,6 +101,7 @@ public data class MessageListItemStyle(
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
     public val textStyleSystemMessage: TextStyle,
+    public val textStyleErrorMessage: TextStyle,
 ) {
 
     @ColorInt
@@ -443,6 +445,22 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiSystemMessageTextStyle, Typeface.BOLD)
                 .build()
 
+            val textStyleErrorMessage = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiErrorMessageTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiErrorMessageTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiErrorMessageTextFontAssets,
+                    R.styleable.MessageListView_streamUiErrorMessageTextFont,
+                )
+                .style(R.styleable.MessageListView_streamUiErrorMessageTextStyle, Typeface.BOLD)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -476,6 +494,7 @@ public data class MessageListItemStyle(
                 messageStrokeColorTheirs = messageStrokeColorTheirs,
                 messageStrokeWidthTheirs = messageStrokeWidthTheirs,
                 textStyleSystemMessage = textStyleSystemMessage,
+                textStyleErrorMessage = textStyleErrorMessage
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

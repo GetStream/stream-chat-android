@@ -23,6 +23,8 @@ public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
 
 public fun Message.isSystem(): Boolean = type == ModelType.message_system
 
+public fun Message.isError(): Boolean = type == ModelType.message_error
+
 public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
 
 public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
