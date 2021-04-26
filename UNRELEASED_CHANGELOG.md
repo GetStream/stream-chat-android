@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Optimized the number of `ChatClient::addDevice` API calls
 
 ### ⬆️ Improved
 
@@ -35,6 +36,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed offline reactions sync
 
 ### ⬆️ Improved
 
