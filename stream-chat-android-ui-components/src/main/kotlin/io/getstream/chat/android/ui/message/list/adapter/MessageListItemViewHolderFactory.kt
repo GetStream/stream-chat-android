@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
@@ -19,6 +20,7 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
@@ -79,6 +81,7 @@ public open class MessageListItemViewHolderFactory {
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
             SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
+            ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -129,6 +132,18 @@ public open class MessageListItemViewHolderFactory {
         return GiphyViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
     }
 
+    protected fun createSystemMessageItemViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return SystemMessageViewHolder(parentView, style)
+    }
+
+    protected fun createErrorMessageItemViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return ErrorMessageViewHolder(parentView, style)
+    }
+
     private fun createEmptyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem> {
@@ -136,11 +151,5 @@ public open class MessageListItemViewHolderFactory {
             BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
             override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
         }
-    }
-
-    protected fun createSystemMessageItemViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return SystemMessageViewHolder(parentView, style)
     }
 }

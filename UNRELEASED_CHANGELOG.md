@@ -79,6 +79,13 @@ Change the tint color for icon of file selection
 Change the icon for the third item in the list of icons
 - app:streamUiCameraAttachmentIconTint
 Change the tint color for icon of camera selection
+- Added support for error messages
+- Added attrs to `MessageListView` that allow to customize error message text style:
+    * `streamUiErrorMessageTextSize`
+    * `streamUiErrorMessageTextColor`
+    * `streamUiErrorMessageTextFont`
+    * `streamUiErrorMessageTextFontAssets`
+    * `streamUiErrorMessageTextStyle`
 
 ### ⚠️ Changed
 
