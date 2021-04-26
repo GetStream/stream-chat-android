@@ -167,22 +167,22 @@ internal class ChatDomainImpl internal constructor(
         appContext
     )
 
+    internal val job = SupervisorJob()
+    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+    internal var repos: RepositoryFacade = createNoOpRepos()
+
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
-
     private val _totalUnreadCount = MutableStateFlow(0)
     private val _channelUnreadCount = MutableStateFlow(0)
     private val _errorEvent = MutableStateFlow<Event<ChatError>?>(null)
     private val _banned = MutableStateFlow(false)
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
-
     override lateinit var currentUser: User
-    lateinit var database: ChatDatabase
-    private val syncModule by lazy { SyncProvider(appContext) }
 
-    internal val job = SupervisorJob()
-    internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+    private val syncModule by lazy { SyncProvider(appContext) }
 
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
@@ -234,16 +234,14 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal var eventHandler: EventHandlerImpl = EventHandlerImpl(this)
-
     private var logger = ChatLogger.get("Domain")
+
     private val cleanTask = object : Runnable {
         override fun run() {
             clean()
             mainHandler.postDelayed(this, 1000)
         }
     }
-
-    internal lateinit var repos: RepositoryFacade
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal var initJob: Deferred<SyncState?>? = null
 
@@ -324,11 +322,11 @@ internal class ChatDomainImpl internal constructor(
             client.preSetUserListeners.add {
                 setUser(it)
             }
-            // disconnect if the low level client disconnects
-            client.disconnectListeners.add {
-                scope.launch {
-                    disconnect()
-                }
+        }
+        // disconnect if the low level client disconnects
+        client.disconnectListeners.add {
+            scope.launch {
+                disconnect()
             }
         }
         storeBgSyncDataWhenUserConnects()
@@ -365,6 +363,7 @@ internal class ChatDomainImpl internal constructor(
         job.cancelChildren()
         stopListening()
         stopClean()
+        clearState()
     }
 
     override fun getVersion(): String {
@@ -840,35 +839,22 @@ internal class ChatDomainImpl internal constructor(
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelPaginationRequest,
-    ): Channel? {
-        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
-        return if (!this::repos.isInitialized) {
-            null
-        } else {
-            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-        }
-    }
+    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelsPaginationRequest,
-    ): Channel? {
-        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-    }
+    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: QueryChannelsPaginationRequest,
-    ): List<Channel> {
-        return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
-    }
+    ): List<Channel> = selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
 
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest,
-    ): List<Channel> {
-        return repos.selectChannels(channelIds, pagination).applyPagination(pagination)
-    }
+    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     override fun clean() {
         for (channelController in activeChannelMapImpl.values.toList()) {
@@ -876,13 +862,8 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    override fun getChannelConfig(channelType: String): Config {
-        // Workaround to avoid crashes when user is not connected yet. Review and remove after final solution is implemented
-        if (!this::repos.isInitialized) {
-            return defaultConfig
-        }
-        return repos.selectChannelConfig(channelType)?.config ?: defaultConfig
-    }
+    override fun getChannelConfig(channelType: String): Config =
+        repos.selectChannelConfig(channelType)?.config ?: defaultConfig
 
     // region use-case functions
     override fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>> =
@@ -1016,6 +997,13 @@ internal class ChatDomainImpl internal constructor(
         }
     }
     // end region
+
+    private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
+        context(appContext)
+        scope(scope)
+        defaultConfig(defaultConfig)
+        setOfflineEnabled(false)
+    }.build()
 
     companion object {
         val EMPTY_DISPOSABLE = object : Disposable {
