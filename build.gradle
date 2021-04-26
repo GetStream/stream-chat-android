@@ -43,12 +43,6 @@ allprojects {
 
                 // Remove when https://github.com/ongakuer/PhotoDraweeView/issues/81 is closed
                 includeModule("me.relex", "photodraweeview")
-
-                // Remove when https://github.com/Kotlin/kotlinx.html/issues/81 is closed
-                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
-
-                // https://youtrack.jetbrains.com/issue/IDEA-261387
-                includeModule("org.jetbrains.trove4j", "trove4j")
             }
         }
         maven {
