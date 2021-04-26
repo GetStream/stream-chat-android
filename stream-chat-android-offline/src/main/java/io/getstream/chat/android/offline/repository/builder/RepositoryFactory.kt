@@ -20,7 +20,7 @@ import io.getstream.chat.android.offline.repository.domain.user.UserRepositoryIm
 
 internal class RepositoryFactory(
     private val database: ChatDatabase,
-    private val currentUser: User,
+    private val currentUser: User?,
 ) {
     fun createUserRepository(): UserRepository = UserRepositoryImpl(database.userDao(), currentUser, 100)
     fun createChannelConfigRepository(): ChannelConfigRepository =

@@ -85,6 +85,10 @@ import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.StopTyping
 import io.getstream.chat.android.offline.usecase.ThreadLoadMore
 import io.getstream.chat.android.offline.usecase.WatchChannel
+import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
+import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.utils.RetryPolicy
+import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
