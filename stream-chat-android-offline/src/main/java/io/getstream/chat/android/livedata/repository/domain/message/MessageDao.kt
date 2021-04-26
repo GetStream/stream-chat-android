@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.livedata.repository.domain.reaction.ReactionEntity
@@ -15,23 +16,43 @@ internal abstract class MessageDao {
 
     @Transaction
     open suspend fun insert(messageEntities: List<MessageEntity>) {
-        insertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
+        upsertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) {
-        insertMessageInnerEntity(messageEntity.messageInnerEntity)
+        upsertMessageInnerEntity(messageEntity.messageInnerEntity)
         insertAttachments(messageEntity.attachments)
         insertReactions(messageEntity.let { it.latestReactions + it.ownReactions })
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertMessageInnerEntity(messageInnerEntity: MessageInnerEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    protected abstract suspend fun insertMessageInnerEntity(messageInnerEntity: MessageInnerEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertMessageInnerEntities(messageInnerEntities: List<MessageInnerEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    protected abstract suspend fun insertMessageInnerEntities(messageInnerEntities: List<MessageInnerEntity>): List<Long>
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    protected abstract fun updateMessageInnerEntity(messageInnerEntity: MessageInnerEntity)
+
+    @Transaction
+    open suspend fun upsertMessageInnerEntity(messageInnerEntity: MessageInnerEntity) {
+        val rowId = insertMessageInnerEntity(messageInnerEntity)
+        if (rowId == -1L) {
+            updateMessageInnerEntity(messageInnerEntity)
+        }
+    }
+
+    @Transaction
+    open suspend fun upsertMessageInnerEntities(messageInnerEntities: List<MessageInnerEntity>) {
+        val rowIds = insertMessageInnerEntities(messageInnerEntities)
+        val entitiesToUpdate = rowIds.mapIndexedNotNull { index, rowId ->
+            if (rowId == -1L) null else messageInnerEntities[index]
+        }
+        entitiesToUpdate.forEach { updateMessageInnerEntity(it) }
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insertAttachments(attachmentEntities: List<AttachmentEntity>)
