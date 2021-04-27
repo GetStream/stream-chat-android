@@ -18,7 +18,7 @@ module.exports = {
       items: [
         {
           type: 'doc',
-          docId: 'intro',
+          docId: 'introduction',
           position: 'left',
           label: 'Documentation',
         },
@@ -32,7 +32,7 @@ module.exports = {
           items: [
             {
               label: 'Android Documentation',
-              to: '/docs/intro',
+              to: '/docs/introduction',
             },
           ],
         },
