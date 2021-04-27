@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
-import io.getstream.chat.android.livedata.service.sync.PushMessageSyncHandler;
 import io.getstream.chat.docs.MainActivity;
 import io.getstream.chat.docs.R;
 
@@ -110,26 +109,26 @@ public class Push {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
      */
-    class CustomFirebaseMessagingService extends FirebaseMessagingService {
-        private PushMessageSyncHandler pushDataSyncHandler = new PushMessageSyncHandler(this);
-
-        @Override
-        public void onNewToken(String token) {
-            // update device's token on Stream backend
-            pushDataSyncHandler.onNewToken(token);
-        }
-
-        @Override
-        public void onMessageReceived(RemoteMessage message) {
-            if (pushDataSyncHandler.isStreamMessage(message)) {
-                // handle RemoteMessage sent from Stream backend
-                pushDataSyncHandler.onMessageReceived(message);
-            } else {
-                // handle RemoteMessage from other source
-            }
-            stopSelf();
-        }
-    }
+//    class CustomFirebaseMessagingService extends FirebaseMessagingService {
+//        private PushMessageSyncHandler pushDataSyncHandler = new PushMessageSyncHandler(this);
+//
+//        @Override
+//        public void onNewToken(String token) {
+//            // update device's token on Stream backend
+//            pushDataSyncHandler.onNewToken(token);
+//        }
+//
+//        @Override
+//        public void onMessageReceived(RemoteMessage message) {
+//            if (pushDataSyncHandler.isStreamMessage(message)) {
+//                // handle RemoteMessage sent from Stream backend
+//                pushDataSyncHandler.syncMessages(message);
+//            } else {
+//                // handle RemoteMessage from other source
+//            }
+//            stopSelf();
+//        }
+//    }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java">Device</a>

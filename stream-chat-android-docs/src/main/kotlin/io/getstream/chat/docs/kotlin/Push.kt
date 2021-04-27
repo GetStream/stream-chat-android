@@ -2,13 +2,10 @@ package io.getstream.chat.docs.kotlin
 
 import android.content.Context
 import android.content.Intent
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.livedata.service.sync.PushMessageSyncHandler
 import io.getstream.chat.docs.MainActivity
 
 class Push(val context: Context, val client: ChatClient) {
@@ -77,25 +74,25 @@ class Push(val context: Context, val client: ChatClient) {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
      */
-    class CustomFirebaseMessagingService : FirebaseMessagingService() {
-        private val pushDataSyncHandler: PushMessageSyncHandler =
-            PushMessageSyncHandler(this)
-
-        override fun onNewToken(token: String) {
-            // update device's token on Stream backend
-            pushDataSyncHandler.onNewToken(token)
-        }
-
-        override fun onMessageReceived(message: RemoteMessage) {
-            if (pushDataSyncHandler.isStreamMessage(message)) {
-                // handle RemoteMessage sent from Stream backend
-                pushDataSyncHandler.onMessageReceived(message)
-            } else {
-                // handle RemoteMessage from other source
-            }
-            stopSelf()
-        }
-    }
+    // class CustomFirebaseMessagingService : FirebaseMessagingService() {
+    //     private val pushDataSyncHandler: PushMessageSyncHandler =
+    //         PushMessageSyncHandler(this)
+    //
+    //     override fun onNewToken(token: String) {
+    //         // update device's token on Stream backend
+    //         pushDataSyncHandler.onNewToken(token)
+    //     }
+    //
+    //     override fun onMessageReceived(message: RemoteMessage) {
+    //         if (pushDataSyncHandler.isStreamMessage(message)) {
+    //             // handle RemoteMessage sent from Stream backend
+    //             pushDataSyncHandler.onMessageReceived(message)
+    //         } else {
+    //             // handle RemoteMessage from other source
+    //         }
+    //         stopSelf()
+    //     }
+    // }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin">Device</a>
