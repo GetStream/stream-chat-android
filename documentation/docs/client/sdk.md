@@ -4,11 +4,9 @@ title: Calling SDK Methods
 sidebar_position: 3
 ---
 
-## Calling SDK methods
-
 Most SDK methods return a [`Call`](https://getstream.github.io/stream-chat-android/stream-chat-android-core/stream-chat-android-core/io.getstream.chat.android.client.call/-call/) object, which is a pending operation waiting to be executed.
 
-#### Running calls synchronously
+## Running calls synchronously
 
 You can run a `Call` synchronously, in a blocking way, using the `execute` method:
 
@@ -17,7 +15,7 @@ You can run a `Call` synchronously, in a blocking way, using the `execute` metho
 val messageResult = channelClient.sendMessage(message).execute()
 ```
 
-#### Running calls asynchronously
+## Running calls asynchronously
 
 You can run a `Call` asynchronously, on a background thread, using the `enqueue` method. The callback passed to `enqueue` will be called on the UI thread.
 
@@ -41,7 +39,7 @@ viewModelScope.launch {
 }
 ```
 
-#### Error handling
+## Error handling
 
 Actions defined in a `Call` return [`Result`](https://getstream.github.io/stream-chat-android/stream-chat-android-core/stream-chat-android-core/io.getstream.chat.android.client.utils/-result/) objects. These contain either the result of a successful operation or the error that caused the operation to fail.
 
