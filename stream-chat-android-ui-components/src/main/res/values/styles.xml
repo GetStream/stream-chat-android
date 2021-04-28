@@ -260,4 +260,8 @@
     <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
     <style name="StreamUiAttachmentActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+    <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="stream_ui_valid_theme">true</item>
+    </style>
 </resources>
