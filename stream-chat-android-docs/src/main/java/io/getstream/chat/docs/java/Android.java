@@ -9,33 +9,18 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
-import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
@@ -47,7 +32,7 @@ import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
-import io.getstream.chat.android.offline.utils.RetryPolicy;
+import io.getstream.chat.android.livedata.utils.RetryPolicy;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.channel.list.ChannelListView;
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
@@ -64,6 +49,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle;
+import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
@@ -79,6 +65,16 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
