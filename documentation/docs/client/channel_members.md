@@ -1,5 +1,5 @@
 ---
-id: clientUserTypes
+id: clientChannelMembers
 title: Channel Members
 sidebar_position: 10
 ---
