@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.leftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
@@ -82,12 +83,12 @@ internal class MessageInputFieldView : FrameLayout {
             binding.messageEditText.hint = hint
         }
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     )

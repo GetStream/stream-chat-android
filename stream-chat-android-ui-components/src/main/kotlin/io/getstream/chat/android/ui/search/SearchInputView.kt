@@ -12,6 +12,7 @@ import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 
 public class SearchInputView : FrameLayout {
@@ -35,16 +36,16 @@ public class SearchInputView : FrameLayout {
 
     private var disableListeners = false
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {

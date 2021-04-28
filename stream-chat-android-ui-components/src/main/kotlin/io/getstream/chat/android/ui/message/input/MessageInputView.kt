@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.Debouncer
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
@@ -80,16 +81,16 @@ public class MessageInputView : ConstraintLayout {
     private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
     private var messageInputDebouncer: Debouncer? = null
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {

@@ -16,6 +16,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 
@@ -36,9 +37,9 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.ogUrl ?: return

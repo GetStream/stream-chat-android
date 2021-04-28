@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.mention.list.internal.MentionListAdapter
@@ -29,11 +30,11 @@ public class MentionListView : ViewFlipper {
 
     private val binding = StreamUiMentionListViewBinding.inflate(LayoutInflater.from(context), this)
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(attrs)
     }
 

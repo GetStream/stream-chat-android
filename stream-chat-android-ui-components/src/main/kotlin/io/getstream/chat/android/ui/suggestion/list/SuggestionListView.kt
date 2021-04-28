@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.Suggestions
@@ -27,12 +28,12 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
 
     private var listener: OnSuggestionClickListener? = null
 
-    public constructor(context: Context) : super(context)
+    public constructor(context: Context) : super(context.createStreamThemeWrapper())
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     )

@@ -12,6 +12,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -19,16 +20,16 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBin
 
 public class ChannelListHeaderView : ConstraintLayout {
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {

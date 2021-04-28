@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
@@ -21,9 +22,9 @@ internal class LinkAttachmentView : FrameLayout {
         .inflate(context.inflater, this, true)
     private var previewUrl: String? = null
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
         previewUrl = attachment.ogUrl

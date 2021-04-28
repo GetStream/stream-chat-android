@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.supportedLatestReactions
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
@@ -22,9 +23,9 @@ public class UserReactionsView : FrameLayout {
     private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter()
     private val gridLayoutManager: GridLayoutManager
 
-    public constructor(context: Context) : super(context)
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    public constructor(context: Context) : super(context.createStreamThemeWrapper())
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     init {
         binding.recyclerView.adapter = userReactionsAdapter

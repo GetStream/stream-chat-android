@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
@@ -49,16 +50,16 @@ public class MediaAttachmentGridView : FrameLayout {
     private var mediaClickListener: MediaClickListener? = null
     private var loadMoreListener: OnLoadMoreListener? = null
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 
@@ -16,12 +17,12 @@ internal class ScrollButtonView : FrameLayout {
     private val binding: StreamUiScrollButtonViewBinding =
         StreamUiScrollButtonViewBinding.inflate(LayoutInflater.from(context), this)
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     )

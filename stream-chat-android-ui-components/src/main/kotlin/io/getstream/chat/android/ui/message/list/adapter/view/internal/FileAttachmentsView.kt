@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
@@ -44,9 +45,9 @@ internal class FileAttachmentsView : RecyclerView {
         attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) }
     )
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     init {
         layoutManager = LinearLayoutManager(context)

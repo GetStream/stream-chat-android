@@ -19,6 +19,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -30,16 +31,16 @@ internal class MessageReplyView : FrameLayout {
         StreamUiMessageReplyViewBinding.inflate(LayoutInflater.from(context), this, true)
     private var ellipsize = false
 
-    constructor(context: Context) : super(context) {
+    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {

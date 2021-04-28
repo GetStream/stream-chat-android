@@ -35,6 +35,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
@@ -394,16 +395,16 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyle
     ) {

@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -23,16 +24,16 @@ internal class AttachmentOptionsView : FrameLayout {
         init(context, null)
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr) {
         init(context, attrs)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr,
         defStyleRes

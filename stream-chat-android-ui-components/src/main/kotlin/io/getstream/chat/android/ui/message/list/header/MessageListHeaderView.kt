@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -31,16 +32,16 @@ public class MessageListHeaderView : FrameLayout {
 
     private var headerState: HeaderState = createInitialHeaderState(context)
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
