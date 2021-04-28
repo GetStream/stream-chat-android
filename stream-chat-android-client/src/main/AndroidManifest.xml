@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.getstream.chat.android.client">
+    package="io.getstream.chat.android.client"
+    >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
-
         <receiver
             android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            >
             <intent-filter>
                 <action android:name="com.getstream.sdk.chat.READ" />
                 <action android:name="com.getstream.sdk.chat.REPLY" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".notifications.PushNotificationRenderer"
+            android:enabled="true"
+            android:exported="false"
+            >
+            <intent-filter android:priority="-1">
+                <action android:name="io.getstream.chat.SHOW_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
             android:exported="false"
             >
-            <intent-filter android:priority="-2" >
+            <intent-filter android:priority="-2">
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>

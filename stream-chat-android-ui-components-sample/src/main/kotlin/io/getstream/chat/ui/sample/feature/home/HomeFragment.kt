@@ -20,9 +20,7 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
-import io.getstream.chat.ui.sample.application.EXTRA_MESSAGE_ID
+import io.getstream.chat.ui.sample.application.SamplePushNotificationRenderer
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.setBadgeNumber
 import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
@@ -72,11 +70,14 @@ class HomeFragment : Fragment() {
 
     private fun parseNotificationData() {
         requireActivity().intent?.let {
-            if (it.hasExtra(EXTRA_CHANNEL_ID) && it.hasExtra(EXTRA_MESSAGE_ID) && it.hasExtra(EXTRA_CHANNEL_TYPE)) {
-                val channelType = it.getStringExtra(EXTRA_CHANNEL_TYPE)
-                val channelId = it.getStringExtra(EXTRA_CHANNEL_ID)
+            if (it.hasExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_ID) &&
+                it.hasExtra(SamplePushNotificationRenderer.EXTRA_MESSAGE_ID) &&
+                it.hasExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_TYPE)
+            ) {
+                val channelType = it.getStringExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_TYPE)
+                val channelId = it.getStringExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_ID)
                 val cid = "$channelType:$channelId"
-                val messageId = it.getStringExtra(EXTRA_MESSAGE_ID)
+                val messageId = it.getStringExtra(SamplePushNotificationRenderer.EXTRA_MESSAGE_ID)
 
                 requireActivity().intent = null
 

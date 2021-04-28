@@ -2736,29 +2736,40 @@ public abstract interface class io/getstream/chat/android/client/notifications/N
 	public abstract fun onLoadSuccess (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public class io/getstream/chat/android/client/notifications/PushNotificationRenderer : android/content/BroadcastReceiver {
+	public static final field Companion Lio/getstream/chat/android/client/notifications/PushNotificationRenderer$Companion;
+	public fun <init> ()V
+	public fun buildErrorCaseNotification (Landroid/content/Context;)Landroid/app/Notification;
+	public fun buildNotification (Landroid/content/Context;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
+	public fun getErrorCaseIntent (Landroid/content/Context;)Landroid/content/Intent;
+	public fun getErrorCaseNotificationContent (Landroid/content/Context;)Ljava/lang/String;
+	public fun getErrorCaseNotificationTitle (Landroid/content/Context;)Ljava/lang/String;
+	public fun getNewMessageIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
+	public fun getNotificationChannelId (Landroid/content/Context;)Ljava/lang/String;
+	protected fun getSmallIcon ()I
+	public fun onReceive (Landroid/content/Context;Landroid/content/Intent;)V
+}
+
+public final class io/getstream/chat/android/client/notifications/PushNotificationRenderer$Companion {
+	public final fun showMessageNotification (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+}
+
 public class io/getstream/chat/android/client/notifications/handler/ChatNotificationHandler {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)V
 	public synthetic fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun buildErrorCaseNotification ()Landroid/app/Notification;
-	public fun buildNotification (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
 	public fun createNotificationChannel ()Landroid/app/NotificationChannel;
 	public final fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	protected final fun getContext ()Landroid/content/Context;
 	public fun getDataLoadListener ()Lio/getstream/chat/android/client/notifications/NotificationLoadDataListener;
 	public fun getDeviceRegisteredListener ()Lio/getstream/chat/android/client/notifications/DeviceRegisteredListener;
-	public fun getErrorCaseIntent ()Landroid/content/Intent;
-	public fun getErrorCaseNotificationContent ()Ljava/lang/String;
-	public fun getErrorCaseNotificationTitle ()Ljava/lang/String;
 	public fun getFirebaseChannelIdKey ()Ljava/lang/String;
 	public fun getFirebaseChannelTypeKey ()Ljava/lang/String;
 	public fun getFirebaseInstanceId ()Lcom/google/firebase/iid/FirebaseInstanceId;
 	public fun getFirebaseMessageIdKey ()Ljava/lang/String;
 	public fun getFirebaseMessageParser ()Lio/getstream/chat/android/client/notifications/FirebaseMessageParser;
-	public fun getNewMessageIntent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public fun getNotificationChannelId ()Ljava/lang/String;
 	public fun getNotificationChannelName ()Ljava/lang/String;
-	public fun getSmallIcon ()I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;)Z
 	public fun onFirebaseMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 }

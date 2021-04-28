@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.notifications
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
@@ -13,8 +12,7 @@ import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
 internal class ChatNotifications private constructor(
@@ -103,54 +101,40 @@ internal class ChatNotifications private constructor(
             if (result.isSuccess) {
                 val (channel, message) = result.data()
                 handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-                onRequiredDataLoaded(channel, message)
+
+                if (!isForeground()) {
+                    PushNotificationRenderer.showMessageNotification(
+                        context = context,
+                        channelName = channel.name,
+                        messageText = message.text,
+                        messageId = message.id,
+                        channelType = channel.type,
+                        channelId = channel.id
+                    )
+                }
             } else {
                 logger.logE("Error loading required data: ${result.error().message}", result.error())
                 handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
-                showErrorCaseNotification()
+
+                if (!isForeground()) {
+                    PushNotificationRenderer.showMessageNotification(
+                        context = context,
+                        channelName = "",
+                        messageText = "",
+                        messageId = messageId,
+                        channelType = channelType,
+                        channelId = channelId
+                    )
+                }
             }
         }
     }
 
-    private fun onRequiredDataLoaded(channel: Channel, message: Message) {
-        val messageId: String = message.id
-        val channelId: String = channel.id
-        val notificationId = System.currentTimeMillis().toInt()
-        val channelName = channel.extraData["name"] ?: ""
-
-        val notification = handler.buildNotification(
-            notificationId,
-            channelName.toString(),
-            message.text,
-            messageId,
-            channel.type,
-            channelId
-        )
-
-        showedNotifications.add(messageId)
-
-        showNotification(notificationId, notification)
-    }
-
-    private fun showErrorCaseNotification() {
-        showNotification(
-            System.currentTimeMillis().toInt(),
-            handler.buildErrorCaseNotification()
-        )
-    }
-
-    private fun showNotification(notificationId: Int, notification: Notification) {
-
-        if (!isForeground()) {
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.notify(
-                notificationId,
-                notification
-            )
-        }
-    }
-
     private fun isForeground(): Boolean {
-        return ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+        return ProcessLifecycleOwner.get()
+            .lifecycle
+            .currentState
+            .isAtLeast(Lifecycle.State.STARTED)
     }
 
     companion object {

@@ -6,8 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.PushNotificationRenderer
 import io.getstream.chat.android.livedata.service.sync.PushMessageSyncHandler
 import io.getstream.chat.docs.MainActivity
 
@@ -30,37 +29,29 @@ class Push(val context: Context, val client: ChatClient) {
                 }
             }
         }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
-         */
-        fun setupNotifications() {
-            val notificationsConfig = NotificationConfig(
-                firebaseMessageIdKey = "message_id",
-                firebaseChannelIdKey = "channel_id",
-                firebaseChannelTypeKey = "channel_type",
-            )
-
-            val notificationHandler = MyNotificationHandler(context, notificationsConfig)
-
-            ChatClient.Builder("{{ api_key }}", context)
-                .notifications(ChatNotificationHandler(context, notificationsConfig))
-                .notifications(notificationHandler)
-                .build()
-        }
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app
-     </a>
+     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app</a>
+     *
+     * ```
+     * <receiver
+     *     android:name=".application.MyPushNotificationRenderer"
+     *     android:enabled="true"
+     *     android:exported="false">
+     *         <intent-filter>
+     *             <action android:name="io.getstream.chat.SHOW_NOTIFICATION" />
+     *         </intent-filter>
+     * </receiver>
+     * ```
      */
-    class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
-        ChatNotificationHandler(context, notificationConfig) {
+    class MyPushNotificationRenderer : PushNotificationRenderer() {
 
         override fun getNewMessageIntent(
+            context: Context,
             messageId: String,
             channelType: String,
-            channelId: String
+            channelId: String,
         ): Intent = Intent(context, MainActivity::class.java).apply {
             putExtra(EXTRA_CHANNEL_ID, channelId)
             putExtra(EXTRA_CHANNEL_TYPE, channelType)

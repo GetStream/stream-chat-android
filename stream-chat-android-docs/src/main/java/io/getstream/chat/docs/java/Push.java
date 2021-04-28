@@ -12,14 +12,11 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
+import io.getstream.chat.android.client.notifications.PushNotificationRenderer;
 import io.getstream.chat.android.livedata.service.sync.PushMessageSyncHandler;
 import io.getstream.chat.docs.MainActivity;
-import io.getstream.chat.docs.R;
 
 public class Push {
-    private Context context;
     private ChatClient client;
 
     /**
@@ -39,62 +36,32 @@ public class Push {
                 }
             });
         }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
-         */
-        public void setupNotifications() {
-            int notificationChannelId = R.string.stream_chat_notification_channel_id;
-            int notificationChannelName = R.string.stream_chat_notification_channel_name;
-            int smallIcon = R.drawable.stream_ic_notification;
-            String firebaseMessageIdKey = "message_id";
-            String firebaseMessageTextKey = "message_text";
-            String firebaseChannelIdKey = "channel_id";
-            String firebaseChannelTypeKey = "channel_type";
-            String firebaseChannelNameKey = "channel_name";
-            int errorCaseNotificationTitle = R.string.stream_chat_notification_title;
-            int errorCaseNotificationContent = R.string.stream_chat_notification_content;
-            boolean useProvidedFirebaseInstance = true;
-
-            NotificationConfig notificationsConfig = new NotificationConfig(
-                    notificationChannelId,
-                    notificationChannelName,
-                    smallIcon,
-                    firebaseMessageIdKey,
-                    firebaseMessageTextKey,
-                    firebaseChannelIdKey,
-                    firebaseChannelTypeKey,
-                    firebaseChannelNameKey,
-                    errorCaseNotificationTitle,
-                    errorCaseNotificationContent,
-                    useProvidedFirebaseInstance
-            );
-
-            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
-
-            new ChatClient.Builder("{{ api_key }}", context)
-                    .notifications(notificationHandler)
-                    .build();
-        }
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#redirection-from-notification-to-app">Redirection from notification to app
-    </a>
+     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#redirection-from-notification-to-app">Redirection from notification to app</a>
+     *
+     * <pre>
+     * <receiver
+     *     android:name=".application.SamplePushNotificationRenderer"
+     *     android:enabled="true"
+     *     android:exported="false">
+     *         <intent-filter>
+     *             <action android:name="io.getstream.chat.SHOW_NOTIFICATION" />
+     *         </intent-filter>
+     *  </receiver>
+     * </pre>
      */
-    class MyNotificationHandler extends ChatNotificationHandler {
+    class MyPushNotificationRenderer extends PushNotificationRenderer {
 
         final static String EXTRA_CHANNEL_ID = "extra_channel_id";
         final static String EXTRA_CHANNEL_TYPE = "extra_channel_type";
         final static String EXTRA_MESSAGE_ID = "extra_message_id";
 
-        public MyNotificationHandler(@NotNull Context context, @NotNull NotificationConfig config) {
-            super(context, config);
-        }
-
         @NotNull
         @Override
         public Intent getNewMessageIntent(
+                @NotNull Context context,
                 @NotNull String messageId,
                 @NotNull String channelType,
                 @NotNull String channelId

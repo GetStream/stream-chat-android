@@ -14,8 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.sample.R
-import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
-import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
+import io.getstream.chat.sample.application.SamplePushNotificationRenderer
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.data.user.SampleUser
@@ -36,7 +35,7 @@ class UserLoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentUserLoginBinding.inflate(inflater, container, false)
         return binding.root
@@ -71,8 +70,8 @@ class UserLoginFragment : Fragment() {
         )
 
         requireActivity().intent?.apply {
-            val channelId = getStringExtra(EXTRA_CHANNEL_ID)
-            val channelType = getStringExtra(EXTRA_CHANNEL_TYPE)
+            val channelId = getStringExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_ID)
+            val channelType = getStringExtra(SamplePushNotificationRenderer.EXTRA_CHANNEL_TYPE)
             if (!channelId.isNullOrBlank() && !channelType.isNullOrBlank()) {
                 val cid = "$channelType:$channelId"
                 viewModel.targetChannelDataReceived(cid)

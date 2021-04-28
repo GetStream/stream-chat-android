@@ -21,5 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".application.SamplePushNotificationRenderer"
+            android:enabled="true"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="io.getstream.chat.SHOW_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
