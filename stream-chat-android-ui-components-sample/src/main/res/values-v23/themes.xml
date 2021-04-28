@@ -6,5 +6,10 @@
         <item name="colorAccent">@color/stream_color_accent</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="stream_ui_theme">@style/StreamTheme</item>
+    </style>
+
+    <style name="StreamTheme" parent="@style/StreamUiTheme">
+        <item name="stream_ui_global_avatar_online_indicator_color">@android:color/holo_orange_dark</item>
     </style>
 </resources>
