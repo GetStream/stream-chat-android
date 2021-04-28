@@ -1418,38 +1418,36 @@ public class ChannelController internal constructor(
 
     internal suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        message.deletedAt = Date()
-        message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        val messageToBeDeleted = message.copy(deletedAt = Date())
+        messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(message)
+        upsertMessage(messageToBeDeleted)
 
         // Update Room State
-        domainImpl.repos.insertMessage(message)
+        domainImpl.repos.insertMessage(messageToBeDeleted)
 
         if (online) {
             val runnable = {
-                client.deleteMessage(message.id)
+                client.deleteMessage(messageToBeDeleted.id)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
-                return Result(result.data())
+                val deletedMessage = result.data()
+                deletedMessage.syncStatus = SyncStatus.COMPLETED
+                upsertMessage(deletedMessage)
+                domainImpl.repos.insertMessage(deletedMessage)
+                return Result(deletedMessage)
             } else {
-                message.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
-
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
+                val failureMessage = messageToBeDeleted.copy(
+                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                )
+                upsertMessage(failureMessage)
+                domainImpl.repos.insertMessage(failureMessage)
                 return Result(result.error())
             }
         }
-        return Result(message)
+        return Result(messageToBeDeleted)
     }
 
     public fun toChannel(): Channel {
