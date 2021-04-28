@@ -6,7 +6,7 @@ sidebar_position: 6
 
 Both channel `channel.query` and `channel.watch` methods ensure that a channel exists and create one otherwise. If all you need is to ensure that a channel exists, you can use `channel.create`.
 
-#### Creating a Channel Using a Channel Id
+## Creating a Channel Using a Channel Id
 
 ```kotlin
 val channelClient = client.channel(channelType = "messaging", channelId = "general")
@@ -19,7 +19,7 @@ channelClient.create().enqueue { result ->
     }
 }
 ```
-#### Creating a Channel for a List of Members
+## Creating a Channel for a List of Members
 
 Channels can be used to conversations between users. In most cases, you want conversations to be unique and make sure that a group of users have only a channel.
 
