@@ -1363,27 +1363,27 @@ public class ChannelController internal constructor(
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
-        var editedMessage = message.copy()
+        val messageToBeEdited = message.copy()
 
         // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
-        editedMessage.apply {
+        messageToBeEdited.apply {
             val now = Date()
             if (updatedAt == null || updatedAt!!.before(now)) {
                 updatedAt = now
             }
         }
 
-        editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(editedMessage)
+        upsertMessage(messageToBeEdited)
 
         // Update Room State
-        domainImpl.repos.insertMessage(editedMessage)
+        domainImpl.repos.insertMessage(messageToBeEdited)
 
         if (online) {
             val runnable = {
-                client.updateMessage(editedMessage)
+                client.updateMessage(messageToBeEdited)
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
@@ -1392,25 +1392,23 @@ public class ChannelController internal constructor(
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
-                editedMessage = result.data()
+                val editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
                 domainImpl.repos.insertMessage(editedMessage)
 
                 return Result(editedMessage)
             } else {
-                editedMessage.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
+                val failedMessage = messageToBeEdited.copy(
+                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                )
 
-                upsertMessage(editedMessage)
-                domainImpl.repos.insertMessage(editedMessage)
+                upsertMessage(failedMessage)
+                domainImpl.repos.insertMessage(failedMessage)
                 return Result(result.error())
             }
         }
-        return Result(editedMessage)
+        return Result(messageToBeEdited)
     }
 
     internal suspend fun deleteMessage(message: Message): Result<Message> {
