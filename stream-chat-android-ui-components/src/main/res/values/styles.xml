@@ -263,5 +263,36 @@
 
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="stream_ui_valid_theme">true</item>
+        <item name="stream_ui_messagelist_item_avatar_style">@style/StreamUi.MessageList.Item.Avatar</item>
+
+        <item name="stream_ui_global_avatar_border_color">@color/stream_ui_white</item>
+        <item name="stream_ui_global_avatar_online_indicator_color">@color/stream_ui_accent_green</item>
+        <item name="stream_ui_global_avatar_text_color">@color/stream_ui_white</item>
+
+    </style>
+
+    <style name="StreamUi" >
+        <!--Common styles properties-->
+    </style>
+
+    <style name="StreamUi.BaseAvatar">
+        <!--Common styles properties for BaseAvatar-->
+        <item name="streamUiAvatarBorderColor">?attr/stream_ui_global_avatar_border_color</item>
+        <item name="streamUiAvatarTextColor">?attr/stream_ui_global_avatar_text_color</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+        <item name="streamUiAvatarOnlineIndicatorPosition">top</item>
+        <item name="streamUiAvatarOnlineIndicatorColor">?attr/stream_ui_global_avatar_online_indicator_color</item>
+        <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
+    </style>
+
+    <style name="StreamUi.MessageList.Item.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of MessageList Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_small</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_small</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="streamUiAvatarBorderWidth">@dimen/stream_ui_avatar_border_width</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
 </resources>

@@ -7,5 +7,9 @@
     <declare-styleable name="StreamUiStyleable" >
         <attr name="stream_ui_valid_theme" format="boolean" />
         <attr name="stream_ui_theme" format="reference" />
+        <attr name="stream_ui_messagelist_item_avatar_style" format="reference" />
+        <attr name="stream_ui_global_avatar_border_color" format="reference|color" />
+        <attr name="stream_ui_global_avatar_text_color" format="reference|color" />
+        <attr name="stream_ui_global_avatar_online_indicator_color" format="reference|color" />
     </declare-styleable>
 </resources>
