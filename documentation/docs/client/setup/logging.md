@@ -4,8 +4,6 @@ title: Logging
 sidebar_position: 4
 ---
 
-# Logging
-
 ## Enabling logs
 
 SDK logs are disabled by default. You can enable logs and set a log level when initializing `ChatClient`:

@@ -4,8 +4,6 @@ title: Adding Dependencies
 sidebar_position: 1
 ---
 
-# Adding Dependencies
-
 Update your repositories in the project level `build.gradle` file:
 
 ```groovy

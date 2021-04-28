@@ -4,8 +4,6 @@ title: Initializing SDK
 sidebar_position: 2
 ---
 
-# Initializing SDK
-
  As a first step, you need to initialize `ChatClient`, which is the main entry point for all operations in the library. You should only create the client once and re-use it across your application. Typically `ChatClient` is initialized in `Application` class:
 
  ```kotlin
