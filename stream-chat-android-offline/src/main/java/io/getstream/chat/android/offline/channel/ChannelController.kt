@@ -345,12 +345,7 @@ public class ChannelController internal constructor(
     }
 
     private fun removeMessagesBefore(date: Date) {
-        val copy = _messages.value
-        // start off empty
-        _messages.value = mutableMapOf()
-        // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.wasCreatedAfter(date) }
-        upsertMessages(recentMessages)
+        _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
     }
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
