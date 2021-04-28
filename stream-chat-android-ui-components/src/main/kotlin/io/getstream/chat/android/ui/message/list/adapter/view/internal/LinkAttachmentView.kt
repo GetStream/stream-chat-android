@@ -9,17 +9,16 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 internal class LinkAttachmentView : FrameLayout {
-    private val binding: StreamUiLinkAttachmentsViewBinding = StreamUiLinkAttachmentsViewBinding
-        .inflate(context.inflater, this, true)
+    private val binding = StreamUiLinkAttachmentsViewBinding.inflate(streamThemeInflater, this, true)
     private var previewUrl: String? = null
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())

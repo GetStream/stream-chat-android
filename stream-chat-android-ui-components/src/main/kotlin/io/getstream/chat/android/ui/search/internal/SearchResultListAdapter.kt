@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.list.SearchResultListView.SearchResultSelectedListener
@@ -25,7 +25,7 @@ internal class SearchResultListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 binding.root.dateFormatter = dateFormatter
                 MessagePreviewViewHolder(binding)

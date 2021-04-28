@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
@@ -14,12 +13,12 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 
 internal class MessagePreviewView : FrameLayout {
 
-    private val binding = StreamUiMessagePreviewItemBinding.inflate(context.inflater, this, true)
-
+    private val binding = StreamUiMessagePreviewItemBinding.inflate(streamThemeInflater, this, true)
     private var _dateFormatter: DateFormatter? = null
 
     /**

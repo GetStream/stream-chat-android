@@ -1,16 +1,16 @@
 package io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListLoadingViewBinding
 
 internal class ChannelListLoadingMoreViewHolder(
     parent: ViewGroup,
     binding: StreamUiChannelListLoadingViewBinding = StreamUiChannelListLoadingViewBinding.inflate(
-        parent.inflater,
+        parent.streamThemeInflater,
         parent,
         false
     ),

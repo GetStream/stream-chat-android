@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.search
 import android.content.Context
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -13,6 +12,7 @@ import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 
 public class SearchInputView : FrameLayout {
@@ -23,7 +23,7 @@ public class SearchInputView : FrameLayout {
     }
 
     private val binding: StreamUiSearchViewBinding =
-        StreamUiSearchViewBinding.inflate(LayoutInflater.from(context), this, true)
+        StreamUiSearchViewBinding.inflate(streamThemeInflater, this, true)
 
     private var debouncedInputChangedListener: InputChangedListener? = null
     private var continuousInputChangedListener: InputChangedListener? = null

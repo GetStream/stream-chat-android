@@ -3,10 +3,10 @@ package io.getstream.chat.android.ui.message.list.internal
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 
@@ -15,7 +15,7 @@ internal class ScrollButtonView : FrameLayout {
     private lateinit var scrollButtonViewStyle: ScrollButtonViewStyle
     private var unreadCount: Int = 0
     private val binding: StreamUiScrollButtonViewBinding =
-        StreamUiScrollButtonViewBinding.inflate(LayoutInflater.from(context), this)
+        StreamUiScrollButtonViewBinding.inflate(streamThemeInflater, this)
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
 

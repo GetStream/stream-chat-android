@@ -4,9 +4,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemChannelMemberBinding
 
 internal class ChannelMembersAdapter(
@@ -15,7 +15,7 @@ internal class ChannelMembersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
         return StreamUiItemChannelMemberBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { ChannelMemberViewHolder(it, onMemberClicked) }
     }
 

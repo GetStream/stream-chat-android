@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -18,6 +17,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 
 internal class MediaAttachmentView : ConstraintLayout {
@@ -26,7 +26,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     var giphyBadgeEnabled: Boolean = true
 
     internal val binding: StreamUiMediaAttachmentViewBinding =
-        StreamUiMediaAttachmentViewBinding.inflate(LayoutInflater.from(context)).also {
+        StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
             it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             val padding = 1.dpToPx()
             it.root.setPadding(padding, padding, padding, padding)

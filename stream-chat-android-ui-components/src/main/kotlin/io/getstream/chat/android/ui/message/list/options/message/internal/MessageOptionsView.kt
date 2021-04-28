@@ -6,12 +6,12 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
@@ -19,13 +19,10 @@ import java.io.Serializable
 
 internal class MessageOptionsView : FrameLayout {
 
-    private val binding: StreamUiMessageOptionsViewBinding =
-        StreamUiMessageOptionsViewBinding.inflate(context.inflater, this, true)
+    private val binding = StreamUiMessageOptionsViewBinding.inflate(streamThemeInflater, this, true)
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
-
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,

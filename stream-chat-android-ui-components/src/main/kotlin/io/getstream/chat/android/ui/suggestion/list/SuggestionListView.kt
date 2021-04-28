@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.suggestion.list
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
@@ -11,6 +10,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.Suggestions
@@ -20,9 +20,8 @@ import io.getstream.chat.android.ui.suggestion.internal.SuggestionListUi
 
 public class SuggestionListView : FrameLayout, SuggestionListUi {
 
-    internal val binding: StreamUiSuggestionListViewBinding = LayoutInflater.from(context).let {
-        StreamUiSuggestionListViewBinding.inflate(it, this)
-    }
+    internal val binding: StreamUiSuggestionListViewBinding =
+        StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
     private val mentionsAdapter: MentionsAdapter = MentionsAdapter { listener?.onMentionClick(it) }
     private val commandsAdapter: CommandsAdapter = CommandsAdapter { listener?.onCommandClick(it) }
 

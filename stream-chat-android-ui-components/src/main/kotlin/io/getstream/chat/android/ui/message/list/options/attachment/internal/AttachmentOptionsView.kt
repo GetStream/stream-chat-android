@@ -7,18 +7,17 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
 import java.io.Serializable
 
 internal class AttachmentOptionsView : FrameLayout {
 
-    private val binding: StreamUiAttachmentOptionsViewBinding =
-        StreamUiAttachmentOptionsViewBinding.inflate(context.inflater, this, true)
+    private val binding = StreamUiAttachmentOptionsViewBinding.inflate(streamThemeInflater, this, true)
 
     constructor(context: Context) : super(context) {
         init(context, null)

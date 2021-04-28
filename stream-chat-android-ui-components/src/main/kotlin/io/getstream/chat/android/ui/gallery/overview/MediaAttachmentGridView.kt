@@ -9,10 +9,10 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
@@ -23,12 +23,9 @@ import java.util.Locale
 
 public class MediaAttachmentGridView : FrameLayout {
 
-    private val binding: StreamUiMediaAttachmentGridViewBinding = StreamUiMediaAttachmentGridViewBinding
-        .inflate(context.inflater, this, true)
-
+    private val binding = StreamUiMediaAttachmentGridViewBinding.inflate(streamThemeInflater, this, true)
     private val dateFormat: DateFormat = SimpleDateFormat("MMM yyyy", Locale.US)
     private var showUserAvatars: Boolean = false
-
     private val adapter: MediaAttachmentAdapter by lazy {
         MediaAttachmentAdapter(showUserAvatars = showUserAvatars) {
             mediaClickListener?.onClick(it)

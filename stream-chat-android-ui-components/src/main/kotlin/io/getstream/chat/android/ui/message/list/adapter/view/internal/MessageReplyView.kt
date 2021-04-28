@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 import android.content.Context
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -23,12 +22,13 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 
 internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
-        StreamUiMessageReplyViewBinding.inflate(LayoutInflater.from(context), this, true)
+        StreamUiMessageReplyViewBinding.inflate(streamThemeInflater, this, true)
     private var ellipsize = false
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
