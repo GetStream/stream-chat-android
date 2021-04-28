@@ -1000,30 +1000,9 @@ public class ChannelController internal constructor(
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val copy = _messages.value
-        val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
-        // filter out old events
-        val freshMessages = mutableListOf<Message>()
-
-        for (message in newMessages) {
-            val oldMessage = copy[message.id]
-            var outdated = false
-            if (oldMessage != null) {
-                val oldTime =
-                    oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
-                val newTime =
-                    message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
-                outdated = oldTime > newTime
-            }
-            if (!outdated) {
-                freshMessages.add(message)
-            } else {
-                val oldDate = oldMessage?.updatedAt
-                logger.logW("Skipping outdated message update for message with text ${message.text}. Old message date is $oldDate new message date id ${message.updatedAt}")
-            }
-        }
-
-        // return all the fresh messages
-        return copy + freshMessages.map { it.copy() }.associateBy(Message::id)
+        return copy + messageHelper.updateValidAttachmentsUrl(messages, copy)
+            .filterNot { (copy[it.id]?.lastUpdateTime() ?: NEVER.time) > it.lastUpdateTime() }
+            .associateBy(Message::id)
     }
 
     private fun upsertMessages(messages: List<Message>) {
@@ -1539,6 +1518,16 @@ public class ChannelController internal constructor(
     private fun String?.isImageMimetype() = this?.contains("image") ?: false
 
     private fun String?.isVideoMimetype() = this?.contains("video") ?: false
+
+    private fun Message.lastUpdateTime(): Long = listOfNotNull(
+        createdAt,
+        createdLocallyAt,
+        updatedAt,
+        updatedLocallyAt,
+        deletedAt
+    ).map { it.time }
+        .maxOrNull()
+        ?: NEVER.time
 
     private companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
