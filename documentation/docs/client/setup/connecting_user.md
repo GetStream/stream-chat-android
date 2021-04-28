@@ -4,8 +4,6 @@ title: Connecting the User
 sidebar_position: 3
 ---
 
-# Connecting the User
-
 The next step is connecting the user. A valid `StreamChat` token is all you need to properly set your current app user as the current user of `ChatClient`. This token can't be created locally and it must be provided by your backend.
 
 ```kotlin
