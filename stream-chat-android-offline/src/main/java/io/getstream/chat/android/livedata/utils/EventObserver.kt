@@ -17,7 +17,6 @@ package io.getstream.chat.android.livedata.utils
  */
 
 import androidx.lifecycle.Observer
-import io.getstream.chat.android.offline.utils.Event
 
 /**
  * An [Observer] for [Event]s, simplifying the pattern of checking if the [Event]'s content has

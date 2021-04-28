@@ -442,9 +442,16 @@ public abstract interface class io/getstream/chat/android/livedata/usecase/Watch
 	public abstract fun invoke (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 }
 
+public class io/getstream/chat/android/livedata/utils/Event {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun getContentIfNotHandled ()Ljava/lang/Object;
+	public final fun getHasBeenHandled ()Z
+	public final fun peekContent ()Ljava/lang/Object;
+}
+
 public final class io/getstream/chat/android/livedata/utils/EventObserver : androidx/lifecycle/Observer {
 	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public fun onChanged (Lio/getstream/chat/android/offline/utils/Event;)V
+	public fun onChanged (Lio/getstream/chat/android/livedata/utils/Event;)V
 	public synthetic fun onChanged (Ljava/lang/Object;)V
 }
 
