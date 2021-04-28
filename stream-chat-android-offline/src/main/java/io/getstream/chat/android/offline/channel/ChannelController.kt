@@ -642,9 +642,9 @@ public class ChannelController internal constructor(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             if (result.isSuccess) {
-                handleSendAttachmentSuccess(result)
+                handleSendAttachmentSuccess(result.data())
             } else {
-                handleSendAttachmentFail(newMessage, result)
+                handleSendAttachmentFail(newMessage, result.error())
             }
         } else {
             uploadStatusMessage = null
@@ -684,8 +684,7 @@ public class ChannelController internal constructor(
         return newAttachment
     }
 
-    private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
-        val processedMessage: Message = result.data()
+    private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
         processedMessage.apply {
             enrichWithCid(this.cid)
             syncStatus = SyncStatus.COMPLETED
@@ -696,21 +695,19 @@ public class ChannelController internal constructor(
         return Result(processedMessage)
     }
 
-    private suspend fun handleSendAttachmentFail(message: Message, result: Result<Message>): Result<Message> {
+    private suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
         logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: ${result.error()}",
-            result.error()
+            "Failed to send message with id ${message.id} and text ${message.text}: $error",
+            error
         )
 
-        if (result.error().isPermanent()) {
-            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-        } else {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        val failedMessage = message.copy(
+            syncStatus = if (error.isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+        )
 
-        upsertMessage(message)
-        domainImpl.repos.insertMessage(message)
-        return Result(result.error())
+        upsertMessage(failedMessage)
+        domainImpl.repos.insertMessage(failedMessage)
+        return Result(error)
     }
 
     // TODO: type should be a sealed/class or enum at the client level
