@@ -6,7 +6,7 @@ sidebar_position: 9
 
 There are two ways to update a channel using the Stream API - a partial or full update. A partial update will retain any custom key-value data, whereas a complete update is going to remove any that are unspecified in the API request.
 
-#### Partial Update
+## Partial Update
 
 A partial update can be used to set and unset specific fields when it is necessary to retain additional custom data fields on the object. AKA a patch style update.
 
@@ -39,7 +39,7 @@ channelClient.updatePartial(set = mapOf("channel_detail.topic" to "Nature")).exe
 channelClient.updatePartial(unset = listOf("channel_detail.rating")).execute()
 ```
 
-#### Full Update
+## Full Update
 
 The `updateChannel` function updates all of the channel data. <b>Any data that is present on the channel and not included in a full update will be deleted.</b>
 
