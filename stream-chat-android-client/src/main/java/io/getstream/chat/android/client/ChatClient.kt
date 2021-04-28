@@ -1345,8 +1345,8 @@ public class ChatClient internal constructor(
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
-        private var baseTimeout = 10000L
-        private var cdnTimeout = 10000L
+        private var baseTimeout = 30_000L
+        private var cdnTimeout = 30_000L
         private var enableMoshi = false
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
