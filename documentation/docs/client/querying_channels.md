@@ -6,7 +6,7 @@ sidebar_position: 7
 
 #### Querying Channel List
 
-You can query channels based on built-in fields as well as any custom field you add to channels. Multiple filters can be combined using AND, OR logical operators, each filter can use its comparison (equality, inequality, greater than, greater or equal, etc.). You can find the complete list of supported operators in the query syntax section of the docs.
+You can query channels based on built-in fields as well as any custom field you add to channels. Multiple filters can be combined using AND, OR logical operators, each filter can use its comparison (equality, inequality, greater than, greater or equal, etc.). You can find the complete list of supported operators in the [query syntax section](https://getstream.io/chat/docs/react/query_syntax/) of the docs.
 
 As an example, let's say that you want to query the last conversations I participated in sorted by `last_message_at`.
 
