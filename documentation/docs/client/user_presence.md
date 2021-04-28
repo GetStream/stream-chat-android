@@ -1,7 +1,7 @@
 ---
 id: clientUserPresence
 title: User Presence
-sidebar_position: 6
+sidebar_position: 5
 ---
 
 User presence allows you to show when a user was last active and if they are online right now. Whenever you read a user the data will look like this:
