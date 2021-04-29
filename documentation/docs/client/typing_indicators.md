@@ -5,7 +5,7 @@ sidebar_position: 24
 ---
 
 In order to support typing events you will need to take care of four things:
-1. Send an event `typing.start` when the user starts typing
+1. Send `typing.start` event  when the user starts typing
 2. Send an event `typing.stop` after the user stopped typing
 3. Handle the two events and use them to toggle the typing indicator UI
 4. Use `parent_id` field of the event to indicate that typing is happening in a thread
