@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
@@ -25,7 +26,7 @@ internal class ChatSocketServiceImplTest {
 
     private lateinit var tokenManager: TokenManager
     private lateinit var socketFactory: SocketFactory
-    private lateinit var eventsParser: EventsParser
+    private lateinit var chatParser: ChatParser
     private lateinit var networkStateProvider: NetworkStateProvider
     private lateinit var socketListener: SocketListener
     private lateinit var socketService: ChatSocketServiceImpl
@@ -34,14 +35,14 @@ internal class ChatSocketServiceImplTest {
     fun setup() {
         tokenManager = mock()
         socketFactory = mock()
-        eventsParser = mock()
+        chatParser = mock()
         networkStateProvider = mock()
         socketListener = mock()
-        socketService = ChatSocketServiceImpl.create(
+        socketService = ChatSocketServiceImpl(
             tokenManager,
             socketFactory,
-            eventsParser,
             networkStateProvider,
+            chatParser,
             testCoroutines.scope
         )
         socketService.addListener(socketListener)
