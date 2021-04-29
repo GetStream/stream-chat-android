@@ -1,27 +1,7 @@
 # April 29th, 2021 - 4.9.1
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-
 ## stream-chat-android
-### 🐞 Fixed
-
 ### ⬆️ Improved
 * Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing.
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -30,17 +10,9 @@
 ### ⬆️ Improved
 - Events received after the client closes the connection are rejected
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed offline reactions sync
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added new versions with API based on kotlin `StateFlow` for the following classes:
@@ -49,25 +21,11 @@
   * `io.getstream.chat.android.offline.thread.ThreadController`
   * `io.getstream.chat.android.offline.querychannels.QueryChannelsController`
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed crash related to accessing `ChatDomain::currentUser` in `MessageListViewModel` before user is connected
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 * Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing.
 
@@ -93,10 +51,6 @@ Change the tint color for icon of camera selection
     * `streamUiErrorMessageTextFont`
     * `streamUiErrorMessageTextFontAssets`
     * `streamUiErrorMessageTextStyle`
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # April 21th, 2021 - 4.9.0
 ## Common changes for all artifacts
