@@ -27,6 +27,7 @@
 - Optimized the number of `ChatClient::addDevice` API calls
 
 ### ⬆️ Improved
+- Events received after the client closes the connection are rejected
 
 ### ✅ Added
 
