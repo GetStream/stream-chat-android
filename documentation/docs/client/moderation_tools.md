@@ -59,7 +59,7 @@ After muting a user messages will still be delivered via web-socket. Implementin
 
 Users can be banned from an app entirely or just from a single channel. When a user is banned, it will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
 
-In most cases, only admins or moderators are allowed to ban other users from a channel.
+> In most cases, only admins or moderators are allowed to ban other users from a channel.
 
 | Name | Type | Description | Default | Optional |
 | :--- | :--- | :--- | :--- | :--- |
