@@ -167,28 +167,6 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
-    public fun disableView() {
-        binding.inputModeIcon.isEnabled = false
-        binding.dismissInputMode.isEnabled = false
-        binding.attachmentsButton.isEnabled = false
-        binding.commandsButton.isEnabled = false
-        binding.messageInputFieldView.isEnabled = false
-        binding.sendMessageButtonDisabled.isEnabled = false
-        binding.sendMessageButtonEnabled.isEnabled = false
-        binding.sendAlsoToChannel.isEnabled = false
-    }
-
-    public fun enableView() {
-        binding.inputModeIcon.isEnabled = true
-        binding.dismissInputMode.isEnabled = true
-        binding.attachmentsButton.isEnabled = true
-        binding.commandsButton.isEnabled = true
-        binding.messageInputFieldView.isEnabled = true
-        binding.sendMessageButtonDisabled.isEnabled = true
-        binding.sendMessageButtonEnabled.isEnabled = true
-        binding.sendAlsoToChannel.isEnabled = true
-    }
-
     /**
      * Enables or disables the handling of mentions in the message input view.
      *
