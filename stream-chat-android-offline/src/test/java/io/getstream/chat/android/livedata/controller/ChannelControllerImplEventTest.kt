@@ -30,6 +30,9 @@ import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomDateAfter
+import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -162,17 +165,29 @@ internal class ChannelControllerEventNewTest {
     @Test
     fun `when a message update event is outdated, it should be ignored`() {
         val messageId = randomString()
+        val createdAt = randomDate()
+        val createdLocallyAt = randomDateBefore(createdAt.time)
+        val updatedAt = randomDateAfter(createdAt.time)
+        val oldUpdatedAt = randomDateBefore(updatedAt.time)
         val recentMessage = randomMessage(
             id = messageId,
             user = User(id = "otherUserId"),
-            updatedAt = Date(),
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedAt,
+            deletedAt = null,
             silent = false,
             showInChannel = true
         )
         val oldMessage = randomMessage(
             id = messageId,
             user = User(id = "otherUserId"),
-            updatedAt = Date(Long.MIN_VALUE),
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = oldUpdatedAt,
+            updatedLocallyAt = oldUpdatedAt,
+            deletedAt = null,
             silent = false,
             showInChannel = true
         )
