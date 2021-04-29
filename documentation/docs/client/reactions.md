@@ -8,17 +8,6 @@ Stream Chat has built-in support for user Reactions. Common examples are likes, 
 
 Similar to other objects in Stream Chat, reactions allow you to add custom data to the reaction of your choice. This is helpful if you want to customize the reaction logic.
 
-| Name | Type | Description | Default | Optional |
-| :--- | :--- | :--- | :--- | :--- |
-| message_id | string | ID of the message to react to | | |
-| reaction | object | Reaction object | | |
-| reaction.type | string | 	Type of the reaction. User could have only 1 reaction of each type per message | | |
-| reaction.score | integer | Score of the reaction for cumulative reactions (see example below) | 1 | &check; |
-| user_id | string | User ID for server side calls | | &check; |
-| enforce_unique | boolean | If set to true, new reaction will replace all reactions the user has (if any) on this message | false | &check; |
-
-> :warning: Custom data for reactions is limited to 1KB.
-
 ## Sending a Reaction
 
 ```kotlin
@@ -38,6 +27,15 @@ channelClient.sendReaction(reaction).enqueue { result ->
     } 
 } 
 ```
+
+| Name | Type | Description | Default | Optional |
+| :--- | :--- | :--- | :--- | :--- |
+| reaction.messageId | String | ID of the message to react to | | |
+| reaction.type | String | Type of the reaction. User could have only 1 reaction of each type per message | | |
+| reaction.score | Int | Score of the reaction for cumulative reactions (see example below) | 1 | &check; |
+| enforceUnique | Boolean | If set to true, new reaction will replace all reactions the user has (if any) on this message | false | &check; |
+
+> Custom data for reactions is limited to 1KB.
 
 ## Replacing a Reaction
 
