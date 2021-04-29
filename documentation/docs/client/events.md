@@ -4,7 +4,7 @@ title: Reactions
 sidebar_position: 25
 ---
 ## Listening for Channel Events
-As soon as you call `watch` on a Channel or `queryChannels` you’ll start to listen to these events. You can hook into specific events:
+As soon as you call `ChannelClient::watch` or `ChatClient::queryChannels` you’ll start to listen to these events. You can hook into specific events:
 
 ```kotlin
 val channelClient = client.channel("messaging", "channelId") 
