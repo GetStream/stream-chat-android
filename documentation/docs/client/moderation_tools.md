@@ -91,7 +91,7 @@ channelClient.unBanUser(targetId = "user-id").enqueue { result ->
 
 Users can be shadow banned from an app entirely or from a channel. When a user is shadow banned, it will still be allowed to post messages, but any message sent during, will have `shadowed: true` field. However, this will be invisible to the author of the message.
 
-> It's up to the client-side implementation to hide or otherwise handle these messages appropriately.
+> It's up to the client-side implementation to handle `shadowed` messages appropriately.
 
 ```kotlin
 // Shadow ban user for 60 minutes from a channel 
