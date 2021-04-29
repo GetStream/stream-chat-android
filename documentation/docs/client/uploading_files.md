@@ -56,7 +56,7 @@ channelClient.sendFile(anyOtherFile, object : ProgressCallback {
 
 ## Customizing Upload Logic
 
-You can use your own CDN. You'll have to create your own implementation of the FileUploader interface, and any upload and delete calls will be sent to that implementation.
+The SDK allows you to use your own CDN by creating your own implementation of the `FileUploader` interface, and pass it to `ChatClient.Builder`.
 
 The code examples below show how to change where files are uploaded:
 
