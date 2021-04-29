@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.android.offline.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.models.Channel

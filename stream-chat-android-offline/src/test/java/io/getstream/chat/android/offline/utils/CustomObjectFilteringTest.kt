@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.android.offline.utils
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
@@ -10,7 +10,6 @@ import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.randomMember
 import io.getstream.chat.android.livedata.randomSyncStatus
 import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.offline.utils.filter
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomIntBetween

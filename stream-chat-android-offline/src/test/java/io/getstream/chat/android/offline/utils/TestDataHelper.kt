@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.android.offline.utils
 
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent

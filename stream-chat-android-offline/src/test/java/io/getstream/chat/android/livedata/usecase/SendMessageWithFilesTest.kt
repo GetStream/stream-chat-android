@@ -235,6 +235,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
                 attachment.apply { this.uploadState = Attachment.UploadState.InProgress }
             }
             .toMutableList()
-}
 
-private fun File.toChatError(): ChatError = ChatError(absolutePath)
+    private fun File.toChatError(): ChatError = ChatError(absolutePath)
+}
