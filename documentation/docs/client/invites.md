@@ -3,7 +3,7 @@ id: chanelInvites
 title: Channel Invites
 sidebar_position: 11
 ---
-Stream Chat provides the ability to invite users to a channel via the `channel` method with the `invites` array. Upon invitation, the end-user will receive a notification that they were invited to the specified channel.
+_Stream Chat_ provides the ability to invite users to a channel via the `channel` method with the `invites` array. Upon invitation, the end-user will receive a notification that they were invited to the specified channel.
 
 ## Inviting a User
 
@@ -88,4 +88,3 @@ client.queryChannels(request).enqueue { result ->
     } 
 }
 ```
-
