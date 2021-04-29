@@ -118,7 +118,7 @@ Administrators can view shadow banned user status in `queryChannels()`, `queryMe
 
 Banned users can be retrieved in different ways:
 1. Using the dedicated query bans endpoint
-2. User Search: you can add the `banned:true` condition to your search. Please note that this will only return users that were banned at the app-level and not the ones that were banned only on channels.
+2. User Search: you can add the `banned:true` condition to your search. Please note that this will only return users that were banned at the app-level and not the ones that were banned only in channels.
 
 ```kotlin
 // retrieve the list of banned users 
