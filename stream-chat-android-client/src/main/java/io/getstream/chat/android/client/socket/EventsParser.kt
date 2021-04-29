@@ -11,20 +11,18 @@ import okhttp3.Response
 import okhttp3.WebSocket
 
 internal class EventsParser(
-    private val parser: ChatParser
+    private val parser: ChatParser,
+    private val service: ChatSocketService,
 ) : okhttp3.WebSocketListener() {
 
     private var connectionEventReceived = false
     private val logger = ChatLogger.get("Events")
-    private lateinit var service: ChatSocketService
-
-    fun setSocketService(service: ChatSocketService) {
-        this.service = service
-    }
+    private var closedByClient = true
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         logger.logI("onOpen")
         connectionEventReceived = false
+        closedByClient = false
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
@@ -39,7 +37,7 @@ internal class EventsParser(
             }
         } catch (t: Throwable) {
             logger.logE("onMessage", t)
-            service.onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
+            onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
         }
     }
 
@@ -53,13 +51,17 @@ internal class EventsParser(
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         logger.logE("onFailure: $t", t)
         // Called when socket is disconnected by client also (client.disconnect())
-        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
+        onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
     private fun onFailure(chatError: ChatError) {
         logger.logE("onFailure $chatError", chatError)
         // Called when socket is disconnected by client also (client.disconnect())
-        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
+        onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
+    }
+
+    internal fun closeByClient() {
+        closedByClient = true
     }
 
     private fun handleEvent(text: String) {
@@ -69,21 +71,37 @@ internal class EventsParser(
             if (!connectionEventReceived) {
                 if (event is ConnectedEvent) {
                     connectionEventReceived = true
-                    service.onConnectionResolved(event)
+                    onConnectionResolved(event)
                 } else {
-                    service.onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
+                    onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
                 }
             } else {
-                service.onEvent(event)
+                onEvent(event)
             }
         } else {
-            service.onSocketError(
-                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause)
-            )
+            onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))
         }
     }
 
     private fun handleErrorEvent(error: ErrorResponse) {
-        service.onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
+        onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
+    }
+
+    private fun onSocketError(error: ChatError) {
+        if (!closedByClient) {
+            service.onSocketError(error)
+        }
+    }
+
+    private fun onConnectionResolved(event: ConnectedEvent) {
+        if (!closedByClient) {
+            service.onConnectionResolved(event)
+        }
+    }
+
+    private fun onEvent(event: ChatEvent) {
+        if (!closedByClient) {
+            service.onEvent(event)
+        }
     }
 }
