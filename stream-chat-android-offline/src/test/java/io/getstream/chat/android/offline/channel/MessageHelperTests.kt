@@ -4,8 +4,8 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.helpers.AttachmentHelper
-import io.getstream.chat.android.livedata.randomAttachment
-import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.offline.randomAttachment
+import io.getstream.chat.android.offline.randomMessage
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

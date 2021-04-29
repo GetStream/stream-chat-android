@@ -7,8 +7,8 @@ import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.randomReaction
-import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.randomReaction
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionDao
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepositoryImpl

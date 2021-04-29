@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
@@ -16,7 +16,7 @@ internal class PaginationTest {
 
     /** [createPaginationInput] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.livedata.PaginationTest#createPaginationInput")
+    @MethodSource("io.getstream.chat.android.offline.PaginationTest#createPaginationInput")
     internal fun `Should return a list of channelEntityPairs properly sorted by pagination param`(
         inputList: List<Channel>,
         pagination: AnyChannelPaginationRequest,

@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.randomQueryChannelsSpec
+import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
@@ -39,7 +39,7 @@ internal class QueryChannelsImplRepositoryTest {
         sut.insertQueryChannels(
             randomQueryChannelsSpec(
                 cids = listOf("cid1", "cid2"),
-                sort = QuerySort.Companion.desc(Channel::cid)
+                sort = QuerySort.desc(Channel::cid)
             )
         )
 

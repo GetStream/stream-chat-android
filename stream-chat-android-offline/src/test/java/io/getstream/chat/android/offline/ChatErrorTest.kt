@@ -1,13 +1,10 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.offline.extensions.isPermanent
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 internal class ChatErrorTest {
 
     @Test

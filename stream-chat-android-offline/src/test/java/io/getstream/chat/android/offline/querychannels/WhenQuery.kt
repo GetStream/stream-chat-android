@@ -15,10 +15,10 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall

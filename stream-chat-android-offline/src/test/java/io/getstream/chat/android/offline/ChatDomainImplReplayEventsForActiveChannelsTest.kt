@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import android.content.Context
 import com.google.common.truth.Truth
@@ -11,21 +11,16 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.event.EventHandlerImpl
-import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
     companion object {

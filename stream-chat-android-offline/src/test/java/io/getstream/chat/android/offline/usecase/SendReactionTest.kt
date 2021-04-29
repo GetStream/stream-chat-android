@@ -2,7 +2,7 @@ package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
+import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -12,12 +12,12 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.randomMember
-import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomReaction
-import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomMember
+import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomReaction
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean

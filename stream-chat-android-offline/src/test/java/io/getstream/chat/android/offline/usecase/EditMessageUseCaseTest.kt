@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

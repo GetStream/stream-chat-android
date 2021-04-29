@@ -12,9 +12,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseDomainTest2
-import io.getstream.chat.android.livedata.randomAttachmentsWithFile
-import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.offline.integration.BaseDomainTest2
+import io.getstream.chat.android.offline.randomAttachmentsWithFile
+import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should throw`

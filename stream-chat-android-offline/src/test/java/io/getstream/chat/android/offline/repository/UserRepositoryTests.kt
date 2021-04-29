@@ -8,8 +8,8 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.randomUserEntity
+import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.randomUserEntity
 import io.getstream.chat.android.offline.repository.domain.user.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.offline.repository.domain.user.UserRepositoryImpl

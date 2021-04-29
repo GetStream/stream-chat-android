@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseConnectedMockedTest
+import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo

@@ -11,9 +11,9 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomMessageEntity
-import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomMessageEntity
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.domain.message.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepositoryImpl

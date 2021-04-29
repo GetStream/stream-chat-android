@@ -8,8 +8,8 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.livedata.randomChannelConfig
-import io.getstream.chat.android.livedata.randomConfig
+import io.getstream.chat.android.offline.randomChannelConfig
+import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigDao
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigInnerEntity

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline.integration
 
 import android.content.Context
 import androidx.annotation.CallSuper

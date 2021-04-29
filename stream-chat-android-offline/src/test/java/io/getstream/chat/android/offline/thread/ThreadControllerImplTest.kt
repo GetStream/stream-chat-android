@@ -9,8 +9,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest

@@ -8,7 +8,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.BaseDomainTest2
+import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.failedCall
 import io.getstream.chat.android.test.randomString

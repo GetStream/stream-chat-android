@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.offline
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture

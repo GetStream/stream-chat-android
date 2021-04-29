@@ -7,9 +7,9 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.offline.extensions.lastMessage
+import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`

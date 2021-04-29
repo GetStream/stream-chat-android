@@ -5,9 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.offline.utils.MessageDiffCallback
 import io.getstream.chat.android.offline.utils.UpdateOperationCounts
