@@ -32,7 +32,7 @@ Messages inside a thread can also have reactions, attachments and mention as any
 
 ## Retrieving Thread Messages
 
-When you read a channel you do not receive messages inside threads. The parent message includes the count of replies which it is usually what apps show as the link to the thread screen. Reading a thread and paginating its messages works in a very similar way as paginating a channel.
+Thread messages are separated from regular messages and won't be included in regular message response. In order to get messages from a particular thread - you need to pass parent message id in messages requests.
 
 ```
 // Retrieve the first 20 messages inside the thread 
