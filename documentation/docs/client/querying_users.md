@@ -41,7 +41,7 @@ Please be aware that this query will return users banned across the entire app, 
 
 You can filter and sort on the custom fields you've set for your user, the user id, and when the user was last active.
 
-The options for the queryUser method are presence, limit, and offset. If presence is true this makes sure you receive the user.presence.changed event when a user goes online or offline.
+The options for the `queryUsers` method are presence, limit, and offset. If presence is `true` this makes sure you receive the `user.presence.changed` event when a user goes online or offline.
 
 ## Querying users by search term
 You can autocomplete the results of your user query by username and/or ID.
