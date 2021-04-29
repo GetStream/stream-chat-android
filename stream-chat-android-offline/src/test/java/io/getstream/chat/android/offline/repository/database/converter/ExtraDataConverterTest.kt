@@ -1,13 +1,13 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseTest
+import io.getstream.chat.android.offline.utils.TestDataHelper
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-internal class ExtraDataConverterTest : BaseTest() {
+internal class ExtraDataConverterTest {
+
+    val data = TestDataHelper()
+
     @Test
     fun testNullEncoding() {
         val converter = ExtraDataConverter()

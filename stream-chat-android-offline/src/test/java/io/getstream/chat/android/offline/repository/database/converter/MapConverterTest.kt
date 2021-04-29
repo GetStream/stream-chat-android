@@ -1,13 +1,14 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.offline.repository.domain.channel.member.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.ChannelUserReadEntity
+import io.getstream.chat.android.offline.utils.TestDataHelper
 import org.junit.Test
 import java.util.Date
 
-internal class MapConverterTest : BaseTest() {
+internal class MapConverterTest {
+    private val data = TestDataHelper()
     // read maps
     @Test
     fun testNullEncoding() {

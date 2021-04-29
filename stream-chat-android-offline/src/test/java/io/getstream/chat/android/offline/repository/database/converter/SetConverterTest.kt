@@ -1,10 +1,9 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 
-internal class SetConverterTest : BaseTest() {
+internal class SetConverterTest {
     @Test
     fun testNullEncoding() {
         val converter = SetConverter()
