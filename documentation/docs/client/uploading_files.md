@@ -58,7 +58,7 @@ channelClient.sendFile(anyOtherFile, object : ProgressCallback {
 
 The SDK allows you to use your own CDN by creating your own implementation of the `FileUploader` interface, and pass it to `ChatClient.Builder`.
 
-The code examples below show how to change where files are uploaded:
+The example below show how to change where files are uploaded:
 
 ```kotlin
 // Set a custom FileUploader implementation when building your client
