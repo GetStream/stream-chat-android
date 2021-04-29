@@ -33,7 +33,7 @@ channelClient.sendImage(imageFile).enqueue { result->
 }
 ```
 
-In the code example above, note how the message attachments are created after the files are uploaded.
+> **NOTE**: Attachments need to be linked to the message after the upload is completed.
 
 ## Uploading a File
 
