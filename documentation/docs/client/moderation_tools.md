@@ -112,7 +112,7 @@ channelClient.removeShadowBan("user-id").enqueue { result ->
 }
 ```
 
-Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
+> Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
 
 ## Retrieving Banned Users
 
