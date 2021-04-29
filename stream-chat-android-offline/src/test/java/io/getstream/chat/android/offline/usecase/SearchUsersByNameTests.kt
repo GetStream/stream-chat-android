@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt

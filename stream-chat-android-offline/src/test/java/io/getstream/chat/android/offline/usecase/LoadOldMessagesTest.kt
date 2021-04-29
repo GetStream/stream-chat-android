@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
-internal class LoadOldMessagesImplTest : BaseDomainTest2() {
+internal class LoadOldMessagesTest : BaseDomainTest2() {
 
     @Before
     override fun setup() {

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.doReturn
@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.usecase.MarkAllRead
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runBlockingTest
@@ -19,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
-internal class MarkAllReadImplTest {
+internal class MarkAllReadTest {
 
     companion object {
         @JvmField

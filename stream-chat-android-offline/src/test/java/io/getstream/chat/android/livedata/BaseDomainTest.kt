@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -40,6 +39,7 @@ import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import io.getstream.chat.android.offline.utils.waitForSetUser
 import io.getstream.chat.android.test.TestCall

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.usecase.MarkRead
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -25,7 +24,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-internal class MarkReadImplTest {
+internal class MarkReadTest {
 
     companion object {
         @JvmField

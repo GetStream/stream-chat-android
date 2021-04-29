@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
@@ -8,7 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class SendReactionImplTest : BaseConnectedIntegrationTest() {
+internal class SendReactionTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking {

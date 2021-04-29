@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.usecase
+package io.getstream.chat.android.offline.usecase
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.randomUser
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.usecase.QueryMembers
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

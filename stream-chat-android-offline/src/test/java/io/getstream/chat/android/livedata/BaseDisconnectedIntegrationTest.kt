@@ -7,11 +7,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
+import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
