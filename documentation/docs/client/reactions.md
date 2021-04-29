@@ -4,9 +4,9 @@ title: Reactions
 sidebar_position: 18
 ---
 
-Stream Chat has built-in support for user Reactions. Common examples are likes, comments, loves, etc. Reactions can be customized so that you are able to use any type of reaction your application requires.
+Stream Chat has built-in support for user reactions. Common examples are likes, comments, loves, etc. Reactions can be customized so that you are able to use any type of reaction your application requires.
 
-Similar to other objects in Stream Chat, reactions allow you to add custom data to the reaction of your choice. This is helpful if you want to customize the reaction logic.
+Similar to other objects in _Stream Chat_, reactions allow you to add custom data to the reaction of your choice. This is helpful if you want to customize the reaction logic.
 
 ## Sending a Reaction
 
@@ -31,7 +31,7 @@ channelClient.sendReaction(reaction).enqueue { result ->
 | Name | Type | Description | Default | Optional |
 | :--- | :--- | :--- | :--- | :--- |
 | reaction.messageId | String | ID of the message to react to | | |
-| reaction.type | String | Type of the reaction. User could have only 1 reaction of each type per message | | |
+| reaction.type | String | Type of the reaction. The user can have only 1 reaction of each type per message | | |
 | reaction.score | Int | Score of the reaction for cumulative reactions (see example below) | 1 | &check; |
 | enforceUnique | Boolean | If set to true, new reaction will replace all reactions the user has (if any) on this message | false | &check; |
 
@@ -67,7 +67,7 @@ channelClient.deleteReaction(
 
 ## Paginating Reactions
 
-Messages returned by the APIs automatically include the 10 most recent reactions. You can also retrieve more reactions and paginate using the following logic:
+Messages returned by the APIs automatically include 10 most recent reactions. You can also retrieve more reactions and paginate using the following logic:
 
 ```kotlin
 // Get the first 10 reactions 
