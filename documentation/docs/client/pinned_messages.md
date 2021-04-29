@@ -8,7 +8,9 @@ Pinned messages allow users to highlight important messages, make announcements,
 
 ## Pinning a Message
 
-An existing message can be updated to be pinned or unpinned by using the `channel.pinMessage` and `channel.unpinMessage` methods. Or a new message can be pinned when it is sent by setting the pinned and `pin_expires` fields when using `channel.sendMessage`.
+An existing message can be updated to be pinned or unpinned by using the `channelClient::pinMessage` and `channelClient::unpinMessage` methods. 
+
+A new message can be pinned when it is sent by setting the `pinned` and `pinExpires` fields.
 
 ```kotlin
 // Create pinned message 
