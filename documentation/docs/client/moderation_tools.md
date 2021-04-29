@@ -6,7 +6,7 @@ sidebar_position: 23
 
 ## Flagging a Message or a User
 
-Any user is allowed to flag a message or a user. Flagging does not perform any particular action on the chat. The API will only trigger the related webhook event and make the message appear on your Dashboard Chat Moderation view.
+Any user is allowed to flag a message or a user. Flagging does not perform any particular action on the chat. The API will only trigger the related webhook event and make the message appear on your _Dashboard Chat Moderation_ view.
 
 ```kotlin
 client.flagMessage("message-id").enqueue { result -> 
@@ -191,5 +191,4 @@ client.queryBannedUsers(
     }
 }
 ```
-
 
