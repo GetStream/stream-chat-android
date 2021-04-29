@@ -12,7 +12,6 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 internal class SocketFactory(
-    private val eventsParser: EventsParser,
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
 ) {
@@ -20,13 +19,13 @@ internal class SocketFactory(
     private val logger = ChatLogger.get(SocketFactory::class.java.simpleName)
     private val httpClient = OkHttpClient()
 
-    fun createAnonymousSocket(endpoint: String, apiKey: String): Socket =
-        create(endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
+    fun createAnonymousSocket(eventsParser: EventsParser, endpoint: String, apiKey: String): Socket =
+        create(eventsParser, endpoint, apiKey, User(ANONYMOUS_USER_ID), true)
 
-    fun createNormalSocket(endpoint: String, apiKey: String, user: User): Socket =
-        create(endpoint, apiKey, user, false)
+    fun createNormalSocket(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User): Socket =
+        create(eventsParser, endpoint, apiKey, user, false)
 
-    private fun create(endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): Socket {
+    private fun create(eventsParser: EventsParser, endpoint: String, apiKey: String, user: User, isAnonymous: Boolean): Socket {
         val url = buildUrl(endpoint, apiKey, user, isAnonymous)
         val request = Request.Builder().url(url).build()
         val newWebSocket = httpClient.newWebSocket(request, eventsParser)

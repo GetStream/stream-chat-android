@@ -17,12 +17,11 @@ internal class ChatSocketImpl(
     coroutineScope: CoroutineScope,
 ) : ChatSocket {
 
-    private val eventsParser = EventsParser(parser)
-    private val service = ChatSocketServiceImpl.create(
+    private val service = ChatSocketServiceImpl(
         tokenManager,
-        SocketFactory(eventsParser, parser, tokenManager),
-        eventsParser,
+        SocketFactory(parser, tokenManager),
         networkStateProvider,
+        parser,
         coroutineScope,
     )
 
