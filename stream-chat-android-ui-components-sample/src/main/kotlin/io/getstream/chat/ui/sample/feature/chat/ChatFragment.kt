@@ -69,7 +69,6 @@ class ChatFragment : Fragment() {
         configureMessageInputView()
         initMessageInputViewModel()
         configureBackButtonHandling()
-        _binding?.messageInputView?.disableView()
     }
 
     private fun configureMessageInputView() {
