@@ -4,11 +4,7 @@ title: Silent Messages
 sidebar_position: 21
 ---
 
-Sometimes you want to add system or transactional messages to channels such as: "your ride is waiting for you", "James updated the information for the trip", "You and Jane are now matched" and so on.
-
-You may not want these messages to mark a channel as unread or increase the unread messages for users.
-
-Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
+Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread. They can be used to send system or transactional messages to channels such as: "your ride is waiting for you", "James updated the information for the trip", "You and Jane are now matched" and so on.
 
 ## Sending a Silent Message
 
