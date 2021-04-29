@@ -345,12 +345,7 @@ public class ChannelController internal constructor(
     }
 
     private fun removeMessagesBefore(date: Date) {
-        val copy = _messages.value
-        // start off empty
-        _messages.value = mutableMapOf()
-        // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.wasCreatedAfter(date) }
-        upsertMessages(recentMessages)
+        _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
     }
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
@@ -647,9 +642,9 @@ public class ChannelController internal constructor(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             if (result.isSuccess) {
-                handleSendAttachmentSuccess(result)
+                handleSendAttachmentSuccess(result.data())
             } else {
-                handleSendAttachmentFail(newMessage, result)
+                handleSendAttachmentFail(newMessage, result.error())
             }
         } else {
             uploadStatusMessage = null
@@ -689,8 +684,7 @@ public class ChannelController internal constructor(
         return newAttachment
     }
 
-    private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
-        val processedMessage: Message = result.data()
+    private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
         processedMessage.apply {
             enrichWithCid(this.cid)
             syncStatus = SyncStatus.COMPLETED
@@ -701,21 +695,19 @@ public class ChannelController internal constructor(
         return Result(processedMessage)
     }
 
-    private suspend fun handleSendAttachmentFail(message: Message, result: Result<Message>): Result<Message> {
+    private suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
         logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: ${result.error()}",
-            result.error()
+            "Failed to send message with id ${message.id} and text ${message.text}: $error",
+            error
         )
 
-        if (result.error().isPermanent()) {
-            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-        } else {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        val failedMessage = message.copy(
+            syncStatus = if (error.isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+        )
 
-        upsertMessage(message)
-        domainImpl.repos.insertMessage(message)
-        return Result(result.error())
+        upsertMessage(failedMessage)
+        domainImpl.repos.insertMessage(failedMessage)
+        return Result(error)
     }
 
     // TODO: type should be a sealed/class or enum at the client level
@@ -1000,30 +992,9 @@ public class ChannelController internal constructor(
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val copy = _messages.value
-        val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
-        // filter out old events
-        val freshMessages = mutableListOf<Message>()
-
-        for (message in newMessages) {
-            val oldMessage = copy[message.id]
-            var outdated = false
-            if (oldMessage != null) {
-                val oldTime =
-                    oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
-                val newTime =
-                    message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
-                outdated = oldTime > newTime
-            }
-            if (!outdated) {
-                freshMessages.add(message)
-            } else {
-                val oldDate = oldMessage?.updatedAt
-                logger.logW("Skipping outdated message update for message with text ${message.text}. Old message date is $oldDate new message date id ${message.updatedAt}")
-            }
-        }
-
-        // return all the fresh messages
-        return copy + freshMessages.map { it.copy() }.associateBy(Message::id)
+        return copy + messageHelper.updateValidAttachmentsUrl(messages, copy)
+            .filterNot { (copy[it.id]?.lastUpdateTime() ?: NEVER.time) > it.lastUpdateTime() }
+            .associateBy(Message::id)
     }
 
     private fun upsertMessages(messages: List<Message>) {
@@ -1392,27 +1363,27 @@ public class ChannelController internal constructor(
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
-        var editedMessage = message.copy()
+        val messageToBeEdited = message.copy()
 
         // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
-        editedMessage.apply {
+        messageToBeEdited.apply {
             val now = Date()
             if (updatedAt == null || updatedAt!!.before(now)) {
                 updatedAt = now
             }
         }
 
-        editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(editedMessage)
+        upsertMessage(messageToBeEdited)
 
         // Update Room State
-        domainImpl.repos.insertMessage(editedMessage)
+        domainImpl.repos.insertMessage(messageToBeEdited)
 
         if (online) {
             val runnable = {
-                client.updateMessage(editedMessage)
+                client.updateMessage(messageToBeEdited)
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
@@ -1421,61 +1392,57 @@ public class ChannelController internal constructor(
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
-                editedMessage = result.data()
+                val editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
                 domainImpl.repos.insertMessage(editedMessage)
 
                 return Result(editedMessage)
             } else {
-                editedMessage.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
+                val failedMessage = messageToBeEdited.copy(
+                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                )
 
-                upsertMessage(editedMessage)
-                domainImpl.repos.insertMessage(editedMessage)
+                upsertMessage(failedMessage)
+                domainImpl.repos.insertMessage(failedMessage)
                 return Result(result.error())
             }
         }
-        return Result(editedMessage)
+        return Result(messageToBeEdited)
     }
 
     internal suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        message.deletedAt = Date()
-        message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        val messageToBeDeleted = message.copy(deletedAt = Date())
+        messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(message)
+        upsertMessage(messageToBeDeleted)
 
         // Update Room State
-        domainImpl.repos.insertMessage(message)
+        domainImpl.repos.insertMessage(messageToBeDeleted)
 
         if (online) {
             val runnable = {
-                client.deleteMessage(message.id)
+                client.deleteMessage(messageToBeDeleted.id)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
-                return Result(result.data())
+                val deletedMessage = result.data()
+                deletedMessage.syncStatus = SyncStatus.COMPLETED
+                upsertMessage(deletedMessage)
+                domainImpl.repos.insertMessage(deletedMessage)
+                return Result(deletedMessage)
             } else {
-                message.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
-
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
+                val failureMessage = messageToBeDeleted.copy(
+                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                )
+                upsertMessage(failureMessage)
+                domainImpl.repos.insertMessage(failureMessage)
                 return Result(result.error())
             }
         }
-        return Result(message)
+        return Result(messageToBeDeleted)
     }
 
     public fun toChannel(): Channel {
@@ -1539,6 +1506,16 @@ public class ChannelController internal constructor(
     private fun String?.isImageMimetype() = this?.contains("image") ?: false
 
     private fun String?.isVideoMimetype() = this?.contains("video") ?: false
+
+    private fun Message.lastUpdateTime(): Long = listOfNotNull(
+        createdAt,
+        createdLocallyAt,
+        updatedAt,
+        updatedLocallyAt,
+        deletedAt
+    ).map { it.time }
+        .maxOrNull()
+        ?: NEVER.time
 
     private companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
