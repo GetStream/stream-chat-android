@@ -4,7 +4,7 @@ title: Querying Channels
 sidebar_position: 7
 ---
 
-#### Querying Channel List
+## Querying Channel List
 
 You can query channels based on built-in fields as well as any custom field you add to channels. Multiple filters can be combined using AND, OR logical operators, each filter can use its comparison (equality, inequality, greater than, greater or equal, etc.). You can find the complete list of supported operators in the [query syntax section](https://getstream.io/chat/docs/react/query_syntax/) of the docs.
 
@@ -52,7 +52,7 @@ val filter = Filters.and(
 )
 ```
 
-#### Paginating Channels
+## Paginating Channels
 
 Query channel requests can be paginated similar to how you paginate on other calls. Here's a short example:
 
@@ -84,3 +84,44 @@ client.queryChannels(nextRequest).enqueue { result ->
     }
 }
 ```
+
+## Paginating Channel Messages
+
+The channel query endpoint allows you to paginate the list of messages, watchers, and members for one channel. To make sure that you can retrieve a consistent list of messages, pagination does not work with simple offset/limit parameters but instead, it relies on passing the ID of the messages from the previous page.
+
+For example: say that you fetched the first 100 messages from a channel and want to lead the next 100. To do this you need to make a channel query request and pass the ID of the oldest message if you are paginating in descending order or the ID of the newest message if paginating in ascending order.
+
+Use the `id_lt` parameter to retrieve messages older than the provided ID and `id_gt` to retrieve messages newer than the provided ID.
+
+The terms `id_lt` and `id_gt` stand for ID less than and ID greater than.
+
+ID-based pagination improves performance and prevents issues related to the list of messages changing while you’re paginating. If needed, you can also use the inclusive versions of those two parameters: `id_lte` and `id_gte`.
+
+```kotlin
+val channelClient = client.channel("messaging", "general")
+val pageSize = 10
+
+// Request for the first page
+val request = QueryChannelRequest()
+    .withMessages(pageSize)
+
+channelClient.query(request).enqueue { result ->
+    if (result.isSuccess) {
+        val messages: List<Message> = result.data().messages
+        if (messages.size < pageSize) {
+            // All messages loaded
+        } else {
+            // Load next page
+            val nextRequest = QueryChannelRequest()
+                .withMessages(LESS_THAN, messages.last().id, pageSize)
+            // ...
+        }
+    } else {
+        // Handle result.error()
+    }
+}
+```
+
+For members and watchers, we use limit and offset parameters.
+
+> The maximum number of messages that can be retrieved at once from the API is 300.
