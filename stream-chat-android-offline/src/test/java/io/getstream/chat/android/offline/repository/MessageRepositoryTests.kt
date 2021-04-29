@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.repository
+package io.getstream.chat.android.offline.repository
 
 import androidx.collection.LruCache
 import com.nhaarman.mockitokotlin2.any
