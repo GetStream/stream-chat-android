@@ -13,7 +13,7 @@ internal class SendGiphy(private val domainImpl: ChatDomainImpl) {
      * Returns new "ephemeral" message with new giphy url.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
      * @param message the message to send
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(message: Message): Call<Message> {

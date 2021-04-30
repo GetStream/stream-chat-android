@@ -14,7 +14,7 @@ internal class GetChannelController(private val domainImpl: ChatDomainImpl) {
      *
      * @param cid the full channel id. ie messaging:123
      *
-     * @see io.getstream.chat.android.livedata.controller.ChannelController
+     * @see io.getstream.chat.android.offline.channel.ChannelController
      */
     @CheckResult
     operator fun invoke(cid: String): Call<ChannelController> {

@@ -583,6 +583,32 @@ public final class io/getstream/chat/android/offline/channel/ChannelController {
 	public final fun toChannel ()Lio/getstream/chat/android/client/models/Channel;
 }
 
+public abstract class io/getstream/chat/android/offline/channel/ChannelController$MessagesState {
+}
+
+public final class io/getstream/chat/android/offline/channel/ChannelController$MessagesState$Loading : io/getstream/chat/android/offline/channel/ChannelController$MessagesState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$Loading;
+}
+
+public final class io/getstream/chat/android/offline/channel/ChannelController$MessagesState$NoQueryActive : io/getstream/chat/android/offline/channel/ChannelController$MessagesState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$NoQueryActive;
+}
+
+public final class io/getstream/chat/android/offline/channel/ChannelController$MessagesState$OfflineNoResults : io/getstream/chat/android/offline/channel/ChannelController$MessagesState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$OfflineNoResults;
+}
+
+public final class io/getstream/chat/android/offline/channel/ChannelController$MessagesState$Result : io/getstream/chat/android/offline/channel/ChannelController$MessagesState {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$Result;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$Result;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/offline/channel/ChannelController$MessagesState$Result;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessages ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;)V

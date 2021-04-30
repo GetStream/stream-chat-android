@@ -9,7 +9,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 internal class CreateChannel(private val domainImpl: ChatDomainImpl) {
     /**
      * Creates a new channel. Will retry according to the retry policy if it fails
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      *
      * @param channel the channel object
      */

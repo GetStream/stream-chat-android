@@ -16,7 +16,7 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
      * @param message the message to send
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(
@@ -27,7 +27,7 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
      * @param message the message to send
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(

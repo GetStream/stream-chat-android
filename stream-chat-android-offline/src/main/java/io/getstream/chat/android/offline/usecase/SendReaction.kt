@@ -14,7 +14,7 @@ internal class SendReaction(private val domainImpl: ChatDomainImpl) {
      * @param cid: the full channel id i. e. messaging:123
      * @param reaction the reaction to add
      * @param enforceUnique if set to true, new reaction will replace all reactions the user has on this message
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {

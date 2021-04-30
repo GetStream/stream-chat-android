@@ -176,10 +176,10 @@ public class QueryChannelsController internal constructor(
             // Careful, it's easy to have a race condition here.
             //
             // The reason is that we are on the IO thread and update ChannelController using postValue()
-            //  ChannelController.toChannel() can read the old version of the data using livedata.value
+            //  ChannelController.toChannel() can read the old version of the data using value
             // Solutions:
             // - suspend/wait for a few seconds (yuck, lets not do that)
-            // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
+            // - post the refresh on a flow object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
             domainImpl.scope.launch {
                 refreshChannel(event.cid)

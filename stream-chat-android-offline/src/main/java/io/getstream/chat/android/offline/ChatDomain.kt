@@ -180,7 +180,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtaining [ThreadController]
      *
-     * @see io.getstream.chat.android.livedata.controller.ThreadController
+     * @see io.getstream.chat.android.offline.thread.ThreadController
      */
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
@@ -290,7 +290,7 @@ public interface ChatDomain {
     /**
      * Creates a new channel. Will retry according to the retry policy if it fails
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      *
      * @param channel the channel object
      *
@@ -306,7 +306,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for sending a message
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun sendMessage(message: Message): Call<Message>
 
@@ -318,7 +318,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for sending a message
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
 
     public fun sendMessage(
@@ -334,7 +334,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for canceling ephemeral message
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun cancelMessage(message: Message): Call<Boolean>
 
@@ -347,7 +347,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for shuffling Giphy image
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun shuffleGiphy(message: Message): Call<Message>
 
@@ -360,7 +360,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for sending Giphy
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun sendGiphy(message: Message): Call<Message>
 
@@ -372,7 +372,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for editing a message
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun editMessage(message: Message): Call<Message>
 
@@ -383,7 +383,7 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for deleting a message
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun deleteMessage(message: Message): Call<Message>
 
@@ -396,13 +396,13 @@ public interface ChatDomain {
      *
      * @return executable async [Call] responsible for sending a reaction
      *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      *
      * @param cid the full channel id, ie messaging:123
      * @param reaction the reaction to mark as deleted
