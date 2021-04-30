@@ -23,7 +23,7 @@ You can declare the `MentionListView` inside a layout file:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light](https://user-images.githubusercontent.com/17440581/108487097-26b9a800-729f-11eb-9575-484c6f651102.png)|![dark](https://user-images.githubusercontent.com/17440581/108487094-25887b00-729f-11eb-9726-348ee1342242.png)|
+|![light](/img/mentions_list_view_light.png)|![dark](/img/mentions_list_view_dark.png)|
 
 ## Adding Mention List View And Binding With View Model
 Here's an example layout containing `MentionListView`:
