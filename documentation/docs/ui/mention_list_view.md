@@ -4,26 +4,23 @@ title: Mention List View
 sidebar_position: 4
 ---
 
-## Creating layout
 `MentionListView` is a view that is responsible for showing previews of messages which contains current user mention.
-
-You can declare the `MentionListView` inside a layout file:
-
-```
-<io.getstream.chat.android.ui.mention.list.MentionListView
-        android:id="@+id/mentionsListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-```
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![light](/img/mentions_list_view_light.png)|![dark](/img/mentions_list_view_dark.png)|
+
+## Binding With View Model
+You can chose to use this view with a viewmodel that already configures the default
+behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
+
+```kotlin
+private val viewModel: MentionListViewModel by viewModels()
+
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
+}
+```
 
 ## Adding Mention List View And Binding With View Model
 Here's an example layout containing `MentionListView`:
