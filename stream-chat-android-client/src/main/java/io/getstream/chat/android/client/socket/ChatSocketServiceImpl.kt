@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
@@ -20,15 +21,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
-internal class ChatSocketServiceImpl private constructor(
+internal class ChatSocketServiceImpl constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
     private val networkStateProvider: NetworkStateProvider,
+    private val parser: ChatParser,
     private val coroutineScope: CoroutineScope,
 ) : ChatSocketService {
     private val logger = ChatLogger.get("SocketService")
     private var connectionConf: ConnectionConf = ConnectionConf.None
     private var socket: Socket? = null
+    private var eventsParser: EventsParser? = null
     private var socketConnectionJob: Job? = null
     private val listeners = mutableListOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
@@ -188,14 +191,14 @@ internal class ChatSocketServiceImpl private constructor(
                 }
                 is ConnectionConf.AnonymousConnectionConf -> {
                     state = State.Connecting
-                    socket = socketFactory.createAnonymousSocket(endpoint, apiKey)
+                    socket = socketFactory.createAnonymousSocket(createNewEventsParser(), endpoint, apiKey)
                 }
                 is ConnectionConf.UserConnectionConf -> {
                     state = State.Connecting
                     socketConnectionJob = coroutineScope.launch {
                         tokenManager.ensureTokenLoaded()
                         withContext(DispatcherProvider.Main) {
-                            socket = socketFactory.createNormalSocket(endpoint, apiKey, user)
+                            socket = socketFactory.createNormalSocket(createNewEventsParser(), endpoint, apiKey, user)
                         }
                     }
                 }
@@ -203,7 +206,13 @@ internal class ChatSocketServiceImpl private constructor(
         }
     }
 
+    private fun createNewEventsParser(): EventsParser = EventsParser(parser, this).also {
+        eventsParser = it
+    }
+
     private fun shutdownSocketConnection() {
+        eventsParser?.closeByClient()
+        eventsParser = null
         socketConnectionJob?.cancel()
         socket?.close(1000, "Connection close by client")
         socket = null
@@ -230,18 +239,5 @@ internal class ChatSocketServiceImpl private constructor(
         object NetworkDisconnected : State()
         object DisconnectedTemporarily : State()
         object DisconnectedPermanently : State()
-    }
-
-    companion object {
-        fun create(
-            tokenManager: TokenManager,
-            socketFactory: SocketFactory,
-            eventsParser: EventsParser,
-            networkStateProvider: NetworkStateProvider,
-            coroutineScope: CoroutineScope,
-        ): ChatSocketServiceImpl {
-            return ChatSocketServiceImpl(tokenManager, socketFactory, networkStateProvider, coroutineScope)
-                .also { eventsParser.setSocketService(it) }
-        }
     }
 }
