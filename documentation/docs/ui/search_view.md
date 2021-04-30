@@ -1,6 +1,6 @@
 ---
 id: uiSearchView
-title: Binding View Models
+title: Search View
 sidebar_position: 5
 ---
 
@@ -69,6 +69,7 @@ searchResultView.setSearchResultSelectedListener { message ->
 }
 ```
 From that point, you should be able to conduct messages search and see result similarly to:
+
 | Light Mode | Dark Mode |
 | --- | --- |
-|<img width="300" alt="Screenshot 2021-02-19 at 10 57 38" src="https://user-images.githubusercontent.com/17440581/108495136-b3b52f00-72a8-11eb-8771-a11e08352587.png">|<img width="300" alt="Screenshot 2021-02-19 at 10 58 04" src="https://user-images.githubusercontent.com/17440581/108495142-b4e65c00-72a8-11eb-8859-6a866508dbcb.png">|
+|![search view light](/img/search_view_hey_light.png)|![search view dark](/img/search_view_hey_dark.png)|
