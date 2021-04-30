@@ -3,7 +3,9 @@ package com.getstream.sdk.chat.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -25,27 +27,34 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
     private var activeThread = MutableLiveData<Message?>()
-    private val _maxMessageLength = MutableLiveData(Int.MAX_VALUE)
-    private val _commands = MutableLiveData<List<Command>>(emptyList())
+    private val _maxMessageLength = MediatorLiveData<Int>()
+    private val _commands = MediatorLiveData<List<Command>>()
     private val _members = MediatorLiveData<List<Member>>()
     public val maxMessageLength: LiveData<Int> = _maxMessageLength
     public val commands: LiveData<List<Command>> = _commands
     public val members: LiveData<List<Member>> = _members
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
     public val repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
-
-    private val _isDirectMessage: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isDirectMessage: MediatorLiveData<Boolean> = MediatorLiveData()
     public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
+    private val _channel = MediatorLiveData<Channel>()
 
     init {
+        _maxMessageLength.value = Int.MAX_VALUE
+        _commands.value = emptyList()
         chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
-                val channel: Channel = channelController.toChannel()
-                _maxMessageLength.value = channel.config.maxMessageLength
-                _commands.value = channel.config.commands
+                _channel.addSource(channelController.channelData) { _channel.value = channelController.toChannel() }
+                _maxMessageLength.addSource(_channel) { _maxMessageLength.value = it.config.maxMessageLength }
+                _commands.addSource(_channel) { _commands.value = it.config.commands }
+                _isDirectMessage.addSource(
+                    _channel.combineWith(chatDomain.user) { channel, user ->
+                        channel?.isDirectMessaging(user?.id ?: "") ?: true
+                    }
+                ) { _isDirectMessage.value = it }
+
                 _members.addSource(channelController.members) { _members.value = it }
-                _isDirectMessage.value = channel.isDirectMessaging()
                 repliedMessage.addSource(channelController.repliedMessage) { repliedMessage.value = it }
             }
         }
