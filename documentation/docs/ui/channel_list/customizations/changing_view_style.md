@@ -27,4 +27,4 @@ TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     )
 }
 ```
-NOTE: The transformer should be set before the view is rendered to make sure that the new style was applied.
+> **NOTE**: The transformer should be set before the view is rendered to make sure that the new style was applied.
