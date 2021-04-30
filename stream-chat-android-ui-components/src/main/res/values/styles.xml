@@ -264,6 +264,7 @@
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="stream_ui_valid_theme">true</item>
         <item name="stream_ui_messagelist_item_avatar_style">@style/StreamUi.MessageList.Item.Avatar</item>
+        <item name="stream_ui_channellist_item_avatar_style">@style/StreamUi.ChannelList.Item.Avatar</item>
 
         <item name="stream_ui_global_avatar_border_color">@color/stream_ui_white</item>
         <item name="stream_ui_global_avatar_online_indicator_color">@color/stream_ui_accent_green</item>
@@ -294,5 +295,16 @@
         <item name="android:layout_marginBottom">8dp</item>
         <item name="streamUiAvatarBorderWidth">@dimen/stream_ui_avatar_border_width</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
+    </style>
+
+    <style name="StreamUi.ChannelList.Item.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of MessageList Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
     </style>
 </resources>

@@ -7,6 +7,15 @@
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
-        <item name="stream_ui_global_avatar_online_indicator_color">@android:color/holo_orange_dark</item>
+        <item name="stream_ui_messagelist_item_avatar_style">@style/MessageListAvatarTheme</item>
+        <item name="stream_ui_channellist_item_avatar_style">@style/ChannelListAvatarTheme</item>
+    </style>
+
+    <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar">
+        <item name="streamUiAvatarOnlineIndicatorColor">@android:color/holo_orange_dark</item>
+    </style>
+
+    <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar">
+        <item name="streamUiAvatarOnlineIndicatorColor">@android:color/holo_blue_bright</item>
     </style>
 </resources>
