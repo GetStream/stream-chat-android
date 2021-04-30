@@ -1,3 +1,15 @@
+# April 30th, 2021 - 4.9.2
+## stream-chat-android-offline
+### ✅ Added
+- Added `ChatDomain::user`, a new property that provide the current user into a LiveData/StateFlow container
+
+### ⚠️ Changed
+- `ChatDomain::currentUser` has been warning-deprecated because it is an unsafe property that could be null, you should subscribe to `ChatDomain::user` instead
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed NPE on MessageInputViewModel when the it was initialized before the user was set
+
 # April 29th, 2021 - 4.9.1
 ## stream-chat-android
 ### ⬆️ Improved
