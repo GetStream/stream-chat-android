@@ -8,9 +8,9 @@ sidebar_position: 10
 
 Sometimes channels will have many hundreds (or thousands) of members and it is important to be able to access ID's and information on all of these members. The `queryMembers` endpoint queries the channel members and allows the user to paginate through a full list of users in channels with very large member counts. The endpoint supports filtering on numerous criteria to efficiently return member information.
 
-> The members are sorted by created_at in ascending order.
+> The members are sorted by _created_at_ in ascending order.
 
-> Stream Chat does not run MongoDB on the backend, only a subset of the query options are available.
+> _Stream Chat_ does not run MongoDB on the backend, only a subset of the query options are available.
 
 Here’s some example of how you can query the list of members:
 
@@ -56,7 +56,7 @@ val filterByPendingInvite = Filters.eq("invite", "pending")
 // Query all the members
 val filterByNone = FilterObject()
 
-// Results can also be orderd with the QuerySort param
+// Results can also be ordered with the _QuerySort_ param
 // For example, this will order results by member creation time, descending
 val createdAtDescendingSort = QuerySort<Member>().desc("created_at")
 ```
