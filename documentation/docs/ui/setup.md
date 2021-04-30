@@ -5,8 +5,8 @@ sidebar_position: 1
 ---
 
 The Android SDK enables you to build any type of chat or messaging experience for Android. It consists of 3 major components:
-* [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client): The client handles all API calls and receives events
-* [Offline](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline): The offline lib stores the data, implements optimistic UI updates, handles network failures, and exposes LiveData or StateFlow objects that make it easy to build your own UI on top of
+* [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client): The client handles all API calls and receives events.
+* [Offline](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline): The offline lib stores the data, implements optimistic UI updates, handles network failures, and exposes LiveData or StateFlow objects that make it easy to build your own UI on top of.
 * [UI](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components): The UI package includes view models and custom views for common things like a channel list, message list, message input, etc.
 
 ## Adding dependencies
@@ -43,8 +43,6 @@ val client = ChatClient.Builder(apiKey = "apiKey", appContext = applicationConte
 val domain = ChatDomain.Builder(applicationContext, client)
     .offlineEnabled()
     .build()
-
-val ui = ChatUI.Builder(appContext = applicationContext).build()
 ```
 Every _Builder_ expose multiple methods that allow different SDK configuration.
 
@@ -72,11 +70,11 @@ For more details see [Client Documentation](../client/setup/clientConnectingUser
 
 ## ChatUI
 UI components customization is supported by accessing the `ChatUI` object directly. It's initialized with default implementations - no initialization is required.
-You can access `ChatUI` to customize the global behaviour of UI elements.  
- * `ChatUI.fonts: ChatFonts` allows you to overwrite fonts
- * `ChatUI.markdown: ChatMarkdown` interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
- * `ChatUI.urlSigner: UrlSigner` url signing logic, enables you to add authorization tokens for images, video etc
- * `ChatUI.avatarBitmapFactory: AvatarBitmapFactory` allows you to generate custom bitmap for avatarView
- * `ChatUI.mimeTypeIconProvider: MimeTypeIconProvider` allows to define own icons for different mime types
- * `ChatUI.supportedReactions: SupportedReactions` allows to define own set of supported message reaction
- * `ChatUI.style: ChatStyle` allows to override global style of UI components, like the TextStyle.
+You can access `ChatUI` to customize the global behaviour of UI elements.
+ * `ChatUI.fonts`: allows you to overwrite fonts
+ * `ChatUI.markdown` interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
+ * `ChatUI.urlSigner` url signing logic, enables you to add authorization tokens for images, video etc
+ * `ChatUI.avatarBitmapFactory` allows to generate custom bitmap for avatarView
+ * `ChatUI.mimeTypeIconProvider` allows to define own icons for different mime types
+ * `ChatUI.supportedReactions` allows to define own set of supported message reaction
+ * `ChatUI.style` allows to override global style of UI components, like the TextStyle.
