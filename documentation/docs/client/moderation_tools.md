@@ -57,7 +57,7 @@ After muting a user messages will still be delivered via web-socket. Implementin
 
 ## Banning a User
 
-Users can be banned from an app entirely or just from a single channel. When a user is banned, it will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
+Users can be banned from an app entirely or just from a single channel. When a user is banned, they will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
 
 > In most cases, only admins or moderators are allowed to ban other users from a channel.
 
@@ -89,7 +89,7 @@ channelClient.unBanUser(targetId = "user-id").enqueue { result ->
 
 ## Shadow Banning a User
 
-Users can be shadow banned from an app entirely or from a channel. When a user is shadow banned, it will still be allowed to post messages, but any message sent during, will have `shadowed: true` field. However, this will be invisible to the author of the message.
+Users can be shadow banned from an app entirely or just from a single channel. When a user is shadow banned, they will still be allowed to post messages, but any message sent during, will have `shadowed: true` field.
 
 > It's up to the client-side implementation to handle `shadowed` messages appropriately.
 
