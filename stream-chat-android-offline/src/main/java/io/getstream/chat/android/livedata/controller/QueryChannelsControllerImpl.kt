@@ -10,8 +10,11 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
+import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController as QueryChannelsControllerStateFlow
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController.ChannelsState as OfflineChannelState
 
 private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
@@ -56,7 +59,14 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
 
     override val loadingMore: LiveData<Boolean> = queryChannels.loadingMore.asLiveData()
 
-    override val channelsState = queryChannels.channelsState.asLiveData()
+    override val channelsState = queryChannels.channelsState.map {
+        when (it) {
+            OfflineChannelState.Loading -> QueryChannelsController.ChannelsState.Loading
+            OfflineChannelState.NoQueryActive -> QueryChannelsController.ChannelsState.NoQueryActive
+            OfflineChannelState.OfflineNoResults -> QueryChannelsController.ChannelsState.OfflineNoResults
+            is OfflineChannelState.Result -> QueryChannelsController.ChannelsState.Result(it.channels)
+        }
+    }.asLiveData()
 
     override val mutedChannelIds: LiveData<List<String>> = queryChannels.mutedChannelIds.asLiveData()
 

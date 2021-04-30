@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
 import io.getstream.chat.android.client.api.models.QuerySort.Companion.descByName
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
+import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 
 internal interface QueryChannelsRepository {
     suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)

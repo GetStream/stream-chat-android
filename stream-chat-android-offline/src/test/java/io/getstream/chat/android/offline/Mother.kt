@@ -31,8 +31,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity

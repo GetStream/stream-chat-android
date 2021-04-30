@@ -4,7 +4,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import org.junit.jupiter.api.Test
 
 internal class QueryChannelsSpecTest {

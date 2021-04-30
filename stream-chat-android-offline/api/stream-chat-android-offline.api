@@ -652,6 +652,32 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun setRecoveryNeeded (Z)V
 }
 
+public abstract class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {
+}
+
+public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Loading : io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Loading;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$NoQueryActive : io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$NoQueryActive;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$OfflineNoResults : io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$OfflineNoResults;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Result : io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Result;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Result;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState$Result;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannels ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/repository/database/ChatDatabase_Impl {
 	public static final field Companion Lio/getstream/chat/android/offline/repository/database/ChatDatabase$Companion;
 	public fun <init> ()V
