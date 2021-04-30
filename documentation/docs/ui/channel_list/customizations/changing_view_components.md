@@ -7,7 +7,7 @@ Let's make an example and create a custom layout in which `ChannelListHeaderView
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light](https://user-images.githubusercontent.com/17440581/108346797-10004c00-71e0-11eb-813b-c807067eb146.png)|![dark](https://user-images.githubusercontent.com/17440581/108346793-0f67b580-71e0-11eb-97f1-1adb99d92443.png)|
+|![light](/img/channel_action_light.png)|![dark](/img/channel_action_dark.png)|
 
 Assuming that we have the setup similar to previous steps, we have to do the following steps:
 1. Add Shimmer dependency

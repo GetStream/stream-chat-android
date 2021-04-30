@@ -24,6 +24,6 @@ This is how default channel list should look like:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light mode](https://user-images.githubusercontent.com/17440581/108333708-877aaf00-71d1-11eb-9998-1a68e1b8fe63.png)|![dark mode](https://user-images.githubusercontent.com/17440581/108333703-85b0eb80-71d1-11eb-8fb0-551dd5065587.png)|
+|![light mode](/img/channel_list_view_light.png)|![dark mode](/img/channel_list_view_dark.png)|
 From that point, `ChannelListHeaderView` will be able to display the current user avatar as well as online status, while `ChannelListView` will display different channels view states, as well as the channel’s pagination, which will be handled automatically.
 `ChannelListViewModelFactory` allows customizing _filter_ and _sort_ options. You can find more about possible options [here](https://getstream.io/chat/docs/android/query_channels/?language=java#common-filters-by-use-case).

@@ -12,7 +12,7 @@ sidebar_position: 3
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light_mode](https://user-images.githubusercontent.com/17440581/108343344-1ee4ff80-71dc-11eb-9914-6dac8670f4d1.png)|![dark_mode](https://user-images.githubusercontent.com/17440581/108343348-20162c80-71dc-11eb-9dc5-43fff7c860c9.png)|
+|![light_mode](/img/channel_action_light.png)|![dark_mode](/img/channel_action_dark.png)|
 
 There are some actions (e.g. clicking on the current user avatar, member, channel, or _Viewing Info_) that require additional handling:
 ```kotlin
