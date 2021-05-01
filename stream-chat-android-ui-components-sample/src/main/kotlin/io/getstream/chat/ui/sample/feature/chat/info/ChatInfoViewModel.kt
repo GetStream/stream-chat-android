@@ -38,11 +38,9 @@ class ChatInfoViewModel(
                 val channelControllerResult = chatDomain.getChannelController(cid).await()
                 if (channelControllerResult.isSuccess) {
                     val channelController = channelControllerResult.data()
-                    val canDeleteChannel = channelController.members.value.isCurrentUserOwnerOrAdmin()
-                    _state.value = _state.value!!.copy(canDeleteChannel = canDeleteChannel)
-
                     _state.addSource(channelController.members) { memberList ->
                         // Updates only if the user state is already set
+                        _state.value = _state.value!!.copy(canDeleteChannel = memberList.isCurrentUserOwnerOrAdmin())
                         memberList.find { member -> member.user.id == _state.value?.member?.user?.id }?.let { member ->
                             _state.value = _state.value?.copy(member = member)
                         }

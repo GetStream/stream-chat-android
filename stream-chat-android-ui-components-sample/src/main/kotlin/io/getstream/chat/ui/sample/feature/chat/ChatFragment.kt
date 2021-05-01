@@ -115,15 +115,17 @@ class ChatFragment : Fragment() {
     }
 
     private fun initChatViewModel() {
-        binding.messagesHeaderView.apply {
-            setAvatarClickListener {
-                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
-            }
-            setTitleClickListener {
-                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
-            }
-            setSubtitleClickListener {
-                chatViewModel.onAction(ChatViewModel.Action.HeaderClicked)
+        chatViewModel.members.observe(viewLifecycleOwner) { members ->
+            binding.messagesHeaderView.apply {
+                setAvatarClickListener {
+                    chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))
+                }
+                setTitleClickListener {
+                    chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))
+                }
+                setSubtitleClickListener {
+                    chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))
+                }
             }
         }
         chatViewModel.navigationEvent.observe(

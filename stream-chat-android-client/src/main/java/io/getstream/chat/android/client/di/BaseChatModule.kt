@@ -140,7 +140,6 @@ internal open class BaseChatModule(
     ): OkHttpClient.Builder {
         return baseClientBuilder()
             // timeouts
-            .callTimeout(timeout, TimeUnit.MILLISECONDS)
             .connectTimeout(timeout, TimeUnit.MILLISECONDS)
             .writeTimeout(timeout, TimeUnit.MILLISECONDS)
             .readTimeout(timeout, TimeUnit.MILLISECONDS)
