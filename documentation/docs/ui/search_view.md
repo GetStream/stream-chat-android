@@ -14,8 +14,7 @@ Here you can find an example layout:
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FCFCFC"
-    >
+    android:background="#FCFCFC">
 
     <io.getstream.chat.android.ui.search.SearchInputView
         android:id="@+id/searchInputView"
@@ -24,8 +23,7 @@ Here you can find an example layout:
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <io.getstream.chat.android.ui.search.list.SearchResultListView
         android:id="@+id/searchResultListView"
@@ -34,8 +32,7 @@ Here you can find an example layout:
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchInputView"
-        />
+        app:layout_constraintTop_toBottomOf="@id/searchInputView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
