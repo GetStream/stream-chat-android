@@ -6,7 +6,7 @@ sidebar_position: 5
 
 The SDK provides two views: `SearchInputView` and `SearchResultListView` which can be used to search and display messages that contain specific text in all channels in which the current user is a member.
 
-### Creating Search View Layout
+## Creating Search View Layout
 Here you can find an example layout:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -40,7 +40,7 @@ Here you can find an example layout:
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 ```
-### Binding Search View Components
+## Binding Search View Components
 In order to display search results, you need to bind `SearchResultListView` with the view model and pass search query from `SearchInputView` to the same view model:
 ```kotlin
 // Get view model
