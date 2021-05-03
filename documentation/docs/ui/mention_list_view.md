@@ -6,24 +6,9 @@ sidebar_position: 4
 
 `MentionListView` is a view that is responsible for showing previews of messages which contains current user mention.
 
-| Light Mode | Dark Mode |
-| --- | --- |
-|![light](/img/mentions_list_view_light.png)|![dark](/img/mentions_list_view_dark.png)|
-
-## Binding With View Model
-You can chose to use this view with a viewmodel that already configures the default
-behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
-
-```kotlin
-private val viewModel: MentionListViewModel by viewModels()
-
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
-}
-```
-
-## Adding Mention List View And Binding With View Model
+## Adding MentionListView
 Here's an example layout containing `MentionListView`:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,12 +29,22 @@ Here's an example layout containing `MentionListView`:
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-Just like other views - `MentionListView` comes together with a view model which is responsible for providing necessary data:
+
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![light](/img/mentions_list_view_light.png)|![dark](/img/mentions_list_view_dark.png)|
+
+## Binding With View Model
+You can chose to use this view with a viewmodel that already configures the default
+behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
+
 ```kotlin
-// Create view model
-val viewModel: MentionListViewModel by viewModels()
-// Bind with view
-viewModel.bindView(mentionListView, viewLifecycleOwner)
+private val viewModel: MentionListViewModel by viewModels()
+
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
+}
 ```
 From that point, you should be able to see messages which contain current user mention.
 
