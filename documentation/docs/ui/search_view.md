@@ -49,7 +49,7 @@ val searchViewModel: SearchViewModel by viewModels()
 // Pass query to view model
 searchInputView.apply {
     setSearchStartedListener { query ->
-        // Pass query when search was preformed
+        // Pass query when search query was submitted
         searchViewModel.setQuery(query)
     }
     setDebouncedInputChangedListener { query ->
