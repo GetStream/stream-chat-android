@@ -881,7 +881,7 @@ public class Android {
     class Navigation {
         public void customizeNavigation() {
             ChatNavigationHandler navigationHandler = destination -> {
-                //Some custom logic here!
+                // Some custom logic here!
                 return true;
             };
 
@@ -937,7 +937,7 @@ public class Android {
                         int avatarSize,
                         @NotNull Continuation<? super Bitmap> $completion
                 ) {
-                    //Return your version of bitmap here!
+                    // Return your version of bitmap here!
                     return super.createUserBitmap(user, style, avatarSize, $completion);
                 }
             };

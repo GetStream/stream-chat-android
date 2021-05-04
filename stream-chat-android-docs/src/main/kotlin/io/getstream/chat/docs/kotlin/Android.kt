@@ -761,8 +761,8 @@ class Android {
     class Navigation() {
 
         fun customizeNavigation() {
-            val navigationHandler : ChatNavigationHandler = ChatNavigationHandler { destination ->
-                //Some custom action here!
+            val navigationHandler: ChatNavigationHandler = ChatNavigationHandler { destination ->
+                // Some custom action here!
                 true
             }
 
@@ -775,12 +775,12 @@ class Android {
         fun customizeUrlSigner() {
             val urlSigner: UrlSigner = object : UrlSigner {
                 override fun signFileUrl(url: String): String {
-                    //Do some change with url here!
+                    // Do some change with url here!
                     return url + "new added text"
                 }
 
                 override fun signImageUrl(url: String): String {
-                    //Do some change with url here!
+                    // Do some change with url here!
                     return url + "new added text"
                 }
             }
@@ -811,7 +811,7 @@ class Android {
     class MarkdownCustomization {
         fun customizeMarkdown() {
             val markdown = ChatMarkdown { textView, text ->
-                //parse markdown the the new text and apply it.
+                // parse markdown the the new text and apply it.
                 textView.text = applyMarkdown(text)
             }
 
@@ -821,15 +821,15 @@ class Android {
         private fun applyMarkdown(text: String): String = text
     }
 
-    class BitmapFactoryCustomization : Fragment(){
+    class BitmapFactoryCustomization : Fragment() {
         fun bitmapFactoryCustomization() {
-            val factory: AvatarBitmapFactory = object :AvatarBitmapFactory(requireContext()) {
+            val factory: AvatarBitmapFactory = object : AvatarBitmapFactory(requireContext()) {
                 override suspend fun createUserBitmap(
                     user: User,
                     style: AvatarStyle,
                     avatarSize: Int,
                 ): Bitmap? {
-                    //Return your version of bitmap here!
+                    // Return your version of bitmap here!
                     return super.createUserBitmap(user, style, avatarSize)
                 }
             }
