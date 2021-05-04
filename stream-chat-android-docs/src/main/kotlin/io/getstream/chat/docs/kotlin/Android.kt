@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.graphics.Typeface
 import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
@@ -43,6 +44,8 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
+import io.getstream.chat.android.ui.common.style.ChatFonts
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -777,6 +780,25 @@ class Android {
             }
 
             ChatUI.urlSigner = urlSigner
+        }
+    }
+
+    class FontCustomization {
+
+        fun customizeFonts() {
+            val fonts: ChatFonts = object : ChatFonts {
+                override fun setFont(textStyle: TextStyle, textView: TextView) {
+                    textStyle.apply(textView)
+                }
+
+                override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
+                    textStyle.apply(textView)
+                }
+
+                override fun getFont(textStyle: TextStyle): Typeface? = textStyle.font
+            }
+
+            ChatUI.fonts = fonts
         }
     }
 }
