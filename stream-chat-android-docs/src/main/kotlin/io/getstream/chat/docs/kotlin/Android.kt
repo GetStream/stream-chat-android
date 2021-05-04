@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.navigation.ChatNavigationHandler
+import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
@@ -40,6 +42,7 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -743,6 +746,18 @@ class Android {
                     messageInputTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_white)
                 )
             }
+        }
+    }
+
+    class Navigation() : Fragment() {
+
+        fun customizeNavigation() {
+            val navigationHandler : ChatNavigationHandler = ChatNavigationHandler { destination ->
+                //Some custom action here!
+                true
+            }
+
+            ChatUI.navigator = ChatNavigator(navigationHandler)
         }
     }
 }

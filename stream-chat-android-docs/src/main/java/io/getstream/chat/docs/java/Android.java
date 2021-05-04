@@ -16,12 +16,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.ui.ChatUI;
+import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -871,4 +874,17 @@ public class Android {
             );
         }
     }
-}
+
+    class Navigation extends Fragment {
+        public void customizeNavigation() {
+            ChatNavigationHandler navigationHandler = destination -> {
+                //Some custom logic here!
+                return true;
+            };
+
+            ChatNavigator chatNavigator = new ChatNavigator(navigationHandler);
+
+            ChatUI.INSTANCE.setNavigator(chatNavigator);
+        }
+    }
+}   

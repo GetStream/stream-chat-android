@@ -4,4 +4,4 @@ title: Navigator
 sidebar_position: 2
 ---
 
-Navigator
+It is possible to add a custom navigator to `ChatUI` by adding a new `ChatNavigator`
