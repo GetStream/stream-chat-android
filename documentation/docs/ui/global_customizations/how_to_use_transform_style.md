@@ -1,7 +1,7 @@
 ---
-id: uiGlobalCustomizations
-title: Global Customizations
-sidebar_position: 7
+id: uiGlobalCustomizationsHowtoUseTransformStyle
+title: How to Use TransformStyle
+sidebar_position: 1
 ---
 
 The SDK provides two entry points for global customization:
