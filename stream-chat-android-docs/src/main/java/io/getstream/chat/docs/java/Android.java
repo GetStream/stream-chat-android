@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.ui.ChatUI;
+import io.getstream.chat.android.ui.common.UrlSigner;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import org.jetbrains.annotations.NotNull;
@@ -875,7 +876,7 @@ public class Android {
         }
     }
 
-    class Navigation extends Fragment {
+    class Navigation {
         public void customizeNavigation() {
             ChatNavigationHandler navigationHandler = destination -> {
                 //Some custom logic here!
@@ -887,4 +888,25 @@ public class Android {
             ChatUI.INSTANCE.setNavigator(chatNavigator);
         }
     }
-}   
+
+    class UrlSignerCustomization {
+
+        public void customizeUrlSigner() {
+            UrlSigner urlSigner = new UrlSigner() {
+                @NotNull
+                @Override
+                public String signFileUrl(@NotNull String url) {
+                    return url + "new added text";
+                }
+
+                @NotNull
+                @Override
+                public String signImageUrl(@NotNull String url) {
+                    return url + "new added text";
+                }
+            };
+
+            ChatUI.INSTANCE.setUrlSigner(urlSigner);
+        }
+    }
+}
