@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.common.UrlSigner;
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import org.jetbrains.annotations.NotNull;
@@ -909,4 +910,19 @@ public class Android {
             ChatUI.INSTANCE.setUrlSigner(urlSigner);
         }
     }
+
+    class MarkdownCustomization {
+        public void customizeMarkdown() {
+            ChatMarkdown markdown = (textView, text) -> {
+                textView.setText(applyMarkdown(text));
+            };
+
+            ChatUI.INSTANCE.setMarkdown(markdown);
+        }
+
+        private String applyMarkdown(String text) {
+            return text;
+        }
+    }
+
 }

@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.common.UrlSigner
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -800,5 +801,18 @@ class Android {
 
             ChatUI.fonts = fonts
         }
+    }
+
+    class MarkdownCustomization {
+        fun customizeMarkdown() {
+            val markdown = ChatMarkdown { textView, text ->
+                //parse markdown the the new text and apply it.
+                textView.text = applyMarkdown(text)
+            }
+
+            ChatUI.markdown = markdown
+        }
+
+        private fun applyMarkdown(text: String): String = text
     }
 }
