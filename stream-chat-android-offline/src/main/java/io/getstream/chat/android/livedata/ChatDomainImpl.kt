@@ -69,6 +69,8 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
             chatDomainStateFlow.currentUser = value
         }
 
+    override val user: LiveData<User?> = chatDomainStateFlow.user.asLiveData()
+
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(this)
 

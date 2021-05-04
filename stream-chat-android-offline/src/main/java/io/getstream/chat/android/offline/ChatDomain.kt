@@ -37,8 +37,19 @@ import java.io.File
  */
 public interface ChatDomain {
 
-    /** the current user on the chatDomain object, same as client.getCurrentUser() */
+    @Deprecated(
+        message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
+        level = DeprecationLevel.WARNING,
+    )
+    /** Unsafe property that represent the current user. This property could be not initialized.
+     * You should subscribe to [ChatDomain.user] instead
+     *
+     * @see [ChatDomain.user]
+     */
     public var currentUser: User
+
+    /** The current user on the chatDomain object */
+    public val user: StateFlow<User?>
 
     /** if offline is enabled */
     public var offlineEnabled: Boolean

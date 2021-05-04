@@ -184,7 +184,14 @@ internal class ChatDomainImpl internal constructor(
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
 
-    override lateinit var currentUser: User
+    private val _user = MutableStateFlow<User?>(null)
+    override val user: StateFlow<User?> = _user
+
+    override var currentUser: User
+        get() = user.value!!
+        set(value) {
+            _user.value = value
+        }
 
     private val syncModule by lazy { SyncProvider(appContext) }
 
