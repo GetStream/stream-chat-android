@@ -60,7 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added `messageLimit` argument to `ChannelListViewModel` and `ChannelListViewModelFactory` constructors to allow changing the number of fetched messages for each channel in the channel list.
 ### ⚠️ Changed
 
 ### ❌ Removed
