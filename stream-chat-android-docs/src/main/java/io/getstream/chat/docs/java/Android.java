@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -23,11 +24,15 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.ui.ChatUI;
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
+import io.getstream.chat.android.ui.avatar.AvatarStyle;
 import io.getstream.chat.android.ui.common.UrlSigner;
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
+import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalDateTime;
@@ -45,10 +50,6 @@ import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
@@ -841,37 +842,37 @@ public class Android {
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
                     viewStyle ->
-                        new MessageInputViewStyle(
-                                true,
-                                genericDrawable,
-                                true,
-                                genericDrawable,
-                                requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
-                                colorBlack,
-                                colorBlack,
-                                textStyleGeneric,
-                                true,
-                                true,
-                                true,
-                                genericDrawable,
-                                genericDrawable,
-                                true,
-                                true,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                true,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                genericDrawable,
-                                colorBlack,
-                                colorBlack,
-                                genericDrawable,
-                                genericDrawable,
-                                20,
-                                genericDrawable,
-                                attachmentDialogStyle
-                        )
+                            new MessageInputViewStyle(
+                                    true,
+                                    genericDrawable,
+                                    true,
+                                    genericDrawable,
+                                    requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
+                                    colorBlack,
+                                    colorBlack,
+                                    textStyleGeneric,
+                                    true,
+                                    true,
+                                    true,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    true,
+                                    true,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    true,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    genericDrawable,
+                                    colorBlack,
+                                    colorBlack,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    20,
+                                    genericDrawable,
+                                    attachmentDialogStyle
+                            )
 
             );
         }
@@ -925,4 +926,23 @@ public class Android {
         }
     }
 
+    class BitmapFactoryCustomization extends Fragment {
+        public void bitmapFactoryCustomization() {
+            AvatarBitmapFactory factory = new AvatarBitmapFactory(requireContext()) {
+                @Nullable
+                @Override
+                public Object createUserBitmap(
+                        @NotNull User user,
+                        @NotNull AvatarStyle style,
+                        int avatarSize,
+                        @NotNull Continuation<? super Bitmap> $completion
+                ) {
+                    //Return your version of bitmap here!
+                    return super.createUserBitmap(user, style, avatarSize, $completion);
+                }
+            };
+
+            ChatUI.INSTANCE.setAvatarBitmapFactory(factory);
+        }
+    }
 }

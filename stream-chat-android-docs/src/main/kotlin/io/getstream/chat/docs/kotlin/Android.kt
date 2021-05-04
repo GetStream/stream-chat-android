@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin
 
+import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.util.Log
 import android.view.Gravity
@@ -26,12 +27,16 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.ChatUI.avatarBitmapFactory
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
+import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
@@ -814,5 +819,22 @@ class Android {
         }
 
         private fun applyMarkdown(text: String): String = text
+    }
+
+    class BitmapFactoryCustomization : Fragment(){
+        fun bitmapFactoryCustomization() {
+            val factory: AvatarBitmapFactory = object :AvatarBitmapFactory(requireContext()) {
+                override suspend fun createUserBitmap(
+                    user: User,
+                    style: AvatarStyle,
+                    avatarSize: Int,
+                ): Bitmap? {
+                    //Return your version of bitmap here!
+                    return super.createUserBitmap(user, style, avatarSize)
+                }
+            }
+
+            ChatUI.avatarBitmapFactory = factory
+        }
     }
 }
