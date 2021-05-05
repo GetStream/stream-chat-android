@@ -59,6 +59,9 @@ allprojects {
 
                 // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
                 includeModule("com.github.mrmike", "ok2curl")
+
+                // Remove when https://github.com/brianwernick/ExoMedia/issues/723 is closed
+                includeModule("com.github.brianwernick", "ExoMedia")
             }
         }
     }

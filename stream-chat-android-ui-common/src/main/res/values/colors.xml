@@ -2,9 +2,4 @@
 <resources>
     <color name="stream_gray_dark">#989898</color>
     <color name="stream_black">#000000</color>
-
-    <!-- Exomedia -->
-    <color name="stream_exomedia_default_controls_button_normal">#FFFFFFFF</color>
-    <color name="stream_exomedia_default_controls_button_pressed">#FFE0E0E0</color>
-    <color name="stream_exomedia_default_controls_button_disabled">#FF757575</color>
 </resources>
