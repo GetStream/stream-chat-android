@@ -46,10 +46,14 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
-import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
@@ -72,6 +76,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle;
+import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle;
 import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
@@ -87,7 +92,6 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
-import kotlin.Unit;
 
 import static java.util.Collections.singletonList;
 
@@ -746,7 +750,7 @@ public class Android {
 
         public void unreadCountInfo() {
             // Get channel
-            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             Channel channel = ChatClient.instance().queryChannel(
                     "channel-type",
@@ -774,7 +778,7 @@ public class Android {
 
         public void getUnreadCountForCurrentUser() {
             // Get channel
-            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             Channel channel = ChatClient.instance().queryChannel(
                     "channel-type",
@@ -842,37 +846,37 @@ public class Android {
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
                     viewStyle ->
-                            new MessageInputViewStyle(
-                                    true,
-                                    genericDrawable,
-                                    true,
-                                    genericDrawable,
-                                    requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
-                                    colorBlack,
-                                    colorBlack,
-                                    textStyleGeneric,
-                                    true,
-                                    true,
-                                    true,
-                                    genericDrawable,
-                                    genericDrawable,
-                                    true,
-                                    true,
-                                    textStyleGeneric,
-                                    textStyleGeneric,
-                                    textStyleGeneric,
-                                    true,
-                                    textStyleGeneric,
-                                    textStyleGeneric,
-                                    genericDrawable,
-                                    colorBlack,
-                                    colorBlack,
-                                    genericDrawable,
-                                    genericDrawable,
-                                    20,
-                                    genericDrawable,
-                                    attachmentDialogStyle
-                            )
+                        new MessageInputViewStyle(
+                                true,
+                                genericDrawable,
+                                true,
+                                genericDrawable,
+                                requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
+                                colorBlack,
+                                colorBlack,
+                                textStyleGeneric,
+                                true,
+                                true,
+                                true,
+                                genericDrawable,
+                                genericDrawable,
+                                true,
+                                true,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                true,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                genericDrawable,
+                                colorBlack,
+                                colorBlack,
+                                genericDrawable,
+                                genericDrawable,
+                                20,
+                                genericDrawable,
+                                attachmentDialogStyle
+                        )
 
             );
         }
