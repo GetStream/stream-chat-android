@@ -5,8 +5,9 @@ sidebar_position: 2
 ---
 
 To display some screens available in the SDK, it is necessary to navigate to then.
-The SDK does that using the ChatNavigator and it navigates to 1 - `AttachmentGaleryActivity`
-to display the gallery of pictures and 2 - After a click in a link, to the destination of the link (the user leaves the chat). 
+The SDK does that using the ChatNavigator and it navigates to:
+- `AttachmentGaleryActivity`: To display the gallery of pictures
+- After a click in a link, to the destination of the link (the user leaves the chat).
 
 It is possible to add a custom navigator to `ChatUI` by adding a new `ChatNavigator`.
 
