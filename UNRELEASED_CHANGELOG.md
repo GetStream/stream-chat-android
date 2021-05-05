@@ -51,7 +51,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Deprecated `MessageInputViewModel::editMessage`. It has `DeprecationLevel.Warning` and still can be used. However, it will be not available in the future, so please consider migrating to use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` instead.
+- Deprecated `MessageInputViewModel::editMessage`. Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` instead.
 - Changed `MessageInputViewModel::repliedMessage` type to `LiveData`. Use `ChatDomain::setMessageForReply` for setting message for reply.
 - Changed `MessageListViewModel::mode` type to `LiveData`. Mode is handled internally and shouldn't be modified outside the SDK.
 
