@@ -25,16 +25,18 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
  * @param filter filter for querying channels, should never be empty
  * @param sort defines the ordering of the channels
  * @param limit the maximum number of channels to fetch
+ * @param messageLimit the number of messages to fetch for each channel
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(
         eq("type", "messaging"),
         Filters.`in`("members", listOf(chatDomain.currentUser.id)),
-        Filters.ne("draft", true)
+        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
+    messageLimit: Int = 1,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -46,7 +48,7 @@ public class ChannelListViewModel(
 
     init {
         stateMerger.value = INITIAL_STATE
-        chatDomain.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+        chatDomain.queryChannels(filter, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             val currentState = stateMerger.value!!
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()

@@ -29,7 +29,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id, args.memberId)),
-                Filters.ne("draft", true),
+                Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
                 Filters.greaterThan("member_count", 2),
             ),
         )
