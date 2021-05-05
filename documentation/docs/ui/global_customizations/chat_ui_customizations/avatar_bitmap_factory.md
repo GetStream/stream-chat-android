@@ -11,19 +11,26 @@ between blocking and non blocking options and configure the keys for easy bitmap
 in the cache system.
 
 To change the default behaviour of this factory, a user needs to extend `AvatarBitmapFactory`,
-which is an open class, and set the desired behaviour. As the example:
+which is an open class, and set the desired behaviour. This example makes the avatar for offline users blurred:
 
 ```kotlin
-val factory: AvatarBitmapFactory = object: AvatarBitmapFactory(requireContext()) {
-    override suspend fun createUserBitmap(
-        user: User,
-        style: AvatarStyle,
-        avatarSize: Int,
-    ): Bitmap? {
-        //Return your version of bitmap here!
-        return super.createUserBitmap(user, style, avatarSize)
+ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
+    override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
+        val imageResult = context.imageLoader.execute(
+            ImageRequest.Builder(context)
+                .data(user.image)
+                .apply {
+                    if (!user.online) {
+                        transformations(BlurTransformation(context))
+                    }
+                }
+                .build()
+        )
+
+        return (imageResult.drawable as? BitmapDrawable)?.bitmap
     }
 }
-
-ChatUI.avatarBitmapFactory = factory
 ```
+Result:
+
+![Blurred images for offline users](/img/blurred_images.png)

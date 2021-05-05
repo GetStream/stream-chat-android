@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin
 
 import android.graphics.Bitmap
 import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
@@ -12,6 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.transform.BlurTransformation
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.utils.DateFormatter
@@ -28,6 +32,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
@@ -823,18 +828,24 @@ class Android {
 
     class BitmapFactoryCustomization : Fragment() {
         fun bitmapFactoryCustomization() {
-            val factory: AvatarBitmapFactory = object : AvatarBitmapFactory(requireContext()) {
-                override suspend fun createUserBitmap(
-                    user: User,
-                    style: AvatarStyle,
-                    avatarSize: Int,
-                ): Bitmap? {
-                    // Return your version of bitmap here!
-                    return super.createUserBitmap(user, style, avatarSize)
+            val context = requireContext()
+
+            ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
+                override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
+                    val imageResult = context.imageLoader.execute(
+                        ImageRequest.Builder(context)
+                            .data(user.image)
+                            .apply {
+                                if (!user.online) {
+                                    transformations(BlurTransformation(context))
+                                }
+                            }
+                            .build()
+                    )
+
+                    return (imageResult.drawable as? BitmapDrawable)?.bitmap
                 }
             }
-
-            ChatUI.avatarBitmapFactory = factory
         }
     }
 }
