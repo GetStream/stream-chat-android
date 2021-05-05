@@ -4,7 +4,7 @@ title: Markdown
 sidebar_position: 5
 ---
 
-The android SDK already was Markdown support by default, by you add your own Markdown parser. Implement the `ChatMarkdown` interface:
+The Android SDK already has Markdown support by default. You can modify it by implementing a custom `ChatMarkdown` interface:
 
 ```Java
 public interface ChatMarkdown {
