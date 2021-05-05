@@ -1,6 +1,6 @@
 ---
-id: uiGlobalCustomizationsHowtoUseTransformStyle
-title: How to Use TransformStyle
+id: uiGlobalCustomizationsTransformStyle
+title: TransformStyle
 sidebar_position: 1
 ---
 
