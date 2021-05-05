@@ -14,7 +14,7 @@ To change the default behaviour of this factory, a user needs to extend `AvatarB
 which is an open class, and set the desired behaviour. As the example:
 
 ```kotlin
-val factory: AvatarBitmapFactory = object :AvatarBitmapFactory(requireContext()) {
+val factory: AvatarBitmapFactory = object: AvatarBitmapFactory(requireContext()) {
     override suspend fun createUserBitmap(
         user: User,
         style: AvatarStyle,
