@@ -158,9 +158,7 @@ class ChatFragment : Fragment() {
                     }
                 }
             }
-            binding.messageListView.setMessageEditHandler { message ->
-                postMessageToEdit(message)
-            }
+            binding.messageListView.setMessageEditHandler(::postMessageToEdit)
         }
     }
 
