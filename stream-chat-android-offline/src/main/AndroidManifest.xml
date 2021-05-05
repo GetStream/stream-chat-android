@@ -1,9 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.getstream.chat.android.livedata">
 
-    <application>
-        <receiver android:name=".service.sync.OfflineSyncFirebaseMessagingReceiver">
-<!--            <intent-filter Todo: declare it!-->
-        </receiver>
-    </application>
+    <application/>
 </manifest>

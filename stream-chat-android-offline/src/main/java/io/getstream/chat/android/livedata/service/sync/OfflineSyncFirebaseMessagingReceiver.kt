@@ -1,8 +1,6 @@
 package io.getstream.chat.android.livedata.service.sync
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -11,17 +9,15 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.logger.ChatLogger
 
-internal class OfflineSyncFirebaseMessagingReceiver : BroadcastReceiver() {
+internal class OfflineSyncFirebaseMessagingHandler() {
 
     private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingReceiver")
 
-    override fun onReceive(context: Context, intent: Intent) {
+    fun syncMessages(context: Context, cid: String) {
         val syncModule = SyncProvider(context)
-        val cid = intent.getStringExtra(EXTRA_CID)
-
         val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
 
-        if (syncConfig != null && cid != null) {
+        if (syncConfig != null) {
             logger.logD("Starting the sync, config: $syncConfig")
 
             performSync(
@@ -37,7 +33,6 @@ internal class OfflineSyncFirebaseMessagingReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        const val EXTRA_CID: String = "EXTRA_CID"
         private const val SYNC_MESSAGES_WORK_NAME = "SYNC_MESSAGES_WORK_NAME"
     }
 
