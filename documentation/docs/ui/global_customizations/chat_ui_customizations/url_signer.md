@@ -13,7 +13,7 @@ public interface UrlSigner {
 }
 ```
 
-This is the way to  add a new UrlSigner:
+This is the way to add a new `UrlSigner`:
 
 ```kotlin
 val urlSigner: UrlSigner = object : UrlSigner {
