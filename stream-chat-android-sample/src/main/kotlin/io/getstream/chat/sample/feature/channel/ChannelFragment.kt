@@ -79,8 +79,8 @@ class ChannelFragment : Fragment() {
                     is MessageListViewModel.Mode.Normal -> resetThread()
                 }
             }
-            binding.messageListView.setOnMessageEditHandler {
-                editMessage.postValue(it)
+            binding.messageListView.setOnMessageEditHandler { message ->
+                postMessageToEdit(message)
             }
         }
     }

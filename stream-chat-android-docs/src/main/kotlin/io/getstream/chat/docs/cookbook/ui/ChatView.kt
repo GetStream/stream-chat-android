@@ -68,7 +68,7 @@ class ChatView : Fragment() {
 
         // Let the message input know when we are editing a message
         messageListView.setMessageEditHandler { message ->
-            messageInputViewModel.editMessage.postValue(message)
+            messageInputViewModel.postMessageToEdit(message)
         }
 
         // Handle navigate up state

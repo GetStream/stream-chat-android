@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.05 ⌛ | 2021.07.05 ⌛ | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
 | `ChatDomain#currentUser` <br/>*Offline* | 2021.04.30 | 2021.05.30 ⌛ | 2021.06.30 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27 ⌛ | 2021.05.25 ⌛ | Setting external SuggestionListView is no longer necessary |
 | `ChatDomain.usecases` <br/>*offline* | 2021.04.6 | 2021.05.6 ⌛ | 2021.06.6 ⌛ | Replace this property call by obtaining a specific use case directly from ChatDomain |

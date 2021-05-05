@@ -1845,9 +1845,11 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun getEditMessage ()Landroidx/lifecycle/MutableLiveData;
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
-	public final fun getRepliedMessage ()Landroidx/lifecycle/MediatorLiveData;
+	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
+	public final fun getRepliedMessage ()Landroidx/lifecycle/LiveData;
 	public final fun isDirectMessage ()Landroidx/lifecycle/LiveData;
 	public final fun keystroke ()V
+	public final fun postMessageToEdit (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun resetThread ()V
 	public final fun sendMessage (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun sendMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
@@ -1872,7 +1874,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
-	public final fun getMode ()Landroidx/lifecycle/MutableLiveData;
+	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V

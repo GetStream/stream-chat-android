@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
@@ -33,8 +32,16 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val maxMessageLength: LiveData<Int> = _maxMessageLength
     public val commands: LiveData<List<Command>> = _commands
     public val members: LiveData<List<Member>> = _members
+    private val _messageToEdit: MutableLiveData<Message?> = MutableLiveData()
+    public val messageToEdit: LiveData<Message?> = _messageToEdit
+    @Deprecated(
+        message = "Do not use this LiveData directly",
+        replaceWith = ReplaceWith("messageToEdit: LiveData<Message?> and postMessageToEdit(message: Message?)"),
+        level = DeprecationLevel.WARNING
+    )
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
-    public val repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
+    private val _repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
+    public val repliedMessage: LiveData<Message?> = _repliedMessage
     private val _isDirectMessage: MediatorLiveData<Boolean> = MediatorLiveData()
     public val isDirectMessage: LiveData<Boolean> = _isDirectMessage
     private val _channel = MediatorLiveData<Channel>()
@@ -55,7 +62,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
                 ) { _isDirectMessage.value = it }
 
                 _members.addSource(channelController.members) { _members.value = it }
-                repliedMessage.addSource(channelController.repliedMessage) { repliedMessage.value = it }
+                _repliedMessage.addSource(channelController.repliedMessage) { _repliedMessage.value = it }
             }
         }
     }
@@ -108,6 +115,15 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun editMessage(message: Message) {
         stopTyping()
         chatDomain.editMessage(message).enqueue()
+    }
+
+    /**
+     * Sets the message to be edited
+     *
+     * @param message the Message to edit
+     */
+    public fun postMessageToEdit(message: Message?) {
+        _messageToEdit.postValue(message)
     }
 
     /**
