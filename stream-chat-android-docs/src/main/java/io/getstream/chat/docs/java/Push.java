@@ -106,6 +106,7 @@ public class Push {
         }
     }
 
+    //Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
      */

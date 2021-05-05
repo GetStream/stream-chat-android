@@ -70,7 +70,8 @@ class Push(val context: Context, val client: ChatClient) {
             const val EXTRA_MESSAGE_ID = "extra_message_id"
         }
     }
-
+    
+    //Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
      */
