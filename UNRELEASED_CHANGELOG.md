@@ -51,6 +51,9 @@ Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `MessageInputViewModel::editMessage`. Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` instead.
+- Changed `MessageInputViewModel::repliedMessage` type to `LiveData`. Use `ChatDomain::setMessageForReply` for setting message for reply.
+- Changed `MessageListViewModel::mode` type to `LiveData`. Mode is handled internally and shouldn't be modified outside the SDK.
 
 ### ❌ Removed
 
