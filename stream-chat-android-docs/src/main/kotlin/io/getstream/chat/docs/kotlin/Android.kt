@@ -668,7 +668,7 @@ class Android {
 
         fun unreadCountInfo() {
             // Get channel
-            val queryChannelRequest = QueryChannelRequest()
+            val queryChannelRequest = QueryChannelRequest().withState()
 
             val channel = ChatClient.instance().queryChannel(
                 channelType = "channel-type",
@@ -696,7 +696,7 @@ class Android {
 
         fun unreadCountForCurrentUser() {
             // Get channel
-            val queryChannelRequest = QueryChannelRequest()
+            val queryChannelRequest = QueryChannelRequest().withState()
 
             val channel = ChatClient.instance().queryChannel(
                 channelType = "channel-type",
