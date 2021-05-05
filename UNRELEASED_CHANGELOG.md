@@ -47,6 +47,7 @@ Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated ExoPlayer version to 2.13.3 
 
 ### ✅ Added
 
