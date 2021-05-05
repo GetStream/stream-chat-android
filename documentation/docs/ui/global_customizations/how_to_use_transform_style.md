@@ -12,7 +12,7 @@ The SDK provides two entry points for global customization:
 
 If you want to customize view styles programmatically you can override corresponding `StyleTransformer` in the `TransformStyle` class.
 
-**Important: This doesn't apply the changes instantly, the view must be recreated for the
+> **Important: This doesn't apply the changes instantly, the view must be recreated for the
 changes to take effect.**
 
 Example:
