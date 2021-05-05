@@ -76,7 +76,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
@@ -452,24 +455,78 @@ public class ChannelClient internal constructor(
         return client.hideChannel(channelType, channelId, clearHistory)
     }
 
+    /**
+     * Uploads a file for the given channel. Progress can be accessed via [callback].
+     *
+     * The Stream CDN imposes the following restrictions on file uploads:
+     * - The maximum file size is 20 MB
+     *
+     * @param file the file that needs to be uploaded
+     * @param callback the callback to track progress
+     *
+     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * if the file was successfully uploaded.
+     *
+     * @see FileUploader
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
+     */
     @CheckResult
-    public fun sendFile(file: File): Call<String> {
-        return client.sendFile(channelType, channelId, file)
+    @JvmOverloads
+    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<String> {
+        return client.sendFile(channelType, channelId, file, callback)
     }
 
+    /**
+     * Uploads an image for the given channel. Progress can be accessed via [callback].
+     *
+     * The Stream CDN imposes the following restrictions on image uploads:
+     * - The maximum image size is 20 MB
+     * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
+     *
+     * @param file the image file that needs to be uploaded
+     * @param callback the callback to track progress
+     *
+     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * if the image was successfully uploaded.
+     *
+     * @see FileUploader
+     * @see StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
+     */
     @CheckResult
-    public fun sendImage(file: File): Call<String> {
-        return client.sendImage(channelType, channelId, file)
+    @JvmOverloads
+    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<String> {
+        return client.sendImage(channelType, channelId, file, callback)
     }
 
+    /**
+     * Deletes the file represented by [url] from the given channel.
+     *
+     * @param url the URL of the file to be deleted
+     *
+     * @return executable async [Call] responsible for deleting a file
+     *
+     * @see FileUploader
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
+     */
     @CheckResult
-    public fun sendFile(file: File, callback: ProgressCallback): Call<String> {
-        return client.sendFile(channelType, channelId, file)
+    public fun deleteFile(url: String): Call<Unit> {
+        return client.deleteFile(channelType, channelId, url)
     }
 
+    /**
+     * Deletes the image represented by [url] from the given channel.
+     *
+     * @param url the URL of the image to be deleted
+     *
+     * @return executable async [Call] responsible for deleting an image
+     *
+     * @see FileUploader
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
+     */
     @CheckResult
-    public fun sendImage(file: File, callback: ProgressCallback): Call<String> {
-        return client.sendImage(channelType, channelId, file)
+    public fun deleteImage(url: String): Call<Unit> {
+        return client.deleteImage(channelType, channelId, url)
     }
 
     @CheckResult

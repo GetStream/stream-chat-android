@@ -3,19 +3,19 @@ package io.getstream.chat.android.ui.message.input.attachment.selected.internal
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
-import io.getstream.chat.android.ui.message.input.internal.SIZE_MEGA_20
 
 internal class SelectedFileAttachmentAdapter(
     var onAttachmentCancelled: (AttachmentMetaData) -> Unit = {},
 ) : SimpleListAdapter<AttachmentMetaData, SelectedFileAttachmentAdapter.SelectedFileAttachmentViewHolder>() {
 
-    internal var attachmentMaxFileSize: Int = SIZE_MEGA_20
+    internal var attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedFileAttachmentViewHolder {
         return StreamUiItemSelectedAttachmentFileBinding
@@ -26,7 +26,7 @@ internal class SelectedFileAttachmentAdapter(
     class SelectedFileAttachmentViewHolder(
         private val binding: StreamUiItemSelectedAttachmentFileBinding,
         private val onAttachmentCancelled: (AttachmentMetaData) -> Unit,
-        private val attachmentMaxFileSize: Int,
+        private val attachmentMaxFileSize: Long,
     ) : SimpleListAdapter.ViewHolder<AttachmentMetaData>(binding.root) {
         lateinit var attachment: AttachmentMetaData
 
