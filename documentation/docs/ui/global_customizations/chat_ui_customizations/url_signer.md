@@ -4,7 +4,7 @@ title: UrlSigner
 sidebar_position: 3
 ---
 
-It is possible to use a custom url signer to `ChatUi` by adding a new `UrlSigner` implementing the following interface:
+`ChatUi` allows to use of a custom url signer by implementing the following interface:
 
 ```kotlin
 public interface UrlSigner {
