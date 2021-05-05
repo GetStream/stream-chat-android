@@ -48,8 +48,7 @@ class Push(val context: Context, val client: ChatClient) {
     }
 
     /**
-     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app
-     </a>
+     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app</a>
      */
     class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
         ChatNotificationHandler(context, notificationConfig) {
@@ -57,7 +56,7 @@ class Push(val context: Context, val client: ChatClient) {
         override fun getNewMessageIntent(
             messageId: String,
             channelType: String,
-            channelId: String
+            channelId: String,
         ): Intent = Intent(context, MainActivity::class.java).apply {
             putExtra(EXTRA_CHANNEL_ID, channelId)
             putExtra(EXTRA_CHANNEL_TYPE, channelType)
@@ -70,8 +69,8 @@ class Push(val context: Context, val client: ChatClient) {
             const val EXTRA_MESSAGE_ID = "extra_message_id"
         }
     }
-    
-    //Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
+
+    // Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
      */
