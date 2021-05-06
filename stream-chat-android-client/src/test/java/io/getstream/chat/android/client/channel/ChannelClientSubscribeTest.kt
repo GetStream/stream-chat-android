@@ -47,8 +47,8 @@ internal class ChannelClientSubscribeTest {
             OTHER_CHANNEL_ID,
             Message(),
             0,
-            null,
-            null
+            0,
+            0
         )
     }
 

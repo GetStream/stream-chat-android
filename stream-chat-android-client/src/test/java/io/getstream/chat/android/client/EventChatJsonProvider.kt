@@ -152,7 +152,9 @@ internal fun createNotificationAddedToChannelEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "channel": ${createChannelJsonString()}
+            "channel": ${createChannelJsonString()},
+            "total_unread_count": 4,
+            "unread_channels": 5
         """.trimIndent()
     )
 
@@ -452,6 +454,19 @@ internal fun createNewMessageEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
+            "message": ${createMessageJsonString()}
+        """.trimIndent()
+    )
+
+internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
+    createChatEventStringJson(
+        "message.new",
+        """
+            "user": ${createUserJsonString()},
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "watcher_count": 3,
             "message": ${createMessageJsonString()}
         """.trimIndent()
     )

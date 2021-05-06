@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.createMessageDeletedEventStringJson
 import io.getstream.chat.android.client.createMessageReadEventStringJson
 import io.getstream.chat.android.client.createMessageUpdatedEventStringJson
 import io.getstream.chat.android.client.createNewMessageEventStringJson
+import io.getstream.chat.android.client.createNewMessageWithoutUnreadCountsEventStringJson
 import io.getstream.chat.android.client.createNotificationAddedToChannelEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelMutesUpdatedEventStringJson
@@ -188,7 +189,7 @@ internal object EventArguments {
     private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message)
     private val messageReadEvent = MessageReadEvent(EventType.MESSAGE_READ, date, user, cid, channelType, channelId)
     private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)
-    private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel)
+    private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)
     private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(EventType.NOTIFICATION_CHANNEL_DELETED, date, cid, channelType, channelId, channel)
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, date, cid, channelType, channelId, channel)
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(EventType.NOTIFICATION_INVITE_ACCEPTED, date, cid, channelType, channelId, user, member)
@@ -216,6 +217,7 @@ internal object EventArguments {
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)
     private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
+    private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, 0, 0)
     private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
     private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, mapOf("type" to "some.unknown.type", "created_at" to dateString))
     private val markAllReadEvent = MarkAllReadEvent(EventType.NOTIFICATION_MARK_READ, date, user)
@@ -262,6 +264,7 @@ internal object EventArguments {
         Arguments.of(createNotificationChannelMutesUpdatedEventStringJson(), notificationChannelMutesUpdatedEvent),
         Arguments.of(createNotificationMutesUpdatedEventStringJson(), notificationMutesUpdatedEvent),
         Arguments.of(createNewMessageEventStringJson(), newMessageEvent),
+        Arguments.of(createNewMessageWithoutUnreadCountsEventStringJson(), newMessageWithoutUnreadCountsEvent),
         Arguments.of(createUnknownEventStringJson(), unknownEvent),
         Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent),
         Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent),

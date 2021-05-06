@@ -186,6 +186,8 @@ private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
         channelId = channel_id,
         user = user.toDomain(),
         channel = channel.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
@@ -327,6 +329,8 @@ private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToCh
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
@@ -338,6 +342,8 @@ private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDe
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 

@@ -48,9 +48,22 @@ public interface HasWatcherCount {
     public val watcherCount: Int
 }
 
+/**
+ * Interface that marks a [ChatEvent] as having the information about unread counts. There are certain
+ * cases when the server omits these fields (e.g. when `ReadEvents` option is disabled, when the number of
+ * watchers is over 100, etc). In that case `totalUnreadCount` and `unreadChannels` fields have 0 values.
+ *
+ * The list of events which contain unread counts:
+ * - message.new
+ * - notification.message_new
+ * - notification.mark_read
+ * - notification.added_to_channel
+ * - notification.channel_deleted
+ * - notification.channel_truncated
+ */
 public interface HasUnreadCounts {
-    public val totalUnreadCount: Int?
-    public val unreadChannels: Int?
+    public val totalUnreadCount: Int
+    public val unreadChannels: Int
 }
 
 /**
@@ -90,7 +103,9 @@ public data class ChannelTruncatedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     val channel: Channel,
-) : CidEvent(), UserEvent, HasChannel
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
+) : CidEvent(), UserEvent, HasChannel, HasUnreadCounts
 
 /**
  * Triggered when a channel is updated. Could contain system [message].
@@ -217,7 +232,7 @@ public data class MessageUpdatedEvent(
 ) : CidEvent(), UserEvent, HasChannel, HasMessage
 
 /**
- * Triggered when a new message is added on a channel
+ * Triggered when a new message is added on a channel.
  */
 public data class NewMessageEvent(
     override val type: String,
@@ -227,9 +242,9 @@ public data class NewMessageEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
-    @SerializedName("watcher_count") override val watcherCount: Int,
-    @SerializedName("total_unread_count") override val totalUnreadCount: Int?,
-    @SerializedName("unread_channels") override val unreadChannels: Int?,
+    @SerializedName("watcher_count") override val watcherCount: Int = 0,
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), UserEvent, HasChannel, HasMessage, HasWatcherCount, HasUnreadCounts
 
 /**
@@ -242,7 +257,9 @@ public data class NotificationAddedToChannelEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     val channel: Channel,
-) : CidEvent(), HasChannel
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
+) : CidEvent(), HasChannel, HasUnreadCounts
 
 /**
  * Triggered when a channel is deleted
@@ -254,7 +271,9 @@ public data class NotificationChannelDeletedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     val channel: Channel,
-) : CidEvent(), HasChannel
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
+) : CidEvent(), HasChannel, HasUnreadCounts
 
 /**
  * Triggered when a channel is muted
@@ -326,8 +345,8 @@ public data class NotificationMarkReadEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    @SerializedName("total_unread_count") override val totalUnreadCount: Int?,
-    @SerializedName("unread_channels") override val unreadChannels: Int?,
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), UserEvent, HasUnreadCounts, HasChannel
 
 /**
@@ -352,8 +371,8 @@ public data class NotificationMessageNewEvent(
     @SerializedName("channel_id") override val channelId: String,
     val channel: Channel,
     override val message: Message,
-    @SerializedName("total_unread_count") override val totalUnreadCount: Int?,
-    @SerializedName("unread_channels") override val unreadChannels: Int?,
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts
 
 /**
