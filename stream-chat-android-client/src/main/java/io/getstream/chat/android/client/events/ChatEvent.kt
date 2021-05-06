@@ -16,6 +16,8 @@ public sealed class ChatEvent {
 
 public sealed class CidEvent : ChatEvent() {
     public abstract val cid: String
+    public abstract val channelType: String
+    public abstract val channelId: String
 }
 
 public interface UserEvent {
@@ -23,9 +25,7 @@ public interface UserEvent {
 }
 
 public interface HasChannel {
-    public val cid: String
-    public val channelType: String
-    public val channelId: String
+    public val channel: Channel
 }
 
 public interface HasMessage {
@@ -83,7 +83,7 @@ public data class ChannelDeletedEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    val channel: Channel,
+    override val channel: Channel,
     val user: User?,
 ) : CidEvent(), HasChannel
 
@@ -98,7 +98,7 @@ public data class ChannelHiddenEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     @SerializedName("clear_history") val clearHistory: Boolean,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when a channels' history is truncated
@@ -110,7 +110,7 @@ public data class ChannelTruncatedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
-    val channel: Channel,
+    override val channel: Channel,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), UserEvent, HasChannel, HasUnreadCounts
@@ -125,7 +125,7 @@ public data class ChannelUpdatedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     val message: Message?,
-    val channel: Channel,
+    override val channel: Channel,
 ) : CidEvent(), HasChannel
 
 /**
@@ -139,7 +139,7 @@ public data class ChannelUpdatedByUserEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     val message: Message?,
-    val channel: Channel,
+    override val channel: Channel,
 ) : CidEvent(), UserEvent, HasChannel
 
 /**
@@ -152,7 +152,7 @@ public data class ChannelVisibleEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered every 30 second to confirm that the client connection is still alive
@@ -174,7 +174,7 @@ public data class MemberAddedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val member: Member,
-) : CidEvent(), UserEvent, HasChannel, HasMember
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when a member is removed from a channel
@@ -186,7 +186,7 @@ public data class MemberRemovedEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when a channel member is updated (promoted to moderator/accepted/.rejected the invite)
@@ -199,7 +199,7 @@ public data class MemberUpdatedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val member: Member,
-) : CidEvent(), UserEvent, HasChannel, HasMember
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when a message is deleted
@@ -212,7 +212,7 @@ public data class MessageDeletedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
-) : CidEvent(), UserEvent, HasChannel, HasMessage
+) : CidEvent(), UserEvent, HasMessage
 
 /**
  * Triggered when a channel is marked as read
@@ -224,7 +224,7 @@ public data class MessageReadEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when a message is updated
@@ -237,7 +237,7 @@ public data class MessageUpdatedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
-) : CidEvent(), UserEvent, HasChannel, HasMessage
+) : CidEvent(), UserEvent, HasMessage
 
 /**
  * Triggered when a new message is added on a channel.
@@ -253,7 +253,7 @@ public data class NewMessageEvent(
     @SerializedName("watcher_count") override val watcherCount: Int = 0,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
-) : CidEvent(), UserEvent, HasChannel, HasMessage, HasWatcherCount, HasUnreadCounts
+) : CidEvent(), UserEvent, HasMessage, HasWatcherCount, HasUnreadCounts
 
 /**
  * Triggered when the user is added to the list of channel members
@@ -264,7 +264,7 @@ public data class NotificationAddedToChannelEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    val channel: Channel,
+    override val channel: Channel,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), HasChannel, HasUnreadCounts
@@ -278,7 +278,7 @@ public data class NotificationChannelDeletedEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    val channel: Channel,
+    override val channel: Channel,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
 ) : CidEvent(), HasChannel, HasUnreadCounts
@@ -301,7 +301,7 @@ public data class NotificationChannelTruncatedEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    val channel: Channel,
+    override val channel: Channel,
 ) : CidEvent(), HasChannel
 
 /**
@@ -315,7 +315,7 @@ public data class NotificationInviteAcceptedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val member: Member,
-) : CidEvent(), UserEvent, HasMember, HasChannel
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when the user rejects an invite
@@ -328,7 +328,7 @@ public data class NotificationInviteRejectedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val member: Member,
-) : CidEvent(), UserEvent, HasMember, HasChannel
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when the user is invited to join a channel
@@ -341,7 +341,7 @@ public data class NotificationInvitedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val member: Member,
-) : CidEvent(), UserEvent, HasMember, HasChannel
+) : CidEvent(), UserEvent, HasMember
 
 /**
  * Triggered when the count of unread messages for a particular channel changes
@@ -355,7 +355,7 @@ public data class NotificationMarkReadEvent(
     @SerializedName("channel_id") override val channelId: String,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
-) : CidEvent(), UserEvent, HasUnreadCounts, HasChannel
+) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**
  * Triggered when the total count of unread messages (across all channels the user is a member) changes
@@ -377,7 +377,7 @@ public data class NotificationMessageNewEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-    val channel: Channel,
+    override val channel: Channel,
     override val message: Message,
     @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
     @SerializedName("unread_channels") override val unreadChannels: Int = 0,
@@ -403,7 +403,7 @@ public data class NotificationRemovedFromChannelEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val member: Member,
-) : CidEvent(), HasChannel, HasMember
+) : CidEvent(), HasMember
 
 /**
  * Triggered when a message reaction is deleted
@@ -417,7 +417,7 @@ public data class ReactionDeletedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
     override val reaction: Reaction,
-) : CidEvent(), UserEvent, HasChannel, HasMessage, HasReaction
+) : CidEvent(), UserEvent, HasMessage, HasReaction
 
 /**
  * Triggered when a message reaction is added
@@ -431,7 +431,7 @@ public data class ReactionNewEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
     override val reaction: Reaction,
-) : CidEvent(), UserEvent, HasChannel, HasMessage, HasReaction
+) : CidEvent(), UserEvent, HasMessage, HasReaction
 
 /**
  * Triggered when a message reaction is updated
@@ -445,7 +445,7 @@ public data class ReactionUpdateEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val message: Message,
     override val reaction: Reaction,
-) : CidEvent(), UserEvent, HasChannel, HasMessage, HasReaction
+) : CidEvent(), UserEvent, HasMessage, HasReaction
 
 /**
  * Triggered when a user starts typing
@@ -458,7 +458,7 @@ public data class TypingStartEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     @SerializedName("parent_id") val parentId: String?,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when a user stops typing
@@ -471,7 +471,7 @@ public data class TypingStopEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     @SerializedName("parent_id") val parentId: String?,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when the user is banned from a channel
@@ -484,7 +484,7 @@ public data class ChannelUserBannedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     val expiration: Date?,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when the user is banned globally
@@ -521,7 +521,7 @@ public data class UserStartWatchingEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
-) : CidEvent(), UserEvent, HasChannel, HasWatcherCount
+) : CidEvent(), UserEvent, HasWatcherCount
 
 /**
  * Triggered when a user stops watching a channel
@@ -534,7 +534,7 @@ public data class UserStopWatchingEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
-) : CidEvent(), UserEvent, HasChannel, HasWatcherCount
+) : CidEvent(), UserEvent, HasWatcherCount
 
 /**
  * Triggered when the channel user ban is lifted
@@ -546,7 +546,7 @@ public data class ChannelUserUnbannedEvent(
     override val cid: String,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when the global user ban is lifted
