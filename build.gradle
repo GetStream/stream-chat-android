@@ -5,6 +5,7 @@ apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'dev.zacsweers.kgp-150-leak-patcher'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 
 buildscript {
@@ -27,6 +28,7 @@ buildscript {
         classpath Dependencies.gradleNexusPublishPlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
+        classpath Dependencies.kgp150LeakPatcher
     }
 }
 
