@@ -37,8 +37,6 @@ internal data class ChannelTruncatedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val channel: DownstreamChannelDto,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -198,6 +196,8 @@ internal data class NotificationChannelTruncatedEventDto(
     val channel_type: String,
     val channel_id: String,
     val channel: DownstreamChannelDto,
+    val total_unread_count: Int = 0,
+    val unread_channels: Int = 0,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

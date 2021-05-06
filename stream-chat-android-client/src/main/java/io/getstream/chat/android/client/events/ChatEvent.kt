@@ -111,9 +111,7 @@ public data class ChannelTruncatedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val channel: Channel,
-    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
-    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
-) : CidEvent(), UserEvent, HasChannel, HasUnreadCounts
+) : CidEvent(), UserEvent, HasChannel
 
 /**
  * Triggered when a channel is updated. Could contain system [message].
@@ -302,7 +300,9 @@ public data class NotificationChannelTruncatedEvent(
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val channel: Channel,
-) : CidEvent(), HasChannel
+    @SerializedName("total_unread_count") override val totalUnreadCount: Int = 0,
+    @SerializedName("unread_channels") override val unreadChannels: Int = 0,
+) : CidEvent(), HasChannel, HasUnreadCounts
 
 /**
  * Triggered when the user accepts an invite

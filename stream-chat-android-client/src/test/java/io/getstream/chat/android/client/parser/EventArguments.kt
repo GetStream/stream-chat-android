@@ -217,7 +217,7 @@ internal object EventArguments {
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)
     private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
-    private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, 0, 0)
+    private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount)
     private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
     private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, mapOf("type" to "some.unknown.type", "created_at" to dateString))
     private val markAllReadEvent = MarkAllReadEvent(EventType.NOTIFICATION_MARK_READ, date, user)

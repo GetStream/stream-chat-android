@@ -31,7 +31,7 @@ Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelC
 - Added `NotificationInviteRejectedEvent`
 - Added `member` field to the `NotificationRemovedFromChannel` event
 - Added `totalUnreadCount` and `unreadChannels` fields to the following events:
-- `channel.truncated`
+- `notification.channel_truncated`
 - `notification.added_to_channel`
 - `notification.channel_deleted`
 ### ⚠️ Changed
