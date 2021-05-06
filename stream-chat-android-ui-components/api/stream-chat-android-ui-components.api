@@ -651,6 +651,38 @@ public abstract interface class io/getstream/chat/android/ui/gallery/AttachmentG
 	public abstract fun onClick (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;)V
 }
 
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Delete$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Delete;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Delete;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Download$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Download;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Download;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Reply$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Reply;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$Reply;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$ShowInChat$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$ShowInChat;
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun newArray (I)[Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentOptionResult$ShowInChat;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentReplyOptionHandler {
 	public abstract fun onClick (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;)V
 }
@@ -735,7 +767,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
-public class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem$Creator : android/os/Parcelable$Creator {
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem$Creator : android/os/Parcelable$Creator {
 	public fun <init> ()V
 	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
 	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
@@ -773,11 +805,6 @@ public abstract interface class io/getstream/chat/android/ui/gallery/overview/Me
 
 public abstract interface class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView$OnLoadMoreListener {
 	public abstract fun onLoadMore ()V
-}
-
-public final class io/getstream/chat/android/ui/gallery/overview/internal/MediaAttachmentDialogFragment$sam$i$androidx_lifecycle_Observer$0 : androidx/lifecycle/Observer {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun onChanged (Ljava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/mention/list/MentionListView : android/widget/ViewFlipper {
@@ -1471,14 +1498,6 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 	protected final fun createAttachmentsContent (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Ljava/util/List;Landroid/view/View;)Landroid/view/View;
 	protected final fun createLinkAndAttachmentsContent (Ljava/util/List;Lio/getstream/chat/android/client/models/Attachment;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
-}
-
-public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory$sam$i$io_getstream_chat_android_ui_message_list_adapter_view_internal_LinkAttachmentView_LinkPreviewClickListener$0 : io/getstream/chat/android/ui/message/list/adapter/view/internal/LinkAttachmentView$LinkPreviewClickListener, kotlin/jvm/internal/FunctionAdapter {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getFunctionDelegate ()Lkotlin/Function;
-	public fun hashCode ()I
-	public final synthetic fun onLinkPreviewClick (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
