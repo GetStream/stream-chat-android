@@ -632,7 +632,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -649,7 +649,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -677,7 +677,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -688,7 +688,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -915,7 +915,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.lessThan("someField", randomIntBetween(300, 320)),
+                    Filters.lessThan("someField", randomIntBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -932,7 +932,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.lessThan("someField", randomLongBetween(300, 320)),
+                    Filters.lessThan("someField", randomLongBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -960,7 +960,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.lessThan("someField", randomIntBetween(300, 320)),
+                    Filters.lessThan("someField", randomIntBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -971,7 +971,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.lessThan("someField", randomLongBetween(300, 320)),
+                    Filters.lessThan("someField", randomLongBetween(301, 320)),
                     expectedList,
                 )
             },
