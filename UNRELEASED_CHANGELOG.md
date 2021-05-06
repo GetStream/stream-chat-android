@@ -34,6 +34,7 @@ Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed an issue when CustomFilter was configured with an int value but the value from the API was a double value
 
 ### ⬆️ Improved
 
