@@ -2,7 +2,6 @@ package com.getstream.sdk.chat
 
 private const val ANDROID_GRADLE_PLUGIN_VERSION = "4.2.1"
 private const val ANDROID_JUNIT5_GRADLE_PLUGIN_VERSION = "1.7.0.0"
-private const val ANDROID_MAVEN_GRADLE_PLUGIN_VERSION = "2.1"
 private const val ANDROID_LEGACY_SUPPORT = "1.0.0"
 private const val ANDROIDX_ACTIVITY_KTX_VERSION = "1.2.2"
 private const val ANDROIDX_ANNOTATIONS_VERSION = "1.2.0"
@@ -79,7 +78,6 @@ private const val WORK_VERSION = "2.5.0"
 object Dependencies {
     const val androidGradlePlugin = "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION"
     const val androidJunit5GradlePlugin = "de.mannodermaus.gradle.plugins:android-junit5:$ANDROID_JUNIT5_GRADLE_PLUGIN_VERSION"
-    const val androidMavenGradlePlugin = "com.github.dcendents:android-maven-gradle-plugin:$ANDROID_MAVEN_GRADLE_PLUGIN_VERSION"
     const val androidLegacySupport = "androidx.legacy:legacy-support-v4:$ANDROID_LEGACY_SUPPORT"
     const val androidxActivityKtx = "androidx.activity:activity-ktx:$ANDROIDX_ACTIVITY_KTX_VERSION"
     const val androidxAnnotations = "androidx.annotation:annotation:$ANDROIDX_ANNOTATIONS_VERSION"
