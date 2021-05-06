@@ -53,6 +53,7 @@ Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelC
   - `notification.channel_truncated`
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed an issue when CustomFilter was configured with an int value but the value from the API was a double value
 
 ### ⬆️ Improved
 
@@ -66,6 +67,7 @@ Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelC
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated ExoPlayer version to 2.13.3 
 
 ### ✅ Added
 
