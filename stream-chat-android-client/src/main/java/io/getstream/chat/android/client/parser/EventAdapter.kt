@@ -4,19 +4,14 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
@@ -35,6 +30,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -47,20 +43,16 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.models.EventType
 
 internal class EventAdapter(
     private val gson: Gson,
-    private val chatEventAdapter: TypeAdapter<ChatEvent>
+    private val chatEventAdapter: TypeAdapter<ChatEvent>,
 ) : TypeAdapter<ChatEvent>() {
 
     override fun write(out: JsonWriter, value: ChatEvent?) {
@@ -153,9 +145,6 @@ internal class EventAdapter(
 
             //region Channels
 
-            EventType.CHANNEL_CREATED -> {
-                gson.fromJson(data, ChannelCreatedEvent::class.java).apply { message?.enrichWithCid(cid) }
-            }
             EventType.CHANNEL_UPDATED -> {
                 if (mapData.containsKey("user")) {
                     gson.fromJson(data, ChannelUpdatedByUserEvent::class.java).apply { message?.enrichWithCid(cid) }
@@ -165,20 +154,6 @@ internal class EventAdapter(
             }
             EventType.CHANNEL_HIDDEN -> {
                 gson.fromJson(data, ChannelHiddenEvent::class.java)
-            }
-            EventType.CHANNEL_MUTED -> {
-                if (mapData.containsKey("mute")) {
-                    gson.fromJson(data, ChannelMuteEvent::class.java)
-                } else {
-                    gson.fromJson(data, ChannelsMuteEvent::class.java)
-                }
-            }
-            EventType.CHANNEL_UNMUTED -> {
-                if (mapData.containsKey("mute")) {
-                    gson.fromJson(data, ChannelUnmuteEvent::class.java)
-                } else {
-                    gson.fromJson(data, ChannelsUnmuteEvent::class.java)
-                }
             }
             EventType.CHANNEL_DELETED -> {
                 gson.fromJson(data, ChannelDeletedEvent::class.java)
@@ -224,6 +199,10 @@ internal class EventAdapter(
                 gson.fromJson(data, NotificationInviteAcceptedEvent::class.java)
             }
 
+            EventType.NOTIFICATION_INVITE_REJECTED -> {
+                gson.fromJson(data, NotificationInviteRejectedEvent::class.java)
+            }
+
             EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> {
                 gson.fromJson(data, NotificationRemovedFromChannelEvent::class.java)
             }
@@ -254,22 +233,6 @@ internal class EventAdapter(
 
             EventType.USER_DELETED -> {
                 gson.fromJson(data, UserDeletedEvent::class.java)
-            }
-
-            EventType.USER_MUTED -> {
-                if (mapData.containsKey("target_user")) {
-                    gson.fromJson(data, UserMutedEvent::class.java)
-                } else {
-                    gson.fromJson(data, UsersMutedEvent::class.java)
-                }
-            }
-
-            EventType.USER_UNMUTED -> {
-                if (mapData.containsKey("target_user")) {
-                    gson.fromJson(data, UserUnmutedEvent::class.java)
-                } else {
-                    gson.fromJson(data, UsersUnmutedEvent::class.java)
-                }
             }
 
             EventType.USER_BANNED -> {

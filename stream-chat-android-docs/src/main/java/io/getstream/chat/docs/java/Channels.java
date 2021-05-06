@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.events.ChannelsMuteEvent;
 import io.getstream.chat.android.client.events.UserStartWatchingEvent;
 import io.getstream.chat.android.client.events.UserStopWatchingEvent;
 import io.getstream.chat.android.client.models.Channel;
@@ -582,14 +581,6 @@ public class Channels {
                     List<ChannelMute> mutes = result.data().getUser().getChannelMutes();
                 }
             });
-
-            // Get updates about muted channels
-            client.subscribeFor(
-                    new Class[]{ChannelsMuteEvent.class},
-                    channelsMuteEvent -> {
-                        List<ChannelMute> mutes = ((ChannelsMuteEvent) channelsMuteEvent).getChannelsMute();
-                    }
-            );
         }
 
         /**

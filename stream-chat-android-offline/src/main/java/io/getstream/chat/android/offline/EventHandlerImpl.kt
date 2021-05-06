@@ -1,18 +1,13 @@
 package io.getstream.chat.android.offline
 
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -35,6 +30,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -48,14 +44,10 @@ import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
 import io.getstream.chat.android.client.events.UserEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -153,18 +145,14 @@ internal class EventHandlerImpl(
                 is NotificationAddedToChannelEvent,
                 is NotificationInvitedEvent,
                 is NotificationInviteAcceptedEvent,
+                is NotificationInviteRejectedEvent,
                 is ChannelTruncatedEvent,
-                is ChannelCreatedEvent,
                 is HealthEvent,
                 is NotificationMutesUpdatedEvent,
                 is GlobalUserBannedEvent,
                 is UserDeletedEvent,
-                is UserMutedEvent,
-                is UsersMutedEvent,
                 is UserPresenceChangedEvent,
                 is GlobalUserUnbannedEvent,
-                is UserUnmutedEvent,
-                is UsersUnmutedEvent,
                 is UserUpdatedEvent,
                 is NotificationChannelMutesUpdatedEvent,
                 is ConnectedEvent,
@@ -185,14 +173,6 @@ internal class EventHandlerImpl(
                 -> Unit
                 is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
-                is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
-                is ChannelsMuteEvent -> {
-                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
-                }
-                is ChannelUnmuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
-                is ChannelsUnmuteEvent -> {
-                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
-                }
                 is MessageDeletedEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is MessageUpdatedEvent -> batchBuilder.addToFetchMessages(event.message.id)
                 is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
@@ -239,10 +219,13 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
                 is NotificationInvitedEvent -> {
-                    event.user?.let { batch.addUser(it) }
+                    batch.addUser(event.user)
                 }
                 is NotificationInviteAcceptedEvent -> {
-                    event.user?.let { batch.addUser(it) }
+                    batch.addUser(event.user)
+                }
+                is NotificationInviteRejectedEvent -> {
+                    batch.addUser(event.user)
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
@@ -312,34 +295,11 @@ internal class EventHandlerImpl(
                 is ChannelDeletedEvent -> {
                     batch.addChannel(event.channel)
                 }
-                is ChannelCreatedEvent -> {
-                    batch.addChannel(event.channel)
-                }
-                is ChannelMuteEvent -> {
-                    batch.addChannel(event.channelMute.channel)
-                }
-                is ChannelsMuteEvent -> {
-                    event.channelsMute.forEach {
-                        batch.addChannel(it.channel)
-                    }
-                }
-                is ChannelUnmuteEvent -> {
-                    batch.addChannel(event.channelMute.channel)
-                }
-                is ChannelsUnmuteEvent -> {
-                    event.channelsMute.forEach {
-                        batch.addChannel(it.channel)
-                    }
-                }
                 is ChannelTruncatedEvent -> {
                     batch.addChannel(event.channel)
                 }
                 is NotificationChannelDeletedEvent -> {
                     batch.addChannel(event.channel)
-                    // note that NotificationChannelDeletedEvent doesn't implement UserEvent
-                    event.user?.let {
-                        batch.addUser(it)
-                    }
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
@@ -380,18 +340,6 @@ internal class EventHandlerImpl(
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
                         ?.let(batch::addChannel)
-                }
-                is UserMutedEvent -> {
-                    batch.addUser(event.targetUser)
-                }
-                is UsersMutedEvent -> {
-                    batch.addUsers(event.targetUsers)
-                }
-                is UserUnmutedEvent -> {
-                    batch.addUser(event.targetUser)
-                }
-                is UsersUnmutedEvent -> {
-                    batch.addUsers(event.targetUsers)
                 }
                 is GlobalUserBannedEvent -> {
                     batch.addUser(event.user.apply { banned = true })

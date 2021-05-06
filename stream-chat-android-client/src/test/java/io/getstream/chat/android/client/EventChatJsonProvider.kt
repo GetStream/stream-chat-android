@@ -1,18 +1,5 @@
 package io.getstream.chat.android.client
 
-internal fun createChannelCreatedEventStringJson() =
-    createChatEventStringJson(
-        "channel.created",
-        """
-            "channel_type": "channelType",
-            "channel_id": "channelId",
-            "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
-            "message": ${createMessageJsonString()},
-            "channel": ${createChannelJsonString()}
-        """.trimIndent()
-    )
-
 internal fun createChannelDeletedEventStringJson() =
     createChatEventStringJson(
         "channel.deleted",
@@ -37,24 +24,6 @@ internal fun createChannelHiddenEventStringJson() =
         """.trimIndent()
     )
 
-internal fun createChannelMuteEventStringJson() =
-    createChatEventStringJson(
-        "channel.muted",
-        """
-            "mute": ${createChannelMuteJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createChannelsMuteEventStringJson() =
-    createChatEventStringJson(
-        "channel.muted",
-        """
-            "mutes": [
-                ${createChannelMuteJsonString()}
-            ]
-        """.trimIndent()
-    )
-
 internal fun createChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "channel.truncated",
@@ -64,22 +33,6 @@ internal fun createChannelTruncatedEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createChannelUnmuteEventStringJson() =
-    createChatEventStringJson(
-        "channel.unmuted",
-        """
-            "mute": ${createChannelMuteJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createChannelsUnmuteEventStringJson() =
-    createChatEventStringJson(
-        "channel.unmuted",
-        """
-            "mutes": [ ${createChannelMuteJsonString()} ]
         """.trimIndent()
     )
 
@@ -239,6 +192,18 @@ internal fun createNotificationInviteAcceptedEventStringJson() =
         """.trimIndent()
     )
 
+internal fun createNotificationInviteRejectedEventStringJson() =
+    createChatEventStringJson(
+        "notification.invite_rejected",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "user": ${createUserJsonString()},
+            "member": ${createMemberJsonString()}
+        """.trimIndent()
+    )
+
 internal fun createNotificationInvitedEventStringJson() =
     createChatEventStringJson(
         "notification.invited",
@@ -288,7 +253,8 @@ internal fun createNotificationRemovedFromChannelEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()}
+            "user": ${createUserJsonString()},
+            "member": ${createMemberJsonString()}
         """.trimIndent()
     )
 
@@ -383,24 +349,6 @@ internal fun createUserDeletedEventStringJson() =
         """.trimIndent()
     )
 
-internal fun createUserMutedEventStringJson() =
-    createChatEventStringJson(
-        "user.muted",
-        """
-            "user": ${createUserJsonString()},
-            "target_user": ${createUserJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createUsersMutedEventStringJson() =
-    createChatEventStringJson(
-        "user.muted",
-        """
-            "user": ${createUserJsonString()},
-            "target_users": [ ${createUserJsonString()} ]
-        """.trimIndent()
-    )
-
 internal fun createUserPresenceChangedEventStringJson() =
     createChatEventStringJson(
         "user.presence.changed",
@@ -449,24 +397,6 @@ internal fun createGlobalUserUnbannedEventStringJson() =
         "user.unbanned",
         """
             "user": ${createUserJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createUserUnmutedEventStringJson() =
-    createChatEventStringJson(
-        "user.unmuted",
-        """
-            "user": ${createUserJsonString()},
-            "target_user": ${createUserJsonString()}
-        """.trimIndent()
-    )
-
-internal fun createUsersUnmutedEventStringJson() =
-    createChatEventStringJson(
-        "user.unmuted",
-        """
-            "user": ${createUserJsonString()},
-            "target_users": [ ${createUserJsonString()} ]
         """.trimIndent()
     )
 
@@ -639,15 +569,6 @@ private fun createConfigJsonString() =
               "set": "fun_set"
             }
           ]
-        }
-    """.trimIndent()
-
-private fun createChannelMuteJsonString() =
-    """
-        {
-            "user": ${createUserJsonString()},
-            "channel": ${createChannelJsonString()},
-            "created_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 

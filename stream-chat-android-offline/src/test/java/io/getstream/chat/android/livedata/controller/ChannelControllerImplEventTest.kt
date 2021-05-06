@@ -22,7 +22,6 @@ import io.getstream.chat.android.livedata.randomMessageReadEvent
 import io.getstream.chat.android.livedata.randomMessageUpdateEvent
 import io.getstream.chat.android.livedata.randomNewMessageEvent
 import io.getstream.chat.android.livedata.randomNotificationMarkReadEvent
-import io.getstream.chat.android.livedata.randomNotificationMessageNewEvent
 import io.getstream.chat.android.livedata.randomReactionNewEvent
 import io.getstream.chat.android.livedata.randomTypingStartEvent
 import io.getstream.chat.android.livedata.randomTypingStopEvent
@@ -33,7 +32,6 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
-import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -198,17 +196,6 @@ internal class ChannelControllerEventNewTest {
 
         Truth.assertThat(channelController.messages.value).isEqualTo(listOf(recentMessage))
         Truth.assertThat(channelController.messages.value).isNotEqualTo(listOf(oldMessage))
-    }
-
-    // New message notification event
-    @Test
-    fun `when a new message notification event comes, watchers should be incremented accordingly`() {
-        val watcherCount = randomInt()
-        val notificationEvent = randomNotificationMessageNewEvent(watcherCount = watcherCount)
-
-        channelController.handleEvent(notificationEvent)
-
-        Truth.assertThat(channelController.watcherCount.value).isEqualTo(watcherCount)
     }
 
     // Member added event

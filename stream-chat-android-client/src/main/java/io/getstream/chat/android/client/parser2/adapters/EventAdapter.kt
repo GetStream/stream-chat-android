@@ -6,19 +6,14 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.ChannelCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelMuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUnmuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelsMuteEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelsUnmuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
@@ -37,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDelete
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
@@ -49,14 +45,10 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMutedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUnmutedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UsersMutedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UsersUnmutedEventDto
 import io.getstream.chat.android.client.models.EventType
 import java.lang.reflect.Type
 import java.util.Date
@@ -91,14 +83,9 @@ internal class EventDtoAdapter(
     private val memberAddedEventAdapter = moshi.adapter(MemberAddedEventDto::class.java)
     private val memberRemovedEventAdapter = moshi.adapter(MemberRemovedEventDto::class.java)
     private val memberUpdatedEventAdapter = moshi.adapter(MemberUpdatedEventDto::class.java)
-    private val channelCreatedEventAdapter = moshi.adapter(ChannelCreatedEventDto::class.java)
     private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
     private val channelUpdatedEventAdapter = moshi.adapter(ChannelUpdatedEventDto::class.java)
     private val channelHiddenEventAdapter = moshi.adapter(ChannelHiddenEventDto::class.java)
-    private val channelMuteEventAdapter = moshi.adapter(ChannelMuteEventDto::class.java)
-    private val channelsMuteEventAdapter = moshi.adapter(ChannelsMuteEventDto::class.java)
-    private val channelUnmuteEventAdapter = moshi.adapter(ChannelUnmuteEventDto::class.java)
-    private val channelsUnmuteEventAdapter = moshi.adapter(ChannelsUnmuteEventDto::class.java)
     private val channelDeletedEventAdapter = moshi.adapter(ChannelDeletedEventDto::class.java)
     private val channelVisibleEventAdapter = moshi.adapter(ChannelVisibleEventDto::class.java)
     private val channelTruncatedEventAdapter = moshi.adapter(ChannelTruncatedEventDto::class.java)
@@ -110,6 +97,7 @@ internal class EventDtoAdapter(
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
     private val notificationInviteAcceptedEventAdapter = moshi.adapter(NotificationInviteAcceptedEventDto::class.java)
+    private val notificationInviteRejectedEventAdapter = moshi.adapter(NotificationInviteRejectedEventDto::class.java)
     private val notificationRemovedFromChannelEventAdapter =
         moshi.adapter(NotificationRemovedFromChannelEventDto::class.java)
     private val notificationMutesUpdatedEventAdapter = moshi.adapter(NotificationMutesUpdatedEventDto::class.java)
@@ -121,10 +109,6 @@ internal class EventDtoAdapter(
     private val userPresenceChangedEventAdapter = moshi.adapter(UserPresenceChangedEventDto::class.java)
     private val userUpdatedEventAdapter = moshi.adapter(UserUpdatedEventDto::class.java)
     private val userDeletedEventAdapter = moshi.adapter(UserDeletedEventDto::class.java)
-    private val userMutedEventAdapter = moshi.adapter(UserMutedEventDto::class.java)
-    private val usersMutedEventAdapter = moshi.adapter(UsersMutedEventDto::class.java)
-    private val userUnmutedEventAdapter = moshi.adapter(UserUnmutedEventDto::class.java)
-    private val usersUnmutedEventAdapter = moshi.adapter(UsersUnmutedEventDto::class.java)
     private val channelUserBannedEventAdapter = moshi.adapter(ChannelUserBannedEventDto::class.java)
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
@@ -158,20 +142,11 @@ internal class EventDtoAdapter(
             EventType.MEMBER_ADDED -> memberAddedEventAdapter
             EventType.MEMBER_REMOVED -> memberRemovedEventAdapter
             EventType.MEMBER_UPDATED -> memberUpdatedEventAdapter
-            EventType.CHANNEL_CREATED -> channelCreatedEventAdapter
             EventType.CHANNEL_UPDATED -> when {
                 map.containsKey("user") -> channelUpdatedByUserEventAdapter
                 else -> channelUpdatedEventAdapter
             }
             EventType.CHANNEL_HIDDEN -> channelHiddenEventAdapter
-            EventType.CHANNEL_MUTED -> when {
-                map.containsKey("mute") -> channelMuteEventAdapter
-                else -> channelsMuteEventAdapter
-            }
-            EventType.CHANNEL_UNMUTED -> when {
-                map.containsKey("mute") -> channelUnmuteEventAdapter
-                else -> channelsUnmuteEventAdapter
-            }
             EventType.CHANNEL_DELETED -> channelDeletedEventAdapter
             EventType.CHANNEL_VISIBLE -> channelVisibleEventAdapter
             EventType.CHANNEL_TRUNCATED -> channelTruncatedEventAdapter
@@ -185,6 +160,7 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
+            EventType.NOTIFICATION_INVITE_REJECTED -> notificationInviteRejectedEventAdapter
             EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> notificationRemovedFromChannelEventAdapter
             EventType.NOTIFICATION_MUTES_UPDATED -> notificationMutesUpdatedEventAdapter
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> notificationChannelMutesUpdatedEventAdapter
@@ -193,14 +169,6 @@ internal class EventDtoAdapter(
             EventType.USER_PRESENCE_CHANGED -> userPresenceChangedEventAdapter
             EventType.USER_UPDATED -> userUpdatedEventAdapter
             EventType.USER_DELETED -> userDeletedEventAdapter
-            EventType.USER_MUTED -> when {
-                map.containsKey("target_user") -> userMutedEventAdapter
-                else -> usersMutedEventAdapter
-            }
-            EventType.USER_UNMUTED -> when {
-                map.containsKey("target_user") -> userUnmutedEventAdapter
-                else -> usersUnmutedEventAdapter
-            }
             EventType.USER_BANNED -> when {
                 map.containsKey("cid") -> channelUserBannedEventAdapter
                 else -> globalUserBannedEventAdapter

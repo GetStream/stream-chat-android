@@ -5,7 +5,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -29,25 +29,24 @@ internal class ChannelClientSubscribeTest {
         const val OTHER_CID = "$OTHER_CHANNEL_TYPE:$OTHER_CHANNEL_ID"
 
         val NON_CHANNEL_EVENT = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
-        val CHANNEL_EVENT = ChannelCreatedEvent(
-            EventType.CHANNEL_CREATED,
+        val CHANNEL_EVENT = ChannelUpdatedEvent(
+            EventType.CHANNEL_UPDATED,
             Date(),
             CID,
             CHANNEL_TYPE,
             CHANNEL_ID,
-            User(),
             null,
-            Channel()
+            Channel(),
         )
         val OTHER_CHANNEL_EVENT = NewMessageEvent(
-            EventType.CHANNEL_CREATED,
+            EventType.MESSAGE_NEW,
             Date(),
             User(),
             OTHER_CID,
             OTHER_CHANNEL_TYPE,
             OTHER_CHANNEL_ID,
             Message(),
-            null,
+            0,
             null,
             null
         )

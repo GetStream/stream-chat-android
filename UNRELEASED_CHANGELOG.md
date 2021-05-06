@@ -27,11 +27,26 @@ Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelC
 ### ⬆️ Improved
 
 ### ✅ Added
-Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
+- Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
+- Added `NotificationInviteRejectedEvent`
+- Added `member` field to the `NotificationRemovedFromChannel` event
 ### ⚠️ Changed
-
+- Made the `user` field in `channel.hidden` and `notification.invite_accepter` events non nullable.
 ### ❌ Removed
-
+- Removed redundant events which can only be received by using webhooks:
+  - `channel.created`
+  - `channel.muted`
+  - `channel.unmuted`
+  - `channel.muted`
+  - `channel.unmuted`
+- Removed `watcherCount` field from the following events as they are not returned with the server response:
+  - `message.deleted`
+  - `message.read`
+  - `message.updated`
+  - `notification.mark_read`
+- Removed `user` field from the following events as they are not returned with the server response: 
+  - `notification.channel_deleted`
+  - `notification.channel_truncated`
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
