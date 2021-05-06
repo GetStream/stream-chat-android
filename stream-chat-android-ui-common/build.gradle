@@ -71,10 +71,7 @@ dependencies {
 
     implementation Dependencies.dexter
 
-    api Dependencies.exoplayerCore
-    api Dependencies.exoplayerDash
-    api Dependencies.exoplayerHls
-    api Dependencies.exoplayerSmoothstreaming
+    api Dependencies.exoMedia
 
     implementation Dependencies.fresco
     implementation Dependencies.photodraweeview

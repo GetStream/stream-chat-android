@@ -38,9 +38,6 @@ allprojects {
         mavenLocal()
         jcenter() {
             content {
-                // Remove when https://github.com/google/ExoPlayer/issues/5246 is closed
-                includeGroup("com.google.android.exoplayer")
-
                 // Remove when https://github.com/ongakuer/PhotoDraweeView/issues/81 is closed
                 includeModule("me.relex", "photodraweeview")
             }
@@ -53,6 +50,9 @@ allprojects {
 
                 // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
                 includeModule("com.github.mrmike", "ok2curl")
+
+                // Remove when https://github.com/brianwernick/ExoMedia/issues/723 is closed
+                includeModule("com.github.brianwernick", "ExoMedia")
             }
         }
     }
