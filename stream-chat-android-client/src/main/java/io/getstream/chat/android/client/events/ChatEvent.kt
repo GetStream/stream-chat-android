@@ -44,6 +44,14 @@ public interface HasOwnUser {
     public val me: User
 }
 
+/**
+ * Interface that marks a [ChatEvent] as having the information about watcher count.
+ *
+ * The list of events which contain watcher count:
+ * - user.watching_start
+ * - user.watching_stop
+ * - message.new
+ */
 public interface HasWatcherCount {
     public val watcherCount: Int
 }
@@ -509,7 +517,7 @@ public data class UserStartWatchingEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
-    @SerializedName("watcher_count") override val watcherCount: Int,
+    @SerializedName("watcher_count") override val watcherCount: Int = 0,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
@@ -522,7 +530,7 @@ public data class UserStopWatchingEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
-    @SerializedName("watcher_count") override val watcherCount: Int,
+    @SerializedName("watcher_count") override val watcherCount: Int = 0,
     @SerializedName("channel_type") override val channelType: String,
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
