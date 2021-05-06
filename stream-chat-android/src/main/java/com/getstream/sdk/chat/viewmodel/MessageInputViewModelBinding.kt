@@ -26,7 +26,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         override fun sendToThread(
             parentMessage: Message,
             messageText: String,
-            alsoSendToChannel: Boolean
+            alsoSendToChannel: Boolean,
         ) {
             this@bindView.sendMessage(messageText) {
                 this.parentId = parentMessage.id
@@ -38,7 +38,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
+            attachmentsFiles: List<File>,
         ) {
             this@bindView.sendMessageWithAttachments(message, attachmentsFiles) {
                 this.parentId = parentMessage.id
@@ -64,6 +64,13 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
         }
     }
     editMessage.observe(lifecycleOwner) { message ->
+        if (message != null) {
+            view.setEditMode(message)
+        } else {
+            view.setNormalMode()
+        }
+    }
+    messageToEdit.observe(lifecycleOwner) { message ->
         if (message != null) {
             view.setEditMode(message)
         } else {
