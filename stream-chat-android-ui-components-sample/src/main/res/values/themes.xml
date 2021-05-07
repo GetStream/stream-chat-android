@@ -11,11 +11,7 @@
         <item name="stream_ui_channellist_item_avatar_style">@style/ChannelListAvatarTheme</item>
     </style>
 
-    <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar">
-        <item name="streamUiAvatarOnlineIndicatorColor">@android:color/holo_orange_dark</item>
-    </style>
+    <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
 
-    <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar">
-        <item name="streamUiAvatarOnlineIndicatorColor">@android:color/holo_blue_bright</item>
-    </style>
+    <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar"/>
 </resources>
