@@ -11,6 +11,7 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
@@ -31,9 +32,6 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import kotlin.properties.Delegates
 
-internal const val SIZE_ONE_MEGA = 1048576
-internal const val SIZE_MEGA_20 = 20 * SIZE_ONE_MEGA
-
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
         StreamUiMessageInputFieldBinding.inflate(streamThemeInflater, this, true)
@@ -47,7 +45,7 @@ internal class MessageInputFieldView : FrameLayout {
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
     private var maxMessageLength: Int = Integer.MAX_VALUE
-    private var attachmentMaxFileSize: Int = SIZE_MEGA_20
+    private var attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
 
     private val _hasBigAttachment = MutableStateFlow(false)
     internal val hasBigAttachment: StateFlow<Boolean> = _hasBigAttachment
@@ -147,7 +145,7 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     fun setAttachmentMaxFileMb(size: Int) {
-        attachmentMaxFileSize = size * SIZE_ONE_MEGA
+        attachmentMaxFileSize = size * AttachmentConstants.MB_IN_BYTES
 
         selectedFileAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize
         selectedMediaAttachmentAdapter.attachmentMaxFileSize = attachmentMaxFileSize

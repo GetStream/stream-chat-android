@@ -39,7 +39,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
-    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
+    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> _mode.postValue(newMode) }
     private val _reads: MediatorLiveData<List<ChannelUserRead>> = MediatorLiveData()
     private val reads: LiveData<List<ChannelUserRead>> = _reads
     private val _loadMoreLiveData = MediatorLiveData<Boolean>()
@@ -48,12 +48,13 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val channel: LiveData<Channel> = _channel
     private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
     public val targetMessage: LiveData<Message> = _targetMessage
+    private val _mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
 
     /**
      * Whether the user is viewing a thread
      * @see Mode
      */
-    public val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
+    public val mode: LiveData<Mode> = _mode
 
     /**
      * Current message list state

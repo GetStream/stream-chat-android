@@ -20,15 +20,13 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.extensions.users
-import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
-import io.getstream.chat.android.livedata.utils.filter
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.offline.request.toQueryChannelsRequest
+import io.getstream.chat.android.offline.utils.filter
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,14 +75,14 @@ public class QueryChannelsController internal constructor(
     public val channels: StateFlow<List<Channel>> = _sortedChannels
     public val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
 
-    public val channelsState: StateFlow<QueryChannelsController.ChannelsState> =
+    public val channelsState: StateFlow<ChannelsState> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
             when {
-                loading -> QueryChannelsController.ChannelsState.Loading
-                channels.isEmpty() -> QueryChannelsController.ChannelsState.OfflineNoResults
-                else -> QueryChannelsController.ChannelsState.Result(channels)
+                loading -> ChannelsState.Loading
+                channels.isEmpty() -> ChannelsState.OfflineNoResults
+                else -> ChannelsState.Result(channels)
             }
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, QueryChannelsController.ChannelsState.NoQueryActive)
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -178,10 +176,10 @@ public class QueryChannelsController internal constructor(
             // Careful, it's easy to have a race condition here.
             //
             // The reason is that we are on the IO thread and update ChannelController using postValue()
-            //  ChannelController.toChannel() can read the old version of the data using livedata.value
+            //  ChannelController.toChannel() can read the old version of the data using value
             // Solutions:
             // - suspend/wait for a few seconds (yuck, lets not do that)
-            // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
+            // - post the refresh on a flow object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
             domainImpl.scope.launch {
                 refreshChannel(event.cid)
@@ -422,4 +420,26 @@ public class QueryChannelsController internal constructor(
     }
 
     private fun List<ChannelMute>.toChannelsId() = map { channelMute -> channelMute.channel.id }
+
+    public sealed class ChannelsState {
+        /** The QueryChannelsController is initialized but no query is currently running.
+         * If you know that a query will be started you typically want to display a loading icon.
+         * */
+        public object NoQueryActive : ChannelsState()
+        /** Indicates we are loading the first page of results.
+         * We are in this state if QueryChannelsController.loading is true
+         * For seeing if we're loading more results have a look at QueryChannelsController.loadingMore
+         *
+         * @see QueryChannelsController.loadingMore
+         * @see QueryChannelsController.loading
+         * */
+        public object Loading : ChannelsState()
+        /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
+        public object OfflineNoResults : ChannelsState()
+        /** The list of channels, loaded either from offline storage or an API call.
+         * Observe chatDomain.online to know if results are currently up to date
+         * @see ChatDomainImpl.online
+         * */
+        public data class Result(val channels: List<Channel>) : ChannelsState()
+    }
 }

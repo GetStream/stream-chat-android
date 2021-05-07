@@ -36,26 +36,23 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
-import io.getstream.chat.android.livedata.extensions.applyPagination
-import io.getstream.chat.android.livedata.extensions.isPermanent
-import io.getstream.chat.android.livedata.extensions.users
-import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.model.SyncState
-import io.getstream.chat.android.livedata.repository.RepositoryFacade
-import io.getstream.chat.android.livedata.repository.builder.RepositoryFacadeBuilder
-import io.getstream.chat.android.livedata.repository.database.ChatDatabase
-import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
-import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.extensions.applyPagination
+import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.CancelMessage
 import io.getstream.chat.android.offline.usecase.CreateChannel
@@ -88,6 +85,10 @@ import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.StopTyping
 import io.getstream.chat.android.offline.usecase.ThreadLoadMore
 import io.getstream.chat.android.offline.usecase.WatchChannel
+import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
+import io.getstream.chat.android.offline.utils.Event
+import io.getstream.chat.android.offline.utils.RetryPolicy
+import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -183,7 +184,14 @@ internal class ChatDomainImpl internal constructor(
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
 
-    override lateinit var currentUser: User
+    private val _user = MutableStateFlow<User?>(null)
+    override val user: StateFlow<User?> = _user
+
+    override var currentUser: User
+        get() = user.value!!
+        set(value) {
+            _user.value = value
+        }
 
     private val syncModule by lazy { SyncProvider(appContext) }
 

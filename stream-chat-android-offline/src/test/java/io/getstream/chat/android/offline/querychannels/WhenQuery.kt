@@ -14,12 +14,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
-import io.getstream.chat.android.livedata.randomChannel
-import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.repository.RepositoryFacade
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomUser
+import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.CoroutineScope
@@ -90,7 +89,7 @@ internal class WhenQuery {
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    QuerySort.Companion.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
+                    QuerySort.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
                 )
             )
             .givenDBChannels(dbChannels)
@@ -111,7 +110,7 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        QuerySort.Companion.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
+                        QuerySort.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
                     )
                 )
                 .givenDBChannels(listOf(dbChannel))

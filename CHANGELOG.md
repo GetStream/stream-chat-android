@@ -1,3 +1,69 @@
+# April 30th, 2021 - 4.9.2
+## stream-chat-android-offline
+### ✅ Added
+- Added `ChatDomain::user`, a new property that provide the current user into a LiveData/StateFlow container
+
+### ⚠️ Changed
+- `ChatDomain::currentUser` has been warning-deprecated because it is an unsafe property that could be null, you should subscribe to `ChatDomain::user` instead
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed NPE on MessageInputViewModel when the it was initialized before the user was set
+
+# April 29th, 2021 - 4.9.1
+## stream-chat-android
+### ⬆️ Improved
+* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing.
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Optimized the number of `ChatClient::addDevice` API calls
+
+### ⬆️ Improved
+- Events received after the client closes the connection are rejected
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed offline reactions sync
+
+### ✅ Added
+- Added new versions with API based on kotlin `StateFlow` for the following classes:
+  * `io.getstream.chat.android.offline.ChatDomain`
+  * `io.getstream.chat.android.offline.channel.ChannelController`
+  * `io.getstream.chat.android.offline.thread.ThreadController`
+  * `io.getstream.chat.android.offline.querychannels.QueryChannelsController`
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed crash related to accessing `ChatDomain::currentUser` in `MessageListViewModel` before user is connected
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing.
+
+### ✅ Added
+Customization of icons in Attachment selection dialog
+you can use:
+- app:streamUiPictureAttachmentIcon
+Change the icon for the first item in the list of icons
+- app:streamUiPictureAttachmentIconTint
+Change the tint color for icon of picture selection
+- app:streamUiFileAttachmentIcon
+Change the icon for the second item in the list of icons
+- app:streamUiFileAttachmentIconTint
+Change the tint color for icon of file selection
+- app:streamUiCameraAttachmentIcon
+Change the icon for the third item in the list of icons
+- app:streamUiCameraAttachmentIconTint
+Change the tint color for icon of camera selection
+- Added support for error messages
+- Added attrs to `MessageListView` that allow to customize error message text style:
+    * `streamUiErrorMessageTextSize`
+    * `streamUiErrorMessageTextColor`
+    * `streamUiErrorMessageTextFont`
+    * `streamUiErrorMessageTextFontAssets`
+    * `streamUiErrorMessageTextStyle`
+
 # April 21th, 2021 - 4.9.0
 ## Common changes for all artifacts
 ### ✅ Added

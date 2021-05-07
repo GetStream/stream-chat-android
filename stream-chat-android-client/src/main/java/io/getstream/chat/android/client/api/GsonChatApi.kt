@@ -744,6 +744,7 @@ internal class GsonChatApi(
         response.channel.watchers = response.watchers.orEmpty()
         response.channel.hidden = response.hidden
         response.channel.hiddenMessagesBefore = response.hide_messages_before
+        response.channel.unreadCount = response.read?.firstOrNull { it.user.id == userId }?.unreadMessages
         return response.channel
     }
 

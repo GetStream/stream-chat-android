@@ -49,25 +49,23 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.ProgressTracker
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.ChannelData
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.extensions.NEVER
-import io.getstream.chat.android.livedata.extensions.addMyReaction
-import io.getstream.chat.android.livedata.extensions.inOffsetWith
-import io.getstream.chat.android.livedata.extensions.isPermanent
-import io.getstream.chat.android.livedata.extensions.removeMyReaction
-import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
-import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
-import io.getstream.chat.android.livedata.extensions.wasCreatedBeforeOrAt
-import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.NEVER
+import io.getstream.chat.android.offline.extensions.addMyReaction
+import io.getstream.chat.android.offline.extensions.inOffsetWith
+import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.removeMyReaction
+import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.extensions.wasCreatedAfter
+import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
+import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -138,15 +136,15 @@ public class ChannelController internal constructor(
         messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
     public val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
-    private val _messagesState: StateFlow<ChannelController.MessagesState> =
+    private val _messagesState: StateFlow<MessagesState> =
         _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
             when {
-                loading -> ChannelController.MessagesState.Loading
-                messages.isEmpty() -> ChannelController.MessagesState.OfflineNoResults
-                else -> ChannelController.MessagesState.Result(messages)
+                loading -> MessagesState.Loading
+                messages.isEmpty() -> MessagesState.OfflineNoResults
+                else -> MessagesState.Result(messages)
             }
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelController.MessagesState.NoQueryActive)
-    public val messagesState: StateFlow<ChannelController.MessagesState> = _messagesState
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
+    public val messagesState: StateFlow<MessagesState> = _messagesState
 
     public val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
 
@@ -345,12 +343,7 @@ public class ChannelController internal constructor(
     }
 
     private fun removeMessagesBefore(date: Date) {
-        val copy = _messages.value
-        // start off empty
-        _messages.value = mutableMapOf()
-        // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.wasCreatedAfter(date) }
-        upsertMessages(recentMessages)
+        _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
     }
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
@@ -647,9 +640,9 @@ public class ChannelController internal constructor(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             if (result.isSuccess) {
-                handleSendAttachmentSuccess(result)
+                handleSendAttachmentSuccess(result.data())
             } else {
-                handleSendAttachmentFail(newMessage, result)
+                handleSendAttachmentFail(newMessage, result.error())
             }
         } else {
             uploadStatusMessage = null
@@ -689,8 +682,7 @@ public class ChannelController internal constructor(
         return newAttachment
     }
 
-    private suspend fun handleSendAttachmentSuccess(result: Result<Message>): Result<Message> {
-        val processedMessage: Message = result.data()
+    private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
         processedMessage.apply {
             enrichWithCid(this.cid)
             syncStatus = SyncStatus.COMPLETED
@@ -701,21 +693,23 @@ public class ChannelController internal constructor(
         return Result(processedMessage)
     }
 
-    private suspend fun handleSendAttachmentFail(message: Message, result: Result<Message>): Result<Message> {
+    private suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
         logger.logE(
-            "Failed to send message with id ${message.id} and text ${message.text}: ${result.error()}",
-            result.error()
+            "Failed to send message with id ${message.id} and text ${message.text}: $error",
+            error
         )
 
-        if (result.error().isPermanent()) {
-            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-        } else {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        val failedMessage = message.copy(
+            syncStatus = if (error.isPermanent()) {
+                SyncStatus.FAILED_PERMANENTLY
+            } else {
+                SyncStatus.SYNC_NEEDED
+            }
+        )
 
-        upsertMessage(message)
-        domainImpl.repos.insertMessage(message)
-        return Result(result.error())
+        upsertMessage(failedMessage)
+        domainImpl.repos.insertMessage(failedMessage)
+        return Result(error)
     }
 
     // TODO: type should be a sealed/class or enum at the client level
@@ -745,7 +739,7 @@ public class ChannelController internal constructor(
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
         val attachmentType: String = when {
-            mimeType.isImageMimetype() -> TYPE_IMAGE
+            mimeType.isSupportedImageMimetype() -> TYPE_IMAGE
             mimeType.isVideoMimetype() -> TYPE_VIDEO
             else -> TYPE_FILE
         }
@@ -1000,30 +994,9 @@ public class ChannelController internal constructor(
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val copy = _messages.value
-        val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
-        // filter out old events
-        val freshMessages = mutableListOf<Message>()
-
-        for (message in newMessages) {
-            val oldMessage = copy[message.id]
-            var outdated = false
-            if (oldMessage != null) {
-                val oldTime =
-                    oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
-                val newTime =
-                    message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
-                outdated = oldTime > newTime
-            }
-            if (!outdated) {
-                freshMessages.add(message)
-            } else {
-                val oldDate = oldMessage?.updatedAt
-                logger.logW("Skipping outdated message update for message with text ${message.text}. Old message date is $oldDate new message date id ${message.updatedAt}")
-            }
-        }
-
-        // return all the fresh messages
-        return copy + freshMessages.map { it.copy() }.associateBy(Message::id)
+        return copy + messageHelper.updateValidAttachmentsUrl(messages, copy)
+            .filterNot { (copy[it.id]?.lastUpdateTime() ?: NEVER.time) > it.lastUpdateTime() }
+            .associateBy(Message::id)
     }
 
     private fun upsertMessages(messages: List<Message>) {
@@ -1392,27 +1365,27 @@ public class ChannelController internal constructor(
     internal suspend fun editMessage(message: Message): Result<Message> {
         // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
-        var editedMessage = message.copy()
+        val messageToBeEdited = message.copy()
 
         // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
-        editedMessage.apply {
+        messageToBeEdited.apply {
             val now = Date()
             if (updatedAt == null || updatedAt!!.before(now)) {
                 updatedAt = now
             }
         }
 
-        editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(editedMessage)
+        upsertMessage(messageToBeEdited)
 
         // Update Room State
-        domainImpl.repos.insertMessage(editedMessage)
+        domainImpl.repos.insertMessage(messageToBeEdited)
 
         if (online) {
             val runnable = {
-                client.updateMessage(editedMessage)
+                client.updateMessage(messageToBeEdited)
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
@@ -1421,61 +1394,65 @@ public class ChannelController internal constructor(
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {
-                editedMessage = result.data()
+                val editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
                 domainImpl.repos.insertMessage(editedMessage)
 
                 return Result(editedMessage)
             } else {
-                editedMessage.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
+                val failedMessage = messageToBeEdited.copy(
+                    syncStatus = if (result.error().isPermanent()) {
+                        SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        SyncStatus.SYNC_NEEDED
+                    }
+                )
 
-                upsertMessage(editedMessage)
-                domainImpl.repos.insertMessage(editedMessage)
+                upsertMessage(failedMessage)
+                domainImpl.repos.insertMessage(failedMessage)
                 return Result(result.error())
             }
         }
-        return Result(editedMessage)
+        return Result(messageToBeEdited)
     }
 
     internal suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        message.deletedAt = Date()
-        message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+        val messageToBeDeleted = message.copy(deletedAt = Date())
+        messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update flow
-        upsertMessage(message)
+        upsertMessage(messageToBeDeleted)
 
         // Update Room State
-        domainImpl.repos.insertMessage(message)
+        domainImpl.repos.insertMessage(messageToBeDeleted)
 
         if (online) {
             val runnable = {
-                client.deleteMessage(message.id)
+                client.deleteMessage(messageToBeDeleted.id)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
-                return Result(result.data())
+                val deletedMessage = result.data()
+                deletedMessage.syncStatus = SyncStatus.COMPLETED
+                upsertMessage(deletedMessage)
+                domainImpl.repos.insertMessage(deletedMessage)
+                return Result(deletedMessage)
             } else {
-                message.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
-                }
-
-                upsertMessage(message)
-                domainImpl.repos.insertMessage(message)
+                val failureMessage = messageToBeDeleted.copy(
+                    syncStatus = if (result.error().isPermanent()) {
+                        SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        SyncStatus.SYNC_NEEDED
+                    }
+                )
+                upsertMessage(failureMessage)
+                domainImpl.repos.insertMessage(failureMessage)
                 return Result(result.error())
             }
         }
-        return Result(message)
+        return Result(messageToBeDeleted)
     }
 
     public fun toChannel(): Channel {
@@ -1536,9 +1513,45 @@ public class ChannelController internal constructor(
         _repliedMessage.value = repliedMessage
     }
 
-    private fun String?.isImageMimetype() = this?.contains("image") ?: false
+    private fun String?.isSupportedImageMimetype() = StreamCdnImageMimeTypes.isImageMimeTypeSupported(this)
 
     private fun String?.isVideoMimetype() = this?.contains("video") ?: false
+
+    private fun Message.lastUpdateTime(): Long = listOfNotNull(
+        createdAt,
+        createdLocallyAt,
+        updatedAt,
+        updatedLocallyAt,
+        deletedAt
+    ).map { it.time }
+        .maxOrNull()
+        ?: NEVER.time
+
+    public sealed class MessagesState {
+        /** The ChannelController is initialized but no query is currently running.
+         * If you know that a query will be started you typically want to display a loading icon.
+         * */
+        public object NoQueryActive : MessagesState()
+
+        /** Indicates we are loading the first page of results.
+         * We are in this state if ChannelController.loading is true
+         * For seeing if we're loading more results have a look at loadingNewerMessages and loadingOlderMessages
+         *
+         * @see loading
+         * @see loadingNewerMessages
+         * @see loadingOlderMessages
+         * */
+        public object Loading : MessagesState()
+
+        /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
+        public object OfflineNoResults : MessagesState()
+
+        /** The list of messages, loaded either from offline storage or an API call.
+         * Observe chatDomain.online to know if results are currently up to date
+         * @see ChatDomainImpl.online
+         * */
+        public data class Result(val messages: List<Message>) : MessagesState()
+    }
 
     private companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"

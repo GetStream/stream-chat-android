@@ -2,7 +2,8 @@ package com.getstream.sdk.chat.navigation
 
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 
-public interface ChatNavigationHandler {
+@FunctionalInterface
+public fun interface ChatNavigationHandler {
     /**
      * Attempt to navigate to the given [destination].
      *

@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
@@ -36,8 +36,19 @@ import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomain
  */
 public interface ChatDomain {
 
-    /** the current user on the chatDomain object, same as client.getCurrentUser() */
+    @Deprecated(
+        message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
+        level = DeprecationLevel.WARNING,
+    )
+    /** Unsafe property that represent the current user. This property could be not initialized.
+     * You should subscribe to [ChatDomain.user] instead
+     *
+     * @see [ChatDomain.user]
+     */
     public var currentUser: User
+
+    /** The current user on the chatDomain object */
+    public val user: LiveData<User?>
 
     /** if offline is enabled */
     public var offlineEnabled: Boolean

@@ -14,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing. 
 
 ### ✅ Added
 
@@ -24,74 +23,49 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Optimized the number of `ChatClient::addDevice` API calls
-
+Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelClient::sendImage` methods.
 ### ⬆️ Improved
 
 ### ✅ Added
-
+Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
 ### ⚠️ Changed
 
 ### ❌ Removed
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed offline reactions sync
+- Fixed an issue when CustomFilter was configured with an int value but the value from the API was a double value
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new versions with API based on kotlin `StateFlow` for the following classes:
-  * `io.getstream.chat.android.offline.ChatDomain`
-  * `io.getstream.chat.android.offline.channel.ChannelController`
-  * `io.getstream.chat.android.offline.thread.ThreadController`
-  * `io.getstream.chat.android.offline.querychannels.QueryChannelsController`
 
 ### ⚠️ Changed
-
+- Changed the upload logic in `ChannelController` for the images unsupported by the Stream CDN. Now such images are uploaded as files via `ChannelClient::sendFile` method.
 ### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fixed crash related to accessing `ChatDomain::currentUser` in `MessageListViewModel` before user is connected
 
 ### ⬆️ Improved
+- Updated ExoPlayer version to 2.13.3 
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `MessageInputViewModel::editMessage`. Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` instead.
+- Changed `MessageInputViewModel::repliedMessage` type to `LiveData`. Use `ChatDomain::setMessageForReply` for setting message for reply.
+- Changed `MessageListViewModel::mode` type to `LiveData`. Mode is handled internally and shouldn't be modified outside the SDK.
 
 ### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Removed empty badge for selected media attachments.
 ### ⬆️ Improved
-* Updated coil dependency to the latest version. This fixes problem with .heic, and .heif attachment metadata parsing. 
 
 ### ✅ Added
-Customization of icons in Attachment selection dialog
-you can use:
-- app:streamUiPictureAttachmentIcon
-Change the icon for the first item in the list of icons
-- app:streamUiPictureAttachmentIconTint
-Change the tint color for icon of picture selection
-- app:streamUiFileAttachmentIcon
-Change the icon for the second item in the list of icons
-- app:streamUiFileAttachmentIconTint
-Change the tint color for icon of file selection
-- app:streamUiCameraAttachmentIcon
-Change the icon for the third item in the list of icons
-- app:streamUiCameraAttachmentIconTint
-Change the tint color for icon of camera selection
-- Added support for error messages
-- Added attrs to `MessageListView` that allow to customize error message text style:
-    * `streamUiErrorMessageTextSize`
-    * `streamUiErrorMessageTextColor`
-    * `streamUiErrorMessageTextFont`
-    * `streamUiErrorMessageTextFontAssets`
-    * `streamUiErrorMessageTextStyle`
-
+- Added `messageLimit` argument to `ChannelListViewModel` and `ChannelListViewModelFactory` constructors to allow changing the number of fetched messages for each channel in the channel list.
 ### ⚠️ Changed
 
 ### ❌ Removed
