@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.ProgressTracker
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
+import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -699,7 +700,11 @@ public class ChannelController internal constructor(
         )
 
         val failedMessage = message.copy(
-            syncStatus = if (error.isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+            syncStatus = if (error.isPermanent()) {
+                SyncStatus.FAILED_PERMANENTLY
+            } else {
+                SyncStatus.SYNC_NEEDED
+            }
         )
 
         upsertMessage(failedMessage)
@@ -734,7 +739,7 @@ public class ChannelController internal constructor(
             checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
         val attachmentType: String = when {
-            mimeType.isImageMimetype() -> TYPE_IMAGE
+            mimeType.isSupportedImageMimetype() -> TYPE_IMAGE
             mimeType.isVideoMimetype() -> TYPE_VIDEO
             else -> TYPE_FILE
         }
@@ -1397,7 +1402,11 @@ public class ChannelController internal constructor(
                 return Result(editedMessage)
             } else {
                 val failedMessage = messageToBeEdited.copy(
-                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                    syncStatus = if (result.error().isPermanent()) {
+                        SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        SyncStatus.SYNC_NEEDED
+                    }
                 )
 
                 upsertMessage(failedMessage)
@@ -1432,7 +1441,11 @@ public class ChannelController internal constructor(
                 return Result(deletedMessage)
             } else {
                 val failureMessage = messageToBeDeleted.copy(
-                    syncStatus = if (result.error().isPermanent()) { SyncStatus.FAILED_PERMANENTLY } else { SyncStatus.SYNC_NEEDED }
+                    syncStatus = if (result.error().isPermanent()) {
+                        SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        SyncStatus.SYNC_NEEDED
+                    }
                 )
                 upsertMessage(failureMessage)
                 domainImpl.repos.insertMessage(failureMessage)
@@ -1500,7 +1513,7 @@ public class ChannelController internal constructor(
         _repliedMessage.value = repliedMessage
     }
 
-    private fun String?.isImageMimetype() = this?.contains("image") ?: false
+    private fun String?.isSupportedImageMimetype() = StreamCdnImageMimeTypes.isImageMimeTypeSupported(this)
 
     private fun String?.isVideoMimetype() = this?.contains("video") ?: false
 

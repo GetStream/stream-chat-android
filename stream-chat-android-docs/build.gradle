@@ -78,4 +78,5 @@ dependencies {
     implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging
+    implementation Dependencies.coil
 }

@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
@@ -24,6 +26,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
+import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Filters;
@@ -33,7 +36,10 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
+import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
+import io.getstream.chat.android.ui.avatar.AvatarStyle;
 import io.getstream.chat.android.ui.channel.list.ChannelListView;
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
@@ -44,6 +50,9 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.ui.common.UrlSigner;
+import io.getstream.chat.android.ui.common.markdown.ChatMarkdown;
+import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.common.style.TextStyle;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
@@ -65,6 +74,17 @@ import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalDateTime;
@@ -733,7 +753,7 @@ public class Android {
 
         public void unreadCountInfo() {
             // Get channel
-            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             Channel channel = ChatClient.instance().queryChannel(
                     "channel-type",
@@ -761,7 +781,7 @@ public class Android {
 
         public void getUnreadCountForCurrentUser() {
             // Get channel
-            QueryChannelRequest queryChannelRequest = new QueryChannelRequest();
+            QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             Channel channel = ChatClient.instance().queryChannel(
                     "channel-type",
@@ -862,6 +882,74 @@ public class Android {
                         )
 
             );
+        }
+    }
+
+    class Navigation {
+        public void customizeNavigation() {
+            ChatNavigationHandler navigationHandler = destination -> {
+                // Some custom logic here!
+                return true;
+            };
+
+            ChatNavigator chatNavigator = new ChatNavigator(navigationHandler);
+
+            ChatUI.INSTANCE.setNavigator(chatNavigator);
+        }
+    }
+
+    class UrlSignerCustomization {
+
+        public void customizeUrlSigner() {
+            UrlSigner urlSigner = new UrlSigner() {
+                @NotNull
+                @Override
+                public String signFileUrl(@NotNull String url) {
+                    return url + "new added text";
+                }
+
+                @NotNull
+                @Override
+                public String signImageUrl(@NotNull String url) {
+                    return url + "new added text";
+                }
+            };
+
+            ChatUI.INSTANCE.setUrlSigner(urlSigner);
+        }
+    }
+
+    class MarkdownCustomization {
+        public void customizeMarkdown() {
+            ChatMarkdown markdown = (textView, text) -> {
+                textView.setText(applyMarkdown(text));
+            };
+
+            ChatUI.INSTANCE.setMarkdown(markdown);
+        }
+
+        private String applyMarkdown(String text) {
+            return text;
+        }
+    }
+
+    class BitmapFactoryCustomization extends Fragment {
+        public void bitmapFactoryCustomization() {
+            AvatarBitmapFactory factory = new AvatarBitmapFactory(requireContext()) {
+                @Nullable
+                @Override
+                public Object createUserBitmap(
+                        @NotNull User user,
+                        @NotNull AvatarStyle style,
+                        int avatarSize,
+                        @NotNull Continuation<? super Bitmap> $completion
+                ) {
+                    // Return your version of bitmap here!
+                    return super.createUserBitmap(user, style, avatarSize, $completion);
+                }
+            };
+
+            ChatUI.INSTANCE.setAvatarBitmapFactory(factory);
         }
     }
 }

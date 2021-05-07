@@ -276,6 +276,69 @@ internal class CustomObjectFilteringTest {
 
         @JvmStatic
         fun equalsFilterArguments() = listOf(
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val doubleValue: Double = 2.0
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", doubleValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val floatValue: Float = 2F
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", floatValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val longValue: Long = 2L
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", longValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val intValue: Int = 2
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", intValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val charValue: Char = 2.toChar()
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", charValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val shortValue: Short = 2
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", shortValue),
+                        expectedList
+                    )
+                },
+            List(positiveRandomInt(10)) { randomChannel().apply { extraData["someField"] = 2.0 } }
+                .let { expectedList ->
+                    val byteValue: Byte = 2
+                    Arguments.of(
+                        (expectedList + List(10) { randomChannel() }).shuffled(),
+                        Filters.eq("someField", byteValue),
+                        expectedList
+                    )
+                },
             List(positiveRandomInt(10)) { randomChannel(type = stringQuery) }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(10) { randomChannel(type = randomString(20)) }).shuffled(),
@@ -569,7 +632,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -586,7 +649,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -614,7 +677,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.greaterThan("someField", randomIntBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomIntBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -625,7 +688,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.greaterThan("someField", randomLongBetween(-100, -80)),
+                    Filters.greaterThan("someField", randomLongBetween(-100, -81)),
                     expectedList,
                 )
             },
@@ -852,7 +915,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.lessThan("someField", randomIntBetween(300, 320)),
+                    Filters.lessThan("someField", randomIntBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -869,7 +932,7 @@ internal class CustomObjectFilteringTest {
                             }
                         }
                         ),
-                    Filters.lessThan("someField", randomLongBetween(300, 320)),
+                    Filters.lessThan("someField", randomLongBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -897,7 +960,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.lessThan("someField", randomIntBetween(300, 320)),
+                    Filters.lessThan("someField", randomIntBetween(301, 320)),
                     expectedList,
                 )
             },
@@ -908,7 +971,7 @@ internal class CustomObjectFilteringTest {
             }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(positiveRandomInt(10)) { randomChannel() }),
-                    Filters.lessThan("someField", randomLongBetween(300, 320)),
+                    Filters.lessThan("someField", randomLongBetween(301, 320)),
                     expectedList,
                 )
             },

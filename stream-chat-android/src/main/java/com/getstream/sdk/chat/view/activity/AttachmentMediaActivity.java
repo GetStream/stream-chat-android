@@ -10,8 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import com.getstream.sdk.chat.ChatUI;
-import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
@@ -63,6 +63,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
+        videoView.isPlaying(); // Workaround to init some internals of the library
         videoView.setVideoURI(Uri.parse(ChatUI.instance().getUrlSigner().signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }

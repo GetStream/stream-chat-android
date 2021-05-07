@@ -77,7 +77,7 @@ internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
 private fun <T : Any> CustomObject.getMemberPropertyOrExtra(name: String, clazz: KClass<out T>): T? =
     name.snakeToLowerCamelCase().let { fieldName ->
         this::class.memberProperties.firstOrNull { it.name == fieldName }?.getter?.call(this)?.cast(clazz)
-            ?: extraData[name] as? T
+            ?: this.getExtra(name, clazz)
     }
 
 private fun <T : Any> Any.cast(clazz: KClass<out T>): T = clazz.javaObjectType.cast(this)!!
@@ -91,3 +91,18 @@ private fun <T : Comparable<T>> compare(a: T?, b: T?, compareFun: (Int) -> Boole
 
 private fun CustomObject.getMembersId(): List<String> =
     getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()
+
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> CustomObject.getExtra(name: String, clazz: KClass<out T>): T? =
+    extraData[name]?.let {
+        when (clazz) {
+            Double::class -> (it as? Number)?.toDouble()
+            Float::class -> (it as? Number)?.toFloat()
+            Long::class -> (it as? Number)?.toLong()
+            Int::class -> (it as? Number)?.toInt()
+            Char::class -> (it as? Number)?.toChar()
+            Short::class -> (it as? Number)?.toShort()
+            Byte::class -> (it as? Number)?.toByte()
+            else -> it
+        }
+    } as? T

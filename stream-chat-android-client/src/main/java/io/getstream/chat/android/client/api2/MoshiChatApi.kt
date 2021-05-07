@@ -581,6 +581,7 @@ internal class MoshiChatApi(
             watchers = response.watchers.map(DownstreamUserDto::toDomain)
             hidden = response.hidden
             hiddenMessagesBefore = response.hide_messages_before
+            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unread_messages
         }
     }
 
