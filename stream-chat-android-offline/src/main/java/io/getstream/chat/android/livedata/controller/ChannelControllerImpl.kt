@@ -16,10 +16,13 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.offline.channel.MessageHelper
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
+import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
+import io.getstream.chat.android.offline.channel.ChannelController.MessagesState as OfflineMessageState
+import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelData
 
 internal class ChannelControllerImpl(private val channelControllerStateFlow: ChannelControllerStateFlow) :
     ChannelController {
@@ -45,7 +48,14 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
 
     override val repliedMessage: LiveData<Message?> = channelControllerStateFlow.repliedMessage.asLiveData()
     override val messages: LiveData<List<Message>> = channelControllerStateFlow.messages.asLiveData()
-    override val messagesState = channelControllerStateFlow.messagesState.asLiveData()
+    override val messagesState = channelControllerStateFlow.messagesState.map {
+        when (it) {
+            OfflineMessageState.Loading -> ChannelController.MessagesState.Loading
+            OfflineMessageState.NoQueryActive -> ChannelController.MessagesState.NoQueryActive
+            OfflineMessageState.OfflineNoResults -> ChannelController.MessagesState.OfflineNoResults
+            is OfflineMessageState.Result -> ChannelController.MessagesState.Result(it.messages)
+        }
+    }.asLiveData()
     override val oldMessages: LiveData<List<Message>> = channelControllerStateFlow.oldMessages.asLiveData()
     override val watcherCount: LiveData<Int> = channelControllerStateFlow.watcherCount.asLiveData()
     override val watchers: LiveData<List<User>> = channelControllerStateFlow.watchers.asLiveData()
@@ -54,7 +64,9 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     override val read: LiveData<ChannelUserRead?> = channelControllerStateFlow.read.asLiveData()
     override val unreadCount: LiveData<Int?> = channelControllerStateFlow.unreadCount.asLiveData()
     override val members: LiveData<List<Member>> = channelControllerStateFlow.members.asLiveData()
-    override val channelData: LiveData<ChannelData> = channelControllerStateFlow.channelData.asLiveData()
+    override val channelData: LiveData<ChannelData> =
+        channelControllerStateFlow.channelData.map(::ChannelData).asLiveData()
+    override val offlineChannelData: LiveData<OfflineChannelData> = channelControllerStateFlow.channelData.asLiveData()
     override val hidden: LiveData<Boolean> = channelControllerStateFlow.hidden.asLiveData()
     override val muted: LiveData<Boolean> = channelControllerStateFlow.muted.asLiveData()
     override val loading: LiveData<Boolean> = channelControllerStateFlow.loading.asLiveData()

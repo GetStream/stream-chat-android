@@ -26,6 +26,8 @@ import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
+import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 
@@ -110,11 +112,11 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
      *   })
      *
      */
-    override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlow.errorEvents.asLiveData()
+    override val errorEvents: LiveData<Event<ChatError>> = chatDomainStateFlow.errorEvents.map(::Event).asLiveData()
     override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy
-        get() = chatDomainStateFlow.retryPolicy
+        get() = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
         set(value) {
             chatDomainStateFlow.retryPolicy = value
         }

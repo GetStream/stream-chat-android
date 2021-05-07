@@ -54,21 +54,18 @@ import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.ChannelData
-import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.controller.helper.MessageHelper
-import io.getstream.chat.android.livedata.extensions.NEVER
-import io.getstream.chat.android.livedata.extensions.addMyReaction
-import io.getstream.chat.android.livedata.extensions.inOffsetWith
-import io.getstream.chat.android.livedata.extensions.isPermanent
-import io.getstream.chat.android.livedata.extensions.removeMyReaction
-import io.getstream.chat.android.livedata.extensions.shouldIncrementUnreadCount
-import io.getstream.chat.android.livedata.extensions.wasCreatedAfter
-import io.getstream.chat.android.livedata.extensions.wasCreatedBeforeOrAt
-import io.getstream.chat.android.livedata.model.ChannelConfig
-import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.extensions.NEVER
+import io.getstream.chat.android.offline.extensions.addMyReaction
+import io.getstream.chat.android.offline.extensions.inOffsetWith
+import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.removeMyReaction
+import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.extensions.wasCreatedAfter
+import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
+import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -139,15 +136,15 @@ public class ChannelController internal constructor(
         messagesTransformation(_messages).stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
     public val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
-    private val _messagesState: StateFlow<ChannelController.MessagesState> =
+    private val _messagesState: StateFlow<MessagesState> =
         _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
             when {
-                loading -> ChannelController.MessagesState.Loading
-                messages.isEmpty() -> ChannelController.MessagesState.OfflineNoResults
-                else -> ChannelController.MessagesState.Result(messages)
+                loading -> MessagesState.Loading
+                messages.isEmpty() -> MessagesState.OfflineNoResults
+                else -> MessagesState.Result(messages)
             }
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelController.MessagesState.NoQueryActive)
-    public val messagesState: StateFlow<ChannelController.MessagesState> = _messagesState
+        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
+    public val messagesState: StateFlow<MessagesState> = _messagesState
 
     public val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
 
@@ -1527,6 +1524,32 @@ public class ChannelController internal constructor(
     ).map { it.time }
         .maxOrNull()
         ?: NEVER.time
+
+    public sealed class MessagesState {
+        /** The ChannelController is initialized but no query is currently running.
+         * If you know that a query will be started you typically want to display a loading icon.
+         * */
+        public object NoQueryActive : MessagesState()
+
+        /** Indicates we are loading the first page of results.
+         * We are in this state if ChannelController.loading is true
+         * For seeing if we're loading more results have a look at loadingNewerMessages and loadingOlderMessages
+         *
+         * @see loading
+         * @see loadingNewerMessages
+         * @see loadingOlderMessages
+         * */
+        public object Loading : MessagesState()
+
+        /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
+        public object OfflineNoResults : MessagesState()
+
+        /** The list of messages, loaded either from offline storage or an API call.
+         * Observe chatDomain.online to know if results are currently up to date
+         * @see ChatDomainImpl.online
+         * */
+        public data class Result(val messages: List<Message>) : MessagesState()
+    }
 
     private companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
