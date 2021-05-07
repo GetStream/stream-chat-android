@@ -664,7 +664,7 @@ internal class MoshiChatApi(
             filter_conditions = query.filter.toMap(),
             offset = query.offset,
             limit = query.limit,
-            querySort = query.sort,
+            sort = query.sort,
             message_limit = query.messageLimit,
             member_limit = query.memberLimit,
             state = query.state,

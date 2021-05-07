@@ -7,7 +7,7 @@ internal class QueryChannelsRequest(
     val filter_conditions: Map<*, *>,
     val offset: Int,
     val limit: Int,
-    val querySort: List<Map<String, Any>>,
+    val sort: List<Map<String, Any>>,
     val message_limit: Int,
     val member_limit: Int,
     val state: Boolean,
