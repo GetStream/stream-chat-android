@@ -20,12 +20,11 @@ public val Message.originalLanguage: String
 
 public fun Channel.getUnreadMessagesCount(forUserId: String = ""): Int {
     return if (forUserId.isEmpty()) {
-        read
-            .sumBy { it.unreadMessages }
+        read.sumOf { it.unreadMessages }
     } else {
         read
             .filter { it.user.id == forUserId }
-            .sumBy { it.unreadMessages }
+            .sumOf { it.unreadMessages }
     }
 }
 
@@ -77,5 +76,5 @@ internal fun String.initials(): String {
     return trim()
         .split("\\s+".toRegex())
         .take(2)
-        .joinToString(separator = "") { it.take(1).toUpperCase() }
+        .joinToString(separator = "") { it.take(1).uppercase() }
 }

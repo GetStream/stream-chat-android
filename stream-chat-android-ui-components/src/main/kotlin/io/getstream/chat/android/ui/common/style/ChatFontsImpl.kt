@@ -41,7 +41,7 @@ internal class ChatFontsImpl(
             textStyle.fontResource != -1 ->
                 getFont(textStyle.fontResource)
             !textStyle.fontAssetsPath.isNullOrEmpty() ->
-                getFont(textStyle.fontAssetsPath!!)
+                getFont(textStyle.fontAssetsPath)
             else -> null
         }
     }

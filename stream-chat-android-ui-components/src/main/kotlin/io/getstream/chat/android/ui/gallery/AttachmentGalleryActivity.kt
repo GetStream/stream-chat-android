@@ -168,7 +168,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 DateUtils.FORMAT_ABBREV_RELATIVE
             )
             .toString()
-            .decapitalize()
+            .replaceFirstChar(Char::lowercase)
 
         return getString(
             R.string.stream_ui_date_and_time_pattern,
