@@ -18,7 +18,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="?attr/stream_ui_messagelist_item_avatar_style"
+        style="?attr/streamUiMessageListItemAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"

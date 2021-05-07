@@ -57,8 +57,8 @@ internal fun Context.copyToClipboard(text: String) {
 internal fun Context.createStreamThemeWrapper(): Context {
     val typedValue = TypedValue()
     return when {
-        theme.resolveAttribute(R.attr.stream_ui_valid_theme, typedValue, true) -> this
-        theme.resolveAttribute(R.attr.stream_ui_theme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
+        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
+        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
         else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
     }
 }
