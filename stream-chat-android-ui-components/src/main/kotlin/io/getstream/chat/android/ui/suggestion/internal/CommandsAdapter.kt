@@ -1,9 +1,9 @@
 package io.getstream.chat.android.ui.suggestion.internal
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
@@ -15,7 +15,7 @@ internal class CommandsAdapter(
 ) : SimpleListAdapter<Command, CommandsAdapter.CommandViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         return StreamUiItemCommandBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 commandsNameStyle?.apply(binding.commandNameTextView)
                 commandsDescriptionStyle?.apply(binding.commandQueryTextView)

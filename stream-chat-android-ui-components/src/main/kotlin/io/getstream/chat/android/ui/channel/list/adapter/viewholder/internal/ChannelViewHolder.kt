@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.extensions.isMuted
@@ -27,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.getLastMessagePreviewText
 import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
@@ -42,7 +42,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private val swipeListener: ChannelListView.SwipeListener,
     private val style: ChannelListViewStyle,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
-        parent.inflater,
+        parent.streamThemeInflater,
         parent,
         false
     ),

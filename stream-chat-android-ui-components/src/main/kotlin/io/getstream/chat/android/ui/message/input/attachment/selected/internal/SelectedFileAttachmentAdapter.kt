@@ -5,8 +5,8 @@ import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
@@ -19,7 +19,7 @@ internal class SelectedFileAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedFileAttachmentViewHolder {
         return StreamUiItemSelectedAttachmentFileBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { SelectedFileAttachmentViewHolder(it, onAttachmentCancelled, attachmentMaxFileSize) }
     }
 
