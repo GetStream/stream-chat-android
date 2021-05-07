@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
 import io.getstream.chat.android.offline.channel.ChannelController.MessagesState as OfflineMessageState
+import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelData
 
 internal class ChannelControllerImpl(private val channelControllerStateFlow: ChannelControllerStateFlow) :
     ChannelController {
@@ -65,6 +66,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     override val members: LiveData<List<Member>> = channelControllerStateFlow.members.asLiveData()
     override val channelData: LiveData<ChannelData> =
         channelControllerStateFlow.channelData.map(::ChannelData).asLiveData()
+    override val offlineChannelData: LiveData<OfflineChannelData> = channelControllerStateFlow.channelData.asLiveData()
     override val hidden: LiveData<Boolean> = channelControllerStateFlow.hidden.asLiveData()
     override val muted: LiveData<Boolean> = channelControllerStateFlow.muted.asLiveData()
     override val loading: LiveData<Boolean> = channelControllerStateFlow.loading.asLiveData()

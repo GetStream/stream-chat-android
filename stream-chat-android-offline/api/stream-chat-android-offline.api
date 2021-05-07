@@ -156,6 +156,7 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Ch
 	public abstract fun getMessages ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMessagesState ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
+	public abstract fun getOfflineChannelData ()Landroidx/lifecycle/LiveData;
 	public abstract fun getOldMessages ()Landroidx/lifecycle/LiveData;
 	public abstract fun getRead ()Landroidx/lifecycle/LiveData;
 	public abstract fun getReads ()Landroidx/lifecycle/LiveData;
