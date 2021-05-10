@@ -65,7 +65,6 @@ import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.wasCreatedAfter
 import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.repository.domain.message.attachment.toUploadAttachment
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
