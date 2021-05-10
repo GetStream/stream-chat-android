@@ -172,7 +172,6 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun hasChannels ()Z
-	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingMore ()V
 	public final fun hideLoadingView ()V
 	public final fun setChannelDeleteClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;)V
@@ -197,7 +196,6 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setSwipeListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;)V
 	public final fun setViewHolderFactory (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory;)V
-	public final fun showEmptyStateView ()V
 	public final fun showLoadingMore ()V
 	public final fun showLoadingView ()V
 }
