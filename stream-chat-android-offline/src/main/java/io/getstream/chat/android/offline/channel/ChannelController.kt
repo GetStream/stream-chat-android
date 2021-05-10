@@ -646,8 +646,6 @@ public class ChannelController internal constructor(
                 handleSendAttachmentFail(newMessage, result.error())
             }
         } else {
-            saveAttachmentsToUpload(newMessage.id, newMessage.attachments)
-
             uploadStatusMessage = null
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
@@ -656,14 +654,6 @@ public class ChannelController internal constructor(
 
     private fun generateUploadId(): String {
         return "upload_id_${UUID.randomUUID()}"
-    }
-
-    private suspend fun saveAttachmentsToUpload(messageId: String, attachmentList: List<Attachment>) {
-        val attachmentsToUpload = attachmentList.map { attachment ->
-            attachment.toUploadAttachment(messageId)
-        }
-
-        domainImpl.repos.insertAttachmentsToUpload(*attachmentsToUpload.toTypedArray())
     }
 
     private suspend fun sendAttachment(
