@@ -24,5 +24,4 @@ internal interface AttachmentToUploadEntityDao {
 
     @Delete
     suspend fun deleteAttachmentsToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
-
 }

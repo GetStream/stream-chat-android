@@ -9,7 +9,7 @@ internal interface AttachmentUploadRepository {
 
 internal class AttachmentUploadRepositoryImpl(
     private val attachmentToUploadEntityDao: AttachmentToUploadEntityDao,
-): AttachmentUploadRepository {
+) : AttachmentUploadRepository {
     override suspend fun insertAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity) {
         attachmentToUploadEntityDao.insertAttachmentToUpload(*attachments)
     }
