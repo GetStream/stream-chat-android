@@ -177,7 +177,8 @@ public class ChatClient internal constructor(
      */
     @Deprecated(
         message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         setUser(user, ConstantTokenProvider(token), listener)
@@ -215,7 +216,8 @@ public class ChatClient internal constructor(
      */
     @Deprecated(
         message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setUser(
         user: User,
@@ -256,6 +258,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        @Suppress("DEPRECATION_ERROR")
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -283,7 +286,8 @@ public class ChatClient internal constructor(
 
     @Deprecated(
         message = "Use connectAnonymousUser instead",
-        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
@@ -309,7 +313,8 @@ public class ChatClient internal constructor(
 
     @Deprecated(
         message = "Use connectGuestUser instead",
-        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
         getGuestToken(userId, username).enqueue {
