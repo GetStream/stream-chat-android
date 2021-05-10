@@ -4,12 +4,13 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `io.getstream.chat.android.livedata.ChannelData` <br/>*Offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
-| `ChannelController#channelData` <br/>*Offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
+| Old serialization implementation<br/>*client* | 2021.05.10 | 2021.07.10 ⌛ | 2021.09.10 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.1) for details |
+| `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
+| `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.05 ⌛ | 2021.07.05 ⌛ | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
-| `ChatDomain#currentUser` <br/>*Offline* | 2021.04.30 | 2021.05.30 ⌛ | 2021.06.30 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
+| `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.05.30 ⌛ | 2021.06.30 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27 ⌛ | 2021.05.25 ⌛ | Setting external SuggestionListView is no longer necessary |
-| `ChatDomain.usecases` <br/>*offline* | 2021.04.6 | 2021.05.6 ⌛ | 2021.06.6 ⌛ | Replace this property call by obtaining a specific use case directly from ChatDomain |
+| `ChatDomain.usecases` <br/>*offline* | 2021.04.06 | 2021.05.06 ⌛ | 2021.06.06 ⌛ | Replace this property call by obtaining a specific use case directly from ChatDomain |
 | `MessageInputView#setMembers` <br/>*ui-components* | 2021.04.07 | 2021.04.21<br/>4.9.0 | 2021.05.05 ⌛ | Use MessageInputView::setUserLookupHandler instead of manually passing the list of users |
 | `ChannelListView's empty state methods` <br/>*ui-components* | 2021.04.05 | 2021.04.21<br/>4.9.0 | 2021.05.05 ⌛ | These methods no longer need to be called directly, `setChannel` handles empty state changes automatically |
 | `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.21<br/>4.9.0 | 2021.05.25 ⌛ | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
