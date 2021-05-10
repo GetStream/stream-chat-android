@@ -6,6 +6,7 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentUploadRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateRepository
@@ -24,6 +25,7 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var messages: MessageRepository
     protected lateinit var reactions: ReactionRepository
     protected lateinit var syncState: SyncStateRepository
+    protected lateinit var attachmentUploadRepository: AttachmentUploadRepository
 
     protected val scope = TestCoroutineScope()
 
@@ -39,6 +41,7 @@ internal open class BaseRepositoryFacadeTest {
         messages = mock()
         reactions = mock()
         syncState = mock()
+        attachmentUploadRepository = mock()
 
         sut = RepositoryFacade(
             userRepository = users,
@@ -48,6 +51,7 @@ internal open class BaseRepositoryFacadeTest {
             messageRepository = messages,
             reactionsRepository = reactions,
             syncStateRepository = syncState,
+            attachmentUploadRepository = attachmentUploadRepository,
             scope = scope,
             defaultConfig = mock(),
         )
