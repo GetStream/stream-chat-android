@@ -23,13 +23,19 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelClient::sendImage` methods.
+- Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelClient::sendImage` methods.
+
 ### ⬆️ Improved
 
 ### ✅ Added
-Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
-### ⚠️ Changed
+- Added `ChannelClient::deleteFile` and `ChannelClient::deleteImage` methods.
 
+### ⚠️ Changed
+- **The client now uses a new serialization implementation by default**, which was [previously](https://github.com/GetStream/stream-chat-android/releases/tag/4.8.0) available as an opt-in API.
+    - This new implementation is more performant and greatly improves type safety in the networking code of the SDK.
+    - If you experience any issues after upgrading to this version of the SDK, you can call `useNewSerialization(false)` when building your `ChatClient` to revert to using the old implementation. Note however that we'll be removing the old implementation soon, so please report any issues found.
+    - To check if the new implementation is causing any failures in your app, enable error logging on `ChatClient` with the `logLevel` method, and look for the `NEW_SERIALIZATION_ERROR` tag in your logs while using the SDK.
+ 
 ### ❌ Removed
 
 ## stream-chat-android-offline
