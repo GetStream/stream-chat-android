@@ -14,7 +14,6 @@ import androidx.core.view.updatePadding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -138,19 +137,6 @@ public class MessageInputView : ConstraintLayout {
      */
     public fun setSendMessageHandler(handler: MessageSendHandler) {
         this.sendMessageHandler = handler
-    }
-
-    @Deprecated(
-        message = "Use setUserLookupHandler instead of manually passing the list of users",
-        ReplaceWith(
-            "setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))",
-            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
-            "io.getstream.chat.android.client.models.Member"
-        ),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setMembers(members: List<Member>) {
-        setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
     }
 
     public fun setCommands(commands: List<Command>) {

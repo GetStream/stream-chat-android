@@ -838,7 +838,6 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setCommandsEnabled (Z)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
 	public final fun setMaxMessageLength (I)V
-	public final fun setMembers (Ljava/util/List;)V
 	public final fun setMentionsEnabled (Z)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener;)V
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
