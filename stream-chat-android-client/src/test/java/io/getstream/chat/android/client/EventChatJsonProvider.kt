@@ -190,7 +190,8 @@ internal fun createNotificationInviteAcceptedEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
-            "member": ${createMemberJsonString()}
+            "member": ${createMemberJsonString()},
+            "channel": ${createChannelJsonString()}
         """.trimIndent()
     )
 
@@ -202,7 +203,8 @@ internal fun createNotificationInviteRejectedEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
-            "member": ${createMemberJsonString()}
+            "member": ${createMemberJsonString()},
+            "channel": ${createChannelJsonString()}
         """.trimIndent()
     )
 
