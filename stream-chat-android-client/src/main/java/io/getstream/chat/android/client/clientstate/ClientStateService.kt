@@ -1,23 +1,18 @@
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
 internal class ClientStateService {
-    fun onConnected(user: User, connectionId: String) {
-        stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(user, connectionId))
+    fun onConnected(connectionId: String) {
+        stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(connectionId))
     }
 
     fun onDisconnected() {
         stateMachine.sendEvent(ClientStateEvent.DisconnectedEvent)
     }
 
-    fun onSetUser(user: User) {
-        stateMachine.sendEvent(ClientStateEvent.SetUserEvent(user))
-    }
-
-    fun onSetAnonymousUser() {
-        stateMachine.sendEvent(ClientStateEvent.SetAnonymousUserEvent)
+    fun onConnectionRequested() {
+        stateMachine.sendEvent(ClientStateEvent.ConnectionRequested)
     }
 
     fun onDisconnectRequested() {
@@ -31,67 +26,28 @@ internal class ClientStateService {
             defaultHandler { state, event -> state.failedToHandleEvent(event) }
 
             state<ClientState.Idle> {
-                onEvent<ClientStateEvent.SetUserEvent> { _, event -> ClientState.User.Pending(event.user) }
-                onEvent<ClientStateEvent.SetAnonymousUserEvent> { _, _ -> ClientState.Anonymous.Pending }
+                onEvent<ClientStateEvent.ConnectionRequested> { _, _ -> ClientState.Pending }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
-            state<ClientState.User.Pending> {
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.User.Authorized.Connected(event.connectionId, event.user) }
+            state<ClientState.Pending> {
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.Connected(event.connectionId) }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
             }
 
-            state<ClientState.User.Authorized.Connected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { state, _ ->
-                    ClientState.User.Authorized.Disconnected(
-                        state.connectionId,
-                        state.user,
-                    )
-                }
+            state<ClientState.Connected> {
+                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> ClientState.Disconnected }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
             }
 
-            state<ClientState.User.Authorized.Disconnected> {
+            state<ClientState.Disconnected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event ->
-                    ClientState.User.Authorized.Connected(
-                        event.connectionId,
-                        event.user,
-                    )
-                }
-            }
-
-            state<ClientState.Anonymous.Pending> {
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.Anonymous.Authorized.Connected(event.connectionId, event.user) }
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-            }
-
-            state<ClientState.Anonymous.Authorized.Connected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { state, _ ->
-                    ClientState.Anonymous.Authorized.Disconnected(
-                        state.connectionId,
-                        state.anonymousUser,
-                    )
-                }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
-            }
-
-            state<ClientState.Anonymous.Authorized.Disconnected> {
-                onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
-                onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> ClientState.Idle }
-                onEvent<ClientStateEvent.ConnectedEvent> { _, event ->
-                    ClientState.Anonymous.Authorized.Connected(
-                        event.connectionId,
-                        event.user,
-                    )
-                }
+                onEvent<ClientStateEvent.ConnectedEvent> { _, event -> ClientState.Connected(event.connectionId) }
             }
         }
     }
@@ -103,9 +59,8 @@ internal class ClientStateService {
         error("Cannot handle event $event while being in inappropriate state $this")
 
     private sealed class ClientStateEvent {
-        data class SetUserEvent(val user: User) : ClientStateEvent()
-        object SetAnonymousUserEvent : ClientStateEvent()
-        data class ConnectedEvent(val user: User, val connectionId: String) : ClientStateEvent()
+        object ConnectionRequested : ClientStateEvent()
+        data class ConnectedEvent(val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()
         object DisconnectedEvent : ClientStateEvent()
     }

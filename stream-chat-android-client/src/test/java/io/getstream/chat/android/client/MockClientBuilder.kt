@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -77,15 +78,17 @@ internal class MockClientBuilder(
         )
 
         val clientStateService = ClientStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService, testCoroutineScope)
+        val userStateService = UserStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, userStateService, testCoroutineScope)
         client = ChatClient(
             config,
             api,
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            clientStateService,
-            queryChannelsPostponeHelper,
+            clientStateService = clientStateService,
+            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            userStateService = userStateService,
         )
 
         client.connectUser(user, token).enqueue()

@@ -3,6 +3,7 @@ package io.getstream.chat.android.client
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -59,15 +60,17 @@ internal class ChatClientTest {
 
         socket = FakeChatSocket()
         val clientStateService = ClientStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
+        val userStateService = UserStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), userStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
-            clientStateService,
-            queryChannelsPostponeHelper,
+            clientStateService = clientStateService,
+            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            userStateService = userStateService,
         ).apply {
             connectUser(User(), "someToken").enqueue()
         }

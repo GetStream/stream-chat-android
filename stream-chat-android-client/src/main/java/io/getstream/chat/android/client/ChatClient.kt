@@ -73,7 +73,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -93,7 +92,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
-    private val userStateService: UserStateService = UserStateService()
+    private val userStateService: UserStateService = UserStateService(),
 ) {
 
     @InternalStreamChatApi
@@ -121,7 +120,7 @@ public class ChatClient internal constructor(
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
-                    clientStateService.onConnected(user, connectionId)
+                    clientStateService.onConnected(connectionId)
                     userStateService.onUserSet(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
@@ -240,7 +239,7 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: TokenProvider,
     ) {
-        clientStateService.onSetUser(user)
+        clientStateService.onConnectionRequested()
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         notifySetUser(user)
@@ -295,7 +294,7 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        clientStateService.onSetAnonymousUser()
+        clientStateService.onConnectionRequested()
         userStateService.onSetAnonymous()
         connectionListener = object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
@@ -482,12 +481,13 @@ public class ChatClient internal constructor(
     }
 
     public fun reconnectSocket() {
-        when (val state = clientStateService.state) {
+        /*when (val state = clientStateService.state) {
             is ClientState.Anonymous -> socket.connectAnonymously()
             is ClientState.User -> socket.connect(state.user)
             is ClientState.Idle -> {
             }
-        }.exhaustive
+        }.exhaustive*/
+        TODO()
     }
 
     public fun addSocketListener(listener: SocketListener) {
@@ -1302,20 +1302,15 @@ public class ChatClient internal constructor(
 
     public fun getCurrentToken(): String? {
         return runCatching {
-            when (clientStateService.state) {
-                is ClientState.User.Pending,
-                is ClientState.User.Authorized,
-                -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+            when (userStateService.state) {
+                is UserState.User -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()
     }
 
     public fun isSocketConnected(): Boolean {
-        return clientStateService.state.let {
-            it is ClientState.User.Authorized.Connected ||
-                it is ClientState.Anonymous.Authorized.Connected
-        }
+        return clientStateService.state is ClientState.Connected
     }
 
     /**
@@ -1567,7 +1562,8 @@ public class ChatClient internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.clientStateService,
-                module.queryChannelsPostponeHelper
+                module.queryChannelsPostponeHelper,
+                module.userStateService
             )
 
             instance = result

@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api2.MoshiApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.UserApi
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -75,10 +76,11 @@ internal open class BaseChatModule(
 
     private val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val clientStateService: ClientStateService = ClientStateService()
+    val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
             api(),
-            clientStateService,
+            userStateService,
             networkScope,
         )
     }

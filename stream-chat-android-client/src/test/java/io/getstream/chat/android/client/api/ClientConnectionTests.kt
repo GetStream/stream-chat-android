@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -80,7 +81,8 @@ internal class ClientConnectionTests {
     @BeforeEach
     fun before() {
         val clientStateService = ClientStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
+        val userStateService = UserStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), userStateService, testCoroutines.scope)
         socket = mock()
         retrofitApi = mock()
         retrofitAnonymousApi = mock()
@@ -107,8 +109,9 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            clientStateService,
-            queryChannelsPostponeHelper,
+            clientStateService = clientStateService,
+            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            userStateService = userStateService,
         )
     }
 
