@@ -5,18 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "attachment_to_upload",
-    foreignKeys = [
-        // ForeignKey(
-        //     entity = MessageInnerEntity::class,
-        //     parentColumns = ["id"],
-        //     childColumns = ["messageId"],
-        //     onDelete = ForeignKey.CASCADE,
-        //     deferred = true
-        // )
-    ]
-)
+@Entity(tableName = "attachment_to_upload")
 internal data class AttachmentToUploadEntity(
     @ColumnInfo(index = true)
     val messageId: String,
