@@ -10,27 +10,41 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
-import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
@@ -72,29 +86,8 @@ import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListView;
 import io.getstream.chat.docs.R;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import kotlin.coroutines.Continuation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -543,18 +536,6 @@ public class Android {
     }
 
     /**
-     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/suggestion_list_view">Suggestion List View</a>
-     */
-    public class SuggestionList extends Fragment {
-        MessageInputView messageInputView;
-        SuggestionListView suggestionListView;
-
-        public void connectingSuggestionListViewWithMessageInputView() {
-            messageInputView.setSuggestionListView(suggestionListView);
-        }
-    }
-
-    /**
      * @see <a href="https://getstream.io/chat/docs/android/android_offline/?language=java">Android Offline</a>
      */
     public class AndroidOffline extends Fragment {
@@ -594,7 +575,7 @@ public class Android {
         public void watchChannel() {
             ChatDomain chatDomain = ChatDomain.instance();
 
-            chatDomain.getUseCases().getWatchChannel().invoke("messaging:123", 0)
+            chatDomain.watchChannel("messaging:123", 0)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             ChannelController channelController = result.data();
@@ -610,7 +591,7 @@ public class Android {
         public void loadMoreMessages() {
             ChatDomain chatDomain = ChatDomain.instance();
 
-            chatDomain.getUseCases().getLoadOlderMessages().invoke("messaging:123", 10)
+            chatDomain.loadOlderMessages("messaging:123", 10)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             Channel channel = result.data();
@@ -623,7 +604,7 @@ public class Android {
             Message message = new Message();
             message.setText("Hello world");
 
-            chatDomain.getUseCases().getSendMessage().invoke(message)
+            chatDomain.sendMessage(message)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             Message message1 = result.data();
@@ -646,7 +627,7 @@ public class Android {
             int limit = 10;
             int messageLimit = 1;
 
-            chatDomain.getUseCases().getQueryChannels().invoke(filter, sort, limit, messageLimit)
+            chatDomain.queryChannels(filter, sort, limit, messageLimit)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final QueryChannelsController controller = result.data();
@@ -673,7 +654,7 @@ public class Android {
             int limit = 10;
             int messageLimit = 1;
 
-            chatDomain.getUseCases().getQueryChannelsLoadMore().invoke(filter, sort, limit, messageLimit)
+            chatDomain.queryChannelsLoadMore(filter, sort, limit, messageLimit)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final List<Channel> channels = result.data();
@@ -685,21 +666,14 @@ public class Android {
             ChatDomain chatDomain = ChatDomain.instance();
 
             // LiveData objects to observe
-            LiveData<Integer> totalUnreadCount = chatDomain.getUseCases()
-                    .getGetTotalUnreadCount()
-                    .invoke()
-                    .execute()
-                    .data();
-            LiveData<Integer> unreadChannelCount = chatDomain.getUseCases()
-                    .getGetUnreadChannelCount()
-                    .invoke()
-                    .execute().data();
+            LiveData<Integer> totalUnreadCount = chatDomain.getTotalUnreadCount();
+            LiveData<Integer> unreadChannelCount = chatDomain.getChannelUnreadCount();
         }
 
         public void messagesFromThread() {
             ChatDomain chatDomain = ChatDomain.instance();
 
-            chatDomain.getUseCases().getGetThread().invoke("cid", "parentId")
+            chatDomain.getThread("cid", "parentId")
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final ThreadController threadController = result.data();
@@ -716,7 +690,7 @@ public class Android {
             ChatDomain chatDomain = ChatDomain.instance();
             int messageLimit = 1;
 
-            chatDomain.getUseCases().getThreadLoadMore().invoke("cid", "parentId", messageLimit)
+            chatDomain.threadLoadMore("cid", "parentId", messageLimit)
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             final List<Message> messages = result.data();

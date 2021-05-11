@@ -106,7 +106,7 @@ public interface ChatDomain {
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "This property is deprecated now. Use cases are now exposed by ChatDomain directly as functions.",
         replaceWith = ReplaceWith("Replace this property call by obtaining a specific use case directly from ChatDomain."),
     )

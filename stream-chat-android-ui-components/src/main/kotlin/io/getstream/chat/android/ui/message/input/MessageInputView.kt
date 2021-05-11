@@ -14,7 +14,6 @@ import androidx.core.view.updatePadding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -140,19 +139,6 @@ public class MessageInputView : ConstraintLayout {
         this.sendMessageHandler = handler
     }
 
-    @Deprecated(
-        message = "Use setUserLookupHandler instead of manually passing the list of users",
-        ReplaceWith(
-            "setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))",
-            "io.getstream.chat.android.ui.message.input.MessageInputView.DefaultUserLookupHandler",
-            "io.getstream.chat.android.client.models.Member"
-        ),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setMembers(members: List<Member>) {
-        setUserLookupHandler(DefaultUserLookupHandler(members.map(Member::user)))
-    }
-
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
         refreshControlsState()
@@ -191,7 +177,7 @@ public class MessageInputView : ConstraintLayout {
 
     @Deprecated(
         message = "Setting external SuggestionListView is no longer necessary to display suggestions popup",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun setSuggestionListView(suggestionListView: SuggestionListView) {
         setSuggestionListViewInternal(suggestionListView, popupWindow = false)
