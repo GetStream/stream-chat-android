@@ -6,5 +6,15 @@
         <item name="colorAccent">@color/stream_color_accent</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="streamUiTheme">@style/StreamTheme</item>
     </style>
+
+    <style name="StreamTheme" parent="@style/StreamUiTheme">
+        <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
+        <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
+    </style>
+
+    <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
+
+    <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar"/>
 </resources>

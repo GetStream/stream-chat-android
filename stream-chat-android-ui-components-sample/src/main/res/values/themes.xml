@@ -3,5 +3,15 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/stream_color_primary</item>
         <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
+        <item name="streamUiTheme">@style/StreamTheme</item>
     </style>
+
+    <style name="StreamTheme" parent="@style/StreamUiTheme">
+        <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
+        <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
+    </style>
+
+    <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
+
+    <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar"/>
 </resources>

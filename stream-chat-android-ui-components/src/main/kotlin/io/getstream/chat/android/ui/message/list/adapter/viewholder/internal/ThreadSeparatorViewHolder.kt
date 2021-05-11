@@ -2,8 +2,8 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemThreadDividerBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
@@ -14,7 +14,7 @@ internal class ThreadSeparatorViewHolder(
     decorators: List<Decorator>,
     internal val binding: StreamUiItemThreadDividerBinding =
         StreamUiItemThreadDividerBinding.inflate(
-            parent.inflater,
+            parent.streamThemeInflater,
             parent,
             false
         ),

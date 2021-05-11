@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 
@@ -21,7 +21,7 @@ internal class MediaAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
         return StreamUiItemMediaAttachmentBinding
-            .inflate(parent.context.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { MediaAttachmentViewHolder(it, showUserAvatars, mediaAttachmentClickListener) }
     }
 

@@ -2,10 +2,10 @@ package io.getstream.chat.android.ui.suggestion.internal
 
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionBinding
@@ -18,7 +18,7 @@ internal class MentionsAdapter(
 ) : SimpleListAdapter<User, MentionsAdapter.MentionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionViewHolder {
         return StreamUiItemMentionBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
                 usernameStyle?.apply(binding.usernameTextView)
                 mentionNameStyle?.apply(binding.mentionNameTextView)

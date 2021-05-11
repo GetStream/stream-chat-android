@@ -23,7 +23,8 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelClient::sendImage` methods.
+- Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelClient::sendImage` methods.
+
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -34,8 +35,14 @@ Fixed the usage of `ProgressCallback` in `ChannelClient::sendFile` and `ChannelC
 - `notification.channel_truncated`
 - `notification.added_to_channel`
 - `notification.channel_deleted`
+
 ### ⚠️ Changed
+- **The client now uses a new serialization implementation by default**, which was [previously](https://github.com/GetStream/stream-chat-android/releases/tag/4.8.0) available as an opt-in API.
+    - This new implementation is more performant and greatly improves type safety in the networking code of the SDK.
+    - If you experience any issues after upgrading to this version of the SDK, you can call `useNewSerialization(false)` when building your `ChatClient` to revert to using the old implementation. Note however that we'll be removing the old implementation soon, so please report any issues found.
+    - To check if the new implementation is causing any failures in your app, enable error logging on `ChatClient` with the `logLevel` method, and look for the `NEW_SERIALIZATION_ERROR` tag in your logs while using the SDK.
 - Made the `user` field in `channel.hidden` and `notification.invite_accepter` events non nullable.
+
 ### ❌ Removed
 - Removed redundant events which can only be received by using webhooks:
   - `channel.created`
