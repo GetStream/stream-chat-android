@@ -315,7 +315,8 @@ public data class NotificationInviteAcceptedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val member: Member,
-) : CidEvent(), UserEvent, HasMember
+    override val channel: Channel,
+) : CidEvent(), UserEvent, HasMember, HasChannel
 
 /**
  * Triggered when the user rejects an invite
@@ -328,7 +329,8 @@ public data class NotificationInviteRejectedEvent(
     @SerializedName("channel_id") override val channelId: String,
     override val user: User,
     override val member: Member,
-) : CidEvent(), UserEvent, HasMember
+    override val channel: Channel,
+) : CidEvent(), UserEvent, HasMember, HasChannel
 
 /**
  * Triggered when the user is invited to join a channel
