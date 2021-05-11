@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.ClientState
 import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.UserState
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -91,6 +93,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    private val userStateService: UserStateService = UserStateService()
 ) {
 
     @InternalStreamChatApi
@@ -119,6 +122,7 @@ public class ChatClient internal constructor(
                     val user = event.me
                     val connectionId = event.connectionId
                     clientStateService.onConnected(user, connectionId)
+                    userStateService.onUserSet(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
                     notifications.onSetUser()
@@ -237,6 +241,7 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
     ) {
         clientStateService.onSetUser(user)
+        userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         notifySetUser(user)
         config.isAnonymous = false
@@ -291,6 +296,7 @@ public class ChatClient internal constructor(
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
+        userStateService.onSetAnonymous()
         connectionListener = object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 notifySetUser(data.user)
@@ -780,12 +786,13 @@ public class ChatClient internal constructor(
     public fun disconnect() {
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
-            clientStateService.state.userOrError().let { user ->
+            userStateService.state.userOrError().let { user ->
                 disconnectListeners.forEach { listener -> listener(user) }
             }
         }
         connectionListener = null
         clientStateService.onDisconnectRequested()
+        userStateService.onLogout()
         socket.disconnect()
         lifecycleObserver.dispose()
     }
@@ -1290,7 +1297,7 @@ public class ChatClient internal constructor(
     }
 
     public fun getCurrentUser(): User? {
-        return runCatching { clientStateService.state.userOrError() }.getOrNull()
+        return runCatching { userStateService.state.userOrError() }.getOrNull()
     }
 
     public fun getCurrentToken(): String? {
@@ -1408,7 +1415,7 @@ public class ChatClient internal constructor(
         }
     }
 
-    private fun isUserSet() = clientStateService.state !is ClientState.Idle
+    private fun isUserSet() = userStateService.state !is UserState.NotSet
 
     private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
         notifications.isValidRemoteMessage(remoteMessage)
