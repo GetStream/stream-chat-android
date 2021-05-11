@@ -219,12 +219,9 @@ public class ChannelListView @JvmOverloads constructor(
     public fun setChannels(channels: List<ChannelListItem>) {
         val filteredChannels = channels.filter(channelListItemPredicate::predicate)
 
-        @Suppress("DEPRECATION")
         if (filteredChannels.isEmpty()) {
-            @Suppress("DEPRECATION_ERROR")
             showEmptyStateView()
         } else {
-            @Suppress("DEPRECATION_ERROR")
             hideEmptyStateView()
         }
 
@@ -236,7 +233,6 @@ public class ChannelListView @JvmOverloads constructor(
     }
 
     public fun showLoadingView() {
-        @Suppress("DEPRECATION_ERROR")
         hideEmptyStateView()
         this.loadingView.isVisible = true
     }
@@ -249,27 +245,11 @@ public class ChannelListView @JvmOverloads constructor(
         this.simpleChannelListView.showLoadingMore(false)
     }
 
-    /**
-     * Shouldn't generally be called directly. Empty state updates are handled by
-     * [setChannels] automatically.
-     */
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "setChannels handles these changes automatically"
-    )
-    public fun showEmptyStateView() {
+    private fun showEmptyStateView() {
         this.emptyStateView.isVisible = true
     }
 
-    /**
-     * Shouldn't generally be called directly. Empty state updates are handled by
-     * [setChannels] automatically.
-     */
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "setChannels handles these changes automatically"
-    )
-    public fun hideEmptyStateView() {
+    private fun hideEmptyStateView() {
         this.emptyStateView.isVisible = false
     }
 

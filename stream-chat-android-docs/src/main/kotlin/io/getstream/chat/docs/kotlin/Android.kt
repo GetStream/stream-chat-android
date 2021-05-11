@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.ChatUI.avatarBitmapFactory
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
@@ -73,7 +72,6 @@ import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -500,18 +498,6 @@ class Android {
             messageListHeaderView.setBackButtonClickListener {
                 messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
             }
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/nessy/docs/chat_docs/android_chat_ux/suggestion_list_view">Suggestion List View</a>
-     */
-    class SuggestionList : Fragment() {
-        lateinit var messageInputView: MessageInputView
-        lateinit var suggestionListView: SuggestionListView
-
-        fun connectingSuggestionListViewWithMessageInputView() {
-            messageInputView.setSuggestionListView(suggestionListView)
         }
     }
 
