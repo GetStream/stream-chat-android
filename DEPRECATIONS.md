@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| Old serialization implementation<br/>*client* | 2021.05.10 | 2021.07.10 ⌛ | 2021.09.10 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
+| Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.07.10 ⌛ | 2021.09.10 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.05 ⌛ | 2021.07.05 ⌛ | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
