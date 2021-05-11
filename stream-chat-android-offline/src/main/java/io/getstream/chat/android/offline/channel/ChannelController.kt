@@ -1096,7 +1096,6 @@ public class ChannelController internal constructor(
                 upsertEventMessage(event.message)
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
-                event.watcherCount?.let { setWatcherCount(it) }
             }
             is ReactionNewEvent -> {
                 upsertMessage(event.message)
@@ -1169,7 +1168,6 @@ public class ChannelController internal constructor(
             }
             is NotificationMarkReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
-                event.watcherCount?.let { setWatcherCount(it) }
             }
             is MarkAllReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))

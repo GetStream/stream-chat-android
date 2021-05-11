@@ -98,7 +98,6 @@ internal fun randomMessageReadEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    watcherCount: Int = randomInt(),
 ): MessageReadEvent {
     return MessageReadEvent(
         type = type,
@@ -107,7 +106,6 @@ internal fun randomMessageReadEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        watcherCount = watcherCount,
     )
 }
 
@@ -118,7 +116,6 @@ internal fun randomNotificationMarkReadEvent(
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
-    watcherCount: Int = randomInt(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
 ): NotificationMarkReadEvent {
@@ -129,7 +126,6 @@ internal fun randomNotificationMarkReadEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
     )
@@ -203,7 +199,6 @@ internal fun randomNotificationMessageNewEvent(
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
     message: Message = randomMessage(),
-    watcherCount: Int = randomInt(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
 ): NotificationMessageNewEvent {
@@ -215,7 +210,6 @@ internal fun randomNotificationMessageNewEvent(
         channelId = channelId,
         channel = channel,
         message = message,
-        watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
     )
@@ -229,7 +223,6 @@ internal fun randomMessageUpdateEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
-    watcherCount: Int = randomInt(),
 ) = MessageUpdatedEvent(
     type = type,
     createdAt = createdAt,
@@ -238,7 +231,6 @@ internal fun randomMessageUpdateEvent(
     channelType = channelType,
     channelId = channelId,
     message = message,
-    watcherCount = watcherCount,
 )
 
 internal fun randomAttachmentsWithFile(

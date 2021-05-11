@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -147,7 +146,6 @@ internal class MoshiChatParser : ChatParser {
             is ReactionNewEvent -> message.enrichWithCid(cid)
             is ReactionUpdateEvent -> message.enrichWithCid(cid)
             is ReactionDeletedEvent -> message.enrichWithCid(cid)
-            is ChannelCreatedEvent -> message?.enrichWithCid(cid)
             is ChannelUpdatedEvent -> message?.enrichWithCid(cid)
             is ChannelUpdatedByUserEvent -> message?.enrichWithCid(cid)
             is NotificationMessageNewEvent -> message.enrichWithCid(cid)

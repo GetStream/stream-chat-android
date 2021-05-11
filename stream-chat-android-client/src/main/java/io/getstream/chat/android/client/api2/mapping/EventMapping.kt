@@ -1,24 +1,17 @@
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.ChannelCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelMuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUnmuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelsMuteEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelsUnmuteEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -36,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDelete
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
@@ -49,27 +43,18 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMutedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUnmutedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UsersMutedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UsersUnmutedEventDto
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -91,6 +76,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -103,14 +89,10 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
 
 internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     return UpstreamConnectedEventDto(
@@ -124,19 +106,14 @@ internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
 internal fun ChatEventDto.toDomain(): ChatEvent {
     return when (this) {
         is NewMessageEventDto -> toDomain()
-        is ChannelCreatedEventDto -> toDomain()
         is ChannelDeletedEventDto -> toDomain()
         is ChannelHiddenEventDto -> toDomain()
-        is ChannelMuteEventDto -> toDomain()
         is ChannelTruncatedEventDto -> toDomain()
-        is ChannelUnmuteEventDto -> toDomain()
         is ChannelUpdatedByUserEventDto -> toDomain()
         is ChannelUpdatedEventDto -> toDomain()
         is ChannelUserBannedEventDto -> toDomain()
         is ChannelUserUnbannedEventDto -> toDomain()
         is ChannelVisibleEventDto -> toDomain()
-        is ChannelsMuteEventDto -> toDomain()
-        is ChannelsUnmuteEventDto -> toDomain()
         is ConnectedEventDto -> toDomain()
         is ConnectingEventDto -> toDomain()
         is DisconnectedEventDto -> toDomain()
@@ -156,6 +133,7 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
         is NotificationChannelMutesUpdatedEventDto -> toDomain()
         is NotificationChannelTruncatedEventDto -> toDomain()
         is NotificationInviteAcceptedEventDto -> toDomain()
+        is NotificationInviteRejectedEventDto -> toDomain()
         is NotificationInvitedEventDto -> toDomain()
         is NotificationMarkReadEventDto -> toDomain()
         is NotificationMessageNewEventDto -> toDomain()
@@ -168,28 +146,11 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
         is TypingStopEventDto -> toDomain()
         is UnknownEventDto -> toDomain()
         is UserDeletedEventDto -> toDomain()
-        is UserMutedEventDto -> toDomain()
         is UserPresenceChangedEventDto -> toDomain()
         is UserStartWatchingEventDto -> toDomain()
         is UserStopWatchingEventDto -> toDomain()
-        is UserUnmutedEventDto -> toDomain()
         is UserUpdatedEventDto -> toDomain()
-        is UsersMutedEventDto -> toDomain()
-        is UsersUnmutedEventDto -> toDomain()
     }
-}
-
-private fun ChannelCreatedEventDto.toDomain(): ChannelCreatedEvent {
-    return ChannelCreatedEvent(
-        type = type,
-        createdAt = created_at,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(),
-        message = message?.toDomain(),
-        channel = channel.toDomain(),
-    )
 }
 
 private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent {
@@ -211,24 +172,8 @@ private fun ChannelHiddenEventDto.toDomain(): ChannelHiddenEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        user = user?.toDomain(),
+        user = user.toDomain(),
         clearHistory = clear_history,
-    )
-}
-
-private fun ChannelMuteEventDto.toDomain(): ChannelMuteEvent {
-    return ChannelMuteEvent(
-        type = type,
-        createdAt = created_at,
-        channelMute = mute.toDomain(),
-    )
-}
-
-private fun ChannelsMuteEventDto.toDomain(): ChannelsMuteEvent {
-    return ChannelsMuteEvent(
-        type = type,
-        createdAt = created_at,
-        channelsMute = mutes.map(DownstreamChannelMuteDto::toDomain),
     )
 }
 
@@ -241,22 +186,6 @@ private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
         channelId = channel_id,
         user = user.toDomain(),
         channel = channel.toDomain(),
-    )
-}
-
-private fun ChannelUnmuteEventDto.toDomain(): ChannelUnmuteEvent {
-    return ChannelUnmuteEvent(
-        type = type,
-        createdAt = created_at,
-        channelMute = mute.toDomain(),
-    )
-}
-
-private fun ChannelsUnmuteEventDto.toDomain(): ChannelsUnmuteEvent {
-    return ChannelsUnmuteEvent(
-        type = type,
-        createdAt = created_at,
-        channelsMute = mutes.map(DownstreamChannelMuteDto::toDomain),
     )
 }
 
@@ -349,7 +278,6 @@ private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent {
         channelType = channel_type,
         channelId = channel_id,
         message = message.toDomain(),
-        watcherCount = watcher_count,
     )
 }
 
@@ -361,7 +289,6 @@ private fun MessageReadEventDto.toDomain(): MessageReadEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        watcherCount = watcher_count,
     )
 }
 
@@ -374,7 +301,6 @@ private fun MessageUpdatedEventDto.toDomain(): MessageUpdatedEvent {
         channelType = channel_type,
         channelId = channel_id,
         message = message.toDomain(),
-        watcherCount = watcher_count,
     )
 }
 
@@ -401,6 +327,8 @@ private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToCh
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
@@ -412,7 +340,8 @@ private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDe
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
-        user = user?.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
@@ -431,8 +360,9 @@ private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannel
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        user = user?.toDomain(),
         channel = channel.toDomain(),
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
     )
 }
 
@@ -443,8 +373,20 @@ private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcc
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        user = user?.toDomain(),
+        user = user.toDomain(),
         member = member.toDomain(),
+    )
+}
+
+private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRejectedEvent {
+    return NotificationInviteRejectedEvent(
+        type = type,
+        createdAt = created_at,
+        cid = cid,
+        channelType = channel_type,
+        channelId = channel_id,
+        user = user.toDomain(),
+        member = member.toDomain()
     )
 }
 
@@ -455,7 +397,7 @@ private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        user = user?.toDomain(),
+        user = user.toDomain(),
         member = member.toDomain(),
     )
 }
@@ -468,7 +410,6 @@ private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        watcherCount = watcher_count,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
     )
@@ -479,7 +420,6 @@ private fun MarkAllReadEventDto.toDomain(): MarkAllReadEvent {
         type = type,
         createdAt = created_at,
         user = user.toDomain(),
-        unreadCount = unread_count,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
     )
@@ -494,7 +434,6 @@ private fun NotificationMessageNewEventDto.toDomain(): NotificationMessageNewEve
         channelId = channel_id,
         channel = channel.toDomain(),
         message = message.toDomain(),
-        watcherCount = watcher_count,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
     )
@@ -516,6 +455,7 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemov
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        member = member.toDomain()
     )
 }
 
@@ -610,24 +550,6 @@ private fun UserDeletedEventDto.toDomain(): UserDeletedEvent {
     )
 }
 
-private fun UserMutedEventDto.toDomain(): UserMutedEvent {
-    return UserMutedEvent(
-        type = type,
-        createdAt = created_at,
-        user = user.toDomain(),
-        targetUser = target_user.toDomain(),
-    )
-}
-
-private fun UsersMutedEventDto.toDomain(): UsersMutedEvent {
-    return UsersMutedEvent(
-        type = type,
-        createdAt = created_at,
-        user = user.toDomain(),
-        targetUsers = target_users.map(DownstreamUserDto::toDomain),
-    )
-}
-
 private fun UserPresenceChangedEventDto.toDomain(): UserPresenceChangedEvent {
     return UserPresenceChangedEvent(
         type = type,
@@ -676,24 +598,6 @@ private fun GlobalUserUnbannedEventDto.toDomain(): GlobalUserUnbannedEvent {
         type = type,
         createdAt = created_at,
         user = user.toDomain(),
-    )
-}
-
-private fun UserUnmutedEventDto.toDomain(): UserUnmutedEvent {
-    return UserUnmutedEvent(
-        type = type,
-        createdAt = created_at,
-        user = user.toDomain(),
-        targetUser = target_user.toDomain(),
-    )
-}
-
-private fun UsersUnmutedEventDto.toDomain(): UsersUnmutedEvent {
-    return UsersUnmutedEvent(
-        type = type,
-        createdAt = created_at,
-        user = user.toDomain(),
-        targetUsers = target_users.map(DownstreamUserDto::toDomain),
     )
 }
 

@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.subscribeFor
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.models.Channel
@@ -561,8 +561,8 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 }
 
             // Get updates about muted channels
-            client.subscribeFor<ChannelsMuteEvent> { event ->
-                val mutes: List<ChannelMute> = event.channelsMute
+            client.subscribeFor<NotificationChannelMutesUpdatedEvent> { event ->
+                val mutes: List<ChannelMute> = event.me.channelMutes
             }
         }
 

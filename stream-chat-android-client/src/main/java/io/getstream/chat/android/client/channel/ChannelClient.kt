@@ -12,19 +12,14 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -46,6 +41,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -58,14 +54,10 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -247,14 +239,9 @@ public class ChannelClient internal constructor(
 
     private fun isRelevantForChannel(event: ChatEvent): Boolean {
         return when (event) {
-            is ChannelCreatedEvent -> event.cid == cid
             is ChannelDeletedEvent -> event.cid == cid
             is ChannelHiddenEvent -> event.cid == cid
-            is ChannelMuteEvent -> event.channelMute.channel.cid == cid
-            is ChannelsMuteEvent -> event.channelsMute.any { it.channel.cid == cid }
             is ChannelTruncatedEvent -> event.cid == cid
-            is ChannelUnmuteEvent -> event.channelMute.channel.cid == cid
-            is ChannelsUnmuteEvent -> event.channelsMute.any { it.channel.cid == cid }
             is ChannelUpdatedEvent -> event.cid == cid
             is ChannelUpdatedByUserEvent -> event.cid == cid
             is ChannelVisibleEvent -> event.cid == cid
@@ -269,6 +256,7 @@ public class ChannelClient internal constructor(
             is NotificationChannelDeletedEvent -> event.cid == cid
             is NotificationChannelTruncatedEvent -> event.cid == cid
             is NotificationInviteAcceptedEvent -> event.cid == cid
+            is NotificationInviteRejectedEvent -> event.cid == cid
             is NotificationInvitedEvent -> event.cid == cid
             is NotificationMarkReadEvent -> event.cid == cid
             is NotificationMessageNewEvent -> event.cid == cid
@@ -288,12 +276,8 @@ public class ChannelClient internal constructor(
             is NotificationMutesUpdatedEvent,
             is GlobalUserBannedEvent,
             is UserDeletedEvent,
-            is UserMutedEvent,
-            is UsersMutedEvent,
             is UserPresenceChangedEvent,
             is GlobalUserUnbannedEvent,
-            is UserUnmutedEvent,
-            is UsersUnmutedEvent,
             is UserUpdatedEvent,
             is ConnectedEvent,
             is ConnectingEvent,
