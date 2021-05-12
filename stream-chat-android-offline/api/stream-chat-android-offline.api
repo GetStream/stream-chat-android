@@ -243,13 +243,6 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Th
 	public abstract fun getThreadId ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/livedata/service/sync/PushMessageSyncHandler {
-	public fun <init> (Landroid/app/Service;)V
-	public final fun isStreamMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
-	public final fun onMessageReceived (Lcom/google/firebase/messaging/RemoteMessage;)V
-	public final fun onNewToken (Ljava/lang/String;)V
-}
-
 public abstract interface class io/getstream/chat/android/livedata/usecase/CancelMessage {
 	public abstract fun invoke (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 }
