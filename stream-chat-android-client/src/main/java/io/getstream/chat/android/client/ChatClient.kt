@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -481,12 +482,10 @@ public class ChatClient internal constructor(
     }
 
     public fun reconnectSocket() {
-        /*when (val state = clientStateService.state) {
-            is ClientState.Anonymous -> socket.connectAnonymously()
-            is ClientState.User -> socket.connect(state.user)
-            is ClientState.Idle -> {
-            }
-        }.exhaustive*/
+        when (clientStateService.state) {
+            is ClientState.Disconnected -> socket.connect(userStateService.state.userOrError())
+            else -> Unit
+        }.exhaustive
     }
 
     public fun addSocketListener(listener: SocketListener) {
