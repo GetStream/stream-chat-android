@@ -12,7 +12,7 @@ sidebar_position: 3
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light_mode](/img/channel_action_light.png)|![dark_mode](/img/channel_action_dark.png)|
+|![light_mode](../../assets/channel_action_light.png)|![dark_mode](../../assets/channel_action_dark.png)|
 
 There are some actions (e.g. clicking on the current user avatar, member, channel, or _Viewing Info_) that require additional handling:
 ```kotlin

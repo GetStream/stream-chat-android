@@ -26,7 +26,7 @@ One example of configuration:
 
 Will create this version of the `MessageInputView`:
 
-![example1 1](/img/message_input_view_example1.jpeg)
+![example1 1](../../../assets/message_input_view_example1.jpeg)
 
 With a different configuration:
 ```xml
@@ -48,7 +48,7 @@ With a different configuration:
 
 we get:
 
-![example2 1](/img/message_input_view_example2.jpeg)
+![example2 1](../../../assets/message_input_view_example2.jpeg)
 
 And different configurations can be used to achieve the desired appearance of `MessageListView`. If you don't have the need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageInputViewStyle` as described in the next section.
 

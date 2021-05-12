@@ -7,7 +7,7 @@ Let's make an example and modify _ChannelListViewStyle_ programmatically. We wan
 
 | Before | After |
 | --- | --- |
-|![before](/img/channel_list_view_style_before.png)|![after](/img/channel_list_view_style_after.png)|
+|![before](../../../assets/channel_list_view_style_before.png)|![after](../../../assets/channel_list_view_style_after.png)|
 
 In order to achieve such effect we need to provide custom _TransformStyle.channelListStyleTransformer_:
 ```kotlin

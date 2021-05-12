@@ -5,7 +5,7 @@ sidebar_position: 3
 ---
 `ChannelListView` provides a mechanism for completely changing the default view holders, as well as introducing different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
 
-![customer view holder](/img/custom_view_holder.png)
+![customer view holder](../../../assets/custom_view_holder.png)
 
 In order to achieve such effect, we need to do the following steps. We are going to use _View Binding_ to simplify things:
 1. Create `custom_channel_list_item.xml` layout:

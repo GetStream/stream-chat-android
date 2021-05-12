@@ -25,4 +25,4 @@ ChatUI.markdown = markdown
 
 Then the SDK will parse markdown automatically:
 
-![mardown messages](/img/markdown_support.png)
+![mardown messages](../../../assets/markdown_support.png)
