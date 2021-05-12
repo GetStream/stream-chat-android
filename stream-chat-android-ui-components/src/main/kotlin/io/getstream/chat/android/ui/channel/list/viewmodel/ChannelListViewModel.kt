@@ -35,7 +35,7 @@ public class ChannelListViewModel(
         eq("type", "messaging"),
         `in`("members", listOf(chatDomain.currentUser.id)),
         or(Filters.notExists("draft"), ne("draft", true)),
-        ne("hidden", false)
+        eq("hidden", false)
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,

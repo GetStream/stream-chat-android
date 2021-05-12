@@ -32,7 +32,7 @@ public class ChannelsViewModel(
         eq("type", "messaging"),
         Filters.`in`("members", listOf(chatDomain.currentUser.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-        Filters.ne("hidden", false)
+        eq("hidden", false)
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
