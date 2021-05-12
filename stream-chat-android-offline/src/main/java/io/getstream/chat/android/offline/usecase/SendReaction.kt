@@ -4,8 +4,8 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.livedata.utils.validateCid
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.utils.validateCid
 
 internal class SendReaction(private val domainImpl: ChatDomainImpl) {
     /**
@@ -14,7 +14,7 @@ internal class SendReaction(private val domainImpl: ChatDomainImpl) {
      * @param cid: the full channel id i. e. messaging:123
      * @param reaction the reaction to add
      * @param enforceUnique if set to true, new reaction will replace all reactions the user has on this message
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(cid: String, reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {

@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
+import android.view.ContextThemeWrapper
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -15,6 +17,7 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import io.getstream.chat.android.ui.R
 
 @Px
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
@@ -49,4 +52,13 @@ internal fun Context?.getFragmentManager(): FragmentManager? {
 internal fun Context.copyToClipboard(text: String) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
+}
+
+internal fun Context.createStreamThemeWrapper(): Context {
+    val typedValue = TypedValue()
+    return when {
+        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
+        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
+        else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
+    }
 }

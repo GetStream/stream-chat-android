@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemErrorMessageBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
@@ -12,7 +12,7 @@ internal class ErrorMessageViewHolder(
     parent: ViewGroup,
     private val style: MessageListItemStyle,
     internal val binding: StreamUiItemErrorMessageBinding = StreamUiItemErrorMessageBinding.inflate(
-        parent.inflater,
+        parent.streamThemeInflater,
         parent,
         false
     ),

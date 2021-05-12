@@ -7,10 +7,10 @@ import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.extensions.inflater
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMediaBinding
 
@@ -22,7 +22,7 @@ internal class SelectedMediaAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedMediaAttachmentViewHolder {
         return StreamUiItemSelectedAttachmentMediaBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { SelectedMediaAttachmentViewHolder(it, onAttachmentCancelled, attachmentMaxFileSize) }
     }
 

@@ -25,7 +25,6 @@ class ChatInitializer(private val context: Context) {
             .loggerHandler(FirebaseLogger)
             .notifications(notificationHandler)
             .logLevel(logLevel)
-            .useNewSerialization(true)
             .build()
 
         val domain = ChatDomain.Builder(client, context)

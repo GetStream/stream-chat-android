@@ -72,9 +72,7 @@ public class AndroidIntroduction {
         });
 
         // Watching a channel's state using the offline library
-        chatDomain.getUseCases()
-                .getWatchChannel()
-                .invoke("messaging:travel", 10)
+        chatDomain.watchChannel("messaging:travel", 10)
                 .enqueue(result -> {
                     if (result.isSuccess()) {
                         ChannelController channelController = result.data();
@@ -103,7 +101,7 @@ public class AndroidIntroduction {
         });
 
         // Using the offline support library
-        chatDomain.getUseCases().getSendMessage().invoke(message).enqueue(result -> {
+        chatDomain.sendMessage(message).enqueue(result -> {
             if (result.isSuccess()) {
                 Message sentMessage = result.data();
             } else {
@@ -134,8 +132,7 @@ public class AndroidIntroduction {
         });
 
         // Using the offline library to query channels
-        chatDomain.getUseCases().getQueryChannels()
-                .invoke(filter, sort, limit, messageLimit)
+        chatDomain.queryChannels(filter, sort, limit, messageLimit)
                 .enqueue(result -> {
                     if (result.isSuccess()) {
                         QueryChannelsController queryChannelsController = result.data();

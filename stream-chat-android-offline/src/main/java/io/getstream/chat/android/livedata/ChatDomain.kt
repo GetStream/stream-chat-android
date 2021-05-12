@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.repository.database.ChatDatabase
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
@@ -106,7 +106,7 @@ public interface ChatDomain {
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
         message = "This property is deprecated now. Use cases are now exposed by ChatDomain directly as functions.",
         replaceWith = ReplaceWith("Replace this property call by obtaining a specific use case directly from ChatDomain."),
     )

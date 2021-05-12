@@ -70,7 +70,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
@@ -178,7 +177,8 @@ public class ChatClient internal constructor(
      */
     @Deprecated(
         message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         setUser(user, ConstantTokenProvider(token), listener)
@@ -216,7 +216,8 @@ public class ChatClient internal constructor(
      */
     @Deprecated(
         message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setUser(
         user: User,
@@ -257,6 +258,7 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
+        @Suppress("DEPRECATION_ERROR")
         return createInitListenerCall { initListener -> setUser(user, tokenProvider, initListener) }
     }
 
@@ -284,7 +286,8 @@ public class ChatClient internal constructor(
 
     @Deprecated(
         message = "Use connectAnonymousUser instead",
-        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         clientStateService.onSetAnonymousUser()
@@ -310,7 +313,8 @@ public class ChatClient internal constructor(
 
     @Deprecated(
         message = "Use connectGuestUser instead",
-        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })")
+        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })"),
+        level = DeprecationLevel.ERROR,
     )
     public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
         getGuestToken(userId, username).enqueue {
@@ -1410,7 +1414,7 @@ public class ChatClient internal constructor(
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 30_000L
         private var cdnTimeout = 30_000L
-        private var enableMoshi = false
+        private var enableMoshi = true
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
@@ -1445,7 +1449,20 @@ public class ChatClient internal constructor(
             return this
         }
 
-        @ExperimentalStreamChatApi
+        /**
+         * A new serialization implementation is now used by default by the SDK.
+         *
+         * If you experience any issues with the new implementation, call this builder method with `false`
+         * as the parameter to revert to the old implementation. Note that the old implementation will be
+         * removed soon.
+         *
+         * To check for issues caused by new serialization, enable error logs using the [logLevel]
+         * method and look for the NEW_SERIALIZATION_ERROR tag in your logs.
+         */
+        @Deprecated(
+            message = "Old serialization will be removed soon",
+            level = DeprecationLevel.WARNING,
+        )
         public fun useNewSerialization(enabled: Boolean): Builder = apply {
             this.enableMoshi = enabled
         }

@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.randomConfig
+import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runBlockingTest

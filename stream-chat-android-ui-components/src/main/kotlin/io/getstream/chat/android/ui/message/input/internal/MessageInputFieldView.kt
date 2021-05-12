@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
@@ -21,8 +20,10 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.leftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
@@ -33,7 +34,7 @@ import kotlin.properties.Delegates
 
 internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
-        StreamUiMessageInputFieldBinding.inflate(LayoutInflater.from(context), this, true)
+        StreamUiMessageInputFieldBinding.inflate(streamThemeInflater, this, true)
 
     private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_field_attachment_hint)
     private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_field_message_hint)
@@ -80,12 +81,12 @@ internal class MessageInputFieldView : FrameLayout {
             binding.messageEditText.hint = hint
         }
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context.createStreamThemeWrapper())
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
+        context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     )

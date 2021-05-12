@@ -360,7 +360,6 @@ internal class ChannelsApiCallsTests {
             "${mock.channelType}:${mock.channelId}",
             mock.channelType,
             mock.channelId,
-            0
         )
 
         Mockito.`when`(

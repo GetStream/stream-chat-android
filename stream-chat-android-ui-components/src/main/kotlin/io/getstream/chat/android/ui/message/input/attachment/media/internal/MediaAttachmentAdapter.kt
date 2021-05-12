@@ -10,8 +10,8 @@ import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.extensions.inflater
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 
 internal class MediaAttachmentAdapter(
@@ -22,7 +22,7 @@ internal class MediaAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
         return StreamUiItemAttachmentMediaBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { MediaAttachmentViewHolder(it, onAttachmentSelected) }
     }
 

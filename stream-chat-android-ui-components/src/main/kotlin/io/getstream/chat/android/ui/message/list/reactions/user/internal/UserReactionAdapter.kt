@@ -7,12 +7,12 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.inflater
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding
 
 internal class UserReactionAdapter :
@@ -20,7 +20,7 @@ internal class UserReactionAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
         return StreamUiItemUserReactionBinding
-            .inflate(parent.context.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let(UserReactionAdapter::UserReactionViewHolder)
     }
 

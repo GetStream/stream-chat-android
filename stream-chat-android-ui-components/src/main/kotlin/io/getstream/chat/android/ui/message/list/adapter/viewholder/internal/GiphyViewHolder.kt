@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -15,7 +15,7 @@ internal class GiphyViewHolder(
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
-        parent.inflater,
+        parent.streamThemeInflater,
         parent,
         false
     ),

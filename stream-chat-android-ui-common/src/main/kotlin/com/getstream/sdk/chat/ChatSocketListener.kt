@@ -2,19 +2,14 @@ package com.getstream.sdk.chat
 
 import com.getstream.sdk.chat.enums.OnlineStatus
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -36,6 +31,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
@@ -48,14 +44,10 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.core.internal.exhaustive
@@ -64,7 +56,7 @@ internal class ChatSocketListener(
     private val onOnlineStatusListener: (OnlineStatus) -> Unit,
     private val onMeListener: (User) -> Unit,
     private val onTotalUnreadCountListener: (Int) -> Unit,
-    private val onUnreadChannels: (Int) -> Unit
+    private val onUnreadChannels: (Int) -> Unit,
 ) : SocketListener() {
     override fun onConnected(event: ConnectedEvent) {
         onMeListener(event.me)
@@ -100,10 +92,7 @@ internal class ChatSocketListener(
             is ConnectedEvent -> {
                 onConnected(event)
             }
-            is ChannelCreatedEvent,
             is ChannelTruncatedEvent,
-            is ChannelMuteEvent,
-            is ChannelUnmuteEvent,
             is ChannelDeletedEvent,
             is ChannelHiddenEvent,
             is ChannelUpdatedEvent,
@@ -119,6 +108,7 @@ internal class ChatSocketListener(
             is NotificationChannelDeletedEvent,
             is NotificationChannelTruncatedEvent,
             is NotificationInviteAcceptedEvent,
+            is NotificationInviteRejectedEvent,
             is NotificationInvitedEvent,
             is NotificationRemovedFromChannelEvent,
             is ReactionDeletedEvent,
@@ -130,24 +120,19 @@ internal class ChatSocketListener(
             is UserStartWatchingEvent,
             is UserStopWatchingEvent,
             is ChannelUserUnbannedEvent,
-            is ChannelsMuteEvent,
-            is ChannelsUnmuteEvent,
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,
             is GlobalUserBannedEvent,
             is UserDeletedEvent,
-            is UserMutedEvent,
-            is UsersMutedEvent,
             is UserPresenceChangedEvent,
             is GlobalUserUnbannedEvent,
-            is UserUnmutedEvent,
-            is UsersUnmutedEvent,
             is UserUpdatedEvent,
             is ConnectingEvent,
             is DisconnectedEvent,
             is ErrorEvent,
-            is UnknownEvent -> { }
+            is UnknownEvent,
+            -> Unit
         }.exhaustive
     }
 }

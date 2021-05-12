@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.extensions.inflater
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 
@@ -30,7 +30,7 @@ internal class FileAttachmentAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return StreamUiItemAttachmentFileBinding
-            .inflate(parent.inflater, parent, false)
+            .inflate(parent.streamThemeInflater, parent, false)
             .let { FileAttachmentViewHolder(it, onAttachmentSelected) }
     }
 

@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.search.list
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.Toast
 import android.widget.ViewFlipper
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -11,6 +10,8 @@ import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter
 
@@ -26,13 +27,13 @@ public class SearchResultListView : ViewFlipper {
         const val LOADING = 2
     }
 
-    private val binding = StreamUiSearchResultListViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = StreamUiSearchResultListViewBinding.inflate(streamThemeInflater, this)
 
-    public constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
     }
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(attrs)
     }
 
