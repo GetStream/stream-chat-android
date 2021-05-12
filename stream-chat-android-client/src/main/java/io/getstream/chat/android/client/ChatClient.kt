@@ -233,6 +233,7 @@ public class ChatClient internal constructor(
         }
         initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
+        clientStateService.onConnectionRequested()
         socket.connect(user)
     }
 
@@ -240,7 +241,6 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: TokenProvider,
     ) {
-        clientStateService.onConnectionRequested()
         userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         notifySetUser(user)
