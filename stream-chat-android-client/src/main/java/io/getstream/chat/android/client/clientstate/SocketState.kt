@@ -1,10 +1,10 @@
 package io.getstream.chat.android.client.clientstate
 
-internal sealed class ClientState {
-    object Idle : ClientState()
-    object Pending : ClientState()
-    class Connected(val connectionId: String) : ClientState()
-    object Disconnected : ClientState()
+internal sealed class SocketState {
+    object Idle : SocketState()
+    object Pending : SocketState()
+    class Connected(val connectionId: String) : SocketState()
+    object Disconnected : SocketState()
 
     internal fun connectionIdOrError(): String = when (this) {
         is Connected -> connectionId

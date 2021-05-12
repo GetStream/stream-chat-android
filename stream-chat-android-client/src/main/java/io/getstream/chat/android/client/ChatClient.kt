@@ -25,8 +25,8 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.clientstate.ClientState
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.SocketState
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
@@ -91,7 +91,7 @@ public class ChatClient internal constructor(
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val clientStateService: ClientStateService = ClientStateService(),
+    private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val userStateService: UserStateService = UserStateService(),
 ) {
@@ -121,14 +121,14 @@ public class ChatClient internal constructor(
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
-                    clientStateService.onConnected(connectionId)
+                    socketStateService.onConnected(connectionId)
                     userStateService.onUserSet(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
-                    clientStateService.onDisconnected()
+                    socketStateService.onDisconnected()
                 }
             }
         }
@@ -233,7 +233,7 @@ public class ChatClient internal constructor(
         }
         initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
-        clientStateService.onConnectionRequested()
+        socketStateService.onConnectionRequested()
         socket.connect(user)
     }
 
@@ -295,7 +295,7 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        clientStateService.onConnectionRequested()
+        socketStateService.onConnectionRequested()
         userStateService.onSetAnonymous()
         connectionListener = object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
@@ -482,8 +482,8 @@ public class ChatClient internal constructor(
     }
 
     public fun reconnectSocket() {
-        when (clientStateService.state) {
-            is ClientState.Disconnected -> when (val userState = userStateService.state) {
+        when (socketStateService.state) {
+            is SocketState.Disconnected -> when (val userState = userStateService.state) {
                 is UserState.User.UserSet -> socket.connect(userState.user)
                 is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
                 else -> error("Weird user state ${userState.javaClass.simpleName} without user being set!")
@@ -793,7 +793,7 @@ public class ChatClient internal constructor(
             }
         }
         connectionListener = null
-        clientStateService.onDisconnectRequested()
+        socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
         lifecycleObserver.dispose()
@@ -1295,7 +1295,7 @@ public class ChatClient internal constructor(
     }
 
     public fun getConnectionId(): String? {
-        return runCatching { clientStateService.state.connectionIdOrError() }.getOrNull()
+        return runCatching { socketStateService.state.connectionIdOrError() }.getOrNull()
     }
 
     public fun getCurrentUser(): User? {
@@ -1312,7 +1312,7 @@ public class ChatClient internal constructor(
     }
 
     public fun isSocketConnected(): Boolean {
-        return clientStateService.state is ClientState.Connected
+        return socketStateService.state is SocketState.Connected
     }
 
     /**
@@ -1563,7 +1563,7 @@ public class ChatClient internal constructor(
                 module.socket(),
                 module.notifications(),
                 tokenManager,
-                module.clientStateService,
+                module.socketStateService,
                 module.queryChannelsPostponeHelper,
                 module.userStateService
             )

@@ -5,13 +5,13 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 
-internal class ClientStateServiceTests {
+internal class SocketStateServiceTests {
 
     @Test
     fun `When initialized Should have Idle state`() {
         val sut = Fixture().please()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -20,7 +20,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnected()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnectRequested()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class ClientStateServiceTests {
 
         sut.onConnected(randomString())
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class ClientStateServiceTests {
 
         sut.onConnectionRequested()
 
-        sut.state shouldBeInstanceOf ClientState.Pending::class
+        sut.state shouldBeInstanceOf SocketState.Pending::class
     }
 
     @Test
@@ -56,7 +56,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnectRequested()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -75,8 +75,8 @@ internal class ClientStateServiceTests {
 
         sut.onConnected("connectionId")
 
-        sut.state shouldBeInstanceOf ClientState.Connected::class
-        val connectedState = sut.state as ClientState.Connected
+        sut.state shouldBeInstanceOf SocketState.Connected::class
+        val connectedState = sut.state as SocketState.Connected
         connectedState.connectionId shouldBeEqualTo "connectionId"
     }
 
@@ -86,7 +86,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnected()
 
-        sut.state shouldBeInstanceOf ClientState.Disconnected::class
+        sut.state shouldBeInstanceOf SocketState.Disconnected::class
     }
 
     @Test
@@ -95,7 +95,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnectRequested()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -104,7 +104,7 @@ internal class ClientStateServiceTests {
 
         sut.onConnected("connectionId")
 
-        sut.state shouldBeInstanceOf ClientState.Connected::class
+        sut.state shouldBeInstanceOf SocketState.Connected::class
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnectRequested()
 
-        sut.state shouldBeEqualTo ClientState.Idle
+        sut.state shouldBeEqualTo SocketState.Idle
     }
 
     @Test
@@ -132,8 +132,8 @@ internal class ClientStateServiceTests {
 
         sut.onConnected("someConnectionId")
 
-        sut.state shouldBeInstanceOf ClientState.Connected::class
-        val connectedState = sut.state as ClientState.Connected
+        sut.state shouldBeInstanceOf SocketState.Connected::class
+        val connectedState = sut.state as SocketState.Connected
         connectedState.connectionId shouldBeEqualTo "someConnectionId"
     }
 
@@ -143,11 +143,11 @@ internal class ClientStateServiceTests {
 
         sut.onDisconnectRequested()
 
-        sut.state shouldBeInstanceOf ClientState.Idle::class
+        sut.state shouldBeInstanceOf SocketState.Idle::class
     }
 
     private class Fixture {
-        private val clientStateService = ClientStateService()
+        private val clientStateService = SocketStateService()
 
         fun please() = clientStateService
 

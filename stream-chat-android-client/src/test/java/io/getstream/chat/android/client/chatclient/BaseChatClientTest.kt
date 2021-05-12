@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.chatclient
 
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.socket.ChatSocket
 import org.junit.jupiter.api.BeforeEach
@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations
 
 internal open class BaseChatClientTest {
     @Mock
-    protected lateinit var clientStateService: ClientStateService
+    protected lateinit var socketStateService: SocketStateService
     @Mock
     protected lateinit var userStateService: UserStateService
     @Mock
@@ -28,7 +28,7 @@ internal open class BaseChatClientTest {
             socket = socket,
             notifications = mock(),
             tokenManager = mock(),
-            clientStateService = clientStateService,
+            clientStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userStateService = userStateService,
         )

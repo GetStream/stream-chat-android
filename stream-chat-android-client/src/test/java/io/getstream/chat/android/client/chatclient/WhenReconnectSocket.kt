@@ -5,7 +5,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.clientstate.ClientState
+import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.randomString
@@ -84,19 +84,19 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
     inner class Fixture {
         fun givenIdleConnectionState() = apply {
-            whenever(clientStateService.state) doReturn ClientState.Idle
+            whenever(socketStateService.state) doReturn SocketState.Idle
         }
 
         fun givenPendingConnectionState() = apply {
-            whenever(clientStateService.state) doReturn ClientState.Pending
+            whenever(socketStateService.state) doReturn SocketState.Pending
         }
 
         fun givenConnectedConnectionState() = apply {
-            whenever(clientStateService.state) doReturn ClientState.Connected(randomString())
+            whenever(socketStateService.state) doReturn SocketState.Connected(randomString())
         }
 
         fun givenDisconnectedConnectionState() = apply {
-            whenever(clientStateService.state) doReturn ClientState.Disconnected
+            whenever(socketStateService.state) doReturn SocketState.Disconnected
         }
 
         fun givenUserSetState(user: User) = apply {
