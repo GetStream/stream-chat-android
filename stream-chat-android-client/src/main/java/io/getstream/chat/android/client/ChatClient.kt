@@ -487,7 +487,6 @@ public class ChatClient internal constructor(
             is ClientState.Idle -> {
             }
         }.exhaustive*/
-        TODO()
     }
 
     public fun addSocketListener(listener: SocketListener) {
