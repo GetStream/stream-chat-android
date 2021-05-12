@@ -483,7 +483,11 @@ public class ChatClient internal constructor(
 
     public fun reconnectSocket() {
         when (clientStateService.state) {
-            is ClientState.Disconnected -> socket.connect(userStateService.state.userOrError())
+            is ClientState.Disconnected -> when (val userState = userStateService.state) {
+                is UserState.User.UserSet -> socket.connect(userState.user)
+                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                else -> error("Weird user state ${userState.javaClass.simpleName} without user being set!")
+            }
             else -> Unit
         }.exhaustive
     }
