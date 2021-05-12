@@ -8,21 +8,21 @@ internal interface AttachmentUploadRepository {
 }
 
 internal class AttachmentUploadRepositoryImpl(
-    private val attachmentToUploadEntityDao: AttachmentToUploadEntityDao,
+    private val attachmentToUploadDao: AttachmentToUploadDao,
 ) : AttachmentUploadRepository {
     override suspend fun insertAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity) {
-        attachmentToUploadEntityDao.insertAttachmentToUpload(*attachments)
+        attachmentToUploadDao.insertAttachmentToUpload(*attachments)
     }
 
     override suspend fun deleteAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity) {
-        attachmentToUploadEntityDao.deleteAttachmentsToUpload(*attachments)
+        attachmentToUploadDao.deleteAttachmentsToUpload(*attachments)
     }
 
     override suspend fun updateAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity) {
-        attachmentToUploadEntityDao.updateAttachmentsToUpload(*attachments)
+        attachmentToUploadDao.updateAttachmentsToUpload(*attachments)
     }
 
     override suspend fun selectAttachmentsToUploadForMessageId(id: Int): List<AttachmentToUploadEntity> {
-        return attachmentToUploadEntityDao.getAttachmentsToUploadForMessage(id)
+        return attachmentToUploadDao.getAttachmentsToUploadForMessage(id)
     }
 }

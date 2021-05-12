@@ -22,7 +22,7 @@ import io.getstream.chat.android.offline.repository.domain.message.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentToUploadEntity
-import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentToUploadEntityDao
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentToUploadDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.ChannelSortInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
@@ -68,7 +68,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
     abstract fun syncStateDao(): SyncStateDao
-    abstract fun attachmentToUploadDao(): AttachmentToUploadEntityDao
+    abstract fun attachmentToUploadDao(): AttachmentToUploadDao
 
     companion object {
         @Volatile

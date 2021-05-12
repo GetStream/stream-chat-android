@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 
 @Dao
-internal interface AttachmentToUploadEntityDao {
+internal interface AttachmentToUploadDao {
 
     @Query("SELECT * FROM attachment_to_upload")
     suspend fun getAttachmentsToUpload(): List<AttachmentToUploadEntity>
