@@ -98,3 +98,4 @@ lint/tmp/
 /projectFilesBackup/
 /projectFilesBackup1/
 *.gpg
+**/DokkasaurusSidebar
