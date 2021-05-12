@@ -32,7 +32,7 @@ internal class RepositoryFacade constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     syncStateRepository: SyncStateRepository,
-    private val attachmentUploadRepository: AttachmentUploadRepository,
+    attachmentUploadRepository: AttachmentUploadRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
