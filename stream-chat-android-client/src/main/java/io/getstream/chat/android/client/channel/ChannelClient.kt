@@ -440,6 +440,17 @@ public class ChannelClient internal constructor(
     }
 
     /**
+     * Removes all of the messages of the channel but doesn't affect the channel data or members.
+     *
+     * @return executable async [Call] which completes with [Result] having data equal to the truncated channel
+     * if the channel was successfully truncated.
+     */
+    @CheckResult
+    public fun truncate(): Call<Channel> {
+        return client.truncateChannel(channelType, channelId)
+    }
+
+    /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on file uploads:
