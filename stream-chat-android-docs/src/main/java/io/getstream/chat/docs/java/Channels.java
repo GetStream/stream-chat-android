@@ -552,6 +552,20 @@ public class Channels {
                 }
             });
         }
+
+        /**
+         * @see <a href="hhttps://getstream.io/chat/docs/android/channel_delete/?language=java#truncating-a-channel">Truncating a Channel</a>
+         */
+        public void truncatingAChannel() {
+            // Removes all of the messages of the channel but doesn't affect the channel data or members
+            channelClient.truncate().enqueue(result -> {
+                if (result.isSuccess()) {
+                    // Channel is truncated
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
     }
 
     /**

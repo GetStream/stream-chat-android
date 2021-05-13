@@ -129,6 +129,13 @@ internal interface ChannelApi {
         @Body body: HideChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
+    @POST("/channels/{type}/{id}/truncate")
+    fun truncateChannel(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+    ): RetrofitCall<ChannelResponse>
+
     @POST("/channels/{type}/{id}/query")
     fun queryChannel(
         @Path("type") channelType: String,

@@ -54,3 +54,18 @@ channelClient.hide(clearHistory = true).enqueue { result ->
     }
 }
 ```
+
+## Truncating a Channel
+
+Messages from a channel can be truncated. This removes all of the messages but doesn't affect the channel data or members.
+
+```kotlin
+// Truncate the channel
+channelClient.truncate().enqueue { result ->
+    if (result.isSuccess) {
+        // Channel is truncated
+    } else {
+        // Handle result.error()
+    }
+}
+```
