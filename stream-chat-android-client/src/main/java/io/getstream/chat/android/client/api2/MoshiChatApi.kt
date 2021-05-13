@@ -501,6 +501,17 @@ internal class MoshiChatApi(
         ).toUnitCall()
     }
 
+    override fun truncateChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Channel> {
+        return channelApi.truncateChannel(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+        ).map(this::flattenChannel)
+    }
+
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return channelApi.rejectInvite(
             channelType = channelType,

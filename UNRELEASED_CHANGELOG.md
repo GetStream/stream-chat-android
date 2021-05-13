@@ -29,7 +29,7 @@ in the ChannelsView
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
 ### ⚠️ Changed
 
 ### ❌ Removed
