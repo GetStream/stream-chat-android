@@ -1,13 +1,5 @@
 ./gradlew dokkaHtmlMultiModule
-git clone --depth 1 --branch 0.3.0 git@github.com:GetStream/DokkasaurusSidebar.git
-python DokkasaurusSidebar/ci.py \
-./build/dokka/htmlMultiModule \
-Dokka \
- 5 \
- ./ \
- True \
- True \
-./dokkasaurus_filter.json
+dokkasaurus build/dokka/htmlMultiModule Dokka --root-position 5 --auto-generated --multi-module --filter-file dokkasaurus_filter.json
 
 mkdir documentation/docs/dokka
 mv ./build/dokka/htmlMultiModule/_category_.json documentation/docs/dokka/_category_.json
