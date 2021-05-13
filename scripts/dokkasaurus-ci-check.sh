@@ -1,3 +1,5 @@
+set -e
+
 # ./gradlew dokkaHtmlMultiModule
 # git clone --depth 1 --branch 0.3.0 git@github.com:GetStream/DokkasaurusSidebar.git
 # python DokkasaurusSidebar/ci.py \
@@ -17,8 +19,7 @@
 
 diff_output=$(git status)
 
-if [[ $diff_output == *"nothing to commit, working tree clean"* ]]; then
-  echo "It's there!"
+if [[ $diff_output != *"nothing to commit, working tree clean"* ]]; then
+  echo "Error! looks like there are changes in your documentation"
+  exit 1
 fi
-
-echo $diff_output
