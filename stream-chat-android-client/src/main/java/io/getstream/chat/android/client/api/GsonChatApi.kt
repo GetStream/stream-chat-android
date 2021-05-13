@@ -471,6 +471,17 @@ internal class GsonChatApi(
         ).toUnitCall()
     }
 
+    override fun truncateChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Channel> {
+        return retrofitApi.truncateChannel(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+        ).map { flattenChannel(it) }
+    }
+
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return retrofitApi.rejectInvite(
             channelType = channelType,

@@ -158,6 +158,13 @@ internal interface RetrofitApi {
         @Body body: HideChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
+    @POST("/channels/{type}/{id}/truncate")
+    fun truncateChannel(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+    ): RetrofitCall<ChannelResponse>
+
     @POST("/channels/{type}/{id}/show")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun showChannel(

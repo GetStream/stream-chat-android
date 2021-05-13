@@ -5,7 +5,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.extensions.isDraft
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -32,6 +31,7 @@ public class ChannelsViewModel(
         eq("type", "messaging"),
         Filters.`in`("members", listOf(chatDomain.currentUser.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
+        Filters.or(Filters.notExists("hidden"), Filters.ne("hidden", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
@@ -56,7 +56,7 @@ public class ChannelsViewModel(
                             is QueryChannelsController.ChannelsState.Loading -> State.Loading
                             is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
                             is QueryChannelsController.ChannelsState.Result ->
-                                State.Result(channelState.channels.filterNot { it.hidden == true || it.isDraft })
+                                State.Result(channelState.channels)
                         }
                     }
                 ) { state -> stateMerger.value = state }

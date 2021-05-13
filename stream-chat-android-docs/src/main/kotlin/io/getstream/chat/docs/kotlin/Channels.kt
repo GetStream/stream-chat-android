@@ -529,6 +529,20 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 }
             }
         }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/channel_delete/?language=kotlin#truncating-a-channel">Truncating a Channel</a>
+         */
+        fun truncatingAChannel() {
+            // Removes all of the messages of the channel but doesn't affect the channel data or members
+            channelClient.truncate().enqueue { result ->
+                if (result.isSuccess) {
+                    // Channel is truncated
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
     }
 
     /**

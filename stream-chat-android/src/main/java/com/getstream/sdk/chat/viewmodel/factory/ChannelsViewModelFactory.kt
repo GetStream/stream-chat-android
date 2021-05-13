@@ -24,6 +24,7 @@ public class ChannelsViewModelFactory @JvmOverloads constructor(
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
+        Filters.or(Filters.notExists("hidden"), Filters.ne("hidden", true)),
     ),
     private val sort: QuerySort<Channel> = ChannelsViewModel.DEFAULT_SORT,
     private val limit: Int = 30

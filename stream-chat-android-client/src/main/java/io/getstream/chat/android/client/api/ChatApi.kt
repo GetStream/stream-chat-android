@@ -184,6 +184,12 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
+    fun truncateChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Channel>
+
+    @CheckResult
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
 
     @CheckResult

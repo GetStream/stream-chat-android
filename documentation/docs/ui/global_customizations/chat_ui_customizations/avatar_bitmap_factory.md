@@ -33,4 +33,4 @@ ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
 ```
 Result:
 
-![Blurred images for offline users](/img/blurred_images.png)
+![Blurred images for offline users](../../../assets/blurred_images.png)
