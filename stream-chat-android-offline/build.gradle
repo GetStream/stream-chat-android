@@ -75,7 +75,6 @@ dependencies {
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.androidxSecurityCrypto
-    implementation Dependencies.firebaseMessaging
     implementation Dependencies.roomRuntime
     implementation Dependencies.roomKtx
     kapt Dependencies.roomCompiler

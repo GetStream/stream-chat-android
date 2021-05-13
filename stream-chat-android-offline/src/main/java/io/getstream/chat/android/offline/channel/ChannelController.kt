@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
+import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
@@ -1171,6 +1173,14 @@ public class ChannelController internal constructor(
             }
             is MarkAllReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
+            }
+            is NotificationInviteAcceptedEvent -> {
+                upsertMember(event.member)
+                updateChannelData(event.channel)
+            }
+            is NotificationInviteRejectedEvent -> {
+                upsertMember(event.member)
+                updateChannelData(event.channel)
             }
         }
     }

@@ -221,12 +221,17 @@ internal class EventHandlerImpl(
                 }
                 is NotificationInvitedEvent -> {
                     batch.addUser(event.user)
+                    batch.addUser(event.member.user)
                 }
                 is NotificationInviteAcceptedEvent -> {
                     batch.addUser(event.user)
+                    batch.addUser(event.member.user)
+                    batch.addChannel(event.channel)
                 }
                 is NotificationInviteRejectedEvent -> {
                     batch.addUser(event.user)
+                    batch.addUser(event.member.user)
+                    batch.addChannel(event.channel)
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {

@@ -5,13 +5,15 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.extensions.isDraft
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.eq
+import io.getstream.chat.android.client.models.Filters.ne
+import io.getstream.chat.android.client.models.Filters.or
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
@@ -31,8 +33,9 @@ public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(
         eq("type", "messaging"),
-        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
-        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
+        `in`("members", listOf(chatDomain.currentUser.id)),
+        or(Filters.notExists("draft"), ne("draft", true)),
+        or(Filters.notExists("hidden"), ne("hidden", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
@@ -65,7 +68,7 @@ public class ChannelListViewModel(
                             is QueryChannelsController.ChannelsState.Result -> currentState.copy(
                                 isLoading = false,
                                 channels = parseMutedChannels(
-                                    channelState.channels.filterNot { it.hidden == true || it.isDraft },
+                                    channelState.channels,
                                     chatDomain.currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
                                 ),
                             )

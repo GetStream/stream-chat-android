@@ -209,6 +209,7 @@ internal data class NotificationInviteAcceptedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val member: DownstreamMemberDto,
+    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -220,6 +221,7 @@ internal data class NotificationInviteRejectedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val member: DownstreamMemberDto,
+    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

@@ -375,6 +375,7 @@ private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcc
         channelId = channel_id,
         user = user.toDomain(),
         member = member.toDomain(),
+        channel = channel.toDomain(),
     )
 }
 
@@ -386,7 +387,8 @@ private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRej
         channelType = channel_type,
         channelId = channel_id,
         user = user.toDomain(),
-        member = member.toDomain()
+        member = member.toDomain(),
+        channel = channel.toDomain(),
     )
 }
 
