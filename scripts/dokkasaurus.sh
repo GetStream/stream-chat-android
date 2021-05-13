@@ -1,5 +1,5 @@
 ./gradlew dokkaHtmlMultiModule
-git clone git@github.com:GetStream/DokkasaurusSidebar.git
+git clone --depth 1 --branch 0.3.0 git@github.com:GetStream/DokkasaurusSidebar.git
 python DokkasaurusSidebar/ci.py \
 ./build/dokka/htmlMultiModule \
 Dokka \
