@@ -53,6 +53,6 @@ At that point you should be able to display the default chat view:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![chat view light](/img/chat_view_light.png)|![chat view dark](/img/chat_view_dark.png)|
+|![chat view light](../../assets/chat_view_light.png)|![chat view dark](../../assets/chat_view_dark.png)|
 
 From that point, you will be able to display and send messages, conduct different actions, as well as view different channel info.

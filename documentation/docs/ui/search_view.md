@@ -69,4 +69,4 @@ From that point, you should be able to conduct messages search and see result si
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![search view light](/img/search_view_hey_light.png)|![search view dark](/img/search_view_hey_dark.png)|
+|![search view light](../assets/search_view_hey_light.png)|![search view dark](../assets/search_view_hey_dark.png)|
