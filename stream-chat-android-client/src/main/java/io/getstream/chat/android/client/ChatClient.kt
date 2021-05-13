@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -78,6 +79,7 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
+import kotlin.jvm.Throws
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -108,6 +110,9 @@ public class ChatClient internal constructor(
 
     public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
+
+    private var pushNotificationReceivedListener: PushNotificationReceivedListener =
+        PushNotificationReceivedListener { _, _ -> }
 
     init {
         eventsObservable.subscribe { event ->
@@ -1263,12 +1268,27 @@ public class ChatClient internal constructor(
 
     //endregion
 
+    @Deprecated(
+        message = "Use handleRemoteMessage instead",
+        replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notifications.onFirebaseMessage(remoteMessage)
+        notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
     }
 
+    @Deprecated(
+        message = "Use setFirebaseToken instead",
+        replaceWith = ReplaceWith("setFirebaseToken(token)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun onNewTokenReceived(token: String) {
         notifications.setFirebaseToken(token)
+    }
+
+    @InternalStreamChatApi
+    public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
+        this.pushNotificationReceivedListener = pushNotificationReceivedListener
     }
 
     public fun getConnectionId(): String? {
@@ -1578,6 +1598,33 @@ public class ChatClient internal constructor(
             return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(
                 defaultNotificationConfig
             )
+        }
+
+        @Throws(IllegalStateException::class)
+        public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
+            ensureClientInitialized()
+            instance!!.run {
+                notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
+            }
+        }
+
+        @Throws(IllegalStateException::class)
+        internal suspend fun loadNotificationInfo(channelType: String, channelId: String, messageId: String) {
+            ensureClientInitialized()
+            instance!!.notifications.loadRequiredData(channelId, channelType, messageId)
+        }
+
+        @Throws(IllegalStateException::class)
+        public fun setFirebaseToken(token: String) {
+            ensureClientInitialized()
+            instance!!.notifications.setFirebaseToken(token)
+        }
+
+        @Throws(IllegalStateException::class)
+        private fun ensureClientInitialized() {
+            if (!isInitialized) {
+                throw IllegalStateException("ChatClient should be initialized first!")
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        chatInitializer.init(AppConfig.apiKey)
         instance = this
         DebugMetricsHelper.init()
         Coil.setImageLoader(

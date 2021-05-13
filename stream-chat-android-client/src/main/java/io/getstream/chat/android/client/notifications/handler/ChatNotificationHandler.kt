@@ -6,11 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -30,7 +26,7 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    public val config: NotificationConfig = NotificationConfig()
+    public val config: NotificationConfig = NotificationConfig(),
 ) {
     private val logger = ChatLogger.get("ChatNotificationHandler")
     private val firebaseMessageParserImpl: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(config) }
@@ -53,11 +49,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public open fun createNotificationChannel(): NotificationChannel {
-        logger.logI("createNotificationChannel()")
         return NotificationChannel(
             getNotificationChannelId(),
             getNotificationChannelName(),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {
             setShowBadge(true)
             importance = NotificationManager.IMPORTANCE_HIGH
@@ -73,7 +68,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                 400,
                 300,
                 200,
-                400
+                400,
             )
         }
     }
@@ -120,7 +115,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         messageText: String,
         messageId: String,
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Notification {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = getNotificationBuilder()
@@ -143,7 +138,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         notificationBuilder.apply {
             addAction(
                 getReadAction(
-                    preparePendingIntent(
+                    prepareActionPendingIntent(
                         notificationId,
                         messageId,
                         channelId,
@@ -154,7 +149,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             )
             addAction(
                 getReplyAction(
-                    preparePendingIntent(
+                    prepareActionPendingIntent(
                         notificationId,
                         messageId,
                         channelId,
@@ -175,7 +170,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getNewMessageIntent(
         messageId: String,
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
@@ -185,19 +180,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     public open fun getFirebaseMessageParser(): FirebaseMessageParser = firebaseMessageParserImpl
-    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean = getFirebaseMessageParser().isValidRemoteMessage(message)
-
-    private fun drawableToBitmap(drawable: Drawable): Bitmap {
-        if (drawable is BitmapDrawable) {
-            return drawable.bitmap
-        }
-        val bitmap =
-            Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
-    }
+    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean =
+        getFirebaseMessageParser().isValidRemoteMessage(message)
 
     private fun getNotificationBuilder(): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getNotificationChannelId())
@@ -210,7 +194,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return NotificationCompat.Action.Builder(
             android.R.drawable.ic_menu_view,
             context.getString(R.string.stream_chat_notification_read),
-            pendingIntent
+            pendingIntent,
         ).build()
     }
 
@@ -229,12 +213,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .build()
     }
 
-    private fun preparePendingIntent(
+    private fun prepareActionPendingIntent(
         notificationId: Int,
         messageId: String,
         channelId: String,
         type: String,
-        actionType: String
+        actionType: String,
     ): PendingIntent {
         val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
 
@@ -250,7 +234,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             0,
             notifyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
     }
 
