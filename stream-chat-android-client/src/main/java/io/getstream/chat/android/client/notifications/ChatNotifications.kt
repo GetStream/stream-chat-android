@@ -6,10 +6,6 @@ import android.content.Context
 import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -77,41 +73,29 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    private fun handleRemoteMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
+    private fun handleRemoteMessage(
+        message: RemoteMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener,
+    ) {
         if (isValidRemoteMessage(message)) {
             val firebaseParser = handler.getFirebaseMessageParser()
             val data = firebaseParser.parse(message)
             if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
                 pushNotificationReceivedListener.onPushNotificationReceived(data.channelType, data.channelId)
-                loadRequiredData(data)
+                LoadNotificationDataWorker.start(
+                    context = context,
+                    channelId = data.channelId,
+                    channelType = data.channelType,
+                    messageId = data.messageId,
+                    notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
+                    notificationIcon = handler.config.loadNotificationDataIcon,
+                    notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
+                )
             }
         } else {
             logger.logE("Push payload is not configured correctly: {${message.data}}")
         }
-    }
-
-    private fun loadRequiredData(data: FirebaseMessageParser.Data) {
-        val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
-            .setInputData(
-                workDataOf(
-                    LoadNotificationDataWorker.DATA_CHANNEL_ID to data.channelId,
-                    LoadNotificationDataWorker.DATA_CHANNEL_TYPE to data.channelType,
-                    LoadNotificationDataWorker.DATA_MESSAGE_ID to data.messageId,
-                    LoadNotificationDataWorker.DATA_NOTIFICATION_CHANNEL_NAME to context.getString(handler.config.loadNotificationDataChannelName),
-                    LoadNotificationDataWorker.DATA_NOTIFICATION_ICON to handler.config.loadNotificationDataIcon,
-                    LoadNotificationDataWorker.DATA_NOTIFICATION_TITLE to context.getString(handler.config.loadNotificationDataTitle),
-                )
-            )
-            .build()
-
-        WorkManager
-            .getInstance(context)
-            .enqueueUniqueWork(
-                "${data.channelType}:${data.channelId}",
-                ExistingWorkPolicy.REPLACE,
-                syncMessagesWork
-            )
     }
 
     fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)

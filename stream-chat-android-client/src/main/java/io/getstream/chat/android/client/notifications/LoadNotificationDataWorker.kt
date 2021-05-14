@@ -7,8 +7,12 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -61,13 +65,44 @@ internal class LoadNotificationDataWorker(
     }
 
     internal companion object {
-        internal const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
-        internal const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
-        internal const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
-        internal const val DATA_NOTIFICATION_TITLE = "DATA_NOTIFICATION_TITLE"
-        internal const val DATA_NOTIFICATION_ICON = "DATA_NOTIFICATION_ICON"
-        internal const val DATA_NOTIFICATION_CHANNEL_NAME = "DATA_NOTIFICATION_CHANNEL_NAME"
+        private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
+        private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
+        private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
+        private const val DATA_NOTIFICATION_TITLE = "DATA_NOTIFICATION_TITLE"
+        private const val DATA_NOTIFICATION_ICON = "DATA_NOTIFICATION_ICON"
+        private const val DATA_NOTIFICATION_CHANNEL_NAME = "DATA_NOTIFICATION_CHANNEL_NAME"
 
         private const val NOTIFICATION_ID = 1
+
+        fun start(
+            context: Context,
+            channelId: String,
+            channelType: String,
+            messageId: String,
+            notificationChannelName: String,
+            notificationIcon: Int,
+            notificationTitle: String,
+        ) {
+            val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
+                .setInputData(
+                    workDataOf(
+                        DATA_CHANNEL_ID to channelId,
+                        DATA_CHANNEL_TYPE to channelType,
+                        DATA_MESSAGE_ID to messageId,
+                        DATA_NOTIFICATION_CHANNEL_NAME to notificationChannelName,
+                        DATA_NOTIFICATION_ICON to notificationIcon,
+                        DATA_NOTIFICATION_TITLE to notificationTitle,
+                    )
+                )
+                .build()
+
+            WorkManager
+                .getInstance(context)
+                .enqueueUniqueWork(
+                    "$channelType:$channelId",
+                    ExistingWorkPolicy.REPLACE,
+                    syncMessagesWork,
+                )
+        }
     }
 }
