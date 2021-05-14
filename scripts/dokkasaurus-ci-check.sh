@@ -1,7 +1,7 @@
 set -e
 
 ./gradlew dokkaHtmlMultiModule
-python DokkasaurusSidebar/ci.py \
+python temp/ci.py \
 ./build/dokka/htmlMultiModule \
 Dokka \
  5 \
