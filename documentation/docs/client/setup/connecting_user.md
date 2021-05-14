@@ -31,7 +31,7 @@ If you don't have a token provider endpoint available yet, there are two options
 - [Disable token authentication while in development](#Development-Token-Mode)
 - [Manually generate a user token](#Manually-Generate-a-User-Token)
 
-### Disabling 
+### Disabling Token Auth
 For development applications, you can disable token authentication checks in the [Dashboard](https://getstream.io/dashboard). This will let you generate tokens using the `ChatClient` without needing a token provider endpoint. 
 
 To disable auth checks, navigage to the [Dashboard](https://getstream.io/dashboard) and complete the following steps:
