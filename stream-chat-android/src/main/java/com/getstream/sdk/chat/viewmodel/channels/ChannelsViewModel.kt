@@ -54,7 +54,7 @@ public class ChannelsViewModel(
                             is QueryChannelsController.ChannelsState.Loading -> State.Loading
                             is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
                             is QueryChannelsController.ChannelsState.Result ->
-                                State.Result(channelState.channels.filterNot { it.hidden == true })
+                                State.Result(channelState.channels)
                         }
                     }
                 ) { state -> stateMerger.value = state }

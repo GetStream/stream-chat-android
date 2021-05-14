@@ -63,7 +63,7 @@ public class ChannelListViewModel(
                             is QueryChannelsController.ChannelsState.Result -> currentState.copy(
                                 isLoading = false,
                                 channels = parseMutedChannels(
-                                    channelState.channels.filterNot { it.hidden == true },
+                                    channelState.channels,
                                     chatDomain.currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
                                 ),
                             )
