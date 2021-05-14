@@ -12,7 +12,9 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
-
+Fixing filter for hidden and draft channels. Those channels were not showing in the results,
+even when the user asked for then. Now this is fixed and the draft and hidden channels can be included
+in the ChannelsView
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -36,7 +38,7 @@
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
 
 ### ✅ Added
-
+- Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -65,7 +67,9 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixing filter for hidden and draft channels. Those channels were not showing in the results,
+even when the user asked for then. Now this is fixed and the draft and hidden channels can be included
+in the ChannelListView.
 ### ⬆️ Improved
 
 ### ✅ Added

@@ -1004,6 +1004,20 @@ public class ChatClient internal constructor(
         return api.hideChannel(channelType, channelId, clearHistory)
     }
 
+    /**
+     * Removes all of the messages of the channel but doesn't affect the channel data or members.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     *
+     * @return executable async [Call] which completes with [Result] having data equal to the truncated channel
+     * if the channel was successfully truncated.
+     */
+    @CheckResult
+    public fun truncateChannel(channelType: String, channelId: String): Call<Channel> {
+        return api.truncateChannel(channelType, channelId)
+    }
+
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
         return api.stopWatching(channelType, channelId)

@@ -49,7 +49,7 @@ internal abstract class MessageDao {
     open suspend fun upsertMessageInnerEntities(messageInnerEntities: List<MessageInnerEntity>) {
         val rowIds = insertMessageInnerEntities(messageInnerEntities)
         val entitiesToUpdate = rowIds.mapIndexedNotNull { index, rowId ->
-            if (rowId == -1L) null else messageInnerEntities[index]
+            if (rowId == -1L) messageInnerEntities[index] else null
         }
         entitiesToUpdate.forEach { updateMessageInnerEntity(it) }
     }

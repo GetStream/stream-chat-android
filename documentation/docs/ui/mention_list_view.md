@@ -33,7 +33,7 @@ Here's an example layout containing `MentionListView`:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light](/img/mentions_list_view_light.png)|![dark](/img/mentions_list_view_dark.png)|
+|![light](../assets/mentions_list_view_light.png)|![dark](../assets/mentions_list_view_dark.png)|
 
 ## Binding With View Model
 You can chose to use this view with a viewmodel that already configures the default

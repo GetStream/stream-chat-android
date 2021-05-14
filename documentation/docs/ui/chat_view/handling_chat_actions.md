@@ -16,7 +16,7 @@ sidebar_position: 3
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![message_options_light](/img/message_options_light.png)|![message_options_dark](/img/message_options_dark.png)|
+|![message_options_light](../../assets/message_options_light.png)|![message_options_dark](../../assets/message_options_dark.png)|
 
 Most of the actions work out of the box but there is a possibility to change its behavior using different listeners and handlers:
 ```kotlin
