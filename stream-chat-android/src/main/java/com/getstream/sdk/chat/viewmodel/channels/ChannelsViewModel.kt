@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
@@ -28,10 +27,9 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(
-        eq("type", "messaging"),
+        Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(chatDomain.currentUser.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-        Filters.or(Filters.notExists("hidden"), Filters.ne("hidden", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
