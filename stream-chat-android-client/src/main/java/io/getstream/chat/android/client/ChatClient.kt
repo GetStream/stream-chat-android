@@ -1284,7 +1284,7 @@ public class ChatClient internal constructor(
     //endregion
 
     @Deprecated(
-        message = "Use handleRemoteMessage instead",
+        message = "Use ChatClient.handleRemoteMessage instead",
         replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
         level = DeprecationLevel.WARNING,
     )
@@ -1293,7 +1293,7 @@ public class ChatClient internal constructor(
     }
 
     @Deprecated(
-        message = "Use setFirebaseToken instead",
+        message = "Use ChatClient.setFirebaseToken instead",
         replaceWith = ReplaceWith("setFirebaseToken(token)"),
         level = DeprecationLevel.WARNING,
     )
@@ -1607,6 +1607,11 @@ public class ChatClient internal constructor(
         public val isInitialized: Boolean
             get() = instance != null
 
+        /**
+         * Checks if remote message can be handled
+         *
+         * @return true if message can be handled
+         */
         public fun isValidRemoteMessage(
             remoteMessage: RemoteMessage,
             defaultNotificationConfig: NotificationConfig = NotificationConfig(),
@@ -1616,6 +1621,15 @@ public class ChatClient internal constructor(
             )
         }
 
+        /**
+         * Handles remote message.
+         * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
+         * Remote message will be handled internally unless user overrides [ChatNotificationHandler.onFirebaseMessage]
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @see [ChatNotificationHandler.onFirebaseMessage]
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
         @Throws(IllegalStateException::class)
         public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
             ensureClientInitialized()
@@ -1626,11 +1640,17 @@ public class ChatClient internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal suspend fun loadNotificationInfo(channelType: String, channelId: String, messageId: String) {
+        internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
             ensureClientInitialized()
-            instance!!.notifications.loadRequiredData(channelId, channelType, messageId)
+            instance!!.notifications.displayNotificationWithData(channelId, channelType, messageId)
         }
 
+        /**
+         * Sets Firebase token.
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
         @Throws(IllegalStateException::class)
         public fun setFirebaseToken(token: String) {
             ensureClientInitialized()

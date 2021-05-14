@@ -107,14 +107,14 @@ internal class ChatNotifications private constructor(
             showedNotifications.add(messageId)
             // Needs to be refactored in a separate task
             GlobalScope.launch(DispatcherProvider.Main) {
-                loadRequiredData(event.channelType, event.channelId, messageId)
+                displayNotificationWithData(event.channelType, event.channelId, messageId)
             }
         }
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
-    internal suspend fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
+    internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 

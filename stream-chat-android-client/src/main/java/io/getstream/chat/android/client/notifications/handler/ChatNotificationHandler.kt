@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
+/**
+ * Class responsible for handling chat notifications.
+ */
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
     public val config: NotificationConfig = NotificationConfig(),
@@ -35,6 +38,11 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return false
     }
 
+    /**
+     * Override this method to customize remote message handling
+     *
+     * @return false if remote message should be handled internally
+     */
     public open fun onFirebaseMessage(message: RemoteMessage): Boolean {
         return false
     }
@@ -78,10 +86,32 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getNotificationChannelName(): String =
         context.getString(config.notificationChannelName)
 
-    // Deprecate 4 functions
+    @Deprecated(
+        message = "Use NotificationConfig.smallIcon instead",
+        replaceWith = ReplaceWith("NotificationConfig.smallIcon"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getSmallIcon(): Int = config.smallIcon
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseMessageIdKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseMessageIdKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseChannelIdKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseChannelIdKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseChannelTypeKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseChannelTypeKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 
     public open fun getErrorCaseNotificationTitle(): String =
@@ -187,7 +217,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     private fun getNotificationBuilder(): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getNotificationChannelId())
             .setAutoCancel(true)
-            .setSmallIcon(getSmallIcon())
+            .setSmallIcon(config.smallIcon)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
     }
 
