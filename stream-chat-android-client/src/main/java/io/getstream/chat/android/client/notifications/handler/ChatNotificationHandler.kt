@@ -78,6 +78,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getNotificationChannelName(): String =
         context.getString(config.notificationChannelName)
 
+    // Deprecate 4 functions
     public open fun getSmallIcon(): Int = config.smallIcon
     public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
     public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
@@ -96,7 +97,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             getRequestCode(),
             getErrorCaseIntent(),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
         return notificationBuilder.setContentTitle(getErrorCaseNotificationTitle())
@@ -124,7 +125,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             getRequestCode(),
             getNewMessageIntent(messageId, channelType, channelId),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
         notificationBuilder.setContentTitle(channelName)
@@ -143,7 +144,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                         messageId,
                         channelId,
                         channelType,
-                        NotificationMessageReceiver.ACTION_READ
+                        NotificationMessageReceiver.ACTION_READ,
                     )
                 )
             )
@@ -154,7 +155,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                         messageId,
                         channelId,
                         channelType,
-                        NotificationMessageReceiver.ACTION_REPLY
+                        NotificationMessageReceiver.ACTION_REPLY,
                     )
                 )
             )

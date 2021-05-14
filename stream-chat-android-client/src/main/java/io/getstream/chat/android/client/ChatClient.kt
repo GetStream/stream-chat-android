@@ -58,6 +58,8 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
+import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -93,6 +95,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
 ) {
 
     @InternalStreamChatApi
@@ -268,25 +271,37 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Initializes [ChatClient] for a specific user and a given [userToken].
+     * Initializes [ChatClient] with stored user data.
      * Caution: This method doesn't establish connection to the web socket, you should use [connectUser] instead.
      *
      * This method initializes [ChatClient] to allow the use of Stream REST API client.
      * Moreover, it warms up the connection, and sets up notifications.
      *
-     * @param user the user to set
-     * @param userToken the user token
      */
-    @InternalStreamChatApi
-    public fun setUserWithoutConnecting(user: User, userToken: String) {
+    private fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet()) {
             return
         }
-        initializeClientWithUser(user, ConstantTokenProvider(userToken))
+        encryptedPushNotificationsConfigStore.get()?.let { config ->
+            initializeClientWithUser(
+                user = User(id = config.userId),
+                tokenProvider = ConstantTokenProvider(config.userToken),
+            )
+        }
     }
 
     private fun notifySetUser(user: User) {
+        storePushNotificationsConfig(user.id)
         preSetUserListeners.forEach { it(user) }
+    }
+
+    private fun storePushNotificationsConfig(userId: String) {
+        encryptedPushNotificationsConfigStore.put(
+            PushNotificationsConfig(
+                userToken = getCurrentToken() ?: "",
+                userId = userId,
+            ),
+        )
     }
 
     @Deprecated(
@@ -1566,7 +1581,8 @@ public class ChatClient internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.clientStateService,
-                module.queryChannelsPostponeHelper
+                module.queryChannelsPostponeHelper,
+                EncryptedPushNotificationsConfigStore(appContext),
             )
 
             instance = result
@@ -1604,6 +1620,7 @@ public class ChatClient internal constructor(
         public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
             ensureClientInitialized()
             instance!!.run {
+                setUserWithoutConnectingIfNeeded()
                 notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
             }
         }
