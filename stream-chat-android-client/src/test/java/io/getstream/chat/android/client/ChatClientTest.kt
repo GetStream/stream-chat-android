@@ -68,6 +68,7 @@ internal class ChatClientTest {
             tokenManager = FakeTokenManager(""),
             clientStateService,
             queryChannelsPostponeHelper,
+            encryptedPushNotificationsConfigStore = mock(),
         ).apply {
             connectUser(User(), "someToken").enqueue()
         }

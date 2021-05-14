@@ -55,25 +55,26 @@ public class Push {
             int errorCaseNotificationContent = R.string.stream_chat_notification_content;
             boolean useProvidedFirebaseInstance = true;
 
-            NotificationConfig notificationsConfig = new NotificationConfig(
-                    notificationChannelId,
-                    notificationChannelName,
-                    smallIcon,
-                    firebaseMessageIdKey,
-                    firebaseMessageTextKey,
-                    firebaseChannelIdKey,
-                    firebaseChannelTypeKey,
-                    firebaseChannelNameKey,
-                    errorCaseNotificationTitle,
-                    errorCaseNotificationContent,
-                    useProvidedFirebaseInstance
-            );
-
-            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
-
-            new ChatClient.Builder("{{ api_key }}", context)
-                    .notifications(notificationHandler)
-                    .build();
+            //TODO Docs will be updated in a separate task
+//            NotificationConfig notificationsConfig = new NotificationConfig(
+//                    notificationChannelId,
+//                    notificationChannelName,
+//                    smallIcon,
+//                    firebaseMessageIdKey,
+//                    firebaseMessageTextKey,
+//                    firebaseChannelIdKey,
+//                    firebaseChannelTypeKey,
+//                    firebaseChannelNameKey,
+//                    errorCaseNotificationTitle,
+//                    errorCaseNotificationContent,
+//                    useProvidedFirebaseInstance
+//            );
+//
+//            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
+//
+//            new ChatClient.Builder("{{ api_key }}", context)
+//                    .notifications(notificationHandler)
+//                    .build();
         }
     }
 

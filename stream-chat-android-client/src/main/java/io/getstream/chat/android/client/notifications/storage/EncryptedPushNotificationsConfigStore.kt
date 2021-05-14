@@ -11,22 +11,23 @@ internal class EncryptedPushNotificationsConfigStore(context: Context) {
     private val logger = ChatLogger.get("EncryptedBackgroundSyncConfigStore")
 
     init {
-        val masterKey = MasterKey.Builder(context, MASTER_KEY_ALIAS)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
         prefs = try {
+            val masterKey = MasterKey.Builder(context, MASTER_KEY_ALIAS)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
             EncryptedSharedPreferences.create(
                 context,
                 ENCRYPTED_SYNC_CONFIG_PREFS_NAME,
                 masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
             )
         } catch (e: Exception) {
             logger.logE("Error creating encrypted shared preferences", e)
             context.applicationContext.getSharedPreferences(
                 SYNC_CONFIG_PREFS_NAME,
-                Context.MODE_PRIVATE
+                Context.MODE_PRIVATE,
             )
         }
     }
