@@ -17,8 +17,8 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
  * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state
  * based on data provided by the ViewModel.
  *
- * This function sets listeners on the view and ViewModel. Make sure to call this method
- * first before setting any additional listeners on these objects yourself.
+ * This function sets listeners on the view and ViewModel. Call this method
+ * before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
