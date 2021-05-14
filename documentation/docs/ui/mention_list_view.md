@@ -48,7 +48,7 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 ```
 From that point, you should be able to see messages which contain current user mention.
 
-> `bindView` sets listeners on the view and the ViewModel, so any additional listeners should be set _after_ calling `bindView`.
+> `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 
 ## Handling Mention List View Actions
 `MentionListView` allows to configure common actions (e.g. click on a single item):
