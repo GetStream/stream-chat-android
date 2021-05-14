@@ -59,16 +59,16 @@ internal class ChatClientTest {
         )
 
         socket = FakeChatSocket()
-        val clientStateService = SocketStateService()
+        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), userStateService, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
         client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
-            clientStateService = clientStateService,
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
         ).apply {

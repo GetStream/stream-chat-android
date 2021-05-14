@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
+import java.util.UUID
 
 internal object Mother {
     private val fixture = JFixture()
@@ -31,4 +32,6 @@ internal object Mother {
             sameInstance(Mute::class.java, mock())
         } <User>().apply(userBuilder)
     }
+
+    fun randomString(): String = UUID.randomUUID().toString()
 }

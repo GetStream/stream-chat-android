@@ -7,8 +7,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.clientstate.UserState
-import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.clientstate.SocketState
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsPostponeHelper(
     private val api: ChatApi,
-    private val userStateService: UserStateService,
+    private val socketStateService: SocketStateService,
     private val coroutineScope: CoroutineScope,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT,
@@ -46,14 +46,10 @@ internal class QueryChannelsPostponeHelper(
         check(attemptCount > 0) {
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         }
-        return when (userStateService.state) {
-            is UserState.NotSet -> error("User must be set before querying channels")
-            is UserState.User.UserSet,
-            is UserState.Anonymous.AnonymousUserSet,
-            -> job()
-            is UserState.User.Pending,
-            is UserState.Anonymous.Pending,
-            -> {
+        return when (socketStateService.state) {
+            is SocketState.Idle -> error("Socket connection must be established before querying channels")
+            is SocketState.Connected, -> job()
+            is SocketState.Pending, SocketState.Disconnected -> {
                 delay(delayDuration)
                 doJob(attemptCount - 1, job)
             }

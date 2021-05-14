@@ -80,9 +80,9 @@ internal class ClientConnectionTests {
 
     @BeforeEach
     fun before() {
-        val clientStateService = SocketStateService()
+        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), userStateService, testCoroutines.scope)
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
         socket = mock()
         retrofitApi = mock()
         retrofitAnonymousApi = mock()
@@ -109,7 +109,7 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            clientStateService = clientStateService,
+            socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
         )

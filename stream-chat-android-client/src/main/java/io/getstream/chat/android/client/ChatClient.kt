@@ -122,7 +122,7 @@ public class ChatClient internal constructor(
                     val user = event.me
                     val connectionId = event.connectionId
                     socketStateService.onConnected(connectionId)
-                    userStateService.onUserSet(user)
+                    userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
                     notifications.onSetUser()
@@ -484,7 +484,7 @@ public class ChatClient internal constructor(
     public fun reconnectSocket() {
         when (socketStateService.state) {
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
-                is UserState.User.UserSet -> socket.connect(userState.user)
+                is UserState.UserSet -> socket.connect(userState.user)
                 is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
                 else -> error("Weird user state ${userState.javaClass.simpleName} without user being set!")
             }
@@ -1305,7 +1305,7 @@ public class ChatClient internal constructor(
     public fun getCurrentToken(): String? {
         return runCatching {
             when (userStateService.state) {
-                is UserState.User -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+                is UserState.UserSet -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()

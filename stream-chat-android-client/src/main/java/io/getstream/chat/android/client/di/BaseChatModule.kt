@@ -80,7 +80,7 @@ internal open class BaseChatModule(
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {
         QueryChannelsPostponeHelper(
             api(),
-            userStateService,
+            socketStateService,
             networkScope,
         )
     }

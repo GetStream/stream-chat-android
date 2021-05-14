@@ -4,8 +4,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 
 internal class UserStateService {
-    fun onUserSet(user: User) {
-        fsm.sendEvent(UserStateEvent.UserConnected(user))
+    fun onUserUpdated(user: User) {
+        fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
     fun onSetUser(user: User) {
@@ -20,28 +20,32 @@ internal class UserStateService {
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
+    fun onUserFailed() {
+        fsm.sendEvent(UserStateEvent.UserSetFailed)
+    }
+
     internal val state: UserState
         get() = fsm.state
 
     private val fsm = FiniteStateMachine<UserState, UserStateEvent> {
         initialState(UserState.NotSet)
         state<UserState.NotSet> {
-            onEvent<UserStateEvent.ConnectUser> { _, event -> UserState.User.Pending(event.user) }
+            onEvent<UserStateEvent.ConnectUser> { _, event -> UserState.UserSet(event.user) }
             onEvent<UserStateEvent.ConnectAnonymous> { _, _ -> UserState.Anonymous.Pending }
         }
-        state<UserState.User.Pending> {
-            onEvent<UserStateEvent.UserConnected> { _, event -> UserState.User.UserSet(event.user) }
+        state<UserState.UserSet> {
+            onEvent<UserStateEvent.UserUpdated> { _, event -> UserState.UserSet(event.user) }
             onEvent<UserStateEvent.UserSetFailed> { _, _ -> UserState.NotSet }
         }
         state<UserState.Anonymous.Pending> {
-            onEvent<UserStateEvent.UserConnected> { _, event -> UserState.Anonymous.AnonymousUserSet(event.user) }
+            onEvent<UserStateEvent.UserUpdated> { _, event -> UserState.Anonymous.AnonymousUserSet(event.user) }
             onEvent<UserStateEvent.UserSetFailed> { _, _ -> UserState.NotSet }
         }
     }
 
     private sealed class UserStateEvent {
         class ConnectUser(val user: User) : UserStateEvent()
-        class UserConnected(val user: User) : UserStateEvent()
+        class UserUpdated(val user: User) : UserStateEvent()
         object ConnectAnonymous : UserStateEvent()
         object UserSetFailed : UserStateEvent()
         object UnsetUser : UserStateEvent()

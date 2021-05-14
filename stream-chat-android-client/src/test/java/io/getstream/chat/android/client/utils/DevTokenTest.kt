@@ -18,16 +18,16 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
 
-    private val clientStateService = SocketStateService()
+    private val socketStateService = SocketStateService()
     private val userStateService: UserStateService = UserStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), userStateService, testCoroutines.scope)
+    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
     private val client = ChatClient(
         config = mock(),
         api = mock(),
         socket = mock(),
         notifications = mock(),
         tokenManager = FakeTokenManager(""),
-        clientStateService,
+        socketStateService,
         queryChannelsPostponeHelper,
         userStateService,
     )

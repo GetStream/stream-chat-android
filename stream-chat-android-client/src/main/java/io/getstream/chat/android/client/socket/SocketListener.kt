@@ -15,9 +15,15 @@ public open class SocketListener {
     public open fun onDisconnected() {
     }
 
+    // public open fun onDisconnected(reason: DisconnectionReason)
+
     public open fun onError(error: ChatError) {
     }
 
     public open fun onEvent(event: ChatEvent) {
     }
+
+    /*enum class DisconnectionReason {
+        NETWORK, TEMP, ERROR,
+    }*/
 }
