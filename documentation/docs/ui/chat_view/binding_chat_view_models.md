@@ -49,6 +49,9 @@ val backHandler = {
 messageListHeaderView.setBackButtonClickListener(backHandler)
 // You should also consider overriding default Activity's back button behaviour
 ```
+
+> `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+
 At that point you should be able to display the default chat view:
 
 | Light Mode | Dark Mode |
