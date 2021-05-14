@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
@@ -128,6 +129,14 @@ public class ChatClient internal constructor(
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
+                    when (event.disconnectCause) {
+                        DisconnectCause.NETWORK_NOT_AVAILABLE,
+                        DisconnectCause.ERROR, -> socketStateService.onDisconnected()
+                        DisconnectCause.UNRECOVERABLE_ERROR -> {
+                            userStateService.onSocketUnrecoverableError()
+                            socketStateService.onSocketUnrecoverableError()
+                        }
+                    }
                     socketStateService.onDisconnected()
                 }
             }

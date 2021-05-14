@@ -699,6 +699,14 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/channel/ChannelClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
 
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause : java/lang/Enum {
+	public static final field ERROR Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+	public static final field NETWORK_NOT_AVAILABLE Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+	public static final field UNRECOVERABLE_ERROR Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+	public static fun values ()[Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+}
+
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
 	public static final field API_KEY_NOT_FOUND Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field AUTHENTICATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
@@ -967,13 +975,16 @@ public final class io/getstream/chat/android/client/events/ConnectingEvent : io/
 }
 
 public final class io/getstream/chat/android/client/events/DisconnectedEvent : io/getstream/chat/android/client/events/ChatEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/clientstate/DisconnectCause;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;)Lio/getstream/chat/android/client/events/DisconnectedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/DisconnectedEvent;Ljava/lang/String;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/DisconnectedEvent;
+	public final fun component3 ()Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/clientstate/DisconnectCause;)Lio/getstream/chat/android/client/events/DisconnectedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/DisconnectedEvent;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/clientstate/DisconnectCause;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/DisconnectedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
+	public final fun getDisconnectCause ()Lio/getstream/chat/android/client/clientstate/DisconnectCause;
 	public fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -2769,6 +2780,7 @@ public class io/getstream/chat/android/client/socket/SocketListener {
 	public fun onConnected (Lio/getstream/chat/android/client/events/ConnectedEvent;)V
 	public fun onConnecting ()V
 	public fun onDisconnected ()V
+	public fun onDisconnected (Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
 	public fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public fun onEvent (Lio/getstream/chat/android/client/events/ChatEvent;)V
 }

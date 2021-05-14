@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.socket
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -77,11 +78,13 @@ internal class ChatSocketServiceImpl constructor(
                         shutdownSocketConnection()
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.NETWORK_NOT_AVAILABLE) }
                     }
                     is State.DisconnectedTemporarily -> {
                         shutdownSocketConnection()
                         healthMonitor.onDisconnected()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.ERROR) }
                     }
                     is State.DisconnectedPermanently -> {
                         shutdownSocketConnection()
@@ -89,6 +92,7 @@ internal class ChatSocketServiceImpl constructor(
                         networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.UNRECOVERABLE_ERROR) }
                     }
                 }
             }
@@ -152,7 +156,6 @@ internal class ChatSocketServiceImpl constructor(
         logger.logI("connect")
         this.connectionConf = connectionConf
         if (networkStateProvider.isConnected()) {
-            state = State.DisconnectedTemporarily
             setupSocket(connectionConf)
         } else {
             state = State.NetworkDisconnected

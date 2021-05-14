@@ -19,6 +19,10 @@ internal class SocketStateService {
         stateMachine.sendEvent(ClientStateEvent.DisconnectRequestedEvent)
     }
 
+    fun onSocketUnrecoverableError() {
+        stateMachine.sendEvent(ClientStateEvent.ForceDisconnect)
+    }
+
     private val stateMachine: FiniteStateMachine<SocketState, ClientStateEvent> by lazy {
         FiniteStateMachine {
             initialState(SocketState.Idle)
@@ -30,24 +34,28 @@ internal class SocketStateService {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> stay() }
             }
 
             state<SocketState.Pending> {
                 onEvent<ClientStateEvent.ConnectedEvent> { _, event -> SocketState.Connected(event.connectionId) }
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
+                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
             }
 
             state<SocketState.Connected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> SocketState.Disconnected }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, _ -> stay() }
+                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
             }
 
             state<SocketState.Disconnected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, event -> SocketState.Connected(event.connectionId) }
+                onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
             }
         }
     }
@@ -63,5 +71,6 @@ internal class SocketStateService {
         data class ConnectedEvent(val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()
         object DisconnectedEvent : ClientStateEvent()
+        object ForceDisconnect : ClientStateEvent()
     }
 }

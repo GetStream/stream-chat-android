@@ -20,8 +20,8 @@ internal class UserStateService {
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
-    fun onUserFailed() {
-        fsm.sendEvent(UserStateEvent.UserSetFailed)
+    fun onSocketUnrecoverableError() {
+        fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
     internal val state: UserState
@@ -35,11 +35,14 @@ internal class UserStateService {
         }
         state<UserState.UserSet> {
             onEvent<UserStateEvent.UserUpdated> { _, event -> UserState.UserSet(event.user) }
-            onEvent<UserStateEvent.UserSetFailed> { _, _ -> UserState.NotSet }
+            onEvent<UserStateEvent.UnsetUser> { _, _ -> UserState.NotSet }
         }
         state<UserState.Anonymous.Pending> {
             onEvent<UserStateEvent.UserUpdated> { _, event -> UserState.Anonymous.AnonymousUserSet(event.user) }
-            onEvent<UserStateEvent.UserSetFailed> { _, _ -> UserState.NotSet }
+            onEvent<UserStateEvent.UnsetUser> { _, _ -> UserState.NotSet }
+        }
+        state<UserState.Anonymous.AnonymousUserSet> {
+            onEvent<UserStateEvent.UnsetUser> { _, _ -> UserState.NotSet }
         }
     }
 
@@ -47,7 +50,6 @@ internal class UserStateService {
         class ConnectUser(val user: User) : UserStateEvent()
         class UserUpdated(val user: User) : UserStateEvent()
         object ConnectAnonymous : UserStateEvent()
-        object UserSetFailed : UserStateEvent()
         object UnsetUser : UserStateEvent()
     }
 }
