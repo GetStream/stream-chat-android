@@ -72,4 +72,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Check
-        run: ./scripts/dokkasaurus.sh
+        run: ./scripts/dokkasaurus-ci-check.sh
