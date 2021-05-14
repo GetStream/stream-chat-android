@@ -36,7 +36,7 @@ Here's an example layout containing `MentionListView`:
 |![light](../assets/mentions_list_view_light.png)|![dark](../assets/mentions_list_view_dark.png)|
 
 ## Binding With View Model
-You can choose to use this view with a ViewModel that already configures the default
+You can use this view with a ViewModel that already configures the default
 behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
 
 ```kotlin
