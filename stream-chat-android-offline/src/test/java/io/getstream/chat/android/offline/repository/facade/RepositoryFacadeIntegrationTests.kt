@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -28,15 +29,20 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     }
 
     @Test
-    fun `Given a message When persisting the message Should store html field`() = runBlocking {
-        val html = randomString()
-        val id = randomString()
-        val message = randomMessage(id = id, html = html)
+    fun `Given a message When persisting the message Should store required fields`() = runBlocking {
+        val message = randomMessage(
+            user = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            )
+        )
 
         repositoryFacade.insertMessages(listOf(message), cache = false)
-        val result = repositoryFacade.selectMessage(id)
+        val result = repositoryFacade.selectMessage(message.id)
 
         Truth.assertThat(result).isNotNull()
-        Truth.assertThat(result!!.html).isEqualTo(html)
+        Truth.assertThat(result).isEqualTo(message)
     }
 }

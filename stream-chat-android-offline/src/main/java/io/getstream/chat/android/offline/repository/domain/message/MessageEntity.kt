@@ -60,6 +60,10 @@ internal data class MessageInnerEntity(
     val command: String? = null,
     /** if the message was sent by shadow banned user */
     val shadowed: Boolean = false,
+    /** if the message is also shown in the channel **/
+    val showInChannel: Boolean = false,
+    /** if the message  **/
+    val silent: Boolean = false,
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap(),
     val replyToId: String?,

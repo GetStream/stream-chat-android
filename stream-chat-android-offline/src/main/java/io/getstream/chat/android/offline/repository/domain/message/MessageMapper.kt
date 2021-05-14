@@ -39,6 +39,8 @@ internal suspend fun MessageEntity.toModel(
         mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
         replyTo = replyToId?.let { getMessage(it) },
         threadParticipants = threadParticipantsIds.map { getUser(it) },
+        showInChannel = showInChannel,
+        silent = silent,
     )
 }
 
@@ -66,6 +68,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         mentionedUsersId = mentionedUsers.map(User::id),
         replyToId = replyTo?.id ?: replyMessageId,
         threadParticipantsIds = threadParticipants.map(User::id),
+        showInChannel = showInChannel,
+        silent = silent
     ),
     attachments = attachments.map { it.toEntity(id) },
     latestReactions = latestReactions.map(Reaction::toEntity),
