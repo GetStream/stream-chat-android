@@ -12,9 +12,7 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
-Fixing filter for hidden and draft channels. Those channels were not showing in the results,
-even when the user asked for then. Now this is fixed and the draft and hidden channels can be included
-in the ChannelsView
+Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelsView`.
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -58,9 +56,7 @@ in the ChannelsView
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fixing filter for hidden and draft channels. Those channels were not showing in the results,
-even when the user asked for then. Now this is fixed and the draft and hidden channels can be included
-in the ChannelListView.
+Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelListView`.
 ### ⬆️ Improved
 
 ### ✅ Added
