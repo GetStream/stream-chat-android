@@ -8,6 +8,9 @@ import io.getstream.chat.android.ui.typing.TypingIndicatorView
 /**
  * Binds [TypingIndicatorView] with [TypingIndicatorViewModel], updating the view's state
  * based on data provided by the ViewModel.
+ *
+ * This function sets listeners on the view and ViewModel. Make sure to call this method
+ * first before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
 public fun TypingIndicatorViewModel.bindView(view: TypingIndicatorView, lifecycleOwner: LifecycleOwner) {
