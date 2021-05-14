@@ -65,6 +65,9 @@ searchResultView.setSearchResultSelectedListener { message ->
     // Handle search result click
 }
 ```
+
+> `bindView` sets listeners on the view and the ViewModel, so any additional listeners should be set _after_ calling `bindView`.
+
 From that point, you should be able to conduct messages search and see result similarly to:
 
 | Light Mode | Dark Mode |

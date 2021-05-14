@@ -20,6 +20,9 @@ val channelListViewModel: ChannelListViewModel by viewModels { channelListFactor
 channelListHeaderViewModel.bindView(channelListHeaderView, viewLifecycleOwner)
 channelListViewModel.bindView(channelListView, viewLifecycleOwner)
 ```
+
+> `bindView` sets listeners on the view and the ViewModel, so any additional listeners should be set _after_ calling `bindView`.
+
 This is how default channel list should look like:
 
 | Light Mode | Dark Mode |

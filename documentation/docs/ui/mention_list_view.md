@@ -36,7 +36,7 @@ Here's an example layout containing `MentionListView`:
 |![light](../assets/mentions_list_view_light.png)|![dark](../assets/mentions_list_view_dark.png)|
 
 ## Binding With View Model
-You can chose to use this view with a viewmodel that already configures the default
+You can choose to use this view with a ViewModel that already configures the default
 behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
 
 ```kotlin
@@ -47,6 +47,8 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 }
 ```
 From that point, you should be able to see messages which contain current user mention.
+
+> `bindView` sets listeners on the view and the ViewModel, so any additional listeners should be set _after_ calling `bindView`.
 
 ## Handling Mention List View Actions
 `MentionListView` allows to configure common actions (e.g. click on a single item):
