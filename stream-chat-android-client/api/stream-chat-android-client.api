@@ -725,6 +725,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/
 	public static final field TOKEN_SIGNATURE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field UNABLE_TO_PARSE_SOCKET_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field UNDEFINED_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field VALIDATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public final fun getCode ()I
 	public final fun getDescription ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatErrorCode;

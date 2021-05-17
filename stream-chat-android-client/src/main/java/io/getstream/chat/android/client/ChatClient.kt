@@ -137,7 +137,6 @@ public class ChatClient internal constructor(
                             socketStateService.onSocketUnrecoverableError()
                         }
                     }
-                    socketStateService.onDisconnected()
                 }
             }
         }

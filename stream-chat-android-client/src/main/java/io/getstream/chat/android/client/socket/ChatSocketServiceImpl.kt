@@ -125,6 +125,7 @@ internal class ChatSocketServiceImpl constructor(
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
+            ChatErrorCode.VALIDATION_ERROR.code,
             -> {
                 state = State.DisconnectedPermanently
             }
