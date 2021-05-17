@@ -30,6 +30,9 @@ Fixing filter for draft channels. Those channels were not showing in the results
 
 ### ✅ Added
 - Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
+- Added enum `DisconnectCause` to `DisconnectedEvent`
+- Added method `SocketListener::onDisconnected(cause: DisconnectCause)`
+
 ### ⚠️ Changed
 
 ### ❌ Removed
