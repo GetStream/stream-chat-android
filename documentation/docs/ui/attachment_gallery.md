@@ -8,8 +8,8 @@ _AttachmentGalleryActivity_ is an _Activity_ used to display attachments that th
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![attachment_gallery_example1_light](/img/attachment_gallery_example1_light.png)|![attachment_gallery_example1_dark](/img/attachment_gallery_example1_dark.png)|
-|![attachment_gallery_example2_light](/img/attachment_gallery_example2_light.png)|![attachment_gallery_example2_dark](/img/attachment_gallery_example2_dark.png)|
+|![attachment_gallery_example1_light](../assets/attachment_gallery_example1_light.png)|![attachment_gallery_example1_dark](../assets/attachment_gallery_example1_dark.png)|
+|![attachment_gallery_example2_light](../assets/attachment_gallery_example2_light.png)|![attachment_gallery_example2_dark](../assets/attachment_gallery_example2_dark.png)|
 
 ## Navigating To Attachment Gallery
 By default, the Attachment Gallery is opened when a user clicks on an attachment in _MessageListView_. In that case, all actions mentioned above have a default implementation, which can be changed by overriding _MessageListView_'s handlers.

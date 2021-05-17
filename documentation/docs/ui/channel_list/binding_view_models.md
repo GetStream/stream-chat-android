@@ -20,10 +20,13 @@ val channelListViewModel: ChannelListViewModel by viewModels { channelListFactor
 channelListHeaderViewModel.bindView(channelListHeaderView, viewLifecycleOwner)
 channelListViewModel.bindView(channelListView, viewLifecycleOwner)
 ```
+
+> `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+
 This is how default channel list should look like:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light mode](/img/channel_list_view_light.png)|![dark mode](/img/channel_list_view_dark.png)|
+|![light mode](../../assets/channel_list_view_light.png)|![dark mode](../../assets/channel_list_view_dark.png)|
 From that point, `ChannelListHeaderView` will be able to display the current user avatar as well as online status, while `ChannelListView` will display different channels view states, as well as the channel’s pagination, which will be handled automatically.
 `ChannelListViewModelFactory` allows customizing _filter_ and _sort_ options. You can find more about possible options [here](https://getstream.io/chat/docs/android/query_channels/?language=java#common-filters-by-use-case).

@@ -11,7 +11,7 @@ Let's change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light](/img/message_style_xml_light.png)|![dark](/img/message_style_xml_dark.png)|
+|![light](../../../assets/message_style_xml_light.png)|![dark](../../../assets/message_style_xml_dark.png)|
 
 In order to do that, we need to add additional attributes to `MessageListView`:
 ```xml
@@ -38,7 +38,7 @@ Let's make an example and try to modify the default view which allows scrolling 
 
 | Before | After |
 | --- | --- |
-|![message style programatically before](/img/message_style_programatically_fab_before.png)|![message style programatically after](/img/message_style_programatically_fab_after.png)|
+|![message style programatically before](../../../assets/message_style_programatically_fab_before.png)|![message style programatically after](../../../assets/message_style_programatically_fab_after.png)|
 
 In order to achieve such effect we need to provide custom _TransformStyle.messageListStyleTransformer_:
 ```kotlin
@@ -57,7 +57,7 @@ Let's make another example and apply the green style from the previous paragraph
 
 | Before | After |
 | --- | --- |
-|![message style before](/img/message_style_programatically_message_before.png)|![message style after](/img/message_style_programatically_message_after.png)|
+|![message style before](../../../assets/message_style_programatically_message_before.png)|![message style after](../../../assets/message_style_programatically_message_after.png)|
 
 We are going to use custom _TransformStyle.messageListItemStyleTransformer_:
 ```kotlin

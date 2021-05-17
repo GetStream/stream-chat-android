@@ -9,7 +9,7 @@ Let's slightly change the chat view by hiding the user avatar in the header and 
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![chat view changing components light](/img/chat_view_changing_components_light.png)|![chat view changing components dark](/img/chat_view_changing_components_dark.png)|
+|![chat view changing components light](../../../assets/chat_view_changing_components_light.png)|![chat view changing components dark](../../../assets/chat_view_changing_components_dark.png)|
 
 We need to do following step to achieve that:
 1. Modify _MessageListHeaderView_ layout:
