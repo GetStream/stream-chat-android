@@ -1303,6 +1303,7 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.WARNING,
     )
     public fun onMessageReceived(remoteMessage: RemoteMessage) {
+        setUserWithoutConnectingIfNeeded()
         notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
     }
 
@@ -1674,7 +1675,6 @@ public class ChatClient internal constructor(
         @Throws(IllegalStateException::class)
         private fun ensureClientInitialized() {
             require(isInitialized) { "ChatClient should be initialized first!" }
-            }
         }
     }
 }
