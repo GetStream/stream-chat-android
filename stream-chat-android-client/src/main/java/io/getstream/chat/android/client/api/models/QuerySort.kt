@@ -3,9 +3,11 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.QuerySort.SortAttribute.FieldSortAttribute
 import io.getstream.chat.android.client.extensions.camelCaseToSnakeCase
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
+import io.getstream.chat.android.client.models.CustomObject
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 public class QuerySort<T : Any> {
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
@@ -14,7 +16,12 @@ public class QuerySort<T : Any> {
         get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
 
     private val SortSpecification<T>.comparator: Comparator<T>?
-        get() = (this.sortAttribute as? FieldSortAttribute<T>)?.field?.comparator(this.sortDirection)
+        get() {
+            return when (this.sortAttribute) {
+                is FieldSortAttribute<T> -> this.sortAttribute.field?.comparator(this.sortDirection)
+                is SortAttribute.FieldNameSortAttribute -> this.sortAttribute.name.comparator(this.sortDirection)
+            }
+        }
 
     @Suppress("UNCHECKED_CAST")
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T>? =
@@ -26,6 +33,25 @@ public class QuerySort<T : Any> {
                     }
                 } ?: EQUAL_ON_COMPARISON
             }
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
+        Comparator { o1, o2 ->
+            (o1.getMemberPropertyOrExtra(this) as? Comparable<Any>)?.let { a ->
+                (o2.getMemberPropertyOrExtra(this) as? Comparable<Any>)?.let { b ->
+                    a.compareTo(b) * sortDirection.value
+                }
+            } ?: EQUAL_ON_COMPARISON
+        }
+
+    private fun Any.getMemberPropertyOrExtra(name: String): Any? =
+        name.snakeToLowerCamelCase().let { fieldName ->
+            this::class.memberProperties
+                .firstOrNull { it.name == fieldName }
+                ?.getter
+                ?.call(this)
+                ?: (this as? CustomObject)?.extraData?.get(name)
         }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
@@ -69,7 +95,8 @@ public class QuerySort<T : Any> {
         listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
     }
 
-    public fun toList(): List<Pair<String, SortDirection>> = sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
+    public fun toList(): List<Pair<String, SortDirection>> =
+        sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 
     private fun getSortFeature(fieldName: String, javaClass: Class<T>): SortAttribute<T> {
         @Suppress("UNCHECKED_CAST")
@@ -100,7 +127,7 @@ public class QuerySort<T : Any> {
 
     private data class SortSpecification<T>(
         val sortAttribute: SortAttribute<T>,
-        val sortDirection: SortDirection
+        val sortDirection: SortDirection,
     )
 
     private sealed class SortAttribute<T>(val name: String) {
@@ -127,7 +154,9 @@ public class QuerySort<T : Any> {
         public const val KEY_FIELD_NAME: String = "field"
         private const val EQUAL_ON_COMPARISON = 0
 
-        public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> = asc(fieldName, T::class)
+        public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> =
+            asc(fieldName, T::class)
+
         public inline fun <reified T : Any> QuerySort<T>.descByName(fieldName: String): QuerySort<T> =
             desc(fieldName, T::class)
 
