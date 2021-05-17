@@ -10,7 +10,7 @@ internal fun BannedUserResponse.toDomain(): BannedUser {
         channel = channel?.toDomain(),
         createdAt = created_at,
         expires = expires,
-        shadow = shadow ?: false,
+        shadow = shadow,
         reason = reason,
     )
 }

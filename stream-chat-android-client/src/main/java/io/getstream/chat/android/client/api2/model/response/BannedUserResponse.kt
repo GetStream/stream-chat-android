@@ -12,6 +12,6 @@ internal data class BannedUserResponse(
     val channel: DownstreamChannelDto?,
     val created_at: Date?,
     val expires: Date?,
-    val shadow: Boolean?,
+    val shadow: Boolean = false,
     val reason: String?,
 )
