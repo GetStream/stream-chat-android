@@ -24,9 +24,6 @@ internal class QueryChannelsSortTest {
     ) {
         val result = channelList.sortedWith(querySort.comparator)
 
-        println("-----")
-        println(result.joinToString(separator = "\n") { it.unreadCount.toString() })
-
         result `should be equal to` expectedChannelList
     }
 
@@ -42,7 +39,8 @@ internal class QueryChannelsSortTest {
             hasUnreadSortArguments() +
             nameSortArguments() +
             multiSortByFieldReferencesArguments() +
-            multiSortByFieldNamesArguments()
+            multiSortByFieldNamesArguments() +
+            unreadCountWithNullsSortArguments()
 
         @JvmStatic
         fun lastUpdatedSortArguments() = listOf(
@@ -342,15 +340,84 @@ internal class QueryChannelsSortTest {
             },
         )
 
+        @JvmStatic
+        fun unreadCountWithNullsSortArguments() = listOf(
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) null else it)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by nullable hasUnread field reference in ascending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5]
+                    ),
+                    QuerySort<Channel>().asc(Channel::hasUnread),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 6 - it else null)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by nullable hasUnread field reference in descending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5]
+                    ),
+                    QuerySort<Channel>().desc(Channel::hasUnread),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) null else it)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by nullable has_unread field name in descending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5]
+                    ),
+                    QuerySort<Channel>().asc("unread_count"),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 6 - it else null)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by nullable has_unread field name in descending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5]
+                    ),
+                    QuerySort<Channel>().desc("unread_count"),
+                    expectedList,
+                )
+            }
+        )
+
         private fun sortArguments(
             testName: String,
             querySort: QuerySort<Channel>,
             channelFactory: (Int) -> Channel,
         ): Arguments {
             return List(10, channelFactory).let { expectedList ->
-
-                println(expectedList.joinToString(separator = "\n") { it.unreadCount.toString() })
-
                 Arguments.of(
                     testName,
                     expectedList.shuffled(),
