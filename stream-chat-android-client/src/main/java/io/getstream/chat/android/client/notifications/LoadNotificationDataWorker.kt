@@ -24,15 +24,22 @@ internal class LoadNotificationDataWorker(
 
     private val logger = ChatLogger.get("LoadNotificationDataWorker")
 
-    private val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
-    private val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
-    private val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
-    private val notificationTitle: String = inputData.getString(DATA_NOTIFICATION_TITLE)!!
-    private val notificationIcon: Int = inputData.getInt(DATA_NOTIFICATION_ICON, R.drawable.stream_ic_notification)
-    private val notificationChannelName: String = inputData.getString(DATA_NOTIFICATION_CHANNEL_NAME)!!
-
     override suspend fun doWork(): Result {
-        setForeground(createForegroundInfo())
+        val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
+        val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
+        val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
+        val notificationTitle: String = inputData.getString(DATA_NOTIFICATION_TITLE)!!
+        val notificationIcon: Int = inputData.getInt(DATA_NOTIFICATION_ICON, R.drawable.stream_ic_notification)
+        val notificationChannelName: String = inputData.getString(DATA_NOTIFICATION_CHANNEL_NAME)!!
+
+        setForeground(
+            createForegroundInfo(
+                notificationChannelId = "$channelType:$channelId",
+                notificationChannelName = notificationChannelName,
+                notificationIcon = notificationIcon,
+                notificationTitle = notificationTitle,
+            )
+        )
 
         return try {
             ChatClient.displayNotificationWithData(channelId, channelType, messageId)
@@ -43,22 +50,50 @@ internal class LoadNotificationDataWorker(
         }
     }
 
-    private fun createForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(NOTIFICATION_ID, createForegroundNotification())
+    private fun createForegroundInfo(
+        notificationChannelId: String,
+        notificationIcon: Int,
+        notificationTitle: String,
+        notificationChannelName: String,
+    ): ForegroundInfo {
+        return ForegroundInfo(
+            NOTIFICATION_ID,
+            createForegroundNotification(
+                notificationChannelId = notificationChannelId,
+                notificationChannelName = notificationChannelName,
+                notificationIcon = notificationIcon,
+                notificationTitle = notificationTitle,
+            ),
+        )
     }
 
-    private fun createForegroundNotification(): Notification {
-        createSyncNotificationChannel()
-        return NotificationCompat.Builder(context, channelId)
+    private fun createForegroundNotification(
+        notificationChannelId: String,
+        notificationIcon: Int,
+        notificationTitle: String,
+        notificationChannelName: String,
+    ): Notification {
+        createSyncNotificationChannel(
+            notificationChannelId = notificationChannelId,
+            notificationChannelName = notificationChannelName,
+        )
+        return NotificationCompat.Builder(context, notificationChannelId)
             .setAutoCancel(true)
             .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
             .build()
     }
 
-    private fun createSyncNotificationChannel() {
+    private fun createSyncNotificationChannel(
+        notificationChannelId: String,
+        notificationChannelName: String,
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel(channelId, notificationChannelName, NotificationManager.IMPORTANCE_HIGH).run {
+            NotificationChannel(
+                notificationChannelId,
+                notificationChannelName,
+                NotificationManager.IMPORTANCE_HIGH,
+            ).run {
                 context.getSystemService(NotificationManager::class.java).createNotificationChannel(this)
             }
         }
