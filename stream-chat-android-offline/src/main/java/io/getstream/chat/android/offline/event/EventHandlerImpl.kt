@@ -193,8 +193,8 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
+                    event.unreadChannels.let(domainImpl::setChannelUnreadCount)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     domainImpl.repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
                         ?.let(batch::addChannel)
@@ -211,8 +211,8 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
+                    event.unreadChannels.let(domainImpl::setChannelUnreadCount)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
@@ -339,8 +339,8 @@ internal class EventHandlerImpl(
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
+                    event.unreadChannels.let(domainImpl::setChannelUnreadCount)
                     batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
