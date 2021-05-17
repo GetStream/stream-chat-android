@@ -24,6 +24,7 @@ Fixing filter for draft channels. Those channels were not showing in the results
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed querying banned users using new serialization.
+- Fixed the bug when wrong credentials lead to inability to login
 
 ### ⬆️ Improved
 
