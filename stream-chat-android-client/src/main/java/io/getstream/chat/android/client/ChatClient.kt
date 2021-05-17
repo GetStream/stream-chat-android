@@ -1673,8 +1673,7 @@ public class ChatClient internal constructor(
 
         @Throws(IllegalStateException::class)
         private fun ensureClientInitialized() {
-            if (!isInitialized) {
-                throw IllegalStateException("ChatClient should be initialized first!")
+            require(isInitialized) { "ChatClient should be initialized first!" }
             }
         }
     }
