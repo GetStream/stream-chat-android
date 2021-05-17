@@ -28,6 +28,7 @@ internal class UserStateService {
         get() = fsm.state
 
     private val fsm = FiniteStateMachine<UserState, UserStateEvent> {
+        defaultHandler { state, event -> error("Can't handle $event while being in state ${state::class.simpleName}") }
         initialState(UserState.NotSet)
         state<UserState.NotSet> {
             onEvent<UserStateEvent.ConnectUser> { _, event -> UserState.UserSet(event.user) }

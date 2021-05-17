@@ -4,11 +4,13 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalStateException
 
 internal class UserStateServiceTests {
 
     @Test
-    fun `Given Idle state When set user Should move to user set state`() {
+    fun `Given user not set state When set user Should move to user set state`() {
         val user = Mother.randomUser()
         val sut = Fixture().please()
 
@@ -30,22 +32,87 @@ internal class UserStateServiceTests {
         Truth.assertThat(sut.state.userOrError()).isEqualTo(user2)
     }
 
-    /*@Test
-    fun onLogout() {
-    }*/
-
-    /*@Test
-    fun onSetAnonymous() {
-    }*/
-/*
     @Test
-    fun onSocketUnrecoverableError() {
-    }*/
+    fun `Given Idle state When logout Should throw an exception`() {
+        val sut = Fixture().please()
+
+        assertThrows<IllegalStateException> { sut.onLogout() }
+    }
+
+    @Test
+    fun `Given user set state When logout Should move to user not set state`() {
+        val sut = Fixture().givenUserSetState().please()
+
+        sut.onLogout()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
+    @Test
+    fun `Given anonymous user pending state When logout Should move to user not set state`() {
+        val sut = Fixture().givenAnonymousPendingState().please()
+
+        sut.onLogout()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
+    @Test
+    fun `Given anonymous user set state When logout Should move to user not set state`() {
+        val sut = Fixture().givenAnonymousUserState().please()
+
+        sut.onLogout()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
+    @Test
+    fun `Given user not set state When set anonymous Should move to anonymous pending state`() {
+        val sut = Fixture().please()
+
+        sut.onSetAnonymous()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.Anonymous.Pending)
+    }
+
+    @Test
+    fun `Given user set state When socket unrecoverable error occurs Should move to user not set state`() {
+        val sut = Fixture().givenUserSetState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
+    @Test
+    fun `Given anonymous user set state When socket unrecoverable error occurs Should move to user not set state`() {
+        val sut = Fixture().givenAnonymousUserState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
+    @Test
+    fun `Given anonymous user pending state When socket unrecoverable error occurs Should move to user not set state`() {
+        val sut = Fixture().givenAnonymousPendingState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
 
     private class Fixture {
         private val userStateService = UserStateService()
 
         fun givenUserSetState(user: User = Mother.randomUser()) = apply { userStateService.onSetUser(user) }
+
+        fun givenAnonymousPendingState() = apply { userStateService.onSetAnonymous() }
+
+        fun givenAnonymousUserState() = apply {
+            givenAnonymousPendingState()
+            userStateService.onUserUpdated(Mother.randomUser())
+        }
 
         fun please() = userStateService
     }
