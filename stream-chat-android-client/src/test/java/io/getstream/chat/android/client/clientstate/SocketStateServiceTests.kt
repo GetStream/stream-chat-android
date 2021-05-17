@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.test.randomString
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -144,6 +145,33 @@ internal class SocketStateServiceTests {
         sut.onDisconnectRequested()
 
         sut.state shouldBeInstanceOf SocketState.Idle::class
+    }
+
+    @Test
+    fun `Given connected state When socket unrecoverable error occurs Should move to idle state`() {
+        val sut = Fixture().givenConnectedState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        sut.state shouldBe SocketState.Idle
+    }
+
+    @Test
+    fun `Given connection pending state When socket unrecoverable error occurs Should move to idle state`() {
+        val sut = Fixture().givenConnectionPendingState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        sut.state shouldBe SocketState.Idle
+    }
+
+    @Test
+    fun `Given disconnected state When socket unrecoverable error occurs Should move to idle state`() {
+        val sut = Fixture().givenDisconnectedState().please()
+
+        sut.onSocketUnrecoverableError()
+
+        sut.state shouldBe SocketState.Idle
     }
 
     private class Fixture {
