@@ -56,5 +56,9 @@ internal class SyncMessagesWork(
                     syncMessagesWork,
                 )
         }
+
+        fun cancel(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(SYNC_MESSAGES_WORK_NAME)
+        }
     }
 }

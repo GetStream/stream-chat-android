@@ -374,6 +374,7 @@ internal class ChatDomainImpl internal constructor(
         stopListening()
         stopClean()
         clearState()
+        offlineSyncFirebaseMessagingHandler.cancel(appContext)
     }
 
     override fun getVersion(): String {

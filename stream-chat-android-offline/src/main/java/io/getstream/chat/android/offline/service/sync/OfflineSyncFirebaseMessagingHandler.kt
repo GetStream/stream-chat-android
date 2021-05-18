@@ -11,4 +11,8 @@ internal class OfflineSyncFirebaseMessagingHandler {
 
         SyncMessagesWork.start(context, cid)
     }
+
+    fun cancel(context: Context) {
+        SyncMessagesWork.cancel(context)
+    }
 }
