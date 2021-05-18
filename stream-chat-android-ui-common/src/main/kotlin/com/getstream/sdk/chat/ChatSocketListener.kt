@@ -74,20 +74,20 @@ internal class ChatSocketListener(
     override fun onEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                event.totalUnreadCount.let(onTotalUnreadCountListener)
-                event.unreadChannels.let(onUnreadChannels)
+                onTotalUnreadCountListener(event.totalUnreadCount)
+                onUnreadChannels(event.unreadChannels)
             }
             is NotificationMarkReadEvent -> {
-                event.totalUnreadCount.let(onTotalUnreadCountListener)
-                event.unreadChannels.let(onUnreadChannels)
+                onTotalUnreadCountListener(event.totalUnreadCount)
+                onUnreadChannels(event.unreadChannels)
             }
             is NotificationMessageNewEvent -> {
-                event.totalUnreadCount.let(onTotalUnreadCountListener)
-                event.unreadChannels.let(onUnreadChannels)
+                onTotalUnreadCountListener(event.totalUnreadCount)
+                onUnreadChannels(event.unreadChannels)
             }
             is MarkAllReadEvent -> {
-                event.totalUnreadCount.let(onTotalUnreadCountListener)
-                event.unreadChannels.let(onUnreadChannels)
+                onTotalUnreadCountListener(event.totalUnreadCount)
+                onUnreadChannels(event.unreadChannels)
             }
             is ConnectedEvent -> {
                 onConnected(event)
