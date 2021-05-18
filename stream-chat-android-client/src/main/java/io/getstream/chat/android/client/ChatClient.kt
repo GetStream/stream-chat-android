@@ -1649,8 +1649,7 @@ public class ChatClient internal constructor(
          */
         @Throws(IllegalStateException::class)
         public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
-            ensureClientInitialized()
-            instance!!.run {
+            ensureClientInitialized().run {
                 setUserWithoutConnectingIfNeeded()
                 notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
             }
@@ -1658,8 +1657,7 @@ public class ChatClient internal constructor(
 
         @Throws(IllegalStateException::class)
         internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
-            ensureClientInitialized()
-            instance!!.notifications.displayNotificationWithData(channelId, channelType, messageId)
+            ensureClientInitialized().notifications.displayNotificationWithData(channelId, channelType, messageId)
         }
 
         /**
@@ -1670,13 +1668,13 @@ public class ChatClient internal constructor(
          */
         @Throws(IllegalStateException::class)
         public fun setFirebaseToken(token: String) {
-            ensureClientInitialized()
-            instance!!.notifications.setFirebaseToken(token)
+            ensureClientInitialized().notifications.setFirebaseToken(token)
         }
 
         @Throws(IllegalStateException::class)
-        private fun ensureClientInitialized() {
+        private fun ensureClientInitialized(): ChatClient {
             require(isInitialized) { "ChatClient should be initialized first!" }
+            return instance()
         }
     }
 }
