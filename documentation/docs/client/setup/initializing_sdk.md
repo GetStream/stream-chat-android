@@ -6,7 +6,7 @@ sidebar_position: 2
 
 Integrating with the you need to initialize the `ChatClient`. The `ChatClient` is the main entry point for all operations in the library. Create a single `ChatClient` and re-use it across your application.
 
-A best practice is to ininitialize `ChatClient` in the `Application` class and create a static reference to the client:
+A best practice is to initialize `ChatClient` in the `Application` class and create a static reference to the client:
 
  ```kotlin
  class App : Application() {
@@ -21,7 +21,7 @@ A best practice is to ininitialize `ChatClient` in the `Application` class and c
  ```
 > You can access your apiKey in the [Dashboard](https://getstream.io/dashboard)
 
-If you create the `ChatClient` instance following the pattern in the previous example, you will be able to access the that instance from any part of your application. 
+If you create the `ChatClient` instance following the pattern in the previous example, you will be able to access that instance from any part of your application. 
 
 Access the `ChatClient` using the `instance()` method:
 

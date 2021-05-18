@@ -40,7 +40,7 @@ val client = ChatClient.Builder("apiKey", context)
 
 ## Filtering logs
 
-All SDK log tags `Chat:` as a prefix that you can use when filtering logs.
+All SDK log tags have `Chat:` as a prefix that you can use when filtering logs.
 
 ```bash
 adb logcat com.your.package | grep "Chat:"
