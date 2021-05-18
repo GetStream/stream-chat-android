@@ -1,10 +1,12 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -18,10 +20,9 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
 
     @VisibleForTesting
-    internal val defaultUsersQueryFilter by lazy {
-        Filters.and(
-            Filters.ne(FIELD_NAME, ""),
-            Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
+    internal fun defaultUsersQueryFilter(userId: String): FilterObject {
+        return Filters.and(
+            Filters.ne(FIELD_NAME, ""), Filters.ne(FIELD_ID, userId)
         )
     }
 
@@ -38,7 +39,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         querySearch: String,
         offset: Int,
         userLimit: Int,
-        userPresence: Boolean
+        userPresence: Boolean,
     ): Call<List<User>> {
         return CoroutineCall(chatDomainImpl.scope) {
             if (chatDomainImpl.isOnline()) {
@@ -63,27 +64,35 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         userLimit: Int,
         userPresence: Boolean,
     ): Result<List<User>> {
-        val filter = if (querySearch.isEmpty()) {
-            defaultUsersQueryFilter
-        } else {
-            Filters.and(
-                Filters.autocomplete(FIELD_NAME, querySearch),
-                Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
-            )
-        }
+        val currentUser = chatDomainImpl.user.value
 
-        return chatDomainImpl.client.queryUsers(
-            QueryUsersRequest(
-                filter = filter,
-                offset = offset,
-                limit = userLimit,
-                querySort = USERS_QUERY_SORT,
-                presence = userPresence
-            )
-        ).execute().also { result ->
-            if (result.isSuccess && result.data().isNotEmpty()) {
-                chatDomainImpl.repos.insertUsers(result.data())
+        return if (currentUser != null) {
+            val filter = if (querySearch.isEmpty()) {
+                defaultUsersQueryFilter(currentUser.id)
+            } else {
+                Filters.and(
+                    Filters.autocomplete(FIELD_NAME, querySearch),
+                    Filters.ne(FIELD_ID, currentUser.id)
+                )
             }
+
+            chatDomainImpl.client.queryUsers(
+                QueryUsersRequest(
+                    filter = filter,
+                    offset = offset,
+                    limit = userLimit,
+                    querySort = USERS_QUERY_SORT,
+                    presence = userPresence
+                )
+            ).execute().also { result ->
+                if (result.isSuccess && result.data().isNotEmpty()) {
+                    chatDomainImpl.repos.insertUsers(result.data())
+                }
+            }
+        } else {
+            Result(
+                ChatError("User is not set in ChatDomain. It is not possible to perform online search")
+            )
         }
     }
 

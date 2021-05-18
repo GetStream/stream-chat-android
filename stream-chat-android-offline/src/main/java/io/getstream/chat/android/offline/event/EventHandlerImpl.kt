@@ -392,11 +392,18 @@ internal class EventHandlerImpl(
     }
 
     private fun EventBatchUpdate.incrementUnreadCountIfNecessary(cid: String, message: Message) {
-        val currentUserId = domainImpl.currentUser.id
-        getCurrentChannel(cid)?.let {
-            if (message.shouldIncrementUnreadCount(currentUserId)) {
-                addChannel(it.apply { incrementUnreadCount(currentUserId) })
+        val currentUser = domainImpl.user.value
+
+        if (currentUser != null) {
+            val currentUserId = currentUser.id
+
+            getCurrentChannel(cid)?.let {
+                if (message.shouldIncrementUnreadCount(currentUserId)) {
+                    addChannel(it.apply { incrementUnreadCount(currentUserId) })
+                }
             }
+        } else {
+            logger.logE("It is not possible to increment unread count because user it not set in ChatDomain.")
         }
     }
 
@@ -429,8 +436,8 @@ internal class EventHandlerImpl(
                 .filter { channelControllerImpl ->
                     channelControllerImpl.members
                         .value
-                        ?.map { member -> member.user.id }
-                        ?.contains(event.user.id) == true
+                        .map { member -> member.user.id }
+                        .contains(event.user.id)
                 }
                 .forEach { channelController ->
                     channelController.handleEvent(userPresenceChanged)
@@ -445,7 +452,7 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        if (user != null && domainImpl.currentUser.id != user.id) {
+        if (user != null && domainImpl.user.value?.id != user.id) {
             ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             // for events of current user we keep "ownReactions" from the event

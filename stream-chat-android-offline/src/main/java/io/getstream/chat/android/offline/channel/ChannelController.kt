@@ -151,7 +151,7 @@ public class ChannelController internal constructor(
             messageMap.values
                 .asSequence()
                 .filter { it.parentId == null || it.showInChannel }
-                .filter { it.user.id == domainImpl.currentUser.id || !it.shadowed }
+                .filter { it.user.id == domainImpl.user.value?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
@@ -172,7 +172,7 @@ public class ChannelController internal constructor(
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.currentUser }
+                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.user.value }
                         else -> null
                     }
                 }
@@ -323,9 +323,15 @@ public class ChannelController internal constructor(
                 lastMarkReadEvent = lastMessageDate
 
                 // update live data with new read
-                updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+                val currentUser = domainImpl.user.value
 
-                shouldUpdate
+                if (currentUser != null) {
+                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
+                    shouldUpdate
+                } else {
+                    logger.logE("User is not set for ChatDomain, so it is not possible to mark a channel as read.")
+                    false
+                }
             }
     }
 
@@ -371,7 +377,11 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun leave(): Result<Unit> {
-        val result = channelClient.removeMembers(domainImpl.currentUser.id).execute()
+        val currentUser = domainImpl.user.value
+
+        val result = currentUser?.let { user ->
+            channelClient.removeMembers(user.id).execute()
+        } ?: Result(ChatError("Current user is not set, then it is not possible to leave channel. Please set User for ChatDomain."))
 
         return if (result.isSuccess) {
             // Remove from query controllers
@@ -583,6 +593,7 @@ public class ChannelController internal constructor(
             newMessage.enrichWithCid(cid)
         }
 
+        // What to do then user is not set?
         newMessage.user = domainImpl.currentUser
 
         newMessage.attachments.forEach { attachment ->
@@ -790,10 +801,10 @@ public class ChannelController internal constructor(
      * If the request fails we retry according to the retry policy set on the repo
      */
     internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
-        val currentUser = domainImpl.currentUser
+        val currentUser = domainImpl.user.value
         reaction.apply {
             user = currentUser
-            userId = currentUser.id
+            userId = currentUser?.id ?: "user_not_set"
             syncStatus = SyncStatus.IN_PROGRESS
             this.enforceUnique = enforceUnique
         }
@@ -803,8 +814,9 @@ public class ChannelController internal constructor(
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
-        if (enforceUnique) {
+        if (enforceUnique && currentUser != null) {
             // remove all user's reactions to the message
+
             domainImpl.repos.updateReactionsForMessageByDeletedDate(
                 userId = currentUser.id,
                 messageId = reaction.messageId,
@@ -846,10 +858,10 @@ public class ChannelController internal constructor(
 
     internal suspend fun deleteReaction(reaction: Reaction): Result<Message> {
         val online = domainImpl.isOnline()
-        val currentUser = domainImpl.currentUser
+        val currentUser = domainImpl.user.value
         reaction.apply {
             user = currentUser
-            userId = currentUser.id
+            userId = currentUser?.id ?: "user_not_set"
             syncStatus = SyncStatus.IN_PROGRESS
             deletedAt = Date()
         }
@@ -989,6 +1001,7 @@ public class ChannelController internal constructor(
         }
     }
 
+    // Todo: Review this code. Hard to understand. 
     internal fun setTyping(userId: String, event: ChatEvent?) {
         val copy = _typing.value.toMutableMap()
         if (event == null) {
@@ -1205,7 +1218,14 @@ public class ChannelController internal constructor(
     }
 
     private fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserId = domainImpl.currentUser.id
+        val currentUser = domainImpl.user.value
+
+        if (currentUser == null) {
+            logger.logE("User is not set in ChatDomain. It is not possible to update reads.")
+            return
+        }
+
+        val currentUserId = currentUser.id
         val previousUserIdToReadMap = _reads.value
         val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
@@ -1231,7 +1251,7 @@ public class ChannelController internal constructor(
                 _unreadCount.value = incomingUserRead.unreadMessages
             } else {
                 // if the previous Read was more current, replace the item in the update map
-                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
+                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
             }
         }
 
@@ -1297,14 +1317,20 @@ public class ChannelController internal constructor(
     }
 
     private fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = domainImpl.currentUser.id
-        if (message.shouldIncrementUnreadCount(currentUserId)) {
-            val newUnreadCount = _unreadCount.value + 1
-            _unreadCount.value = newUnreadCount
-            _read.value = _read.value?.copy(unreadMessages = newUnreadCount)
-            _reads.value = _reads.value.apply {
-                this[currentUserId]?.unreadMessages = newUnreadCount
+        val currentUser = domainImpl.user.value
+
+        if (currentUser != null) {
+            val currentUserId = currentUser.id
+            if (message.shouldIncrementUnreadCount(currentUserId)) {
+                val newUnreadCount = _unreadCount.value + 1
+                _unreadCount.value = newUnreadCount
+                _read.value = _read.value?.copy(unreadMessages = newUnreadCount)
+                _reads.value = _reads.value.apply {
+                    this[currentUserId]?.unreadMessages = newUnreadCount
+                }
             }
+        } else {
+            logger.logE("Unread count could not be incremented because user is not set. Please set user for ChatDomain.")
         }
     }
 

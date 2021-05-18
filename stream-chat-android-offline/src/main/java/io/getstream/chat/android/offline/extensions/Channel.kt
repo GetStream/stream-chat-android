@@ -50,8 +50,7 @@ internal fun Channel.updateReads(newRead: ChannelUserRead) {
 }
 
 internal fun Channel.incrementUnreadCount(currentUserId: String) {
-    read.firstOrNull { it.user.id == currentUserId }
-        ?.let { it.unreadMessages++ }
+    read.firstOrNull { it.user.id == currentUserId }?.let { it.unreadMessages++ }
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
