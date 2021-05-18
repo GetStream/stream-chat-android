@@ -4,7 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.logger.ChatLogger
 
 internal class OfflineSyncFirebaseMessagingHandler {
-    private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingReceiver")
+    private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingHandler")
 
     fun syncMessages(context: Context, cid: String) {
         logger.logD("Starting the sync")
