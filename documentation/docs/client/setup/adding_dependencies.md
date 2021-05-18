@@ -14,7 +14,7 @@ allprojects {
 }
 ```
 
-Open up the app module's `build.gradle` script and make the following changes:
+Open the app module's `build.gradle` script and make the following changes:
 
 ```groovy
 android {
