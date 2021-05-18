@@ -4,7 +4,7 @@ title: Connecting the User
 sidebar_position: 3
 ---
 
-The next step is connecting the user. A valid `StreamChat` token is all you need to properly set your current app user as the current user of `ChatClient`. Because you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server. This token can't be created locally and it must be provided by your backend.
+The next step is connecting the user. A valid `StreamChat` token is all you need to properly set your current app user as the current user of `ChatClient`. Because you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
 
 ```kotlin
 val user = User(
