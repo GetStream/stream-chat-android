@@ -23,7 +23,7 @@ class App : Application() {
         Coil.setImageLoader(
             ImageLoader.Builder(this).componentRegistry {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder())
+                    add(ImageDecoderDecoder(this@App))
                 } else {
                     add(GifDecoder())
                 }

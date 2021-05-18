@@ -21,6 +21,8 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.Command
 import io.getstream.chat.android.offline.repository.domain.message.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentToUploadDao
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentToUploadEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.ChannelSortInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
@@ -42,7 +44,8 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
         ChannelEntity::class,
         ChannelConfigInnerEntity::class,
         CommandInnerEntity::class,
-        SyncStateEntity::class
+        SyncStateEntity::class,
+        AttachmentToUploadEntity::class
     ],
     version = 42,
     exportSchema = false
@@ -55,7 +58,7 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
     MapConverter::class,
     SetConverter::class,
     SyncStatusConverter::class,
-    DateConverter::class
+    DateConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao
@@ -65,6 +68,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
     abstract fun syncStateDao(): SyncStateDao
+    abstract fun attachmentToUploadDao(): AttachmentToUploadDao
 
     companion object {
         @Volatile

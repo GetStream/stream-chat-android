@@ -65,6 +65,7 @@ internal class RepositoryFacadeBuilder {
             messageRepository = messageRepository,
             reactionsRepository = factory.createReactionRepository(getUser),
             syncStateRepository = factory.createSyncStateRepository(),
+            attachmentUploadRepository = factory.createAttachmentUploadRepository(),
             scope = scope,
             defaultConfig = config,
         )
