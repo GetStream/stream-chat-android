@@ -27,9 +27,10 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         socket = mock(),
         notifications = mock(),
         tokenManager = FakeTokenManager(""),
-        socketStateService,
-        queryChannelsPostponeHelper,
-        userStateService,
+        socketStateService = socketStateService,
+        queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+        userStateService = userStateService,
+        encryptedPushNotificationsConfigStore = mock(),
     )
 
     @Test

@@ -31,6 +31,7 @@ internal open class BaseChatClientTest {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userStateService = userStateService,
+            encryptedPushNotificationsConfigStore = mock(),
         )
     }
 }

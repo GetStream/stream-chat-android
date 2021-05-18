@@ -112,6 +112,7 @@ internal class ClientConnectionTests {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
+            encryptedPushNotificationsConfigStore = mock(),
         )
     }
 

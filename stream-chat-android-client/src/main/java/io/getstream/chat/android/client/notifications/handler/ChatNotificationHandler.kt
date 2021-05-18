@@ -6,11 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -28,9 +24,12 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
+/**
+ * Class responsible for handling chat notifications.
+ */
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    public val config: NotificationConfig = NotificationConfig()
+    public val config: NotificationConfig = NotificationConfig(),
 ) {
     private val logger = ChatLogger.get("ChatNotificationHandler")
     private val firebaseMessageParserImpl: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(config) }
@@ -39,6 +38,11 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return false
     }
 
+    /**
+     * Override this method to customize remote message handling
+     *
+     * @return false if remote message should be handled internally
+     */
     public open fun onFirebaseMessage(message: RemoteMessage): Boolean {
         return false
     }
@@ -53,11 +57,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public open fun createNotificationChannel(): NotificationChannel {
-        logger.logI("createNotificationChannel()")
         return NotificationChannel(
             getNotificationChannelId(),
             getNotificationChannelName(),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {
             setShowBadge(true)
             importance = NotificationManager.IMPORTANCE_HIGH
@@ -73,7 +76,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                 400,
                 300,
                 200,
-                400
+                400,
             )
         }
     }
@@ -83,9 +86,32 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getNotificationChannelName(): String =
         context.getString(config.notificationChannelName)
 
+    @Deprecated(
+        message = "Use NotificationConfig.smallIcon instead",
+        replaceWith = ReplaceWith("NotificationConfig.smallIcon"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getSmallIcon(): Int = config.smallIcon
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseMessageIdKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseMessageIdKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseChannelIdKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseChannelIdKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
+
+    @Deprecated(
+        message = "Use NotificationConfig.firebaseChannelTypeKey instead",
+        replaceWith = ReplaceWith("NotificationConfig.firebaseChannelTypeKey"),
+        level = DeprecationLevel.WARNING,
+    )
     public open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 
     public open fun getErrorCaseNotificationTitle(): String =
@@ -101,7 +127,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             getRequestCode(),
             getErrorCaseIntent(),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
         return notificationBuilder.setContentTitle(getErrorCaseNotificationTitle())
@@ -120,7 +146,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         messageText: String,
         messageId: String,
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Notification {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = getNotificationBuilder()
@@ -129,7 +155,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             getRequestCode(),
             getNewMessageIntent(messageId, channelType, channelId),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
         notificationBuilder.setContentTitle(channelName)
@@ -143,23 +169,23 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         notificationBuilder.apply {
             addAction(
                 getReadAction(
-                    preparePendingIntent(
+                    prepareActionPendingIntent(
                         notificationId,
                         messageId,
                         channelId,
                         channelType,
-                        NotificationMessageReceiver.ACTION_READ
+                        NotificationMessageReceiver.ACTION_READ,
                     )
                 )
             )
             addAction(
                 getReplyAction(
-                    preparePendingIntent(
+                    prepareActionPendingIntent(
                         notificationId,
                         messageId,
                         channelId,
                         channelType,
-                        NotificationMessageReceiver.ACTION_REPLY
+                        NotificationMessageReceiver.ACTION_REPLY,
                     )
                 )
             )
@@ -175,7 +201,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getNewMessageIntent(
         messageId: String,
         channelType: String,
-        channelId: String
+        channelId: String,
     ): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
@@ -185,24 +211,13 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     public open fun getFirebaseMessageParser(): FirebaseMessageParser = firebaseMessageParserImpl
-    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean = getFirebaseMessageParser().isValidRemoteMessage(message)
-
-    private fun drawableToBitmap(drawable: Drawable): Bitmap {
-        if (drawable is BitmapDrawable) {
-            return drawable.bitmap
-        }
-        val bitmap =
-            Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
-    }
+    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean =
+        getFirebaseMessageParser().isValidRemoteMessage(message)
 
     private fun getNotificationBuilder(): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getNotificationChannelId())
             .setAutoCancel(true)
-            .setSmallIcon(getSmallIcon())
+            .setSmallIcon(config.smallIcon)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
     }
 
@@ -210,7 +225,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return NotificationCompat.Action.Builder(
             android.R.drawable.ic_menu_view,
             context.getString(R.string.stream_chat_notification_read),
-            pendingIntent
+            pendingIntent,
         ).build()
     }
 
@@ -229,12 +244,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .build()
     }
 
-    private fun preparePendingIntent(
+    private fun prepareActionPendingIntent(
         notificationId: Int,
         messageId: String,
         channelId: String,
         type: String,
-        actionType: String
+        actionType: String,
     ): PendingIntent {
         val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
 
@@ -250,7 +265,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             context,
             0,
             notifyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT,
         )
     }
 

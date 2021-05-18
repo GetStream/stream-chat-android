@@ -5,6 +5,12 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
 | `SocketListener::onDisconnected` <br/>*client* | 2021.05.17 | 2021.06.17⌛ | 2021.07.17⌛ | Use method with DisconnectCause instead of it |
+| `ChatClient#handleRemoteMessage`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `ChatClient.handleRemoteMessage` method instead |
+| `ChatClient#onNewTokenReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `ChatClient.setFirebaseToken` method instead |
+| `ChatNotificationHandler#getSmallIcon`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `NotificationsConfig.smallIcon` instead |
+| `ChatNotificationHandler#getFirebaseMessageIdKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseMessageIdKey` instead |
+| `ChatNotificationHandler#getFirebaseChannelIdKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelIdKey` instead |
+| `ChatNotificationHandler#getFirebaseChannelTypeKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelTypeKey` instead |
 | Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.07.10 ⌛ | 2021.09.10 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.07⌛ | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead

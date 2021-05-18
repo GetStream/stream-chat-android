@@ -193,8 +193,8 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.enrichWithCid(event.cid)
                     event.message.enrichWithOwnReactions(batch, event.user)
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
+                    domainImpl.setChannelUnreadCount(event.unreadChannels)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     domainImpl.repos.selectChannelWithoutMessages(event.cid)?.copy(hidden = false)
                         ?.let(batch::addChannel)
@@ -211,8 +211,8 @@ internal class EventHandlerImpl(
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.enrichWithCid(event.cid)
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
+                    domainImpl.setChannelUnreadCount(event.unreadChannels)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
@@ -317,8 +317,8 @@ internal class EventHandlerImpl(
                 // we use syncState to store the last markAllRead date for a given
                 // user since it makes more sense to write to the database once instead of N times.
                 is MarkAllReadEvent -> {
-                    event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels.let(domainImpl::setChannelUnreadCount)
+                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
+                    domainImpl.setChannelUnreadCount(event.unreadChannels)
 
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
@@ -339,8 +339,8 @@ internal class EventHandlerImpl(
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
-                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-                    event.unreadChannels?.let(domainImpl::setChannelUnreadCount)
+                    domainImpl.setTotalUnreadCount(event.totalUnreadCount)
+                    domainImpl.setChannelUnreadCount(event.unreadChannels)
                     batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
