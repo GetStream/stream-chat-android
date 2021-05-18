@@ -20,7 +20,7 @@
             android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
             android:exported="false"
             >
-            <intent-filter android:priority="-2" >
+            <intent-filter android:priority="-1" >
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>

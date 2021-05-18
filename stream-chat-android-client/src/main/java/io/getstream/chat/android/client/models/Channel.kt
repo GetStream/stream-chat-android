@@ -62,4 +62,7 @@ public data class Channel(
 
     val lastUpdated: Date?
         get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
+
+    val hasUnread: Boolean
+        get() = unreadCount?.let { it > 0 } ?: false
 }
