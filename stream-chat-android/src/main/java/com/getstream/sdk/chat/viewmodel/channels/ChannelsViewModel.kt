@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
@@ -28,11 +29,11 @@ public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
+        userFilter(chatDomain),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
-    private val limit: Int = 30
+    private val limit: Int = 30,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -51,10 +52,18 @@ public class ChannelsViewModel(
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading -> State.Loading
+                            is QueryChannelsController.ChannelsState.Loading,
+                            -> State.Loading
                             is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
-                            is QueryChannelsController.ChannelsState.Result ->
-                                State.Result(channelState.channels)
+                            is QueryChannelsController.ChannelsState.Result -> {
+                                val currentUser = chatDomain.user.value
+
+                                if (currentUser != null) {
+                                    State.Result(channelState.channels)
+                                } else {
+                                    State.Error("User is not set in ChatDomain")
+                                }
+                            }
                         }
                     }
                 ) { state -> stateMerger.value = state }
@@ -108,13 +117,14 @@ public class ChannelsViewModel(
     public sealed class State {
         public object Loading : State()
         public data class Result(val channels: List<Channel>) : State()
+        public data class Error(val message: String) : State()
         public object NoChannelsAvailable : State()
         public object NavigateToLoginScreen : State()
     }
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
-        val endOfChannels: Boolean = false
+        val endOfChannels: Boolean = false,
     )
 
     public sealed class Event {
@@ -125,5 +135,14 @@ public class ChannelsViewModel(
     public companion object {
         @JvmField
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
+    }
+}
+
+private fun userFilter(chatDomain: ChatDomain): FilterObject {
+    return chatDomain.user.value?.id?.let { id ->
+        Filters.`in`("members", id)
+    } ?: Filters.neutral().also {
+        ChatLogger.get("ChannelsViewModel")
+            .logE("User is not set in ChatDomain, default filter for ChannelsViewModel won't work")
     }
 }

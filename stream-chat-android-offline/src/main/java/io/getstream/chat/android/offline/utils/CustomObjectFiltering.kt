@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.api.models.NoneFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotExistsFilterObject
@@ -68,6 +69,7 @@ internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
                 channel.members.map { it.user.id }.containsAll(memberIds)
         } ?: false
         NeutralFilterObject -> true
+        NoneFilterObject -> false
     }
 } catch (e: ClassCastException) {
     false

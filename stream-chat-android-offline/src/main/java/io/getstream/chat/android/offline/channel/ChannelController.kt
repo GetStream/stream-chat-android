@@ -576,7 +576,6 @@ public class ChannelController internal constructor(
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
-
     internal suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
@@ -593,8 +592,16 @@ public class ChannelController internal constructor(
             newMessage.enrichWithCid(cid)
         }
 
+        val currentUser = domainImpl.user.value
+
+        if (currentUser == null) {
+            return Result(
+                ChatError("User is not set in ChatDomain. Messages can't be send.")
+            )
+        }
+
         // What to do then user is not set?
-        newMessage.user = domainImpl.currentUser
+        newMessage.user = currentUser
 
         newMessage.attachments.forEach { attachment ->
             attachment.uploadId = generateUploadId()
@@ -1001,7 +1008,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    // Todo: Review this code. Hard to understand. 
+    // Todo: Review this code. Hard to understand.
     internal fun setTyping(userId: String, event: ChatEvent?) {
         val copy = _typing.value.toMutableMap()
         if (event == null) {
@@ -1009,7 +1016,8 @@ public class ChannelController internal constructor(
         } else {
             copy[userId] = event
         }
-        copy.remove(domainImpl.currentUser.id)
+
+        domainImpl.user.value?.id?.let(copy::remove)
         _typing.value = copy.toMap()
     }
 
@@ -1017,7 +1025,7 @@ public class ChannelController internal constructor(
         _hidden.value = hidden
     }
 
-    internal suspend fun handleEvents(events: List<ChatEvent>) {
+    internal fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
         }

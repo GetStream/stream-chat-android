@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
@@ -106,6 +107,11 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun hideEmptyStateView() {
         this.emptyStateView.isVisible = false
+    }
+
+    public fun showErrorView(message: String) {
+        this.emptyStateView.isVisible = true
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     public fun setPaginationEnabled(enabled: Boolean) {

@@ -21,14 +21,18 @@ public fun ChannelListViewModel.bindView(
     lifecycle: LifecycleOwner,
 ) {
     state.observe(lifecycle) { channelState ->
-        if (channelState.isLoading) {
-            view.showLoadingView()
-        } else {
-            view.hideLoadingView()
-            channelState
-                .channels
-                .map(ChannelListItem::ChannelItem)
-                .let(view::setChannels)
+        when {
+            channelState is ChannelListViewModel.State.Result && channelState.isLoading -> view.showLoadingView()
+
+            channelState is ChannelListViewModel.State.Result && !channelState.isLoading -> {
+                view.hideLoadingView()
+                channelState
+                    .channels
+                    .map(ChannelListItem::ChannelItem)
+                    .let(view::setChannels)
+            }
+
+            channelState is ChannelListViewModel.State.Error -> view.showErrorState("Error: No user is set")
         }
     }
 

@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.client.api.models.NoneFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotExistsFilterObject
@@ -53,6 +54,7 @@ internal fun FilterObject.toMap(): Map<*, *> = when (this) {
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf(KEY_AUTOCOMPLETE to this.value))
     is DistinctFilterObject -> mapOf(KEY_DISTINCT to true, KEY_MEMBERS to this.memberIds)
     is NeutralFilterObject -> emptyMap<String, String>()
+    is NoneFilterObject -> emptyMap<String, String>()
 }
 
 private const val KEY_EXIST: String = "\$exists"

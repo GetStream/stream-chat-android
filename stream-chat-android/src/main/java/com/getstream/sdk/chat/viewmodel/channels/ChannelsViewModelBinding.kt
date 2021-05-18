@@ -30,6 +30,9 @@ public fun ChannelsViewModel.bindView(
                 view.showEmptyStateView()
                 view.hideLoadingView()
             }
+            is ChannelsViewModel.State.Error -> {
+                view.showErrorView(it.message)
+            }
         }
     }
     paginationState.observe(lifecycle) {

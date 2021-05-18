@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
@@ -77,6 +78,11 @@ public class ChannelListView @JvmOverloads constructor(
                     simpleChannelListView.setItemSeparator(separator)
                 }
         }
+    }
+
+    internal fun showErrorState(message: String) {
+        showEmptyStateView()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     /**
