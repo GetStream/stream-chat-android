@@ -1,6 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-
+- Fixed channel list sorting
 ### ⬆️ Improved
 
 ### ✅ Added
