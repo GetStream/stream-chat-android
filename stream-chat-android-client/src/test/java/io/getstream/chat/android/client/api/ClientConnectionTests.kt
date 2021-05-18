@@ -109,6 +109,7 @@ internal class ClientConnectionTests {
             tokenManager = FakeTokenManager(token),
             clientStateService,
             queryChannelsPostponeHelper,
+            encryptedPushNotificationsConfigStore = mock(),
         )
     }
 

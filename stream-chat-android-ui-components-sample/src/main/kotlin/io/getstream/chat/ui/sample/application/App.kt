@@ -6,6 +6,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
 class App : Application() {
@@ -16,6 +17,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
         Coil.setImageLoader(
@@ -28,6 +30,15 @@ class App : Application() {
             }.build()
         )
         ApplicationConfigurator.configureApp(this)
+    }
+
+    private fun getApiKey(): String {
+        val user = userRepository.getUser()
+        return if (user != SampleUser.None) {
+            user.apiKey
+        } else {
+            AppConfig.apiKey
+        }
     }
 
     companion object {

@@ -19,10 +19,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
-import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -587,7 +584,6 @@ public interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private val syncModule by lazy { SyncProvider(appContext) }
 
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -635,7 +631,6 @@ public interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            storeNotificationConfig(client.notificationHandler.config)
             ChatDomain.instance = buildImpl()
             return ChatDomain.instance()
         }
@@ -653,14 +648,6 @@ public interface ChatDomain {
                 backgroundSyncEnabled,
                 appContext
             )
-        }
-
-        private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
-            if (NotificationConfigUnavailable != notificationConfig) {
-                syncModule.notificationConfigStore.apply {
-                    put(notificationConfig)
-                }
-            }
         }
     }
 

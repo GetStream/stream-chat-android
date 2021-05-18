@@ -55,8 +55,11 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
+import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -78,6 +81,7 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
+import kotlin.jvm.Throws
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -91,6 +95,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val clientStateService: ClientStateService = ClientStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
 ) {
 
     @InternalStreamChatApi
@@ -109,6 +114,9 @@ public class ChatClient internal constructor(
     public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf()
 
+    private var pushNotificationReceivedListener: PushNotificationReceivedListener =
+        PushNotificationReceivedListener { _, _ -> }
+
     init {
         eventsObservable.subscribe { event ->
 
@@ -121,6 +129,7 @@ public class ChatClient internal constructor(
                     clientStateService.onConnected(user, connectionId)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
+                    storePushNotificationsConfig(user.id)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -263,25 +272,36 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Initializes [ChatClient] for a specific user and a given [userToken].
+     * Initializes [ChatClient] with stored user data.
      * Caution: This method doesn't establish connection to the web socket, you should use [connectUser] instead.
      *
      * This method initializes [ChatClient] to allow the use of Stream REST API client.
      * Moreover, it warms up the connection, and sets up notifications.
      *
-     * @param user the user to set
-     * @param userToken the user token
      */
-    @InternalStreamChatApi
-    public fun setUserWithoutConnecting(user: User, userToken: String) {
+    private fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet()) {
             return
         }
-        initializeClientWithUser(user, ConstantTokenProvider(userToken))
+        encryptedPushNotificationsConfigStore.get()?.let { config ->
+            initializeClientWithUser(
+                user = User(id = config.userId),
+                tokenProvider = ConstantTokenProvider(config.userToken),
+            )
+        }
     }
 
     private fun notifySetUser(user: User) {
         preSetUserListeners.forEach { it(user) }
+    }
+
+    private fun storePushNotificationsConfig(userId: String) {
+        encryptedPushNotificationsConfigStore.put(
+            PushNotificationsConfig(
+                userToken = getCurrentToken() ?: "",
+                userId = userId,
+            ),
+        )
     }
 
     @Deprecated(
@@ -787,6 +807,8 @@ public class ChatClient internal constructor(
         connectionListener = null
         clientStateService.onDisconnectRequested()
         socket.disconnect()
+        notifications.cancelLoadDataWork()
+        encryptedPushNotificationsConfigStore.clear()
         lifecycleObserver.dispose()
     }
 
@@ -1277,12 +1299,28 @@ public class ChatClient internal constructor(
 
     //endregion
 
+    @Deprecated(
+        message = "Use ChatClient.handleRemoteMessage instead",
+        replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun onMessageReceived(remoteMessage: RemoteMessage) {
-        notifications.onFirebaseMessage(remoteMessage)
+        setUserWithoutConnectingIfNeeded()
+        notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
     }
 
+    @Deprecated(
+        message = "Use ChatClient.setFirebaseToken instead",
+        replaceWith = ReplaceWith("setFirebaseToken(token)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun onNewTokenReceived(token: String) {
         notifications.setFirebaseToken(token)
+    }
+
+    @InternalStreamChatApi
+    public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
+        this.pushNotificationReceivedListener = pushNotificationReceivedListener
     }
 
     public fun getConnectionId(): String? {
@@ -1560,7 +1598,8 @@ public class ChatClient internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.clientStateService,
-                module.queryChannelsPostponeHelper
+                module.queryChannelsPostponeHelper,
+                EncryptedPushNotificationsConfigStore(appContext),
             )
 
             instance = result
@@ -1585,6 +1624,11 @@ public class ChatClient internal constructor(
         public val isInitialized: Boolean
             get() = instance != null
 
+        /**
+         * Checks if remote message can be handled
+         *
+         * @return true if message can be handled
+         */
         public fun isValidRemoteMessage(
             remoteMessage: RemoteMessage,
             defaultNotificationConfig: NotificationConfig = NotificationConfig(),
@@ -1592,6 +1636,45 @@ public class ChatClient internal constructor(
             return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(
                 defaultNotificationConfig
             )
+        }
+
+        /**
+         * Handles remote message.
+         * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
+         * Remote message will be handled internally unless user overrides [ChatNotificationHandler.onFirebaseMessage]
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @see [ChatNotificationHandler.onFirebaseMessage]
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
+        @Throws(IllegalStateException::class)
+        public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
+            ensureClientInitialized().run {
+                setUserWithoutConnectingIfNeeded()
+                notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
+            }
+        }
+
+        @Throws(IllegalStateException::class)
+        internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+            ensureClientInitialized().notifications.displayNotificationWithData(channelId, channelType, messageId)
+        }
+
+        /**
+         * Sets Firebase token.
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
+        @Throws(IllegalStateException::class)
+        public fun setFirebaseToken(token: String) {
+            ensureClientInitialized().notifications.setFirebaseToken(token)
+        }
+
+        @Throws(IllegalStateException::class)
+        private fun ensureClientInitialized(): ChatClient {
+            require(isInitialized) { "ChatClient should be initialized first!" }
+            return instance()
         }
     }
 }
