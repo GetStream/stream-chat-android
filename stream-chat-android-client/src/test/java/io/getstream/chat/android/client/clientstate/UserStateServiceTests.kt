@@ -102,6 +102,15 @@ internal class UserStateServiceTests {
         Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
     }
 
+    @Test
+    fun `Given user not set state When logout Should stay`() {
+        val sut = Fixture().please()
+
+        sut.onLogout()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+    }
+
     private class Fixture {
         private val userStateService = UserStateService()
 
