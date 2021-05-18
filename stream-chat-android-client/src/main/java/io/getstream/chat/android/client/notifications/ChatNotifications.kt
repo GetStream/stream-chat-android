@@ -55,9 +55,14 @@ internal class ChatNotifications private constructor(
     fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
         logger.logI("onReceiveFirebaseMessage: payload: {$message.data}")
 
+        if (isValidRemoteMessage(message)) {
+            val data = handler.getFirebaseMessageParser().run { parse(message) }
+            pushNotificationReceivedListener.onPushNotificationReceived(data.channelType, data.channelId)
+        }
+
         if (!handler.onFirebaseMessage(message)) {
             if (isForeground()) return
-            handleRemoteMessage(message, pushNotificationReceivedListener)
+            handleRemoteMessage(message)
         }
     }
 
@@ -77,16 +82,12 @@ internal class ChatNotifications private constructor(
         LoadNotificationDataWorker.cancel(context)
     }
 
-    private fun handleRemoteMessage(
-        message: RemoteMessage,
-        pushNotificationReceivedListener: PushNotificationReceivedListener,
-    ) {
+    private fun handleRemoteMessage(message: RemoteMessage) {
         if (isValidRemoteMessage(message)) {
-            val firebaseParser = handler.getFirebaseMessageParser()
-            val data = firebaseParser.parse(message)
+            val data = handler.getFirebaseMessageParser().run { parse(message) }
+
             if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
-                pushNotificationReceivedListener.onPushNotificationReceived(data.channelType, data.channelId)
                 LoadNotificationDataWorker.start(
                     context = context,
                     channelId = data.channelId,
