@@ -129,6 +129,7 @@ public class ChatClient internal constructor(
                     clientStateService.onConnected(user, connectionId)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
+                    storePushNotificationsConfig(user.id)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -291,7 +292,6 @@ public class ChatClient internal constructor(
     }
 
     private fun notifySetUser(user: User) {
-        storePushNotificationsConfig(user.id)
         preSetUserListeners.forEach { it(user) }
     }
 
