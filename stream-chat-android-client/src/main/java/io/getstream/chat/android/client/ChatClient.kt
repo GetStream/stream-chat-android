@@ -807,6 +807,8 @@ public class ChatClient internal constructor(
         connectionListener = null
         clientStateService.onDisconnectRequested()
         socket.disconnect()
+        notifications.cancelLoadDataWork()
+        encryptedPushNotificationsConfigStore.clear()
         lifecycleObserver.dispose()
     }
 

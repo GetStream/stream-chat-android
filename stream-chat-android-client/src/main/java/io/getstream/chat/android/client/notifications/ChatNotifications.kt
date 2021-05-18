@@ -73,6 +73,10 @@ internal class ChatNotifications private constructor(
         }
     }
 
+    fun cancelLoadDataWork() {
+        LoadNotificationDataWorker.cancel(context)
+    }
+
     private fun handleRemoteMessage(
         message: RemoteMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,

@@ -34,7 +34,7 @@ internal class LoadNotificationDataWorker(
 
         setForeground(
             createForegroundInfo(
-                notificationChannelId = "$channelType:$channelId",
+                notificationChannelId = LOAD_NOTIFICATION_DATA_CHANNEL_ID,
                 notificationChannelName = notificationChannelName,
                 notificationIcon = notificationIcon,
                 notificationTitle = notificationTitle,
@@ -108,6 +108,8 @@ internal class LoadNotificationDataWorker(
         private const val DATA_NOTIFICATION_CHANNEL_NAME = "DATA_NOTIFICATION_CHANNEL_NAME"
 
         private const val NOTIFICATION_ID = 1
+        private const val LOAD_NOTIFICATION_DATA_CHANNEL_ID = "load_notification_data_channel_id"
+        private const val LOAD_NOTIFICATION_DATA_WORK_NAME = "LOAD_NOTIFICATION_DATA_WORK_NAME"
 
         fun start(
             context: Context,
@@ -134,10 +136,14 @@ internal class LoadNotificationDataWorker(
             WorkManager
                 .getInstance(context)
                 .enqueueUniqueWork(
-                    "$channelType:$channelId",
-                    ExistingWorkPolicy.REPLACE,
+                    LOAD_NOTIFICATION_DATA_WORK_NAME,
+                    ExistingWorkPolicy.APPEND_OR_REPLACE,
                     syncMessagesWork,
                 )
+        }
+
+        fun cancel(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(LOAD_NOTIFICATION_DATA_WORK_NAME)
         }
     }
 }
