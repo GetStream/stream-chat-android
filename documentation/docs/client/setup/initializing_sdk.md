@@ -4,7 +4,7 @@ title: Initializing SDK
 sidebar_position: 2
 ---
 
-Integrating with the you need to initialize the `ChatClient`. The `ChatClient` is the main entry point for all operations in the library. Create a single `ChatClient` and re-use it across your application.
+When integrating with Stream Cha, your first step is initializing the `ChatClient`. The `ChatClient` is the main entry point for all operations in the library. Create a single `ChatClient` and re-use it across your application.
 
 A best practice is to initialize `ChatClient` in the `Application` class and create a static reference to the client:
 
