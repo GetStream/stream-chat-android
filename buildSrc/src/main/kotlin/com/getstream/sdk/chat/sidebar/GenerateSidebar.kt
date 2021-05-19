@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.sidebar
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.ListProperty
@@ -11,9 +10,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 
 abstract class GenerateSidebar : DefaultTask() {
     @get:InputDirectory
