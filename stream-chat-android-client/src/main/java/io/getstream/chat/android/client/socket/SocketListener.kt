@@ -15,7 +15,8 @@ public open class SocketListener {
 
     @Deprecated(
         "Use method with DisconnectCause",
-        replaceWith = ReplaceWith("Use method with DisconnectCause instead of it")
+        replaceWith = ReplaceWith("Use method with DisconnectCause instead of it"),
+        level = DeprecationLevel.WARNING,
     )
     public open fun onDisconnected() {
     }
