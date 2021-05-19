@@ -17,7 +17,7 @@ internal class ImageLoaderFactoryInitializer : Initializer<ImageLoaderFactory> {
                 // duplicated as we can not extend component
                 // registry of existing image loader builder
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder())
+                    add(ImageDecoderDecoder(context))
                 } else {
                     add(GifDecoder())
                 }

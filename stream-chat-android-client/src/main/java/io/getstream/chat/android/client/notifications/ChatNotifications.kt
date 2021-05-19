@@ -9,6 +9,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -16,6 +17,9 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 internal class ChatNotifications private constructor(
     val handler: ChatNotificationHandler,
@@ -48,8 +52,13 @@ internal class ChatNotifications private constructor(
         pushTokenUpdateHandler.updateTokenIfNecessary(firebaseToken)
     }
 
-    fun onFirebaseMessage(message: RemoteMessage) {
+    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
         logger.logI("onReceiveFirebaseMessage: payload: {$message.data}")
+
+        if (isValidRemoteMessage(message)) {
+            val data = handler.getFirebaseMessageParser().run { parse(message) }
+            pushNotificationReceivedListener.onPushNotificationReceived(data.channelType, data.channelId)
+        }
 
         if (!handler.onFirebaseMessage(message)) {
             if (isForeground()) return
@@ -69,13 +78,25 @@ internal class ChatNotifications private constructor(
         }
     }
 
+    fun cancelLoadDataWork() {
+        LoadNotificationDataWorker.cancel(context)
+    }
+
     private fun handleRemoteMessage(message: RemoteMessage) {
         if (isValidRemoteMessage(message)) {
-            val firebaseParser = handler.getFirebaseMessageParser()
-            val data = firebaseParser.parse(message)
+            val data = handler.getFirebaseMessageParser().run { parse(message) }
+
             if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
-                loadRequiredData(data.channelType, data.channelId, data.messageId)
+                LoadNotificationDataWorker.start(
+                    context = context,
+                    channelId = data.channelId,
+                    channelType = data.channelType,
+                    messageId = data.messageId,
+                    notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
+                    notificationIcon = handler.config.loadNotificationDataIcon,
+                    notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
+                )
             }
         } else {
             logger.logE("Push payload is not configured correctly: {${message.data}}")
@@ -89,26 +110,29 @@ internal class ChatNotifications private constructor(
 
         if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
-            loadRequiredData(event.channelType, event.channelId, messageId)
+            // Needs to be refactored in a separate task
+            GlobalScope.launch(DispatcherProvider.Main) {
+                displayNotificationWithData(event.channelType, event.channelId, messageId)
+            }
         }
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
-    private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
+    internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
-        getChannel.zipWith(getMessage).enqueue { result ->
-            if (result.isSuccess) {
-                val (channel, message) = result.data()
-                handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-                onRequiredDataLoaded(channel, message)
-            } else {
-                logger.logE("Error loading required data: ${result.error().message}", result.error())
-                handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
-                showErrorCaseNotification()
-            }
+        val result = getChannel.zipWith(getMessage).await()
+        if (result.isSuccess) {
+            logger.logD("Notification data loaded")
+            val (channel, message) = result.data()
+            handler.getDataLoadListener()?.onLoadSuccess(channel, message)
+            onRequiredDataLoaded(channel, message)
+        } else {
+            logger.logE("Error loading required data: ${result.error().message}", result.error())
+            handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
+            showErrorCaseNotification()
         }
     }
 
@@ -124,7 +148,7 @@ internal class ChatNotifications private constructor(
             message.text,
             messageId,
             channel.type,
-            channelId
+            channelId,
         )
 
         showedNotifications.add(messageId)
@@ -140,7 +164,6 @@ internal class ChatNotifications private constructor(
     }
 
     private fun showNotification(notificationId: Int, notification: Notification) {
-
         if (!isForeground()) {
             (context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.notify(
                 notificationId,

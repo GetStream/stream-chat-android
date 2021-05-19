@@ -126,8 +126,6 @@ public class ChannelController internal constructor(
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _unreadCount = MutableStateFlow(0)
 
-    private var uploadStatusMessage: Message? = null
-
     public val repliedMessage: StateFlow<Message?> = _repliedMessage
     internal var hideMessagesBefore: Date? = null
     internal val unfilteredMessages: StateFlow<List<Message>> =
@@ -606,6 +604,7 @@ public class ChannelController internal constructor(
                 maxValue = attachment.upload?.length() ?: 0L
             }
         }
+        var uploadStatusMessage: Message? = null
 
         if (hasAttachments) {
             uploadStatusMessage = newMessage
@@ -633,7 +632,6 @@ public class ChannelController internal constructor(
                 }.toMutableList()
 
                 uploadStatusMessage?.let { cancelMessage(it) }
-                uploadStatusMessage = null
             }
 
             newMessage.type = "regular"
@@ -647,7 +645,6 @@ public class ChannelController internal constructor(
                 handleSendAttachmentFail(newMessage, result.error())
             }
         } else {
-            uploadStatusMessage = null
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }

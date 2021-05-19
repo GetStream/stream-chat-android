@@ -11,12 +11,12 @@ import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitCallback
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
-import org.awaitility.Awaitility.await
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -48,8 +48,8 @@ internal class ClientInstrumentationTests {
             client.connectUser(User(userId), token).enqueue(initCallback)
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until(initCallback::onSuccessIsCalled)
-            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+            awaitUntil(5, initCallback::onSuccessIsCalled)
+            awaitUntil(5, connectedEventConsumer::isReceived)
         }
     }
 
@@ -61,7 +61,7 @@ internal class ClientInstrumentationTests {
             val client = ChatClient.Builder(apiKey, context).build()
             client.connectUser(User(userId), invalidToken).enqueue(initCallback)
         }.andThen {
-            await().atMost(5, SECONDS).until(initCallback::onErrorIsCalled)
+            awaitUntil(5, initCallback::onErrorIsCalled)
         }
     }
 
@@ -75,7 +75,7 @@ internal class ClientInstrumentationTests {
                 client.subscribe(connectedEventConsumer::onEvent)
             }
         }.andThen {
-            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+            awaitUntil(5, connectedEventConsumer::isReceived)
         }
     }
 
@@ -86,8 +86,8 @@ internal class ClientInstrumentationTests {
             client.connectAnonymousUser().enqueue(initCallback)
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until(initCallback::onSuccessIsCalled)
-            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+            awaitUntil(5, initCallback::onSuccessIsCalled)
+            awaitUntil(5, connectedEventConsumer::isReceived)
         }
     }
 
@@ -100,8 +100,8 @@ internal class ClientInstrumentationTests {
             }
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(50, SECONDS).until(initCallback::onSuccessIsCalled)
-            await().atMost(50, SECONDS).until(connectedEventConsumer::isReceived)
+            awaitUntil(20, initCallback::onSuccessIsCalled)
+            awaitUntil(20, connectedEventConsumer::isReceived)
         }
     }
 
@@ -114,9 +114,28 @@ internal class ClientInstrumentationTests {
             client.connectUser(User(userId), token).enqueue()
             client.subscribeForSingle<HealthEvent>(consumer::onEvent)
         }.andThen {
-            await()
-                .atMost(10, SECONDS)
-                .until { consumer.isReceivedExactly(listOf(HealthEvent::class.java)) }
+            awaitUntil(10) { consumer.isReceivedExactly(listOf(HealthEvent::class.java)) }
         }
+    }
+}
+
+/**
+ * Awaits at most [timeoutSeconds] for the provided [predicate] to yield
+ * a true result.
+ */
+private fun awaitUntil(timeoutSeconds: Long, predicate: () -> Boolean) {
+    runBlocking {
+        val timeoutMs = timeoutSeconds * 1_000
+        var waited = 0L
+        while (waited < timeoutMs) {
+            if (predicate()) {
+                return@runBlocking
+            }
+
+            delay(100)
+            waited += 100
+        }
+
+        throw AssertionError("Predicate was not fulfilled within ${timeoutMs}ms")
     }
 }

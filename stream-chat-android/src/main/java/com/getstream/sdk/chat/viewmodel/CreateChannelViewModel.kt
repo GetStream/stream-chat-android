@@ -24,7 +24,7 @@ public class CreateChannelViewModel @JvmOverloads constructor(
 
     public fun onEvent(event: Event) {
         if (event is Event.ChannelNameSubmitted) {
-            val channelNameCandidate = event.channelName.replace(" ".toRegex(), "-").toLowerCase()
+            val channelNameCandidate = event.channelName.replace(" ".toRegex(), "-").lowercase()
             val isValidName = validateChannelName(channelNameCandidate)
             if (isValidName) {
                 stateMerger.postValue(State.Loading)

@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -30,14 +29,11 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.parser.StreamGson
-import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
-import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
-import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
@@ -53,6 +49,7 @@ import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
+import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.usecase.CancelMessage
 import io.getstream.chat.android.offline.usecase.CreateChannel
@@ -193,8 +190,6 @@ internal class ChatDomainImpl internal constructor(
             _user.value = value
         }
 
-    private val syncModule by lazy { SyncProvider(appContext) }
-
     /** if the client connection has been initialized */
     override val initialized: StateFlow<Boolean> = _initialized
 
@@ -256,6 +251,8 @@ internal class ChatDomainImpl internal constructor(
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
+    private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
+
     private fun clearState() {
         _initialized.value = false
         _online.value = false
@@ -268,7 +265,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private fun isTestRunner(): Boolean {
-        return Build.FINGERPRINT.toLowerCase().contains("robolectric")
+        return Build.FINGERPRINT.lowercase().contains("robolectric")
     }
 
     internal fun setUser(user: User) {
@@ -337,7 +334,12 @@ internal class ChatDomainImpl internal constructor(
                 disconnect()
             }
         }
-        storeBgSyncDataWhenUserConnects()
+
+        if (backgroundSyncEnabled) {
+            client.setPushNotificationReceivedListener { channelType, channelId ->
+                offlineSyncFirebaseMessagingHandler.syncMessages(appContext, "$channelType:$channelId")
+            }
+        }
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -372,6 +374,7 @@ internal class ChatDomainImpl internal constructor(
         stopListening()
         stopClean()
         clearState()
+        offlineSyncFirebaseMessagingHandler.cancel(appContext)
     }
 
     override fun getVersion(): String {
@@ -490,28 +493,6 @@ internal class ChatDomainImpl internal constructor(
         val channelController = channel(cid)
         return CoroutineCall(scope) {
             channelController.removeMembers(*userIds)
-        }
-    }
-
-    private fun storeBgSyncDataWhenUserConnects() {
-        client.addSocketListener(
-            object : SocketListener() {
-                override fun onConnected(event: ConnectedEvent) {
-                    storeBgSyncData()
-                    client.removeSocketListener(this)
-                }
-            }
-        )
-    }
-
-    private fun storeBgSyncData() {
-        if (backgroundSyncEnabled && !isTestRunner()) {
-            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken() ?: "")
-            if (config.isValid()) {
-                syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    put(config)
-                }
-            }
         }
     }
 

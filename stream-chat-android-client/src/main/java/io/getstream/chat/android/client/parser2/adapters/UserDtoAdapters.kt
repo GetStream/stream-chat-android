@@ -19,6 +19,7 @@ internal object DownstreamUserDtoAdapter :
     ): DownstreamUserDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
+    @Suppress("UNUSED_PARAMETER")
     fun toJson(jsonWriter: JsonWriter, value: DownstreamUserDto): Unit = error("Can't convert this to Json")
 }
 
@@ -26,6 +27,7 @@ internal object UpstreamUserDtoAdapter :
     CustomObjectDtoAdapter<UpstreamUserDto>(UpstreamUserDto::class) {
 
     @FromJson
+    @Suppress("UNUSED_PARAMETER")
     fun fromJson(jsonReader: JsonReader): UpstreamUserDto = error("Can't parse this from Json")
 
     @ToJson

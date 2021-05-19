@@ -49,7 +49,7 @@ internal class MentionsAdapter(
                 usernameTextView.text = user.name
                 mentionNameTextView.text = itemView.context.getString(
                     R.string.stream_ui_mention_user_name_template,
-                    user.name.toLowerCase()
+                    user.name.lowercase()
                 )
             }
         }

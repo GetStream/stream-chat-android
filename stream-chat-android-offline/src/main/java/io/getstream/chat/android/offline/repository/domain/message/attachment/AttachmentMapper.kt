@@ -29,6 +29,49 @@ internal fun Attachment.toEntity(messageId: String): AttachmentEntity = Attachme
     extraData = extraData,
 )
 
+internal fun Attachment.toUploadAttachment(messageId: String) = AttachmentToUploadEntity(
+    messageId = messageId,
+    authorName = authorName,
+    titleLink = titleLink,
+    thumbUrl = thumbUrl,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    ogUrl = ogUrl,
+    mimeType = mimeType,
+    fileSize = fileSize,
+    title = title,
+    text = text,
+    type = type,
+    image = image,
+    url = url,
+    name = name,
+    fallback = fallback,
+    uploadFilePath = upload?.absolutePath,
+    uploadState = uploadState?.toEntity(),
+    extraData = extraData,
+)
+
+internal fun AttachmentToUploadEntity.toModel(): Attachment = Attachment(
+    authorName = authorName,
+    titleLink = titleLink,
+    thumbUrl = thumbUrl,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    ogUrl = ogUrl,
+    mimeType = mimeType,
+    fileSize = fileSize,
+    title = title,
+    text = text,
+    type = type,
+    image = image,
+    url = url,
+    name = name,
+    fallback = fallback,
+    upload = uploadFilePath?.let(::File),
+    uploadState = uploadState?.let(UploadStateEntity::toModel),
+    extraData = extraData.toMutableMap(),
+)
+
 internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     authorName = authorName,
     titleLink = titleLink,

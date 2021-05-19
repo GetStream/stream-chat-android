@@ -8,6 +8,14 @@ sidebar_position: 4
 
 SDK logs are disabled by default. You can enable logs and set a log level when initializing `ChatClient`:
 
+You can set logs at the following levels:
+
+- `ChatLogLevel.ALL` to see all log entries.
+- `ChatLogLevel.DEBUG` to see debug, warning, and error entries.
+- `ChatLogLevel.WARN` to see warning and error entries.
+- `ChatLogLevel.ERROR` to see error entries.
+- `ChatLogLevel.NOTHING` to not show any logs.
+
 ```kotlin
 val client = ChatClient.Builder("apiKey", context)
     .logLevel(ChatLogLevel.ALL)
@@ -30,9 +38,9 @@ val client = ChatClient.Builder("apiKey", context)
      .build()
 ```
 
-## Finding logs
+## Filtering logs
 
-All SDK log tags have the `Chat:` prefix, so you can filter for that those in the logs:
+All SDK log tags have `Chat:` as a prefix that you can use when filtering logs.
 
 ```bash
 adb logcat com.your.package | grep "Chat:"
@@ -40,6 +48,6 @@ adb logcat com.your.package | grep "Chat:"
 
 Here's a set of useful tags for debugging network communication:
 
-- `Chat:Http`
-- `Chat:Events`
-- `Chat:SocketService`
+- `Chat:Http` to see HTTP requests made from the `ChatClient` and the responses returned by Stream.
+- `Chat:Events` to see a list of [events](https://getstream.github.io/stream-chat-android/stream-chat-android-client/stream-chat-android-client/io.getstream.chat.android.client.events/-chat-event/index.html) that the `ChatClient` emits.
+- `Chat:SocketService` to see socket related events.

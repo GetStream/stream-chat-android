@@ -86,6 +86,7 @@ internal class MockClientBuilder(
             tokenManager = FakeTokenManager(token),
             clientStateService,
             queryChannelsPostponeHelper,
+            encryptedPushNotificationsConfigStore = mock(),
         )
 
         client.connectUser(user, token).enqueue()
