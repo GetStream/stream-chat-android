@@ -113,19 +113,6 @@ allprojects {
 > See the [releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version number.
 
 ```gradle
-android {
-    ...
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    // for Kotlin projects
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
-
 dependencies {
     implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
 }

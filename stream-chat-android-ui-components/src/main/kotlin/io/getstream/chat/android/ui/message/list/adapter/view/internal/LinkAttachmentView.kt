@@ -49,7 +49,7 @@ internal class LinkAttachmentView : FrameLayout {
         val label = attachment.authorName
         if (label != null) {
             binding.labelContainer.isVisible = true
-            binding.labelTextView.text = label.capitalize()
+            binding.labelTextView.text = label.replaceFirstChar(Char::uppercase)
         } else {
             binding.labelContainer.isVisible = false
         }

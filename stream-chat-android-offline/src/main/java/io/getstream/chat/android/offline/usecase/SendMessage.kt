@@ -57,9 +57,9 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
             return
         }
 
-        val text = message.text.toLowerCase()
+        val text = message.text.lowercase()
         message.mentionedUsersIds = channel.members.mapNotNullTo(mutableListOf()) { member ->
-            if (text.contains("@${member.user.name.toLowerCase()}")) {
+            if (text.contains("@${member.user.name.lowercase()}")) {
                 member.user.id
             } else {
                 null
