@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
     message = "Use ChatDomain::channelUnreadCount instead",
     level = DeprecationLevel.ERROR,
 )
-public interface GetUnreadChannelCount {
+public sealed interface GetUnreadChannelCount {
     /**
      * Returns the number of channels with unread messages for the given user.
      * You might also be interested in GetTotalUnreadCount

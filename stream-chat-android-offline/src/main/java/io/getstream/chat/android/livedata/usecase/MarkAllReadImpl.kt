@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface MarkAllRead {
+public sealed interface MarkAllRead {
     @CheckResult
     public operator fun invoke(): Call<Boolean>
 }

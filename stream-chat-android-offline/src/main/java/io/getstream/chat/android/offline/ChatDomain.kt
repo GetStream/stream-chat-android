@@ -32,7 +32,7 @@ import java.io.File
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat
  */
-public interface ChatDomain {
+public sealed interface ChatDomain {
 
     @Deprecated(
         message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",

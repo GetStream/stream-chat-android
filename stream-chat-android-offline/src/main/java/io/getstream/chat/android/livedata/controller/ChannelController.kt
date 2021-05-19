@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelDa
  * - .typing (who is currently typing)
  *
  */
-public interface ChannelController {
+public sealed interface ChannelController {
     public val channelType: String
     public val channelId: String
 

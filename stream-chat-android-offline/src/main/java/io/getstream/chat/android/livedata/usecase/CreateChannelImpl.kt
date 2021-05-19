@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface CreateChannel {
+public sealed interface CreateChannel {
     /**
      * Creates a new channel. Will retry according to the retry policy if it fails
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy

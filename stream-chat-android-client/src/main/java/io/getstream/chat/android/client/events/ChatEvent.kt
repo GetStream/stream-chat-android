@@ -20,27 +20,27 @@ public sealed class CidEvent : ChatEvent() {
     public abstract val channelId: String
 }
 
-public interface UserEvent {
+public sealed interface UserEvent {
     public val user: User
 }
 
-public interface HasChannel {
+public sealed interface HasChannel {
     public val channel: Channel
 }
 
-public interface HasMessage {
+public sealed interface HasMessage {
     public val message: Message
 }
 
-public interface HasReaction {
+public sealed interface HasReaction {
     public val reaction: Reaction
 }
 
-public interface HasMember {
+public sealed interface HasMember {
     public val member: Member
 }
 
-public interface HasOwnUser {
+public sealed interface HasOwnUser {
     public val me: User
 }
 
@@ -52,7 +52,7 @@ public interface HasOwnUser {
  * - user.watching_stop
  * - message.new
  */
-public interface HasWatcherCount {
+public sealed interface HasWatcherCount {
     public val watcherCount: Int
 }
 
@@ -69,7 +69,7 @@ public interface HasWatcherCount {
  * - notification.channel_deleted
  * - notification.channel_truncated
  */
-public interface HasUnreadCounts {
+public sealed interface HasUnreadCounts {
     public val totalUnreadCount: Int
     public val unreadChannels: Int
 }

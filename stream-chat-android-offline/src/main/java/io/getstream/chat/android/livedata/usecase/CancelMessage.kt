@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface CancelMessage {
+public sealed interface CancelMessage {
     /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain

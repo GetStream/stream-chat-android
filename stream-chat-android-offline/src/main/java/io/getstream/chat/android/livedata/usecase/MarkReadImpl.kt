@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface MarkRead {
+public sealed interface MarkRead {
     /**
      * Marks the messages on the specified channel as read
      *

@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import java.io.File
 
-public interface SendMessage {
+public sealed interface SendMessage {
     /**
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain

@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface SetMessageForReply {
+public sealed interface SetMessageForReply {
     /**
      * Set the reply state for the channel.
      *

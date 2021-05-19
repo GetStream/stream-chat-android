@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface DeleteReaction {
+public sealed interface DeleteReaction {
     /**
      * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
      * @param cid the full channel id, ie messaging:123

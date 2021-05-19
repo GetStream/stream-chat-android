@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface ShuffleGiphy {
+public sealed interface ShuffleGiphy {
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
