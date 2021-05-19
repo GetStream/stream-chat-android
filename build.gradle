@@ -36,7 +36,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        mavenLocal()
         jcenter() {
             content {
                 // Remove when https://github.com/ongakuer/PhotoDraweeView/issues/81 is closed
@@ -65,7 +64,13 @@ task clean(type: Delete) {
 
 // Use the default greeting
 tasks.register('docusaurusSidebar', GenerateSidebar) {
-    dokkaPathInput = "build/dokka/gfmMultiModule"
+    inputDir = file("build/dokka/htmlMultiModule")
+    outputDir = file("documentation/docs/dokka")
+    modulesFilterInput = [
+            'stream-chat-android-client',
+            'stream-chat-android-offline',
+            'stream-chat-android-ui-components',
+    ]
 }
 
 dependencyUpdates {
