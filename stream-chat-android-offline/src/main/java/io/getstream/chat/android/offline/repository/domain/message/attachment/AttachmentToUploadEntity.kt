@@ -4,9 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.client.utils.SyncStatus
 
 @Entity(tableName = "attachment_to_upload")
 internal data class AttachmentToUploadEntity(
+    @PrimaryKey
+    var uploadId: String,
     @ColumnInfo(index = true)
     val messageId: String,
     val authorName: String?,
@@ -27,7 +30,5 @@ internal data class AttachmentToUploadEntity(
     val uploadFilePath: String?,
     @Embedded val uploadState: UploadStateEntity?,
     val extraData: Map<String, Any>,
-) {
-    @PrimaryKey
-    var id: Int = hashCode()
-}
+    val syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED,
+)

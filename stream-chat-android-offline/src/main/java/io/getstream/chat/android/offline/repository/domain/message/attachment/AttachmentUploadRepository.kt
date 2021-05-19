@@ -1,10 +1,14 @@
 package io.getstream.chat.android.offline.repository.domain.message.attachment
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 internal interface AttachmentUploadRepository {
     suspend fun insertAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity)
     suspend fun deleteAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity)
     suspend fun updateAttachmentsToUpload(vararg attachments: AttachmentToUploadEntity)
-    suspend fun selectAttachmentsToUploadForMessageId(id: Int): List<AttachmentToUploadEntity>
+    suspend fun selectAttachmentsToUploadForMessageId(messageId: String): List<AttachmentToUploadEntity>
+    fun observeAttachmentsToUpload(): Flow<Map<String, List<AttachmentToUploadEntity>>>
 }
 
 internal class AttachmentUploadRepositoryImpl(
@@ -22,7 +26,12 @@ internal class AttachmentUploadRepositoryImpl(
         attachmentToUploadDao.updateAttachmentsToUpload(*attachments)
     }
 
-    override suspend fun selectAttachmentsToUploadForMessageId(id: Int): List<AttachmentToUploadEntity> {
-        return attachmentToUploadDao.getAttachmentsToUploadForMessage(id)
+    override suspend fun selectAttachmentsToUploadForMessageId(messageId: String): List<AttachmentToUploadEntity> {
+        return attachmentToUploadDao.getAttachmentsToUploadForMessage(messageId)
+    }
+
+    override fun observeAttachmentsToUpload(): Flow<Map<String, List<AttachmentToUploadEntity>>> {
+        return attachmentToUploadDao.observeAttachmentsToUpload()
+            .map { attachmentEntities -> attachmentEntities.groupBy { it.messageId } }
     }
 }

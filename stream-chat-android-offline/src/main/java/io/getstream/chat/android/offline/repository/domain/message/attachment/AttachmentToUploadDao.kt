@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AttachmentToUploadDao {
@@ -14,7 +15,7 @@ internal interface AttachmentToUploadDao {
     suspend fun getAttachmentsToUpload(): List<AttachmentToUploadEntity>
 
     @Query("SELECT * FROM attachment_to_upload where messageId == :messageId")
-    suspend fun getAttachmentsToUploadForMessage(messageId: Int): List<AttachmentToUploadEntity>
+    suspend fun getAttachmentsToUploadForMessage(messageId: String): List<AttachmentToUploadEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAttachmentToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
@@ -24,4 +25,7 @@ internal interface AttachmentToUploadDao {
 
     @Delete
     suspend fun deleteAttachmentsToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
+
+    @Query("SELECT * FROM attachment_to_upload")
+    fun observeAttachmentsToUpload(): Flow<List<AttachmentToUploadEntity>>
 }

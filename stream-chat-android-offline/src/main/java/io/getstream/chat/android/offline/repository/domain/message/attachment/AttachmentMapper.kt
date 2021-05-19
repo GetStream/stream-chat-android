@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.repository.domain.message.attachment
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_FAILED
 import io.getstream.chat.android.offline.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_IN_PROGRESS
@@ -29,27 +30,31 @@ internal fun Attachment.toEntity(messageId: String): AttachmentEntity = Attachme
     extraData = extraData,
 )
 
-internal fun Attachment.toUploadAttachment(messageId: String) = AttachmentToUploadEntity(
-    messageId = messageId,
-    authorName = authorName,
-    titleLink = titleLink,
-    thumbUrl = thumbUrl,
-    imageUrl = imageUrl,
-    assetUrl = assetUrl,
-    ogUrl = ogUrl,
-    mimeType = mimeType,
-    fileSize = fileSize,
-    title = title,
-    text = text,
-    type = type,
-    image = image,
-    url = url,
-    name = name,
-    fallback = fallback,
-    uploadFilePath = upload?.absolutePath,
-    uploadState = uploadState?.toEntity(),
-    extraData = extraData,
-)
+internal fun Attachment.toUploadAttachment(messageId: String): AttachmentToUploadEntity {
+    requireNotNull(uploadId)
+    return AttachmentToUploadEntity(
+        uploadId = uploadId!!,
+        messageId = messageId,
+        authorName = authorName,
+        titleLink = titleLink,
+        thumbUrl = thumbUrl,
+        imageUrl = imageUrl,
+        assetUrl = assetUrl,
+        ogUrl = ogUrl,
+        mimeType = mimeType,
+        fileSize = fileSize,
+        title = title,
+        text = text,
+        type = type,
+        image = image,
+        url = url,
+        name = name,
+        fallback = fallback,
+        uploadFilePath = upload?.absolutePath,
+        uploadState = uploadState?.toEntity(),
+        extraData = extraData,
+    )
+}
 
 internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     authorName = authorName,
@@ -72,7 +77,7 @@ internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     extraData = extraData.toMutableMap(),
 )
 
-private fun Attachment.UploadState.toEntity(): UploadStateEntity {
+internal fun Attachment.UploadState.toEntity(): UploadStateEntity {
     val (statusCode, errorMessage) = when (this) {
         is Attachment.UploadState.Success -> UPLOAD_STATE_SUCCESS to null
         is Attachment.UploadState.InProgress -> UPLOAD_STATE_IN_PROGRESS to null
