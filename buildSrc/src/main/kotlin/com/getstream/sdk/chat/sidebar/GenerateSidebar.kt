@@ -39,9 +39,6 @@ abstract class GenerateSidebar : DefaultTask() {
 
     @TaskAction
     fun run() {
-        println("Dokka directory: ${inputDir.asFile.get().absolutePath}")
-        println("Output directory: ${outputDir.asFile.get().absolutePath}")
-
         val modulesToInclude = modulesFilterInput.get()
         val dokkaFileTree: FileTree = inputDir.asFileTree
         val outputFile = outputDir.get().asFile
