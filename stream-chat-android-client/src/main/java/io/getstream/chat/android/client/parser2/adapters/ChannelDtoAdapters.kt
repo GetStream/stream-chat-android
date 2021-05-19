@@ -19,6 +19,7 @@ internal object DownstreamChannelDtoAdapter :
     ): DownstreamChannelDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
+    @Suppress("UNUSED_PARAMETER")
     fun toJson(jsonWriter: JsonWriter, value: DownstreamChannelDto): Unit = error("Can't convert this to Json")
 }
 
@@ -26,6 +27,7 @@ internal object UpstreamChannelDtoAdapter :
     CustomObjectDtoAdapter<UpstreamChannelDto>(UpstreamChannelDto::class) {
 
     @FromJson
+    @Suppress("UNUSED_PARAMETER")
     fun fromJson(jsonReader: JsonReader): UpstreamChannelDto = error("Can't parse this from Json")
 
     @ToJson

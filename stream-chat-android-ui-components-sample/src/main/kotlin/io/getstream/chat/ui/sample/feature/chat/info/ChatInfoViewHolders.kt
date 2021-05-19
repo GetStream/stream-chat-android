@@ -47,7 +47,7 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
             binding.memberUsername.text = user.name
             binding.memberOnlineIndicator.isVisible = user.online
             binding.memberOnlineText.text = user.getLastSeenText(itemView.context)
-            binding.mentionSymbolText.text = "@${user.name.toLowerCase()}"
+            binding.mentionSymbolText.text = "@${user.name.lowercase()}"
         }
     }
 }

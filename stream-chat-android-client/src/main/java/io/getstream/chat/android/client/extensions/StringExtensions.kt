@@ -12,8 +12,7 @@ private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
 @InternalStreamChatApi
 public fun String.snakeToLowerCamelCase(): String {
     return snakeRegex.replace(this) {
-        it.value.replace("_", "")
-            .toUpperCase()
+        it.value.replace("_", "").uppercase()
     }
 }
 
@@ -22,7 +21,7 @@ public fun String.snakeToLowerCamelCase(): String {
  * For example string "createdAtSomeTime" is converted to "created_at_some_time".
  */
 internal fun String.camelCaseToSnakeCase(): String {
-    return camelRegex.replace(this) { "_${it.value}" }.toLowerCase()
+    return camelRegex.replace(this) { "_${it.value}" }.lowercase()
 }
 
 internal fun String.isAnonymousChannelId(): Boolean = contains("!members")
