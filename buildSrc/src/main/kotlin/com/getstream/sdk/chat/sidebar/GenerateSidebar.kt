@@ -39,8 +39,6 @@ abstract class GenerateSidebar : DefaultTask() {
         val dokkaFileTree: FileTree = inputDir.asFileTree
         val outputFile = outputDir.get().asFile
 
-        createSidebarFiles(dokkaFileTree, modulesToInclude)
-
         outputFile.listFiles()?.forEach { file -> file.deleteRecursively() }
 
         modulesToInclude.map { module ->
@@ -51,6 +49,8 @@ abstract class GenerateSidebar : DefaultTask() {
         }.forEach { (inputModule, outModule) ->
             inputModule.copyRecursively(outModule)
         }
+
+        createSidebarFiles(dokkaFileTree, modulesToInclude)
 
         println("_category_.json files created")
     }
@@ -69,12 +69,17 @@ abstract class GenerateSidebar : DefaultTask() {
 
     private fun createCategoryFile(parentFile: File) {
         val categoryFile = File("${parentFile.path}/_category.json")
+
+        if (categoryFile.exists()) {
+            categoryFile.delete()
+        }
+
         val isCreated = categoryFile.createNewFile()
 
         if (isCreated) {
             categoryFile.writeText(categoryContent(parentFile.name))
         } else {
-            println("Category file could not be created")
+            println("Category file could not be created: $categoryFile")
         }
     }
 
