@@ -514,7 +514,7 @@ public class ChatClient internal constructor(
             is SocketState.Disconnected -> when (val userState = userStateService.state) {
                 is UserState.UserSet -> socket.connect(userState.user)
                 is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
-                else -> error("Weird user state ${userState.javaClass.simpleName} without user being set!")
+                else -> error("Invalid user state $userState without user being set!")
             }
             else -> Unit
         }.exhaustive
