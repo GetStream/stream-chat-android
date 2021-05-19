@@ -29,7 +29,7 @@ class ChatPreviewViewModel(
         viewModelScope.launch {
             val result = chatClient.createChannel(
                 channelType = "messaging",
-                members = listOf(chatDomain.currentUser.id, memberId),
+                members = listOf(chatDomain.user.value!!.id, memberId),
                 extraData = mapOf(CHANNEL_ARG_DRAFT to true)
             ).await()
             if (result.isSuccess) {

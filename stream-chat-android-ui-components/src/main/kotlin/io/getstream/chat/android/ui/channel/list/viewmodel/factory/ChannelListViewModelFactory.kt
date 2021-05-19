@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
@@ -23,7 +24,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+        Filters.`in`("members", memberIdList(ChatDomain.instance().user.value?.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
@@ -37,5 +38,11 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
 
         @Suppress("UNCHECKED_CAST")
         return ChannelListViewModel(ChatDomain.instance(), filter, sort, limit, messageLimit) as T
+    }
+}
+
+private fun memberIdList(userId: String?): List<String> {
+    return userId?.let(::listOf) ?: emptyList<String>().also {
+        ChatLogger.get("User is not set in ChatDomain, default filter won't work.")
     }
 }

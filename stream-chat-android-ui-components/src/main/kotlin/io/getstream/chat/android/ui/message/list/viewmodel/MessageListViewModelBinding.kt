@@ -29,7 +29,11 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     channel.observe(lifecycleOwner) {
-        view.init(it) { currentUser }
+        if (currentUser != null) {
+            view.init(it) { currentUser!! }
+        } else {
+            logger.logE("User is not set in ChatDomain, it is not possible to bind MessageListViewModel.")
+        }
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }

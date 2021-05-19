@@ -48,21 +48,22 @@ class ChatInfoViewModel(
                         }
                     }
                 }
+
                 // Currently, we don't receive any event when channel member is banned/shadow banned, so
                 // we need to get member data from the server
-                val result =
-                    channelClient.queryMembers(
-                        offset = 0,
-                        limit = 1,
-                        filter = Filters.ne("id", chatDomain.currentUser.id)
-                    )
-                        .await()
+                val result = channelClient.queryMembers(
+                    offset = 0,
+                    limit = 1,
+                    filter = Filters.ne("id", chatDomain.user.value?.id ?: "")
+                ).await()
+
                 if (result.isSuccess) {
                     val member = result.data().firstOrNull()
                     // Update member, member block status, and channel notifications
                     _state.value = _state.value!!.copy(
                         member = member,
                         isMemberBlocked = member?.shadowBanned ?: false,
+                        notificationsEnabled = chatDomain.user.value?.channelMutes?.any { it.channel.cid == cid } == true,
                         loading = false,
                     )
                 } else {

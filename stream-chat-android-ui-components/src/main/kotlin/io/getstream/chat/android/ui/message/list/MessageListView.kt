@@ -236,7 +236,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
-    private lateinit var getCurrentUser: () -> User
+    private lateinit var getCurrentUser: () -> User?
 
     /**
      * If you are allowed to scroll up or not

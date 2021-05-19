@@ -9,6 +9,8 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.TaggedLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -17,6 +19,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
@@ -49,7 +52,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
     public val targetMessage: LiveData<Message> = _targetMessage
     private val _mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
-
+    @InternalStreamChatApi
+    public val logger: TaggedLogger = ChatLogger.get("MessageListViewModel")
     /**
      * Whether the user is viewing a thread
      * @see Mode
@@ -61,8 +65,8 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @see State
      */
     public val state: LiveData<State> = stateMerger
-    public val currentUser: User
-        get() = domain.currentUser
+    public val currentUser: User?
+        get() = domain.user.value
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
@@ -96,7 +100,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
 
                 messageListData = MessageListItemLiveData(
-                    { currentUser.id },
+                    { currentUser?.id },
                     channelController.messages,
                     channelController.reads,
                     typingIds,
@@ -143,7 +147,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-            { currentUser.id },
+            { currentUser?.id },
             threadMessages,
             reads,
             null,

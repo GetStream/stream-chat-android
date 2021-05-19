@@ -50,7 +50,7 @@ import java.util.Date
  *
  */
 internal class MessageListItemLiveData(
-    private val getCurrentUserId: () -> String,
+    private val getCurrentUserId: () -> String?,
     messages: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,

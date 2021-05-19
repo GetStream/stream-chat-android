@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.extensions.isMuted
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -20,6 +21,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
+import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getLastMessage
@@ -48,7 +50,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     ),
 ) : SwipeViewHolder(binding.root) {
     private val dateFormatter = DateFormatter.from(context)
-    private val currentUser = ChatDomain.instance().currentUser
+
+    private val logger = ChatLogger.get("ChannelViewHolder")
 
     private var optionsCount = 1
 
@@ -75,7 +78,11 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             itemForegroundView.apply {
                 avatarView.setOnClickListener {
                     when {
-                        channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
+                        channel.isDirectMessaging() -> {
+                            ChatDomain.instance().user.value?.let(userClickListener::onClick) ?: run {
+                                logger.logE("User click can't be handled because user it not set for ChatDomain")
+                            }
+                        }
                         else -> channelClickListener.onClick(channel)
                     }
                 }
@@ -204,7 +211,13 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
         lastMessage ?: return
 
-        lastMessageLabel.text = channel.getLastMessagePreviewText(context, channel.isDirectMessaging())
+        ChatDomain.instance().user.value?.let { user ->
+            lastMessageLabel.text =
+                channel.getLastMessagePreviewText(context, channel.isDirectMessaging(), user.asMention(context))
+        } ?: run {
+            logger.logE("User is not set in ChatDomain. The text of last message can not be set.")
+        }
+
         lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
 
@@ -236,7 +249,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
+        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
         when {
             !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {

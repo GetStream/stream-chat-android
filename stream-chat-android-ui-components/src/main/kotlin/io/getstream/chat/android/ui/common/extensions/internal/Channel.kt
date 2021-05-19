@@ -34,8 +34,8 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
     )
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
-    val currentUser = ChatDomain.instance().currentUser
-    return read.filter { it.user.id != currentUser.id }
+    val currentUser = ChatDomain.instance().user.value
+    return read.filter { it.user.id != currentUser?.id }
         .mapNotNull { it.lastRead }
         .any { it.time >= message.getCreatedAtOrThrow().time }
 }
@@ -44,6 +44,7 @@ internal fun Channel.isMessageRead(message: Message): Boolean {
 internal fun Channel.getLastMessagePreviewText(
     context: Context,
     isDirectMessaging: Boolean = false,
+    userMention: String
 ): SpannableStringBuilder? {
     return getLastMessage()?.let { message ->
         if (message.isSystem()) {
@@ -52,9 +53,7 @@ internal fun Channel.getLastMessagePreviewText(
             val sender = message.getSenderDisplayName(context, isDirectMessaging)
 
             // bold mentions of the current user
-            val currentUserMention = ChatDomain.instance().currentUser.asMention(context)
-            val previewText: SpannableString =
-                message.text.trim().bold(currentUserMention.singletonList(), ignoreCase = true)
+            val previewText: SpannableString = message.text.trim().bold(userMention.singletonList(), ignoreCase = true)
 
             val attachments: SpannableString? = message.attachments
                 .takeIf { it.isNotEmpty() }

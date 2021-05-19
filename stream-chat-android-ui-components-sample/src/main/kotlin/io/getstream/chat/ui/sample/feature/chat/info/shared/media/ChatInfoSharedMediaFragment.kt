@@ -103,7 +103,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
                                 createdAt = it.createdAt,
                                 messageId = it.message.id,
                                 cid = it.message.cid,
-                                isMine = it.message.user.id == ChatDomain.instance().currentUser.id
+                                isMine = it.message.user.id == ChatDomain.instance().user.value?.id
                             )
                         } else {
                             null

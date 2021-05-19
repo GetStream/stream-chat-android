@@ -8,7 +8,7 @@ import io.getstream.chat.android.ui.R
 
 internal fun User.isCurrentUser(): Boolean {
     return if (ChatDomain.isInitialized) {
-        id == ChatDomain.instance().currentUser.id
+        id == ChatDomain.instance().user.value?.id
     } else {
         false
     }

@@ -28,7 +28,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
         ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id, args.memberId)),
+                Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id, args.memberId)),
                 Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
                 Filters.greaterThan("member_count", 2),
             ),

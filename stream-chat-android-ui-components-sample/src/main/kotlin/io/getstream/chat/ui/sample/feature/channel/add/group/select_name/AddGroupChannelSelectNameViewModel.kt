@@ -14,7 +14,7 @@ import java.util.UUID
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 
-    private val currentUserId: String = ChatDomain.instance().currentUser.id
+    private val currentUserId: String = ChatDomain.instance().user.value!!.id
     private val _state: MutableLiveData<State> = MutableLiveData()
     val state: LiveData<State> = _state
 

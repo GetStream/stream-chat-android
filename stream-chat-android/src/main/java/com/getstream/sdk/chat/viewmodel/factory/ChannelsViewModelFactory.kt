@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
@@ -22,11 +23,11 @@ import io.getstream.chat.android.livedata.ChatDomain
 public class ChannelsViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+        Filters.`in`("members", memberIdList(ChatDomain.instance().user.value?.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = ChannelsViewModel.DEFAULT_SORT,
-    private val limit: Int = 30
+    private val limit: Int = 30,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelsViewModel::class.java) {
@@ -35,5 +36,11 @@ public class ChannelsViewModelFactory @JvmOverloads constructor(
 
         @Suppress("UNCHECKED_CAST")
         return ChannelsViewModel(ChatDomain.instance(), filter, sort, limit) as T
+    }
+}
+
+private fun memberIdList(userId: String?): List<String> {
+    return userId?.let(::listOf) ?: emptyList<String>().also {
+        ChatLogger.get("User is not set in ChatDomain, default filter won't work.")
     }
 }

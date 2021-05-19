@@ -33,7 +33,7 @@ class GroupChatInfoMemberOptionsViewModel(
             val result = chatDomain.queryChannels(
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.distinct(listOf(memberId, chatDomain.currentUser.id)),
+                    Filters.distinct(listOf(memberId, chatDomain.user.value!!.id)),
                 ),
                 sort = QuerySort.desc(Channel::lastUpdated),
                 messageLimit = 0,
