@@ -6,4 +6,4 @@ title: getFirebaseMessageIdKey
   
   
 # getFirebaseMessageIdKey  
-open fun [getFirebaseMessageIdKey](getFirebaseMessageIdKey.md)(): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+~~open~~ ~~fun~~ [~~getFirebaseMessageIdKey~~](getFirebaseMessageIdKey.md)~~(~~~~)~~~~:~~ [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)

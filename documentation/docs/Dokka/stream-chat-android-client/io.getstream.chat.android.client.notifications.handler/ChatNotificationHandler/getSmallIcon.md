@@ -6,4 +6,4 @@ title: getSmallIcon
   
   
 # getSmallIcon  
-open fun [getSmallIcon](getSmallIcon.md)(): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)
+~~open~~ ~~fun~~ [~~getSmallIcon~~](getSmallIcon.md)~~(~~~~)~~~~:~~ [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)

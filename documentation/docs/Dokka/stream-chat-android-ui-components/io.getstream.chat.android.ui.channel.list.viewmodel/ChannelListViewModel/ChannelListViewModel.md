@@ -7,10 +7,9 @@ title: ChannelListViewModel
   
 # ChannelListViewModel  
 fun [ChannelListViewModel](ChannelListViewModel.md)(chatDomain: ChatDomain = ChatDomain.instance(), filter: FilterObject = Filters.and(
-        eq("type", "messaging"),
-        `in`("members", listOf(chatDomain.currentUser.id)),
-        or(Filters.notExists("draft"), ne("draft", true)),
-        or(Filters.notExists("hidden"), ne("hidden", true)),
+        Filters.eq("type", "messaging"),
+        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
+        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ), sort: QuerySort&lt;Channel&gt; = DEFAULT_SORT, limit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 30, messageLimit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 1)  
   
 ## Parameters  

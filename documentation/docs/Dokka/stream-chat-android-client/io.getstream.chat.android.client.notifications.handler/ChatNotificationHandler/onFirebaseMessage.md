@@ -6,4 +6,7 @@ title: onFirebaseMessage
   
   
 # onFirebaseMessage  
-open fun [onFirebaseMessage](onFirebaseMessage.md)(message: RemoteMessage): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
+open fun [onFirebaseMessage](onFirebaseMessage.md)(message: RemoteMessage): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)Override this method to customize remote message handling  
+  
+#### Return  
+false if remote message should be handled internally

@@ -6,4 +6,4 @@ title: onMessageReceived
   
   
 # onMessageReceived  
-fun [onMessageReceived](onMessageReceived.md)(remoteMessage: RemoteMessage)
+~~fun~~ [~~onMessageReceived~~](onMessageReceived.md)~~(~~~~remoteMessage~~~~:~~ RemoteMessage~~)~~

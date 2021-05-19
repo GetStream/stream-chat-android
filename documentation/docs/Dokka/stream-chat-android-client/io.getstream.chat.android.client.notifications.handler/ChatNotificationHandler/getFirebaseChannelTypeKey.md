@@ -6,4 +6,4 @@ title: getFirebaseChannelTypeKey
   
   
 # getFirebaseChannelTypeKey  
-open fun [getFirebaseChannelTypeKey](getFirebaseChannelTypeKey.md)(): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)
+~~open~~ ~~fun~~ [~~getFirebaseChannelTypeKey~~](getFirebaseChannelTypeKey.md)~~(~~~~)~~~~:~~ [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)

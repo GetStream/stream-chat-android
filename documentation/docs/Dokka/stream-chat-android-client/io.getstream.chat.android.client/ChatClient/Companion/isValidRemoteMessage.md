@@ -6,4 +6,7 @@ title: isValidRemoteMessage
   
   
 # isValidRemoteMessage  
-fun [isValidRemoteMessage](isValidRemoteMessage.md)(remoteMessage: RemoteMessage, defaultNotificationConfig: [NotificationConfig](../../../io.getstream.chat.android.client.notifications.handler/NotificationConfig/index.md) = NotificationConfig()): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)
+fun [isValidRemoteMessage](isValidRemoteMessage.md)(remoteMessage: RemoteMessage, defaultNotificationConfig: [NotificationConfig](../../../io.getstream.chat.android.client.notifications.handler/NotificationConfig/index.md) = NotificationConfig()): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)Checks if remote message can be handled  
+  
+#### Return  
+true if message can be handled

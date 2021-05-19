@@ -28,10 +28,9 @@ androidJvm
 | | |
 |---|---|
 | <a name="io.getstream.chat.android.ui.channel.list.viewmodel/ChannelListViewModel/ChannelListViewModel/#io.getstream.chat.android.livedata.ChatDomain#io.getstream.chat.android.client.api.models.FilterObject#io.getstream.chat.android.client.api.models.QuerySort[io.getstream.chat.android.client.models.Channel]#kotlin.Int#kotlin.Int/PointingToDeclaration/"></a>[ChannelListViewModel](ChannelListViewModel.md)| <a name="io.getstream.chat.android.ui.channel.list.viewmodel/ChannelListViewModel/ChannelListViewModel/#io.getstream.chat.android.livedata.ChatDomain#io.getstream.chat.android.client.api.models.FilterObject#io.getstream.chat.android.client.api.models.QuerySort[io.getstream.chat.android.client.models.Channel]#kotlin.Int#kotlin.Int/PointingToDeclaration/"></a>fun [ChannelListViewModel](ChannelListViewModel.md)(chatDomain: ChatDomain = ChatDomain.instance(), filter: FilterObject = Filters.and(
-        eq("type", "messaging"),
-        `in`("members", listOf(chatDomain.currentUser.id)),
-        or(Filters.notExists("draft"), ne("draft", true)),
-        or(Filters.notExists("hidden"), ne("hidden", true)),
+        Filters.eq("type", "messaging"),
+        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
+        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ), sort: QuerySort&lt;Channel&gt; = DEFAULT_SORT, limit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 30, messageLimit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 1)entry point for all livedata & offline operations|
   
   
@@ -79,5 +78,5 @@ androidJvm
   
 |  Name |  Summary | 
 |---|---|
-| <a name="io.getstream.chat.android.ui.channel.list.viewmodel//bindView/io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel#io.getstream.chat.android.ui.channel.list.ChannelListView#androidx.lifecycle.LifecycleOwner/PointingToDeclaration/"></a>[bindView](../bindView.md)| <a name="io.getstream.chat.android.ui.channel.list.viewmodel//bindView/io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel#io.getstream.chat.android.ui.channel.list.ChannelListView#androidx.lifecycle.LifecycleOwner/PointingToDeclaration/"></a>@[JvmName](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-name/index.html)(name = bind)fun [ChannelListViewModel](index.md).[bindView](../bindView.md)(view: [ChannelListView](../../io.getstream.chat.android.ui.channel.list/ChannelListView/index.md), lifecycle: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html))|
+| <a name="io.getstream.chat.android.ui.channel.list.viewmodel//bindView/io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel#io.getstream.chat.android.ui.channel.list.ChannelListView#androidx.lifecycle.LifecycleOwner/PointingToDeclaration/"></a>[bindView](../bindView.md)| <a name="io.getstream.chat.android.ui.channel.list.viewmodel//bindView/io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel#io.getstream.chat.android.ui.channel.list.ChannelListView#androidx.lifecycle.LifecycleOwner/PointingToDeclaration/"></a>@[JvmName](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-name/index.html)(name = bind)fun [ChannelListViewModel](index.md).[bindView](../bindView.md)(view: [ChannelListView](../../io.getstream.chat.android.ui.channel.list/ChannelListView/index.md), lifecycle: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html))Binds [ChannelListView](../../io.getstream.chat.android.ui.channel.list/ChannelListView/index.md) with [ChannelListViewModel](index.md), updating the view's state based on data provided by the ViewModel, and propagating view events to the ViewModel as needed.|
 

@@ -10,7 +10,6 @@ title: ChannelListViewModelFactory
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-        Filters.or(Filters.notExists("hidden"), Filters.ne("hidden", true)),
     ), sort: QuerySort&lt;Channel&gt; = ChannelListViewModel.DEFAULT_SORT, limit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 30, messageLimit: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html) = 1)  
   
 ## Parameters  
