@@ -759,11 +759,11 @@ public final class io/getstream/chat/android/offline/repository/domain/message/M
 
 public final class io/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadDao_Impl : io/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteAttachmentsToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteAttachmentsToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getAttachmentsToUpload (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getAttachmentsToUploadForMessage (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertAttachmentToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateAttachmentsToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAttachmentToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateAttachmentsToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/queryChannels/QueryChannelsDao_Impl {
