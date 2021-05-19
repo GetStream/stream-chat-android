@@ -1,0 +1,24 @@
+---
+title: index
+sidebar_position: 1
+---
+/[stream-chat-android-client](../../index.md)/[io.getstream.chat.android.client.utils.observable](../index.md)/[Disposable](index.md)  
+  
+  
+  
+# Disposable  
+interface [Disposable](index.md)  
+  
+## Properties  
+  
+|  Name |  Summary | 
+|---|---|
+| <a name="io.getstream.chat.android.client.utils.observable/Disposable/isDisposed/#/PointingToDeclaration/"></a>[isDisposed](isDisposed.md)| <a name="io.getstream.chat.android.client.utils.observable/Disposable/isDisposed/#/PointingToDeclaration/"></a>abstract val [isDisposed](isDisposed.md): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)|
+  
+  
+## Functions  
+  
+|  Name |  Summary | 
+|---|---|
+| <a name="io.getstream.chat.android.client.utils.observable/Disposable/dispose/#/PointingToDeclaration/"></a>[dispose](dispose.md)| <a name="io.getstream.chat.android.client.utils.observable/Disposable/dispose/#/PointingToDeclaration/"></a>abstract fun [dispose](dispose.md)()|
+

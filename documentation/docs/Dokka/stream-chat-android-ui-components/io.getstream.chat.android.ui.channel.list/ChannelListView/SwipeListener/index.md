@@ -1,0 +1,28 @@
+---
+title: index
+sidebar_position: 1
+---
+/[stream-chat-android-ui-components](../../../index.md)/[io.getstream.chat.android.ui.channel.list](../../index.md)/[ChannelListView](../index.md)/[SwipeListener](index.md)  
+  
+  
+  
+# SwipeListener  
+interface [SwipeListener](index.md)  
+  
+## Types  
+  
+|  Name |  Summary | 
+|---|---|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener.Companion///PointingToDeclaration/"></a>[Companion](Companion/index.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener.Companion///PointingToDeclaration/"></a>object [Companion](Companion/index.md)|
+  
+  
+## Functions  
+  
+|  Name |  Summary | 
+|---|---|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onRestoreSwipePosition/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int/PointingToDeclaration/"></a>[onRestoreSwipePosition](onRestoreSwipePosition.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onRestoreSwipePosition/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int/PointingToDeclaration/"></a>abstract fun [onRestoreSwipePosition](onRestoreSwipePosition.md)(viewHolder: [SwipeViewHolder](../../../io.getstream.chat.android.ui.channel.list.adapter.viewholder/SwipeViewHolder/index.md), adapterPosition: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html))Invoked in order to set the [viewHolder](onRestoreSwipePosition.md)'s initial state when bound.|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeCanceled/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>[onSwipeCanceled](onSwipeCanceled.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeCanceled/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>abstract fun [onSwipeCanceled](onSwipeCanceled.md)(viewHolder: [SwipeViewHolder](../../../io.getstream.chat.android.ui.channel.list.adapter.viewholder/SwipeViewHolder/index.md), adapterPosition: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), x: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null, y: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null)Invoked when a swipe is canceled.|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeChanged/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float#kotlin.Float/PointingToDeclaration/"></a>[onSwipeChanged](onSwipeChanged.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeChanged/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float#kotlin.Float/PointingToDeclaration/"></a>abstract fun [onSwipeChanged](onSwipeChanged.md)(viewHolder: [SwipeViewHolder](../../../io.getstream.chat.android.ui.channel.list.adapter.viewholder/SwipeViewHolder/index.md), adapterPosition: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), dX: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html), totalDeltaX: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html))Invoked after a swipe has been detected, and movement is occurring.|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeCompleted/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>[onSwipeCompleted](onSwipeCompleted.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeCompleted/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>abstract fun [onSwipeCompleted](onSwipeCompleted.md)(viewHolder: [SwipeViewHolder](../../../io.getstream.chat.android.ui.channel.list.adapter.viewholder/SwipeViewHolder/index.md), adapterPosition: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), x: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null, y: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null)Invoked when a swipe is successfully completed naturally, without cancellation.|
+| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeStarted/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>[onSwipeStarted](onSwipeStarted.md)| <a name="io.getstream.chat.android.ui.channel.list/ChannelListView.SwipeListener/onSwipeStarted/#io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder#kotlin.Int#kotlin.Float?#kotlin.Float?/PointingToDeclaration/"></a>abstract fun [onSwipeStarted](onSwipeStarted.md)(viewHolder: [SwipeViewHolder](../../../io.getstream.chat.android.ui.channel.list.adapter.viewholder/SwipeViewHolder/index.md), adapterPosition: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), x: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null, y: [Float](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html)? = null)Invoked when a swipe is detected.|
+

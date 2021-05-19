@@ -1,6 +1,7 @@
 set -e
 
-./gradlew dokkaHtmlMultiModule docusaurusSidebar
+  ./gradlew dokkaHtmlMultiModule
+  ./gradlew docusaurusSidebar
 
 diff_output=$(git status)
 
