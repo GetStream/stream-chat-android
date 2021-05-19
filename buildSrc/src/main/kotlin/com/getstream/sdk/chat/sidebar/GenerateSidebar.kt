@@ -49,11 +49,11 @@ abstract class GenerateSidebar : DefaultTask() {
 
         modulesToInclude.map { module ->
             Pair(
-                Paths.get("${inputDir.get().asFile.path}/$module"),
-                Paths.get("${outputFile.path}/$module")
+                File("${inputDir.get().asFile.path}/$module"),
+                File("${outputFile.path}/$module")
             )
         }.forEach { (inputModule, outModule) ->
-            Files.move(inputModule, outModule)
+            inputModule.copyRecursively(outModule)
         }
 
         println("_category_.json files created")
