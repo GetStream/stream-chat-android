@@ -1,4 +1,5 @@
 import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.sidebar.GenerateSidebar
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -60,6 +61,11 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+// Use the default greeting
+tasks.register('docusaurusSidebar', GenerateSidebar) {
+    dokkaPathInput = "build/dokka/gfmMultiModule"
 }
 
 dependencyUpdates {
