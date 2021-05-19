@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
@@ -53,7 +54,7 @@ internal class ChatNotifications private constructor(
     }
 
     fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
-        logger.logI("onReceiveFirebaseMessage: payload: {$message.data}")
+        logger.logI("onReceiveFirebaseMessage: payload: ${message.data}")
 
         if (isValidRemoteMessage(message)) {
             val data = handler.getFirebaseMessageParser().run { parse(message) }
@@ -137,38 +138,57 @@ internal class ChatNotifications private constructor(
     }
 
     private fun onRequiredDataLoaded(channel: Channel, message: Message) {
-        val messageId: String = message.id
-        val channelId: String = channel.id
         val notificationId = System.currentTimeMillis().toInt()
-        val channelName = channel.extraData["name"] ?: ""
 
-        val notification = handler.buildNotification(
-            notificationId,
-            channelName.toString(),
-            message.text,
-            messageId,
-            channel.type,
-            channelId,
-        )
+        handler.buildNotification(
+            notificationId = notificationId,
+            channelName = channel.name,
+            messageText = message.text,
+            messageId = message.id,
+            channelType = channel.type,
+            channelId = channel.id,
+        ).let { notification ->
+            showedNotifications.add(message.id)
+            showNotification(notificationId = notificationId, notification = notification)
+        }
 
-        showedNotifications.add(messageId)
-
-        showNotification(notificationId, notification)
+        if (handler.config.shouldGroupNotifications) {
+            handler.buildNotificationGroupSummary(
+                channelType = channel.type,
+                channelId = channel.id,
+                channelName = channel.name,
+                messageId = message.id,
+            ).let { notification ->
+                showNotification(
+                    notificationId = handler.getNotificationGroupSummaryId(
+                        channelType = channel.type,
+                        channelId = channel.id,
+                    ),
+                    notification = notification,
+                )
+            }
+        }
     }
 
     private fun showErrorCaseNotification() {
         showNotification(
-            System.currentTimeMillis().toInt(),
-            handler.buildErrorCaseNotification()
+            notificationId = System.currentTimeMillis().toInt(),
+            notification = handler.buildErrorCaseNotification(),
         )
+
+        if (handler.config.shouldGroupNotifications) {
+            handler.buildErrorNotificationGroupSummary().let { notification ->
+                showNotification(
+                    notificationId = handler.getErrorNotificationGroupSummaryId(),
+                    notification = notification,
+                )
+            }
+        }
     }
 
     private fun showNotification(notificationId: Int, notification: Notification) {
         if (!isForeground()) {
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager)?.notify(
-                notificationId,
-                notification
-            )
+            notificationManager.notify(notificationId, notification)
         }
     }
 

@@ -38,6 +38,11 @@ Fixing filter for draft channels. Those channels were not showing in the results
 
 ### ✅ Added
 - Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
+- Added possibility to group notifications:
+    - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
+    - If enabled, by default notifications are grouped by Channel's cid
+    - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
+
 ### ⚠️ Changed
 
 ### ❌ Removed

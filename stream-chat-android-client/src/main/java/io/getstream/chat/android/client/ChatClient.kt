@@ -1657,7 +1657,11 @@ public class ChatClient internal constructor(
 
         @Throws(IllegalStateException::class)
         internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
-            ensureClientInitialized().notifications.displayNotificationWithData(channelId, channelType, messageId)
+            ensureClientInitialized().notifications.displayNotificationWithData(
+                channelId = channelId,
+                channelType = channelType,
+                messageId = messageId,
+            )
         }
 
         /**
