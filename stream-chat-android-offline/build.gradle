@@ -117,5 +117,5 @@ dependencies {
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
 
-    //dokkaPlugin("io.getstream:dokkasaurus:0.1.7")
+    dokkaPlugin(Dependencies.dokkasaurus)
 }

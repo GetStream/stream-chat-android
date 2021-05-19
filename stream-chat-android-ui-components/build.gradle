@@ -97,5 +97,5 @@ dependencies {
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
 
-    //dokkaPlugin("io.getstream:dokkasaurus:0.1.7")
+    dokkaPlugin(Dependencies.dokkasaurus)
 }
