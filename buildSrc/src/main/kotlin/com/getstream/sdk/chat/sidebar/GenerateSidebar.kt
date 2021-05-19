@@ -41,6 +41,8 @@ abstract class GenerateSidebar : DefaultTask() {
 
         outputFile.listFiles()?.forEach { file -> file.deleteRecursively() }
 
+        createSidebarFiles(dokkaFileTree, modulesToInclude)
+
         modulesToInclude.map { module ->
             Pair(
                 File("${inputDir.get().asFile.path}/$module"),
@@ -49,8 +51,6 @@ abstract class GenerateSidebar : DefaultTask() {
         }.forEach { (inputModule, outModule) ->
             inputModule.copyRecursively(outModule)
         }
-
-        createSidebarFiles(dokkaFileTree, modulesToInclude)
 
         println("_category_.json files created")
     }
