@@ -116,4 +116,6 @@ dependencies {
     androidTestImplementation Dependencies.kluent
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
+
+    //dokkaPlugin("io.getstream:dokkasaurus:0.1.7")
 }

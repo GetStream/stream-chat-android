@@ -111,4 +111,6 @@ dependencies {
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
+
+    //dokkaPlugin("io.getstream:dokkasaurus:0.1.7")
 }
