@@ -17,11 +17,11 @@ internal interface AttachmentToUploadDao {
     suspend fun getAttachmentsToUploadForMessage(messageId: Int): List<AttachmentToUploadEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAttachmentToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
+    suspend fun insertAttachmentToUpload(attachmentToUploadEntities: List<AttachmentToUploadEntity>)
 
     @Update
-    suspend fun updateAttachmentsToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
+    suspend fun updateAttachmentsToUpload(attachmentToUploadEntities: List<AttachmentToUploadEntity>)
 
     @Delete
-    suspend fun deleteAttachmentsToUpload(vararg attachmentToUploadEntity: AttachmentToUploadEntity)
+    suspend fun deleteAttachmentsToUpload(attachmentToUploadEntities: List<AttachmentToUploadEntity>)
 }
