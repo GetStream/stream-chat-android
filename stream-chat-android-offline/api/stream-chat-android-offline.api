@@ -761,8 +761,9 @@ public final class io/getstream/chat/android/offline/repository/domain/message/a
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun deleteAttachmentsToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getAttachmentsToUpload (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getAttachmentsToUploadForMessage (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getAttachmentsToUploadForMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertAttachmentToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun observeAttachmentsToUpload ()Lkotlinx/coroutines/flow/Flow;
 	public fun updateAttachmentsToUpload ([Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
