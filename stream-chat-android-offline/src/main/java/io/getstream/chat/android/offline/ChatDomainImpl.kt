@@ -265,7 +265,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     private fun isTestRunner(): Boolean {
-        return Build.FINGERPRINT.toLowerCase().contains("robolectric")
+        return Build.FINGERPRINT.lowercase().contains("robolectric")
     }
 
     internal fun setUser(user: User) {

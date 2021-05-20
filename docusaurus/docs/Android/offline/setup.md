@@ -14,19 +14,6 @@ The offline storage also enables it to implement optimistic UI updates.
 
 Offline package is build on top of the Client package. You need to add the following dependency if you aim to use Stream SDK Offline package:
 ```kotlin
-android {
-    ...
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    // for Kotlin projects
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
-
 dependencies {
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
 }
