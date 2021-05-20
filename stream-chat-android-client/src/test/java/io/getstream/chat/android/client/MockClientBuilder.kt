@@ -5,7 +5,8 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.GsonChatApi
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -76,16 +77,18 @@ internal class MockClientBuilder(
             testCoroutineScope
         )
 
-        val clientStateService = ClientStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, clientStateService, testCoroutineScope)
+        val socketStateService = SocketStateService()
+        val userStateService = UserStateService()
+        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(api, socketStateService, testCoroutineScope)
         client = ChatClient(
             config,
             api,
             socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            clientStateService,
-            queryChannelsPostponeHelper,
+            socketStateService = socketStateService,
+            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            userStateService = userStateService,
             encryptedPushNotificationsConfigStore = mock(),
         )
 

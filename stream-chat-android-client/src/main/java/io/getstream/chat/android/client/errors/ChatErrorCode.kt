@@ -15,6 +15,7 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     NO_ERROR_BODY(1009, "No error body. See http status code"),
 
     // server error codes
+    VALIDATION_ERROR(4, "Validation error, check your credentials"),
     AUTHENTICATION_ERROR(5, "Unauthenticated, problem with authentication"),
     TOKEN_EXPIRED(40, "Token expired, new one must be requested."),
     TOKEN_NOT_VALID(41, "Unauthenticated, token not valid yet"),
