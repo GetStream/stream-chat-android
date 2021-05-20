@@ -593,7 +593,7 @@ public data class ConnectingEvent(
 public data class DisconnectedEvent(
     override val type: String,
     override val createdAt: Date,
-    val disconnectCause: DisconnectCause = DisconnectCause.NETWORK_NOT_AVAILABLE,
+    val disconnectCause: DisconnectCause = DisconnectCause.NetworkNotAvailable,
 ) : ChatEvent()
 
 /**

@@ -139,9 +139,9 @@ public class ChatClient internal constructor(
                 }
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
-                        DisconnectCause.NETWORK_NOT_AVAILABLE,
-                        DisconnectCause.ERROR, -> socketStateService.onDisconnected()
-                        DisconnectCause.UNRECOVERABLE_ERROR -> {
+                        DisconnectCause.NetworkNotAvailable,
+                        is DisconnectCause.Error, -> socketStateService.onDisconnected()
+                        is DisconnectCause.UnrecoverableError -> {
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
                         }

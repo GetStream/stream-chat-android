@@ -701,12 +701,21 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/channel/ChannelClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
 
-public final class io/getstream/chat/android/client/clientstate/DisconnectCause : java/lang/Enum {
-	public static final field ERROR Lio/getstream/chat/android/client/clientstate/DisconnectCause;
-	public static final field NETWORK_NOT_AVAILABLE Lio/getstream/chat/android/client/clientstate/DisconnectCause;
-	public static final field UNRECOVERABLE_ERROR Lio/getstream/chat/android/client/clientstate/DisconnectCause;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/clientstate/DisconnectCause;
-	public static fun values ()[Lio/getstream/chat/android/client/clientstate/DisconnectCause;
+public abstract class io/getstream/chat/android/client/clientstate/DisconnectCause {
+}
+
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
+	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+}
+
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$NetworkNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$NetworkNotAvailable;
+}
+
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
+	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
 }
 
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
