@@ -59,7 +59,9 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
     ) {
         if (!ChatClient.isInitialized) return
 
-        if (channelId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank()) {
+        val currentUser = ChatClient.instance().getCurrentUser()
+
+        if (channelId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank() || currentUser == null) {
             return
         }
 
@@ -68,13 +70,14 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             channelId = channelId,
             message = Message().apply {
                 text = messageChars.toString()
+                user = currentUser
             }
         ).enqueue()
     }
 
     private fun cancelNotification(
         context: Context?,
-        notificationId: Int?
+        notificationId: Int?,
     ) {
         safeLet(
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager,
