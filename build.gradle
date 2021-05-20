@@ -66,7 +66,7 @@ task clean(type: Delete) {
 // Use the default greeting
 tasks.register('docusaurusSidebar', GenerateSidebar) {
     inputDir = file("build/dokka/htmlMultiModule")
-    outputDir = file("documentation/docs/Dokka")
+    outputDir = file("docusaurus/docs/Android/Dokka")
     modulesFilterInput = [
             'stream-chat-android-client',
             'stream-chat-android-offline',
