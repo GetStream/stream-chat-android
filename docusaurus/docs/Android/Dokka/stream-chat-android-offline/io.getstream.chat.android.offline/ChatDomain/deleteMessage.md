@@ -1,0 +1,32 @@
+---
+title: deleteMessage
+---
+/[stream-chat-android-offline](../../index.md)/[io.getstream.chat.android.offline](../index.md)/[ChatDomain](index.md)/[deleteMessage](deleteMessage.md)  
+  
+  
+  
+# deleteMessage  
+abstract fun [deleteMessage](deleteMessage.md)(message: Message): Call&lt;Message&gt;Deletes the specified message, request is retried according to the retry policy specified on the chatDomain  
+  
+#### Return  
+executable async Call responsible for deleting a message  
+  
+## See also  
+  
+androidJvm  
+  
+| | |
+|---|---|
+| <a name="io.getstream.chat.android.offline/ChatDomain/deleteMessage/#io.getstream.chat.android.client.models.Message/PointingToDeclaration/"></a>[io.getstream.chat.android.offline.utils.RetryPolicy](../../io.getstream.chat.android.offline.utils/RetryPolicy/index.md)| <a name="io.getstream.chat.android.offline/ChatDomain/deleteMessage/#io.getstream.chat.android.client.models.Message/PointingToDeclaration/"></a>|
+  
+  
+  
+## Parameters  
+  
+androidJvm  
+  
+| | |
+|---|---|
+| <a name="io.getstream.chat.android.offline/ChatDomain/deleteMessage/#io.getstream.chat.android.client.models.Message/PointingToDeclaration/"></a>message| <a name="io.getstream.chat.android.offline/ChatDomain/deleteMessage/#io.getstream.chat.android.client.models.Message/PointingToDeclaration/"></a>the message to mark as deleted|
+  
+
