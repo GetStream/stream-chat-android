@@ -12,19 +12,6 @@ The Android SDK enables you to build any type of chat or messaging experience fo
 ## Adding dependencies
 UI package is build on top of the Client and Offline packages. If you aim to use Stream SDK UI components you need to add dependency to the UI artifact. 
 ```kotlin
-android {
-    ...
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    // for Kotlin projects
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
-
 dependencies {
     implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
 }

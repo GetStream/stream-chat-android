@@ -17,13 +17,6 @@ allprojects {
 Open the app module's `build.gradle` script and make the following changes:
 
 ```groovy
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
 dependencies {
     implementation "io.getstream:stream-chat-android-client:$stream_version"
 }

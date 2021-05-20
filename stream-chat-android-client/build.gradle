@@ -5,7 +5,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
-apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
@@ -93,9 +92,6 @@ dependencies {
     testRuntimeOnly Dependencies.junitVintageEngine
 
     testImplementation Dependencies.assertj
-    testImplementation(Dependencies.awaitility) {
-        exclude group: "org.hamcrest", module: "hamcrest"
-    }
     testImplementation Dependencies.json
     testImplementation Dependencies.kluent
     testImplementation Dependencies.truth
@@ -107,9 +103,6 @@ dependencies {
 
     // Instrumentation tests
     androidTestImplementation Dependencies.assertj
-    androidTestImplementation(Dependencies.awaitility) {
-        exclude group: "org.hamcrest", module: "hamcrest"
-    }
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit

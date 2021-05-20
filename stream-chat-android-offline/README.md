@@ -14,13 +14,6 @@ repositories {
 dependencies {
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
 }
-
-android {
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-}
 ```
 
 > For the latest version, check the [Releases page](https://github.com/GetStream/stream-chat-android/releases).
