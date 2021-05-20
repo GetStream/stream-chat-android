@@ -47,9 +47,8 @@ internal class QueryChannelsPostponeHelper(
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         }
         return when (socketStateService.state) {
-            is SocketState.Idle -> error("Socket connection must be established before querying channels")
             is SocketState.Connected, -> job()
-            is SocketState.Pending, SocketState.Disconnected -> {
+            is SocketState.Idle, SocketState.Pending, SocketState.Disconnected -> {
                 delay(delayDuration)
                 doJob(attemptCount - 1, job)
             }

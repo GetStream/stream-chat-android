@@ -54,7 +54,8 @@ internal class QueryChannelsPostponeHelperTests {
 
     @Test
     fun `Given idle connection state When query channel Should return a Error Call`() {
-        val expectedErrorResult = "Socket connection must be established before querying channels"
+        val expectedErrorResult =
+            "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         whenever(socketStateService.state) doReturn SocketState.Idle
 
         val result = sut.queryChannel("channelType", "channelId", mock()).execute().error()
