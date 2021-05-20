@@ -3,9 +3,7 @@ set -e
 ./gradlew dokkaHtmlMultiModule
 ./gradlew docusaurusSidebar
 
-diff_output=$(git status)
-
-if [[ $diff_output != *"nothing to commit, working tree clean"* ]]; then
+if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
   echo "Error! looks like there are changes in your documentation."
   echo "Please update your documentation. You can run for that:"
   echo "./gradlew dokkaHtmlMultiModule"
