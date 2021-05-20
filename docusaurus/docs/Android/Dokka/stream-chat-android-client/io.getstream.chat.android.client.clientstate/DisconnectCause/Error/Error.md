@@ -1,9 +1,9 @@
 ---
-title: Error
+title: error
 ---
-/[stream-chat-android-client](../../../index.md)/[io.getstream.chat.android.client.clientstate](../../index.md)/[DisconnectCause](../index.md)/[Error](index.md)/[Error](Error.md)  
+/[stream-chat-android-client](../../../index.md)/[io.getstream.chat.android.client.clientstate](../../index.md)/[DisconnectCause](../index.md)/[Error](index.md)/[error](error.md)  
   
   
   
-# Error  
-fun [Error](Error.md)(error: [ChatNetworkError](../../../io.getstream.chat.android.client.errors/ChatNetworkError/index.md)?)
+# error  
+val [error](error.md): [ChatNetworkError](../../../io.getstream.chat.android.client.errors/ChatNetworkError/index.md)?
