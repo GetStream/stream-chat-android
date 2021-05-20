@@ -25,8 +25,11 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.clientstate.ClientState
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.DisconnectCause
+import io.getstream.chat.android.client.clientstate.SocketState
+import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.clientstate.UserState
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -93,9 +96,10 @@ public class ChatClient internal constructor(
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val clientStateService: ClientStateService = ClientStateService(),
+    private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
+    private val userStateService: UserStateService = UserStateService(),
 ) {
 
     @InternalStreamChatApi
@@ -126,14 +130,22 @@ public class ChatClient internal constructor(
                 is ConnectedEvent -> {
                     val user = event.me
                     val connectionId = event.connectionId
-                    clientStateService.onConnected(user, connectionId)
+                    socketStateService.onConnected(connectionId)
+                    userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
                     storePushNotificationsConfig(user.id)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
-                    clientStateService.onDisconnected()
+                    when (event.disconnectCause) {
+                        DisconnectCause.NetworkNotAvailable,
+                        is DisconnectCause.Error, -> socketStateService.onDisconnected()
+                        is DisconnectCause.UnrecoverableError -> {
+                            userStateService.onSocketUnrecoverableError()
+                            socketStateService.onSocketUnrecoverableError()
+                        }
+                    }
                 }
             }
         }
@@ -238,6 +250,7 @@ public class ChatClient internal constructor(
         }
         initializeClientWithUser(user, tokenProvider)
         connectionListener = listener
+        socketStateService.onConnectionRequested()
         socket.connect(user)
     }
 
@@ -245,7 +258,7 @@ public class ChatClient internal constructor(
         user: User,
         tokenProvider: TokenProvider,
     ) {
-        clientStateService.onSetUser(user)
+        userStateService.onSetUser(user)
         // fire a handler here that the chatDomain and chatUI can use
         notifySetUser(user)
         config.isAnonymous = false
@@ -310,7 +323,8 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        clientStateService.onSetAnonymousUser()
+        socketStateService.onConnectionRequested()
+        userStateService.onSetAnonymous()
         connectionListener = object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 notifySetUser(data.user)
@@ -496,11 +510,13 @@ public class ChatClient internal constructor(
     }
 
     public fun reconnectSocket() {
-        when (val state = clientStateService.state) {
-            is ClientState.Anonymous -> socket.connectAnonymously()
-            is ClientState.User -> socket.connect(state.user)
-            is ClientState.Idle -> {
+        when (socketStateService.state) {
+            is SocketState.Disconnected -> when (val userState = userStateService.state) {
+                is UserState.UserSet -> socket.connect(userState.user)
+                is UserState.Anonymous.AnonymousUserSet -> socket.connectAnonymously()
+                else -> error("Invalid user state $userState without user being set!")
             }
+            else -> Unit
         }.exhaustive
     }
 
@@ -800,12 +816,13 @@ public class ChatClient internal constructor(
     public fun disconnect() {
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
-            clientStateService.state.userOrError().let { user ->
+            userStateService.state.userOrError().let { user ->
                 disconnectListeners.forEach { listener -> listener(user) }
             }
         }
         connectionListener = null
-        clientStateService.onDisconnectRequested()
+        socketStateService.onDisconnectRequested()
+        userStateService.onLogout()
         socket.disconnect()
         notifications.cancelLoadDataWork()
         encryptedPushNotificationsConfigStore.clear()
@@ -1324,29 +1341,24 @@ public class ChatClient internal constructor(
     }
 
     public fun getConnectionId(): String? {
-        return runCatching { clientStateService.state.connectionIdOrError() }.getOrNull()
+        return runCatching { socketStateService.state.connectionIdOrError() }.getOrNull()
     }
 
     public fun getCurrentUser(): User? {
-        return runCatching { clientStateService.state.userOrError() }.getOrNull()
+        return runCatching { userStateService.state.userOrError() }.getOrNull()
     }
 
     public fun getCurrentToken(): String? {
         return runCatching {
-            when (clientStateService.state) {
-                is ClientState.User.Pending,
-                is ClientState.User.Authorized,
-                -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+            when (userStateService.state) {
+                is UserState.UserSet -> if (tokenManager.hasToken()) tokenManager.getToken() else null
                 else -> null
             }
         }.getOrNull()
     }
 
     public fun isSocketConnected(): Boolean {
-        return clientStateService.state.let {
-            it is ClientState.User.Authorized.Connected ||
-                it is ClientState.Anonymous.Authorized.Connected
-        }
+        return socketStateService.state is SocketState.Connected
     }
 
     /**
@@ -1446,7 +1458,7 @@ public class ChatClient internal constructor(
         }
     }
 
-    private fun isUserSet() = clientStateService.state !is ClientState.Idle
+    private fun isUserSet() = userStateService.state !is UserState.NotSet
 
     private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
         notifications.isValidRemoteMessage(remoteMessage)
@@ -1597,9 +1609,10 @@ public class ChatClient internal constructor(
                 module.socket(),
                 module.notifications(),
                 tokenManager,
-                module.clientStateService,
+                module.socketStateService,
                 module.queryChannelsPostponeHelper,
                 EncryptedPushNotificationsConfigStore(appContext),
+                module.userStateService,
             )
 
             instance = result

@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.socket
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -47,7 +48,7 @@ internal class ChatSocketServiceImpl constructor(
     )
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
-            if (state == State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
+            if (state is State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
                 logger.logI("network connected, reconnecting socket")
                 reconnect(connectionConf)
             }
@@ -60,7 +61,7 @@ internal class ChatSocketServiceImpl constructor(
 
     @VisibleForTesting
     internal var state: State by Delegates.observable(
-        State.DisconnectedTemporarily as State,
+        State.DisconnectedTemporarily(null) as State,
         { _, oldState, newState ->
             if (oldState != newState) {
                 logger.logI("updateState: ${newState.javaClass.simpleName}")
@@ -77,11 +78,13 @@ internal class ChatSocketServiceImpl constructor(
                         shutdownSocketConnection()
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                     }
                     is State.DisconnectedTemporarily -> {
                         shutdownSocketConnection()
                         healthMonitor.onDisconnected()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                     }
                     is State.DisconnectedPermanently -> {
                         shutdownSocketConnection()
@@ -89,6 +92,7 @@ internal class ChatSocketServiceImpl constructor(
                         networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
+                        callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
                     }
                 }
             }
@@ -97,7 +101,7 @@ internal class ChatSocketServiceImpl constructor(
         private set
 
     override fun onSocketError(error: ChatError) {
-        if (state != State.DisconnectedPermanently) {
+        if (state !is State.DisconnectedPermanently) {
             logger.logE(error)
             callListeners { it.onError(error) }
             (error as? ChatNetworkError)?.let(::onChatNetworkError)
@@ -121,11 +125,12 @@ internal class ChatSocketServiceImpl constructor(
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
+            ChatErrorCode.VALIDATION_ERROR.code,
             -> {
-                state = State.DisconnectedPermanently
+                state = State.DisconnectedPermanently(error)
             }
             else -> {
-                state = State.DisconnectedTemporarily
+                state = State.DisconnectedTemporarily(error)
             }
         }
     }
@@ -152,7 +157,6 @@ internal class ChatSocketServiceImpl constructor(
         logger.logI("connect")
         this.connectionConf = connectionConf
         if (networkStateProvider.isConnected()) {
-            state = State.DisconnectedTemporarily
             setupSocket(connectionConf)
         } else {
             state = State.NetworkDisconnected
@@ -161,7 +165,7 @@ internal class ChatSocketServiceImpl constructor(
     }
 
     override fun disconnect() {
-        state = State.DisconnectedPermanently
+        state = State.DisconnectedPermanently(null)
     }
 
     override fun onConnectionResolved(event: ConnectedEvent) {
@@ -187,7 +191,7 @@ internal class ChatSocketServiceImpl constructor(
         with(connectionConf) {
             when (this) {
                 is ConnectionConf.None -> {
-                    state = State.DisconnectedPermanently
+                    state = State.DisconnectedPermanently(null)
                 }
                 is ConnectionConf.AnonymousConnectionConf -> {
                     state = State.Connecting
@@ -237,7 +241,7 @@ internal class ChatSocketServiceImpl constructor(
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
         object NetworkDisconnected : State()
-        object DisconnectedTemporarily : State()
-        object DisconnectedPermanently : State()
+        class DisconnectedTemporarily(val error: ChatNetworkError?) : State()
+        class DisconnectedPermanently(val error: ChatNetworkError?) : State()
     }
 }

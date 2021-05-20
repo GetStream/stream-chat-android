@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `SocketListener::onDisconnected` <br/>*client* | 2021.05.17 | 2021.06.17⌛ | 2021.07.17⌛ | Use method with DisconnectCause instead of it |
 | `ChatClient#handleRemoteMessage`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `ChatClient.handleRemoteMessage` method instead |
 | `ChatClient#onNewTokenReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `ChatClient.setFirebaseToken` method instead |
 | `ChatNotificationHandler#getSmallIcon`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.14<br/>⌛ | 2021.07.14 ⌛ | Use the `NotificationsConfig.smallIcon` instead |
