@@ -1,0 +1,22 @@
+---
+title: index
+sidebar_position: 1
+---
+/[stream-chat-android-client](../../index.md)/[io.getstream.chat.android.client.api.models](../index.md)/[QueryUsersRequest](index.md)  
+  
+  
+  
+# QueryUsersRequest  
+data class [QueryUsersRequest](index.md)@[JvmOverloads](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html)()constructor(**filter**: [FilterObject](../FilterObject/index.md), **offset**: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), **limit**: [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html), **querySort**: [QuerySort](../QuerySort/index.md)&lt;[User](../../io.getstream.chat.android.client.models/User/index.md)&gt;, **presence**: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html))  
+  
+## Properties  
+  
+|  Name |  Summary | 
+|---|---|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/filter/#/PointingToDeclaration/"></a>[filter](filter.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/filter/#/PointingToDeclaration/"></a>@SerializedName(value = filter_conditions)var [filter](filter.md): [FilterObject](../FilterObject/index.md)|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/limit/#/PointingToDeclaration/"></a>[limit](limit.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/limit/#/PointingToDeclaration/"></a>val [limit](limit.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/offset/#/PointingToDeclaration/"></a>[offset](offset.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/offset/#/PointingToDeclaration/"></a>val [offset](offset.md): [Int](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html)|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/presence/#/PointingToDeclaration/"></a>[presence](presence.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/presence/#/PointingToDeclaration/"></a>var [presence](presence.md): [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html) = false|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/querySort/#/PointingToDeclaration/"></a>[querySort](querySort.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/querySort/#/PointingToDeclaration/"></a>var [querySort](querySort.md): [QuerySort](../QuerySort/index.md)&lt;[User](../../io.getstream.chat.android.client.models/User/index.md)&gt;|
+| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/sort/#/PointingToDeclaration/"></a>[sort](sort.md)| <a name="io.getstream.chat.android.client.api.models/QueryUsersRequest/sort/#/PointingToDeclaration/"></a>val [sort](sort.md): [List](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html)&lt;[Map](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html)&lt;[String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), [Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html)&gt;&gt;|
+
