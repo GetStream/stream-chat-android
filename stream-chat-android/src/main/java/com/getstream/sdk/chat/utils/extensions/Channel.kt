@@ -41,11 +41,9 @@ internal fun Channel.getReadDateOfChannelLastMessage(userId: String): Date? {
 }
 
 @JvmOverloads
-internal fun Channel.getChannelNameOrMembers(currentUser: User = ChatDomain.instance().currentUser): String {
+internal fun Channel.getChannelNameOrMembers(currentUser: User? = ChatDomain.instance().user.value): String {
     val userName = name
-    return if (!userName.isNullOrEmpty()) {
-        userName
-    } else {
+    return userName.ifEmpty {
         val users = members.getOtherUsers(currentUser)
         val userNames = users.take(3).map { it.name }
         userNames.joinToString(separator = ", ").let {
@@ -59,9 +57,9 @@ internal fun Channel.getChannelNameOrMembers(currentUser: User = ChatDomain.inst
 }
 
 @JvmOverloads
-internal fun Channel.readLastMessage(currentUser: User = ChatDomain.instance().currentUser): Boolean {
-    val currentUserId = currentUser.id
-    val myReadDate: Date? = getReadDateOfChannelLastMessage(currentUserId)
+internal fun Channel.readLastMessage(currentUser: User? = ChatDomain.instance().user.value): Boolean {
+    val currentUserId = currentUser?.id
+    val myReadDate: Date? = currentUserId?.let(::getReadDateOfChannelLastMessage)
     val lastMessage: Message? = computeLastMessage()
     return when {
         myReadDate == null -> false
@@ -76,7 +74,7 @@ internal fun Channel.readLastMessage(currentUser: User = ChatDomain.instance().c
 
 @JvmOverloads
 internal fun Channel.getLastMessageReads(
-    currentUser: User = ChatDomain.instance().currentUser
+    currentUser: User? = ChatDomain.instance().user.value
 ): List<ChannelUserRead> {
     val lastMessage: Message? = computeLastMessage()
     if (lastMessage?.createdAt == null) return emptyList()
@@ -84,7 +82,7 @@ internal fun Channel.getLastMessageReads(
     val readLastMessage: MutableList<ChannelUserRead> = mutableListOf()
 
     val channelUserReadList = read
-    val currentUserId = currentUser.id
+    val currentUserId = currentUser?.id
     for (channelUserRead in channelUserReadList) {
         if (channelUserRead.getUserId() == currentUserId || channelUserRead.lastRead == null) {
             continue

@@ -63,8 +63,8 @@ private fun getOnlineStateSubtitle(context: Context, members: List<Member>): Str
 
 private fun List<User>.filterCurrentUser(): List<User> {
     return if (ChatDomain.isInitialized) {
-        val currentUser = ChatDomain.instance().currentUser
-        filter { it.id != currentUser.id }
+        val currentUser = ChatDomain.instance().user.value
+        filter { it.id != currentUser?.id }
     } else {
         this
     }

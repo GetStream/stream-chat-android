@@ -11,8 +11,10 @@ import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
@@ -35,7 +37,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val currentUser = ChatDomain.instance().currentUser
+    private val currentUser : LiveData<User?> = ChatDomain.instance().user
 
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
@@ -51,7 +53,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessageListItem.Position.BOTTOM),
-            isMine = message.user.id == currentUser.id
+            isMine = message.user.id == currentUser.value?.id
         )
     }
 
@@ -155,7 +157,12 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, currentUser)
+                currentUser.observe(viewLifecycleOwner) { user ->
+                    user?.let {
+                        decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, it)
+                    }
+                }
+
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
                 setMessageListItemStyle(style.itemStyle)
@@ -182,12 +189,16 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         with(binding.userReactionsView) {
             isVisible = true
             configure(style)
-            setMessage(message, currentUser)
+            currentUser.observe(viewLifecycleOwner) { user ->
+                user?.let {
+                    setMessage(message, it)
+                }
+            }
         }
     }
 
     private fun isMessageAuthorMuted(): Boolean {
-        return currentUser.mutes.any { mute -> mute.target.id == message.user.id }
+        return currentUser.value?.mutes?.any { mute -> mute.target.id == message.user.id } == true
     }
 
     private fun setupMessageOptions() {

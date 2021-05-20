@@ -47,7 +47,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     protected ChannelListView.ChannelClickListener channelClickListener;
     protected ChannelListView.ChannelClickListener channelLongClickListener;
     protected ChannelListViewStyle style;
-    protected DateFormatter defaultDateFormatter = DateFormatter.from(itemView.getContext());
+    protected DateFormatter defaultDateFormatter = DateFormatter.Companion.from(itemView.getContext());
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -208,17 +208,22 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastMessage().getSize());
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleText().getSize());
 
-        User currentUser = ChatDomain.instance().getCurrentUser();
-        String currentUserId = currentUser.getId();
+        User currentUser = ChatDomain.instance().getUser().getValue();
 
-        Message lastMessage = ChannelUtils.computeLastMessage(channel);
-        boolean outgoing = (lastMessage != null && lastMessage.getUser().getId().equals(currentUserId));
-        boolean readLastMessage = ChannelUtils.readLastMessage(channel);
+        if (currentUser != null) {
+            String currentUserId = currentUser.getId();
 
-        if (readLastMessage || outgoing)
-            applyReadStyle();
-        else
+            Message lastMessage = ChannelUtils.computeLastMessage(channel);
+            boolean outgoing = (lastMessage != null && lastMessage.getUser().getId().equals(currentUserId));
+            boolean readLastMessage = ChannelUtils.readLastMessage(channel);
+
+            if (readLastMessage || outgoing)
+                applyReadStyle();
+            else
+                applyUnreadStyle();
+        } else {
             applyUnreadStyle();
+        }
     }
 
     protected void applyReadStyle() {
