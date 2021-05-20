@@ -2,7 +2,8 @@ package io.getstream.chat.android.client.utils
 
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -17,16 +18,18 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 internal class DevTokenTest(private val userId: String, private val expectedToken: String) {
 
-    private val clientStateService = ClientStateService()
-    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), clientStateService, testCoroutines.scope)
+    private val socketStateService = SocketStateService()
+    private val userStateService: UserStateService = UserStateService()
+    private val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
     private val client = ChatClient(
         config = mock(),
         api = mock(),
         socket = mock(),
         notifications = mock(),
         tokenManager = FakeTokenManager(""),
-        clientStateService,
-        queryChannelsPostponeHelper,
+        socketStateService = socketStateService,
+        queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+        userStateService = userStateService,
         encryptedPushNotificationsConfigStore = mock(),
     )
 

@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -91,6 +92,10 @@ internal class ChatEventsObservable(
 
         override fun onDisconnected() {
             observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
+        }
+
+        override fun onDisconnected(cause: DisconnectCause) {
+            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), cause))
         }
 
         override fun onEvent(event: ChatEvent) {

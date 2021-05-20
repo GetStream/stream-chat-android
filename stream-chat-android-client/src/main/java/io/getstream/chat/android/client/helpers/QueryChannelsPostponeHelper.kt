@@ -7,8 +7,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.clientstate.ClientState
-import io.getstream.chat.android.client.clientstate.ClientStateService
+import io.getstream.chat.android.client.clientstate.SocketState
+import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import kotlinx.coroutines.CoroutineScope
@@ -17,16 +17,16 @@ import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsPostponeHelper(
     private val api: ChatApi,
-    private val clientStateService: ClientStateService,
+    private val socketStateService: SocketStateService,
     private val coroutineScope: CoroutineScope,
     private val delayDuration: Long = DELAY_DURATION,
-    private val attemptsCount: Int = MAX_ATTEMPTS_COUNT
+    private val attemptsCount: Int = MAX_ATTEMPTS_COUNT,
 ) {
 
     internal fun queryChannel(
         channelType: String,
         channelId: String,
-        request: QueryChannelRequest
+        request: QueryChannelRequest,
     ): Call<Channel> = CoroutineCall(coroutineScope) {
         doSafeJob { api.queryChannel(channelType, channelId, request) }.await()
     }
@@ -46,12 +46,9 @@ internal class QueryChannelsPostponeHelper(
         check(attemptCount > 0) {
             "Failed to perform job. Waiting for set user completion was too long. Limit of attempts was reached."
         }
-        return when (clientStateService.state) {
-            is ClientState.Idle -> error("User must be set before querying channels")
-            is ClientState.User.Authorized,
-            is ClientState.Anonymous.Authorized -> job()
-            is ClientState.User.Pending,
-            is ClientState.Anonymous.Pending -> {
+        return when (socketStateService.state) {
+            is SocketState.Connected, -> job()
+            is SocketState.Idle, SocketState.Pending, SocketState.Disconnected -> {
                 delay(delayDuration)
                 doJob(attemptCount - 1, job)
             }
