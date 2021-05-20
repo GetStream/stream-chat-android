@@ -9,4 +9,6 @@ if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
   echo "./gradlew dokkaHtmlMultiModule"
   echo "./gradlew docusaurusSidebar"
   exit 1
+else
+  echo "Documentation is up to date"
 fi
