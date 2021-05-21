@@ -140,7 +140,8 @@ public class ChatClient internal constructor(
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
                         DisconnectCause.NetworkNotAvailable,
-                        is DisconnectCause.Error, -> socketStateService.onDisconnected()
+                        is DisconnectCause.Error,
+                        -> socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
@@ -245,13 +246,28 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
-        if (!ensureUserNotSet(listener)) {
-            return
+        val userState = userStateService.state
+        when {
+            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
+                userStateService.onUserUpdated(user)
+                tokenManager.setTokenProvider(tokenProvider)
+                connectionListener = listener
+                socketStateService.onConnectionRequested()
+                socket.connect(user)
+            }
+            userState is UserState.NotSet -> {
+                initializeClientWithUser(user, tokenProvider)
+                connectionListener = listener
+                socketStateService.onConnectionRequested()
+                socket.connect(user)
+            }
         }
-        initializeClientWithUser(user, tokenProvider)
-        connectionListener = listener
-        socketStateService.onConnectionRequested()
-        socket.connect(user)
+
+        // initializeClientWithUser(user, tokenProvider)
+
+        /*if (!ensureUserNotSet(listener)) {
+            return
+        }*/
     }
 
     private fun initializeClientWithUser(
