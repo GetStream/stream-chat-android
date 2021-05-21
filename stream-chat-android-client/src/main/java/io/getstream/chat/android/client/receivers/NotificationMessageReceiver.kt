@@ -61,7 +61,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
 
         val currentUser = ChatClient.instance().getCurrentUser()
 
-        if (channelId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank() || currentUser == null) {
+        if (messageChars.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank() || currentUser == null) {
             return
         }
 
