@@ -2,26 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/startupFragment"
+    app:startDestination="@id/userLoginFragment"
     >
-
-    <fragment
-        android:id="@+id/startupFragment"
-        android:name="io.getstream.chat.ui.sample.feature.startup.StartupFragment"
-        android:label="StartupFragment"
-        >
-        <action
-            android:id="@+id/action_startupFragmentFragment_to_userLoginFragment"
-            app:destination="@id/userLoginFragment"
-            app:popUpTo="@+id/startupFragment"
-            app:popUpToInclusive="true"
-            />
-
-        <action
-            android:id="@+id/action_startupFragmentFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            />
-    </fragment>
 
     <fragment
         android:id="@+id/userLoginFragment"
