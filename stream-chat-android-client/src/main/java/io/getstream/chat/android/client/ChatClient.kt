@@ -254,6 +254,7 @@ public class ChatClient internal constructor(
                 connectionListener = listener
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
+                notifySetUser(user)
             }
             userState is UserState.NotSet -> {
                 initializeClientWithUser(user, tokenProvider)

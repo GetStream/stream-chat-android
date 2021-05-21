@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.chatclient
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.clearInvocations
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -59,6 +60,20 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     @Test
+    fun `Given user set and socket in idle state and user with the same id Should invoke pre set listeners`() {
+        val listener: (User) -> Unit = mock()
+        val sut = Fixture()
+            .givenIdleConnectionState()
+            .givenUserSetState(Mother.randomUser { id = "userId" })
+            .givenPreSetUserListener(listener)
+            .get()
+
+        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
+
+        verify(listener).invoke(argThat { id == "userId" })
+    }
+
+    @Test
     fun `Given user not set Should set the user`() {
         val user = Mother.randomUser { id = "userId" }
         val sut = Fixture().givenUserNotSetState().get()
@@ -97,6 +112,16 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verify(api).warmUp()
     }
 
+    @Test
+    fun `Given user not set Should invoke pre set listeners`() {
+        val listener: (User) -> Unit = mock()
+        val sut = Fixture().givenUserNotSetState().givenPreSetUserListener(listener).get()
+
+        sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
+
+        verify(listener).invoke(argThat { id == "userId" })
+    }
+
     inner class Fixture {
         fun givenIdleConnectionState() = apply {
             whenever(socketStateService.state) doReturn SocketState.Idle
@@ -132,6 +157,10 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         fun givenWarmUpEnabled() = apply {
             whenever(config.warmUp) doReturn true
+        }
+
+        fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
+            chatClient.preSetUserListeners.add(listener)
         }
 
         fun clearSocketInvocations() = apply {
