@@ -15,7 +15,8 @@
 
 ## stream-chat-android
 ### 🐞 Fixed
-Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelsView`.
+- Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelsView`.
+- Fixed link preview UI issues in old-ui package
 ### ⬆️ Improved
 
 ### ✅ Added
