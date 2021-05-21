@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
@@ -82,7 +81,7 @@ internal class GsonChatApi(
         callback: ProgressCallback?,
     ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = if (callback != null) {
+            if (callback != null) {
                 fileUploader.sendFile(
                     channelType = channelType,
                     channelId = channelId,
@@ -100,12 +99,6 @@ internal class GsonChatApi(
                     file = file,
                 )
             }
-
-            if (result != null) {
-                Result(result)
-            } else {
-                Result(ChatError("Upload failed"))
-            }
         }
     }
 
@@ -116,7 +109,7 @@ internal class GsonChatApi(
         callback: ProgressCallback?,
     ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = if (callback != null) {
+            if (callback != null) {
                 fileUploader.sendImage(
                     channelType = channelType,
                     channelId = channelId,
@@ -134,12 +127,6 @@ internal class GsonChatApi(
                     file = file
                 )
             }
-
-            if (result != null) {
-                Result(result)
-            } else {
-                Result(ChatError("Upload failed"))
-            }
         }
     }
 
@@ -152,7 +139,6 @@ internal class GsonChatApi(
                 connectionId = connectionId,
                 url = url
             )
-            Result(Unit)
         }
     }
 
@@ -165,7 +151,6 @@ internal class GsonChatApi(
                 connectionId = connectionId,
                 url = url
             )
-            Result(Unit)
         }
     }
 
