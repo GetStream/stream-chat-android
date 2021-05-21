@@ -6,4 +6,5 @@ public sealed class DisconnectCause {
     public object NetworkNotAvailable : DisconnectCause()
     public class Error(public val error: ChatNetworkError?) : DisconnectCause()
     public class UnrecoverableError(public val error: ChatNetworkError?) : DisconnectCause()
+    public object AppBackgrounded : DisconnectCause()
 }

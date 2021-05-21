@@ -38,7 +38,7 @@ internal class ChatSocketImpl(
     }
 
     override fun disconnectTemporary() {
-        service.disconnectTemporary()
+        service.disconnectRequested()
     }
 
     override fun addListener(listener: SocketListener) {

@@ -111,7 +111,9 @@ public class ChatClient internal constructor(
     private val lifecycleObserver = StreamLifecycleObserver(
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
-            override fun stopped() = disconnectSocket()
+            override fun stopped() {
+                socket.disconnectTemporary()
+            }
         }
     )
 
@@ -139,6 +141,7 @@ public class ChatClient internal constructor(
                 }
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
+                        DisconnectCause.AppBackgrounded,
                         DisconnectCause.NetworkNotAvailable,
                         is DisconnectCause.Error,
                         -> socketStateService.onDisconnected()
@@ -146,7 +149,7 @@ public class ChatClient internal constructor(
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
                         }
-                    }
+                    }.exhaustive
                 }
             }
         }
@@ -525,7 +528,7 @@ public class ChatClient internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        socket.disconnectTemporary()
+        socket.disconnect()
     }
 
     public fun reconnectSocket() {
