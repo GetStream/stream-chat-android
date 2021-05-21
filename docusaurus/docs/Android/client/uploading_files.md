@@ -61,9 +61,30 @@ The SDK allows you to use your own CDN by creating your own implementation of th
 The example below show how to change where files are uploaded:
 
 ```kotlin
+// Create a custom FileUploader
+class MyFileUploader : FileUploader {
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        file: File,
+    ): Result<String> {
+        return try {
+            // Send the file to your own CDN
+            val url = ...
+            // Return a Result object with file url
+            Result.success(url)
+        } catch (e: Exception) {
+            // Return a Result object with exception in case upload failed
+            Result.error(e)
+        }
+    }
+    ...
+}
+
 // Set a custom FileUploader implementation when building your client
 val client = ChatClient.Builder("39mr6a3z4tem", context)
     .fileUploader(MyFileUploader())
     .build()
-}
 ```

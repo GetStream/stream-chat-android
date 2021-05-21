@@ -233,7 +233,7 @@ internal class MoshiChatApi(
         callback: ProgressCallback?,
     ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = if (callback != null) {
+            if (callback != null) {
                 fileUploader.sendFile(
                     channelType = channelType,
                     channelId = channelId,
@@ -251,12 +251,6 @@ internal class MoshiChatApi(
                     file = file,
                 )
             }
-
-            if (result != null) {
-                Result(result)
-            } else {
-                Result(ChatError("Upload failed"))
-            }
         }
     }
 
@@ -267,7 +261,7 @@ internal class MoshiChatApi(
         callback: ProgressCallback?,
     ): Call<String> {
         return CoroutineCall(coroutineScope) {
-            val result = if (callback != null) {
+            if (callback != null) {
                 fileUploader.sendImage(
                     channelType = channelType,
                     channelId = channelId,
@@ -284,12 +278,6 @@ internal class MoshiChatApi(
                     connectionId = connectionId,
                     file = file
                 )
-            }
-
-            if (result != null) {
-                Result(result)
-            } else {
-                Result(ChatError("Upload failed"))
             }
         }
     }

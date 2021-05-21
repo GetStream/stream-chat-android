@@ -39,6 +39,7 @@ Fixing filter for draft channels. Those channels were not showing in the results
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
+- Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails. 
 
 ### ✅ Added
 - Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
@@ -46,6 +47,7 @@ Fixing filter for draft channels. Those channels were not showing in the results
 - Added method `SocketListener::onDisconnected(cause: DisconnectCause)`
 
 ### ⚠️ Changed
+- Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
 
 ### ❌ Removed
 
