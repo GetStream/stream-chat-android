@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -66,28 +66,26 @@ internal class StreamFileUploaderTest {
     }
 
     @Test
-    fun `Should return file when successfully sent file without progress callback`() {
+    fun `Should return result containing file when successfully sent file without progress callback`() {
         val file = "file"
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
 
-        val result =
-            streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
-        result shouldBeEqualTo file
+        result.data() shouldBeEqualTo file
     }
 
     @Test
-    fun `Should return null when sending file without progress callback failed`() {
+    fun `Should return result containing error when sending file without progress callback failed`() {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
-        val result =
-            streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
-        result.shouldBeNull()
+        result.isError.shouldBeTrue()
     }
 
     @Test
@@ -130,28 +128,26 @@ internal class StreamFileUploaderTest {
     }
 
     @Test
-    fun `Should return file when successfully sent image without progress callback`() {
+    fun `Should return result containing file when successfully sent image without progress callback`() {
         val file = "file"
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
 
-        val result =
-            streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
-        result shouldBeEqualTo file
+        result.data() shouldBeEqualTo file
     }
 
     @Test
-    fun `Should return null when sending image without progress callback failed`() {
+    fun `Should return containing error when sending image without progress callback failed`() {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
-        val result =
-            streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
-        result.shouldBeNull()
+        result.isError.shouldBeTrue()
     }
 
     @Test
