@@ -9,6 +9,7 @@ internal interface ChatSocketService {
     fun anonymousConnect(endpoint: String, apiKey: String)
     fun userConnect(endpoint: String, apiKey: String, user: User)
     fun disconnect()
+    fun disconnectTemporary()
     fun addListener(listener: SocketListener)
     fun removeListener(listener: SocketListener)
     fun onSocketError(error: ChatError)

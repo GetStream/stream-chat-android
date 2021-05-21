@@ -168,6 +168,10 @@ internal class ChatSocketServiceImpl constructor(
         state = State.DisconnectedPermanently(null)
     }
 
+    override fun disconnectTemporary() {
+        state = State.DisconnectedTemporarily(null)
+    }
+
     override fun onConnectionResolved(event: ConnectedEvent) {
         state = State.Connected(event)
     }

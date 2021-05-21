@@ -1,17 +1,21 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+/**
+ *  A class which encapsulates a successful outcome with a value of type [T] or a failure with [ChatError].
+ */
 public class Result<T : Any> private constructor(
     private val data: T?,
-    private val error: ChatError?
+    private val error: ChatError?,
 ) {
 
     @Suppress("DEPRECATION")
     public constructor(data: T) : this(data, null)
 
     @Suppress("DEPRECATION")
-    public constructor(error: ChatError)  : this(null, error)
+    public constructor(error: ChatError) : this(null, error)
 
     public val isSuccess: Boolean
         get() = data != null
@@ -44,4 +48,35 @@ public class Result<T : Any> private constructor(
         result = 31 * result + (error?.hashCode() ?: 0)
         return result
     }
+
+    public companion object {
+
+        /**
+         * Creates a [Result] object with [data] payload
+         */
+        @JvmStatic
+        public fun <T : Any> success(data: T): Result<T> {
+            return Result(data)
+        }
+
+        /**
+         * Creates a [Result] object with error payload
+         */
+        @JvmStatic
+        public fun <T : Any> error(t: Throwable): Result<T> {
+            return Result(null, ChatError(t.message, t))
+        }
+    }
 }
+
+@InternalStreamChatApi
+public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
+    return if (isSuccess) {
+        Result(mapper(data()))
+    } else {
+        Result(error())
+    }
+}
+
+@InternalStreamChatApi
+public fun Result<*>.toUnitResult(): Result<Unit> = map {}
