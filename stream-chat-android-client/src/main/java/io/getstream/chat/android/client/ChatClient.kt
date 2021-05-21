@@ -140,7 +140,8 @@ public class ChatClient internal constructor(
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
                         DisconnectCause.NetworkNotAvailable,
-                        is DisconnectCause.Error, -> socketStateService.onDisconnected()
+                        is DisconnectCause.Error,
+                        -> socketStateService.onDisconnected()
                         is DisconnectCause.UnrecoverableError -> {
                             userStateService.onSocketUnrecoverableError()
                             socketStateService.onSocketUnrecoverableError()
@@ -245,13 +246,31 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
-        if (!ensureUserNotSet(listener)) {
-            return
+        val userState = userStateService.state
+        when {
+            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
+                userStateService.onUserUpdated(user)
+                tokenManager.setTokenProvider(tokenProvider)
+                connectionListener = listener
+                socketStateService.onConnectionRequested()
+                socket.connect(user)
+                notifySetUser(user)
+            }
+            userState is UserState.NotSet -> {
+                initializeClientWithUser(user, tokenProvider)
+                connectionListener = listener
+                socketStateService.onConnectionRequested()
+                socket.connect(user)
+            }
+            userState is UserState.UserSet && userState.user.id != user.id -> {
+                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            }
+            else -> {
+                logger.logE("Failed to connect user. Please check you don't have connected user already")
+                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            }
         }
-        initializeClientWithUser(user, tokenProvider)
-        connectionListener = listener
-        socketStateService.onConnectionRequested()
-        socket.connect(user)
     }
 
     private fun initializeClientWithUser(
@@ -506,7 +525,7 @@ public class ChatClient internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        socket.disconnect()
+        socket.disconnectTemporary()
     }
 
     public fun reconnectSocket() {
@@ -1445,16 +1464,6 @@ public class ChatClient internal constructor(
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
-        }
-    }
-
-    private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
-        return if (isUserSet()) {
-            logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
-            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
-            false
-        } else {
-            true
         }
     }
 

@@ -31,4 +31,7 @@ internal class FakeChatSocket : ChatSocket {
 
     override fun disconnect() {
     }
+
+    override fun disconnectTemporary() {
+    }
 }
