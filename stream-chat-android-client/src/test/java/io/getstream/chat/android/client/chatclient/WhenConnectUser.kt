@@ -9,8 +9,10 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
+import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.test.randomString
@@ -120,6 +122,16 @@ internal class WhenConnectUser : BaseChatClientTest() {
         sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
         verify(listener).invoke(argThat { id == "userId" })
+    }
+
+    @Test
+    fun `Given user set and user with different id Should call init connection listener with error`() {
+        val connectionDataCallback: Call.Callback<ConnectionData> = mock()
+        val sut = Fixture().givenUserSetState(Mother.randomUser { id = "userId1" }).get()
+
+        sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
+
+        verify(connectionDataCallback).onResult(argThat { isError })
     }
 
     inner class Fixture {

@@ -1,16 +1,13 @@
 package io.getstream.chat.android.client.api
 
 import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
@@ -29,7 +26,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import java.util.Date
@@ -121,20 +117,6 @@ internal class ClientConnectionTests {
         client.connectUser(user, token).enqueue()
 
         verify(socket, times(1)).connect(user)
-    }
-
-    @Test
-    fun `Should not connect and report error when user is already set`() {
-        client.connectUser(user, token).enqueue()
-        socketListener.onEvent(connectedEvent)
-        reset(socket)
-
-        client.connectUser(user, token).enqueue(initCallback)
-
-        verify(socket, never()).connect(user)
-
-        val error = ChatError("User cannot be set until previous one is disconnected.")
-        verify(initCallback).onResult(argThat { this.error().message == error.message })
     }
 
     @Test

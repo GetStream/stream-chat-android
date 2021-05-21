@@ -262,13 +262,11 @@ public class ChatClient internal constructor(
                 socketStateService.onConnectionRequested()
                 socket.connect(user)
             }
+            userState is UserState.UserSet && userState.user.id != user.id -> {
+                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            }
         }
-
-        // initializeClientWithUser(user, tokenProvider)
-
-        /*if (!ensureUserNotSet(listener)) {
-            return
-        }*/
     }
 
     private fun initializeClientWithUser(
@@ -1462,16 +1460,6 @@ public class ChatClient internal constructor(
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
-        }
-    }
-
-    private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
-        return if (isUserSet()) {
-            logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
-            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
-            false
-        } else {
-            true
         }
     }
 
