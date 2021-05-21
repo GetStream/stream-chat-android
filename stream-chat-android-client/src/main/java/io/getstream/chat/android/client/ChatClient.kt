@@ -266,6 +266,10 @@ public class ChatClient internal constructor(
                 logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
                 listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
             }
+            else -> {
+                logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+                listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            }
         }
     }
 
