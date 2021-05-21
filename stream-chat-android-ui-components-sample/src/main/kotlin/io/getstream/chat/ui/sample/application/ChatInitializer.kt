@@ -32,8 +32,4 @@ class ChatInitializer(private val context: Context) {
             .offlineEnabled()
             .build()
     }
-
-    fun isUserSet(): Boolean {
-        return ChatClient.isInitialized && ChatClient.instance().getCurrentUser() != null
-    }
 }
