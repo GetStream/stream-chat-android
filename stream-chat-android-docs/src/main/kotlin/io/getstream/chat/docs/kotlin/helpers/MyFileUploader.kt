@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin.helpers
 
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
 class MyFileUploader : FileUploader {
@@ -12,8 +13,12 @@ class MyFileUploader : FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): String? {
-        TODO("Not yet implemented")
+    ): Result<String> {
+        return try {
+            Result.success("url")
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 
     override fun sendFile(
@@ -22,8 +27,12 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): String? {
-        TODO("Not yet implemented")
+    ): Result<String> {
+        return try {
+            Result.success("url")
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 
     override fun sendImage(
@@ -33,8 +42,12 @@ class MyFileUploader : FileUploader {
         connectionId: String,
         file: File,
         callback: ProgressCallback,
-    ): String? {
-        TODO("Not yet implemented")
+    ): Result<String> {
+        return try {
+            Result.success("url")
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 
     override fun sendImage(
@@ -43,8 +56,12 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         file: File,
-    ): String? {
-        TODO("Not yet implemented")
+    ): Result<String> {
+        return try {
+            Result.success("url")
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 
     override fun deleteFile(
@@ -53,8 +70,12 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         url: String,
-    ) {
-        TODO("Not yet implemented")
+    ): Result<Unit> {
+        return try {
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 
     override fun deleteImage(
@@ -63,7 +84,11 @@ class MyFileUploader : FileUploader {
         userId: String,
         connectionId: String,
         url: String,
-    ) {
-        TODO("Not yet implemented")
+    ): Result<Unit> {
+        return try {
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.error(e)
+        }
     }
 }
