@@ -18,7 +18,6 @@
 
         <activity
             android:name="io.getstream.chat.ui.sample.feature.HostActivity"
-            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
