@@ -506,7 +506,7 @@ public class ChatClient internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        socket.disconnect()
+        socket.disconnectTemporary()
     }
 
     public fun reconnectSocket() {
