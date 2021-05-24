@@ -39,12 +39,12 @@ internal class ChatNotifications private constructor(
     }
 
     fun onSetUser() {
-        handler.getFirebaseInstanceId()?.instanceId?.addOnCompleteListener {
+        handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {
             if (it.isSuccessful) {
-                logger.logI("FirebaseInstanceId returned token successfully")
+                logger.logI("FirebaseInstallations returned token successfully")
                 setFirebaseToken(it.result!!.token)
             } else {
-                logger.logI("Error: FirebaseInstanceId doesn't returned token")
+                logger.logI("Error: FirebaseInstallations didn't returned token")
             }
         }
     }
