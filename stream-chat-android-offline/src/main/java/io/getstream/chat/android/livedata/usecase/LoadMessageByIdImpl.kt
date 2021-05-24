@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface LoadMessageById {
+public sealed interface LoadMessageById {
     /**
      * Loads message for a given message id and channel id
      *

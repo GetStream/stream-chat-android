@@ -5,6 +5,7 @@
 - Updated to Kotlin 1.5
 - Updated to Android Gradle Plugin 4.2.1
 - Updated Room version to 2.3.0
+- Marked many library interfaces that should not be implemented by clients as [sealed](https://kotlinlang.org/docs/sealed-classes.html)
 
 ### ✅ Added
 
@@ -29,6 +30,7 @@
 ### 🐞 Fixed
 - Fixed querying banned users using new serialization.
 - Fixed the bug when wrong credentials lead to inability to login
+- Fixed issues with Proguard stripping response classes in new serialization implementation incorrectly
 
 ### ⬆️ Improved
 - Improved handling push notifications:

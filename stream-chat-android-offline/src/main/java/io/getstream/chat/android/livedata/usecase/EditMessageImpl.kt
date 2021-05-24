@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface EditMessage {
+public sealed interface EditMessage {
     /**
      * Edits the specified message. Local storage is updated immediately
      * The API request is retried according to the retry policy specified on the chatDomain

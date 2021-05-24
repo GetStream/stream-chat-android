@@ -7,7 +7,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 
 @InternalStreamChatApi
-public interface DownloadAttachment {
+public sealed interface DownloadAttachment {
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
      *

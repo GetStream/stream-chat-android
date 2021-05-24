@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.list.adapter.internal
+package io.getstream.chat.android.ui.message.list.adapter
 
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
@@ -11,7 +11,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryLis
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 
 internal class MessageListListenerContainerImpl(
     messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
