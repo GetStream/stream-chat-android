@@ -282,6 +282,7 @@
         <item name="streamUiAvatarTextColor">?attr/streamUiGlobalAvatarTextColor</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
         <item name="streamUiAvatarOnlineIndicatorPosition">top</item>
+        <item name="streamUiAvatarBorderWidth">0dp</item>
         <item name="streamUiAvatarOnlineIndicatorColor">?attr/streamUiGlobalAvatarOnlineIndicatorColor</item>
         <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
     </style>
@@ -293,7 +294,6 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="streamUiAvatarBorderWidth">@dimen/stream_ui_avatar_border_width</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
 
