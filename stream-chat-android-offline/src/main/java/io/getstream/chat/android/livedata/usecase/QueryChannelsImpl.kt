@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 
-public interface QueryChannels {
+public sealed interface QueryChannels {
     /**
      * Queries offline storage and the API for channels matching the filter
      * Returns a queryChannelsController

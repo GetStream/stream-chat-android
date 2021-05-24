@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface StopTyping {
+public sealed interface StopTyping {
     /**
      * StopTyping should be called when the user submits the text and finishes typing
      *

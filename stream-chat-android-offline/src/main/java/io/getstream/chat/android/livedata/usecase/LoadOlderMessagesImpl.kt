@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface LoadOlderMessages {
+public sealed interface LoadOlderMessages {
     /**
      * Loads older messages for the channel
      *

@@ -9,7 +9,7 @@ import androidx.annotation.Px
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
-public interface StreamImageLoader {
+public sealed interface StreamImageLoader {
     public companion object {
         public fun instance(): StreamImageLoader = CoilStreamImageLoader
     }

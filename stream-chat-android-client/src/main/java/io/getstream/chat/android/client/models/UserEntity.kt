@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.models
 
-public interface UserEntity {
+public sealed interface UserEntity {
 
     public var user: User
 

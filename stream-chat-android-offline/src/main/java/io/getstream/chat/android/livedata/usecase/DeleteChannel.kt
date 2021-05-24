@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface DeleteChannel {
+public sealed interface DeleteChannel {
     /**
      * Deletes the channel with the specified id
      *

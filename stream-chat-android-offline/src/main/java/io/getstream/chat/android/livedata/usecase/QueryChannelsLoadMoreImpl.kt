@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface QueryChannelsLoadMore {
+public sealed interface QueryChannelsLoadMore {
     /**
      * Load more channels for this query
      * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin

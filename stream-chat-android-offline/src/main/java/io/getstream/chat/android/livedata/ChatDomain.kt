@@ -34,7 +34,7 @@ import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomain
  *
  * Use cases are exposed via chatDomain.useCases
  */
-public interface ChatDomain {
+public sealed interface ChatDomain {
 
     @Deprecated(
         message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",

@@ -5,6 +5,7 @@
 - Updated to Kotlin 1.5
 - Updated to Android Gradle Plugin 4.2.1
 - Updated Room version to 2.3.0
+- Marked many library interfaces that should not be implemented by clients as [sealed](https://kotlinlang.org/docs/sealed-classes.html)
 
 ### ✅ Added
 

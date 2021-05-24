@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface SendGiphy {
+public sealed interface SendGiphy {
     /**
      * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.

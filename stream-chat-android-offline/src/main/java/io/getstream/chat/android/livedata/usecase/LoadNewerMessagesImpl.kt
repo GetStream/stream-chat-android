@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface LoadNewerMessages {
+public sealed interface LoadNewerMessages {
     /**
      * Loads newer messages for the channel
      *
