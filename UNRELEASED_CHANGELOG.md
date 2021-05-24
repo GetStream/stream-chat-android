@@ -30,6 +30,7 @@
 ### 🐞 Fixed
 - Fixed querying banned users using new serialization.
 - Fixed the bug when wrong credentials lead to inability to login
+- Fixed issues with Proguard stripping response classes in new serialization implementation incorrectly
 
 ### ⬆️ Improved
 - Improved handling push notifications:
