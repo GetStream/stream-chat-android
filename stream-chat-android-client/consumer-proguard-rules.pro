@@ -8,8 +8,6 @@
 -keep class io.getstream.chat.android.client.models.* { *; }
 -keep class io.getstream.chat.android.client.parser.* { *; }
 -keep class io.getstream.chat.android.client.socket.* { *; }
--keep class io.getstream.chat.android.client.socket.EventsParser.TypedEvent { *; }
--keep class io.getstream.chat.android.client.utils.FilterObject { *; }
 -keep class io.getstream.chat.android.client.utils.Result { *; }
 -keep class io.getstream.chat.android.client.utils.SyncStatus { *; }
 
