@@ -17,7 +17,9 @@ class ChatInitializer(private val context: Context) {
                 firebaseMessageIdKey = "message_id",
                 firebaseChannelIdKey = "channel_id",
                 firebaseChannelTypeKey = "channel_type",
-                smallIcon = R.drawable.ic_chat_bubble
+                smallIcon = R.drawable.ic_chat_bubble,
+                loadNotificationDataIcon = R.drawable.ic_chat_bubble,
+                shouldGroupNotifications = true,
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
