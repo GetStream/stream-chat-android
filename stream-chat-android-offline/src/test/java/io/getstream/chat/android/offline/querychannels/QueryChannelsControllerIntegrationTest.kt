@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
 
-    @Test
+    // @Test
     fun `When observing channels Should receive the correct number of events with channels`() = runBlocking {
         val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)

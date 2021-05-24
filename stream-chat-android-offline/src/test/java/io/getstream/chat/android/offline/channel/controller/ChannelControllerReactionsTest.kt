@@ -23,6 +23,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
@@ -243,7 +244,7 @@ internal class ChannelControllerReactionsTest {
         val chatDomainImpl: ChatDomainImpl = mock()
 
         init {
-            whenever(chatDomainImpl.currentUser) doReturn user
+            whenever(chatDomainImpl.user) doReturn MutableStateFlow(user)
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos

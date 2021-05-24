@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
 import com.nhaarman.mockitokotlin2.any
@@ -15,6 +16,7 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.observeAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldContainSame
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +42,7 @@ internal class CreateChannelViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(chatDomain.currentUser) doReturn CURRENT_USER
+        whenever(chatDomain.user) doReturn MutableLiveData(CURRENT_USER)
         whenever(chatDomain.createChannel(any())) doReturn createChannelCall
         whenever(createChannelCall.execute()) doReturn createChannelResult
         whenever(createChannelResult.data()) doReturn CHANNEL

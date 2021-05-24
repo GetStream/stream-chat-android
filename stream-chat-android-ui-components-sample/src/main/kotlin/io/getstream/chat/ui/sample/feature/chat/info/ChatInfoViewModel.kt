@@ -63,7 +63,6 @@ class ChatInfoViewModel(
                     _state.value = _state.value!!.copy(
                         member = member,
                         isMemberBlocked = member?.shadowBanned ?: false,
-                        notificationsEnabled = chatDomain.user.value?.channelMutes?.any { it.channel.cid == cid } == true,
                         loading = false,
                     )
                 } else {

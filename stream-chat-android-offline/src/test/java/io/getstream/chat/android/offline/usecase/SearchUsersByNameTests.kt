@@ -19,6 +19,7 @@ import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
@@ -40,7 +41,7 @@ internal class SearchUsersByNameTests {
             on(it.client) doReturn chatClient
             on(it.repos) doReturn repositoryFacade
             on(it.scope) doReturn TestCoroutineScope()
-            on(it.currentUser) doReturn randomUser()
+            on(it.user) doReturn MutableStateFlow(randomUser())
         }
         sut = SearchUsersByName(chatDomainImpl)
     }
@@ -54,7 +55,7 @@ internal class SearchUsersByNameTests {
 
         verify(chatClient).queryUsers(
             argThat {
-                filter == sut.defaultUsersQueryFilter
+                filter == sut.defaultUsersQueryFilter(chatDomainImpl.user.value?.id!!)
             }
         )
     }
@@ -71,7 +72,7 @@ internal class SearchUsersByNameTests {
             com.nhaarman.mockitokotlin2.check {
                 it.presence `should be equal to` true
                 it.filter `should be equal to` Filters.and(
-                    Filters.ne("id", chatDomainImpl.currentUser.id),
+                    Filters.ne("id", chatDomainImpl.user.value!!.id),
                     Filters.autocomplete("name", querySearch),
                 )
             }

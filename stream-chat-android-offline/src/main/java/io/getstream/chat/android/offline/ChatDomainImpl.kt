@@ -136,7 +136,6 @@ internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     // the new behaviour for ChatDomain is to follow the ChatClient.setUser
     // the userOverwrite field is here for backwards compatibility
-    internal var userOverwrite: User? = null,
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -156,7 +155,6 @@ internal class ChatDomainImpl internal constructor(
     ) : this(
         client,
         null,
-        null,
         handler,
         offlineEnabled,
         recoveryEnabled,
@@ -167,6 +165,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
@@ -183,12 +182,6 @@ internal class ChatDomainImpl internal constructor(
 
     private val _user = MutableStateFlow<User?>(null)
     override val user: StateFlow<User?> = _user
-
-    override var currentUser: User
-        get() = user.value!!
-        set(value) {
-            _user.value = value
-        }
 
     /** if the client connection has been initialized */
     override val initialized: StateFlow<Boolean> = _initialized
@@ -280,8 +273,7 @@ internal class ChatDomainImpl internal constructor(
             scope(scope)
             defaultConfig(defaultConfig)
             setOfflineEnabled(offlineEnabled)
-        }
-            .build()
+        }.build()
 
         // load channel configs from Room into memory
         initJob = scope.async {
@@ -316,18 +308,15 @@ internal class ChatDomainImpl internal constructor(
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         // if the user is already defined, just call setUser ourselves
-        val current = userOverwrite ?: client.getCurrentUser()
+        val current = client.getCurrentUser()
         if (current != null) {
             setUser(current)
         }
-        // past behaviour was to set the user on the chat domain
-        // the new syntax is to automatically pick up changes from the client
-        if (userOverwrite == null) {
-            // listen to future user changes
-            client.preSetUserListeners.add {
-                setUser(it)
-            }
+
+        client.preSetUserListeners.add {
+            setUser(it)
         }
+
         // disconnect if the low level client disconnects
         client.disconnectListeners.add {
             scope.launch {

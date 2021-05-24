@@ -236,7 +236,9 @@ internal class ChatDomainImplCreateChannelTest {
 
     private inner class Fixture {
         private val context: Context = mock()
-        private val chatClient: ChatClient = mock()
+        private val chatClient: ChatClient = mock {
+            on(it.getCurrentUser()) doReturn user
+        }
         private var user: User = randomUser()
         private val testScope = TestCoroutineScope()
         private var isOnline: Boolean = true
@@ -244,6 +246,7 @@ internal class ChatDomainImplCreateChannelTest {
 
         fun givenUser(user: User) = apply {
             this.user = user
+            whenever(chatClient.getCurrentUser()) doReturn user
         }
 
         fun givenRepositoryFacade(repositoryFacade: RepositoryFacade): Fixture = apply {
@@ -267,7 +270,6 @@ internal class ChatDomainImplCreateChannelTest {
         fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).buildImpl().apply {
                 repos = repositoryFacade
-                currentUser = this@Fixture.user
                 scope = testScope
                 if (isOnline) setOnline() else setOffline()
             }

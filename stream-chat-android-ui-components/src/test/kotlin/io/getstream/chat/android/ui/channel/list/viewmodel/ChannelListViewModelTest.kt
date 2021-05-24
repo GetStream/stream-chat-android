@@ -36,7 +36,7 @@ internal class ChannelListViewModelTest {
 
         // then
         verify(mockObserver, times(2))
-            .onChanged(ChannelListViewModel.State(isLoading = false, channels = mockChannels))
+            .onChanged(ChannelListViewModel.State.Result(isLoading = false, channels = mockChannels))
     }
 
     @Test
@@ -48,7 +48,7 @@ internal class ChannelListViewModelTest {
 
         // then
         verify(mockObserver, times(2))
-            .onChanged(ChannelListViewModel.State(isLoading = false, channels = emptyList()))
+            .onChanged(ChannelListViewModel.State.Result(isLoading = false, channels = emptyList()))
     }
 
     @Test
@@ -66,7 +66,7 @@ internal class ChannelListViewModelTest {
 
         // then
         val result = mockObserver.lastObservedValue.shouldBeInstanceOf<ChannelListViewModel.State>()
-        result.channels shouldBeEqualTo mockChannels + moreChannels
+        (result as ChannelListViewModel.State.Result).channels shouldBeEqualTo mockChannels + moreChannels
     }
 
     companion object {
@@ -89,7 +89,7 @@ private class Fixture {
     private val channelsState = MutableLiveData<QueryChannelsController.ChannelsState>()
 
     init {
-        whenever(chatDomain.currentUser) doReturn user
+        whenever(chatDomain.user) doReturn MutableLiveData(user)
         whenever(
             chatDomain.queryChannels(
                 any(),

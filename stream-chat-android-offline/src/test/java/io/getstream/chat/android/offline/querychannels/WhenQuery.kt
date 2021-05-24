@@ -23,6 +23,7 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
@@ -49,7 +50,7 @@ internal class WhenQuery {
         val user: User = randomUser()
 
         val chatDomainImpl: ChatDomainImpl = mock {
-            on(it.currentUser) doReturn user
+            on(it.user) doReturn MutableStateFlow(user)
         }
         val sut = Fixture()
             .givenChatDomain(chatDomainImpl)
@@ -181,7 +182,7 @@ internal class WhenQuery {
         private val user: User = randomUser()
 
         private var chatDomainImpl: ChatDomainImpl = mock {
-            on(it.currentUser) doReturn user
+            on(it.user) doReturn MutableStateFlow(user)
         }
 
         fun givenQuerySort(querySort: QuerySort<Channel>) = apply {

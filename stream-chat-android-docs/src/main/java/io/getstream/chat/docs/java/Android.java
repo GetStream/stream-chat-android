@@ -118,7 +118,7 @@ public class Android {
             // Get ViewModel
             FilterObject filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.in("members", singletonList(ChatDomain.instance().getCurrentUser().getId()))
+                    Filters.in("members", singletonList(ChatDomain.instance().getUser().getValue().getId()))
             );
             int limit = 30;
 

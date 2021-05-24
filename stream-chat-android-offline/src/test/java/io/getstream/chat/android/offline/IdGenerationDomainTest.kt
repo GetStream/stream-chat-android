@@ -3,13 +3,17 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+@ExperimentalCoroutinesApi
 internal class IdGenerationDomainTest {
 
     private lateinit var chatDomainImpl: ChatDomainImpl
@@ -18,7 +22,10 @@ internal class IdGenerationDomainTest {
     @BeforeEach
     fun init() {
         val contextMock = mock<Context>()
-        val clientMock = mock<ChatClient>()
+        currentUserFake = randomUser()
+        val clientMock = mock<ChatClient> {
+            on(it.getCurrentUser()) doReturn currentUserFake
+        }
         val handlerFake = Handler()
         chatDomainImpl = ChatDomainImpl(
             appContext = contextMock,
@@ -29,38 +36,37 @@ internal class IdGenerationDomainTest {
             recoveryEnabled = false,
             userPresence = true,
         )
-        currentUserFake = randomUser()
     }
 
     @Test
     fun `Given ChatDomainImpl with no currentUser When generateMessageId() called Should throw`() {
-        assertThrows<NullPointerException> { chatDomainImpl.currentUser }
+        assertThrows<NullPointerException> { chatDomainImpl.user }
         assertThrows<NullPointerException> { chatDomainImpl.generateMessageId() }
     }
 
     @Test
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return not-empty messageId`() {
-        setCurrentUser()
+            // setCurrentUser()
 
-        val messageId = chatDomainImpl.generateMessageId()
+            val messageId = chatDomainImpl.generateMessageId()
 
-        Truth.assertThat(messageId).isNotEmpty()
-    }
+            Truth.assertThat(messageId).isNotEmpty()
+        }
 
     @Test
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return unique messageId`() {
-        setCurrentUser()
+            // setCurrentUser()
 
-        val idMap = sortedSetOf<String>()
-        (0..1000000).forEach {
-            val messageId = chatDomainImpl.generateMessageId()
-            Truth.assertThat(idMap).doesNotContain(messageId)
-            idMap.add(messageId)
+            val idMap = sortedSetOf<String>()
+            repeat(1000000) {
+                val messageId = chatDomainImpl.generateMessageId()
+                Truth.assertThat(idMap).doesNotContain(messageId)
+                idMap.add(messageId)
+            }
         }
-    }
 
-    private fun setCurrentUser() {
-        chatDomainImpl.currentUser = currentUserFake
-        Truth.assertThat(chatDomainImpl.currentUser).isNotNull()
+    private suspend fun setCurrentUser() {
+        chatDomainImpl.updateCurrentUser(currentUserFake)
+        Truth.assertThat(chatDomainImpl.user.value).isNotNull()
     }
 }

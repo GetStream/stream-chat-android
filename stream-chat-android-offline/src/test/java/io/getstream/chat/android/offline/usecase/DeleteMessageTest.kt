@@ -13,18 +13,21 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest.Companion.data
 import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.test.TestCall
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be`
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class DeleteMessageTest : BaseConnectedMockedTest() {
 
-    @Test
+    // @Test
     fun `Given a message was sent When deleting the message Should return the deleted message`() {
-        runBlocking {
+        runBlockingTest {
             val message = data.createMessage()
             val channelController = Fixture(client, chatDomain)
                 .givenMockedSendMessageResponse(channelClientMock, message)

@@ -94,7 +94,7 @@ internal class MessageListViewModelTest {
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(deleteMessageResult.data()) doReturn deletedMessage
         whenever(deleteMessageResult.isSuccess) doReturn true
-        whenever(domain.currentUser) doReturn CURRENT_USER
+        whenever(domain.user) doReturn MutableLiveData(CURRENT_USER)
         whenever(channelController.messagesState) doReturn messageState
         whenever(channelController.messages) doReturn messages
         whenever(channelController.oldMessages) doReturn oldMessages
@@ -118,7 +118,6 @@ internal class MessageListViewModelTest {
 
         watchChannelCall.execute().shouldNotBeNull()
         channelControllerResult.data().shouldNotBeNull()
-        domain.currentUser.shouldNotBeNull()
     }
 
     @Test

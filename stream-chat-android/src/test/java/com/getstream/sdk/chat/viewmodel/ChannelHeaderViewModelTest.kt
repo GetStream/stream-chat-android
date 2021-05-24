@@ -19,6 +19,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -39,7 +40,7 @@ internal class ChannelHeaderViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(chatDomain.currentUser) doReturn CURRENT_USER
+        whenever(chatDomain.user) doReturn MutableLiveData(CURRENT_USER)
         whenever(chatDomain.watchChannel(any(), any())) doReturn channelControllerCall
         whenever(channelControllerResult.isSuccess) doReturn true
         whenever(channelControllerResult.data()) doReturn channelController

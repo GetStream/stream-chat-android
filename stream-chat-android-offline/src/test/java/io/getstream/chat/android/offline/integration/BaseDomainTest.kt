@@ -223,7 +223,7 @@ internal open class BaseDomainTest {
         val backgroundSyncEnabled = false
         chatDomainImpl = ChatDomainImpl(
             client,
-            data.user1,
+            // data.user1,
             db,
             handler,
             offlineEnabled,

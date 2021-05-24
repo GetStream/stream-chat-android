@@ -44,7 +44,6 @@ internal class ChatDomainImplTest {
         val recoveryEnabled = true
         sut = ChatDomainImpl(
             client,
-            currentUser,
             db,
             handler,
             offlineEnabled,
@@ -63,6 +62,6 @@ internal class ChatDomainImplTest {
             val result = sut.createNewChannel(newChannel)
 
             result.isSuccess shouldBeEqualTo true
-            result.data().createdBy shouldBeEqualTo sut.currentUser
+            result.data().createdBy shouldBeEqualTo sut.user.value
         }
 }

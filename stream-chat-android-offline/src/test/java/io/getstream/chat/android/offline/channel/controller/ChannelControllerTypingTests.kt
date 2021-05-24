@@ -21,6 +21,7 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -108,7 +109,7 @@ internal class ChannelControllerTypingTests {
 
         init {
             whenever(chatClient.channel(any(), any())) doReturn channelClient
-            whenever(chatDomainImpl.currentUser) doReturn user
+            whenever(chatDomainImpl.user) doReturn MutableStateFlow(user)
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
