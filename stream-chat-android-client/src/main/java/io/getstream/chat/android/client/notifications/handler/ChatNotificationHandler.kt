@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.RingtoneManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -121,23 +120,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         context.getString(config.errorCaseNotificationContent)
 
     public open fun buildErrorCaseNotification(): Notification {
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = getNotificationBuilder()
-        val intent = PendingIntent.getActivity(
-            context,
-            getRequestCode(),
-            getErrorCaseIntent(),
-            PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-
-        return notificationBuilder.setContentTitle(getErrorCaseNotificationTitle())
-            .setContentText(getErrorCaseNotificationContent())
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-            .setShowWhen(true)
-            .setContentIntent(intent)
-            .setSound(defaultSoundUri)
-            .build()
+        return getNotificationBuilder(
+            contentTitle = getErrorCaseNotificationTitle(),
+            contentText = getErrorCaseNotificationContent(),
+            groupKey = getErrorNotificationGroupKey(),
+            intent = getErrorCaseIntent(),
+        ).build()
     }
 
     public open fun buildNotification(
@@ -148,25 +136,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         channelType: String,
         channelId: String,
     ): Notification {
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = getNotificationBuilder()
-
-        val intent = PendingIntent.getActivity(
-            context,
-            getRequestCode(),
-            getNewMessageIntent(messageId, channelType, channelId),
-            PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-
-        notificationBuilder.setContentTitle(channelName)
-            .setContentText(messageText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-            .setShowWhen(true)
-            .setContentIntent(intent)
-            .setSound(defaultSoundUri)
-
-        notificationBuilder.apply {
+        val notificationBuilder = getNotificationBuilder(
+            contentTitle = channelName,
+            contentText = messageText,
+            groupKey = getNotificationGroupKey(channelType = channelType, channelId = channelId),
+            intent = getNewMessageIntent(messageId = messageId, channelType = channelType, channelId = channelId),
+        ).apply {
             addAction(
                 getReadAction(
                     prepareActionPendingIntent(
@@ -194,8 +169,47 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return notificationBuilder.build()
     }
 
+    public open fun buildNotificationGroupSummary(
+        channelType: String,
+        channelId: String,
+        channelName: String,
+        messageId: String,
+    ): Notification {
+        return getNotificationBuilder(
+            contentTitle = channelName,
+            contentText = context.getString(config.notificationGroupSummaryContentText),
+            groupKey = getNotificationGroupKey(channelType = channelType, channelId = channelId),
+            intent = getNewMessageIntent(messageId = messageId, channelType = channelType, channelId = channelId),
+        ).apply {
+            setGroupSummary(true)
+        }.build()
+    }
+
+    public open fun buildErrorNotificationGroupSummary(): Notification {
+        return getNotificationBuilder(
+            contentTitle = context.getString(config.errorNotificationGroupSummaryTitle),
+            contentText = context.getString(config.errorNotificationGroupSummaryContentText),
+            groupKey = getErrorNotificationGroupKey(),
+            getErrorCaseIntent(),
+        ).apply {
+            setGroupSummary(true)
+        }.build()
+    }
+
+    public open fun getNotificationGroupKey(channelType: String, channelId: String): String {
+        return "$channelType:$channelId"
+    }
+
+    public open fun getNotificationGroupSummaryId(channelType: String, channelId: String): Int {
+        return getNotificationGroupKey(channelType = channelType, channelId = channelId).hashCode()
+    }
+
+    public open fun getErrorNotificationGroupKey(): String = ERROR_NOTIFICATION_GROUP_KEY
+
+    public open fun getErrorNotificationGroupSummaryId(): Int = getErrorNotificationGroupKey().hashCode()
+
     private fun getRequestCode(): Int {
-        return 1220999987
+        return System.currentTimeMillis().toInt()
     }
 
     public open fun getNewMessageIntent(
@@ -214,11 +228,34 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     internal fun isValidRemoteMessage(message: RemoteMessage): Boolean =
         getFirebaseMessageParser().isValidRemoteMessage(message)
 
-    private fun getNotificationBuilder(): NotificationCompat.Builder {
+    private fun getNotificationBuilder(
+        contentTitle: String,
+        contentText: String,
+        groupKey: String,
+        intent: Intent,
+    ): NotificationCompat.Builder {
+        val contentIntent = PendingIntent.getActivity(
+            context,
+            getRequestCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+
         return NotificationCompat.Builder(context, getNotificationChannelId())
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true)
             .setSmallIcon(config.smallIcon)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setShowWhen(true)
+            .setContentIntent(contentIntent)
+            .apply {
+                if (config.shouldGroupNotifications) {
+                    setGroup(groupKey)
+                }
+            }
     }
 
     private fun getReadAction(pendingIntent: PendingIntent): NotificationCompat.Action {
@@ -275,4 +312,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         } else {
             null
         }
+
+    private companion object {
+        private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"
+    }
 }

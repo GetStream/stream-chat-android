@@ -2680,7 +2680,9 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)V
 	public synthetic fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun buildErrorCaseNotification ()Landroid/app/Notification;
+	public fun buildErrorNotificationGroupSummary ()Landroid/app/Notification;
 	public fun buildNotification (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
+	public fun buildNotificationGroupSummary (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
 	public fun createNotificationChannel ()Landroid/app/NotificationChannel;
 	public final fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	protected final fun getContext ()Landroid/content/Context;
@@ -2689,6 +2691,8 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getErrorCaseIntent ()Landroid/content/Intent;
 	public fun getErrorCaseNotificationContent ()Ljava/lang/String;
 	public fun getErrorCaseNotificationTitle ()Ljava/lang/String;
+	public fun getErrorNotificationGroupKey ()Ljava/lang/String;
+	public fun getErrorNotificationGroupSummaryId ()I
 	public fun getFirebaseChannelIdKey ()Ljava/lang/String;
 	public fun getFirebaseChannelTypeKey ()Ljava/lang/String;
 	public fun getFirebaseInstanceId ()Lcom/google/firebase/iid/FirebaseInstanceId;
@@ -2697,6 +2701,8 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNewMessageIntent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public fun getNotificationChannelId ()Ljava/lang/String;
 	public fun getNotificationChannelName ()Ljava/lang/String;
+	public fun getNotificationGroupKey (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
 	public fun getSmallIcon ()I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;)Z
 	public fun onFirebaseMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
@@ -2704,14 +2710,18 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
-	public fun <init> (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIII)V
-	public synthetic fun <init> (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIIIIZ)V
+	public synthetic fun <init> (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIIIIZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()Z
 	public final fun component12 ()I
 	public final fun component13 ()I
 	public final fun component14 ()I
+	public final fun component15 ()I
+	public final fun component16 ()I
+	public final fun component17 ()I
+	public final fun component18 ()Z
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()Ljava/lang/String;
@@ -2720,11 +2730,13 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()I
-	public final fun copy (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIII)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public final fun copy (IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIIIIZ)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIZIIIIIIZILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getErrorCaseNotificationContent ()I
 	public final fun getErrorCaseNotificationTitle ()I
+	public final fun getErrorNotificationGroupSummaryContentText ()I
+	public final fun getErrorNotificationGroupSummaryTitle ()I
 	public final fun getFirebaseChannelIdKey ()Ljava/lang/String;
 	public final fun getFirebaseChannelNameKey ()Ljava/lang/String;
 	public final fun getFirebaseChannelTypeKey ()Ljava/lang/String;
@@ -2735,6 +2747,8 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public final fun getLoadNotificationDataTitle ()I
 	public final fun getNotificationChannelId ()I
 	public final fun getNotificationChannelName ()I
+	public final fun getNotificationGroupSummaryContentText ()I
+	public final fun getShouldGroupNotifications ()Z
 	public final fun getSmallIcon ()I
 	public final fun getUseProvidedFirebaseInstance ()Z
 	public fun hashCode ()I
@@ -2809,12 +2823,12 @@ public abstract interface class io/getstream/chat/android/client/token/TokenProv
 }
 
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
-	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/lang/String;
-	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Ljava/lang/String;
-	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/lang/String;
-	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Ljava/lang/String;
+	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
 }
 
 public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {

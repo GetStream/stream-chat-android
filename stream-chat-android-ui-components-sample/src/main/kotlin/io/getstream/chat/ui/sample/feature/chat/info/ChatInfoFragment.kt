@@ -80,13 +80,7 @@ class ChatInfoFragment : Fragment() {
             }
 
             if (state.channelExists) {
-                add(ChatInfoItem.Option.Stateful.Notifications(isChecked = state.notificationsEnabled))
-
-                if (state.member != null) {
-                    add(ChatInfoItem.Option.Stateful.MuteUser(isChecked = state.isMemberMuted))
-                    // TODO disable block until we improve this feature
-                    // add(ChatInfoItem.Option.Stateful.Block(isChecked = state.isMemberBlocked))
-                }
+                add(ChatInfoItem.Option.Stateful.MuteDistinctChannel(isChecked = state.channelMuted))
             }
 
             add(ChatInfoItem.Option.SharedMedia)
@@ -107,10 +101,7 @@ class ChatInfoFragment : Fragment() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
             viewModel.onAction(
                 when (option) {
-                    is ChatInfoItem.Option.Stateful.Notifications -> ChatInfoViewModel.Action.OptionNotificationClicked(
-                        isChecked
-                    )
-                    is ChatInfoItem.Option.Stateful.MuteUser -> ChatInfoViewModel.Action.OptionMuteUserClicked(isChecked)
+                    is ChatInfoItem.Option.Stateful.MuteDistinctChannel -> ChatInfoViewModel.Action.OptionMuteDistinctChannelClicked(isChecked)
                     is ChatInfoItem.Option.Stateful.Block -> ChatInfoViewModel.Action.OptionBlockUserClicked(isChecked)
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
                 }

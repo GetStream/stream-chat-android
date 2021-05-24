@@ -3,13 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/stream_attach_image_height"
     android:minWidth="@dimen/stream_attach_min_width"
-    >
+    android:minHeight="@dimen/stream_attach_image_height">
 
     <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
         android:id="@+id/iv_media_thumb"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/stream_attach_image_height"
         android:minWidth="@dimen/stream_attach_min_width"
         android:layout_marginStart="1px"
@@ -55,7 +54,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_des"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
         app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
@@ -64,25 +63,24 @@
 
         <TextView
             android:id="@+id/tv_media_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="9dp"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_media_des"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:ellipsize="end"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tv_media_title"
-            app:layout_constraintStart_toStartOf="@+id/tv_media_title"
-            app:layout_constraintTop_toBottomOf="@+id/tv_media_title"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_media_title" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -34,7 +34,7 @@ class GroupChatInfoViewModel(
             if (result.isSuccess) {
                 val controller = result.data()
                 // Update channel mute status
-                updateChannelMuteStatus(chatDomain.currentUser.channelMutes)
+                chatDomain.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
                 // Update members
                 _state.addSource(controller.members, this::updateMembers)

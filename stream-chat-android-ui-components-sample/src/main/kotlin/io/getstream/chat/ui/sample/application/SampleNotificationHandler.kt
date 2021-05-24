@@ -18,6 +18,7 @@ class SampleNotificationHandler(context: Context, notificationConfig: Notificati
         channelType: String,
         channelId: String
     ): Intent = Intent(context, HostActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         putExtra(EXTRA_CHANNEL_ID, channelId)
         putExtra(EXTRA_CHANNEL_TYPE, channelType)
         putExtra(EXTRA_MESSAGE_ID, messageId)
