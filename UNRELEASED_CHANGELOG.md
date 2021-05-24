@@ -45,6 +45,10 @@ Fixing filter for draft channels. Those channels were not showing in the results
 - Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
 - Added `DisconnectCause` to `DisconnectedEvent`
 - Added method `SocketListener::onDisconnected(cause: DisconnectCause)`
+- Added possibility to group notifications:
+    - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
+    - If enabled, by default notifications are grouped by Channel's cid
+    - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
 
 ### ⚠️ Changed
 - Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
