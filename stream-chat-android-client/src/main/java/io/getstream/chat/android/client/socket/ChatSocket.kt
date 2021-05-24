@@ -10,4 +10,5 @@ internal interface ChatSocket {
     fun addListener(listener: SocketListener)
     fun removeListener(listener: SocketListener)
     fun disconnect()
+    fun disconnectTemporary()
 }
