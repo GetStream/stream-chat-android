@@ -2,6 +2,7 @@
 
 -keep class io.getstream.chat.android.client.api.* { *; }
 -keep class io.getstream.chat.android.client.api.models.* { *; }
+-keep class io.getstream.chat.android.client.api2.model.** { *; }
 -keep class io.getstream.chat.android.client.errors.* { *; }
 -keep class io.getstream.chat.android.client.events.* { *; }
 -keep class io.getstream.chat.android.client.models.* { *; }
