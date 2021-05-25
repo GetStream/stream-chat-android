@@ -1,0 +1,21 @@
+---
+title: subscribeFor
+---
+//[stream-chat-android-client](../../../index.md)/[io.getstream.chat.android.client.channel](../index.md)/[ChannelClient](index.md)/[subscribeFor](subscribeFor.md)
+
+
+
+# subscribeFor  
+[androidJvm]  
+Content  
+fun [subscribeFor](subscribeFor.md)(vararg eventTypes: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), listener: (event: [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)) -&gt; [Unit](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(vararg eventTypes: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), listener: [ChatEventListener](../../io.getstream.chat.android.client/ChatEventListener/index.md)&lt;[ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(lifecycleOwner: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html), vararg eventTypes: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), listener: (event: [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)) -&gt; [Unit](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(lifecycleOwner: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html), vararg eventTypes: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), listener: [ChatEventListener](../../io.getstream.chat.android.client/ChatEventListener/index.md)&lt;[ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(vararg eventTypes: [Class](https://developer.android.com/reference/kotlin/java/lang/Class.html)&lt;out [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;, listener: (event: [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)) -&gt; [Unit](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(vararg eventTypes: [Class](https://developer.android.com/reference/kotlin/java/lang/Class.html)&lt;out [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;, listener: [ChatEventListener](../../io.getstream.chat.android.client/ChatEventListener/index.md)&lt;[ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(lifecycleOwner: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html), vararg eventTypes: [Class](https://developer.android.com/reference/kotlin/java/lang/Class.html)&lt;out [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;, listener: (event: [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)) -&gt; [Unit](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html)): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+fun [subscribeFor](subscribeFor.md)(lifecycleOwner: [LifecycleOwner](https://developer.android.com/reference/kotlin/androidx/lifecycle/LifecycleOwner.html), vararg eventTypes: [Class](https://developer.android.com/reference/kotlin/java/lang/Class.html)&lt;out [ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;, listener: [ChatEventListener](../../io.getstream.chat.android.client/ChatEventListener/index.md)&lt;[ChatEvent](../../io.getstream.chat.android.client.events/ChatEvent/index.md)&gt;): [Disposable](../../io.getstream.chat.android.client.utils.observable/Disposable/index.md)  
+
+
+
