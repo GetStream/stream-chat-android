@@ -83,7 +83,7 @@ internal class ChatSocketServiceImpl constructor(
                     is State.DisconnectedByRequest -> {
                         shutdownSocketConnection()
                         healthMonitor.stop()
-                        callListeners { it.onDisconnected(DisconnectCause.AppBackgrounded) }
+                        callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                     }
                     is State.DisconnectedTemporarily -> {
                         shutdownSocketConnection()
@@ -173,7 +173,7 @@ internal class ChatSocketServiceImpl constructor(
         state = State.DisconnectedPermanently(null)
     }
 
-    override fun disconnectRequested() {
+    override fun releaseConnection() {
         state = State.DisconnectedByRequest
     }
 

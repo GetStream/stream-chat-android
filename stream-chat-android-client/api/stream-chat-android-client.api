@@ -704,8 +704,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 public abstract class io/getstream/chat/android/client/clientstate/DisconnectCause {
 }
 
-public final class io/getstream/chat/android/client/clientstate/DisconnectCause$AppBackgrounded : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$AppBackgrounded;
+public final class io/getstream/chat/android/client/clientstate/DisconnectCause$ConnectionReleased : io/getstream/chat/android/client/clientstate/DisconnectCause {
+	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$ConnectionReleased;
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {

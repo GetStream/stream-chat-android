@@ -112,7 +112,7 @@ public class ChatClient internal constructor(
         object : LifecycleHandler {
             override fun resume() = reconnectSocket()
             override fun stopped() {
-                socket.disconnectTemporary()
+                socket.releaseConnection()
             }
         }
     )
@@ -141,7 +141,7 @@ public class ChatClient internal constructor(
                 }
                 is DisconnectedEvent -> {
                     when (event.disconnectCause) {
-                        DisconnectCause.AppBackgrounded,
+                        DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
                         is DisconnectCause.Error,
                         -> socketStateService.onDisconnected()
