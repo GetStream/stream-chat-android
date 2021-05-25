@@ -489,9 +489,7 @@ class Android {
         }
 
         fun editingMessage() {
-            messageListView.setMessageEditHandler { message ->
-                messageInputViewModel.editMessage.postValue(message)
-            }
+            messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
         }
 
         fun handlingBackButtonClicks() {

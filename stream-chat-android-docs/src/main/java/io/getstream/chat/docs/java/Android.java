@@ -523,9 +523,7 @@ public class Android {
         }
 
         public void editingMessage() {
-            messageListView.setMessageEditHandler((message) -> {
-                messageInputViewModel.getEditMessage().postValue(message);
-            });
+            messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit);
         }
 
         public void handlingBackButtonClicks() {
