@@ -52,11 +52,15 @@
     - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
     - If enabled, by default notifications are grouped by Channel's cid
     - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
+- Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`. 
+It should be used now to fetch Firebase token in the following way: `handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {...}`.
 
 ### ⚠️ Changed
 - Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
+- Updated `firebase-messaging` library to the version `22.0.0`. Removed deprecated `FirebaseInstanceId` invocations from the project. 
 
 ### ❌ Removed
+- `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseInstallations()`.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
