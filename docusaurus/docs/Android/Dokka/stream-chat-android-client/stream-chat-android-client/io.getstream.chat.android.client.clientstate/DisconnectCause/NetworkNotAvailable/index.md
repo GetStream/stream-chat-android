@@ -7,5 +7,9 @@ sidebar_position: 1
 
 
 # NetworkNotAvailable  
- [androidJvm] object [NetworkNotAvailable](index.md) : [DisconnectCause](../index.md)   
+ [androidJvm] object [NetworkNotAvailable](index.md) : [DisconnectCause](../index.md)
+
+Happens when networks is not available anymore.
+
+   
 

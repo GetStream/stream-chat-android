@@ -13,5 +13,5 @@ sidebar_position: 1
   
 |  Name |  Summary | 
 |---|---|
-| <a name="io.getstream.chat.android.client.clientstate/DisconnectCause///PointingToDeclaration/"></a>[DisconnectCause](DisconnectCause/index.md)| <a name="io.getstream.chat.android.client.clientstate/DisconnectCause///PointingToDeclaration/"></a>[androidJvm]  <br/>Content  <br/>sealed class [DisconnectCause](DisconnectCause/index.md)  <br/><br/><br/>|
+| <a name="io.getstream.chat.android.client.clientstate/DisconnectCause///PointingToDeclaration/"></a>[DisconnectCause](DisconnectCause/index.md)| <a name="io.getstream.chat.android.client.clientstate/DisconnectCause///PointingToDeclaration/"></a>[androidJvm]  <br/>Content  <br/>sealed class [DisconnectCause](DisconnectCause/index.md)  <br/>More info  <br/>Sealed class represents possible cause of disconnection.  <br/><br/><br/>|
 
