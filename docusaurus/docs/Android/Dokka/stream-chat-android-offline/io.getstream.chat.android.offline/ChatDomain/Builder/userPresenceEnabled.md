@@ -1,9 +1,0 @@
----
-title: userPresenceEnabled
----
-/[stream-chat-android-offline](../../../index.md)/[io.getstream.chat.android.offline](../../index.md)/[ChatDomain](../index.md)/[Builder](index.md)/[userPresenceEnabled](userPresenceEnabled.md)  
-  
-  
-  
-# userPresenceEnabled  
-fun [userPresenceEnabled](userPresenceEnabled.md)(): [ChatDomain.Builder](index.md)
