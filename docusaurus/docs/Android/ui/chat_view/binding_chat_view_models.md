@@ -31,9 +31,7 @@ messageListViewModel.mode.observe(this) { mode ->
 }
 
 // Let the message input know when we are editing a message
-messageListView.setMessageEditHandler { message ->
-    messageInputViewModel.editMessage.postValue(message)
-}
+messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
 
 // Handle navigate up state
 messageListViewModel.state.observe(this) { state ->
