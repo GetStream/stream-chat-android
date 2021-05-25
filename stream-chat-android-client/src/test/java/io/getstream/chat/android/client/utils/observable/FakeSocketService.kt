@@ -29,7 +29,7 @@ internal class FakeSocketService(
     override fun disconnect() {
     }
 
-    override fun disconnectTemporary() {
+    override fun releaseConnection() {
     }
 
     override fun addListener(listener: SocketListener) {
