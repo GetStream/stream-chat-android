@@ -8,9 +8,9 @@ if [[ $(git status --porcelain | wc -l) -gt 0 ]]; then
   echo "Please update your documentation. You can run for that:"
   echo "./gradlew dokkaHtmlMultiModule"
   echo "./gradlew docusaurusSidebar"
-  exit 1
   echo "Changes are: "
   git status
+  exit 1
 else
   echo "Documentation is up to date"
 fi
