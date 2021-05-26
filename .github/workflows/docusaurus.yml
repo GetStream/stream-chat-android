@@ -6,6 +6,7 @@ on:
       - main # default branch name for each repo that docs should be push from
 jobs:
   push_docusaurus:
+    name: Publish docusaurus docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
