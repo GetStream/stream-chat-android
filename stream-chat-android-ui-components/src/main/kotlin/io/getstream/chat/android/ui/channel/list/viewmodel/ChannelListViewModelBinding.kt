@@ -43,4 +43,8 @@ public fun ChannelListViewModel.bindView(
     view.setOnEndReachedListener {
         onAction(ChannelListViewModel.Action.ReachedEndOfList)
     }
+
+    view.setChannelDeleteClickListener {
+        this.deleteChannel(it)
+    }
 }
