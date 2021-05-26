@@ -24,7 +24,6 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         } else {
             logger.logE("User is not set in ChatDomain, it is not possible to bind MessageListViewModel.")
         }
-
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }

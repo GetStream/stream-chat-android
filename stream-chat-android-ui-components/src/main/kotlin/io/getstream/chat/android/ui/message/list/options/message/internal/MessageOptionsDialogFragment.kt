@@ -37,7 +37,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
-    private val currentUser : LiveData<User?> = ChatDomain.instance().user
+    private val currentUser: LiveData<User?> = ChatDomain.instance().user
 
     private val optionsMode: OptionsMode by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode

@@ -58,7 +58,7 @@ internal class ChatDomainImplTest {
 
     @Test
     fun `When create a new channel without author should set current user as author and return channel with author`() =
-         testCoroutines.scope.runBlockingTest {
+        testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = User())
 
             val result = sut.createNewChannel(newChannel)

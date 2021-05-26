@@ -13,7 +13,6 @@ import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
@@ -49,18 +48,18 @@ internal class IdGenerationDomainTest {
 
     @Test
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return not-empty messageId`() {
-            val messageId = chatDomainImpl.generateMessageId()
+        val messageId = chatDomainImpl.generateMessageId()
 
-            Truth.assertThat(messageId).isNotEmpty()
-        }
+        Truth.assertThat(messageId).isNotEmpty()
+    }
 
     @Test
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return unique messageId`() {
-            val idMap = sortedSetOf<String>()
-            repeat(1000000) {
-                val messageId = chatDomainImpl.generateMessageId()
-                Truth.assertThat(idMap).doesNotContain(messageId)
-                idMap.add(messageId)
-            }
+        val idMap = sortedSetOf<String>()
+        repeat(1000000) {
+            val messageId = chatDomainImpl.generateMessageId()
+            Truth.assertThat(idMap).doesNotContain(messageId)
+            idMap.add(messageId)
         }
+    }
 }
