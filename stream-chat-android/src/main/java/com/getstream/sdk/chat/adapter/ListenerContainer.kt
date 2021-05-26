@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 
-public interface ListenerContainer {
+public sealed interface ListenerContainer {
     public var messageClickListener: MessageClickListener
     public var messageLongClickListener: MessageLongClickListener
     public var messageRetryListener: MessageRetryListener

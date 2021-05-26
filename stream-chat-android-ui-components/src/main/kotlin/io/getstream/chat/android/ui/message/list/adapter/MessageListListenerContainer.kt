@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryLis
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 
-public interface MessageListListenerContainer {
+public sealed interface MessageListListenerContainer {
     public val messageClickListener: MessageClickListener
     public val messageLongClickListener: MessageLongClickListener
     public val messageRetryListener: MessageRetryListener

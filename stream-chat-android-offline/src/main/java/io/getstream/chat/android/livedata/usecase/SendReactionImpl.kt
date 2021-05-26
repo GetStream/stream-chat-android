@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface SendReaction {
+public sealed interface SendReaction {
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
      * API call to send the reaction is retried according to the retry policy specified on the chatDomain

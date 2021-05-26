@@ -80,6 +80,11 @@ internal class ChatSocketServiceImpl constructor(
                         callListeners { it.onDisconnected() }
                         callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                     }
+                    is State.DisconnectedByRequest -> {
+                        shutdownSocketConnection()
+                        healthMonitor.stop()
+                        callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
+                    }
                     is State.DisconnectedTemporarily -> {
                         shutdownSocketConnection()
                         healthMonitor.onDisconnected()
@@ -168,6 +173,10 @@ internal class ChatSocketServiceImpl constructor(
         state = State.DisconnectedPermanently(null)
     }
 
+    override fun releaseConnection() {
+        state = State.DisconnectedByRequest
+    }
+
     override fun onConnectionResolved(event: ConnectedEvent) {
         state = State.Connected(event)
     }
@@ -243,5 +252,6 @@ internal class ChatSocketServiceImpl constructor(
         object NetworkDisconnected : State()
         class DisconnectedTemporarily(val error: ChatNetworkError?) : State()
         class DisconnectedPermanently(val error: ChatNetworkError?) : State()
+        object DisconnectedByRequest : State()
     }
 }

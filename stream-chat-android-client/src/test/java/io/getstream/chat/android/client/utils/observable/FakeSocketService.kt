@@ -29,6 +29,9 @@ internal class FakeSocketService(
     override fun disconnect() {
     }
 
+    override fun releaseConnection() {
+    }
+
     override fun addListener(listener: SocketListener) {
         listeners.add(listener)
     }

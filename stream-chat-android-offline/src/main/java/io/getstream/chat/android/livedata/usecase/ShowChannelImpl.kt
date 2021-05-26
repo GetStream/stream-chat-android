@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface ShowChannel {
+public sealed interface ShowChannel {
     /**
      * Shows a channel that was previously hidden
      *

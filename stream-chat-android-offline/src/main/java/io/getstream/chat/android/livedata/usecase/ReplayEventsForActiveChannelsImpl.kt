@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface ReplayEventsForActiveChannels {
+public sealed interface ReplayEventsForActiveChannels {
     /**
      * Adds the specified channel to the active channels
      * Replays events for all active channels

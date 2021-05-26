@@ -26,14 +26,26 @@ public class io/getstream/chat/android/client/errors/ChatError {
 }
 
 public final class io/getstream/chat/android/client/utils/Result {
+	public static final field Companion Lio/getstream/chat/android/client/utils/Result$Companion;
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public fun <init> (Ljava/lang/Object;)V
+	public synthetic fun <init> (Ljava/lang/Object;Lio/getstream/chat/android/client/errors/ChatError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun data ()Ljava/lang/Object;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun error ()Lio/getstream/chat/android/client/errors/ChatError;
+	public static final fun error (Ljava/lang/Throwable;)Lio/getstream/chat/android/client/utils/Result;
 	public fun hashCode ()I
 	public final fun isError ()Z
 	public final fun isSuccess ()Z
+	public static final fun success (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/utils/Result$Companion {
+	public final fun error (Ljava/lang/Throwable;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun success (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/utils/ResultKt {
 }
 
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {

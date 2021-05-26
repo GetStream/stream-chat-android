@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ThreadController
 
-public interface GetThread {
+public sealed interface GetThread {
     /**
      * Returns a thread controller for the given channel and message id
      *

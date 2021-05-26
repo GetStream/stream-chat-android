@@ -4,7 +4,7 @@ import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface Keystroke {
+public sealed interface Keystroke {
     /**
      * Keystroke should be called whenever a user enters text into the message input
      * It automatically calls stopTyping when the user stops typing after 5 seconds

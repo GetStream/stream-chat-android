@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 
-public interface GetChannelController {
+public sealed interface GetChannelController {
     /**
      * Returns a ChannelController for given cid
      *

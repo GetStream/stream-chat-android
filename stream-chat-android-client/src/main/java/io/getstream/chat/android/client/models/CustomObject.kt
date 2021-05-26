@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.models
 
-public interface CustomObject {
+public sealed interface CustomObject {
     public var extraData: MutableMap<String, Any>
 
     @Suppress("UNCHECKED_CAST")

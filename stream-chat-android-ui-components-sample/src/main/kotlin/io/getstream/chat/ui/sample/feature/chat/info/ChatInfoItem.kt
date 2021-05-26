@@ -79,14 +79,7 @@ sealed class ChatInfoItem {
         sealed class Stateful : Option() {
             abstract val isChecked: Boolean
 
-            data class Notifications(override val isChecked: Boolean) : Stateful() {
-                override val iconResId: Int
-                    get() = R.drawable.ic_notifications
-                override val textResId: Int
-                    get() = R.string.chat_info_option_notifications
-            }
-
-            data class MuteUser(override val isChecked: Boolean) : Stateful() {
+            data class MuteDistinctChannel(override val isChecked: Boolean) : Stateful() {
                 override val iconResId: Int
                     get() = R.drawable.ic_mute
                 override val textResId: Int

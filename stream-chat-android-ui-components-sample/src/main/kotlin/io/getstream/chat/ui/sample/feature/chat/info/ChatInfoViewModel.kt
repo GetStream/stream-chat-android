@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
@@ -35,6 +34,9 @@ class ChatInfoViewModel(
             channelClient = chatClient.channel(cid)
             _state.value = State()
             viewModelScope.launch {
+                // Update channel mute status
+                chatDomain.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+
                 val channelControllerResult = chatDomain.getChannelController(cid).await()
                 if (channelControllerResult.isSuccess) {
                     val channelController = channelControllerResult.data()
@@ -61,12 +63,8 @@ class ChatInfoViewModel(
                     _state.value = _state.value!!.copy(
                         member = member,
                         isMemberBlocked = member?.shadowBanned ?: false,
-                        notificationsEnabled = chatDomain.currentUser.channelMutes.any { it.channel.cid == cid },
                         loading = false,
                     )
-
-                    // Muted channel members
-                    _state.addSource(chatDomain.muted) { mutes -> updateMutes(mutes) }
                 } else {
                     // TODO: Handle error
                     _state.value = _state.value!!.copy(loading = false)
@@ -85,19 +83,18 @@ class ChatInfoViewModel(
 
     fun onAction(action: Action) {
         when (action) {
-            is Action.OptionNotificationClicked -> switchNotifications(action.isEnabled)
-            is Action.OptionMuteUserClicked -> switchUserMute(action.isEnabled)
+            is Action.OptionMuteDistinctChannelClicked -> switchChannelMute(action.isEnabled)
             is Action.OptionBlockUserClicked -> switchUserBlock(action.isEnabled)
-            is Action.ChannelMutesUpdated -> updateChannelNotificationsStatus(action.channelMutes)
+            is Action.ChannelMutesUpdated -> updateChannelMuteStatus(action.channelMutes)
             is Action.ChannelDeleted -> deleteChannel()
         }
     }
 
-    private fun updateChannelNotificationsStatus(channelMutes: List<ChannelMute>) {
-        _state.value = _state.value!!.copy(notificationsEnabled = channelMutes.any { it.channel.cid == cid })
+    private fun updateChannelMuteStatus(channelMutes: List<ChannelMute>) {
+        _state.value = _state.value!!.copy(channelMuted = channelMutes.any { it.channel.cid == cid })
     }
 
-    private fun switchNotifications(isEnabled: Boolean) {
+    private fun switchChannelMute(isEnabled: Boolean) {
         viewModelScope.launch {
             val result = if (isEnabled) {
                 channelClient.mute().await()
@@ -106,25 +103,7 @@ class ChatInfoViewModel(
             }
             if (result.isError) {
                 // Handle error in a better way
-                _state.value = _state.value!!.copy(notificationsEnabled = !isEnabled)
-            }
-        }
-    }
-
-    private fun switchUserMute(isEnabled: Boolean) {
-        viewModelScope.launch {
-            val currentState = _state.value!!
-            if (currentState.member == null) {
-                return@launch
-            }
-            val result = if (isEnabled) {
-                channelClient.muteUser(currentState.member.getUserId()).await()
-            } else {
-                channelClient.unmuteUser(currentState.member.getUserId()).await()
-            }
-            if (result.isError) {
-                // Handle error in a better way
-                _state.value = _state.value!!.copy(isMemberMuted = !isEnabled)
+                _state.value = _state.value!!.copy(channelMuted = !isEnabled)
             }
         }
     }
@@ -162,19 +141,9 @@ class ChatInfoViewModel(
         }
     }
 
-    private fun updateMutes(mutes: List<Mute>) {
-        val currentState = state.value!!
-        if (currentState.member == null) {
-            return
-        }
-        _state.value =
-            currentState.copy(isMemberMuted = mutes.any { mute -> mute.target.id == currentState.member.getUserId() })
-    }
-
     data class State(
         val member: Member? = null,
-        val notificationsEnabled: Boolean = false,
-        val isMemberMuted: Boolean = false,
+        val channelMuted: Boolean = false,
         val isMemberBlocked: Boolean = false,
         val canDeleteChannel: Boolean = false,
         val channelExists: Boolean = true,
@@ -182,8 +151,7 @@ class ChatInfoViewModel(
     )
 
     sealed class Action {
-        data class OptionNotificationClicked(val isEnabled: Boolean) : Action()
-        data class OptionMuteUserClicked(val isEnabled: Boolean) : Action()
+        data class OptionMuteDistinctChannelClicked(val isEnabled: Boolean) : Action()
         data class OptionBlockUserClicked(val isEnabled: Boolean) : Action()
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
         object ChannelDeleted : Action()

@@ -37,6 +37,10 @@ internal class ChatSocketImpl(
         service.disconnect()
     }
 
+    override fun releaseConnection() {
+        service.releaseConnection()
+    }
+
     override fun addListener(listener: SocketListener) {
         service.addListener(listener)
     }

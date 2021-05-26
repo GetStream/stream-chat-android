@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 
-public interface DeleteMessage {
+public sealed interface DeleteMessage {
     /**
      * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain
      * @param message the message to mark as deleted

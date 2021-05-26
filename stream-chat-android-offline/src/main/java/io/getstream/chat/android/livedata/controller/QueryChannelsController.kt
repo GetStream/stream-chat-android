@@ -14,15 +14,17 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
  * - .loadingMore if we're currently loading more channels
  *
  */
-public interface QueryChannelsController {
+public sealed interface QueryChannelsController {
     /**
      * The filter used for this query
      */
     public val filter: FilterObject
+
     /**
      * The sort used for this query
      */
     public val sort: QuerySort<Channel>
+
     /**
      * When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
      * determines if the channel should be added to the query or not.

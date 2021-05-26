@@ -42,7 +42,11 @@ internal class LoadNotificationDataWorker(
         )
 
         return try {
-            ChatClient.displayNotificationWithData(channelId, channelType, messageId)
+            ChatClient.displayNotificationWithData(
+                channelId = channelId,
+                channelType = channelType,
+                messageId = messageId,
+            )
             Result.success()
         } catch (exception: IllegalStateException) {
             logger.logE("Error while loading notification data: ${exception.message}")
