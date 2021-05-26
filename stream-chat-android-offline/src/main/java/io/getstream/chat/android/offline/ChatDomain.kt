@@ -34,16 +34,16 @@ import java.io.File
  */
 public sealed interface ChatDomain {
 
-    // @Deprecated(
-    //     message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
-    //     level = DeprecationLevel.WARNING,
-    // )
+    @Deprecated(
+        message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
+        level = DeprecationLevel.WARNING,
+    )
     /** Unsafe property that represent the current user. This property could be not initialized.
      * You should subscribe to [ChatDomain.user] instead
      *
      * @see [ChatDomain.user]
      */
-    // public var currentUser: User
+    public var currentUser: User
 
     /** The current user on the chatDomain object */
     public val user: StateFlow<User?>

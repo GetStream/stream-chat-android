@@ -170,6 +170,12 @@ internal class ChatDomainImpl internal constructor(
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
 
+    override var currentUser: User
+        get() = user.value!!
+        set(value) {
+            _user.value = value
+        }
+
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
     private val _totalUnreadCount = MutableStateFlow(0)
