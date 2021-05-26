@@ -73,6 +73,7 @@ private const val THREETENABP_VERSION = "1.3.0"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1.2"
 private const val WORK_VERSION = "2.5.0"
+private const val DOKKASAURUS_VERSION = "0.1.8"
 
 object Dependencies {
     const val androidGradlePlugin = "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION"
@@ -174,6 +175,7 @@ object Dependencies {
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:$WORK_VERSION"
     const val workTesting = "androidx.work:work-testing:$WORK_VERSION"
+    const val dokkasaurus = "io.getstream:dokkasaurus:$DOKKASAURUS_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

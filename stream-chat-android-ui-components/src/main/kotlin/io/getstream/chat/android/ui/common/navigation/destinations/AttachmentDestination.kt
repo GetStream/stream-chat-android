@@ -25,15 +25,18 @@ public open class AttachmentDestination(
     }
 
     public fun showAttachment(message: Message, attachment: Attachment) {
+        if (attachment.type == ModelType.attach_file ||
+            attachment.type == ModelType.attach_video ||
+            attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true
+        ) {
+            loadFile(attachment)
+            return
+        }
+
         var url: String? = null
         var type: String? = attachment.type
 
         when (attachment.type) {
-            ModelType.attach_file,
-            ModelType.attach_video -> {
-                loadFile(attachment)
-                return
-            }
             ModelType.attach_image -> {
                 when {
                     attachment.ogUrl != null -> {
@@ -83,7 +86,7 @@ public open class AttachmentDestination(
 
         // Media
         when {
-            mimeType.contains("audio") || mimeType.contains("video") -> {
+            mimeType.contains("audio") || mimeType.contains(VIDEO_MIME_TYPE_PREFIX) -> {
                 val intent = Intent(context, AttachmentMediaActivity::class.java).apply {
                     putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType)
                     putExtra(AttachmentMediaActivity.URL_KEY, url)
@@ -126,4 +129,8 @@ public open class AttachmentDestination(
     }
 
     private fun Attachment.isGif() = mimeType?.contains("gif") ?: false
+
+    private companion object {
+        private const val VIDEO_MIME_TYPE_PREFIX = "video"
+    }
 }
