@@ -13,7 +13,6 @@ import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentUploadRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.SyncStateRepository
@@ -32,7 +31,6 @@ internal class RepositoryFacade constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     syncStateRepository: SyncStateRepository,
-    attachmentUploadRepository: AttachmentUploadRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -41,8 +39,7 @@ internal class RepositoryFacade constructor(
     MessageRepository by messageRepository,
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
-    SyncStateRepository by syncStateRepository,
-    AttachmentUploadRepository by attachmentUploadRepository {
+    SyncStateRepository by syncStateRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
