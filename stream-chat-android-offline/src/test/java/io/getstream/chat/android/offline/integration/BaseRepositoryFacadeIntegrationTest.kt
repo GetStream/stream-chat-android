@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.integration
 
+import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -26,7 +27,8 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     protected lateinit var repositoryFacade: RepositoryFacade
 
     @Before
-    fun setup() {
+    @CallSuper
+    open fun setup() {
         chatDatabase = createChatDatabase()
         repositoryFacade = createRepositoryFacade()
     }
