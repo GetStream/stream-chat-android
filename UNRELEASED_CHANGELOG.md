@@ -2,9 +2,10 @@
 ### 🐞 Fixed
 - Fixed channel list sorting
 ### ⬆️ Improved
-- Updated to Kotlin 1.5.10
+- Updated to Kotlin 1.5.10, coroutines 1.5.0
 - Updated to Android Gradle Plugin 4.2.1
 - Updated Room version to 2.3.0
+- Updated Firebase, AndroidX, and other dependency versions to latest, [see here](https://github.com/GetStream/stream-chat-android/pull/1895) for more details
 - Marked many library interfaces that should not be implemented by clients as [sealed](https://kotlinlang.org/docs/sealed-classes.html)
 
 ### ✅ Added
