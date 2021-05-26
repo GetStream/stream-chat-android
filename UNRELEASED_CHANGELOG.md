@@ -88,6 +88,7 @@ It should be used now to fetch Firebase token in the following way: `handler.get
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelListView`.
+Fixed bug when for some video attachments activity with media player wasn't shown.
 ### ⬆️ Improved
 
 ### ✅ Added
