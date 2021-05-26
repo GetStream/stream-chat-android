@@ -11,17 +11,19 @@ import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.offline.utils.MessageDiffCallback
 import io.getstream.chat.android.offline.utils.UpdateOperationCounts
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
 
-    // @Test
-    fun `When observing messages Should receive the correct number of events with messages`() = runBlocking {
+    @Test
+    fun `When observing messages Should receive the correct number of events with messages`() = runBlockingTest {
         val counter = DiffUtilOperationCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
@@ -51,17 +53,14 @@ internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
     ) {
         private val channelController = chatDomainImpl.channel(channel)
 
-        fun givenChannelInOfflineStorage(channel: Channel): Fixture {
-            runBlocking {
-                chatDomainImpl.repos.insertChannel(channel)
-            }
+        suspend fun givenChannelInOfflineStorage(channel: Channel): Fixture {
+            chatDomainImpl.repos.insertChannel(channel)
+
             return this
         }
 
-        fun givenMessageInOfflineStorage(message: Message): Fixture {
-            runBlocking {
-                chatDomainImpl.repos.insertMessage(message)
-            }
+        suspend fun givenMessageInOfflineStorage(message: Message): Fixture {
+            chatDomainImpl.repos.insertMessage(message)
             return this
         }
 

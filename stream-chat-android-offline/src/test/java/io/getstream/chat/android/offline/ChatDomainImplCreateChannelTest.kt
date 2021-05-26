@@ -1,6 +1,9 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
@@ -20,13 +23,20 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.Test
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [28])
 internal class ChatDomainImplCreateChannelTest {
 
     private val channelId = "ChannelId"
@@ -40,9 +50,19 @@ internal class ChatDomainImplCreateChannelTest {
     private val channelMembers = listOf(randomMember(), randomMember())
     private val channelExtraData = mutableMapOf<String, Any>("extraData" to true)
 
+    private lateinit var chatDatabase: ChatDatabase
+
+    @Before
+    fun setUp() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        chatDatabase = Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+    }
+
     @Test
     fun `given offline chat domain when creating channel should mark it with sync needed and store in database`(): Unit =
-        runBlocking {
+        runBlockingTest {
             val currentUser = randomUser()
             val repositoryFacade: RepositoryFacade = mock()
             val channel = Channel(
@@ -85,7 +105,7 @@ internal class ChatDomainImplCreateChannelTest {
 
     @Test
     fun `given online chat domain when creating channel should store it in database `(): Unit =
-        runBlocking {
+        runBlockingTest {
             val currentUser = randomUser()
             val repositoryFacade: RepositoryFacade = mock()
             val channel = Channel(
@@ -128,7 +148,7 @@ internal class ChatDomainImplCreateChannelTest {
 
     @Test
     fun `given online chat domain when creating channel is completed should mark it with proper sync states`(): Unit =
-        runBlocking {
+        runBlockingTest {
             val repositoryFacade: RepositoryFacade = mock()
 
             val sut = Fixture()
@@ -154,7 +174,7 @@ internal class ChatDomainImplCreateChannelTest {
 
     @Test
     fun `given online chat domain when creating channel failed should mark it with proper sync states`(): Unit =
-        runBlocking {
+        runBlockingTest {
             val repositoryFacade: RepositoryFacade = mock()
 
             val sut = Fixture()
@@ -180,7 +200,7 @@ internal class ChatDomainImplCreateChannelTest {
 
     @Test
     fun `given online chat domain when creating channel failed permanently should mark it with proper sync states`(): Unit =
-        runBlocking {
+        runBlockingTest {
             val repositoryFacade: RepositoryFacade = mock()
 
             val sut = Fixture()
@@ -219,20 +239,21 @@ internal class ChatDomainImplCreateChannelTest {
     }
 
     @Test
-    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() = runBlockingTest {
-        val repositoryFacade: RepositoryFacade = mock()
-        val networkChannel = randomChannel()
-        val sut = Fixture()
-            .givenChatClientResult(Result(networkChannel))
-            .givenRepositoryFacade(repositoryFacade)
-            .get()
+    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() =
+        runBlockingTest {
+            val repositoryFacade: RepositoryFacade = mock()
+            val networkChannel = randomChannel()
+            val sut = Fixture()
+                .givenChatClientResult(Result(networkChannel))
+                .givenRepositoryFacade(repositoryFacade)
+                .get()
 
-        val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
+            val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isEqualTo(networkChannel)
-        verify(repositoryFacade).insertChannel(networkChannel)
-    }
+            Truth.assertThat(result.isSuccess).isTrue()
+            Truth.assertThat(result.data()).isEqualTo(networkChannel)
+            verify(repositoryFacade).insertChannel(networkChannel)
+        }
 
     private inner class Fixture {
         private val context: Context = mock()
@@ -268,11 +289,15 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
         fun get(): ChatDomainImpl {
-            return ChatDomain.Builder(context, chatClient).buildImpl().apply {
-                repos = repositoryFacade
-                scope = testScope
-                if (isOnline) setOnline() else setOffline()
-            }
+            return ChatDomain
+                .Builder(context, chatClient)
+                .database(chatDatabase)
+                .buildImpl()
+                .apply {
+                    repos = repositoryFacade
+                    scope = testScope
+                    if (isOnline) setOnline() else setOffline()
+                }
         }
     }
 }
