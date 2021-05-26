@@ -620,7 +620,7 @@ public class ChannelController internal constructor(
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-                newMessage.attachments = uploadAttachments(newMessage).toMutableList()
+                newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
 
                 uploadStatusMessage?.let { cancelMessage(it) }
             }
