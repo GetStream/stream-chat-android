@@ -69,7 +69,7 @@ dependencies {
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.constraintLayout
     implementation Dependencies.materialComponents
-    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.lottie

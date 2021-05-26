@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel
 
-import android.webkit.MimeTypeMap
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -49,15 +48,13 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.ProgressTracker
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
-import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.extensions.NEVER
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
@@ -81,6 +78,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.Exception
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -596,11 +594,6 @@ public class ChannelController internal constructor(
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
 
-        val attachmentProgressList = newMessage.attachments.map { attachment ->
-            ProgressTrackerFactory.getOrCreate(attachment.uploadId!!).apply {
-                maxValue = attachment.upload?.length() ?: 0L
-            }
-        }
         var uploadStatusMessage: Message? = null
 
         if (hasAttachments) {
@@ -624,9 +617,7 @@ public class ChannelController internal constructor(
             if (hasAttachments) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
-                newMessage.attachments = newMessage.attachments.mapIndexed { i, attach ->
-                    sendAttachment(attach, attachmentProgressList[i], attachmentTransformer)
-                }.toMutableList()
+                newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
 
                 uploadStatusMessage?.let { cancelMessage(it) }
             }
@@ -651,31 +642,35 @@ public class ChannelController internal constructor(
         return "upload_id_${UUID.randomUUID()}"
     }
 
-    private suspend fun sendAttachment(
-        attachment: Attachment,
-        attachmentProgress: ProgressTracker,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Attachment {
-        var newAttachment: Attachment = attachment
+    internal suspend fun uploadAttachments(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
+    ): List<Attachment> {
+        return try {
+            message.attachments.map { attachment ->
+                val result = AttachmentUploader(client)
+                    .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
 
-        if (newAttachment.upload != null) {
-            val result = uploadAttachment(
-                newAttachment,
-                attachmentTransformer,
-                attachmentProgress.toProgressCallback()
-            )
+                if (result.isSuccess) {
+                    result.data()
+                } else {
+                    attachment.apply { uploadState = Attachment.UploadState.Failed(result.error()) }
+                }
+            }.toMutableList()
+        } catch (e: Exception) {
+            message.attachments.map {
+                if (it.uploadState != Attachment.UploadState.Success) {
+                    it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
+                }
+                it
+            }.toMutableList()
+        }.also {
+            message.attachments = it
 
-            if (result.isSuccess) {
-                newAttachment = result.data()
-                attachmentProgress.setComplete(true)
-                newAttachment.uploadState = Attachment.UploadState.Success
-            } else {
-                attachmentProgress.setComplete(false)
-                newAttachment.uploadState = Attachment.UploadState.Failed(result.error())
-            }
+            // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
+            domainImpl.repos.deleteChannelMessage(message)
+            domainImpl.repos.insertMessage(message)
         }
-
-        return newAttachment
     }
 
     private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
@@ -720,66 +715,6 @@ public class ChannelController internal constructor(
             "ephemeral"
         } else {
             "regular"
-        }
-    }
-
-    /**
-     * Upload the attachment.upload file for the given attachment
-     * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
-     */
-    internal suspend fun uploadAttachment(
-        attachment: Attachment,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
-        progressCallback: ProgressCallback? = null,
-    ): Result<Attachment> {
-        val file =
-            checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType: String = when {
-            mimeType.isSupportedImageMimetype() -> TYPE_IMAGE
-            mimeType.isVideoMimetype() -> TYPE_VIDEO
-            else -> TYPE_FILE
-        }
-        val pathResult: Result<String> = if (attachmentType == TYPE_IMAGE) {
-            sendImage(file)
-        } else {
-            if (progressCallback != null) {
-                sendFile(file, progressCallback)
-            } else {
-                sendFile(file)
-            }
-        }
-
-        val url = if (pathResult.isError) null else pathResult.data()
-        val uploadState =
-            if (pathResult.isError) Attachment.UploadState.Failed(pathResult.error()) else Attachment.UploadState.Success
-
-        var newAttachment = attachment.copy(
-            name = file.name,
-            fileSize = file.length().toInt(),
-            mimeType = mimeType ?: "",
-            url = url,
-            uploadState = uploadState,
-            type = attachmentType
-        ).apply {
-            url?.let {
-                if (attachmentType == TYPE_IMAGE) {
-                    imageUrl = it
-                } else {
-                    assetUrl = it
-                }
-            }
-        }
-
-        // allow the user to change the format of the attachment
-        if (attachmentTransformer != null) {
-            newAttachment = attachmentTransformer(newAttachment, file)
-        }
-
-        return if (!pathResult.isError) {
-            Result(newAttachment)
-        } else {
-            Result(pathResult.error())
         }
     }
 

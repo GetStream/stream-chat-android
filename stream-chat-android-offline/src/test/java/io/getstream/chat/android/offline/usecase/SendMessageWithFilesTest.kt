@@ -106,60 +106,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `Upload attachment should have the right format`() = testCoroutines.scope.runBlockingTest {
-        val attachments = defaultAttachments()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploads(files)
-
-        for (attachment in attachments) {
-            val url = attachment.upload!!.absolutePath
-            val expectedAttachment = attachment.copy(
-                assetUrl = url,
-                url = url,
-                type = "file",
-                mimeType = "",
-                name = attachment.upload!!.name,
-                uploadState = Attachment.UploadState.Success
-            )
-            val result = channelControllerImpl.uploadAttachment(attachment = attachment)
-            assertSuccess(result)
-            Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
-        }
-    }
-
-    @Test
-    fun `Upload attachment should be configurable`() = testCoroutines.scope.runBlockingTest {
-        val attachments = defaultAttachments()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploads(files)
-        val extra = mutableMapOf<String, Any>("The Answer" to 42)
-
-        for (attachment in attachments) {
-            val url = attachment.upload!!.absolutePath
-            val expectedAttachment = attachment.copy(
-                assetUrl = url,
-                url = url,
-                type = "file",
-                mimeType = "",
-                name = attachment.upload!!.name,
-                extraData = extra,
-                uploadState = Attachment.UploadState.Success
-            )
-            val result = channelControllerImpl.uploadAttachment(
-                attachment = attachment,
-                attachmentTransformer = { attachment, _ ->
-                    attachment.copy(extraData = extra)
-                }
-            )
-
-            assertSuccess(result)
-            Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
-        }
-    }
-
-    @Test
     fun `Errors should still return the attachments`() = testCoroutines.scope.runBlockingTest {
         val message = randomMessage()
         message.cid = channelControllerImpl.cid
@@ -180,30 +126,6 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
         val result = chatDomain.sendMessage(message).execute()
 
         Truth.assertThat(result).isEqualTo(expectedResult)
-    }
-
-    @Test
-    fun `Should return apply the right transformation to attachments`() = testCoroutines.scope.runBlockingTest {
-        val message = randomMessage()
-        message.cid = channelControllerImpl.cid
-        message.attachments = defaultAttachments()
-        val extra = mutableMapOf<String, Any>("the answer" to 42)
-
-        val files: List<File> = message.attachments.map { it.upload!! }
-
-        mockFileUploads(files)
-
-        val result = channelControllerImpl.uploadAttachment(
-            message.attachments.first(),
-            attachmentTransformer = { attachment, _ ->
-                attachment.copy(extraData = extra)
-            }
-        )
-
-        assertSuccess(result)
-        val uploadedAttachment = result.data()
-
-        Truth.assertThat(uploadedAttachment.extraData).isEqualTo(extra)
     }
 
     @Test

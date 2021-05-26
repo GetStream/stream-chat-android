@@ -21,7 +21,7 @@ buildscript {
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
-        classpath Dependencies.firebasePlugin
+        classpath Dependencies.firebaseCrashlyticsPlugin
         classpath Dependencies.ktlintPlugin
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
