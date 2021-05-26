@@ -72,9 +72,6 @@ dependencies {
 
     api Dependencies.exoMedia
 
-    implementation Dependencies.fresco
-    implementation Dependencies.photodraweeview
-
     testImplementation project(":stream-chat-android-test")
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
