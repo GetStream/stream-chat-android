@@ -703,7 +703,6 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 public final class io/getstream/chat/android/offline/repository/database/ChatDatabase_Impl {
 	public static final field Companion Lio/getstream/chat/android/offline/repository/database/ChatDatabase$Companion;
 	public fun <init> ()V
-	public fun attachmentToUploadDao ()Lio/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadDao;
 	public fun channelConfigDao ()Lio/getstream/chat/android/offline/repository/domain/channelconfig/ChannelConfigDao;
 	public fun channelStateDao ()Lio/getstream/chat/android/offline/repository/domain/channel/ChannelDao;
 	public fun clearAllTables ()V
@@ -758,16 +757,6 @@ public final class io/getstream/chat/android/offline/repository/domain/message/M
 	public static synthetic fun selectSyncNeeded$default (Lio/getstream/chat/android/offline/repository/domain/message/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadDao_Impl : io/getstream/chat/android/offline/repository/domain/message/attachment/AttachmentToUploadDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteAttachmentsToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getAttachmentsToUpload (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun getAttachmentsToUploadForMessage (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun getRequiredConverters ()Ljava/util/List;
-	public fun insertAttachmentToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateAttachmentsToUpload (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/queryChannels/QueryChannelsDao_Impl {

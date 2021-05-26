@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
@@ -114,13 +113,6 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     ): Result<Message> = channelControllerStateFlow.sendMessage(message, attachmentTransformer)
 
     suspend fun cancelMessage(message: Message): Result<Boolean> = channelControllerStateFlow.cancelMessage(message)
-
-    internal suspend fun uploadAttachment(
-        attachment: Attachment,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
-        progressCallback: ProgressCallback? = null,
-    ): Result<Attachment> =
-        channelControllerStateFlow.uploadAttachment(attachment, attachmentTransformer, progressCallback)
 
     suspend fun sendGiphy(message: Message): Result<Message> = channelControllerStateFlow.sendGiphy(message)
     suspend fun shuffleGiphy(message: Message): Result<Message> = channelControllerStateFlow.shuffleGiphy(message)
