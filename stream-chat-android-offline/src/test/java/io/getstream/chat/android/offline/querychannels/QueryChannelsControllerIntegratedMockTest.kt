@@ -19,7 +19,7 @@ import java.util.Date
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTest() {
 
-    // @Test
+    @Test
     fun `Given some channels When received new message event Should return the same channels with proper orderings`() {
         runBlocking {
             val queryChannelsController =

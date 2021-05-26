@@ -37,7 +37,9 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
@@ -157,6 +159,7 @@ internal open class BaseDomainTest {
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
+            on(it.getCurrentUser()) doReturn data.user1
         }
         return client
     }
@@ -192,6 +195,7 @@ internal open class BaseDomainTest {
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
+            on(it.getCurrentUser()) doReturn data.user1
         }
         whenever(client.connectUser(any(), any<String>())) doAnswer {
             TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
@@ -203,7 +207,7 @@ internal open class BaseDomainTest {
         return Room.inMemoryDatabaseBuilder(
             getApplicationContext(),
             ChatDatabase::class.java
-        )
+        ).allowMainThreadQueries()
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
             .build()
     }
@@ -213,6 +217,8 @@ internal open class BaseDomainTest {
         if (setUser) {
             waitForSetUser(client, data.user1, data.user1Token)
         }
+
+        val offlineSyncFirebaseMessagingHandler: OfflineSyncFirebaseMessagingHandler = mock()
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
@@ -232,6 +238,9 @@ internal open class BaseDomainTest {
             backgroundSyncEnabled,
             context
         )
+
+        chatDomainImpl.offlineSyncFirebaseMessagingHandler = offlineSyncFirebaseMessagingHandler
+
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 

@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
 
-    // @Test
+    @Test
     fun `When observing channels Should receive the correct number of events with channels`() = runBlocking {
         val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
@@ -56,21 +56,17 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
     ) {
         private val queryChannelsControllerImpl = chatDomainImpl.queryChannels(filter, QuerySort())
 
-        fun givenChannelInOfflineStorage(channel: Channel): Fixture {
-            runBlocking {
+        suspend fun givenChannelInOfflineStorage(channel: Channel): Fixture =
+            apply {
                 val query = QueryChannelsSpec(filter, QuerySort()).apply { cids = listOf(channel.cid) }
                 chatDomainImpl.repos.insertChannel(channel)
                 chatDomainImpl.repos.insertQueryChannels(query)
             }
-            return this
-        }
 
-        fun givenMessageInOfflineStorage(message: Message): Fixture {
-            runBlocking {
+        suspend fun givenMessageInOfflineStorage(message: Message): Fixture =
+            apply {
                 chatDomainImpl.repos.insertMessage(message)
             }
-            return this
-        }
 
         suspend fun withCounter(counter: DiffUtilOperationCounter<Channel>): Fixture {
             chatDomainImpl.scope.launch {

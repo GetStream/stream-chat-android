@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 @ExperimentalCoroutinesApi
 internal class SendMessageTest : BaseConnectedMockedTest() {
 
-    // @Test
+    @Test
     fun `Given a message was sent When subscribing message updates Should emit the sent message`() {
         runBlockingTest {
             val message = data.createMessage().apply { extraData = mutableMapOf("location" to "Amsterdam") }

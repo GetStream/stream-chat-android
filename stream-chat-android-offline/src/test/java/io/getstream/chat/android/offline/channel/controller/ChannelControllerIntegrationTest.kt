@@ -14,7 +14,7 @@ import io.getstream.chat.android.offline.utils.UpdateOperationCounts
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `When observing messages Should receive the correct number of events with messages`() = runBlockingTest {
+    fun `When observing messages Should receive the correct number of events with messages`() = runBlocking {
         val counter = DiffUtilOperationCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
@@ -53,18 +53,22 @@ internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
     ) {
         private val channelController = chatDomainImpl.channel(channel)
 
-        suspend fun givenChannelInOfflineStorage(channel: Channel): Fixture {
-            chatDomainImpl.repos.insertChannel(channel)
+        fun givenChannelInOfflineStorage(channel: Channel): Fixture {
+            runBlocking {
+                chatDomainImpl.repos.insertChannel(channel)
+            }
 
             return this
         }
 
-        suspend fun givenMessageInOfflineStorage(message: Message): Fixture {
-            chatDomainImpl.repos.insertMessage(message)
+        fun givenMessageInOfflineStorage(message: Message): Fixture {
+            runBlocking {
+                chatDomainImpl.repos.insertMessage(message)
+            }
             return this
         }
 
-        suspend fun withCounter(counter: DiffUtilOperationCounter<Message>): Fixture {
+        fun withCounter(counter: DiffUtilOperationCounter<Message>): Fixture {
             chatDomainImpl.scope.launch {
                 channelController.messages.collect { messages ->
                     val messageIds = messages.map { it.id }

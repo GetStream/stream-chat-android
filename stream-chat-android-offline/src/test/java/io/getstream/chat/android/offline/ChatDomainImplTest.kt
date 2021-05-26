@@ -27,8 +27,10 @@ internal class ChatDomainImplTest {
 
     @BeforeEach
     fun setUp() {
-        val client: ChatClient = mock()
         val currentUser = randomUser()
+        val client: ChatClient = mock {
+            on(it.getCurrentUser()) doReturn currentUser
+        }
         val db: ChatDatabase = mock {
             on { userDao() } doReturn mock()
             on { channelConfigDao() } doReturn mock()
@@ -56,12 +58,12 @@ internal class ChatDomainImplTest {
 
     @Test
     fun `When create a new channel without author should set current user as author and return channel with author`() =
-        testCoroutines.scope.runBlockingTest {
+         testCoroutines.scope.runBlockingTest {
             val newChannel = randomChannel(cid = "channelType:channelId", createdBy = User())
 
             val result = sut.createNewChannel(newChannel)
 
             result.isSuccess shouldBeEqualTo true
-            result.data().createdBy shouldBeEqualTo sut.user.value
+            sut.user.value shouldBeEqualTo result.data().createdBy
         }
 }

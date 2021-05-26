@@ -141,7 +141,7 @@ internal class ChatDomainImpl internal constructor(
     override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
-    internal var backgroundSyncEnabled: Boolean = false,
+    backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
 ) : ChatDomain {
     internal constructor(
@@ -244,7 +244,7 @@ internal class ChatDomainImpl internal constructor(
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
-    private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
+    internal var offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 
     private fun clearState() {
         _initialized.value = false
@@ -987,6 +987,7 @@ internal class ChatDomainImpl internal constructor(
         scope(scope)
         defaultConfig(defaultConfig)
         setOfflineEnabled(false)
+        database(db)
     }.build()
 
     companion object {

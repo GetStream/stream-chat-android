@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class DeleteMessageTest : BaseConnectedMockedTest() {
 
-    // @Test
+    @Test
     fun `Given a message was sent When deleting the message Should return the deleted message`() {
         runBlockingTest {
             val message = data.createMessage()
