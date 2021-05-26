@@ -767,7 +767,12 @@ internal class ChatDomainImpl internal constructor(
                 // TODO: 1.1 image upload support
                 repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+                repos.insertMessage(
+                    message.copy(
+                        syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                        updatedLocallyAt = Date(),
+                    ),
+                )
             }
         }
 
