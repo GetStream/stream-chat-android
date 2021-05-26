@@ -126,7 +126,7 @@ dependencies {
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.androidxPreferences
     implementation Dependencies.constraintLayout
-    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.materialComponents
 
     implementation Dependencies.navigationRuntimeKTX
