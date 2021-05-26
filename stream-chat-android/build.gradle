@@ -67,7 +67,7 @@ dependencies {
     implementation Dependencies.androidxLifecycleViewModelKtx
     implementation Dependencies.androidxMedia
     implementation Dependencies.constraintLayout
-    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxFragmentKtx
     api Dependencies.androidxRecyclerview
 
     implementation Dependencies.drawabletoolbox

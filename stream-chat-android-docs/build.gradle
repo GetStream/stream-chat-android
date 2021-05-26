@@ -73,7 +73,7 @@ android {
 dependencies {
     implementation project(":stream-chat-android-ui-components")
     implementation Dependencies.constraintLayout
-    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
