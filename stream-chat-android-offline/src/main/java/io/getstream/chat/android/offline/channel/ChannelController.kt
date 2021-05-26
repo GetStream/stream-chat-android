@@ -592,10 +592,7 @@ public class ChannelController internal constructor(
 
         newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-        newMessage.syncStatus = SyncStatus.IN_PROGRESS
-        if (!online) {
-            newMessage.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
 
         var uploadStatusMessage: Message? = null
 
@@ -698,7 +695,8 @@ public class ChannelController internal constructor(
                 SyncStatus.FAILED_PERMANENTLY
             } else {
                 SyncStatus.SYNC_NEEDED
-            }
+            },
+            updatedLocallyAt = Date(),
         )
 
         upsertMessage(failedMessage)
@@ -927,10 +925,18 @@ public class ChannelController internal constructor(
     }
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val copy = _messages.value
-        return copy + messageHelper.updateValidAttachmentsUrl(messages, copy)
-            .filterNot { (copy[it.id]?.lastUpdateTime() ?: NEVER.time) > it.lastUpdateTime() }
+        val currentMessages = _messages.value
+        return currentMessages + messageHelper.updateValidAttachmentsUrl(messages, currentMessages)
+            .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
+    }
+
+    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
+        return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
+            currentMessage?.lastUpdateTime() ?: NEVER.time <= newMessage.lastUpdateTime()
+        } else {
+            currentMessage?.lastLocalUpdateTime() ?: NEVER.time <= newMessage.lastLocalUpdateTime()
+        }
     }
 
     private fun upsertMessages(messages: List<Message>) {
@@ -1307,13 +1313,7 @@ public class ChannelController internal constructor(
         val online = domainImpl.isOnline()
         val messageToBeEdited = message.copy()
 
-        // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
-        messageToBeEdited.apply {
-            val now = Date()
-            if (updatedAt == null || updatedAt!!.before(now)) {
-                updatedAt = now
-            }
-        }
+        messageToBeEdited.updatedLocallyAt = Date()
 
         messageToBeEdited.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
@@ -1346,7 +1346,8 @@ public class ChannelController internal constructor(
                         SyncStatus.FAILED_PERMANENTLY
                     } else {
                         SyncStatus.SYNC_NEEDED
-                    }
+                    },
+                    updatedLocallyAt = Date(),
                 )
 
                 upsertMessage(failedMessage)
@@ -1459,10 +1460,16 @@ public class ChannelController internal constructor(
 
     private fun Message.lastUpdateTime(): Long = listOfNotNull(
         createdAt,
-        createdLocallyAt,
         updatedAt,
+        deletedAt,
+    ).map { it.time }
+        .maxOrNull()
+        ?: NEVER.time
+
+    private fun Message.lastLocalUpdateTime(): Long = listOfNotNull(
+        createdLocallyAt,
         updatedLocallyAt,
-        deletedAt
+        deletedAt,
     ).map { it.time }
         .maxOrNull()
         ?: NEVER.time

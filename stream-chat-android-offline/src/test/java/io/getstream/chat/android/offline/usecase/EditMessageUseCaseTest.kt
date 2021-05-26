@@ -31,7 +31,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
 
-        whenever(clientMock.updateMessage(any())) doReturn TestCall(Result(updatedMessage))
+        whenever(clientMock.updateMessage(any())) doReturn TestCall(Result(updatedMessage.copy()))
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
