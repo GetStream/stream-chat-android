@@ -73,7 +73,7 @@ private const val THREETENABP_VERSION = "1.3.1"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1.3"
 private const val WORK_VERSION = "2.5.0"
-private const val DOKKASAURUS_VERSION = "0.1.8"
+private const val DOKKASAURUS_VERSION = "0.1.9"
 
 object Dependencies {
     const val androidGradlePlugin = "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION"
