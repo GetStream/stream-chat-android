@@ -367,6 +367,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
+	public final fun getLogger ()Lio/getstream/chat/android/client/logger/TaggedLogger;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;

@@ -745,6 +745,7 @@ public final class com/getstream/sdk/chat/view/channels/ChannelsView : android/w
 	public final fun setPaginationEnabled (Z)V
 	public final fun setViewHolderFactory (Lcom/getstream/sdk/chat/adapter/ChannelViewHolderFactory;)V
 	public final fun showEmptyStateView ()V
+	public final fun showErrorView (Ljava/lang/String;)V
 	public final fun showLoadingView ()V
 }
 
@@ -915,6 +916,17 @@ public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$P
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
+}
+
+public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Error : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Error;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Error;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State$Loading : com/getstream/sdk/chat/viewmodel/channels/ChannelsViewModel$State {

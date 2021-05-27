@@ -336,6 +336,10 @@ public final class io/getstream/chat/android/client/api/models/NeutralFilterObje
 	public static final field INSTANCE Lio/getstream/chat/android/client/api/models/NeutralFilterObject;
 }
 
+public final class io/getstream/chat/android/client/api/models/NoneFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
+	public static final field INSTANCE Lio/getstream/chat/android/client/api/models/NoneFilterObject;
+}
+
 public final class io/getstream/chat/android/client/api/models/NorFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
 	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
@@ -2304,6 +2308,7 @@ public final class io/getstream/chat/android/client/models/Filters {
 	public static final fun nin (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun none ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nor ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun notExists (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun or ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
