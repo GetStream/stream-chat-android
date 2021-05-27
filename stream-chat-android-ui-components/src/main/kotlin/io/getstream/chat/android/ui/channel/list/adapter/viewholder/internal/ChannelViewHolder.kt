@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -253,7 +254,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message) {
         when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.WAIT_ATTACHMENTS -> {
                 messageStatusImageView.setImageDrawable(style.indicatorPendingSyncIcon)
             }
 
@@ -264,7 +265,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             SyncStatus.FAILED_PERMANENTLY -> {
                 // no direction on this yet
             }
-        }
+        }.exhaustive
     }
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {

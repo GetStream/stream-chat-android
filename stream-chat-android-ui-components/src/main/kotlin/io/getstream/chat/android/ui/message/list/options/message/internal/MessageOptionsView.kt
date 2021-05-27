@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
@@ -112,10 +113,10 @@ internal class MessageOptionsView : FrameLayout {
             SyncStatus.COMPLETED -> {
                 // Empty
             }
-            SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS -> {
+            SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS, SyncStatus.WAIT_ATTACHMENTS -> {
                 binding.threadReplyTV.isVisible = false
             }
-        }
+        }.exhaustive
 
         configureCopyMessage(iconsTint, configuration, style)
 

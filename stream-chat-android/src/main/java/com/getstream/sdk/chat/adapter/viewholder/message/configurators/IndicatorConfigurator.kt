@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.ReadStateStyle
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.core.internal.exhaustive
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -53,7 +54,7 @@ internal class IndicatorConfigurator(
         }
 
         when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.WAIT_ATTACHMENTS -> {
                 binding.pbDeliver.isVisible = true
                 binding.ivDeliver.isVisible = false
             }
@@ -65,7 +66,7 @@ internal class IndicatorConfigurator(
                 binding.pbDeliver.isVisible = false
                 binding.ivDeliver.isVisible = false
             }
-        }
+        }.exhaustive
 
         if (message.text.isEmpty()) {
             binding.itemMessageContainer.updateConstraints {

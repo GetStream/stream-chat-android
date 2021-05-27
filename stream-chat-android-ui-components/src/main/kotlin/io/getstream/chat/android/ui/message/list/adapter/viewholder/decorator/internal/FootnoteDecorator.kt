@@ -183,7 +183,9 @@ internal class FootnoteDecorator(
             data.message.isDeleted() -> footnoteView.hideStatusIndicator()
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
-                SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> footnoteView.showStatusIndicator(style.iconIndicatorPendingSync)
+                SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.WAIT_ATTACHMENTS -> footnoteView.showStatusIndicator(
+                    style.iconIndicatorPendingSync
+                )
                 SyncStatus.COMPLETED -> {
                     if (data.isMessageRead) footnoteView.showStatusIndicator(style.iconIndicatorRead)
                     else footnoteView.showStatusIndicator(style.iconIndicatorSent)

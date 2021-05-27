@@ -35,3 +35,7 @@ internal fun Message.users(): List<User> {
 internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {
     return user.id != currentUserId && !silent && !shadowed
 }
+
+internal fun Message.isEphemeral(): Boolean = type == "ephemeral"
+
+internal fun Message.hasAttachments(): Boolean = attachments.isNotEmpty()

@@ -8,7 +8,9 @@ public enum class SyncStatus(public val status: Int) {
     /** after the retry strategy we still failed to sync this */
     FAILED_PERMANENTLY(2),
     /** when sync is in progress */
-    IN_PROGRESS(3);
+    IN_PROGRESS(3),
+    /** when message waits its' attachments to be sent */
+    WAIT_ATTACHMENTS(4);
 
     public companion object {
         private val map = values().associateBy(SyncStatus::status)

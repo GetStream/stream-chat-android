@@ -25,7 +25,6 @@ internal class MessageSender(
     internal suspend fun sendMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
-        val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
         if (newMessage.id.isEmpty()) {
@@ -44,13 +43,10 @@ internal class MessageSender(
 
         newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-        newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+        newMessage.syncStatus =
+            if (newMessage.hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
 
-        var uploadStatusMessage: Message? = null
-
-        if (hasAttachments) {
-            uploadStatusMessage = newMessage
-        }
+        val ephemeralUploadStatusMessage: Message? = if (message.isEphemeral()) newMessage else null
 
         // Update flow in channel controller
         channelController.upsertMessage(newMessage)
@@ -66,12 +62,12 @@ internal class MessageSender(
 
         return if (online) {
             // upload attachments
-            if (hasAttachments) {
+            if (newMessage.hasAttachments()) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
 
                 newMessage.attachments = channelController.uploadAttachments(newMessage).toMutableList()
 
-                uploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
+                ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
             }
 
             newMessage.type = "regular"
