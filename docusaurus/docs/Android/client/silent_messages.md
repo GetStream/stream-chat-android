@@ -1,5 +1,5 @@
 ---
-id: clientSilentMessages
+id: client-silent-messages
 title: Silent Messages
 sidebar_position: 21
 ---

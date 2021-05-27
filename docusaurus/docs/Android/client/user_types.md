@@ -1,5 +1,5 @@
 ---
-id: clientUserTypes
+id: client-user-types
 title: User Types
 sidebar_position: 4
 ---

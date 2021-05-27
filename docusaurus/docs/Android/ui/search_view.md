@@ -1,5 +1,5 @@
 ---
-id: uiSearchView
+id: ui-search-view
 title: Search View
 sidebar_position: 5
 ---

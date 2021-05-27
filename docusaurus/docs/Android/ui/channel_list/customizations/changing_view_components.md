@@ -1,5 +1,5 @@
 ---
-id: uiChannelListChangingChannelListViewComponents
+id: ui-channel-list-changing-channel-list-view-components
 title: Changing Channel List View Components
 sidebar_position: 2
 ---

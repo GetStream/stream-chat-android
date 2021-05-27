@@ -7,6 +7,7 @@
 - Updated Room version to 2.3.0
 - Updated Firebase, AndroidX, and other dependency versions to latest, [see here](https://github.com/GetStream/stream-chat-android/pull/1895) for more details
 - Marked many library interfaces that should not be implemented by clients as [sealed](https://kotlinlang.org/docs/sealed-classes.html)
+- Removed Fresco, PhotoDraweeView, and FrescoImageViewer dependencies (replaced by StfalconImageViewer)
 
 ### ✅ Added
 
@@ -19,6 +20,8 @@
 ### 🐞 Fixed
 - Fixing filter for draft channels. Those channels were not showing in the results, even when the user asked for them. Now this is fixed and the draft channels can be included in the `ChannelsView`.
 - Fixed link preview UI issues in old-ui package
+- Fixed crashes when opening the image gallery.
+
 ### ⬆️ Improved
 
 ### ✅ Added

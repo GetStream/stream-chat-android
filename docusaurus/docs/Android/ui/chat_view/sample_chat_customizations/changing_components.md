@@ -1,5 +1,5 @@
 ---
-id: uiSampleChatCustomizationsChangingComponents
+id: ui-sample-chat-customizations-changing-components
 title: Changing Components
 
 sidebar_position: 1

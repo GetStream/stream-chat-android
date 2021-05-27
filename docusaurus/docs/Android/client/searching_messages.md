@@ -1,5 +1,5 @@
 ---
-id: clientSearchingMessages
+id: client-searching-messages
 title: Searching Messages
 sidebar_position: 20
 ---
