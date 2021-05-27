@@ -72,7 +72,7 @@ public data class ChannelListViewStyle(
 
                 val moreOptionsEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiChannelOptionsEnabled,
-                    true
+                    false
                 )
 
                 val deleteEnabled = a.getBoolean(

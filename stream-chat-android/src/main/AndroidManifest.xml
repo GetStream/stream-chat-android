@@ -9,12 +9,5 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application android:networkSecurityConfig="@xml/network_security_config">
-        <provider
-            android:authorities="${applicationId}.FrescoContentProvider"
-            android:name=".utils.frescoimageviewer.FrescoContentProvider"
-            android:enabled="true"
-            android:exported="false"
-            />
-    </application>
+    <application android:networkSecurityConfig="@xml/network_security_config" />
 </manifest>

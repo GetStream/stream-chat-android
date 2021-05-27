@@ -37,13 +37,12 @@ class MentionsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupOnClickListeners()
-
         viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
         binding.mentionsListView.setMentionSelectedListener { message ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
                 .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
         }
+        setupOnClickListeners()
     }
 
     private fun setupOnClickListeners() {

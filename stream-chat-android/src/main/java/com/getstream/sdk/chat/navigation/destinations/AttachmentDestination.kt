@@ -2,12 +2,14 @@ package com.getstream.sdk.chat.navigation.destinations
 
 import android.content.Context
 import android.content.Intent
+import android.widget.ImageView
 import android.widget.Toast
+import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer
 import com.getstream.sdk.chat.view.activity.AttachmentActivity
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity
+import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -117,8 +119,9 @@ public open class AttachmentDestination(
 
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        ImageViewer.Builder(context, imageUrls)
-            .setStartPosition(
+        StfalconImageViewer
+            .Builder(context, imageUrls, ImageView::load)
+            .withStartPosition(
                 if (attachmentIndex in imageUrls.indices) attachmentIndex else 0
             )
             .show()
