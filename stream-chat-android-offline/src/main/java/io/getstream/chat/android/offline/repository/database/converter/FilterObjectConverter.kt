@@ -93,7 +93,6 @@ private fun FilterObject.toMap(): Map<*, *> = when (this) {
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf(KEY_AUTOCOMPLETE to this.value))
     is DistinctFilterObject -> mapOf(KEY_DISTINCT to true, KEY_MEMBERS to this.memberIds)
     is NeutralFilterObject -> emptyMap<String, String>()
-    is NoneFilterObject -> emptyMap<String, String>()
 }
 
 private const val KEY_EXIST: String = "\$exists"

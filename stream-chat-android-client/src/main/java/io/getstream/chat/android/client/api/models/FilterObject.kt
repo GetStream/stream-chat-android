@@ -19,4 +19,3 @@ public data class InFilterObject internal constructor(val fieldName: String, val
 public data class NotInFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
 public data class DistinctFilterObject internal constructor(val memberIds: Set<String>) : FilterObject()
 public object NeutralFilterObject : FilterObject()
-public object NoneFilterObject : FilterObject()

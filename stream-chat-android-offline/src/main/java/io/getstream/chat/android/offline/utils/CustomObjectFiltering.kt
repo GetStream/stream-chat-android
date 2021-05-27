@@ -69,7 +69,6 @@ internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
                 channel.members.map { it.user.id }.containsAll(memberIds)
         } ?: false
         NeutralFilterObject -> true
-        NoneFilterObject -> false
     }
 } catch (e: ClassCastException) {
     false
