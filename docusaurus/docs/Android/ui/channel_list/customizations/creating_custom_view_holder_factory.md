@@ -1,5 +1,5 @@
 ---
-id: uiChannelListCreatingCustomViewHolderFactory
+id: ui-channel-list-creating-custom-view-holder-factory
 title: Creating Custom View Holder Factory
 sidebar_position: 3
 ---

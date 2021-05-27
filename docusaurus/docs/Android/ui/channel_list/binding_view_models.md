@@ -1,5 +1,5 @@
 ---
-id: uiChannelListBindingViewModels
+id: ui-channel-list-binding-view-models
 title: Binding View Models
 sidebar_position: 2
 ---

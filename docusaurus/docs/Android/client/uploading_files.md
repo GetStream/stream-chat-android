@@ -1,5 +1,5 @@
 ---
-id: clientUploadingFiles
+id: client-uploading-files
 title: Uploading Files
 sidebar_position: 17
 ---

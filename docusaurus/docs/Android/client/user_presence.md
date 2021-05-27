@@ -1,5 +1,5 @@
 ---
-id: clientUserPresence
+id: client-user-presence
 title: User Presence
 sidebar_position: 5
 ---

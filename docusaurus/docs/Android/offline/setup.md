@@ -1,5 +1,5 @@
 ---
-id: offlineSetup
+id: offline-setup
 title: Setup
 sidebar_position: 1
 ---

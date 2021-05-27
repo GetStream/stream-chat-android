@@ -27,6 +27,7 @@ private const val COROUTINES_VERSION = "1.5.0"
 private const val DEXTER_VERSION = "6.2.2"
 private const val DRAWABLETOOLBOX_VERSION = "1.0.7"
 private const val DOKKA_VERSION = "1.4.32"
+private const val DOKKASAURUS_VERSION = "0.1.9"
 private const val DOTENV_VERSION = "5.2.2"
 private const val ESPRESSO_VERSION = "3.3.0"
 private const val EXOMEDIA_VERSION = "743fa9757c" // TODO fix when proper release is available
@@ -73,7 +74,6 @@ private const val THREETENABP_VERSION = "1.3.1"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1.3"
 private const val WORK_VERSION = "2.5.0"
-private const val DOKKASAURUS_VERSION = "0.1.8"
 
 object Dependencies {
     const val androidGradlePlugin = "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN_VERSION"
@@ -109,6 +109,7 @@ object Dependencies {
     const val dexter = "com.karumi:dexter:$DEXTER_VERSION"
     const val drawabletoolbox = "com.github.duanhong169:drawabletoolbox:$DRAWABLETOOLBOX_VERSION"
     const val dokka = "org.jetbrains.dokka:dokka-gradle-plugin:$DOKKA_VERSION"
+    const val dokkasaurus = "io.getstream:dokkasaurus:$DOKKASAURUS_VERSION"
     const val dotenv = "io.github.cdimascio:java-dotenv:$DOTENV_VERSION"
     const val espressoCore = "androidx.test.espresso:espresso-core:$ESPRESSO_VERSION"
     const val exoMedia = "com.github.brianwernick:ExoMedia:$EXOMEDIA_VERSION"
@@ -178,7 +179,6 @@ object Dependencies {
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:$WORK_VERSION"
     const val workTesting = "androidx.work:work-testing:$WORK_VERSION"
-    const val dokkasaurus = "io.getstream:dokkasaurus:$DOKKASAURUS_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsUrlSigner
+id: ui-global-customizations-url-signer
 title: UrlSigner
 sidebar_position: 3
 ---

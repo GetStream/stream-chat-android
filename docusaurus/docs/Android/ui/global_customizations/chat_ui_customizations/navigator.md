@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsNavigator
+id: ui-global-customizations-navigator
 title: Navigator
 sidebar_position: 2
 ---

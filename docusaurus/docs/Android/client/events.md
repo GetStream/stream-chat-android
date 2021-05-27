@@ -1,5 +1,5 @@
 ---
-id: clientReactions
+id: client-reactions
 title: Reactions
 sidebar_position: 25
 ---
