@@ -1,5 +1,5 @@
 ---
-id: clientThreadAndReplies
+id: client-thread-and-replies
 title: Threads and Replies
 sidebar_position: 19
 ---

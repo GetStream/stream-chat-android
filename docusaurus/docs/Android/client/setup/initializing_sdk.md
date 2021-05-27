@@ -1,5 +1,5 @@
 ---
-id: clientInitializingSDK
+id: client-initializing-sdk
 title: Initializing SDK
 sidebar_position: 2
 ---

@@ -1,5 +1,5 @@
 ---
-id: uiAttachmentGallery
+id: ui-attachment-gallery
 title: Attachment Gallery
 sidebar_position: 6
 ---

@@ -1,5 +1,5 @@
 ---
-id: clientSdkCallingSdkMethods
+id: client-sdk-calling-sdk-methods
 title: Calling SDK Methods
 sidebar_position: 3
 ---

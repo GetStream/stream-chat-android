@@ -1,5 +1,5 @@
 ---
-id: uiBindingChatViewModels
+id: ui-binding-chat-view-models
 title: Binding Chat View Models
 sidebar_position: 2
 ---

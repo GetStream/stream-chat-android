@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsAvatarBitmapFactory
+id: ui-global-customizations-avatar-bitmap-factory
 title: Avatar Bitmap Factory
 sidebar_position: 6
 ---

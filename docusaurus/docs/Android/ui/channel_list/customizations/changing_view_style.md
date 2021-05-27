@@ -1,5 +1,5 @@
 ---
-id: uiChannelListCustomizationsChangingStyle
+id: ui-channel-list-customizations-changing-style
 title: Changing Channel List View Style
 sidebar_position: 1
 ---

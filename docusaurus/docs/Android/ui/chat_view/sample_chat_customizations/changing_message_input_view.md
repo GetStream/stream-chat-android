@@ -1,5 +1,5 @@
 ---
-id: uiSampleChatCustomizationsChangingMessageInputView
+id: ui-sample-chat-customizations-changing-message-input-view
 title: Changing Message Input View
 
 sidebar_position: 2

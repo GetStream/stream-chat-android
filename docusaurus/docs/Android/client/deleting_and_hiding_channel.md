@@ -1,5 +1,5 @@
 ---
-id: clientDeletingAndHidingChannel
+id: client-deleting-and-hiding-channel
 title: Deleting and Hiding a Channel
 sidebar_position: 13
 ---

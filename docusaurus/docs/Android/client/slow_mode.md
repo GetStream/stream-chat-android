@@ -1,5 +1,5 @@
 ---
-id: clientSlowMode
+id: client-slow-mode
 title: Slow mode
 sidebar_position: 14
 ---

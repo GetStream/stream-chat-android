@@ -1,5 +1,5 @@
 ---
-id: clientMutingChannels
+id: client-muting-channels
 title: Muting Channels
 sidebar_position: 12
 ---
