@@ -1,6 +1,6 @@
 ---
-id: client-reactions
-title: Reactions
+id: client-events
+title: Events
 sidebar_position: 25
 ---
 ## Listening for Channel Events
