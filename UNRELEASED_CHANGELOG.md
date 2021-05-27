@@ -94,5 +94,8 @@ Fixed bug when for some video attachments activity with media player wasn't show
 ### ✅ Added
 
 ### ⚠️ Changed
+- Swipe options of `ChannelListView` component:
+    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it. 
+    - "Channel delete" option has now default implementation. Clicking on the "delete" icon shows AlertDialog asking to confirm Channel deletion operation.
 
 ### ❌ Removed
