@@ -35,23 +35,20 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter() {
-            content {
-                // Remove when https://github.com/ongakuer/PhotoDraweeView/issues/81 is closed
-                includeModule("me.relex", "photodraweeview")
-            }
-        }
         maven {
             url "https://jitpack.io"
             content {
                 includeModule("com.github.chrisbanes", "PhotoView")
                 includeModule("com.github.duanhong169", "drawabletoolbox")
 
-                // Remove when https://github.com/mrmike/Ok2Curl/issues/60 is closed
+                // https://github.com/mrmike/Ok2Curl/issues/60
                 includeModule("com.github.mrmike", "ok2curl")
 
-                // Remove when https://github.com/brianwernick/ExoMedia/issues/723 is closed
+                // https://github.com/brianwernick/ExoMedia/issues/723
                 includeModule("com.github.brianwernick", "ExoMedia")
+
+                // https://github.com/stfalcon-studio/StfalconImageViewer/issues/69
+                includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
             }
         }
     }
