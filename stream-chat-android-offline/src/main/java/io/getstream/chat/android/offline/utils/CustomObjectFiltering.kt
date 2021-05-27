@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.InFilterObject
 import io.getstream.chat.android.client.api.models.LessThanFilterObject
 import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NoneFilterObject
 import io.getstream.chat.android.client.api.models.NorFilterObject
 import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotExistsFilterObject

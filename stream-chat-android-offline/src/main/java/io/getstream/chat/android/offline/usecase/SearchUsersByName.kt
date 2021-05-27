@@ -22,7 +22,8 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
     @VisibleForTesting
     internal fun defaultUsersQueryFilter(userId: String): FilterObject {
         return Filters.and(
-            Filters.ne(FIELD_NAME, ""), Filters.ne(FIELD_ID, userId)
+            Filters.ne(FIELD_NAME, ""),
+            Filters.ne(FIELD_ID, userId)
         )
     }
 
