@@ -112,7 +112,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> = channelControllerStateFlow.sendMessage(message, attachmentTransformer)
 
-    suspend fun cancelMessage(message: Message): Result<Boolean> = channelControllerStateFlow.cancelMessage(message)
+    suspend fun cancelMessage(message: Message): Result<Boolean> = channelControllerStateFlow.cancelEphemeralMessage(message)
 
     suspend fun sendGiphy(message: Message): Result<Message> = channelControllerStateFlow.sendGiphy(message)
     suspend fun shuffleGiphy(message: Message): Result<Message> = channelControllerStateFlow.shuffleGiphy(message)

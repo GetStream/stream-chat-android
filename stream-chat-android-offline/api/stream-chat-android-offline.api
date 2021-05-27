@@ -551,6 +551,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
 }
 
 public final class io/getstream/chat/android/offline/channel/ChannelController {
+	public static final field Companion Lio/getstream/chat/android/offline/channel/ChannelController$Companion;
 	public final fun clean ()V
 	public final fun getChannelData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelId ()Ljava/lang/String;

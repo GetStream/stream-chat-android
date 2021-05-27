@@ -64,6 +64,7 @@ import io.getstream.chat.android.offline.extensions.removeMyReaction
 import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.wasCreatedAfter
 import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
+import io.getstream.chat.android.offline.message.MessageSender
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -79,7 +80,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Exception
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -562,75 +562,75 @@ public class ChannelController internal constructor(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
-        val online = domainImpl.isOnline()
-        val newMessage = message.copy()
-        val hasAttachments = newMessage.attachments.isNotEmpty()
+        if (attachmentTransformer != null) {
+            val online = domainImpl.isOnline()
+            val newMessage = message.copy()
+            val hasAttachments = newMessage.attachments.isNotEmpty()
 
-        // set defaults for id, cid and created at
-        if (newMessage.id.isEmpty()) {
-            newMessage.id = domainImpl.generateMessageId()
-        }
-        if (newMessage.cid.isEmpty()) {
-            newMessage.enrichWithCid(cid)
-        }
-
-        newMessage.user = domainImpl.currentUser
-
-        newMessage.attachments.forEach { attachment ->
-            attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress
-        }
-
-        newMessage.type = getMessageType(message)
-        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-        newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-
-        var uploadStatusMessage: Message? = null
-
-        if (hasAttachments) {
-            uploadStatusMessage = newMessage
-        }
-
-        // Update flow in channel controller
-        upsertMessage(newMessage)
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        for (query in domainImpl.getActiveQueries()) {
-            query.refreshChannel(cid)
-        }
-
-        // we insert early to ensure we don't lose messages
-        domainImpl.repos.insertMessage(newMessage)
-        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-
-        return if (online) {
-            // upload attachments
-            if (hasAttachments) {
-                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
-
-                newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
-
-                uploadStatusMessage?.let { cancelMessage(it) }
+            // set defaults for id, cid and created at
+            if (newMessage.id.isEmpty()) {
+                newMessage.id = domainImpl.generateMessageId()
+            }
+            if (newMessage.cid.isEmpty()) {
+                newMessage.enrichWithCid(cid)
             }
 
-            newMessage.type = "regular"
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+            newMessage.user = domainImpl.currentUser
 
-            logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
+            newMessage.attachments.forEach { attachment ->
+                attachment.uploadId = generateUploadId()
+                attachment.uploadState = Attachment.UploadState.InProgress
+            }
 
-            if (result.isSuccess) {
-                handleSendAttachmentSuccess(result.data())
+            newMessage.type = getMessageType(message)
+            newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
+            newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+
+            var uploadStatusMessage: Message? = null
+
+            if (hasAttachments) {
+                uploadStatusMessage = newMessage
+            }
+
+            // Update flow in channel controller
+            upsertMessage(newMessage)
+            // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+            // Update flow for currently running queries
+            for (query in domainImpl.getActiveQueries()) {
+                query.refreshChannel(cid)
+            }
+
+            // we insert early to ensure we don't lose messages
+            domainImpl.repos.insertMessage(newMessage)
+            domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+
+            return if (online) {
+                // upload attachments
+                if (hasAttachments) {
+                    logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
+                    newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
+
+                    uploadStatusMessage?.let { cancelEphemeralMessage(it) }
+                }
+
+                newMessage.type = "regular"
+                val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+
+                logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
+
+                if (result.isSuccess) {
+                    handleSendAttachmentSuccess(result.data())
+                } else {
+                    handleSendAttachmentFail(newMessage, result.error())
+                }
             } else {
-                handleSendAttachmentFail(newMessage, result.error())
+                logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
+                Result(newMessage)
             }
         } else {
-            logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
-            Result(newMessage)
+            return MessageSender(cid, domainImpl, this, channelClient).sendMessage(message)
         }
-    }
-
-    private fun generateUploadId(): String {
-        return "upload_id_${UUID.randomUUID()}"
     }
 
     internal suspend fun uploadAttachments(
@@ -664,7 +664,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
+    internal suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
         processedMessage.apply {
             enrichWithCid(this.cid)
             syncStatus = SyncStatus.COMPLETED
@@ -675,7 +675,7 @@ public class ChannelController internal constructor(
         return Result(processedMessage)
     }
 
-    private suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
+    internal suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
         logger.logE(
             "Failed to send message with id ${message.id} and text ${message.text}: $error",
             error
@@ -695,25 +695,11 @@ public class ChannelController internal constructor(
         return Result(error)
     }
 
-    // TODO: type should be a sealed/class or enum at the client level
-    private fun getMessageType(message: Message): String {
-        val hasAttachments = message.attachments.isNotEmpty()
-        val hasAttachmentsToUpload = message.attachments.any { attachment ->
-            attachment.uploadState is Attachment.UploadState.InProgress
-        }
-
-        return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
-            "ephemeral"
-        } else {
-            "regular"
-        }
-    }
-
     /**
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
      */
-    internal suspend fun cancelMessage(message: Message): Result<Boolean> {
+    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
         if ("ephemeral" != message.type) {
             throw IllegalArgumentException("Only ephemeral message can be canceled")
         }
@@ -930,7 +916,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    private fun upsertMessages(messages: List<Message>) {
+    internal fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
         _messages.value = newMessages
@@ -1493,7 +1479,7 @@ public class ChannelController internal constructor(
         public data class Result(val messages: List<Message>) : MessagesState()
     }
 
-    private companion object {
+    internal companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private const val MESSAGE_ACTION_SEND = "send"
@@ -1502,5 +1488,23 @@ public class ChannelController internal constructor(
         private const val TYPE_FILE = "file"
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
         private const val OFFSET_EVENT_TIME = 5L
+
+        internal fun generateUploadId(): String {
+            return "upload_id_${UUID.randomUUID()}"
+        }
+
+        // TODO: type should be a sealed/class or enum at the client level
+        internal fun getMessageType(message: Message): String {
+            val hasAttachments = message.attachments.isNotEmpty()
+            val hasAttachmentsToUpload = message.attachments.any { attachment ->
+                attachment.uploadState is Attachment.UploadState.InProgress
+            }
+
+            return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
+                "ephemeral"
+            } else {
+                "regular"
+            }
+        }
     }
 }
