@@ -1,5 +1,5 @@
 ---
-id: clientUpdatingAChannel
+id: client-updating-a-channel
 title: Updating a Channel
 sidebar_position: 9
 ---

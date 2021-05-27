@@ -1,5 +1,5 @@
 ---
-id: clientWatchingChannel
+id: client-watching-channel
 title: Watching a Channel
 sidebar_position: 8
 ---

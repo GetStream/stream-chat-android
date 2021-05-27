@@ -1,5 +1,5 @@
 ---
-id: clientSdkQueryingUsers
+id: client-sdk-querying-users
 title: Querying Users
 sidebar_position: 4
 ---

@@ -1,5 +1,5 @@
 ---
-id: uiSampleChatCustomizationsChangingMessagesStyle
+id: ui-sample-chat-customizations-changing-messages-style
 title: Changing Messages Style
 
 sidebar_position: 3

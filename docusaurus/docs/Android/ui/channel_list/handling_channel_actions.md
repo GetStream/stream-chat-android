@@ -1,5 +1,5 @@
 ---
-id: uiChannelListHandlingChannelActions
+id: ui-channel-list-handling-channel-actions
 title: Handling Channel Actions
 sidebar_position: 3
 ---

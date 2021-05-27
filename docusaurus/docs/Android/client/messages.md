@@ -1,5 +1,5 @@
 ---
-id: clientMessages
+id: client-messages
 title: Messages
 sidebar_position: 15
 ---

@@ -1,5 +1,5 @@
 ---
-id: clientPinnedMessages
+id: client-pinned-messages
 title: Pinned Messages
 sidebar_position: 22
 ---

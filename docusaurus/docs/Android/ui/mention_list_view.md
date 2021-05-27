@@ -1,5 +1,5 @@
 ---
-id: uiMentionListView
+id: ui-mention-list-view
 title: Mention List View
 sidebar_position: 4
 ---

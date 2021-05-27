@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsTransformStyle
+id: ui-global-customizations-transform-style
 title: TransformStyle
 sidebar_position: 1
 ---

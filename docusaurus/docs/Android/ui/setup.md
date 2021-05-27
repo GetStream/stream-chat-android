@@ -1,5 +1,5 @@
 ---
-id: uiSetup
+id: ui-setup
 title: Setup
 sidebar_position: 1
 ---

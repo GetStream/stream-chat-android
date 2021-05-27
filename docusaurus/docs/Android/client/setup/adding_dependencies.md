@@ -1,5 +1,5 @@
 ---
-id: clientAddingDependencies
+id: client-adding-dependencies
 title: Adding Dependencies
 sidebar_position: 1
 ---

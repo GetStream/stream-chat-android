@@ -1,5 +1,5 @@
 ---
-id: clientModerationTools
+id: client-moderation-tools
 title: Moderation Tools
 sidebar_position: 23
 ---

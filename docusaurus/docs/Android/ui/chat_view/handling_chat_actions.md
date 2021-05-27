@@ -1,5 +1,5 @@
 ---
-id: uiHandlingChatActions
+id: ui-handling-chat-actions
 title: Handling Chat Actions
 sidebar_position: 3
 ---

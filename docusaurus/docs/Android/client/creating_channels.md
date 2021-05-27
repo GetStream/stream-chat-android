@@ -1,5 +1,5 @@
 ---
-id: clientCreatingChannels
+id: client-creating-channels
 title: Creating Channels
 sidebar_position: 6
 ---
