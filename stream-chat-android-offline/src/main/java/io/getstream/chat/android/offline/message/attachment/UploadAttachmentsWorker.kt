@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.channel.attachment
+package io.getstream.chat.android.offline.message.attachment
 
 import android.content.Context
 import androidx.work.CoroutineWorker

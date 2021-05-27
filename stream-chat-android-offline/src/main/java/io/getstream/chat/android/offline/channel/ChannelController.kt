@@ -55,16 +55,19 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.extensions.NEVER
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
-import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
-import io.getstream.chat.android.offline.extensions.wasCreatedAfter
-import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.message.MessageSender
+import io.getstream.chat.android.offline.message.NEVER
+import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
+import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
+import io.getstream.chat.android.offline.message.attachment.generateUploadId
+import io.getstream.chat.android.offline.message.getMessageType
+import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.wasCreatedAfter
+import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -82,9 +85,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Calendar
 import java.util.Date
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.regex.Pattern
 import kotlin.math.max
 
 public class ChannelController internal constructor(
@@ -93,15 +94,15 @@ public class ChannelController internal constructor(
     private val client: ChatClient,
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
-    private val messageHelper: MessageHelper = MessageHelper(),
+    private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
 ) {
     internal constructor(
         channelType: String,
         channelId: String,
         client: ChatClient,
         domain: ChatDomain,
-        messageHelper: MessageHelper = MessageHelper(),
-    ) : this(channelType, channelId, client, domain as ChatDomainImpl, messageHelper)
+        attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    ) : this(channelType, channelId, client, domain as ChatDomainImpl, attachmentUrlValidator)
 
     private val editJobs = mutableMapOf<String, Job>()
 
@@ -903,7 +904,7 @@ public class ChannelController internal constructor(
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val currentMessages = _messages.value
-        return currentMessages + messageHelper.updateValidAttachmentsUrl(messages, currentMessages)
+        return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
     }
@@ -1486,25 +1487,6 @@ public class ChannelController internal constructor(
         private const val TYPE_IMAGE = "image"
         private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
-        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
         private const val OFFSET_EVENT_TIME = 5L
-
-        internal fun generateUploadId(): String {
-            return "upload_id_${UUID.randomUUID()}"
-        }
-
-        // TODO: type should be a sealed/class or enum at the client level
-        internal fun getMessageType(message: Message): String {
-            val hasAttachments = message.attachments.isNotEmpty()
-            val hasAttachmentsToUpload = message.attachments.any { attachment ->
-                attachment.uploadState is Attachment.UploadState.InProgress
-            }
-
-            return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
-                "ephemeral"
-            } else {
-                "regular"
-            }
-        }
     }
 }

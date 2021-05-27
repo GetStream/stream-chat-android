@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.extensions
+package io.getstream.chat.android.offline.message
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction

@@ -40,6 +40,7 @@ import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController

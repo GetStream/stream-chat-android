@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.MessageHelper
+import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -31,14 +31,14 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
         channelId: String,
         client: ChatClient,
         domainImpl: ChatDomainImpl,
-        messageHelper: MessageHelper = MessageHelper(),
+        attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     ) : this(
         ChannelControllerStateFlow(
             channelType,
             channelId,
             client,
             domainImpl.chatDomainStateFlow,
-            messageHelper
+            attachmentUrlValidator
         )
     )
 

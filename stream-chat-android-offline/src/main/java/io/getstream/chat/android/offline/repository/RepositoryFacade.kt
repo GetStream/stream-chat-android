@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.lastMessage
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.repository.domain.channel.ChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepository

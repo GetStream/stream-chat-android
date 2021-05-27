@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import java.util.Date
 
 internal class MessageSender(
@@ -37,11 +38,11 @@ internal class MessageSender(
         newMessage.user = requireNotNull(domainImpl.user.value)
 
         newMessage.attachments.forEach { attachment ->
-            attachment.uploadId = ChannelController.generateUploadId()
+            attachment.uploadId = generateUploadId()
             attachment.uploadState = Attachment.UploadState.InProgress
         }
 
-        newMessage.type = ChannelController.getMessageType(message)
+        newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
 

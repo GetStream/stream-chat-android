@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.helpers.AttachmentHelper
+import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import org.amshove.kluent.shouldBeEqualTo
@@ -11,15 +12,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-internal class MessageHelperTests {
+internal class AttachmentUrlValidatorTests {
 
-    private lateinit var sut: MessageHelper
+    private lateinit var sut: AttachmentUrlValidator
     private lateinit var attachmentHelper: AttachmentHelper
 
     @BeforeEach
     fun setup() {
         attachmentHelper = mock()
-        sut = MessageHelper(attachmentHelper)
+        sut = AttachmentUrlValidator(attachmentHelper)
     }
 
     @Test
