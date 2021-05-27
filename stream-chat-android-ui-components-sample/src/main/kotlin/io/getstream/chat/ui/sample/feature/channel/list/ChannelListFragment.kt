@@ -49,6 +49,9 @@ class ChannelListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupOnClickListeners()
+        viewModel.bindView(binding.channelsView, viewLifecycleOwner)
+        searchViewModel.bindView(binding.searchResultListView, this)
+
         binding.channelsView.apply {
             view as ViewGroup // for use as a parent in inflation
 
@@ -101,8 +104,6 @@ class ChannelListFragment : Fragment() {
             setChannelLeaveClickListener { channel ->
                 viewModel.leaveChannel(channel)
             }
-
-            viewModel.bindView(this, viewLifecycleOwner)
         }
 
         binding.searchInputView.apply {
@@ -120,7 +121,6 @@ class ChannelListFragment : Fragment() {
             }
         }
 
-        searchViewModel.bindView(binding.searchResultListView, this)
         binding.searchResultListView.setSearchResultSelectedListener { message ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
                 .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))

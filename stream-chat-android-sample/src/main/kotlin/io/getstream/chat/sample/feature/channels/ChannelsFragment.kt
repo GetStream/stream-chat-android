@@ -22,7 +22,7 @@ import io.getstream.chat.sample.databinding.FragmentChannelsBinding
 
 class ChannelsFragment : Fragment() {
 
-    private val viewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
+    private val channelsViewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
 
     private var _binding: FragmentChannelsBinding? = null
     protected val binding get() = _binding!!
@@ -42,9 +42,9 @@ class ChannelsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.bindView(binding.channelsListView, viewLifecycleOwner)
+        channelsViewModel.bindView(binding.channelsListView, viewLifecycleOwner)
 
-        viewModel.state.observe(
+        channelsViewModel.state.observe(
             viewLifecycleOwner,
             Observer {
                 if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
@@ -78,7 +78,7 @@ class ChannelsFragment : Fragment() {
                         dialog.dismiss()
                     }
                     .setPositiveButton(R.string.confirm) { _, _ ->
-                        viewModel.hideChannel(channel)
+                        channelsViewModel.hideChannel(channel)
                     }.show()
             }
         )
@@ -98,12 +98,12 @@ class ChannelsFragment : Fragment() {
             when (it.itemId) {
                 R.id.item_log_out -> {
                     App.instance.userRepository.user = SampleUser.None
-                    viewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
+                    channelsViewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
                     true
                 }
 
                 R.id.mark_all_read -> {
-                    viewModel.markAllRead()
+                    channelsViewModel.markAllRead()
                     true
                 }
 

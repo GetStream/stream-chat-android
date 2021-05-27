@@ -165,6 +165,7 @@ class ChatFragment : Fragment() {
     private fun initMessagesViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
+            bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->
                 if (previousMessage == null) {
                     true
@@ -179,7 +180,6 @@ class ChatFragment : Fragment() {
                     shouldShowDateSeparator(calendar, previousMessage, message)
                 }
             }
-            bindView(binding.messageListView, viewLifecycleOwner)
             state.observe(viewLifecycleOwner) {
                 when (it) {
                     is MessageListViewModel.State.Loading -> Unit
