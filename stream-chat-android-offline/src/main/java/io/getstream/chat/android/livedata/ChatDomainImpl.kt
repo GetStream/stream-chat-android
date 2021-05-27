@@ -27,6 +27,7 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
+import io.getstream.chat.android.offline.ChatDomainImpl
 import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
@@ -69,7 +70,9 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
             chatDomainStateFlow.currentUser = value
         }
 
-    override val user: LiveData<User?> = chatDomainStateFlow.user.asLiveData()
+    override val user: LiveData<User?>
+        get() = (chatDomainStateFlow as ChatDomainImpl)._userLiveData
+
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override val useCases: UseCaseHelper = UseCaseHelper(this)

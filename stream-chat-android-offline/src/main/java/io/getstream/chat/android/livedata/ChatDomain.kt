@@ -638,8 +638,8 @@ public sealed interface ChatDomain {
 
         public fun build(): ChatDomain {
             val offlineChatDomain = offlineChatDomainBuilder.build()
-            ChatDomain.instance = buildImpl(offlineChatDomain)
-            return ChatDomain.instance()
+            instance = buildImpl(offlineChatDomain)
+            return instance()
         }
 
         internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomain): ChatDomainImpl {
