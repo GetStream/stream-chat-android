@@ -16,6 +16,10 @@
         <item quantity="one">%1d Member, %2d Online</item>
         <item quantity="other">%1d Members, %2d Online</item>
     </plurals>
+    <string name="stream_ui_channel_option_delete_confirmation_title">Delete Channel</string>
+    <string name="stream_ui_channel_option_delete_confirmation_message">Are you sure you want to permanently delete this message?</string>
+    <string name="stream_ui_channel_option_delete_positive_button">Delete</string>
+    <string name="stream_ui_channel_option_delete_negative_button">Cancel</string>
 
     <!--ChannelsHeaderView-->
     <string name="stream_ui_channels_header_view_online_title">Stream Chat</string>
