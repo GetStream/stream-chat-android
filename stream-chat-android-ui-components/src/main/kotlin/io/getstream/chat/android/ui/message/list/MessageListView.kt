@@ -22,8 +22,10 @@ import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -230,6 +232,15 @@ public class MessageListView : ConstraintLayout {
         AttachmentGalleryActivity.AttachmentDeleteOptionHandler { attachmentData ->
             realListener().onClick(attachmentData)
         }
+    }
+
+    private var errorEventHandler = ErrorEventHandler { errorEvent ->
+        when (errorEvent) {
+            is MessageListViewModel.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
+            is MessageListViewModel.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
+            is MessageListViewModel.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
+            is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
+        }.let(::showToast)
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
@@ -617,6 +628,10 @@ public class MessageListView : ConstraintLayout {
         emptyStateViewContainer.isVisible = false
     }
 
+    public fun showError(errorEvent: MessageListViewModel.ErrorEvent) {
+        errorEventHandler.onErrorEvent(errorEvent)
+    }
+
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
         scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
     }
@@ -959,6 +974,9 @@ public class MessageListView : ConstraintLayout {
         this._attachmentDeleteOptionHandler = handler
     }
 
+    public fun setErrorEventHandler(handler: ErrorEventHandler) {
+        this.errorEventHandler = handler
+    }
     //endregion
 
     //region Listener declarations
@@ -1077,6 +1095,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface AttachmentDownloadHandler {
         public fun onAttachmentDownload(attachment: Attachment)
+    }
+
+    public fun interface ErrorEventHandler {
+        public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
     }
     //endregion
 

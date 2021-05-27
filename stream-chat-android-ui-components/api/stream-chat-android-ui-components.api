@@ -1160,6 +1160,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setEndRegionReachedHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$EndRegionReachedHandler;)V
 	public final fun setEnterThreadListener (Lio/getstream/chat/android/ui/message/list/MessageListView$EnterThreadListener;)V
+	public final fun setErrorEventHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ErrorEventHandler;)V
 	public final fun setFlagMessageResultHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$FlagMessageResultHandler;)V
 	public final fun setGiphySendHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$GiphySendHandler;)V
 	public final fun setLastMessageReadHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$LastMessageReadHandler;)V
@@ -1195,6 +1196,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
 	public final fun showEmptyStateView ()V
+	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 	public final fun showLoadingView ()V
 }
 
@@ -1224,6 +1226,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$EnterThreadListener {
 	public abstract fun onThreadEntered (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$ErrorEventHandler {
+	public abstract fun onErrorEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$FlagMessageResultHandler {

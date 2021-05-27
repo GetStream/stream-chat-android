@@ -9,6 +9,8 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -21,6 +23,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import kotlin.properties.Delegates
+import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 /**
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
@@ -49,6 +52,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
     public val targetMessage: LiveData<Message> = _targetMessage
     private val _mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
+    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
+    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
     /**
      * Whether the user is viewing a thread
@@ -193,6 +198,9 @@ public class MessageListViewModel @JvmOverloads constructor(
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue { result ->
                     event.resultHandler(result)
+                    if (result.isError) {
+                        _errorEvents.postValue(EventWrapper(ErrorEvent.FlagMessageError(result.error())))
+                    }
                 }
             }
             is Event.GiphyActionSelected -> {
@@ -205,10 +213,14 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
-                client.muteUser(event.user.id).enqueue()
+                client.muteUser(event.user.id).enqueue(
+                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(it))) }
+                )
             }
             is Event.UnmuteUser -> {
-                client.unmuteUser(event.user.id).enqueue()
+                client.unmuteUser(event.user.id).enqueue(
+                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(it))) }
+                )
             }
             is Event.BlockUser -> {
                 val channelClient = client.channel(cid)
@@ -216,7 +228,9 @@ public class MessageListViewModel @JvmOverloads constructor(
                     targetId = event.user.id,
                     reason = null,
                     timeout = null,
-                ).enqueue()
+                ).enqueue(
+                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(it))) }
+                )
             }
             is Event.ReplyMessage -> {
                 domain.setMessageForReply(event.cid, event.repliedMessage).enqueue()
@@ -406,6 +420,13 @@ public class MessageListViewModel @JvmOverloads constructor(
     public sealed class Mode {
         public data class Thread(val parentMessage: Message) : Mode()
         public object Normal : Mode()
+    }
+
+    public sealed class ErrorEvent(public open val chatError: ChatError) {
+        public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
     public fun interface DateSeparatorHandler {

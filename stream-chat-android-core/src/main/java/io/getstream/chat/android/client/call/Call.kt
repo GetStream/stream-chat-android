@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.call
 
 import androidx.annotation.WorkerThread
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -82,3 +83,20 @@ public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}
+
+private val onSuccessStub: (Any) -> Unit = {}
+private val onErrorStub: (ChatError) -> Unit = {}
+
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.enqueue(
+    onSuccess: (T) -> Unit = onSuccessStub,
+    onError: (ChatError) -> Unit = onErrorStub,
+) {
+    enqueue {
+        if (it.isSuccess) {
+            onSuccess(it.data())
+        } else {
+            onError(it.error())
+        }
+    }
+}

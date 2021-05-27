@@ -79,6 +79,10 @@
     <string name="stream_ui_title_thread_reply">Thread Reply</string>
     <string name="stream_ui_subtitle_thread">with %s</string>
     <string name="stream_ui_file_too_big">File too big</string>
+    <string name="stream_ui_message_list_error_mute_user">Failed to mute user</string>
+    <string name="stream_ui_message_list_error_unmute_user">Failed to unmute user</string>
+    <string name="stream_ui_message_list_error_block_user">Failed to block user</string>
+    <string name="stream_ui_message_list_error_flag_message">Failed to flag message</string>
 
     <!-- Send Giphy view -->
     <string name="stream_ui_giphy_title">Giphy</string>

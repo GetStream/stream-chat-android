@@ -2,6 +2,8 @@ package com.getstream.sdk.chat.utils.extensions
 
 import android.content.ContextWrapper
 import android.view.View
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -20,3 +22,8 @@ public val View.activity: AppCompatActivity?
         }
         return null
     }
+
+@InternalStreamChatApi
+public fun View.showToast(@StringRes resId: Int) {
+    Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show()
+}
