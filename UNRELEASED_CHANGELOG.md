@@ -46,7 +46,7 @@
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
-- Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails. 
+- Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails.
 
 ### ✅ Added
 - Added `ChatClient::truncateChannel` and `ChannelClient::truncate` methods to remove messages from a channel.
@@ -56,12 +56,12 @@
     - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
     - If enabled, by default notifications are grouped by Channel's cid
     - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
-- Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`. 
+- Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`.
 It should be used now to fetch Firebase token in the following way: `handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {...}`.
 
 ### ⚠️ Changed
 - Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
-- Updated `firebase-messaging` library to the version `22.0.0`. Removed deprecated `FirebaseInstanceId` invocations from the project. 
+- Updated `firebase-messaging` library to the version `22.0.0`. Removed deprecated `FirebaseInstanceId` invocations from the project.
 
 ### ❌ Removed
 - `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseMessaging()`.
@@ -95,11 +95,12 @@ Fixed bug when for some video attachments activity with media player wasn't show
 ### ⬆️ Improved
 
 ### ✅ Added
-
+ChannelListViewModel.State now has ChannelListViewModel.State.Result and ChannelListViewModel.State.Error so
+there are different classes to deal with a correct result and a failed one. 
 ### ⚠️ Changed
 - Swipe options of `ChannelListView` component:
-    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it. 
-    If you want to make this option visible, you need to set `app:streamUiChannelOptionsEnabled="true"` explicitly to `io.getstream.chat.android.ui.channel.list.ChannelListView` component. 
+    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it.
+    If you want to make this option visible, you need to set `app:streamUiChannelOptionsEnabled="true"` explicitly to `io.getstream.chat.android.ui.channel.list.ChannelListView` component.
     - "Channel delete" option has now default implementation. Clicking on the "delete" icon shows AlertDialog asking to confirm Channel deletion operation.
 
 ### ❌ Removed
