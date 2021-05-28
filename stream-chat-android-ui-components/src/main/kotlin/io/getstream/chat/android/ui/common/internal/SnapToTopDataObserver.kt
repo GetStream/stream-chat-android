@@ -30,8 +30,7 @@ internal class SnapToTopDataObserver(
         if (
             itemPosition != 0 ||
             recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE ||
-            recyclerView.canScrollVertically(-1) ||
-            layoutManager.findFirstVisibleItemPosition() == 0
+            recyclerView.canScrollVertically(-1)
         ) {
             return
         }
