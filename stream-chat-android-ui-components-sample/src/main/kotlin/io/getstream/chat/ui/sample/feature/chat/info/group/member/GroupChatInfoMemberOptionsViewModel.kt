@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
@@ -97,7 +96,7 @@ class GroupChatInfoMemberOptionsViewModel(
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {
-                _errorEvents.postValue(Event(ErrorEvent.RemoveMemberError(result.error())))
+                _errorEvents.postValue(Event(ErrorEvent.RemoveMemberError))
             }
         }
     }
@@ -115,8 +114,8 @@ class GroupChatInfoMemberOptionsViewModel(
         object RedirectToChatPreview : UiEvent()
     }
 
-    sealed class ErrorEvent(open val chatError: ChatError) {
-        data class RemoveMemberError(override val chatError: ChatError) : ErrorEvent(chatError)
+    sealed class ErrorEvent {
+        object RemoveMemberError : ErrorEvent()
     }
 }
 

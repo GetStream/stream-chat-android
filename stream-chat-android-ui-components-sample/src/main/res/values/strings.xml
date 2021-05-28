@@ -48,6 +48,7 @@
     <string name="add_channel_user_item_offline">Offline</string>
     <string name="add_channel_user_item_online">Online</string>
     <string name="add_channel_user_item_last_online">Last online %s</string>
+    <string name="add_channel_error_create_channel">Failed to create channel</string>
 
     <!--Add Group Channel Screens-->
     <string name="add_group_channel_title">Add Group Members</string>
