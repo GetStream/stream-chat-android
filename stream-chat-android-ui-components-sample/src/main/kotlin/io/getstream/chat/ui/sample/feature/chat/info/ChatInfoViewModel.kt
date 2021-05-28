@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
 import kotlinx.coroutines.launch
 
@@ -26,8 +27,10 @@ class ChatInfoViewModel(
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
     private val _channelDeletedState = MutableLiveData(false)
+    private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     val state: LiveData<State> = _state
     val channelDeletedState: LiveData<Boolean> = _channelDeletedState
+    val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
     init {
         if (cid != null) {
@@ -102,8 +105,7 @@ class ChatInfoViewModel(
                 channelClient.unmute().await()
             }
             if (result.isError) {
-                // Handle error in a better way
-                _state.value = _state.value!!.copy(channelMuted = !isEnabled)
+                _errorEvents.postValue(Event(ErrorEvent.MuteChannelError))
             }
         }
     }
@@ -124,7 +126,7 @@ class ChatInfoViewModel(
                 channelClient.removeShadowBan(currentState.member.getUserId()).await()
             }
             if (result.isError) {
-                // TODO: Show error message
+                _errorEvents.postValue(Event(ErrorEvent.BlockUserError))
                 _state.value = _state.value!!.copy(isMemberBlocked = !isEnabled)
             }
         }
@@ -136,8 +138,9 @@ class ChatInfoViewModel(
             val result = chatDomain.deleteChannel(cid).await()
             if (result.isSuccess) {
                 _channelDeletedState.value = true
+            } else {
+                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError))
             }
-            // Handle error
         }
     }
 
@@ -155,6 +158,12 @@ class ChatInfoViewModel(
         data class OptionBlockUserClicked(val isEnabled: Boolean) : Action()
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
         object ChannelDeleted : Action()
+    }
+
+    sealed class ErrorEvent {
+        object MuteChannelError : ErrorEvent()
+        object BlockUserError : ErrorEvent()
+        object DeleteChannelError : ErrorEvent()
     }
 }
 
