@@ -7,10 +7,12 @@ import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.zipWith
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -69,11 +71,12 @@ internal class ChatNotifications private constructor(
 
     fun onChatEvent(event: ChatEvent) {
         if (event is NewMessageEvent) {
-            logger.logI("onChatEvent: {$event.type}")
+            val currentUserId = ChatClient.instance().getCurrentUser()?.id
+            if (event.message.user.id == currentUserId) return
 
+            logger.logD("Handling $event")
             if (!handler.onChatEvent(event)) {
-                if (isForeground()) return
-                logger.logI("onReceiveWebSocketEvent: $event")
+                logger.logI("Handling $event internally")
                 handleEvent(event)
             }
         }
@@ -111,9 +114,21 @@ internal class ChatNotifications private constructor(
 
         if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
-            // Needs to be refactored in a separate task
             GlobalScope.launch(DispatcherProvider.Main) {
-                displayNotificationWithData(event.channelType, event.channelId, messageId)
+                val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
+                if (result.isSuccess) {
+                    showNotification(
+                        channel = result.data(),
+                        message = event.message,
+                        shouldShowInForeground = true,
+                    )
+                } else {
+                    showErrorNotification(
+                        messageId = event.message.id,
+                        error = result.error(),
+                        shouldShowInForeground = true,
+                    )
+                }
             }
         }
     }
@@ -126,20 +141,18 @@ internal class ChatNotifications private constructor(
 
         val result = getChannel.zipWith(getMessage).await()
         if (result.isSuccess) {
-            logger.logD("Notification data loaded")
             val (channel, message) = result.data()
-            handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-            onRequiredDataLoaded(channel, message)
+            showNotification(channel = channel, message = message)
         } else {
-            logger.logE("Error loading required data: ${result.error().message}", result.error())
-            handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
-            showErrorCaseNotification()
+            showErrorNotification(messageId = messageId, error = result.error())
         }
     }
 
-    private fun onRequiredDataLoaded(channel: Channel, message: Message) {
+    private fun showNotification(channel: Channel, message: Message, shouldShowInForeground: Boolean = false) {
+        logger.logD("Showing notification with loaded data")
         val notificationId = System.currentTimeMillis().toInt()
 
+        handler.getDataLoadListener()?.onLoadSuccess(channel, message)
         handler.buildNotification(
             notificationId = notificationId,
             channelName = channel.name,
@@ -149,7 +162,11 @@ internal class ChatNotifications private constructor(
             channelId = channel.id,
         ).let { notification ->
             showedNotifications.add(message.id)
-            showNotification(notificationId = notificationId, notification = notification)
+            showNotification(
+                notificationId = notificationId,
+                notification = notification,
+                shouldShowInForeground = shouldShowInForeground,
+            )
         }
 
         if (handler.config.shouldGroupNotifications) {
@@ -165,29 +182,33 @@ internal class ChatNotifications private constructor(
                         channelId = channel.id,
                     ),
                     notification = notification,
+                    shouldShowInForeground = shouldShowInForeground,
                 )
             }
         }
     }
 
-    private fun showErrorCaseNotification() {
+    private fun showErrorNotification(messageId: String, error: ChatError, shouldShowInForeground: Boolean = false) {
+        logger.logE("Error loading required data: ${error.message}", error)
+        handler.getDataLoadListener()?.onLoadFail(messageId, error)
+
         showNotification(
             notificationId = System.currentTimeMillis().toInt(),
             notification = handler.buildErrorCaseNotification(),
+            shouldShowInForeground = shouldShowInForeground,
         )
 
         if (handler.config.shouldGroupNotifications) {
-            handler.buildErrorNotificationGroupSummary().let { notification ->
-                showNotification(
-                    notificationId = handler.getErrorNotificationGroupSummaryId(),
-                    notification = notification,
-                )
-            }
+            showNotification(
+                notificationId = handler.getErrorNotificationGroupSummaryId(),
+                notification = handler.buildErrorNotificationGroupSummary(),
+                shouldShowInForeground = shouldShowInForeground,
+            )
         }
     }
 
-    private fun showNotification(notificationId: Int, notification: Notification) {
-        if (!isForeground()) {
+    private fun showNotification(notificationId: Int, notification: Notification, shouldShowInForeground: Boolean) {
+        if (shouldShowInForeground || !isForeground()) {
             notificationManager.notify(notificationId, notification)
         }
     }

@@ -2708,7 +2708,7 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationGroupKey (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
 	public fun getSmallIcon ()I
-	public fun onChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;)Z
+	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onFirebaseMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 }
 

@@ -46,6 +46,7 @@
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
+    - Changed `ChatNotificationHandler::onChatEvent` - it now doesn't handle events by default and receives `NewMessageEvent` instead of generic `ChatEvent`
 - Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails. 
 
 ### ✅ Added
