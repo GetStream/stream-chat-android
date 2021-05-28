@@ -762,21 +762,21 @@ internal class ChatDomainImpl internal constructor(
                     client.updateMessage(message).execute()
                 }
                 else -> {
-                    val pendingAttachments = message.attachments.any {
+                    val hasPendingAttachments = message.attachments.any {
                         val uploadState = it.uploadState
                         uploadState == null || uploadState == Attachment.UploadState.InProgress
                     }
 
-                    val failedAttachments = message.attachments.any {
+                    val hasFailedAttachments = message.attachments.any {
                         it.uploadState is Attachment.UploadState.Failed
                     }
 
                     when {
-                        failedAttachments -> {
+                        hasFailedAttachments -> {
                             markMessageAsFailed(message)
                             break
                         }
-                        pendingAttachments -> {
+                        hasPendingAttachments -> {
                             val channelInfo = message.channelInfo
                             val channelType = channelInfo?.type
                             val channelId = channelInfo?.type
