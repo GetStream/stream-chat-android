@@ -1,5 +1,5 @@
 ---
-id: clientPinnedMessages
+id: client-pinned-messages
 title: Pinned Messages
 sidebar_position: 22
 ---
@@ -58,7 +58,7 @@ channelClient.query(QueryChannelRequest()).enqueue { result ->
 }
 ```
 
-> To learn more about channels you can visit [Querying Channels](/docs/client/clientSdkQueryingChannels)
+> To learn more about channels you can visit [Querying Channels](../client/client-sdk-querying-channels)
 
 ## Searching for Pinned Messages
 

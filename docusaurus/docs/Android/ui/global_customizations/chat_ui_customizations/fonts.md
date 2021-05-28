@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsFonts
+id: ui-global-customizations-fonts
 title: Fonts
 sidebar_position: 4
 ---

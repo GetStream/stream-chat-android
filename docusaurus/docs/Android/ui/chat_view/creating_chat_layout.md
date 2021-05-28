@@ -1,5 +1,5 @@
 ---
-id: uiCreatingChatLayout
+id: ui-creating-chat-layout
 title: Creating Chat Layout
 sidebar_position: 1
 ---

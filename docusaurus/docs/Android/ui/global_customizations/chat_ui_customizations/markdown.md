@@ -1,5 +1,5 @@
 ---
-id: uiGlobalCustomizationsMarkdown
+id: ui-global-customizations-markdown
 title: Markdown
 sidebar_position: 5
 ---

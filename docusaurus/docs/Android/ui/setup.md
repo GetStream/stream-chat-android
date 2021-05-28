@@ -1,5 +1,5 @@
 ---
-id: uiSetup
+id: ui-setup
 title: Setup
 sidebar_position: 1
 ---
@@ -53,7 +53,7 @@ ChatClient.instance().connectUser(user = user, token = "userToken")
         }
     }
 ```
-For more details see [Client Documentation](../client/setup/clientConnectingUser).
+For more details see [Client Documentation](../client/setup/client-connecting-user).
 
 ## ChatUI
 UI components customization is supported by accessing the `ChatUI` object directly. It's initialized with default implementations - no initialization is required.

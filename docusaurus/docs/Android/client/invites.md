@@ -1,5 +1,5 @@
 ---
-id: chanelInvites
+id: chanel-invites
 title: Channel Invites
 sidebar_position: 11
 ---

@@ -2,8 +2,10 @@
 
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
+import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 
@@ -43,6 +45,20 @@ public fun ChannelListViewModel.bindView(
 
     view.setOnEndReachedListener {
         onAction(ChannelListViewModel.Action.ReachedEndOfList)
+    }
+
+    view.setChannelDeleteClickListener {
+        AlertDialog.Builder(view.context)
+            .setTitle(R.string.stream_ui_channel_option_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_channel_option_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_channel_option_delete_positive_button) { dialog, _ ->
+                dialog.dismiss()
+                deleteChannel(it)
+            }
+            .setNegativeButton(R.string.stream_ui_channel_option_delete_negative_button) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     errorEvents.observe(

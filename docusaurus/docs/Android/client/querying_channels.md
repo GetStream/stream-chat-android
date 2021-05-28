@@ -1,5 +1,5 @@
 ---
-id: clientSdkQueryingChannels
+id: client-sdk-querying-channels
 title: Querying Channels
 sidebar_position: 7
 ---

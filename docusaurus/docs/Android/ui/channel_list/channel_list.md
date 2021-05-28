@@ -1,5 +1,5 @@
 ---
-id: uiChannelListCreatingLayout
+id: ui-channel-list-creating-layout
 title: Creating Layout
 sidebar_position: 1
 ---

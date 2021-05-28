@@ -1,5 +1,5 @@
 ---
-id: clientConnectingUser
+id: client-connecting-user
 title: Connecting the User
 sidebar_position: 3
 ---

@@ -1,5 +1,5 @@
 ---
-id: clientLogging
+id: client-logging
 title: Logging
 sidebar_position: 4
 ---

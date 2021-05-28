@@ -1,5 +1,5 @@
 ---
-id: clientTypingIndicators
+id: client-typing-indicators
 title: Typing Indicators
 sidebar_position: 24
 ---
