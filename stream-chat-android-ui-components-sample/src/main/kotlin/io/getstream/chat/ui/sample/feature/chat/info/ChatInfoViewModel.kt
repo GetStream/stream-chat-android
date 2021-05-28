@@ -127,7 +127,6 @@ class ChatInfoViewModel(
             }
             if (result.isError) {
                 _errorEvents.postValue(Event(ErrorEvent.BlockUserError))
-                _state.value = _state.value!!.copy(isMemberBlocked = !isEnabled)
             }
         }
     }

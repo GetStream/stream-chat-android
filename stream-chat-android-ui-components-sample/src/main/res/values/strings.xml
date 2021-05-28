@@ -94,6 +94,9 @@
     <string name="chat_group_info_user_remove_title">Remove %s</string>
     <string name="chat_group_info_user_remove_description">Are you sure you want to remove %s from %s?</string>
     <string name="chat_group_info_error_remove_member">Failed to remove member</string>
+    <string name="chat_group_info_error_change_name">Failed to change channel name</string>
+    <string name="chat_group_info_error_mute_channel">Failed to switch mute state</string>
+    <string name="chat_group_info_error_leave_channel">Failed to leave channel</string>
 
     <!-- Chat fragment -->
     <string name="chat_fragment_big_attachment_subtitle">File too big - max %d mb</string>
