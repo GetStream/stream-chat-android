@@ -45,7 +45,6 @@ internal class PushTokenUpdateHandler(
             ChatClient.instance().addDevice(firebaseToken).enqueue { result ->
                 if (result.isSuccess) {
                     this.userFirebaseToken = userFirebaseToken
-
                     handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
                     logger.logI("Device registered with token $firebaseToken")
                 } else {

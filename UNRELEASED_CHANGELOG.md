@@ -65,7 +65,7 @@ It should be used now to fetch Firebase token in the following way: `handler.get
 - Updated `firebase-messaging` library to the version `22.0.0`. Removed deprecated `FirebaseInstanceId` invocations from the project. 
 
 ### ❌ Removed
-- `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseInstallations()`.
+- `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseMessaging()`.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed

@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.google.firebase.FirebaseApp
-import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -310,9 +310,9 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         )
     }
 
-    public open fun getFirebaseInstallations(): FirebaseInstallations? =
+    public open fun getFirebaseMessaging(): FirebaseMessaging? =
         if (config.useProvidedFirebaseInstance && FirebaseApp.getApps(context).isNotEmpty()) {
-            FirebaseInstallations.getInstance()
+            FirebaseMessaging.getInstance()
         } else {
             null
         }
