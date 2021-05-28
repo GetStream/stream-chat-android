@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.channel.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
@@ -760,23 +761,52 @@ internal class ChatDomainImpl internal constructor(
                 message.updatedAt != null || message.updatedLocallyAt != null -> {
                     client.updateMessage(message).execute()
                 }
-                else -> channelClient.sendMessage(message).execute()
+                else -> {
+                    val pendingAttachments = message.attachments.any {
+                        val uploadState = it.uploadState
+                        uploadState == null || uploadState == Attachment.UploadState.InProgress
+                    }
+
+                    val failedAttachments = message.attachments.any {
+                        it.uploadState is Attachment.UploadState.Failed
+                    }
+
+                    when {
+                        failedAttachments -> {
+                            markMessageAsFailed(message)
+                            break
+                        }
+                        pendingAttachments -> {
+                            val channelInfo = message.channelInfo
+                            val channelType = channelInfo?.type
+                            val channelId = channelInfo?.type
+                            if (channelType != null && channelId != null) {
+                                UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
+                            }
+                            break
+                        }
+                        else -> { channelClient.sendMessage(message).execute() }
+                    }
+                }
             }
 
             if (result.isSuccess) {
-                // TODO: 1.1 image upload support
                 repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                repos.insertMessage(
-                    message.copy(
-                        syncStatus = SyncStatus.FAILED_PERMANENTLY,
-                        updatedLocallyAt = Date(),
-                    ),
-                )
+                markMessageAsFailed(message)
             }
         }
 
         return messages
+    }
+
+    private suspend fun markMessageAsFailed(message: Message) {
+        repos.insertMessage(
+            message.copy(
+                syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                updatedLocallyAt = Date(),
+            ),
+        )
     }
 
     @VisibleForTesting
