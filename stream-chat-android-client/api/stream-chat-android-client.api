@@ -2699,9 +2699,9 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getErrorNotificationGroupSummaryId ()I
 	public fun getFirebaseChannelIdKey ()Ljava/lang/String;
 	public fun getFirebaseChannelTypeKey ()Ljava/lang/String;
-	public fun getFirebaseInstallations ()Lcom/google/firebase/installations/FirebaseInstallations;
 	public fun getFirebaseMessageIdKey ()Ljava/lang/String;
 	public fun getFirebaseMessageParser ()Lio/getstream/chat/android/client/notifications/FirebaseMessageParser;
+	public fun getFirebaseMessaging ()Lcom/google/firebase/messaging/FirebaseMessaging;
 	public fun getNewMessageIntent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public fun getNotificationChannelId ()Ljava/lang/String;
 	public fun getNotificationChannelName ()Ljava/lang/String;
