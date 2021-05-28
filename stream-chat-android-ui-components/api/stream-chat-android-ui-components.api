@@ -184,6 +184,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
+	public final fun setErrorEventHandler (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ErrorEventHandler;)V
 	public final fun setItemSeparator (I)V
 	public final fun setItemSeparatorHeight (I)V
 	public final fun setLoadingView (Landroid/view/View;)V
@@ -196,6 +197,7 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setSwipeListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;)V
 	public final fun setViewHolderFactory (Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory;)V
+	public final fun showError (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent;)V
 	public final fun showLoadingMore ()V
 	public final fun showLoadingView ()V
 }
@@ -224,6 +226,10 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView$Cha
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$EndReachedListener {
 	public abstract fun onEndReached ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ErrorEventHandler {
+	public abstract fun onErrorEvent (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener {
@@ -419,6 +425,7 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)V
 	public synthetic fun <init> (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTypingEvents ()Landroidx/lifecycle/LiveData;
@@ -436,6 +443,44 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 }
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion {
+}
+
+public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent {
+	public synthetic fun <init> (Lio/getstream/chat/android/client/errors/ChatError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$DeleteChannelError : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$DeleteChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$DeleteChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$DeleteChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$HideChannelError : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$HideChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$HideChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$HideChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$LeaveChannelError : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$LeaveChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$LeaveChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$ErrorEvent$LeaveChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$PaginationState {

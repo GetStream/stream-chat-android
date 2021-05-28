@@ -23,6 +23,9 @@
 
     <!--Channel List View-->
     <string name="stream_ui_stream_channel_unknown_title">Channel without name</string>
+    <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
+    <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
 
     <!--Channel List Item View-->
     <string name="stream_ui_channel_display_name_self">You</string>
