@@ -65,7 +65,7 @@ internal class WhenHandleEvent {
             channelId = channelId,
             client = chatClient,
             domainImpl = chatDomain,
-            messageHelper = attachmentUrlValidator
+            attachmentUrlValidator = attachmentUrlValidator
         )
     }
 

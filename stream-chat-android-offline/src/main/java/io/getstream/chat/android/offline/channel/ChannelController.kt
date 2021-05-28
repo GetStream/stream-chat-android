@@ -52,6 +52,8 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.mapErrorSuspend
+import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -616,15 +618,11 @@ public class ChannelController internal constructor(
                 }
 
                 newMessage.type = "regular"
-                val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
                 logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-
-                if (result.isSuccess) {
-                    handleSendAttachmentSuccess(result.data())
-                } else {
-                    handleSendAttachmentFail(newMessage, result.error())
-                }
+                domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+                    .mapSuspend(::handleSendMessageSuccess)
+                    .mapErrorSuspend { handleSendMessageFail(newMessage, it) }
             } else {
                 logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
                 Result(newMessage)
@@ -665,24 +663,20 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
-        processedMessage.apply {
-            enrichWithCid(this.cid)
-            syncStatus = SyncStatus.COMPLETED
-            domainImpl.repos.insertMessage(this)
-        }
-
-        upsertMessage(processedMessage)
-        return Result(processedMessage)
+    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
+        return processedMessage.apply { enrichWithCid(this.cid) }
+            .copy(syncStatus = SyncStatus.COMPLETED)
+            .also { domainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
     }
 
-    internal suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
+    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
         logger.logE(
             "Failed to send message with id ${message.id} and text ${message.text}: $error",
             error
         )
 
-        val failedMessage = message.copy(
+        return message.copy(
             syncStatus = if (error.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY
             } else {
@@ -690,10 +684,8 @@ public class ChannelController internal constructor(
             },
             updatedLocallyAt = Date(),
         )
-
-        upsertMessage(failedMessage)
-        domainImpl.repos.insertMessage(failedMessage)
-        return Result(error)
+            .also { domainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
     }
 
     /**

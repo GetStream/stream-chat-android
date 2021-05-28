@@ -35,11 +35,11 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.channel.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState

@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.mapErrorSuspend
+import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
@@ -71,15 +73,12 @@ internal class MessageSender(
             }
 
             newMessage.type = "regular"
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            if (result.isSuccess) {
-                channelController.handleSendAttachmentSuccess(result.data())
-            } else {
-                channelController.handleSendAttachmentFail(newMessage, result.error())
-            }
+            return domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+                .mapSuspend(channelController::handleSendMessageSuccess)
+                .mapErrorSuspend { error -> channelController.handleSendMessageFail(newMessage, error) }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)

@@ -66,10 +66,17 @@ public class Result<T : Any> private constructor(
         public fun <T : Any> error(t: Throwable): Result<T> {
             return Result(null, ChatError(t.message, t))
         }
+
+        /**
+         * Creates a [Result] object with error payload
+         */
+        @JvmStatic
+        public fun <T : Any> error(error: ChatError): Result<T> {
+            return Result(null, error)
+        }
     }
 }
 
-@InternalStreamChatApi
 public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -80,3 +87,41 @@ public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
 
 @InternalStreamChatApi
 public fun Result<*>.toUnitResult(): Result<Unit> = map {}
+
+public fun <T: Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
+    if (isSuccess) {
+        successSideEffect(data())
+    }
+    return this
+}
+
+public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
+    return if (isSuccess) {
+        Result(mapper(data()))
+    } else {
+        Result(error())
+    }
+}
+
+public fun <T: Any> Result<T>.mapError(errorMapper: (ChatError) -> T): Result<T> {
+    return if (isSuccess) {
+        this
+    } else {
+        Result(errorMapper(error()))
+    }
+}
+
+public suspend fun <T: Any> Result<T>.mapErrorSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
+    return if (isSuccess) {
+        this
+    } else {
+        Result(errorMapper(error()))
+    }
+}
+
+public fun <T: Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
+    if (isError) {
+        errorSideEffect(error())
+    }
+    return this
+}
