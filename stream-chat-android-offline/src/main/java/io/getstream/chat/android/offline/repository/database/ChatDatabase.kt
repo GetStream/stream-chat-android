@@ -20,6 +20,7 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.Channel
 import io.getstream.chat.android.offline.repository.domain.channelconfig.CommandInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentDao
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.ChannelSortInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
@@ -65,6 +66,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
     abstract fun syncStateDao(): SyncStateDao
+    abstract fun attachmentDao(): AttachmentDao
 
     companion object {
         @Volatile
