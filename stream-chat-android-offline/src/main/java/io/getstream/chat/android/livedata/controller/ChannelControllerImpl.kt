@@ -82,7 +82,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
 
     fun keystroke(parentId: String?): Result<Boolean> = channelControllerStateFlow.keystroke(parentId)
     fun stopTyping(parentId: String?): Result<Boolean> = channelControllerStateFlow.stopTyping(parentId)
-    internal fun markRead(): Boolean = channelControllerStateFlow.markRead()
+    internal suspend fun markRead(): Boolean = channelControllerStateFlow.markRead()
 
     suspend fun hide(clearHistory: Boolean): Result<Unit> = channelControllerStateFlow.hide(clearHistory)
     suspend fun show(): Result<Unit> = channelControllerStateFlow.show()
@@ -135,14 +135,14 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     fun isHidden(): Boolean = channelControllerStateFlow.isHidden()
 
     internal suspend fun handleEvents(events: List<ChatEvent>) = channelControllerStateFlow.handleEvents(events)
-    internal fun handleEvent(event: ChatEvent) = channelControllerStateFlow.handleEvent(event)
+    internal suspend fun handleEvent(event: ChatEvent) = channelControllerStateFlow.handleEvent(event)
 
     fun upsertMembers(members: List<Member>) = channelControllerStateFlow.upsertMembers(members)
     fun upsertMember(member: Member) = channelControllerStateFlow.upsertMember(member)
     suspend fun removeMembers(vararg userIds: String): Result<Channel> =
         channelControllerStateFlow.removeMembers(*userIds)
 
-    fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
+    // fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
 
     suspend fun editMessage(message: Message): Result<Message> = channelControllerStateFlow.editMessage(message)
     suspend fun deleteMessage(message: Message): Result<Message> = channelControllerStateFlow.deleteMessage(message)

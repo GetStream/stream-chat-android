@@ -47,10 +47,12 @@ public class ChannelListViewModel(
 
     init {
         stateMerger.value = INITIAL_STATE
+
         chatDomain.queryChannels(filter, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
-                stateMerger.addSource(
+
+                val channelState = Transformations.switchMap(chatDomain.user) { currentUser ->
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
@@ -60,24 +62,19 @@ public class ChannelListViewModel(
                                 isLoading = false,
                                 channels = emptyList(),
                             )
-                            is QueryChannelsController.ChannelsState.Result -> {
-                                val currentUser = chatDomain.user.value
-
-                                if (currentUser != null) {
-                                    State.Result(
-                                        isLoading = false,
-                                        channels = parseMutedChannels(
-                                            channelState.channels,
-                                            currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
-                                        ),
-                                    )
-                                } else {
-                                    State.Error("User is not set in ChatDomain")
-                                }
-                            }
+                            is QueryChannelsController.ChannelsState.Result ->
+                                State.Result(
+                                    isLoading = false,
+                                    channels = parseMutedChannels(
+                                        channelState.channels,
+                                        currentUser?.channelMutes?.map { channelMute -> channelMute.channel.id }
+                                    ),
+                                )
                         }
                     }
-                ) { state -> stateMerger.value = state }
+                }
+
+                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
 
                 stateMerger.addSource(queryChannelsController.mutedChannelIds) { mutedChannels ->
                     val state = stateMerger.value

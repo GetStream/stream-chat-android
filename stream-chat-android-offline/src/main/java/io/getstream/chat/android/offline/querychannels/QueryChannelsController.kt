@@ -107,7 +107,7 @@ public class QueryChannelsController internal constructor(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-    internal fun addChannelIfFilterMatches(channel: Channel) {
+    internal suspend fun addChannelIfFilterMatches(channel: Channel) {
         if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
             channelControllerImpl.updateDataFromChannel(channel)
@@ -130,13 +130,13 @@ public class QueryChannelsController internal constructor(
         refreshChannels(cIds)
     }
 
-    internal fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
         }
     }
 
-    internal fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         when (event) {
             is NotificationAddedToChannelEvent -> addChannelIfFilterMatches(event.channel)
             is ChannelUpdatedEvent -> {
@@ -341,7 +341,7 @@ public class QueryChannelsController internal constructor(
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    internal fun updateChannelsAndQueryResults(
+    internal suspend fun updateChannelsAndQueryResults(
         channels: List<Channel>?,
         isFirstPage: Boolean,
     ) {

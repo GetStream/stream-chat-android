@@ -72,13 +72,14 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Exception
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -147,14 +148,16 @@ public class ChannelController internal constructor(
     public val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
 
     private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): StateFlow<List<Message>> {
-        return messages.map { messageMap ->
-            messageMap.values
-                .asSequence()
-                .filter { it.parentId == null || it.showInChannel }
-                .filter { it.user.id == domainImpl.user.value?.id || !it.shadowed }
-                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .toList()
+        return domainImpl.user.filterNotNull().flatMapConcat { user ->
+            messages.map { messageMap ->
+                messageMap.values
+                    .asSequence()
+                    .filter { it.parentId == null || it.showInChannel }
+                    .filter { it.user.id == user.id || !it.shadowed }
+                    .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                    .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                    .toList()
+            }
         }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
     }
 
@@ -166,19 +169,23 @@ public class ChannelController internal constructor(
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     /** who is currently typing (current user is excluded from this) */
-    public val typing: StateFlow<TypingEvent> = _typing
-        .map {
-            val userList = it.values
-                .sortedBy(ChatEvent::createdAt)
-                .mapNotNull { event ->
-                    when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.user.value }
-                        else -> null
-                    }
-                }
+    public val typing: StateFlow<TypingEvent> =
+        domainImpl.user
+            .filterNotNull()
+            .flatMapConcat { currentUser ->
+                _typing.map {
+                    val userList = it.values
+                        .sortedBy(ChatEvent::createdAt)
+                        .mapNotNull { event ->
+                            when (event) {
+                                is TypingStartEvent -> event.user.takeIf { user -> user != currentUser }
+                                else -> null
+                            }
+                        }
 
-            TypingEvent(channelId, userList)
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
+                    TypingEvent(channelId, userList)
+                }
+            }.stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
 
     /** how far every user in this channel has read */
     public val reads: StateFlow<List<ChannelUserRead>> = _reads
@@ -295,7 +302,7 @@ public class ChannelController internal constructor(
      *
      * @return whether the channel was marked as read or not
      */
-    internal fun markRead(): Boolean {
+    internal suspend fun markRead(): Boolean {
         if (!getConfig().isReadEvents) {
             return false
         }
@@ -381,7 +388,8 @@ public class ChannelController internal constructor(
 
         val result = currentUser?.let { user ->
             channelClient.removeMembers(user.id).execute()
-        } ?: Result(ChatError("Current user is not set, then it is not possible to leave channel. Please set User for ChatDomain."))
+        }
+            ?: Result(ChatError("Current user is not set, then it is not possible to leave channel. Please set User for ChatDomain."))
 
         return if (result.isSuccess) {
             // Remove from query controllers
@@ -1008,8 +1016,9 @@ public class ChannelController internal constructor(
         }
     }
 
-    // Todo: Review this code. Hard to understand.
     internal fun setTyping(userId: String, event: ChatEvent?) {
+        val user = domainImpl.user.value
+
         val copy = _typing.value.toMutableMap()
         if (event == null) {
             copy.remove(userId)
@@ -1017,7 +1026,8 @@ public class ChannelController internal constructor(
             copy[userId] = event
         }
 
-        domainImpl.user.value?.id?.let(copy::remove)
+        copy.remove(user?.id)
+
         _typing.value = copy.toMap()
     }
 
@@ -1025,7 +1035,7 @@ public class ChannelController internal constructor(
         _hidden.value = hidden
     }
 
-    internal fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
         }
@@ -1035,7 +1045,7 @@ public class ChannelController internal constructor(
         return _hidden.value
     }
 
-    internal fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
@@ -1225,67 +1235,60 @@ public class ChannelController internal constructor(
         upsertMembers(listOf(member))
     }
 
-    private fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUser = domainImpl.user.value
+    private suspend fun updateReads(reads: List<ChannelUserRead>) {
+        domainImpl.user.filterNotNull().collect { currentUser ->
+            val currentUserId = currentUser.id
+            val previousUserIdToReadMap = _reads.value
+            val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
-        if (currentUser == null) {
-            logger.logE("User is not set in ChatDomain. It is not possible to update reads.")
-            return
-        }
+            /**
+             * It's possible that the data coming back from the online channel query has a last read date that's
+             * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
+             * to show in the channel list.
+             */
+            incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
 
-        val currentUserId = currentUser.id
-        val previousUserIdToReadMap = _reads.value
-        val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
+                // the previous last Read date that is most current
+                val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
 
-        /**
-         * It's possible that the data coming back from the online channel query has a last read date that's
-         * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
-         * to show in the channel list.
-         */
-        incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
+                // Use AFTER to determine if the incoming read is more current.
+                // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+                val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
+                    previousLastRead,
+                    OFFSET_EVENT_TIME
+                ) == true
 
-            // the previous last Read date that is most current
-            val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
-
-            // Use AFTER to determine if the incoming read is more current.
-            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-            val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
-                previousLastRead,
-                OFFSET_EVENT_TIME
-            ) == true
-
-            if (shouldUpdateByIncoming) {
-                _read.value = incomingUserRead
-                _unreadCount.value = incomingUserRead.unreadMessages
-            } else {
-                // if the previous Read was more current, replace the item in the update map
-                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
+                if (shouldUpdateByIncoming) {
+                    _read.value = incomingUserRead
+                    _unreadCount.value = incomingUserRead.unreadMessages
+                } else {
+                    // if the previous Read was more current, replace the item in the update map
+                    incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
+                }
             }
-        }
 
-        // always post the newly updated map
-        _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+            // always post the newly updated map
+            _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+        }
     }
 
-    private fun updateRead(
-        read: ChannelUserRead,
-    ) {
+    private suspend fun updateRead(read: ChannelUserRead) {
         updateReads(listOf(read))
     }
 
-    private fun updateDataFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateDataFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateDataFromChannel(localChannel)
     }
 
-    private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+    private suspend fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         localChannel.hidden?.let(::setHidden)
         hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateOldMessagesFromChannel(localChannel)
     }
 
-    internal fun updateDataFromChannel(c: Channel) {
+    internal suspend fun updateDataFromChannel(c: Channel) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1299,7 +1302,7 @@ public class ChannelController internal constructor(
         lastMessageAt.value = c.lastMessageAt
     }
 
-    private fun updateOldMessagesFromChannel(c: Channel) {
+    private suspend fun updateOldMessagesFromChannel(c: Channel) {
         // Update all the flow objects based on the channel
         updateChannelData(c)
         setWatcherCount(c.watcherCount)
@@ -1324,10 +1327,8 @@ public class ChannelController internal constructor(
         this._watchers.value = (this._watchers.value + watchers.associateBy { it.id })
     }
 
-    private fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUser = domainImpl.user.value
-
-        if (currentUser != null) {
+    private suspend fun incrementUnreadCountIfNecessary(message: Message) {
+        domainImpl.user.filterNotNull().collect { currentUser ->
             val currentUserId = currentUser.id
             if (message.shouldIncrementUnreadCount(currentUserId)) {
                 val newUnreadCount = _unreadCount.value + 1
@@ -1337,8 +1338,6 @@ public class ChannelController internal constructor(
                     this[currentUserId]?.unreadMessages = newUnreadCount
                 }
             }
-        } else {
-            logger.logE("Unread count could not be incremented because user is not set. Please set user for ChatDomain.")
         }
     }
 

@@ -85,15 +85,15 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-    internal fun addChannelIfFilterMatches(channel: Channel) {
+    internal suspend fun addChannelIfFilterMatches(channel: Channel) {
         queryChannels.addChannelIfFilterMatches(channel)
     }
 
-    internal fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         queryChannels.handleEvents(events)
     }
 
-    internal fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         queryChannels.handleEvent(event)
     }
 
@@ -132,7 +132,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    internal fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+    internal suspend fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
         return queryChannels.updateChannelsAndQueryResults(channels, isFirstPage)
     }
 
