@@ -107,5 +107,8 @@ dependencies {
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
 
-    dokkaPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPlugin("org.jetbrains.dokka:dokka-base:1.4.32")
+    dokkaHtmlPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPartialPlugin("org.jetbrains.dokka:dokka-base:1.4.32")
+    dokkaHtmlPartialPlugin(Dependencies.dokkasaurus)
 }

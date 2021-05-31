@@ -115,5 +115,8 @@ dependencies {
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
 
-    dokkaPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPlugin("org.jetbrains.dokka:dokka-base:1.4.32")
+    dokkaHtmlPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPartialPlugin("org.jetbrains.dokka:dokka-base:1.4.32")
+    dokkaHtmlPartialPlugin(Dependencies.dokkasaurus)
 }
