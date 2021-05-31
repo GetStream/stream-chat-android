@@ -777,12 +777,10 @@ internal class ChatDomainImpl internal constructor(
                             break
                         }
                         hasPendingAttachments -> {
-                            val channelInfo = message.channelInfo
-                            val channelType = channelInfo?.type
-                            val channelId = channelInfo?.type
-                            if (channelType != null && channelId != null) {
-                                UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
-                            }
+                            val cid = message.cid
+                            val channelType = cid.split(":")[0]
+                            val channelId = cid.split(":")[1]
+                            UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
                             break
                         }
                         else -> { channelClient.sendMessage(message).execute() }
