@@ -100,7 +100,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
 
                 messageListData = MessageListItemLiveData(
-                    { currentUser?.id },
+                    domain.user,
                     channelController.messages,
                     channelController.reads,
                     typingIds,
@@ -147,7 +147,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-            { currentUser?.id },
+            domain.user,
             threadMessages,
             reads,
             null,
