@@ -1,27 +1,14 @@
 package io.getstream.chat.android.offline.message.attachment
 
-import android.content.Context
-import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 
-internal class UploadAttachmentsWorker(
-    appContext: Context,
-    workerParams: WorkerParameters,
-) : CoroutineWorker(appContext, workerParams) {
-
-    override suspend fun doWork(): Result {
-        val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
-        val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
-        val messageId = inputData.getString(DATA_MESSAGE_ID)!!
-
+internal class UploadAttachmentsWorker {
+    suspend fun uploadAttachmentsForMessage(channelType: String, channelId: String, messageId: String): Result<Unit> {
         return try {
             val domainImpl = (ChatDomain.instance() as ChatDomainImpl)
             val message = domainImpl.repos.selectMessage(messageId)!!
@@ -30,45 +17,13 @@ internal class UploadAttachmentsWorker(
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                 domainImpl.markMessageAttachmentSyncStatus(message, SyncStatus.COMPLETED)
-                Result.success()
+                Result.success(Unit)
             } else {
                 domainImpl.markMessageAttachmentSyncStatus(message, SyncStatus.FAILED_PERMANENTLY)
-                Result.failure()
+                Result.error(ChatError())
             }
-            Result.success()
         } catch (e: Exception) {
-            Result.failure()
-        }
-    }
-
-    private suspend fun ChatDomainImpl.markMessageAttachmentSyncStatus(
-        message: Message,
-        syncStatus: SyncStatus,
-    ) = repos.insertMessage(message.copy(attachmentsSyncStatus = syncStatus))
-
-    companion object {
-        private const val DATA_MESSAGE_ID = "message_id"
-        private const val DATA_CHANNEL_TYPE = "channel_type"
-        private const val DATA_CHANNEL_ID = "channel_id"
-
-        fun start(
-            context: Context,
-            channelType: String,
-            channelId: String,
-            messageId: String,
-        ) {
-            val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsWorker>()
-                .setInputData(
-                    workDataOf(
-                        DATA_CHANNEL_ID to channelId,
-                        DATA_CHANNEL_TYPE to channelType,
-                        DATA_MESSAGE_ID to messageId,
-                    )
-                )
-                .build()
-
-            WorkManager.getInstance(context)
-                .enqueue(uploadAttachmentsWorRequest)
+            Result.error(e)
         }
     }
 }
