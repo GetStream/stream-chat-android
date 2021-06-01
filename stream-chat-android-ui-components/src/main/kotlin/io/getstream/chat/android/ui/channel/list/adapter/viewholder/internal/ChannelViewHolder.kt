@@ -214,9 +214,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         ChatDomain.instance().user.value?.let { user ->
             lastMessageLabel.text =
                 channel.getLastMessagePreviewText(context, channel.isDirectMessaging(), user.asMention(context))
-        } ?: run {
-            logger.logE("User is not set in ChatDomain. The text of last message can not be set.")
-        }
+        } ?: logger.logE("User is not set in ChatDomain. The text of last message can not be set.")
 
         lastMessageTimeLabel.text = dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
