@@ -85,6 +85,7 @@ internal class LoadNotificationDataWorker(
             .setAutoCancel(true)
             .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
 
@@ -96,7 +97,7 @@ internal class LoadNotificationDataWorker(
             NotificationChannel(
                 notificationChannelId,
                 notificationChannelName,
-                NotificationManager.IMPORTANCE_HIGH,
+                NotificationManager.IMPORTANCE_LOW,
             ).run {
                 context.getSystemService(NotificationManager::class.java).createNotificationChannel(this)
             }
