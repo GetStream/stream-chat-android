@@ -23,7 +23,6 @@ internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         assertSuccess(result2)
         val parentMessage = channelState.getMessage(parentId)!!
         Truth.assertThat(parentMessage.id).isEqualTo(parentId)
-
         // get the thread
         val result3 = chatDomain.getThread(data.channel1.cid, parentId).execute()
         assertSuccess(result3)

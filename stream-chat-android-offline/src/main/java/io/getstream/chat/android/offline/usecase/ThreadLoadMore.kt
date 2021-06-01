@@ -19,7 +19,6 @@ internal class ThreadLoadMore(private val domainImpl: ChatDomainImpl) {
     operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {
         validateCid(cid)
         require(parentId.isNotEmpty()) { "parentId can't be empty" }
-
         val channelController = domainImpl.channel(cid)
         val threadController = channelController.getThread(parentId)
 
