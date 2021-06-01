@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -23,6 +24,10 @@ import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+}
+
+fun Fragment.showToast(@StringRes resId: Int) {
+    showToast(getString(resId))
 }
 
 fun Fragment.showToast(text: String) {

@@ -15,6 +15,7 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberOptionsFragmentBinding
 import io.getstream.chat.ui.sample.feature.chat.info.UserData
 import io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragmentDirections
@@ -134,6 +135,14 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         dismiss()
                     }
                 }
+            }
+        )
+        viewModel.errorEvents.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                when (it) {
+                    is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member
+                }.let(::showToast)
             }
         )
     }

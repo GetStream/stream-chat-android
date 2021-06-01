@@ -12,14 +12,17 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 
     private val chatDomain = ChatDomain.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
+    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     val state: LiveData<State> = _state
     val paginationState: LiveData<PaginationState> = _paginationState
+    val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
     private var channelClient: ChannelClient? = null
     private var searchQuery: String = ""
@@ -60,6 +63,8 @@ class AddChannelViewModel : ViewModel() {
             val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).execute()
             if (result.isSuccess) {
                 _state.postValue(State.NavigateToChannel(result.data().cid))
+            } else {
+                _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
             }
         }
     }
@@ -118,6 +123,10 @@ class AddChannelViewModel : ViewModel() {
         object MessageSent : Event()
         data class MembersChanged(val members: List<User>) : Event()
         data class SearchInputChanged(val query: String) : Event()
+    }
+
+    sealed class ErrorEvent {
+        object CreateChannelError : ErrorEvent()
     }
 
     data class PaginationState(

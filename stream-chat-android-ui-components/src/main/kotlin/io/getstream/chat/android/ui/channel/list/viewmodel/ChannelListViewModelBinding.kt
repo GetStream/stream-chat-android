@@ -4,6 +4,7 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
@@ -18,9 +19,9 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 @JvmName("bind")
 public fun ChannelListViewModel.bindView(
     view: ChannelListView,
-    lifecycle: LifecycleOwner,
+    lifecycleOwner: LifecycleOwner,
 ) {
-    state.observe(lifecycle) { channelState ->
+    state.observe(lifecycleOwner) { channelState ->
         if (channelState.isLoading) {
             view.showLoadingView()
         } else {
@@ -32,7 +33,7 @@ public fun ChannelListViewModel.bindView(
         }
     }
 
-    paginationState.observe(lifecycle) { paginationState ->
+    paginationState.observe(lifecycleOwner) { paginationState ->
         view.setPaginationEnabled(!paginationState.endOfChannels && !paginationState.loadingMore)
 
         if (paginationState.loadingMore) {
@@ -59,4 +60,11 @@ public fun ChannelListViewModel.bindView(
             }
             .show()
     }
+
+    errorEvents.observe(
+        lifecycleOwner,
+        EventObserver {
+            view.showError(it)
+        }
+    )
 }
