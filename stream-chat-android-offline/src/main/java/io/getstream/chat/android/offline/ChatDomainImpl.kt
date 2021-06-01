@@ -799,10 +799,8 @@ internal class ChatDomainImpl internal constructor(
             }
 
             if (result.isSuccess) {
-                logger.logD("Result successful for message: ${message.id}")
                 repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
-                logger.logD("Result error for message: ${message.id}. Reason: ${result.error()}")
                 markMessageAsFailed(message)
             }
         }
