@@ -8,8 +8,10 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.mapErrorSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
+import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
@@ -25,7 +27,6 @@ internal class MessageSender(
     private val logger = ChatLogger.get("ChatDomain MessageSender")
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
-        val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
         // set defaults for id, cid and created at
@@ -46,9 +47,7 @@ internal class MessageSender(
         newMessage.type = getMessageType(message)
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus =
-            if (newMessage.hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-
-        val ephemeralUploadStatusMessage: Message? = if (message.isEphemeral()) newMessage else null
+            if (newMessage.hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
 
         // Update flow in channel controller
         channelController.upsertMessage(newMessage)
@@ -62,7 +61,12 @@ internal class MessageSender(
         domainImpl.repos.insertMessage(newMessage)
         domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
-        return if (online) {
+        return send(newMessage)
+    }
+
+    private suspend fun send(newMessage: Message): Result<Message> {
+        return if (domainImpl.online.value) {
+            val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
             // upload attachments
             if (newMessage.hasAttachments()) {
                 logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
@@ -72,16 +76,19 @@ internal class MessageSender(
                 ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
             }
 
-            newMessage.type = "regular"
-
-            logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-
-            return domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
-                .mapSuspend(channelController::handleSendMessageSuccess)
-                .mapErrorSuspend { error -> channelController.handleSendMessageFail(newMessage, error) }
+            doSend(newMessage)
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }
+    }
+
+    private suspend fun doSend(message: Message): Result<Message> {
+        val messageToSend = message.copy(type = "regular")
+        return Result.success(messageToSend)
+            .onSuccess { newMessage -> logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}") }
+            .flatMapSuspend { newMessage -> domainImpl.runAndRetry { channelClient.sendMessage(newMessage) } }
+            .mapSuspend(channelController::handleSendMessageSuccess)
+            .mapErrorSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
     }
 }

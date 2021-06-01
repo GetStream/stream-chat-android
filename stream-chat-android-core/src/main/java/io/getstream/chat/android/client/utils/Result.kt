@@ -125,3 +125,19 @@ public fun <T: Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Res
     }
     return this
 }
+
+public fun <T : Any, R: Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
+    return if (isSuccess) {
+        func(data())
+    } else {
+        Result.error(error())
+    }
+}
+
+public suspend fun <T : Any, R: Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
+    return if (isSuccess) {
+        func(data())
+    } else {
+        Result.error(error())
+    }
+}
