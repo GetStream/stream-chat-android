@@ -6,7 +6,7 @@ sidebar_position: 1
 
 Android SDK comes up with the default, customizable push notifications handling mechanism which includes:
 1. Receiving push notification using _FirebaseMessagingService_
-2. Loading require data using _Worker_
+2. Loading required data using _Worker_
 3. Showing notification with default actions
 
 See [Customizing Push Notifications](./client-customizing-push-notifications) for customization options.
