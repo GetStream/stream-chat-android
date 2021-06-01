@@ -755,42 +755,54 @@ internal class ChatDomainImpl internal constructor(
         val messages = repos.selectMessagesSyncNeeded()
         for (message in messages) {
             val channelClient = client.channel(message.cid)
-            // support sending, deleting and editing messages here
+            val hasPendingAttachments = message.attachments.any {
+                val uploadState = it.uploadState
+                uploadState == null || uploadState == Attachment.UploadState.InProgress
+            }
+            val hasFailedAttachments = message.attachments.any {
+                it.uploadState is Attachment.UploadState.Failed
+            }
+            val hasAttachmentsUploadInProgress = message.attachmentsSyncStatus == SyncStatus.IN_PROGRESS
+
+            if (hasFailedAttachments) {
+                logger.logD("Failed attachments upload for message: ${message.id}")
+                markMessageAsFailed(message)
+                break
+            }
+            if (hasAttachmentsUploadInProgress) {
+                // wait until upload completes until starting another worker
+                logger.logD("Upload of attachments already in progress for message: ${message.id}")
+                break
+            }
+            if (hasPendingAttachments) {
+                logger.logD("Starting upload worker for message: ${message.id}")
+                markMessageAttachmentSyncStatus(message, SyncStatus.IN_PROGRESS)
+                val cid = message.cid
+                val channelType = cid.split(":")[0]
+                val channelId = cid.split(":")[1]
+                UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
+                break
+            }
             val result = when {
-                message.deletedAt != null -> channelClient.deleteMessage(message.id).execute()
-                message.updatedAt != null || message.updatedLocallyAt != null -> {
+                message.deletedAt != null -> {
+                    logger.logD("Deleting message: ${message.id}")
+                    channelClient.deleteMessage(message.id).execute()
+                }
+                message.updatedLocallyAt != null -> {
+                    logger.logD("Updating message: ${message.id}")
                     client.updateMessage(message).execute()
                 }
                 else -> {
-                    val hasPendingAttachments = message.attachments.any {
-                        val uploadState = it.uploadState
-                        uploadState == null || uploadState == Attachment.UploadState.InProgress
-                    }
-
-                    val hasFailedAttachments = message.attachments.any {
-                        it.uploadState is Attachment.UploadState.Failed
-                    }
-
-                    when {
-                        hasFailedAttachments -> {
-                            markMessageAsFailed(message)
-                            break
-                        }
-                        hasPendingAttachments -> {
-                            val cid = message.cid
-                            val channelType = cid.split(":")[0]
-                            val channelId = cid.split(":")[1]
-                            UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
-                            break
-                        }
-                        else -> { channelClient.sendMessage(message).execute() }
-                    }
+                    logger.logD("Sending message: ${message.id}")
+                    channelClient.sendMessage(message).execute()
                 }
             }
 
             if (result.isSuccess) {
+                logger.logD("Result successful for message: ${message.id}")
                 repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
             } else if (result.isError && result.error().isPermanent()) {
+                logger.logD("Result error for message: ${message.id}. Reason: ${result.error()}")
                 markMessageAsFailed(message)
             }
         }
@@ -798,14 +810,13 @@ internal class ChatDomainImpl internal constructor(
         return messages
     }
 
-    private suspend fun markMessageAsFailed(message: Message) {
-        repos.insertMessage(
-            message.copy(
-                syncStatus = SyncStatus.FAILED_PERMANENTLY,
-                updatedLocallyAt = Date(),
-            ),
-        )
-    }
+    private suspend fun markMessageAttachmentSyncStatus(
+        message: Message,
+        syncStatus: SyncStatus,
+    ) = repos.insertMessage(message.copy(attachmentsSyncStatus = syncStatus))
+
+    private suspend fun markMessageAsFailed(message: Message) =
+        repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
 
     @VisibleForTesting
     internal suspend fun retryReactions(): List<Reaction> {
@@ -1018,7 +1029,7 @@ internal class ChatDomainImpl internal constructor(
             }
         }
     }
-    // end region
+// end region
 
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
         context(appContext)
