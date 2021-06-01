@@ -59,6 +59,7 @@
     - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
 - Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`. 
 It should be used now to fetch Firebase token in the following way: `handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {...}`.
+- Added `Message.attachmentsSyncStatus: SyncStatus` property. 
 
 ### ⚠️ Changed
 - Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
