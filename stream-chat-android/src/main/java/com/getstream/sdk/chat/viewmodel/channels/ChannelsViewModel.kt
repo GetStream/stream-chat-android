@@ -48,7 +48,8 @@ public class ChannelsViewModel(
         chatDomain.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
-                stateMerger.addSource(
+
+                val channelState = Transformations.switchMap(chatDomain.user) { currentUser ->
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
@@ -66,7 +67,10 @@ public class ChannelsViewModel(
                             }
                         }
                     }
-                ) { state -> stateMerger.value = state }
+                }
+
+                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+
                 paginationStateMerger.addSource(queryChannelsController.loadingMore) { loadingMore ->
                     setPaginationState { copy(loadingMore = loadingMore) }
                 }

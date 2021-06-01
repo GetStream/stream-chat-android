@@ -3,6 +3,7 @@
 package com.getstream.sdk.chat.view
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -18,9 +19,15 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
-    channel.observe(lifecycleOwner) {
-        if (currentUser != null) {
-            view.init(it, currentUser!!)
+    val initLd = Transformations.switchMap(currentUserLd) { user ->
+        Transformations.map(channel) { channel ->
+            channel to user
+        }
+    }
+
+    initLd.observe(lifecycleOwner) { (channel, user) ->
+        if (user != null) {
+            view.init(channel, user)
         } else {
             logger.logE("User is not set in ChatDomain, it is not possible to bind MessageListViewModel.")
         }
