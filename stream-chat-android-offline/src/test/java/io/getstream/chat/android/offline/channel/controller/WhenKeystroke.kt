@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
-    fun `Given config without typing events And no keystroke before Should return false result`() {
+    fun `Given config without typing events And no keystroke before Should return false result`() = runBlockingTest {
         Fixture().givenTypingEvents(false)
 
         val result = sut.keystroke(null)
@@ -30,7 +30,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
     }
 
     @Test
-    fun `Given config with typing events And not null parentId And no keystroke before Should invoke keystroke with parentId to ChannelClient`() {
+    fun `Given config with typing events And not null parentId And no keystroke before Should invoke keystroke with parentId to ChannelClient`() = runBlockingTest {
         Fixture()
             .givenTypingEvents(true)
             .givenParentId("parentId")
@@ -42,7 +42,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
     }
 
     @Test
-    fun `Given config with typing events And null parentId And no keystroke before Should invoke keystroke without parentId to ChannelClient`() {
+    fun `Given config with typing events And null parentId And no keystroke before Should invoke keystroke without parentId to ChannelClient`() = runBlockingTest {
         Fixture()
             .givenTypingEvents(true)
             .givenSuccessfulResponse()
@@ -53,7 +53,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
     }
 
     @Test
-    fun `Given config with typing events And successful response And no keystroke before Should return result with True`() {
+    fun `Given config with typing events And successful response And no keystroke before Should return result with True`() = runBlockingTest {
         val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
@@ -66,7 +66,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
     }
 
     @Test
-    fun `Given config with typing events And failed response And no keystroke before Should return result with error`() {
+    fun `Given config with typing events And failed response And no keystroke before Should return result with error`() = runBlockingTest {
         val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
