@@ -96,6 +96,7 @@ Fixed bug when for some video attachments activity with media player wasn't show
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `topLeft`, `topRight`, `bottomLeft`, `bottomRight` options to the `streamUiAvatarOnlineIndicatorPosition` attribute of `AvatarView` and corresponding constants to `AvatarView.OnlineIndicatorPosition` enum.
 
 ### ⚠️ Changed
 - Swipe options of `ChannelListView` component:

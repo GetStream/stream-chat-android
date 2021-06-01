@@ -62,7 +62,7 @@ public data class AvatarStyle(
                 )
                 val onlineIndicatorPosition = it.getEnum(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
-                    AvatarView.OnlineIndicatorPosition.TOP
+                    AvatarView.OnlineIndicatorPosition.TOP_RIGHT
                 )
                 val onlineIndicatorColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
                 val onlineIndicatorBorderColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)

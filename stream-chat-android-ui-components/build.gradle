@@ -97,5 +97,6 @@ dependencies {
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
 
-    dokkaPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPlugin(Dependencies.dokkasaurus)
+    dokkaHtmlPartialPlugin(Dependencies.dokkasaurus)
 }
