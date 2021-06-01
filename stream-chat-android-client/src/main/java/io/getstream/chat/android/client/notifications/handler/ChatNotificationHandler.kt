@@ -12,11 +12,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.google.firebase.FirebaseApp
-import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
@@ -30,11 +29,16 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
     public val config: NotificationConfig = NotificationConfig(),
 ) {
-    private val logger = ChatLogger.get("ChatNotificationHandler")
     private val firebaseMessageParserImpl: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(config) }
 
-    public open fun onChatEvent(event: ChatEvent): Boolean {
-        return false
+    /**
+     * Handles showing notification after receiving [NewMessageEvent] from other users.
+     * Default implementation loads necessary data and displays notification even if app is in foreground.
+     *
+     * @return false if notification should be handled internally
+     */
+    public open fun onChatEvent(event: NewMessageEvent): Boolean {
+        return true
     }
 
     /**
@@ -306,9 +310,9 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         )
     }
 
-    public open fun getFirebaseInstallations(): FirebaseInstallations? =
+    public open fun getFirebaseMessaging(): FirebaseMessaging? =
         if (config.useProvidedFirebaseInstance && FirebaseApp.getApps(context).isNotEmpty()) {
-            FirebaseInstallations.getInstance()
+            FirebaseMessaging.getInstance()
         } else {
             null
         }

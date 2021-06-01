@@ -11,6 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.utils.extensions.showToast
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
@@ -24,6 +25,7 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.channel.list.internal.SimpleChannelListView
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 
@@ -48,6 +50,14 @@ public class ChannelListView @JvmOverloads constructor(
     private var channelInfoListener: ChannelClickListener = ChannelClickListener.DEFAULT
 
     private var channelLeaveListener: ChannelClickListener = ChannelClickListener.DEFAULT
+
+    private var errorEventHandler = ErrorEventHandler { errorEvent ->
+        when (errorEvent) {
+            is ChannelListViewModel.ErrorEvent.HideChannelError -> R.string.stream_ui_channel_list_error_hide_channel
+            is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel
+            is ChannelListViewModel.ErrorEvent.LeaveChannelError -> R.string.stream_ui_channel_list_error_leave_channel
+        }.let(::showToast)
+    }
 
     init {
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -216,6 +226,14 @@ public class ChannelListView @JvmOverloads constructor(
         simpleChannelListView.currentChannelItemList()?.let(::setChannels)
     }
 
+    public fun setErrorEventHandler(handler: ErrorEventHandler) {
+        this.errorEventHandler = handler
+    }
+
+    public fun showError(errorEvent: ChannelListViewModel.ErrorEvent) {
+        errorEventHandler.onErrorEvent(errorEvent)
+    }
+
     public fun setChannels(channels: List<ChannelListItem>) {
         val filteredChannels = channels.filter(channelListItemPredicate::predicate)
 
@@ -359,6 +377,10 @@ public class ChannelListView @JvmOverloads constructor(
      */
     public fun interface ChannelListItemPredicate {
         public fun predicate(channelListItem: ChannelListItem): Boolean
+    }
+
+    public fun interface ErrorEventHandler {
+        public fun onErrorEvent(errorEvent: ChannelListViewModel.ErrorEvent)
     }
 
     public interface SwipeListener {

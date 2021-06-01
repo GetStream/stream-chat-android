@@ -2,11 +2,14 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.isMuted
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -14,6 +17,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.utils.Event
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -43,6 +47,8 @@ public class ChannelListViewModel(
 
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
+    private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
+    public val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
     init {
         stateMerger.value = INITIAL_STATE
@@ -99,15 +105,21 @@ public class ChannelListViewModel(
     }
 
     public fun leaveChannel(channel: Channel) {
-        chatDomain.leaveChannel(channel.cid).enqueue()
+        chatDomain.leaveChannel(channel.cid).enqueue(
+            onError = { _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(it))) }
+        )
     }
 
     public fun deleteChannel(channel: Channel) {
-        chatDomain.deleteChannel(channel.cid).enqueue()
+        chatDomain.deleteChannel(channel.cid).enqueue(
+            onError = { _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(it))) }
+        )
     }
 
     public fun hideChannel(channel: Channel) {
-        chatDomain.hideChannel(channel.cid, true).enqueue()
+        chatDomain.hideChannel(channel.cid, true).enqueue(
+            onError = { _errorEvents.postValue(Event(ErrorEvent.HideChannelError(it))) }
+        )
     }
 
     public fun markAllRead() {
@@ -122,6 +134,17 @@ public class ChannelListViewModel(
         paginationStateMerger.value = reducer(paginationStateMerger.value ?: PaginationState())
     }
 
+    private fun parseMutedChannels(
+        channelsMap: List<Channel>,
+        channelMutesIds: List<String>?,
+    ): List<Channel> {
+        return channelsMap.map { channel ->
+            channel.copy().apply {
+                isMuted = channelMutesIds?.contains(channel.id) ?: false
+            }
+        }
+    }
+
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
 
     public data class PaginationState(
@@ -133,21 +156,16 @@ public class ChannelListViewModel(
         public object ReachedEndOfList : Action()
     }
 
+    public sealed class ErrorEvent(public open val chatError: ChatError) {
+        public data class LeaveChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class DeleteChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class HideChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+    }
+
     public companion object {
         @JvmField
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
 
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
-    }
-
-    private fun parseMutedChannels(
-        channelsMap: List<Channel>,
-        channelMutesIds: List<String>?,
-    ): List<Channel> {
-        return channelsMap.map { channel ->
-            channel.copy().apply {
-                isMuted = channelMutesIds?.contains(channel.id) ?: false
-            }
-        }
     }
 }

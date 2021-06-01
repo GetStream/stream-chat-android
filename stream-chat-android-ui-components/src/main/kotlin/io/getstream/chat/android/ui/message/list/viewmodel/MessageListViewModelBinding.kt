@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Mute
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView
 
@@ -83,4 +84,10 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
             )
         )
     }
+    errorEvents.observe(
+        lifecycleOwner,
+        EventObserver {
+            view.showError(it)
+        }
+    )
 }

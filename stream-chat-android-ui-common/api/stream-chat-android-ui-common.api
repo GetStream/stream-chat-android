@@ -366,6 +366,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
@@ -377,6 +378,55 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 
 public abstract interface class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler {
 	public abstract fun shouldAddDateSeparator (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;)Z
+}
+
+public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public synthetic fun <init> (Lio/getstream/chat/android/client/errors/ChatError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$BlockUserError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$FlagMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$FlagMessageError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$FlagMessageError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$FlagMessageError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$MuteUserError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$MuteUserError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$MuteUserError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$MuteUserError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {

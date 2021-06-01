@@ -18,6 +18,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
@@ -103,7 +104,6 @@ class GroupChatInfoFragment : Fragment() {
                 }
             }
         )
-
         viewModel.state.observe(viewLifecycleOwner) { state ->
             val members = if (state.shouldExpandMembers != false) {
                 state.members.map { ChatInfoItem.MemberItem(it) }
@@ -123,6 +123,16 @@ class GroupChatInfoFragment : Fragment() {
                     )
             )
         }
+        viewModel.errorEvents.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                when (it) {
+                    is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name
+                    is GroupChatInfoViewModel.ErrorEvent.MuteChannelError -> R.string.chat_group_info_error_mute_channel
+                    is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel
+                }.let(::showToast)
+            }
+        )
     }
 
     private fun setOnClickListeners() {

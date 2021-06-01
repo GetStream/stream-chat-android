@@ -9,12 +9,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentAddChannelBinding
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
@@ -27,7 +29,7 @@ class AddChannelFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAddChannelBinding.inflate(inflater, container, false)
         return binding.root
@@ -74,6 +76,14 @@ class AddChannelFragment : Fragment() {
                     is AddChannelViewModel.State.ResultMoreUsers -> Unit
                 }
             }
+            errorEvents.observe(
+                viewLifecycleOwner,
+                EventObserver {
+                    when (it) {
+                        is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel
+                    }.let(::showToast)
+                }
+            )
         }
         binding.addChannelView.apply {
             setMembersChangedListener {

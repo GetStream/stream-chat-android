@@ -25,8 +25,10 @@ class GroupChatInfoViewModel(
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()
     private val _events = MutableLiveData<Event<UiEvent>>()
+    private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     val events: LiveData<Event<UiEvent>> = _events
     val state: LiveData<State> = _state
+    val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
     init {
         _state.value = INITIAL_STATE
@@ -80,7 +82,7 @@ class GroupChatInfoViewModel(
         viewModelScope.launch {
             val result = channelClient.update(message = null, mapOf("name" to name)).await()
             if (result.isError) {
-                // TODO: Handle error
+                _errorEvents.postValue(Event(ErrorEvent.ChangeGroupNameError))
             }
         }
     }
@@ -91,7 +93,7 @@ class GroupChatInfoViewModel(
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.RedirectToHome)
             } else {
-                // TODO: Handle error
+                _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError))
             }
         }
     }
@@ -118,8 +120,7 @@ class GroupChatInfoViewModel(
                 channelClient.unmute().await()
             }
             if (result.isError) {
-                // Handle error in a better way
-                _state.value = _state.value!!.copy(channelMuted = !isEnabled)
+                _errorEvents.postValue(Event(ErrorEvent.MuteChannelError))
             }
         }
     }
@@ -145,6 +146,12 @@ class GroupChatInfoViewModel(
     sealed class UiEvent {
         data class ShowMemberOptions(val member: Member, val channelName: String) : UiEvent()
         object RedirectToHome : UiEvent()
+    }
+
+    sealed class ErrorEvent {
+        object ChangeGroupNameError : ErrorEvent()
+        object MuteChannelError : ErrorEvent()
+        object LeaveChannelError : ErrorEvent()
     }
 
     companion object {

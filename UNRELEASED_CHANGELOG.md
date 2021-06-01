@@ -46,6 +46,7 @@
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
+    - Changed `ChatNotificationHandler::onChatEvent` - it now doesn't handle events by default and receives `NewMessageEvent` instead of generic `ChatEvent`
 - Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails. 
 
 ### ✅ Added
@@ -64,7 +65,7 @@ It should be used now to fetch Firebase token in the following way: `handler.get
 - Updated `firebase-messaging` library to the version `22.0.0`. Removed deprecated `FirebaseInstanceId` invocations from the project. 
 
 ### ❌ Removed
-- `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseInstallations()`.
+- `ChatNotificationHandler::getFirebaseInstanceId()` due to `FirebaseInstanceId` being deprecated. It's replaced now with `ChatNotificationHandler::getFirebaseMessaging()`.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -95,6 +96,7 @@ Fixed bug when for some video attachments activity with media player wasn't show
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `topLeft`, `topRight`, `bottomLeft`, `bottomRight` options to the `streamUiAvatarOnlineIndicatorPosition` attribute of `AvatarView` and corresponding constants to `AvatarView.OnlineIndicatorPosition` enum.
 
 ### ⚠️ Changed
 - Swipe options of `ChannelListView` component:

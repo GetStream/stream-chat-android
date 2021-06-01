@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentAddGroupChannelSelectNameBinding
 import io.getstream.chat.ui.sample.feature.channel.add.group.AddGroupChannelMembersSharedViewModel
 
@@ -36,7 +38,7 @@ class AddGroupChannelSelectNameFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAddGroupChannelSelectNameBinding.inflate(inflater, container, false)
         return binding.root
@@ -103,6 +105,14 @@ class AddGroupChannelSelectNameFragment : Fragment() {
                 }
             }
         }
+        viewModelSelect.errorEvents.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                when (it) {
+                    is AddGroupChannelSelectNameViewModel.ErrorEvent.CreateChannelError -> R.string.add_group_channel_error_create_channel
+                }.let(::showToast)
+            }
+        )
     }
 
     override fun onDestroyView() {

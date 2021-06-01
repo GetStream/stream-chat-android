@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.utils.Event
 import kotlinx.coroutines.launch
 
 class GroupChatInfoAddUsersViewModel(
@@ -25,9 +26,11 @@ class GroupChatInfoAddUsersViewModel(
     private var members: List<Member> = emptyList()
     private val _state: MutableLiveData<State> = MutableLiveData(INITIAL_STATE)
     private val _userAddedState: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     private var isLoadingMore: Boolean = false
     val state: LiveData<State> = _state
     val userAddedState: LiveData<Boolean> = _userAddedState
+    val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
     private var channelController: ChannelController? = null
 
     private val observer = Observer<List<Member>> { members = it }
@@ -64,7 +67,7 @@ class GroupChatInfoAddUsersViewModel(
             if (response.isSuccess) {
                 _userAddedState.value = true
             } else {
-                // TODO: Handle error
+                _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
             }
         }
     }
@@ -142,6 +145,10 @@ class GroupChatInfoAddUsersViewModel(
         data class UserClicked(val user: User) : Action()
         data class SearchQueryChanged(val query: String) : Action()
         object LoadMoreRequested : Action()
+    }
+
+    sealed class ErrorEvent {
+        object AddMemberError : ErrorEvent()
     }
 
     companion object {

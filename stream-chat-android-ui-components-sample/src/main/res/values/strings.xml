@@ -48,10 +48,12 @@
     <string name="add_channel_user_item_offline">Offline</string>
     <string name="add_channel_user_item_online">Online</string>
     <string name="add_channel_user_item_last_online">Last online %s</string>
+    <string name="add_channel_error_create_channel">Failed to create channel</string>
 
     <!--Add Group Channel Screens-->
     <string name="add_group_channel_title">Add Group Members</string>
     <string name="add_group_channel_next_button">Next</string>
+    <string name="add_group_channel_error_create_channel">Failed to create channel</string>
     <string name="add_group_channel_select_name_title">Name of Group Chat</string>
     <string name="add_group_channel_select_name_choose_title">NAME</string>
     <string name="add_group_channel_select_name_choose_hint">Choose a group chat name</string>
@@ -75,6 +77,9 @@
     <string name="chat_info_option_shared_groups_empty_title">Groups shared with %s will appear here.</string>
     <string name="chat_info_option_delete_conversation">Delete Conversation</string>
     <string name="chat_info_delete_conversation_confirm">Are you sure you want to delete this conversation?</string>
+    <string name="chat_info_error_block_user">Failed to block user</string>
+    <string name="chat_info_error_mute_channel">Failed to switch mute state</string>
+    <string name="chat_info_error_delete_channel">Failed to delete channel</string>
 
     <string name="chat_group_info_owner">Owner</string>
     <string name="chat_group_info_option_mute">Mute Group</string>
@@ -88,6 +93,11 @@
     <string name="chat_group_info_user_option_remove">Remove From Group</string>
     <string name="chat_group_info_user_remove_title">Remove %s</string>
     <string name="chat_group_info_user_remove_description">Are you sure you want to remove %s from %s?</string>
+    <string name="chat_group_info_error_remove_member">Failed to remove member</string>
+    <string name="chat_group_info_error_change_name">Failed to change channel name</string>
+    <string name="chat_group_info_error_mute_channel">Failed to switch mute state</string>
+    <string name="chat_group_info_error_leave_channel">Failed to leave channel</string>
+    <string name="chat_group_info_error_add_member">Failed to add channel member</string>
 
     <!-- Chat fragment -->
     <string name="chat_fragment_big_attachment_subtitle">File too big - max %d mb</string>

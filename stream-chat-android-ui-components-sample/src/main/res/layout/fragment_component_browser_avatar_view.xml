@@ -112,7 +112,7 @@
 
             <TextView
                 style="@style/ComponentBrowserLabel"
-                android:text="Read indicator"
+                android:text="Online indicator"
                 />
 
             <io.getstream.chat.android.ui.avatar.AvatarView
@@ -131,6 +131,43 @@
                 android:id="@+id/avatarViewLargeIndicator"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 />
+
+            <View style="@style/ComponentBrowserSeparator" />
+
+            <TextView
+                style="@style/ComponentBrowserLabel"
+                android:text="Online indicator position"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewIndicatorTopLeft"
+                style="@style/StreamUiUserAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorPosition="topLeft"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewIndicatorBottomLeft"
+                style="@style/StreamUiUserAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorPosition="bottomLeft"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewIndicatorTopRight"
+                style="@style/StreamUiUserAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorPosition="topRight"
+                />
+
+            <io.getstream.chat.android.ui.avatar.AvatarView
+                android:id="@+id/avatarViewIndicatorBottomRight"
+                style="@style/StreamUiUserAvatarStyle"
+                app:streamUiAvatarOnlineIndicatorEnabled="true"
+                app:streamUiAvatarOnlineIndicatorPosition="bottomRight"
+                />
+
+            <View style="@style/ComponentBrowserSeparator" />
 
             <TextView
                 style="@style/ComponentBrowserLabel"
@@ -159,6 +196,8 @@
                 app:streamUiAvatarBorderWidth="4dp"
                 app:streamUiAvatarBorderColor="@color/grey_dark"
                 />
+
+            <View style="@style/ComponentBrowserSeparator" />
 
             <TextView
                 style="@style/ComponentBrowserLabel"
@@ -193,6 +232,9 @@
                 app:streamUiAvatarOnlineIndicatorColor="@color/stream_ui_accent_blue"
                 app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
                 />
+
         </LinearLayout>
+
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
