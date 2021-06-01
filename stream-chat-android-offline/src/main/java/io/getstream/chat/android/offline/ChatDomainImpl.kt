@@ -394,7 +394,7 @@ internal class ChatDomainImpl internal constructor(
         var result: Result<T>
 
         while (true) {
-            result = runnable().execute()
+            result = runnable().await()
             if (result.isSuccess || result.error().isPermanent()) {
                 break
             } else {
@@ -598,8 +598,8 @@ internal class ChatDomainImpl internal constructor(
             )
         }
 
-    private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
-        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).execute()
+    private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
+        client.getSyncHistory(cids, syncStateFlow.value?.lastSyncedAt ?: Date()).await()
 
     /**
      * replay events for all active channels
@@ -691,7 +691,7 @@ internal class ChatDomainImpl internal constructor(
         if (cids.isNotEmpty() && online) {
             val filter = `in`("cid", cids)
             val request = QueryChannelsRequest(filter, 0, 30)
-            val result = client.queryChannels(request).execute()
+            val result = client.queryChannels(request).await()
             if (result.isSuccess) {
                 val channels = result.data()
                 val foundChannelIds = channels.map { it.id }
@@ -756,11 +756,11 @@ internal class ChatDomainImpl internal constructor(
             val channelClient = client.channel(message.cid)
             // support sending, deleting and editing messages here
             val result = when {
-                message.deletedAt != null -> channelClient.deleteMessage(message.id).execute()
+                message.deletedAt != null -> channelClient.deleteMessage(message.id).await()
                 message.updatedAt != null || message.updatedLocallyAt != null -> {
-                    client.updateMessage(message).execute()
+                    client.updateMessage(message).await()
                 }
-                else -> channelClient.sendMessage(message).execute()
+                else -> channelClient.sendMessage(message).await()
             }
 
             if (result.isSuccess) {
@@ -783,9 +783,9 @@ internal class ChatDomainImpl internal constructor(
     internal suspend fun retryReactions(): List<Reaction> {
         return repos.selectReactionsSyncNeeded().onEach { reaction ->
             val result = if (reaction.deletedAt != null) {
-                client.deleteReaction(reaction.messageId, reaction.type).execute()
+                client.deleteReaction(reaction.messageId, reaction.type).await()
             } else {
-                client.sendReaction(reaction, reaction.enforceUnique).execute()
+                client.sendReaction(reaction, reaction.enforceUnique).await()
             }
 
             if (result.isSuccess) {
@@ -983,7 +983,7 @@ internal class ChatDomainImpl internal constructor(
         extraData: Map<String, Any>,
     ): Call<Channel> {
         return CoroutineCall(scope) {
-            client.createChannel(channelType, members, extraData).execute().also {
+            client.createChannel(channelType, members, extraData).await().also {
                 if (it.isSuccess) {
                     repos.insertChannel(it.data())
                 }
