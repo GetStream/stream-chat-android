@@ -391,22 +391,6 @@ internal class EventHandlerImpl(
         }
     }
 
-    private fun EventBatchUpdate.incrementUnreadCountIfNecessary(cid: String, message: Message) {
-        val currentUser = domainImpl.user.value
-
-        if (currentUser != null) {
-            val currentUserId = currentUser.id
-
-            getCurrentChannel(cid)?.let {
-                if (message.shouldIncrementUnreadCount(currentUserId)) {
-                    addChannel(it.apply { incrementUnreadCount(currentUserId) })
-                }
-            }
-        } else {
-            logger.logE("It is not possible to increment unread count because user it not set in ChatDomain.")
-        }
-    }
-
     private suspend fun handleEventsInternal(events: List<ChatEvent>) {
         val sortedEvents = events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(sortedEvents)

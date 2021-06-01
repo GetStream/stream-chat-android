@@ -8,6 +8,8 @@ import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateLastMessage
 import io.getstream.chat.android.offline.extensions.users
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.singleOrNull
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -73,7 +75,7 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        val currentUserId = domainImpl.user.value?.id
+        val currentUserId = domainImpl.user.singleOrNull()?.id
         userMap.remove(currentUserId)
 
         domainImpl.repos.storeStateForChannels(
