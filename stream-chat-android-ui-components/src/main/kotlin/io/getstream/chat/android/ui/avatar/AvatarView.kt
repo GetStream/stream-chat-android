@@ -92,10 +92,26 @@ public class AvatarView : AppCompatImageView {
 
     private fun drawOnlineStatus(canvas: Canvas) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
-            val cx = width - (width / 8f)
+            val cx: Float = when (avatarStyle.onlineIndicatorPosition) {
+                OnlineIndicatorPosition.TOP_LEFT,
+                OnlineIndicatorPosition.BOTTOM_LEFT,
+                -> width / 8f
+                OnlineIndicatorPosition.TOP,
+                OnlineIndicatorPosition.BOTTOM,
+                OnlineIndicatorPosition.TOP_RIGHT,
+                OnlineIndicatorPosition.BOTTOM_RIGHT,
+                -> width - (width / 8f)
+            }
+
             val cy: Float = when (avatarStyle.onlineIndicatorPosition) {
-                OnlineIndicatorPosition.TOP -> height / 8f
-                OnlineIndicatorPosition.BOTTOM -> height - height / 8f
+                OnlineIndicatorPosition.TOP_LEFT,
+                OnlineIndicatorPosition.TOP_RIGHT,
+                OnlineIndicatorPosition.TOP,
+                -> height / 8f
+                OnlineIndicatorPosition.BOTTOM_LEFT,
+                OnlineIndicatorPosition.BOTTOM_RIGHT,
+                OnlineIndicatorPosition.BOTTOM,
+                -> height - height / 8f
             }
             canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
             canvas.drawCircle(cx, cy, width / 10f, onlineIndicatorPaint)
@@ -114,8 +130,21 @@ public class AvatarView : AppCompatImageView {
     }
 
     public enum class OnlineIndicatorPosition {
+        @Deprecated(
+            message = "Use OnlineIndicatorPosition.TOP_RIGHT instead",
+            level = DeprecationLevel.WARNING,
+        )
         TOP,
-        BOTTOM
+
+        @Deprecated(
+            message = "Use OnlineIndicatorPosition.BOTTOM_RIGHT instead",
+            level = DeprecationLevel.WARNING,
+        )
+        BOTTOM,
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
     }
 
     internal companion object {

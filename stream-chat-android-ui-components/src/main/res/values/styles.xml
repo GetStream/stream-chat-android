@@ -48,7 +48,7 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
-        <item name="streamUiAvatarOnlineIndicatorPosition">bottom</item>
+        <item name="streamUiAvatarOnlineIndicatorPosition">bottomRight</item>
     </style>
 
     <style name="StreamUiChatInfoAvatarStyle" parent="StreamUiBaseAvatarStyle">
@@ -281,7 +281,7 @@
         <item name="streamUiAvatarBorderColor">?attr/streamUiGlobalAvatarBorderColor</item>
         <item name="streamUiAvatarTextColor">?attr/streamUiGlobalAvatarTextColor</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
-        <item name="streamUiAvatarOnlineIndicatorPosition">top</item>
+        <item name="streamUiAvatarOnlineIndicatorPosition">topRight</item>
         <item name="streamUiAvatarBorderWidth">0dp</item>
         <item name="streamUiAvatarOnlineIndicatorColor">?attr/streamUiGlobalAvatarOnlineIndicatorColor</item>
         <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
