@@ -67,34 +67,31 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         userPresence: Boolean,
     ): Result<List<User>> {
         val currentUser = chatDomainImpl.user.value
-
-        return if (currentUser != null) {
-            val filter = if (querySearch.isEmpty()) {
-                defaultUsersQueryFilter(currentUser.id)
-            } else {
-                Filters.and(
-                    Filters.autocomplete(FIELD_NAME, querySearch),
-                    Filters.ne(FIELD_ID, currentUser.id)
-                )
-            }
-
-            chatDomainImpl.client.queryUsers(
-                QueryUsersRequest(
-                    filter = filter,
-                    offset = offset,
-                    limit = userLimit,
-                    querySort = USERS_QUERY_SORT,
-                    presence = userPresence
-                )
-            ).await().also { result ->
-                if (result.isSuccess && result.data().isNotEmpty()) {
-                    chatDomainImpl.repos.insertUsers(result.data())
-                }
-            }
-        } else {
-            Result(
+            ?: return Result(
                 ChatError("User is not set in ChatDomain. It is not possible to perform online search")
             )
+
+        val filter = if (querySearch.isEmpty()) {
+            defaultUsersQueryFilter(currentUser.id)
+        } else {
+            Filters.and(
+                Filters.autocomplete(FIELD_NAME, querySearch),
+                Filters.ne(FIELD_ID, currentUser.id)
+            )
+        }
+
+        return chatDomainImpl.client.queryUsers(
+            QueryUsersRequest(
+                filter = filter,
+                offset = offset,
+                limit = userLimit,
+                querySort = USERS_QUERY_SORT,
+                presence = userPresence
+            )
+        ).await().also { result ->
+            if (result.isSuccess && result.data().isNotEmpty()) {
+                chatDomainImpl.repos.insertUsers(result.data())
+            }
         }
     }
 

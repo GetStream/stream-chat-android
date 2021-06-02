@@ -550,8 +550,8 @@ internal class ChatDomainImpl internal constructor(
     internal fun allActiveChannels(): List<ChannelController> =
         activeChannelMapImpl.values.toList()
 
-    fun generateMessageId(): String {
-        return (_user.value?.id ?: "user_not_user") + "-" + UUID.randomUUID().toString()
+    fun generateMessageId(userId: String): String {
+        return userId + "-" + UUID.randomUUID().toString()
     }
 
     private fun addTypingChannel(channelController: ChannelController) {

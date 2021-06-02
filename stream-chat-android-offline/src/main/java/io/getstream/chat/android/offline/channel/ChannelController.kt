@@ -580,24 +580,21 @@ public class ChannelController internal constructor(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
+        val currentUser = domainImpl.user.value
+            ?: return Result(
+                ChatError("User is not set in ChatDomain. Messages can't be send.")
+            )
+
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
         val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
         if (newMessage.id.isEmpty()) {
-            newMessage.id = domainImpl.generateMessageId()
+            newMessage.id = domainImpl.generateMessageId(currentUser.id)
         }
         if (newMessage.cid.isEmpty()) {
             newMessage.enrichWithCid(cid)
-        }
-
-        val currentUser = domainImpl.user.value
-
-        if (currentUser == null) {
-            return Result(
-                ChatError("User is not set in ChatDomain. Messages can't be send.")
-            )
         }
 
         // What to do then user is not set?
@@ -809,9 +806,13 @@ public class ChannelController internal constructor(
      */
     internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
         val currentUser = domainImpl.user.value
+            ?: return Result(
+                ChatError("Current user is not set in ChatDomain. It is not possible to send reactions")
+            )
+
         reaction.apply {
             user = currentUser
-            userId = currentUser?.id ?: "user_not_set"
+            userId = currentUser.id
             syncStatus = SyncStatus.IN_PROGRESS
             this.enforceUnique = enforceUnique
         }
@@ -821,7 +822,7 @@ public class ChannelController internal constructor(
         if (!online) {
             reaction.syncStatus = SyncStatus.SYNC_NEEDED
         }
-        if (enforceUnique && currentUser != null) {
+        if (enforceUnique) {
             // remove all user's reactions to the message
             domainImpl.repos.updateReactionsForMessageByDeletedDate(
                 userId = currentUser.id,
