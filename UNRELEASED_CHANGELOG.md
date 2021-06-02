@@ -43,6 +43,7 @@
     - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
     - Deprecated `ChatClient.handleRemoteMessage`
     - Deprecated `ChatClient.onNewTokenReceived`
+    - Changed `ChatNotificationHandler::buildNotification` signature - it now receives `Channel` and `Message` and returns `NotificationCompat.Builder` for better customization
     - Deprecated `ChatNotificationHandler.getSmallIcon`
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
