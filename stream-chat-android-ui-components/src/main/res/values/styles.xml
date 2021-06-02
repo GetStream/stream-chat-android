@@ -331,7 +331,7 @@
         <item name="streamUiChannelActionsDeleteConversationEnabled">true</item>
         <item name="streamUiChannelActionsCancelIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiChannelActionsCancelEnabled">true</item>
-        <item name="streamUiChannelActionsItemTint">@color/stream_ui_grey</item>
-        <item name="streamUiChannelActionsWarningItemTint">@color/stream_ui_accent_red</item>
+        <item name="streamUiChannelActionsIconsTint">@color/stream_ui_grey</item>
+        <item name="streamUiChannelActionsWarningActionsTint">@color/stream_ui_accent_red</item>
     </style>
 </resources>

@@ -156,12 +156,12 @@ public data class ChannelActionsDialogViewStyle(
                 )
 
                 val iconsTint = a.getColor(
-                    R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTint,
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsIconsTint,
                     context.getColorCompat(R.color.stream_ui_grey)
                 )
 
                 val warningActionsTint = a.getColor(
-                    R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTint,
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningActionsTint,
                     context.getColorCompat(R.color.stream_ui_accent_red)
                 )
 
