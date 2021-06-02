@@ -265,14 +265,13 @@
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
-
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
-
+        <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
     </style>
 
-    <style name="StreamUi" >
+    <style name="StreamUi">
         <!--Common styles properties-->
     </style>
 
@@ -306,5 +305,9 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
+        <item name="streamUiChannelActionsItemTextColor">@color/stream_ui_accent_green</item>
     </style>
 </resources>

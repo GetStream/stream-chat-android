@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
@@ -27,6 +28,8 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         ChannelActionsViewModelFactory(cid, isGroup)
     }
 
+    private lateinit var style: ChannelActionsDialogViewStyle
+
     private var _binding: StreamUiFragmentChannelActionsBinding? = null
     private val binding get() = _binding!!
 
@@ -41,6 +44,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        consumeStyleArg()
         bindViews()
         // render
         channelActionsViewModel.state.observe(viewLifecycleOwner) { state ->
@@ -63,21 +67,37 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun bindViews() {
         with(binding) {
             recyclerView.adapter = membersAdapter
+            configureViewInfoAction()
+            configureLeaveGroupButton()
+            configureCancelButton()
+        }
+    }
 
-            binding.leaveGroupButton.isVisible = isGroup
-
-            // these buttons all trigger side effects and don't alter state
-            leaveGroupButton.setOnClickListener {
-                channelActionListener?.onLeaveChannelClicked(cid)
+    private fun configureCancelButton() {
+        binding.cancelButton.apply {
+            style.channelActionItemTextStyle.apply(this)
+            setOnClickListener {
                 dismiss()
             }
+        }
+    }
 
-            viewInfoButton.setOnClickListener {
+    private fun configureViewInfoAction() {
+        binding.viewInfoButton.apply {
+            style.channelActionItemTextStyle.apply(this)
+            setOnClickListener {
                 channelActionListener?.onChannelInfoSelected(cid)
                 dismiss()
             }
+        }
+    }
 
-            cancelButton.setOnClickListener {
+    private fun configureLeaveGroupButton() {
+        binding.leaveGroupButton.apply {
+            style.channelActionItemTextStyle.apply(this)
+            isVisible = isGroup
+            setOnClickListener {
+                channelActionListener?.onLeaveChannelClicked(cid)
                 dismiss()
             }
         }
@@ -120,6 +140,13 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun consumeStyleArg() {
+        styleArg?.let {
+            style = it
+            styleArg = null
+        } ?: dismiss()
+    }
+
     interface ChannelActionListener {
         fun onDeleteConversationClicked(cid: String)
 
@@ -134,11 +161,19 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CID = "cid"
         private const val ARG_IS_GROUP = "is_group"
 
-        fun newInstance(cid: String, isGroup: Boolean): ChannelActionsDialogFragment {
+        var styleArg: ChannelActionsDialogViewStyle? = null
+
+        fun newInstance(
+            cid: String,
+            isGroup: Boolean,
+            style: ChannelActionsDialogViewStyle,
+        ): ChannelActionsDialogFragment {
             return ChannelActionsDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_CID, cid)
                     putBoolean(ARG_IS_GROUP, isGroup)
+                    // pass style via static field
+                    styleArg = style
                 }
             }
         }

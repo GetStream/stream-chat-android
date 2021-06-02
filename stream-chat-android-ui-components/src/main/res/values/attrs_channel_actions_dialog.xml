@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChannelActionsDialog">
+        <attr name="streamUiChannelActionsItemTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelActionsItemTextColor" format="color|reference" />
+        <attr name="streamUiChannelActionsItemTextFont" format="reference" />
+        <attr name="streamUiChannelActionsItemTextFontAssets" format="string" />
+        <attr name="streamUiChannelActionsItemTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
