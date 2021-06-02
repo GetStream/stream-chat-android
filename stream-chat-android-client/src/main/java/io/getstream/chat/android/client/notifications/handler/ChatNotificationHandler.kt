@@ -16,6 +16,9 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
@@ -134,25 +137,22 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     public open fun buildNotification(
         notificationId: Int,
-        channelName: String,
-        messageText: String,
-        messageId: String,
-        channelType: String,
-        channelId: String,
-    ): Notification {
-        val notificationBuilder = getNotificationBuilder(
-            contentTitle = channelName,
-            contentText = messageText,
-            groupKey = getNotificationGroupKey(channelType = channelType, channelId = channelId),
-            intent = getNewMessageIntent(messageId = messageId, channelType = channelType, channelId = channelId),
+        channel: Channel,
+        message: Message
+    ): NotificationCompat.Builder {
+        return getNotificationBuilder(
+            contentTitle = channel.name,
+            contentText = message.text,
+            groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
+            intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {
             addAction(
                 getReadAction(
                     prepareActionPendingIntent(
                         notificationId,
-                        messageId,
-                        channelId,
-                        channelType,
+                        message.id,
+                        channel.id,
+                        channel.type,
                         NotificationMessageReceiver.ACTION_READ,
                     )
                 )
@@ -161,32 +161,25 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                 getReplyAction(
                     prepareActionPendingIntent(
                         notificationId,
-                        messageId,
-                        channelId,
-                        channelType,
+                        message.id,
+                        channel.id,
+                        channel.type,
                         NotificationMessageReceiver.ACTION_REPLY,
                     )
                 )
             )
         }
-
-        return notificationBuilder.build()
     }
 
-    public open fun buildNotificationGroupSummary(
-        channelType: String,
-        channelId: String,
-        channelName: String,
-        messageId: String,
-    ): Notification {
+    public open fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
         return getNotificationBuilder(
-            contentTitle = channelName,
+            contentTitle = channel.name,
             contentText = context.getString(config.notificationGroupSummaryContentText),
-            groupKey = getNotificationGroupKey(channelType = channelType, channelId = channelId),
-            intent = getNewMessageIntent(messageId = messageId, channelType = channelType, channelId = channelId),
+            groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
+            intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {
             setGroupSummary(true)
-        }.build()
+        }
     }
 
     public open fun buildErrorNotificationGroupSummary(): Notification {

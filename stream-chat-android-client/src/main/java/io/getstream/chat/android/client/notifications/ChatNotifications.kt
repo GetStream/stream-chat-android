@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
@@ -167,29 +166,18 @@ internal class ChatNotificationsImpl constructor(
         val notificationId = System.currentTimeMillis().toInt()
 
         handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-        handler.buildNotification(
-            notificationId = notificationId,
-            channelName = channel.name,
-            messageText = message.text,
-            messageId = message.id,
-            channelType = channel.type,
-            channelId = channel.id,
-        ).let { notification ->
-            showedNotifications.add(message.id)
-            showNotification(
-                notificationId = notificationId,
-                notification = notification,
-                shouldShowInForeground = shouldShowInForeground,
-            )
-        }
+        handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
+            .let { notification ->
+                showedNotifications.add(message.id)
+                showNotification(
+                    notificationId = notificationId,
+                    notification = notification,
+                    shouldShowInForeground = shouldShowInForeground,
+                )
+            }
 
         if (handler.config.shouldGroupNotifications) {
-            handler.buildNotificationGroupSummary(
-                channelType = channel.type,
-                channelId = channel.id,
-                channelName = channel.name,
-                messageId = message.id,
-            ).let { notification ->
+            handler.buildNotificationGroupSummary(channel = channel, message = message).build().let { notification ->
                 showNotification(
                     notificationId = handler.getNotificationGroupSummaryId(
                         channelType = channel.type,
