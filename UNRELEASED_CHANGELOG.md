@@ -40,6 +40,7 @@
 - Improved handling push notifications:
     - Added `ChatClient.handleRemoteMessage` for remote message handling
     - Added `ChatClient.setFirebaseToken` for setting Firebase token
+    - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
     - Deprecated `ChatClient.handleRemoteMessage`
     - Deprecated `ChatClient.onNewTokenReceived`
     - Deprecated `ChatNotificationHandler.getSmallIcon`

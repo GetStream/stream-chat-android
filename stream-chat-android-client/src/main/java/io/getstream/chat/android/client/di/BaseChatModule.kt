@@ -31,6 +31,8 @@ import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
+import io.getstream.chat.android.client.notifications.NoOpChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.GsonChatParser
@@ -109,7 +111,11 @@ internal open class BaseChatModule(
         handler: ChatNotificationHandler,
         api: ChatApi,
     ): ChatNotifications {
-        return ChatNotifications.create(handler, api, appContext)
+        return if (handler.config.pushNotificationsEnabled) {
+            ChatNotificationsImpl(handler, api, appContext)
+        } else {
+            NoOpChatNotifications(handler)
+        }
     }
 
     private fun buildRetrofit(
