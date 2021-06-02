@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ChannelActionsDialog">
+        <!-- Channel actions dialog title with member names -->
+        <attr name="streamUiChannelActionsMemberNamesTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelActionsMemberNamesTextColor" format="color|reference" />
+        <attr name="streamUiChannelActionsMemberNamesTextFont" format="reference" />
+        <attr name="streamUiChannelActionsMemberNamesTextFontAssets" format="string" />
+        <attr name="streamUiChannelActionsMemberNamesTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Channel actions dialog subtitle with member info -->
+        <attr name="streamUiChannelActionsMemberInfoTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelActionsMemberInfoTextColor" format="color|reference" />
+        <attr name="streamUiChannelActionsMemberInfoTextFont" format="reference" />
+        <attr name="streamUiChannelActionsMemberInfoTextFontAssets" format="string" />
+        <attr name="streamUiChannelActionsMemberInfoTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Channel action item text style -->
         <attr name="streamUiChannelActionsItemTextSize" format="dimension|reference" />
         <attr name="streamUiChannelActionsItemTextColor" format="color|reference" />
         <attr name="streamUiChannelActionsItemTextFont" format="reference" />

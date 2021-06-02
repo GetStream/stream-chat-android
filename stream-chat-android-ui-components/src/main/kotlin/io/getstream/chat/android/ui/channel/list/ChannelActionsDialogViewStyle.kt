@@ -18,6 +18,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [ChannelActionsDialogFragment].
  * Use this class together with [TransformStyle.channelActionsDialogStyleTransformer] to change [ChannelActionsDialogFragment] styles programmatically.
  *
+ * @property memberNamesTextStyle - test appearance for dialog title with member names
+ * @property memberInfoTextStyle - test appearance for dialog subtitle with member info
  * @property itemTextStyle - text appearance for action item
  * @property viewInfoIcon - icon for view info action. Default - [R.drawable.stream_ui_ic_single_user]
  * @property viewInfoEnabled - shows/hides view info action. Shown by default
@@ -31,6 +33,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property warningActionsTint - color of dangerous actions such as delete conversation. Default - [R.color.stream_ui_accent_red].
  */
 public data class ChannelActionsDialogViewStyle(
+    public val memberNamesTextStyle: TextStyle,
+    public val memberInfoTextStyle: TextStyle,
     public val itemTextStyle: TextStyle,
     public val viewInfoIcon: Drawable,
     public val viewInfoEnabled: Boolean,
@@ -59,6 +63,44 @@ public data class ChannelActionsDialogViewStyle(
                     ),
                     R.styleable.ChannelActionsDialog
                 )
+
+                val memberNamesTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextFontAssets,
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextFont
+                    )
+                    .style(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val memberInfoTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextFontAssets,
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextFont
+                    )
+                    .style(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
 
                 val itemTextStyle = TextStyle.Builder(a)
                     .size(
@@ -124,6 +166,8 @@ public data class ChannelActionsDialogViewStyle(
                 )
 
                 return ChannelActionsDialogViewStyle(
+                    memberNamesTextStyle = memberNamesTextStyle,
+                    memberInfoTextStyle = memberInfoTextStyle,
                     itemTextStyle = itemTextStyle,
                     viewInfoIcon = viewInfoIcon,
                     viewInfoEnabled = viewInfoEnabled,

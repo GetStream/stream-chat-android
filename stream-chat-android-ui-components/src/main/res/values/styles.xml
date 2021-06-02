@@ -308,6 +308,16 @@
     </style>
 
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
+        <!-- Channel actions dialog title with member names -->
+        <item name="streamUiChannelActionsMemberNamesTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiChannelActionsMemberNamesTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiChannelActionsMemberNamesTextStyle">bold</item>
+
+        <!-- Channel actions dialog subtitle with member info -->
+        <item name="streamUiChannelActionsMemberInfoTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiChannelActionsMemberInfoTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiChannelActionsMemberInfoTextStyle">normal</item>
+
         <!-- Channel action item text style -->
         <item name="streamUiChannelActionsItemTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiChannelActionsItemTextColor">@color/stream_ui_text_color_primary</item>
