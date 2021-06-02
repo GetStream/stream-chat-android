@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -364,7 +365,7 @@ public class QueryChannelsController internal constructor(
     internal suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val request = pagination.toQueryChannelsRequest(filter, domainImpl.userPresence)
         // next run the actual query
-        val response = client.queryChannels(request).execute()
+        val response = client.queryChannels(request).await()
 
         if (response.isSuccess) {
             recoveryNeeded = false

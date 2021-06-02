@@ -15,6 +15,7 @@ public final class io/getstream/chat/android/client/call/Call$DefaultImpls {
 
 public final class io/getstream/chat/android/client/call/CallKt {
 	public static final fun await (Lio/getstream/chat/android/client/call/Call;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun enqueue$default (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public class io/getstream/chat/android/client/errors/ChatError {

@@ -40,12 +40,14 @@
 - Improved handling push notifications:
     - Added `ChatClient.handleRemoteMessage` for remote message handling
     - Added `ChatClient.setFirebaseToken` for setting Firebase token
+    - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
     - Deprecated `ChatClient.handleRemoteMessage`
     - Deprecated `ChatClient.onNewTokenReceived`
     - Deprecated `ChatNotificationHandler.getSmallIcon`
     - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
     - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
+    - Changed `ChatNotificationHandler::onChatEvent` - it now doesn't handle events by default and receives `NewMessageEvent` instead of generic `ChatEvent`
 - Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails.
 
 ### ✅ Added
@@ -58,6 +60,7 @@
     - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
 - Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`.
 It should be used now to fetch Firebase token in the following way: `handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {...}`.
+- Added `Message.attachmentsSyncStatus: SyncStatus` property.
 
 ### ⚠️ Changed
 - Changed the return type of `FileUploader` methods from nullable string to `Result<String>`.
@@ -95,12 +98,13 @@ Fixed bug when for some video attachments activity with media player wasn't show
 ### ⬆️ Improved
 
 ### ✅ Added
-ChannelListViewModel.State now has ChannelListViewModel.State.Result and ChannelListViewModel.State.Error so
-there are different classes to deal with a correct result and a failed one. 
+- Added `topLeft`, `topRight`, `bottomLeft`, `bottomRight` options to the `streamUiAvatarOnlineIndicatorPosition` attribute of `AvatarView` and corresponding constants to `AvatarView.OnlineIndicatorPosition` enum.
+- ChannelListViewModel.State now has ChannelListViewModel.State.Result and ChannelListViewModel.State.Error so
+there are different classes to deal with a correct result and a failed one.
 ### ⚠️ Changed
 - Swipe options of `ChannelListView` component:
-    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it.
-    If you want to make this option visible, you need to set `app:streamUiChannelOptionsEnabled="true"` explicitly to `io.getstream.chat.android.ui.channel.list.ChannelListView` component.
+    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it. 
+    If you want to make this option visible, you need to set `app:streamUiChannelOptionsEnabled="true"` explicitly to `io.getstream.chat.android.ui.channel.list.ChannelListView` component. 
     - "Channel delete" option has now default implementation. Clicking on the "delete" icon shows AlertDialog asking to confirm Channel deletion operation.
 
 ### ❌ Removed

@@ -7,10 +7,12 @@ import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.zipWith
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -22,23 +24,34 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal class ChatNotifications private constructor(
-    val handler: ChatNotificationHandler,
+internal interface ChatNotifications {
+    val handler: ChatNotificationHandler
+    fun onSetUser()
+    fun setFirebaseToken(firebaseToken: String)
+    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onChatEvent(event: ChatEvent)
+    fun isValidRemoteMessage(message: RemoteMessage): Boolean
+    fun cancelLoadDataWork()
+    suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
+}
+
+internal class ChatNotificationsImpl constructor(
+    override val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context,
-) {
+) : ChatNotifications {
     private val logger = ChatLogger.get("ChatNotifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
     private val showedNotifications = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    private fun init() {
+    init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             notificationManager.createNotificationChannel(handler.createNotificationChannel())
     }
 
-    fun onSetUser() {
+    override fun onSetUser() {
         handler.getFirebaseMessaging()?.token?.addOnCompleteListener {
             if (it.isSuccessful) {
                 logger.logI("Firebase returned token successfully")
@@ -49,11 +62,14 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun setFirebaseToken(firebaseToken: String) {
+    override fun setFirebaseToken(firebaseToken: String) {
         pushTokenUpdateHandler.updateTokenIfNecessary(firebaseToken)
     }
 
-    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
+    override fun onFirebaseMessage(
+        message: RemoteMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener,
+    ) {
         logger.logI("onReceiveFirebaseMessage: payload: ${message.data}")
 
         if (isValidRemoteMessage(message)) {
@@ -67,19 +83,20 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun onChatEvent(event: ChatEvent) {
+    override fun onChatEvent(event: ChatEvent) {
         if (event is NewMessageEvent) {
-            logger.logI("onChatEvent: {$event.type}")
+            val currentUserId = ChatClient.instance().getCurrentUser()?.id
+            if (event.message.user.id == currentUserId) return
 
+            logger.logD("Handling $event")
             if (!handler.onChatEvent(event)) {
-                if (isForeground()) return
-                logger.logI("onReceiveWebSocketEvent: $event")
+                logger.logI("Handling $event internally")
                 handleEvent(event)
             }
         }
     }
 
-    fun cancelLoadDataWork() {
+    override fun cancelLoadDataWork() {
         LoadNotificationDataWorker.cancel(context)
     }
 
@@ -104,42 +121,52 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
+    override fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
 
         if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
-            // Needs to be refactored in a separate task
             GlobalScope.launch(DispatcherProvider.Main) {
-                displayNotificationWithData(event.channelType, event.channelId, messageId)
+                val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
+                if (result.isSuccess) {
+                    showNotification(
+                        channel = result.data(),
+                        message = event.message,
+                        shouldShowInForeground = true,
+                    )
+                } else {
+                    showErrorNotification(
+                        messageId = event.message.id,
+                        error = result.error(),
+                        shouldShowInForeground = true,
+                    )
+                }
             }
         }
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
-    internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
         val result = getChannel.zipWith(getMessage).await()
         if (result.isSuccess) {
-            logger.logD("Notification data loaded")
             val (channel, message) = result.data()
-            handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-            onRequiredDataLoaded(channel, message)
+            showNotification(channel = channel, message = message)
         } else {
-            logger.logE("Error loading required data: ${result.error().message}", result.error())
-            handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
-            showErrorCaseNotification()
+            showErrorNotification(messageId = messageId, error = result.error())
         }
     }
 
-    private fun onRequiredDataLoaded(channel: Channel, message: Message) {
+    private fun showNotification(channel: Channel, message: Message, shouldShowInForeground: Boolean = false) {
+        logger.logD("Showing notification with loaded data")
         val notificationId = System.currentTimeMillis().toInt()
 
+        handler.getDataLoadListener()?.onLoadSuccess(channel, message)
         handler.buildNotification(
             notificationId = notificationId,
             channelName = channel.name,
@@ -149,7 +176,11 @@ internal class ChatNotifications private constructor(
             channelId = channel.id,
         ).let { notification ->
             showedNotifications.add(message.id)
-            showNotification(notificationId = notificationId, notification = notification)
+            showNotification(
+                notificationId = notificationId,
+                notification = notification,
+                shouldShowInForeground = shouldShowInForeground,
+            )
         }
 
         if (handler.config.shouldGroupNotifications) {
@@ -165,29 +196,33 @@ internal class ChatNotifications private constructor(
                         channelId = channel.id,
                     ),
                     notification = notification,
+                    shouldShowInForeground = shouldShowInForeground,
                 )
             }
         }
     }
 
-    private fun showErrorCaseNotification() {
+    private fun showErrorNotification(messageId: String, error: ChatError, shouldShowInForeground: Boolean = false) {
+        logger.logE("Error loading required data: ${error.message}", error)
+        handler.getDataLoadListener()?.onLoadFail(messageId, error)
+
         showNotification(
             notificationId = System.currentTimeMillis().toInt(),
             notification = handler.buildErrorCaseNotification(),
+            shouldShowInForeground = shouldShowInForeground,
         )
 
         if (handler.config.shouldGroupNotifications) {
-            handler.buildErrorNotificationGroupSummary().let { notification ->
-                showNotification(
-                    notificationId = handler.getErrorNotificationGroupSummaryId(),
-                    notification = notification,
-                )
-            }
+            showNotification(
+                notificationId = handler.getErrorNotificationGroupSummaryId(),
+                notification = handler.buildErrorNotificationGroupSummary(),
+                shouldShowInForeground = shouldShowInForeground,
+            )
         }
     }
 
-    private fun showNotification(notificationId: Int, notification: Notification) {
-        if (!isForeground()) {
+    private fun showNotification(notificationId: Int, notification: Notification, shouldShowInForeground: Boolean) {
+        if (shouldShowInForeground || !isForeground()) {
             notificationManager.notify(notificationId, notification)
         }
     }
@@ -195,12 +230,18 @@ internal class ChatNotifications private constructor(
     private fun isForeground(): Boolean {
         return ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     }
+}
 
-    companion object {
-        fun create(
-            handler: ChatNotificationHandler,
-            client: ChatApi,
-            context: Context,
-        ) = ChatNotifications(handler, client, context).apply(ChatNotifications::init)
-    }
+internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
+    override fun onSetUser() = Unit
+    override fun setFirebaseToken(firebaseToken: String) = Unit
+    override fun onFirebaseMessage(
+        message: RemoteMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener,
+    ) = Unit
+
+    override fun onChatEvent(event: ChatEvent) = Unit
+    override fun isValidRemoteMessage(message: RemoteMessage) = false
+    override fun cancelLoadDataWork() = Unit
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
 }

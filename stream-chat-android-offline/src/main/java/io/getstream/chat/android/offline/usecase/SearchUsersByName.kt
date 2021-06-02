@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
@@ -85,7 +86,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
                     querySort = USERS_QUERY_SORT,
                     presence = userPresence
                 )
-            ).execute().also { result ->
+            ).await().also { result ->
                 if (result.isSuccess && result.data().isNotEmpty()) {
                     chatDomainImpl.repos.insertUsers(result.data())
                 }

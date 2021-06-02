@@ -80,8 +80,8 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     fun getThread(threadId: String): ThreadControllerImpl =
         ThreadControllerImpl(channelControllerStateFlow.getThread(threadId))
 
-    fun keystroke(parentId: String?): Result<Boolean> = channelControllerStateFlow.keystroke(parentId)
-    fun stopTyping(parentId: String?): Result<Boolean> = channelControllerStateFlow.stopTyping(parentId)
+    suspend fun keystroke(parentId: String?): Result<Boolean> = channelControllerStateFlow.keystroke(parentId)
+    suspend fun stopTyping(parentId: String?): Result<Boolean> = channelControllerStateFlow.stopTyping(parentId)
     internal suspend fun markRead(): Boolean = channelControllerStateFlow.markRead()
 
     suspend fun hide(clearHistory: Boolean): Result<Unit> = channelControllerStateFlow.hide(clearHistory)
@@ -142,14 +142,14 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     suspend fun removeMembers(vararg userIds: String): Result<Channel> =
         channelControllerStateFlow.removeMembers(*userIds)
 
-    // fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
+    fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
 
     suspend fun editMessage(message: Message): Result<Message> = channelControllerStateFlow.editMessage(message)
     suspend fun deleteMessage(message: Message): Result<Message> = channelControllerStateFlow.deleteMessage(message)
 
     override fun toChannel(): Channel = channelControllerStateFlow.toChannel()
 
-    internal fun loadOlderThreadMessages(
+    internal suspend fun loadOlderThreadMessages(
         threadId: String,
         limit: Int,
         firstMessage: Message? = null,

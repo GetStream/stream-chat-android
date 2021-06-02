@@ -6,20 +6,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 
     private val chatDomain = ChatDomain.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
+    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     val state: LiveData<State> = _state
     val paginationState: LiveData<PaginationState> = _paginationState
+    val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
     private var channelClient: ChannelClient? = null
     private var searchQuery: String = ""
@@ -57,9 +61,11 @@ class AddChannelViewModel : ViewModel() {
     private fun createChannel() {
         val client = requireNotNull(channelClient) { "Cannot create Channel without initializing ChannelClient" }
         viewModelScope.launch(Dispatchers.IO) {
-            val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).execute()
+            val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).await()
             if (result.isSuccess) {
                 _state.postValue(State.NavigateToChannel(result.data().cid))
+            } else {
+                _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
             }
         }
     }
@@ -75,7 +81,7 @@ class AddChannelViewModel : ViewModel() {
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map { it.id } + chatDomain.user.value!!.id,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
-                ).execute()
+                ).await()
             if (result.isSuccess) {
                 val cid = result.data().cid
                 channelClient = ChatClient.instance().channel(cid)
@@ -118,6 +124,10 @@ class AddChannelViewModel : ViewModel() {
         object MessageSent : Event()
         data class MembersChanged(val members: List<User>) : Event()
         data class SearchInputChanged(val query: String) : Event()
+    }
+
+    sealed class ErrorEvent {
+        object CreateChannelError : ErrorEvent()
     }
 
     data class PaginationState(

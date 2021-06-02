@@ -29,8 +29,10 @@ class GroupChatInfoMemberOptionsViewModel(
 
     private val _events = MutableLiveData<Event<UiEvent>>()
     private val _state: MediatorLiveData<State> = MediatorLiveData()
+    private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     val events: LiveData<Event<UiEvent>> = _events
     val state: LiveData<State> = _state
+    val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
     init {
         viewModelScope.launch {
@@ -106,7 +108,7 @@ class GroupChatInfoMemberOptionsViewModel(
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {
-                // TODO: Handle error
+                _errorEvents.postValue(Event(ErrorEvent.RemoveMemberError))
             }
         }
     }
@@ -122,6 +124,10 @@ class GroupChatInfoMemberOptionsViewModel(
         object Dismiss : UiEvent()
         data class RedirectToChat(val cid: String) : UiEvent()
         object RedirectToChatPreview : UiEvent()
+    }
+
+    sealed class ErrorEvent {
+        object RemoveMemberError : ErrorEvent()
     }
 }
 

@@ -11,12 +11,15 @@ import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 
     private val currentUserId: String = ChatDomain.instance().user.value!!.id
     private val _state: MutableLiveData<State> = MutableLiveData()
+    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     val state: LiveData<State> = _state
+    val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
     fun onEvent(event: Event) {
         when (event) {
@@ -36,6 +39,8 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
                 ).await()
             if (result.isSuccess) {
                 _state.value = State.NavigateToChannel(result.data().cid)
+            } else {
+                _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
             }
         }
     }
@@ -52,5 +57,9 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
 
     sealed class Event {
         data class CreateChannel(val name: String, val members: List<User>) : Event()
+    }
+
+    sealed class ErrorEvent {
+        object CreateChannelError : ErrorEvent()
     }
 }

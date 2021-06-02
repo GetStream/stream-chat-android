@@ -13,6 +13,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupAddUsersDialogFragmentBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment.LoadMoreListener
@@ -68,6 +71,15 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
                 dismiss()
             }
         }
+        viewModel.errorEvents.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                when (it) {
+                    is GroupChatInfoAddUsersViewModel.ErrorEvent.AddMemberError -> R.string.chat_group_info_error_add_member
+                }.let(::showToast)
+            }
+        )
+
         adapter.setUserClickListener { user ->
             viewModel.onAction(GroupChatInfoAddUsersViewModel.Action.UserClicked(user))
         }
