@@ -279,7 +279,7 @@ internal class ChatDomainImpl internal constructor(
         repos = RepositoryFacadeBuilder {
             context(appContext)
             database(db)
-            _user.value?.let(::currentUser)
+            currentUser(user)
             scope(scope)
             defaultConfig(defaultConfig)
             setOfflineEnabled(offlineEnabled)

@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
 
 internal class MessageListItemDecoratorProvider(
-    getCurrentUser: () -> User?,
+    getCurrentUser: () -> User,
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
     style: MessageListItemStyle,
