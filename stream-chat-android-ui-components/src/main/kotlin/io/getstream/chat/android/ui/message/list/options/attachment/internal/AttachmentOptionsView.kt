@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -144,11 +144,11 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     private fun TextView.configureListItem(icon: Int, iconTint: Int) {
-        this.setLeftDrawable(icon, iconTint)
+        this.setLeftDrawableWithTint(icon, iconTint)
     }
 
     private fun TextView.configureListItem(icon: Int, iconTint: Int, textTint: Int) {
         this.setTextColor(textTint)
-        this.setLeftDrawable(icon, iconTint)
+        this.setLeftDrawableWithTint(icon, iconTint)
     }
 }

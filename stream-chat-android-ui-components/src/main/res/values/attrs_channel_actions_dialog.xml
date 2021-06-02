@@ -10,5 +10,12 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="streamUiChannelActionsViewInfoIcon" format="reference" />
+        <attr name="streamUiChannelActionsLeaveGroupIcon" format="reference" />
+        <attr name="streamUiChannelActionsDeleteConversationIcon" format="reference" />
+        <attr name="streamUiChannelActionsCancelIcon" format="reference" />
+        <attr name="streamUiChannelActionsItemTint" format="color|reference" />
+        <attr name="streamUiChannelActionsWarningItemTint" format="color|reference" />
     </declare-styleable>
 </resources>

@@ -308,6 +308,5 @@
     </style>
 
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
-        <item name="streamUiChannelActionsItemTextColor">@color/stream_ui_accent_green</item>
     </style>
 </resources>

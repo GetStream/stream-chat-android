@@ -1,9 +1,11 @@
 package io.getstream.chat.android.ui.channel.actions.internal
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -12,17 +14,19 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
-    private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
-        channelActionListener?.onMemberSelected(it)
-    }
+    var channelActionListener: ChannelActionListener? = null
 
     private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
     private val isGroup: Boolean by lazy { requireArguments().getBoolean(ARG_IS_GROUP, false) }
 
-    var channelActionListener: ChannelActionListener? = null
+    private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
+        channelActionListener?.onMemberSelected(it)
+    }
 
     private val channelActionsViewModel: ChannelActionsViewModel by viewModels {
         ChannelActionsViewModelFactory(cid, isGroup)
@@ -45,14 +49,19 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         consumeStyleArg()
-        bindViews()
-        // render
+
+        binding.recyclerView.adapter = membersAdapter
+        configureViewInfoAction()
+        configureLeaveGroupButton()
+        configureCancelButton()
+        configureDeleteConversationButton()
+
         channelActionsViewModel.state.observe(viewLifecycleOwner) { state ->
             with(state) {
                 membersAdapter.submitList(members)
                 bindMemberNames(members)
                 bindMembersInfo(members)
-                bindDeleteButton(canDeleteChannel)
+                bindDeleteConversationButton(canDeleteChannel)
             }
         }
     }
@@ -64,18 +73,9 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    private fun bindViews() {
-        with(binding) {
-            recyclerView.adapter = membersAdapter
-            configureViewInfoAction()
-            configureLeaveGroupButton()
-            configureCancelButton()
-        }
-    }
-
     private fun configureCancelButton() {
         binding.cancelButton.apply {
-            style.channelActionItemTextStyle.apply(this)
+            configureActionItem(style.itemTextStyle, style.cancelIcon, style.iconsTint)
             setOnClickListener {
                 dismiss()
             }
@@ -84,7 +84,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     private fun configureViewInfoAction() {
         binding.viewInfoButton.apply {
-            style.channelActionItemTextStyle.apply(this)
+            configureActionItem(style.itemTextStyle, style.viewInfoIcon, style.iconsTint)
             setOnClickListener {
                 channelActionListener?.onChannelInfoSelected(cid)
                 dismiss()
@@ -94,8 +94,8 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     private fun configureLeaveGroupButton() {
         binding.leaveGroupButton.apply {
-            style.channelActionItemTextStyle.apply(this)
             isVisible = isGroup
+            configureActionItem(style.itemTextStyle, style.leaveGroupIcon, style.iconsTint)
             setOnClickListener {
                 channelActionListener?.onLeaveChannelClicked(cid)
                 dismiss()
@@ -103,16 +103,19 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun bindDeleteButton(canDeleteChannel: Boolean) {
-        if (canDeleteChannel) {
-            binding.deleteButton.isVisible = true
-            binding.deleteButton.setOnClickListener {
+    private fun configureDeleteConversationButton() {
+        binding.deleteButton.apply {
+            configureActionItem(style.itemTextStyle, style.deleteConversationIcon, style.warningActionsTint)
+            setTextColor(style.warningActionsTint)
+            setOnClickListener {
                 channelActionListener?.onDeleteConversationClicked(cid)
                 dismiss()
             }
-        } else {
-            binding.deleteButton.isVisible = false
         }
+    }
+
+    private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
+        binding.deleteButton.isVisible = canDeleteChannel
     }
 
     private fun bindMemberNames(members: List<Member>) {
@@ -145,6 +148,11 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             style = it
             styleArg = null
         } ?: dismiss()
+    }
+
+    private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable, tint: Int) {
+        setLeftDrawableWithTint(icon, tint)
+        textStyle.apply(this)
     }
 
     interface ChannelActionListener {
