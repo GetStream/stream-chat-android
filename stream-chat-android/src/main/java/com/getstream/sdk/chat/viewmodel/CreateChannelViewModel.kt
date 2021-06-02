@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
@@ -47,7 +48,7 @@ public class CreateChannelViewModel @JvmOverloads constructor(
             this.createdBy = author
         }
         viewModelScope.launch(DispatcherProvider.IO) {
-            val result = domain.createChannel(channel).execute()
+            val result = domain.createChannel(channel).await()
             when {
                 result.isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)

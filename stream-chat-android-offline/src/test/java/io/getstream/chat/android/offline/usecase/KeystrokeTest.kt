@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.usecase
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -12,6 +13,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,7 +45,7 @@ internal class KeystrokeTest {
     }
 
     @Test
-    fun `Given appropriate cid When invoke Should invoke keystroke to channel controller`() {
+    fun `Given appropriate cid When invoke Should invoke keystroke to channel controller`() = runBlockingTest {
         val channelController = mock<ChannelController>()
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
         whenever(chatDomainImpl.scope) doReturn TestCoroutineScope()
@@ -54,10 +56,9 @@ internal class KeystrokeTest {
     }
 
     @Test
-    fun `Given appropriate cid When invoke Should invoke keystroke to chat domain`() {
-        val channelController = mock<ChannelController> {
-            on { keystroke(null) } doReturn Result(true)
-        }
+    fun `Given appropriate cid When invoke Should invoke keystroke to chat domain`() = runBlockingTest {
+        val channelController = mock<ChannelController>()
+        whenever(channelController.keystroke(anyOrNull())) doReturn Result(true)
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
         whenever(chatDomainImpl.scope) doReturn TestCoroutineScope()
 

@@ -4,6 +4,6 @@ object Configuration {
     const val compileSdkVersion = 29
     const val targetSdkVersion = 29
     const val minSdkVersion = 21
-    const val versionName = "4.10.0"
+    const val versionName = "4.11.0"
     const val artifactGroup = "io.getstream"
 }

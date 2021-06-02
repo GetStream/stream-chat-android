@@ -3,7 +3,8 @@ package io.getstream.chat.android.offline.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -11,7 +12,8 @@ import org.junit.runner.RunWith
 internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun loadMoreForThread() = runBlocking {
+    @Ignore("Mock Me")
+    fun loadMoreForThread() = runBlockingTest {
         // start a new thread
         val message1 = data.createMessage()
         val channelState = chatDomain.watchChannel(data.channel1.cid, 10).execute().data()
@@ -23,7 +25,6 @@ internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         assertSuccess(result2)
         val parentMessage = channelState.getMessage(parentId)!!
         Truth.assertThat(parentMessage.id).isEqualTo(parentId)
-
         // get the thread
         val result3 = chatDomain.getThread(data.channel1.cid, parentId).execute()
         assertSuccess(result3)

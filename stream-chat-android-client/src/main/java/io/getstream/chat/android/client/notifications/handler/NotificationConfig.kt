@@ -21,4 +21,5 @@ public data class NotificationConfig(
     val errorNotificationGroupSummaryTitle: Int = R.string.stream_chat_error_notification_group_summary_content_text,
     val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
     val shouldGroupNotifications: Boolean = false,
+    val pushNotificationsEnabled: Boolean = true,
 )

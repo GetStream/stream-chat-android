@@ -18,29 +18,39 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal class ChatNotifications private constructor(
-    val handler: ChatNotificationHandler,
+internal interface ChatNotifications {
+    val handler: ChatNotificationHandler
+    fun onSetUser()
+    fun setFirebaseToken(firebaseToken: String)
+    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onChatEvent(event: ChatEvent)
+    fun isValidRemoteMessage(message: RemoteMessage): Boolean
+    fun cancelLoadDataWork()
+    suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
+}
+
+internal class ChatNotificationsImpl constructor(
+    override val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context,
-) {
+) : ChatNotifications {
     private val logger = ChatLogger.get("ChatNotifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
     private val showedNotifications = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    private fun init() {
+    init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             notificationManager.createNotificationChannel(handler.createNotificationChannel())
     }
 
-    fun onSetUser() {
+    override fun onSetUser() {
         handler.getFirebaseMessaging()?.token?.addOnCompleteListener {
             if (it.isSuccessful) {
                 logger.logI("Firebase returned token successfully")
@@ -51,11 +61,14 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun setFirebaseToken(firebaseToken: String) {
+    override fun setFirebaseToken(firebaseToken: String) {
         pushTokenUpdateHandler.updateTokenIfNecessary(firebaseToken)
     }
 
-    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener) {
+    override fun onFirebaseMessage(
+        message: RemoteMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener,
+    ) {
         logger.logI("onReceiveFirebaseMessage: payload: ${message.data}")
 
         if (isValidRemoteMessage(message)) {
@@ -69,7 +82,7 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun onChatEvent(event: ChatEvent) {
+    override fun onChatEvent(event: ChatEvent) {
         if (event is NewMessageEvent) {
             val currentUserId = ChatClient.instance().getCurrentUser()?.id
             if (event.message.user.id == currentUserId) return
@@ -82,7 +95,7 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun cancelLoadDataWork() {
+    override fun cancelLoadDataWork() {
         LoadNotificationDataWorker.cancel(context)
     }
 
@@ -107,7 +120,7 @@ internal class ChatNotifications private constructor(
         }
     }
 
-    fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
+    override fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
@@ -135,7 +148,7 @@ internal class ChatNotifications private constructor(
 
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
-    internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
@@ -153,29 +166,18 @@ internal class ChatNotifications private constructor(
         val notificationId = System.currentTimeMillis().toInt()
 
         handler.getDataLoadListener()?.onLoadSuccess(channel, message)
-        handler.buildNotification(
-            notificationId = notificationId,
-            channelName = channel.name,
-            messageText = message.text,
-            messageId = message.id,
-            channelType = channel.type,
-            channelId = channel.id,
-        ).let { notification ->
-            showedNotifications.add(message.id)
-            showNotification(
-                notificationId = notificationId,
-                notification = notification,
-                shouldShowInForeground = shouldShowInForeground,
-            )
-        }
+        handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
+            .let { notification ->
+                showedNotifications.add(message.id)
+                showNotification(
+                    notificationId = notificationId,
+                    notification = notification,
+                    shouldShowInForeground = shouldShowInForeground,
+                )
+            }
 
         if (handler.config.shouldGroupNotifications) {
-            handler.buildNotificationGroupSummary(
-                channelType = channel.type,
-                channelId = channel.id,
-                channelName = channel.name,
-                messageId = message.id,
-            ).let { notification ->
+            handler.buildNotificationGroupSummary(channel = channel, message = message).build().let { notification ->
                 showNotification(
                     notificationId = handler.getNotificationGroupSummaryId(
                         channelType = channel.type,
@@ -216,12 +218,18 @@ internal class ChatNotifications private constructor(
     private fun isForeground(): Boolean {
         return ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     }
+}
 
-    companion object {
-        fun create(
-            handler: ChatNotificationHandler,
-            client: ChatApi,
-            context: Context,
-        ) = ChatNotifications(handler, client, context).apply(ChatNotifications::init)
-    }
+internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
+    override fun onSetUser() = Unit
+    override fun setFirebaseToken(firebaseToken: String) = Unit
+    override fun onFirebaseMessage(
+        message: RemoteMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener,
+    ) = Unit
+
+    override fun onChatEvent(event: ChatEvent) = Unit
+    override fun isValidRemoteMessage(message: RemoteMessage) = false
+    override fun cancelLoadDataWork() = Unit
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
 }
