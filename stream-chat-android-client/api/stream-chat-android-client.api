@@ -2688,8 +2688,8 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public synthetic fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun buildErrorCaseNotification ()Landroid/app/Notification;
 	public fun buildErrorNotificationGroupSummary ()Landroid/app/Notification;
-	public fun buildNotification (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
-	public fun buildNotificationGroupSummary (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/app/Notification;
+	public fun buildNotification (ILio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)Landroidx/core/app/NotificationCompat$Builder;
+	public fun buildNotificationGroupSummary (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)Landroidx/core/app/NotificationCompat$Builder;
 	public fun createNotificationChannel ()Landroid/app/NotificationChannel;
 	public final fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	protected final fun getContext ()Landroid/content/Context;
