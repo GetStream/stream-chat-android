@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
@@ -43,7 +44,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
     }
 
     fun setupChatDomain(client: ChatClient): ChatDomainImpl {
-        db = createRoomDb()
+        db = createRoomDB(testCoroutines.dispatcher)
 
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl =
