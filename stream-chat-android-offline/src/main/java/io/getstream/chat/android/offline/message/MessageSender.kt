@@ -14,7 +14,12 @@ import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.launch
 import java.util.Date
 
 internal class MessageSender(
@@ -25,6 +30,7 @@ internal class MessageSender(
 ) {
 
     private val logger = ChatLogger.get("ChatDomain MessageSender")
+    private var jobsMap: Map<String, Job> = emptyMap()
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
         val newMessage = message.copy()
@@ -66,21 +72,46 @@ internal class MessageSender(
 
     private suspend fun send(newMessage: Message): Result<Message> {
         return if (domainImpl.online.value) {
-            val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
-            // upload attachments
-            if (newMessage.hasAttachments()) {
-                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
-
-                newMessage.attachments = channelController.uploadAttachments(newMessage).toMutableList()
-
-                ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
+            return if (newMessage.hasAttachments()) {
+                waitForAttachmentsToBeSent(newMessage)
+            } else {
+                doSend(newMessage)
             }
-
-            doSend(newMessage)
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }
+    }
+
+    private fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
+        jobsMap[newMessage.id]?.cancel()
+        jobsMap = jobsMap + (
+            newMessage.id to domainImpl.scope.launch {
+                val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
+                domainImpl.repos.observerAttachmentsForMessage(newMessage.id)
+                    .filterNot(Collection<Attachment>::isEmpty)
+                    .collect { attachments ->
+                        when {
+                            attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
+                                ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
+                                doSend(newMessage)
+                                jobsMap[newMessage.id]?.cancel()
+                            }
+                            attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
+                                jobsMap[newMessage.id]?.cancel()
+                            }
+                            else -> Unit
+                        }
+                    }
+            }
+            )
+        UploadAttachmentsAndroidWorker.start(
+            domainImpl.appContext,
+            channelController.channelType,
+            channelController.channelId,
+            newMessage.id
+        )
+        return Result.success(newMessage)
     }
 
     private suspend fun doSend(message: Message): Result<Message> {
