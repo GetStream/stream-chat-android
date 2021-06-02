@@ -156,8 +156,6 @@ public class ChannelListViewModel(
         }
     }
 
-    public data class State(val isLoading: Boolean, val channels: List<Channel>)
-
     public data class PaginationState(
         val loadingMore: Boolean = false,
         val endOfChannels: Boolean = false,

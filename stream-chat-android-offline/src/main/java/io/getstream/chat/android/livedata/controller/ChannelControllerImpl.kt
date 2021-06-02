@@ -142,7 +142,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     suspend fun removeMembers(vararg userIds: String): Result<Channel> =
         channelControllerStateFlow.removeMembers(*userIds)
 
-    fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
+    suspend fun updateLiveDataFromChannel(c: Channel) = channelControllerStateFlow.updateDataFromChannel(c)
 
     suspend fun editMessage(message: Message): Result<Message> = channelControllerStateFlow.editMessage(message)
     suspend fun deleteMessage(message: Message): Result<Message> = channelControllerStateFlow.deleteMessage(message)

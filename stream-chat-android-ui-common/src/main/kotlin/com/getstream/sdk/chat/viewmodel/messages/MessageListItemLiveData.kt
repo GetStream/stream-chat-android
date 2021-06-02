@@ -132,7 +132,7 @@ internal class MessageListItemLiveData(
      * Note how they don't recompute the message list, but only add to the end
      */
     @UiThread
-    internal fun typingChanged(newTypingUsers: List<User>) : MessageListItemWrapper{
+    internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
         typingUsers = newTypingUsers
         typingItems = usersAsTypingItems(newTypingUsers)
         return wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
@@ -326,7 +326,7 @@ internal class MessageListItemLiveData(
         }
     }
 
-    private fun <T, U> LiveData<User?>.changeOnUserLoaded(data: LiveData<T>,  func: (T, User?) -> U): LiveData<U> {
+    private fun <T, U> LiveData<User?>.changeOnUserLoaded(data: LiveData<T>, func: (T, User?) -> U): LiveData<U> {
         return Transformations.switchMap(this) { user ->
             Transformations.map(data) { type ->
                 func(type, user)
