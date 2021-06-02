@@ -1,5 +1,7 @@
 package io.getstream.chat.android.offline
 
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -33,6 +35,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
@@ -45,7 +48,10 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.asExecutor
 import java.util.Date
+import java.util.concurrent.Executors
 
 private val fixture = JFixture()
 
@@ -621,3 +627,12 @@ internal fun randomQueryChannelsSpec(
     sort: QuerySort<Channel> = QuerySort.Companion.asc(Channel::lastMessageAt),
     cids: List<String> = emptyList(),
 ): QueryChannelsSpec = QueryChannelsSpec(filter, sort, cids)
+
+internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
+    Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)
+        .allowMainThreadQueries()
+        // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
+        // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
+        .setTransactionExecutor(Executors.newSingleThreadExecutor())
+        .setQueryExecutor(dispatcher.asExecutor())
+        .build()

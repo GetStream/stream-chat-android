@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
@@ -60,7 +61,7 @@ class AddChannelViewModel : ViewModel() {
     private fun createChannel() {
         val client = requireNotNull(channelClient) { "Cannot create Channel without initializing ChannelClient" }
         viewModelScope.launch(Dispatchers.IO) {
-            val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).execute()
+            val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).await()
             if (result.isSuccess) {
                 _state.postValue(State.NavigateToChannel(result.data().cid))
             } else {
@@ -80,7 +81,7 @@ class AddChannelViewModel : ViewModel() {
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map { it.id } + chatDomain.currentUser.id,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
-                ).execute()
+                ).await()
             if (result.isSuccess) {
                 val cid = result.data().cid
                 channelClient = ChatClient.instance().channel(cid)

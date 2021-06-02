@@ -7,6 +7,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 
@@ -27,8 +29,10 @@ internal class UploadAttachmentsWorker(
                 .uploadAttachments(message)
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
+                domainImpl.markMessageAttachmentSyncStatus(message, SyncStatus.COMPLETED)
                 Result.success()
             } else {
+                domainImpl.markMessageAttachmentSyncStatus(message, SyncStatus.FAILED_PERMANENTLY)
                 Result.failure()
             }
             Result.success()
@@ -36,6 +40,11 @@ internal class UploadAttachmentsWorker(
             Result.failure()
         }
     }
+
+    private suspend fun ChatDomainImpl.markMessageAttachmentSyncStatus(
+        message: Message,
+        syncStatus: SyncStatus,
+    ) = repos.insertMessage(message.copy(attachmentsSyncStatus = syncStatus))
 
     companion object {
         private const val DATA_MESSAGE_ID = "message_id"
