@@ -75,7 +75,7 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        val currentUserId = domainImpl.user.singleOrNull()?.id
+        val currentUserId = domainImpl.user.value?.id
         userMap.remove(currentUserId)
 
         domainImpl.repos.storeStateForChannels(

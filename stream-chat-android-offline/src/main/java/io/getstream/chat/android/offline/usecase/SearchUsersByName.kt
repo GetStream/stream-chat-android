@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
-import kotlinx.coroutines.flow.singleOrNull
 
 /**
  * Use case for searching users by string-autocomplete filter. Performs online request if connected or local searching
@@ -66,7 +65,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         userLimit: Int,
         userPresence: Boolean,
     ): Result<List<User>> {
-        val currentUser = chatDomainImpl.user.singleOrNull()
+        val currentUser = chatDomainImpl.user.value
 
         return if (currentUser != null) {
             val filter = if (querySearch.isEmpty()) {
