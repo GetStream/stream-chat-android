@@ -308,5 +308,20 @@
     </style>
 
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
+        <!-- Channel action item text style -->
+        <item name="streamUiChannelActionsItemTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiChannelActionsItemTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiChannelActionsItemTextStyle">bold</item>
+
+        <item name="streamUiChannelActionsViewInfoIcon">@drawable/stream_ui_ic_single_user</item>
+        <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+        <item name="streamUiChannelActionsLeaveGroupIcon">@drawable/stream_ui_ic_leave_group</item>
+        <item name="streamUiChannelActionsLeaveGroupEnabled">true</item>
+        <item name="streamUiChannelActionsDeleteConversationIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiChannelActionsDeleteConversationEnabled">true</item>
+        <item name="streamUiChannelActionsCancelIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiChannelActionsCancelEnabled">true</item>
+        <item name="streamUiChannelActionsItemTint">@color/stream_ui_grey</item>
+        <item name="streamUiChannelActionsWarningItemTint">@color/stream_ui_accent_red</item>
     </style>
 </resources>

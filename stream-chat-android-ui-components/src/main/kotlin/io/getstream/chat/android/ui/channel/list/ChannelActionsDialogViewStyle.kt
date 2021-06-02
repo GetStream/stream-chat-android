@@ -20,18 +20,26 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  *
  * @property itemTextStyle - text appearance for action item
  * @property viewInfoIcon - icon for view info action. Default - [R.drawable.stream_ui_ic_single_user]
+ * @property viewInfoEnabled - shows/hides view info action. Shown by default
  * @property leaveGroupIcon - icon for leave group action. Default - [R.drawable.stream_ui_ic_leave_group]
+ * @property leaveGroupEnabled - shows/hides leave group action. Shown by default
  * @property deleteConversationIcon - icon for delete conversation action. Default - [R.drawable.stream_ui_ic_delete]
+ * @property deleteConversationEnabled - shows/hides delete conversation action. Shown by default
  * @property cancelIcon - icon for dismiss dialog action. Default - [R.drawable.stream_ui_ic_clear]
+ * @property cancelEnabled - shows/hides dismiss dialog action. Shown by default
  * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
  * @property warningActionsTint - color of dangerous actions such as delete conversation. Default - [R.color.stream_ui_accent_red].
  */
 public data class ChannelActionsDialogViewStyle(
     public val itemTextStyle: TextStyle,
     public val viewInfoIcon: Drawable,
+    public val viewInfoEnabled: Boolean,
     public val leaveGroupIcon: Drawable,
+    public val leaveGroupEnabled: Boolean,
     public val deleteConversationIcon: Drawable,
+    public val deleteConversationEnabled: Boolean,
     public val cancelIcon: Drawable,
+    public val cancelEnabled: Boolean,
     @ColorInt public val iconsTint: Int,
     @ColorInt public val warningActionsTint: Int,
 ) {
@@ -74,16 +82,36 @@ public data class ChannelActionsDialogViewStyle(
                 val viewInfoIcon = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsViewInfoIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_single_user)!!
 
+                val viewInfoEnabled = a.getBoolean(
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsViewInfoEnabled,
+                    true
+                )
+
                 val leaveGroupIcon =
                     a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsLeaveGroupIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_leave_group)!!
+
+                val leaveGroupEnabled = a.getBoolean(
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsLeaveGroupEnabled,
+                    true
+                )
 
                 val deleteConversationIcon =
                     a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsDeleteConversationIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_delete)!!
 
+                val deleteConversationEnabled = a.getBoolean(
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsDeleteConversationEnabled,
+                    true
+                )
+
                 val cancelIcon = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsCancelIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
+
+                val cancelEnabled = a.getBoolean(
+                    R.styleable.ChannelActionsDialog_streamUiChannelActionsCancelEnabled,
+                    true
+                )
 
                 val iconsTint = a.getColor(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTint,
@@ -98,9 +126,13 @@ public data class ChannelActionsDialogViewStyle(
                 return ChannelActionsDialogViewStyle(
                     itemTextStyle = itemTextStyle,
                     viewInfoIcon = viewInfoIcon,
+                    viewInfoEnabled = viewInfoEnabled,
                     leaveGroupIcon = leaveGroupIcon,
+                    leaveGroupEnabled = leaveGroupEnabled,
                     deleteConversationIcon = deleteConversationIcon,
+                    deleteConversationEnabled = deleteConversationEnabled,
                     cancelIcon = cancelIcon,
+                    cancelEnabled = cancelEnabled,
                     iconsTint = iconsTint,
                     warningActionsTint = warningActionsTint,
                 ).let(TransformStyle.channelActionsDialogStyleTransformer::transform)

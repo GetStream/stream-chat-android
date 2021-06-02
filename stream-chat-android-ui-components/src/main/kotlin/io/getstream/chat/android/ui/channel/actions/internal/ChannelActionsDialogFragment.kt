@@ -73,49 +73,65 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    private fun configureCancelButton() {
-        binding.cancelButton.apply {
-            configureActionItem(style.itemTextStyle, style.cancelIcon, style.iconsTint)
-            setOnClickListener {
-                dismiss()
-            }
-        }
-    }
-
     private fun configureViewInfoAction() {
         binding.viewInfoButton.apply {
-            configureActionItem(style.itemTextStyle, style.viewInfoIcon, style.iconsTint)
-            setOnClickListener {
-                channelActionListener?.onChannelInfoSelected(cid)
-                dismiss()
+            if (style.viewInfoEnabled) {
+                configureActionItem(style.itemTextStyle, style.viewInfoIcon, style.iconsTint)
+                setOnClickListener {
+                    channelActionListener?.onChannelInfoSelected(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
             }
         }
     }
 
     private fun configureLeaveGroupButton() {
         binding.leaveGroupButton.apply {
-            isVisible = isGroup
-            configureActionItem(style.itemTextStyle, style.leaveGroupIcon, style.iconsTint)
-            setOnClickListener {
-                channelActionListener?.onLeaveChannelClicked(cid)
-                dismiss()
+            if (style.leaveGroupEnabled) {
+                isVisible = isGroup
+                configureActionItem(style.itemTextStyle, style.leaveGroupIcon, style.iconsTint)
+                setOnClickListener {
+                    channelActionListener?.onLeaveChannelClicked(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
             }
         }
     }
 
     private fun configureDeleteConversationButton() {
         binding.deleteButton.apply {
-            configureActionItem(style.itemTextStyle, style.deleteConversationIcon, style.warningActionsTint)
-            setTextColor(style.warningActionsTint)
-            setOnClickListener {
-                channelActionListener?.onDeleteConversationClicked(cid)
-                dismiss()
+            if (style.deleteConversationEnabled) {
+                configureActionItem(style.itemTextStyle, style.deleteConversationIcon, style.warningActionsTint)
+                setTextColor(style.warningActionsTint)
+                setOnClickListener {
+                    channelActionListener?.onDeleteConversationClicked(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
+            }
+        }
+    }
+
+    private fun configureCancelButton() {
+        binding.cancelButton.apply {
+            if (style.cancelEnabled) {
+                configureActionItem(style.itemTextStyle, style.cancelIcon, style.iconsTint)
+                setOnClickListener {
+                    dismiss()
+                }
+            } else {
+                isVisible = false
             }
         }
     }
 
     private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
-        binding.deleteButton.isVisible = canDeleteChannel
+        binding.deleteButton.isVisible = canDeleteChannel && style.deleteConversationEnabled
     }
 
     private fun bindMemberNames(members: List<Member>) {
