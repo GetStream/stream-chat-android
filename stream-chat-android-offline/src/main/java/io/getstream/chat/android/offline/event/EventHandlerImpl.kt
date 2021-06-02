@@ -55,9 +55,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.setMember
-import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateReads
 import kotlinx.coroutines.launch
 
