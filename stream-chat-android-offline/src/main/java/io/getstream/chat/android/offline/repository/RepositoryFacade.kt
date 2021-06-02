@@ -68,7 +68,7 @@ internal class RepositoryFacade constructor(
         config = selectChannelConfig(type)?.config ?: defaultConfig
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
-            fullList.distinct()
+            fullList.distinctBy(Message::id)
         } else {
             messages
         }
