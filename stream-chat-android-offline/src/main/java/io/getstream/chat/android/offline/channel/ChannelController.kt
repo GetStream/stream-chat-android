@@ -1235,8 +1235,10 @@ public class ChannelController internal constructor(
         upsertMembers(listOf(member))
     }
 
-    private suspend fun updateReads(reads: List<ChannelUserRead>) {
-        domainImpl.user.filterNotNull().collect { currentUser ->
+    private fun updateReads(reads: List<ChannelUserRead>) {
+        val currentUser = domainImpl.user.value
+
+        if (currentUser != null) {
             val currentUserId = currentUser.id
             val previousUserIdToReadMap = _reads.value
             val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
