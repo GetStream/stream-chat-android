@@ -3,7 +3,7 @@ id: ui-channel-list-handling-channel-actions
 title: Handling Channel Actions
 sidebar_position: 3
 ---
-`ChannelListHeaderView` and `ChannelListView` comes with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
+`ChannelListHeaderView` and `ChannelListView` come with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
 * See current user avatar
 * See current user online status
 * See channel members

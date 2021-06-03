@@ -3,7 +3,7 @@ id: ui-handling-chat-actions
 title: Handling Chat Actions
 sidebar_position: 3
 ---
-`MessageListView` and `ChannelListView` comes with a set of actions out of the box which is available by long-pressing a message. There are multiple available actions:
+`MessageListView` and `ChannelListView` come with a set of actions out of the box which is available by long-pressing a message. There are multiple available actions:
 * Adding reaction
 * Reply
 * Thread reply
