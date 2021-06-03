@@ -49,21 +49,19 @@ public class ChannelsViewModel(
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
 
-                val channelState = Transformations.switchMap(chatDomain.user) { currentUser ->
-                    map(queryChannelsController.channelsState) { channelState ->
-                        when (channelState) {
-                            is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading,
-                            -> State.Loading
-                            is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
-                            is QueryChannelsController.ChannelsState.Result -> {
-                                val currentUser = chatDomain.user.value
+                val channelState = map(queryChannelsController.channelsState) { channelState ->
+                    when (channelState) {
+                        is QueryChannelsController.ChannelsState.NoQueryActive,
+                        is QueryChannelsController.ChannelsState.Loading,
+                        -> State.Loading
+                        is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
+                        is QueryChannelsController.ChannelsState.Result -> {
+                            val currentUser = chatDomain.user.value
 
-                                if (currentUser != null) {
-                                    State.Result(channelState.channels)
-                                } else {
-                                    State.Error("User is not set in ChatDomain")
-                                }
+                            if (currentUser != null) {
+                                State.Result(channelState.channels)
+                            } else {
+                                State.Error("User is not set in ChatDomain")
                             }
                         }
                     }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.MutableLiveData
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -176,7 +175,6 @@ internal class ChatDomainImpl internal constructor(
         get() = user.value!!
         set(value) {
             _user.value = value
-            _userLiveData.value = value
         }
 
     private val _initialized = MutableStateFlow(false)
@@ -190,7 +188,6 @@ internal class ChatDomainImpl internal constructor(
     private val _typingChannels = MutableStateFlow<TypingEvent>(TypingEvent("", emptyList()))
 
     private val _user = MutableStateFlow<User?>(null)
-    internal val _userLiveData = MutableLiveData<User?>()
     override val user: StateFlow<User?> = _user
 
     /** if the client connection has been initialized */
@@ -275,7 +272,6 @@ internal class ChatDomainImpl internal constructor(
         clearState()
 
         _user.value = user
-        _userLiveData.postValue(user)
 
         repos = RepositoryFacadeBuilder {
             context(appContext)
@@ -348,7 +344,6 @@ internal class ChatDomainImpl internal constructor(
         }
 
         _user.value = me
-        _userLiveData.postValue(me)
         repos.insertCurrentUser(me)
         _mutedUsers.value = me.mutes
         setTotalUnreadCount(me.totalUnreadCount)
