@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property memberInfoTextStyle - test appearance for dialog subtitle with member info
  * @property itemTextStyle - text appearance for action item
  * @property viewInfoIcon - icon for view info action. Default - [R.drawable.stream_ui_ic_single_user]
- * @property viewInfoEnabled - shows/hides view info action. Shown by default
+ * @property viewInfoEnabled - shows/hides view info action. Hidden by default
  * @property leaveGroupIcon - icon for leave group action. Default - [R.drawable.stream_ui_ic_leave_group]
  * @property leaveGroupEnabled - shows/hides leave group action. Shown by default
  * @property deleteConversationIcon - icon for delete conversation action. Default - [R.drawable.stream_ui_ic_delete]
@@ -126,7 +126,7 @@ public data class ChannelActionsDialogViewStyle(
 
                 val viewInfoEnabled = a.getBoolean(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsViewInfoEnabled,
-                    true
+                    false
                 )
 
                 val leaveGroupIcon =

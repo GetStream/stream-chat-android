@@ -324,7 +324,7 @@
         <item name="streamUiChannelActionsItemTextStyle">bold</item>
 
         <item name="streamUiChannelActionsViewInfoIcon">@drawable/stream_ui_ic_single_user</item>
-        <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+        <item name="streamUiChannelActionsViewInfoEnabled">false</item>
         <item name="streamUiChannelActionsLeaveGroupIcon">@drawable/stream_ui_ic_leave_group</item>
         <item name="streamUiChannelActionsLeaveGroupEnabled">true</item>
         <item name="streamUiChannelActionsDeleteConversationIcon">@drawable/stream_ui_ic_delete</item>

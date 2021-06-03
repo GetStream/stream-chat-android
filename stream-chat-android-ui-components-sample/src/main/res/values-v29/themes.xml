@@ -20,5 +20,7 @@
 
     <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar" />
 
-    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" />
+    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
+        <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+    </style>
 </resources>
