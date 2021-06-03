@@ -89,7 +89,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -298,7 +298,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         parentMessage: Message,
         message: String,
         alsoSendToChannel: Boolean,
-        attachmentFiles: List<File>,
+        attachmentFiles: List<Pair<File, String?>>,
     ) {
         messageSendHandler.sendToThreadWithAttachments(
             parentMessage,
@@ -448,7 +448,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

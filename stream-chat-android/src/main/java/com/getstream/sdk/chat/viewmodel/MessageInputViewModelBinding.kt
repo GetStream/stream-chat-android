@@ -38,7 +38,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
         ) {
             this@bindView.sendMessageWithAttachments(message, attachmentsFiles) {
                 this.parentId = parentMessage.id
