@@ -57,26 +57,26 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
 
             override fun sendMessageWithAttachments(
                 message: String,
-                attachmentsFiles: List<File>,
+                attachmentsFiles: List<Pair<File, String?>>,
                 messageReplyTo: Message?,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsFiles) { replyMessageId = messageReplyTo?.id }
-            }
-
-            override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
-                viewModel.sendMessage(messageText) {
-                    this.parentId = parentMessage.id
-                    this.showInChannel = alsoSendToChannel
-                }
             }
 
             override fun sendToThreadWithAttachments(
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsFiles: List<File>,
+                attachmentsFiles: List<Pair<File, String?>>,
             ) {
                 viewModel.sendMessageWithAttachments(message, attachmentsFiles) {
+                    this.parentId = parentMessage.id
+                    this.showInChannel = alsoSendToChannel
+                }
+            }
+
+            override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+                viewModel.sendMessage(messageText) {
                     this.parentId = parentMessage.id
                     this.showInChannel = alsoSendToChannel
                 }

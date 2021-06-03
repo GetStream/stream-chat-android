@@ -19,7 +19,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             this@bindView.sendMessage(messageText)
         }
 
-        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<Pair<File, String?>>) {
             this@bindView.sendMessageWithAttachments(message, attachmentsFiles)
         }
 

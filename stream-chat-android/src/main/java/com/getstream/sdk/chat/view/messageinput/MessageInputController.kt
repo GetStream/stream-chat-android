@@ -96,11 +96,11 @@ internal class MessageInputController(
             true -> view.sendTextMessage(message)
             false -> view.sendAttachments(
                 message,
-                attachmentsController.selectedAttachments.map {
+                attachmentsController.selectedAttachments.map { metaData ->
                     storageHelper.getCachedFileFromUri(
                         view.context,
-                        it
-                    )
+                        metaData
+                    ) to metaData.mimeType
                 }
             )
         }

@@ -490,7 +490,7 @@ public class MessageInputView : ConstraintLayout {
 
             override fun sendMessageWithAttachments(
                 message: String,
-                attachmentsFiles: List<File>,
+                attachmentsFiles: List<Pair<File, String?>>,
                 messageReplyTo: Message?,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -508,7 +508,7 @@ public class MessageInputView : ConstraintLayout {
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsFiles: List<File>,
+                attachmentsFiles: List<Pair<File, String?>>,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -543,7 +543,7 @@ public class MessageInputView : ConstraintLayout {
 
         public fun sendMessageWithAttachments(
             message: String,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
             messageReplyTo: Message? = null,
         )
 
@@ -557,7 +557,7 @@ public class MessageInputView : ConstraintLayout {
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
