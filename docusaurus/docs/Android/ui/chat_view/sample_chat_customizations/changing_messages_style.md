@@ -4,7 +4,7 @@ title: Changing Messages Style
 
 sidebar_position: 3
 ---
-It is possible to change the style of 2 ways: using XML and programatically.
+It is possible to change the style in 2 ways: using XML and programmatically.
 
 ## Changing Messages Style Using XML
 Let's change the style of messages sent by the current user.
@@ -40,7 +40,7 @@ Let's make an example and try to modify the default view which allows scrolling 
 | --- | --- |
 |![message style programatically before](../../../assets/message_style_programatically_fab_before.png)|![message style programatically after](../../../assets/message_style_programatically_fab_after.png)|
 
-In order to achieve such effect we need to provide custom _TransformStyle.messageListStyleTransformer_:
+To achieve such effect we need to provide custom _TransformStyle.messageListStyleTransformer_:
 ```kotlin
 TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle ->
     defaultViewStyle.copy(
