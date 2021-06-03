@@ -17,7 +17,11 @@ jobs:
       - name: Create Dokka folder
         run: mkdir -p docusaurus/docs/Android/Dokka
       - name: Create Dokka files
-        run: ./gradlew dokkaHtmlMultiModule
+        run: ./gradlew stream-chat-android-client:dokkaDokkasaurus \
+          stream-chat-android-offline:dokkaDokkasaurus \
+          stream-chat-android-ui-components:dokkaDokkasaurus
+      - name: Move dokkasaurus files
+        run: ./scripts/merge-dokkasaurus-outputs.sh
       - name: Update Dokka Sidebar
         run: ./gradlew docusaurusSidebar
       - name: push
