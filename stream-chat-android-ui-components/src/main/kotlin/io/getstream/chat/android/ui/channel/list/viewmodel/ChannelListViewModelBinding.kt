@@ -61,6 +61,10 @@ public fun ChannelListViewModel.bindView(
             .show()
     }
 
+    view.setChannelLeaveClickListener { channel ->
+        leaveChannel(channel)
+    }
+
     errorEvents.observe(
         lifecycleOwner,
         EventObserver {
