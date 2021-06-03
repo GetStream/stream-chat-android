@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cl_root"
+    android:id="@+id/clRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
 
     <com.getstream.sdk.chat.view.AvatarView
-        android:id="@+id/avatar_group"
+        android:id="@+id/avatarGroup"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+        app:layout_constraintBottom_toTopOf="@+id/ivSeparator"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tvName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -30,23 +30,23 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@id/avatar_group"
-        app:layout_constraintRight_toLeftOf="@id/tv_date"
-        app:layout_constraintTop_toTopOf="@+id/avatar_group"
+        app:layout_constraintLeft_toRightOf="@id/avatarGroup"
+        app:layout_constraintRight_toLeftOf="@id/tvDate"
+        app:layout_constraintTop_toTopOf="@+id/avatarGroup"
         />
 
     <ImageView
-        android:id="@+id/iv_attachment_type"
+        android:id="@+id/ivAttachmentType"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
-        app:layout_constraintStart_toStartOf="@+id/tv_name"
-        app:layout_constraintTop_toTopOf="@+id/tv_last_message"
+        app:layout_constraintBottom_toBottomOf="@+id/tvLastMessage"
+        app:layout_constraintStart_toStartOf="@+id/tvName"
+        app:layout_constraintTop_toTopOf="@+id/tvLastMessage"
         />
 
     <TextView
-        android:id="@+id/tv_last_message"
+        android:id="@+id/tvLastMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
@@ -55,32 +55,32 @@
         android:gravity="start"
         android:maxLines="1"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/avatar_group"
-        app:layout_constraintLeft_toRightOf="@id/iv_attachment_type"
-        app:layout_constraintRight_toLeftOf="@id/tv_date"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarGroup"
+        app:layout_constraintLeft_toRightOf="@id/ivAttachmentType"
+        app:layout_constraintRight_toLeftOf="@id/tvDate"
         />
 
     <TextView
-        android:id="@+id/tv_date"
+        android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:gravity="end"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/avatar_group"
+        app:layout_constraintTop_toTopOf="@+id/avatarGroup"
         />
 
     <com.getstream.sdk.chat.view.ReadStateView
-        android:id="@+id/read_state"
+        android:id="@+id/readState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/avatar_group"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarGroup"
         app:layout_constraintRight_toRightOf="parent"
         />
 
     <ImageView
-        android:id="@+id/iv_separator"
+        android:id="@+id/ivSeparator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/stream_ic_channel_divider"
@@ -88,7 +88,7 @@
         />
 
     <View
-        android:id="@+id/click_area"
+        android:id="@+id/clickArea"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/selectableItemBackground"

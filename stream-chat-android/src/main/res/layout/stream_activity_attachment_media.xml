@@ -14,7 +14,7 @@
         />
 
     <ImageView
-        android:id="@+id/iv_audio"
+        android:id="@+id/ivAudio"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:background="@drawable/stream_ic_audio"
