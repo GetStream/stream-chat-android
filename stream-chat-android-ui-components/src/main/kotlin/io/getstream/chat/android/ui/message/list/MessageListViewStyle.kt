@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
 
 /**
@@ -20,6 +21,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  *
  * @property scrollButtonViewStyle - style for [ScrollButtonView]
  * @property itemStyle - style for message list view holders
+ * @property giphyViewHolderStyle - style for [GiphyViewHolder]
  * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
  * @property backgroundColor - [MessageListView] background color. Default - [R.color.stream_ui_white_snow]
  * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
@@ -52,6 +54,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
+    public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
     @ColorInt val iconsTint: Int,
@@ -138,6 +141,8 @@ public data class MessageListViewStyle(
                     .threadsEnabled(R.styleable.MessageListView_streamUiThreadsEnabled)
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
                     .build()
+
+                val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
 
                 val iconsTint = attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageOptionIconColor,
@@ -280,6 +285,7 @@ public data class MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
+                    giphyViewHolderStyle = giphyViewHolderStyle,
                     backgroundColor = backgroundColor,
                     iconsTint = iconsTint,
                     replyIcon = replyIcon,
