@@ -1,31 +1,38 @@
 package io.getstream.chat.android.ui.channel.actions.internal
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
 internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
-    private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
-        channelActionListener?.onMemberSelected(it)
-    }
+    var channelActionListener: ChannelActionListener? = null
 
     private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
     private val isGroup: Boolean by lazy { requireArguments().getBoolean(ARG_IS_GROUP, false) }
 
-    var channelActionListener: ChannelActionListener? = null
+    private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
+        channelActionListener?.onMemberSelected(it)
+    }
 
     private val channelActionsViewModel: ChannelActionsViewModel by viewModels {
         ChannelActionsViewModelFactory(cid, isGroup)
     }
+
+    private lateinit var style: ChannelActionsDialogViewStyle
 
     private var _binding: StreamUiFragmentChannelActionsBinding? = null
     private val binding get() = _binding!!
@@ -41,14 +48,20 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindViews()
-        // render
+        consumeStyleArg()
+
+        binding.recyclerView.adapter = membersAdapter
+        configureViewInfoAction()
+        configureLeaveGroupButton()
+        configureCancelButton()
+        configureDeleteConversationButton()
+
         channelActionsViewModel.state.observe(viewLifecycleOwner) { state ->
             with(state) {
                 membersAdapter.submitList(members)
                 bindMemberNames(members)
                 bindMembersInfo(members)
-                bindDeleteButton(canDeleteChannel)
+                bindDeleteConversationButton(canDeleteChannel)
             }
         }
     }
@@ -60,42 +73,69 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    private fun bindViews() {
-        with(binding) {
-            recyclerView.adapter = membersAdapter
-
-            binding.leaveGroupButton.isVisible = isGroup
-
-            // these buttons all trigger side effects and don't alter state
-            leaveGroupButton.setOnClickListener {
-                channelActionListener?.onLeaveChannelClicked(cid)
-                dismiss()
-            }
-
-            viewInfoButton.setOnClickListener {
-                channelActionListener?.onChannelInfoSelected(cid)
-                dismiss()
-            }
-
-            cancelButton.setOnClickListener {
-                dismiss()
+    private fun configureViewInfoAction() {
+        binding.viewInfoButton.apply {
+            if (style.viewInfoEnabled) {
+                configureActionItem(style.itemTextStyle, style.viewInfoIcon, style.iconsTint)
+                setOnClickListener {
+                    channelActionListener?.onChannelInfoSelected(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
             }
         }
     }
 
-    private fun bindDeleteButton(canDeleteChannel: Boolean) {
-        if (canDeleteChannel) {
-            binding.deleteButton.isVisible = true
-            binding.deleteButton.setOnClickListener {
-                channelActionListener?.onDeleteConversationClicked(cid)
-                dismiss()
+    private fun configureLeaveGroupButton() {
+        binding.leaveGroupButton.apply {
+            if (style.leaveGroupEnabled) {
+                isVisible = isGroup
+                configureActionItem(style.itemTextStyle, style.leaveGroupIcon, style.iconsTint)
+                setOnClickListener {
+                    channelActionListener?.onLeaveChannelClicked(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
             }
-        } else {
-            binding.deleteButton.isVisible = false
         }
+    }
+
+    private fun configureDeleteConversationButton() {
+        binding.deleteButton.apply {
+            if (style.deleteConversationEnabled) {
+                configureActionItem(style.itemTextStyle, style.deleteConversationIcon, style.warningActionsTint)
+                setTextColor(style.warningActionsTint)
+                setOnClickListener {
+                    channelActionListener?.onDeleteConversationClicked(cid)
+                    dismiss()
+                }
+            } else {
+                isVisible = false
+            }
+        }
+    }
+
+    private fun configureCancelButton() {
+        binding.cancelButton.apply {
+            if (style.cancelEnabled) {
+                configureActionItem(style.itemTextStyle, style.cancelIcon, style.iconsTint)
+                setOnClickListener {
+                    dismiss()
+                }
+            } else {
+                isVisible = false
+            }
+        }
+    }
+
+    private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
+        binding.deleteButton.isVisible = canDeleteChannel && style.deleteConversationEnabled
     }
 
     private fun bindMemberNames(members: List<Member>) {
+        style.memberNamesTextStyle.apply(binding.channelMembersTextView)
         binding.channelMembersTextView.text = if (isGroup) {
             members.joinToString { it.user.name }
         } else {
@@ -104,6 +144,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun bindMembersInfo(members: List<Member>) {
+        style.memberInfoTextStyle.apply(binding.membersInfoTextView)
         binding.membersInfoTextView.text = if (isGroup) {
             requireContext().resources.getQuantityString(
                 R.plurals.stream_ui_channel_actions_members_count,
@@ -120,6 +161,18 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun consumeStyleArg() {
+        styleArg?.let {
+            style = it
+            styleArg = null
+        } ?: dismiss()
+    }
+
+    private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable, tint: Int) {
+        setLeftDrawableWithTint(icon, tint)
+        textStyle.apply(this)
+    }
+
     interface ChannelActionListener {
         fun onDeleteConversationClicked(cid: String)
 
@@ -134,11 +187,19 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_CID = "cid"
         private const val ARG_IS_GROUP = "is_group"
 
-        fun newInstance(cid: String, isGroup: Boolean): ChannelActionsDialogFragment {
+        var styleArg: ChannelActionsDialogViewStyle? = null
+
+        fun newInstance(
+            cid: String,
+            isGroup: Boolean,
+            style: ChannelActionsDialogViewStyle,
+        ): ChannelActionsDialogFragment {
             return ChannelActionsDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_CID, cid)
                     putBoolean(ARG_IS_GROUP, isGroup)
+                    // pass style via static field
+                    styleArg = style
                 }
             }
         }

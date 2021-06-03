@@ -30,7 +30,7 @@ client.flagUser("user-id").enqueue { result ->
 
 ## Muting a User
 
-Any user is allowed to mute another user. Mutes are stored at user level and returned with the rest of the user information when `connectUser` is called. A user will be be muted until the user is `unmuted` or the mute is expired.
+Any user is allowed to mute another user. Mutes are stored at user level and returned with the rest of the user information when `connectUser` is called. A user will be muted until the user is `unmuted` or the mute is expired.
 
 ```kotlin 
 client.muteUser("user-id").enqueue { result -> 

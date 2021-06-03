@@ -21,7 +21,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.leftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
@@ -104,7 +104,7 @@ internal class MessageInputFieldView : FrameLayout {
             clearCommandButton.setOnClickListener {
                 resetMode()
             }
-            commandBadge.leftDrawable(
+            commandBadge.setLeftDrawableWithSize(
                 R.drawable.stream_ui_ic_command,
                 R.dimen.stream_ui_message_input_command_icon_size
             )
