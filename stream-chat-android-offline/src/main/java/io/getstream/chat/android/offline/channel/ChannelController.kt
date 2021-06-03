@@ -61,7 +61,7 @@ import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
-import io.getstream.chat.android.offline.message.MessageSender
+import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
@@ -628,7 +628,7 @@ public class ChannelController internal constructor(
                 Result(newMessage)
             }
         } else {
-            return MessageSender(cid, domainImpl, this, channelClient).sendMessage(message)
+            return MessageSendingService.instance().sendMessage(message, cid, domainImpl, this, channelClient)
         }
     }
 

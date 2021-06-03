@@ -12,70 +12,73 @@ import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.mapErrorSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.onSuccess
+import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
 
-internal class MessageSender(
-    private val cid: String,
-    private val domainImpl: ChatDomainImpl,
-    private val channelController: ChannelController,
-    private val channelClient: ChannelClient,
-) {
-
+internal class MessageSendingService private constructor() {
     private val logger = ChatLogger.get("ChatDomain MessageSender")
     private var jobsMap: Map<String, Job> = emptyMap()
 
-    internal suspend fun sendMessage(message: Message): Result<Message> {
-        val newMessage = message.copy()
-
-        // set defaults for id, cid and created at
-        if (newMessage.id.isEmpty()) {
-            newMessage.id = domainImpl.generateMessageId()
+    internal suspend fun sendMessage(
+        message: Message,
+        cid: String,
+        domainImpl: ChatDomainImpl,
+        channelController: ChannelController,
+        channelClient: ChannelClient,
+    ): Result<Message> {
+        return Result.success(
+            message.copy().apply {
+                if (id.isEmpty()) {
+                    id = domainImpl.generateMessageId()
+                }
+                if (cid.isEmpty()) {
+                    enrichWithCid(cid)
+                }
+                user = requireNotNull(domainImpl.user.value)
+                attachments.forEach { attachment ->
+                    attachment.uploadId = generateUploadId()
+                    attachment.uploadState = Attachment.UploadState.InProgress
+                }
+                type = getMessageType(message)
+                createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
+                syncStatus =
+                    if (hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+            }
+        ).onSuccess { newMessage ->
+            // Update flow in channel controller
+            channelController.upsertMessage(newMessage)
+            // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+            // Update flow for currently running queries
+            domainImpl.getActiveQueries().forEach { query -> query.refreshChannel(cid) }
+        }.onSuccessSuspend { newMessage ->
+            // we insert early to ensure we don't lose messages
+            domainImpl.repos.insertMessage(newMessage)
+            domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+        }.flatMapSuspend { newMessage ->
+            send(newMessage, domainImpl, channelClient, channelController)
         }
-        if (newMessage.cid.isEmpty()) {
-            newMessage.enrichWithCid(cid)
-        }
-
-        newMessage.user = requireNotNull(domainImpl.user.value)
-
-        newMessage.attachments.forEach { attachment ->
-            attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress
-        }
-
-        newMessage.type = getMessageType(message)
-        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-        newMessage.syncStatus =
-            if (newMessage.hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-
-        // Update flow in channel controller
-        channelController.upsertMessage(newMessage)
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        for (query in domainImpl.getActiveQueries()) {
-            query.refreshChannel(cid)
-        }
-
-        // we insert early to ensure we don't lose messages
-        domainImpl.repos.insertMessage(newMessage)
-        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-
-        return send(newMessage)
     }
 
-    private suspend fun send(newMessage: Message): Result<Message> {
+    private suspend fun send(
+        newMessage: Message,
+        domainImpl: ChatDomainImpl,
+        channelClient: ChannelClient,
+        channelController: ChannelController,
+    ): Result<Message> {
         return if (domainImpl.online.value) {
             return if (newMessage.hasAttachments()) {
-                waitForAttachmentsToBeSent(newMessage)
+                waitForAttachmentsToBeSent(newMessage, domainImpl, channelClient, channelController)
             } else {
-                doSend(newMessage)
+                doSend(newMessage, domainImpl, channelClient, channelController)
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
@@ -83,18 +86,24 @@ internal class MessageSender(
         }
     }
 
-    private fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
+    private fun waitForAttachmentsToBeSent(
+        newMessage: Message,
+        domainImpl: ChatDomainImpl,
+        channelClient: ChannelClient,
+        channelController: ChannelController,
+    ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         jobsMap = jobsMap + (
             newMessage.id to domainImpl.scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
                 domainImpl.repos.observerAttachmentsForMessage(newMessage.id)
+                    .distinctUntilChanged()
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
                                 ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
-                                doSend(newMessage)
+                                doSend(newMessage, domainImpl, channelClient, channelController)
                                 jobsMap[newMessage.id]?.cancel()
                             }
                             attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
@@ -114,12 +123,28 @@ internal class MessageSender(
         return Result.success(newMessage)
     }
 
-    private suspend fun doSend(message: Message): Result<Message> {
+    private suspend fun doSend(
+        message: Message,
+        domainImpl: ChatDomainImpl,
+        channelClient: ChannelClient,
+        channelController: ChannelController,
+    ): Result<Message> {
         val messageToSend = message.copy(type = "regular")
         return Result.success(messageToSend)
-            .onSuccess { newMessage -> logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}") }
+            .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage -> domainImpl.runAndRetry { channelClient.sendMessage(newMessage) } }
             .mapSuspend(channelController::handleSendMessageSuccess)
             .mapErrorSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
+    }
+
+    internal companion object {
+        private var instance: MessageSendingService? = null
+
+        internal fun instance(): MessageSendingService {
+            if (instance == null) {
+                instance = MessageSendingService()
+            }
+            return instance!!
+        }
     }
 }

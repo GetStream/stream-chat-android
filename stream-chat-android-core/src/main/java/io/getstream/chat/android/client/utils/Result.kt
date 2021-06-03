@@ -95,6 +95,13 @@ public fun <T: Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<
     return this
 }
 
+public suspend fun <T: Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
+    if (isSuccess) {
+        successSideEffect(data())
+    }
+    return this
+}
+
 public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
