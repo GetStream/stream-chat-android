@@ -60,6 +60,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added default implementation of "Leave channel" click listener to `ChannelListViewModelBinding`
 
 ### ✅ Added
 - Added `streamUiChannelActionsDialogStyle` attribute to application theme and `ChannelListView` to customize channel actions dialog appearance. The attribute references a style with the following attributes:
