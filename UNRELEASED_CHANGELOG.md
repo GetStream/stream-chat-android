@@ -76,6 +76,13 @@
   - `streamUiChannelActionsCancelEnabled` attribute to hide/show "Cancel" action item
   - `streamUiChannelActionsIconsTint` attribute to customize action ions tint color
   - `streamUiChannelActionsWarningActionsTint` attribute to customize the color of "Delete Conversation" action item
+- Adding extra XML attrs allowing to customize "Send also to channel" CheckBox at `MessageInputView` component:
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxDrawable`
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxDirectChatText`
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxGroupChatText`
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
+  - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
 
 ### ⚠️ Changed
 
