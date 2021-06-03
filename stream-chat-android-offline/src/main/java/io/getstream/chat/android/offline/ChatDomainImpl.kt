@@ -292,12 +292,6 @@ internal class ChatDomainImpl internal constructor(
 
             // load the current user from the db
             val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
-            // set active channels and recover
-            // restore channels
-            syncState.activeChannelIds.forEach(::channel)
-            // restore queries
-            repos.selectQueriesChannelsByIds(syncState.activeQueryIds)
-                .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
             // retrieve the last time the user marked all as read and handle it as an event
             syncState.markedAllReadAt
