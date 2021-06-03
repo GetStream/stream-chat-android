@@ -65,7 +65,6 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_view_info"
         app:drawableStartCompat="@drawable/stream_ui_ic_single_user"
-        app:drawableTint="@color/stream_ui_grey"
         />
 
     <TextView
@@ -74,7 +73,6 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_channel_actions_leave_group"
         app:drawableStartCompat="@drawable/stream_ui_ic_leave_group"
-        app:drawableTint="@color/stream_ui_grey"
         />
 
     <TextView
@@ -85,7 +83,6 @@
         android:textColor="@color/stream_ui_accent_red"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/stream_ui_ic_delete"
-        app:drawableTint="@color/stream_ui_accent_red"
         tools:visibility="visible"
         />
 
@@ -95,7 +92,6 @@
         android:layout_width="match_parent"
         android:text="@string/stream_ui_cancel"
         app:drawableStartCompat="@drawable/stream_ui_ic_clear"
-        app:drawableTint="@color/stream_ui_grey"
         />
 
 </LinearLayout>

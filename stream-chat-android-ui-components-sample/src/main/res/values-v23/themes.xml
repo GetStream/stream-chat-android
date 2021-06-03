@@ -12,9 +12,14 @@
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
+        <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
 
     <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar"/>
+
+    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
+        <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+    </style>
 </resources>

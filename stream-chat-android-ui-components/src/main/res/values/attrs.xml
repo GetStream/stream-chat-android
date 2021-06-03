@@ -4,7 +4,7 @@
     <attr name="streamUiReactionsBubbleColorTheirs" format="color|reference" />
 
     <!--Themes attributes-->
-    <declare-styleable name="StreamUiStyleable" >
+    <declare-styleable name="StreamUiStyleable">
         <attr name="streamUiValidTheme" format="boolean" />
         <attr name="streamUiTheme" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
@@ -12,5 +12,6 @@
         <attr name="streamUiGlobalAvatarBorderColor" format="reference|color" />
         <attr name="streamUiGlobalAvatarTextColor" format="reference|color" />
         <attr name="streamUiGlobalAvatarOnlineIndicatorColor" format="reference|color" />
+        <attr name="streamUiChannelActionsDialogStyle" format="reference" />
     </declare-styleable>
 </resources>
