@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.channel.attachment
 
+import android.graphics.BitmapFactory
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
@@ -10,6 +11,9 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.uploader.toProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
+import java.io.FileInputStream
+import java.lang.Exception
+import java.lang.StringBuilder
 
 internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
@@ -23,8 +27,8 @@ internal class AttachmentUploader(
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
-        val mimeType: String? = MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(file.extension)
+        val mimeType: String = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+            ?: getFileExtFromBytes(file)
         val attachmentType = mimeType.toAttachmentType()
 
         val progressTracker = attachment.uploadId?.let {
@@ -104,5 +108,19 @@ internal class AttachmentUploader(
         override fun toString(): String {
             return value
         }
+    }
+}
+
+private fun getFileExtFromBytes(f: File): String {
+    FileInputStream(f).use { fis ->
+        val buf = ByteArray(5) //max ext size + 1
+        fis.read(buf, 0, buf.size)
+        val builder = StringBuilder(buf.size)
+        var i = 1
+        while (i < buf.size && buf[i].toInt().toChar() != '\r' && buf[i].toInt().toChar() != '\n') {
+            builder.append(buf[i].toInt().toChar())
+            i++
+        }
+        return builder.toString().lowercase()
     }
 }

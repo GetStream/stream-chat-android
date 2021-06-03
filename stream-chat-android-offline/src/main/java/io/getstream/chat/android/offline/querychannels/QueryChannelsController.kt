@@ -228,6 +228,7 @@ public class QueryChannelsController internal constructor(
                 )
             }
 
+
         _channels.value += affectedChannels
     }
 

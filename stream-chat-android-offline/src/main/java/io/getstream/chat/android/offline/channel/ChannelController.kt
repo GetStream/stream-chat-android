@@ -86,6 +86,10 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import kotlin.math.max
+import android.graphics.BitmapFactory
+
+
+
 
 public class ChannelController internal constructor(
     public val channelType: String,

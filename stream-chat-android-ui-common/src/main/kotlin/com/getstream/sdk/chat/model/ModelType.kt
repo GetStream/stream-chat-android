@@ -25,6 +25,7 @@ public object ModelType {
     public const val attach_imgur: String = "imgur"
     public const val attach_giphy: String = "giphy"
     public const val attach_video: String = "video"
+    public const val attach_audio: String = "audio"
     public const val attach_product: String = "product"
     public const val attach_file: String = "file"
     public const val attach_link: String = "link"

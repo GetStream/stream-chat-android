@@ -96,7 +96,7 @@ internal class MessageInputController(
             true -> view.sendTextMessage(message)
             false -> view.sendAttachments(
                 message,
-                attachmentsController.selectedAttachments.map {
+                attachmentsController.selectedAttachments.map { //Haaaaaaaa
                     storageHelper.getCachedFileFromUri(
                         view.context,
                         it

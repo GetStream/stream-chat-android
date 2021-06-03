@@ -286,7 +286,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         messageSendHandler.sendMessage(message)
     }
 
-    internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
+    internal fun sendAttachments(message: String, attachmentFiles: List<Pair<File, String>>;kb) {
         messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
     }
 
