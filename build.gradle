@@ -60,7 +60,7 @@ task clean(type: Delete) {
 
 // Use the default greeting
 tasks.register('docusaurusSidebar', GenerateSidebar) {
-    inputDir = file("build/dokka/dokkasaurusMultiModule")
+    inputDir = file("build/dokka/docusaurus")
     outputDir = file("docusaurus/docs/Android/Dokka")
     modulesFilterInput = [
             'stream-chat-android-client',
