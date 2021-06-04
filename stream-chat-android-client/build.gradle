@@ -113,4 +113,6 @@ tasks.register('dokkaDokkasaurus', DokkaTask) {
     dependencies {
         dokkaPlugin(Dependencies.dokkasaurus)
     }
+
+    outputDirectory = file("../build/dokka/docusaurus")
 }
