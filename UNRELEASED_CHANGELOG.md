@@ -47,7 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+Fixed bug where files without extension in their name lost the mime type.
 ### ⬆️ Improved
 
 ### ✅ Added

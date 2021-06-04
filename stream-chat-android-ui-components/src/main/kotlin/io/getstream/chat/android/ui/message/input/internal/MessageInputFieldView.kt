@@ -166,9 +166,9 @@ internal class MessageInputFieldView : FrameLayout {
         messageText = "${messageText.substringBeforeLast("@")}@${user.name} "
     }
 
-    fun getAttachedFiles(): List<File> {
-        return selectedAttachments.map {
-            storageHelper.getCachedFileFromUri(context, it)
+    fun getAttachedFiles(): List<Pair<File, String?>> {
+        return selectedAttachments.map { metaData ->
+            storageHelper.getCachedFileFromUri(context, metaData) to metaData.mimeType
         }
     }
 

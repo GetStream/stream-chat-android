@@ -73,7 +73,10 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
 
-        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+        override fun sendMessageWithAttachments(
+            message: String,
+            attachmentsFilesWithMimeType: List<Pair<File, String?>>
+        ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
 
@@ -89,7 +92,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFiles: List<Pair<File, String?>>,
         ) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -228,7 +231,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
-        val notEmptyMessage = !messageText.isNullOrBlank() || attachments.isNotEmpty()
+        val notEmptyMessage = messageText.isNotBlank() || attachments.isNotEmpty()
         binding.sendButton.isVisible = notEmptyMessage && !isMessageTooLong()
     }
 
@@ -286,8 +289,8 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         messageSendHandler.sendMessage(message)
     }
 
-    internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
-        messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
+    internal fun sendAttachments(message: String, attachmentFilesWithMimeType: List<Pair<File, String?>>) {
+        messageSendHandler.sendMessageWithAttachments(message, attachmentFilesWithMimeType)
     }
 
     internal fun sendToThread(parentMessage: Message, message: String, alsoSendToChannel: Boolean) {
@@ -298,13 +301,13 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         parentMessage: Message,
         message: String,
         alsoSendToChannel: Boolean,
-        attachmentFiles: List<File>,
+        attachmentFilesWithMimeType: List<Pair<File, String?>>,
     ) {
         messageSendHandler.sendToThreadWithAttachments(
             parentMessage,
             message,
             alsoSendToChannel,
-            attachmentFiles
+            attachmentFilesWithMimeType
         )
     }
 
@@ -442,13 +445,13 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     public interface MessageSendHandler {
         public fun sendMessage(messageText: String)
-        public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        public fun sendMessageWithAttachments(message: String, attachmentsFilesWithMimeType: List<Pair<File, String?>>)
         public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
         public fun sendToThreadWithAttachments(
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsFilesWithMimeType: List<Pair<File, String?>>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
