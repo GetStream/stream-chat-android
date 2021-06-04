@@ -5,12 +5,15 @@ sidebar_position: 1
 ---
 
 The Android SDK enables you to build any type of chat or messaging experience for Android. It consists of 3 major components:
+
 * [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client): The client handles all API calls and receives events.
 * [Offline](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline): The offline lib stores the data, implements optimistic UI updates, handles network failures, and exposes LiveData or StateFlow objects that make it easy to build your own UI on top of.
 * [UI](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components): The UI package includes view models and custom views for common things like a channel list, message list, message input, etc.
 
 ## Adding dependencies
-UI package is build on top of the Client and Offline packages. If you aim to use Stream SDK UI components you need to add dependency to the UI artifact. 
+
+The UI package is built on top of the Client and Offline packages. If you aim to use Stream SDK UI components you need to add dependency to the UI artifact.
+
 ```kotlin
 dependencies {
     implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
@@ -18,10 +21,13 @@ dependencies {
 
 ```
 See the [releases](https://github.com/GetStream/stream-chat-android/releases) page for the latest version number.
+
 If you prefer to use low-level chat Client only with Offline support library you can include those dependencies directly instead of the whole UI package.
 
 ## Initializing SDK
-As a first step, you need to initialize each of the SDK components. Most of the times, this will happen only once in the _Application_ class:
+
+First, initialize each of the SDK components.  will happen only once in the _Application_ class:
+
 ```kotlin
 val client = ChatClient.Builder(apiKey = "apiKey", appContext = applicationContext)
     .logLevel(ChatLogLevel.ALL)
@@ -31,10 +37,13 @@ val domain = ChatDomain.Builder(applicationContext, client)
     .offlineEnabled()
     .build()
 ```
-Every _Builder_ expose multiple methods that allow different SDK configuration.
+
+Every _Builder_ exposes methods for SDK configuration.
 
 ## Connecting User
+
 The next step is connecting the user:
+
 ```kotlin
 val user = User(
     id = "bender",
@@ -53,11 +62,14 @@ ChatClient.instance().connectUser(user = user, token = "userToken")
         }
     }
 ```
+
 For more details see [Client Documentation](../client/setup/client-connecting-user).
 
 ## ChatUI
-UI components customization is supported by accessing the `ChatUI` object directly. It's initialized with default implementations - no initialization is required.
+
+The `ChatUI` object supports UI component customization by default. It's initialized with default implementations - no initialization is required.
 You can access `ChatUI` to customize the global behaviour of UI elements.
+
  * `ChatUI.fonts`: allows you to overwrite fonts
  * `ChatUI.markdown` interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
  * `ChatUI.urlSigner` url signing logic, enables you to add authorization tokens for images, video etc
