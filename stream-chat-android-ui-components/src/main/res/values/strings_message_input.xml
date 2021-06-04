@@ -4,11 +4,12 @@
     <string name="stream_ui_message_input_send_as_direct_message">Also send as direct message</string>
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
-    <string name="stream_ui_message_input_hint_edit">Send a message</string>
-    <string name="stream_ui_message_input_hint_attachment">Add a comment or send</string>
+    <!-- TODO: probably a different hint in when editing a message is a bug -->
+    <string name="stream_ui_message_input_edit_message_hint">Send a message</string>
+    <string name="stream_ui_message_input_attachments_message_hint">Add a comment or send</string>
 
     <!-- Commands Popup -->
-    <string name="stream_ui_message_input_commands_title">Instant Commands</string>
+    <string name="stream_ui_message_input_instant_commands">Instant Commands</string>
     <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
 
     <!-- File Picker Dialog -->

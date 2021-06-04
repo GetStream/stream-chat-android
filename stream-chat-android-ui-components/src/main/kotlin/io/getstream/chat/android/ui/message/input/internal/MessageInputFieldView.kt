@@ -36,8 +36,8 @@ internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
         StreamUiMessageInputFieldBinding.inflate(streamThemeInflater, this, true)
 
-    private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_hint_attachment)
-    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_hint_edit)
+    private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_attachments_message_hint)
+    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_edit_message_hint)
     private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter()
     private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter()
     private val storageHelper = StorageHelper()
