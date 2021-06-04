@@ -78,6 +78,10 @@ public data class MessageInputViewStyle(
     public val sendButtonEnabledIcon: Drawable,
     public val sendButtonDisabledIcon: Drawable,
     public val showSendAlsoToChannelCheckbox: Boolean,
+    public val sendAlsoToChannelCheckboxDrawable: Drawable?,
+    public val sendAlsoToChannelCheckboxGroupChatText: CharSequence?,
+    public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?,
+    public val sendAlsoToChannelCheckboxTextStyle: TextStyle,
     public val commandsEnabled: Boolean,
     public val commandsTitleTextStyle: TextStyle,
     public val commandsNameTextStyle: TextStyle,
@@ -219,6 +223,32 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiShowSendAlsoToChannelCheckbox,
                     true
                 )
+                val sendAlsoToChannelCheckboxGroupChatText: CharSequence? = a.getText(
+                    R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxGroupChatText
+                )
+                val sendAlsoToChannelCheckboxDirectChatText: CharSequence? = a.getText(
+                    R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxDirectChatText
+                )
+                val sendAlsoToChannelCheckboxTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxTextFontAssets,
+                        R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxTextFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+                val sendAlsoToChannelCheckboxDrawable = a.getDrawable(R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxDrawable)
+
                 val mentionsEnabled = a.getBoolean(
                     R.styleable.MessageInputView_streamUiMentionsEnabled,
                     true
@@ -427,6 +457,10 @@ public data class MessageInputViewStyle(
                     sendButtonEnabledIcon = sendButtonEnabledIcon,
                     sendButtonDisabledIcon = sendButtonDisabledIcon,
                     showSendAlsoToChannelCheckbox = showSendAlsoToChannelCheckbox,
+                    sendAlsoToChannelCheckboxGroupChatText = sendAlsoToChannelCheckboxGroupChatText,
+                    sendAlsoToChannelCheckboxDirectChatText = sendAlsoToChannelCheckboxDirectChatText,
+                    sendAlsoToChannelCheckboxDrawable = sendAlsoToChannelCheckboxDrawable,
+                    sendAlsoToChannelCheckboxTextStyle = sendAlsoToChannelCheckboxTextStyle,
                     commandsEnabled = commandsEnabled,
                     commandsTitleTextStyle = commandsTitleTextStyle,
                     commandsNameTextStyle = commandsNameTextStyle,
