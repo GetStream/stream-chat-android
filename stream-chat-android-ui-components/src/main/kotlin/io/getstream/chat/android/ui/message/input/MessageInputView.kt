@@ -302,13 +302,19 @@ public class MessageInputView : ConstraintLayout {
         if (shouldShowCheckbox) {
             val text = when (chatMode) {
                 ChatMode.GROUP_CHAT -> {
-                    context.getString(R.string.stream_ui_send_also_to_channel)
+                    style.sendAlsoToChannelCheckboxGroupChatText
+                        ?: context.getString(R.string.stream_ui_send_also_to_channel)
                 }
                 ChatMode.DIRECT_CHAT -> {
-                    context.getString(R.string.stream_ui_send_also_as_direct_message)
+                    style.sendAlsoToChannelCheckboxDirectChatText
+                        ?: context.getString(R.string.stream_ui_send_also_as_direct_message)
                 }
             }
             binding.sendAlsoToChannel.text = text
+            style.sendAlsoToChannelCheckboxDrawable?.let {
+                binding.sendAlsoToChannel.buttonDrawable = it
+            }
+            style.sendAlsoToChannelCheckboxTextStyle.apply(binding.sendAlsoToChannel)
         }
         binding.sendAlsoToChannel.isVisible = shouldShowCheckbox
     }
@@ -490,7 +496,7 @@ public class MessageInputView : ConstraintLayout {
 
             override fun sendMessageWithAttachments(
                 message: String,
-                attachmentsFiles: List<File>,
+                attachmentsWithMimeTypes: List<Pair<File, String?>>,
                 messageReplyTo: Message?,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -508,7 +514,7 @@ public class MessageInputView : ConstraintLayout {
                 parentMessage: Message,
                 message: String,
                 alsoSendToChannel: Boolean,
-                attachmentsFiles: List<File>,
+                attachmentsWithMimeTypes: List<Pair<File, String?>>,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
@@ -543,7 +549,7 @@ public class MessageInputView : ConstraintLayout {
 
         public fun sendMessageWithAttachments(
             message: String,
-            attachmentsFiles: List<File>,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
             messageReplyTo: Message? = null,
         )
 
@@ -557,7 +563,7 @@ public class MessageInputView : ConstraintLayout {
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

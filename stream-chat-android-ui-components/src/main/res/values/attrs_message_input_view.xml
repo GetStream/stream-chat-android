@@ -44,6 +44,18 @@
 
         <!--"Also send to channel" CheckBox-->
         <attr name="streamUiShowSendAlsoToChannelCheckbox" format="boolean" />
+        <attr name="streamUiSendAlsoToChannelCheckboxDrawable" format="reference" />
+        <attr name="streamUiSendAlsoToChannelCheckboxGroupChatText" format="string" />
+        <attr name="streamUiSendAlsoToChannelCheckboxDirectChatText" format="string" />
+        <attr name="streamUiSendAlsoToChannelCheckboxTextFont" format="string" />
+        <attr name="streamUiSendAlsoToChannelCheckboxTextFontAssets" format="string" />
+        <attr name="streamUiSendAlsoToChannelCheckboxTextSize" format="dimension" />
+        <attr name="streamUiSendAlsoToChannelCheckboxTextColor" format="reference|color" />
+        <attr name="streamUiSendAlsoToChannelCheckboxTextStyle" format="enum" >
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
 
         <!--Mentions-->
         <attr name="streamUiMentionsEnabled" format="boolean" />

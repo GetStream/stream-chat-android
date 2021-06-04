@@ -23,8 +23,8 @@ internal class AttachmentUploader(
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
-        val mimeType: String? = MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(file.extension)
+        val mimeType: String? = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+            ?: attachment.mimeType
         val attachmentType = mimeType.toAttachmentType()
 
         val progressTracker = attachment.uploadId?.let {
