@@ -4,9 +4,7 @@
     <string name="stream_ui_message_input_send_as_direct_message">Also send as direct message</string>
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
-    <!-- TODO: probably a different hint in when editing a message is a bug -->
-    <string name="stream_ui_message_input_edit_message_hint">Send a message</string>
-    <string name="stream_ui_message_input_attachments_message_hint">Add a comment or send</string>
+    <string name="stream_ui_message_input_only_attachments_hint">Add a comment or send</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">Instant Commands</string>
@@ -14,7 +12,7 @@
 
     <!-- File Picker Dialog -->
     <string name="stream_ui_message_input_permission_camera">Allow access to your Camera</string>
-    <string name="stream_ui_message_input_permission_files">Allow access to your Files</string>
+    <string name="stream_ui_message_input_permission_file">Allow access to your Files</string>
     <string name="stream_ui_message_input_permission_media">Allow access to your Gallery</string>
     <string name="stream_ui_message_input_recent_files">Recent Files</string>
     <string name="stream_ui_message_input_no_files">There is no photo or video.</string>

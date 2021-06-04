@@ -8,8 +8,8 @@
     <string name="stream_ui_message_list_giphy_send">Send</string>
     <string name="stream_ui_message_list_giphy_cancel">Cancel</string>
     <string name="stream_ui_message_list_giphy_shuffle">Shuffle</string>
-    <string name="stream_ui_message_list_message_ephemeral">Only visible to you</string>
-    <string name="stream_ui_message_list_message_deleted">Message deleted</string>
+    <string name="stream_ui_message_list_ephemeral_message">Only visible to you</string>
+    <string name="stream_ui_message_list_deleted_message">Message deleted</string>
     <string name="stream_ui_message_list_attachment_more_count">+%d</string>
     <string name="stream_ui_message_list_attachment_uploading">Uploading %d / %d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Upload complete, processing…</string>

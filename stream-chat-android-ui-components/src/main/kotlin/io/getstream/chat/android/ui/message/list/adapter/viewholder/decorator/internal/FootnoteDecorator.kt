@@ -151,7 +151,7 @@ internal class FootnoteDecorator(
             !data.message.isEphemeral() && !data.message.isDeleted() -> textView.isVisible = false
             else -> textView.apply {
                 isVisible = true
-                text = context.getString(R.string.stream_ui_message_list_message_ephemeral)
+                text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
                 setLeftDrawable(R.drawable.stream_ui_ic_icon_eye_off)
                 compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
             }

@@ -120,7 +120,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         fun newFlagMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.stream_ui_ic_flag,
             iconTintResId = R.color.red,
-            title = context.getString(R.string.stream_ui_message_list_flag_message),
+            title = context.getString(R.string.stream_ui_message_list_flag_confirmation_title),
             description = context.getString(R.string.stream_ui_message_list_flag_confirmation_message),
             confirmText = context.getString(R.string.stream_ui_message_list_flag_confirmation_positive_button),
             cancelText = context.getString(R.string.cancel),
