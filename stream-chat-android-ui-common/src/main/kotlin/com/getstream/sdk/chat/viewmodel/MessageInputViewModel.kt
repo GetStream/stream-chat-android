@@ -98,11 +98,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
 
     public fun sendMessageWithAttachments(
         messageText: String,
-        attachmentFiles: List<Pair<File, String?>>,
+        attachmentsWithMimeTypes: List<Pair<File, String?>>,
         messageTransformer: Message.() -> Unit = { }
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
-        val attachments = attachmentFiles.map { (file, mimeType) ->
+        val attachments = attachmentsWithMimeTypes.map { (file, mimeType) ->
             Attachment(upload = file, mimeType = mimeType)
         }.toMutableList()
 
