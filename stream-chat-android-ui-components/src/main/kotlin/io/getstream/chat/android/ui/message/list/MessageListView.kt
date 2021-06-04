@@ -581,6 +581,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
         messageListItemViewHolderFactory.setMessageListItemStyle(messageListViewStyle.itemStyle)
+        messageListItemViewHolderFactory.setGiphyViewHolderStyle(messageListViewStyle.giphyViewHolderStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)

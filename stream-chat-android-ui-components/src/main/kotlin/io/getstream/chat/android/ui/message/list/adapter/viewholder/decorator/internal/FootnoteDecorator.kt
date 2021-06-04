@@ -152,7 +152,7 @@ internal class FootnoteDecorator(
             else -> textView.apply {
                 isVisible = true
                 text = context.getString(R.string.stream_ui_message_list_ephemeral_message)
-                setLeftDrawable(R.drawable.stream_ui_ic_icon_eye_off)
+                setLeftDrawable(style.iconOnlyVisibleToYou)
                 compoundDrawablePadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_small)
             }
         }
