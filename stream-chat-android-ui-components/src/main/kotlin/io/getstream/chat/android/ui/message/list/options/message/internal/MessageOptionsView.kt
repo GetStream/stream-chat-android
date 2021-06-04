@@ -161,7 +161,7 @@ internal class MessageOptionsView : FrameLayout {
         if (configuration.muteEnabled) {
             val icon = if (isMessageAuthorMuted) style.unmuteIcon else style.muteIcon
             binding.muteTV.configureListItem(style.messageOptionsText, icon, iconTint)
-            binding.muteTV.setText(if (isMessageAuthorMuted) R.string.stream_ui_message_option_unmute else R.string.stream_ui_message_option_mute)
+            binding.muteTV.setText(if (isMessageAuthorMuted) R.string.stream_ui_message_list_action_unmute_user else R.string.stream_ui_message_list_action_mute_user)
         } else {
             binding.muteTV.isVisible = false
         }

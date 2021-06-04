@@ -63,7 +63,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, pictureUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
-                getString(R.string.stream_ui_gallery_share_sheet_title),
+                getString(R.string.stream_ui_attachment_gallery_share),
             ),
             null
         )
@@ -149,7 +149,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private fun onGalleryPageSelected(position: Int) {
         binding.imageCountTextView.text = getString(
-            R.string.stream_ui_gallery_count_template,
+            R.string.stream_ui_attachment_gallery_count,
             position + 1,
             attachmentGalleryItems.size
         )
@@ -171,7 +171,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             .replaceFirstChar(Char::lowercase)
 
         return getString(
-            R.string.stream_ui_date_and_time_pattern,
+            R.string.stream_ui_attachment_gallery_date,
             relativeDay,
             dateFormatter.formatTime(createdAt)
         )

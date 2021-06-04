@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
-import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
 
 internal class SelectedFileAttachmentAdapter(
@@ -41,7 +40,7 @@ internal class SelectedFileAttachmentAdapter(
                 ivFileThumb.loadAttachmentThumb(attachment)
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 if (item.size > attachmentMaxFileSize) {
-                    tvFileTitle.text = context.getString(R.string.stream_ui_file_too_big)
+                    tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
                     tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
                 } else {
                     tvFileTitle.text = attachment.title

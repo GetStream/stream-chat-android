@@ -22,7 +22,7 @@
         android:paddingTop="@dimen/stream_ui_spacing_small"
         android:paddingEnd="@dimen/stream_ui_spacing_medium"
         android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:text="@string/stream_ui_message_deleted_label"
+        android:text="@string/stream_ui_message_list_message_deleted"
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textStyle="italic"
         />

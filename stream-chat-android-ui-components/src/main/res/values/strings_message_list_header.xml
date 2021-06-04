@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Header Title -->
+    <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
+
+    <!-- Header Subtitle -->
+    <string name="stream_ui_message_list_header_thread_subtitle">with %s</string>
+    <string name="stream_ui_message_list_header_disconnected">Searching for network</string>
+    <string name="stream_ui_message_list_header_offline">Offline…</string>
+    <string name="stream_ui_message_list_header_retry">Try Again</string>
+    <string name="stream_ui_message_list_header_member_count_online">%s, %d Online</string>
+    <plurals name="stream_ui_message_list_header_member_count">
+        <item quantity="one">%1d Member</item>
+        <item quantity="other">%1d Members</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_header_typing_users">
+        <item quantity="one">%s is typing</item>
+        <item quantity="other">%s and %d more are typing</item>
+    </plurals>
+
+    <string name="stream_ui_message_list_header_back_button_content_description">Back button</string>
+</resources>

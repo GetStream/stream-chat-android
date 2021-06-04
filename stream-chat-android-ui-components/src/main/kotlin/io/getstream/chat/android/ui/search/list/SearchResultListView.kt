@@ -70,10 +70,10 @@ public class SearchResultListView : ViewFlipper {
         if (!isEmpty) {
             val count = messages.count()
             binding.searchInfoBar.text =
-                resources.getQuantityString(R.plurals.stream_ui_search_result_list_result_count, count, count)
+                resources.getQuantityString(R.plurals.stream_ui_search_result_list_count, count, count)
             scrollListener.enablePagination()
         } else {
-            binding.emptyLabel.text = resources.getString(R.string.stream_ui_search_result_list_result_empty, query)
+            binding.emptyLabel.text = resources.getString(R.string.stream_ui_search_result_list_empty, query)
             scrollListener.disablePagination()
         }
 

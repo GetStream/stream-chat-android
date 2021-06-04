@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_input_send_to_channel">Also send to channel</string>
+    <string name="stream_ui_message_input_send_direct_message">Also send as direct message</string>
+    <string name="stream_ui_message_input_reply">Reply to message</string>
+    <string name="stream_ui_message_input_hint">Write something here</string>
+    <string name="stream_ui_message_input_hint_edit">Send a message</string>
+    <string name="stream_ui_message_input_hint_attachment">Add a comment or send</string>
+
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_input_commands_title">Instant Commands</string>
+    <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_input_permission_camera">Allow access to your Camera</string>
+    <string name="stream_ui_message_input_permission_files">Allow access to your Files</string>
+    <string name="stream_ui_message_input_permission_media">Allow access to your Gallery</string>
+    <string name="stream_ui_message_input_recent_files">Recent Files</string>
+    <string name="stream_ui_message_input_no_files">There is no photo or video.</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_input_error_file_size">File too big</string>
+    <string name="stream_ui_message_input_error_max_length">"Max message length (%d) exceeded."</string>
+</resources>

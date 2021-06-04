@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:gravity="center_horizontal"
-        android:text="@string/stream_ui_channels_header_view_online_title"
+        android:text="@string/stream_ui_channel_list_header_connected"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/actionButton"
@@ -63,7 +63,7 @@
             style="@style/StreamUiTextAppearance.HeadlineBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stream_ui_channels_header_view_offline_title"
+            android:text="@string/stream_ui_channel_list_header_disconnected"
             />
 
     </LinearLayout>

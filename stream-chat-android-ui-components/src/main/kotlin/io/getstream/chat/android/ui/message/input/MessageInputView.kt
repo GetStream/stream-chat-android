@@ -100,7 +100,7 @@ public class MessageInputView : ConstraintLayout {
         when (newValue) {
             is InputMode.Reply -> {
                 binding.inputModeHeader.isVisible = true
-                binding.headerLabel.text = context.getString(R.string.stream_ui_reply_to_message)
+                binding.headerLabel.text = context.getString(R.string.stream_ui_message_input_reply)
                 binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_arrow_curve_left)
                 binding.messageInputFieldView.onReply(newValue.repliedMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
@@ -108,7 +108,7 @@ public class MessageInputView : ConstraintLayout {
 
             is InputMode.Edit -> {
                 binding.inputModeHeader.isVisible = true
-                binding.headerLabel.text = context.getString(R.string.stream_ui_message_option_edit)
+                binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_action_edit_message)
                 binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_edit)
                 binding.messageInputFieldView.onEdit(newValue.oldMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
@@ -303,11 +303,11 @@ public class MessageInputView : ConstraintLayout {
             val text = when (chatMode) {
                 ChatMode.GROUP_CHAT -> {
                     style.sendAlsoToChannelCheckboxGroupChatText
-                        ?: context.getString(R.string.stream_ui_send_also_to_channel)
+                        ?: context.getString(R.string.stream_ui_message_input_send_to_channel)
                 }
                 ChatMode.DIRECT_CHAT -> {
                     style.sendAlsoToChannelCheckboxDirectChatText
-                        ?: context.getString(R.string.stream_ui_send_also_as_direct_message)
+                        ?: context.getString(R.string.stream_ui_message_input_send_direct_message)
                 }
             }
             binding.sendAlsoToChannel.text = text

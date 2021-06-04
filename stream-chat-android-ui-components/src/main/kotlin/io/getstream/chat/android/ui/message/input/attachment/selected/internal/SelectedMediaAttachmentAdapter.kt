@@ -65,7 +65,7 @@ internal class SelectedMediaAttachmentAdapter(
         private fun bindErrorBadge(attachment: AttachmentMetaData) {
             if (attachment.size > attachmentMaxFileSize) {
                 binding.tvError.isVisible = true
-                binding.tvError.text = context.getString(R.string.stream_ui_file_too_big)
+                binding.tvError.text = context.getString(R.string.stream_ui_message_input_error_file_size)
             } else {
                 binding.tvError.isVisible = false
             }

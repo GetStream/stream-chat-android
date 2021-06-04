@@ -147,7 +147,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         style.memberInfoTextStyle.apply(binding.membersInfoTextView)
         binding.membersInfoTextView.text = if (isGroup) {
             requireContext().resources.getQuantityString(
-                R.plurals.stream_ui_channel_actions_members_count,
+                R.plurals.stream_ui_channel_list_action_dialog_member_info,
                 members.size,
                 members.size,
                 members.count { it.user.online }

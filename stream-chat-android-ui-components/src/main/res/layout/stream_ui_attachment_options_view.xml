@@ -20,28 +20,28 @@
         <TextView
             android:id="@+id/reply"
             style="@style/StreamUiMessageOptionItem"
-            android:text="@string/stream_ui_attachment_option_reply"
+            android:text="@string/stream_ui_attachment_gallery_action_reply"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
             />
 
         <TextView
             android:id="@+id/showInChat"
             style="@style/StreamUiMessageOptionItem"
-            android:text="@string/stream_ui_attachment_option_show_in_chat"
+            android:text="@string/stream_ui_attachment_gallery_action_show_in_chat"
             tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
             />
 
         <TextView
             android:id="@+id/saveImage"
             style="@style/StreamUiMessageOptionItem"
-            android:text="@string/stream_ui_attachment_option_save"
+            android:text="@string/stream_ui_attachment_gallery_action_save_image"
             tools:drawableStart="@drawable/stream_ui_ic_download"
             />
 
         <TextView
             android:id="@+id/delete"
             style="@style/StreamUiMessageOptionItem"
-            android:text="@string/stream_ui_attachment_option_delete"
+            android:text="@string/stream_ui_attachment_gallery_action_delete"
             app:drawableTint="@color/stream_ui_accent_red"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />
