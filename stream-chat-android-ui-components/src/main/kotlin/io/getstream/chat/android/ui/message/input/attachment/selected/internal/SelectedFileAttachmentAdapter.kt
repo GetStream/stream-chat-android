@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentFileBinding
 
 internal class SelectedFileAttachmentAdapter(
