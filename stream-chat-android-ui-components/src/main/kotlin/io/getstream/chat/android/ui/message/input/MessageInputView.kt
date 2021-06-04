@@ -302,13 +302,19 @@ public class MessageInputView : ConstraintLayout {
         if (shouldShowCheckbox) {
             val text = when (chatMode) {
                 ChatMode.GROUP_CHAT -> {
-                    context.getString(R.string.stream_ui_send_also_to_channel)
+                    style.sendAlsoToChannelCheckboxGroupChatText
+                        ?: context.getString(R.string.stream_ui_send_also_to_channel)
                 }
                 ChatMode.DIRECT_CHAT -> {
-                    context.getString(R.string.stream_ui_send_also_as_direct_message)
+                    style.sendAlsoToChannelCheckboxDirectChatText
+                        ?: context.getString(R.string.stream_ui_send_also_as_direct_message)
                 }
             }
             binding.sendAlsoToChannel.text = text
+            style.sendAlsoToChannelCheckboxDrawable?.let {
+                binding.sendAlsoToChannel.buttonDrawable = it
+            }
+            style.sendAlsoToChannelCheckboxTextStyle.apply(binding.sendAlsoToChannel)
         }
         binding.sendAlsoToChannel.isVisible = shouldShowCheckbox
     }
