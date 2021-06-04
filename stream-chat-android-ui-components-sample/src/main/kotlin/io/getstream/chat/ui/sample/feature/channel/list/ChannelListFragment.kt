@@ -100,10 +100,6 @@ class ChannelListFragment : Fragment() {
                     .findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(direction)
             }
-
-            setChannelLeaveClickListener { channel ->
-                viewModel.leaveChannel(channel)
-            }
         }
 
         binding.searchInputView.apply {
