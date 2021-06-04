@@ -45,7 +45,7 @@ public class UserReactionsView : FrameLayout {
     private fun bindTitle(message: Message) {
         val reactionCount = message.supportedLatestReactions.size
         binding.userReactionsTitleTextView.text = context.resources.getQuantityString(
-            R.plurals.stream_ui_message_list_action_dialog_message_reactions,
+            R.plurals.stream_ui_message_list_message_reactions,
             reactionCount,
             reactionCount
         )

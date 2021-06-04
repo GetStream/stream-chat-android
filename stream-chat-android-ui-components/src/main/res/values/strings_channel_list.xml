@@ -4,11 +4,11 @@
     <string name="stream_ui_channel_list_you">You</string>
 
     <!-- Channel Actions Dialog -->
-    <string name="stream_ui_channel_list_action_view_info">View info</string>
-    <string name="stream_ui_channel_list_action_leave_channel">Leave Group</string>
-    <string name="stream_ui_channel_list_action_dismiss_dialog">Cancel</string>
-    <string name="stream_ui_channel_list_action_delete_channel">Delete conversation</string>
-    <plurals name="stream_ui_channel_list_action_dialog_member_info">
+    <string name="stream_ui_channel_list_view_info">View info</string>
+    <string name="stream_ui_channel_list_leave_channel">Leave Group</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">Cancel</string>
+    <string name="stream_ui_channel_list_delete_channel">Delete conversation</string>
+    <plurals name="stream_ui_channel_list_member_info">
         <item quantity="one">%1d Member, %2d Online</item>
         <item quantity="other">%1d Members, %2d Online</item>
     </plurals>

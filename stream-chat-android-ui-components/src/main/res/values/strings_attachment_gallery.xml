@@ -2,12 +2,10 @@
 <resources>
     <string name="stream_ui_attachment_gallery_title">Photos</string>
     <string name="stream_ui_attachment_gallery_count">%d of %d</string>
-    <string name="stream_ui_attachment_gallery_share">Share Image</string>
     <string name="stream_ui_attachment_gallery_date">Sent %s at %s</string>
-
-    <!-- Attachment Actions Dropdown -->
-    <string name="stream_ui_attachment_gallery_action_reply">Reply</string>
-    <string name="stream_ui_attachment_gallery_action_delete">Delete</string>
-    <string name="stream_ui_attachment_gallery_action_show_in_chat">Show in chat</string>
-    <string name="stream_ui_attachment_gallery_action_save_image">Save Image</string>
+    <string name="stream_ui_attachment_gallery_reply">Reply</string>
+    <string name="stream_ui_attachment_gallery_delete">Delete</string>
+    <string name="stream_ui_attachment_gallery_show_in_chat">Show in chat</string>
+    <string name="stream_ui_attachment_gallery_save_image">Save Image</string>
+    <string name="stream_ui_attachment_gallery_share">Share Image</string>
 </resources>

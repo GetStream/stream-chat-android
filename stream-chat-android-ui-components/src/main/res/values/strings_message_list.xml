@@ -24,17 +24,17 @@
     </plurals>
 
     <!-- Message Actions Dialog -->
-    <string name="stream_ui_message_list_action_reply">Reply</string>
-    <string name="stream_ui_message_list_action_thread_reply">Thread reply</string>
-    <string name="stream_ui_message_list_action_resend_message">Resend</string>
-    <string name="stream_ui_message_list_action_copy_message">Copy Message</string>
-    <string name="stream_ui_message_list_action_edit_message">Edit Message</string>
-    <string name="stream_ui_message_list_action_flag_message">Flag Message</string>
-    <string name="stream_ui_message_list_action_mute_user">Mute User</string>
-    <string name="stream_ui_message_list_action_unmute_user">Unmute User</string>
-    <string name="stream_ui_message_list_action_block_user">Block user</string>
-    <string name="stream_ui_message_list_action_delete_message">Delete Message</string>
-    <plurals name="stream_ui_message_list_action_dialog_message_reactions">
+    <string name="stream_ui_message_list_reply">Reply</string>
+    <string name="stream_ui_message_list_thread_reply">Thread reply</string>
+    <string name="stream_ui_message_list_resend_message">Resend</string>
+    <string name="stream_ui_message_list_copy_message">Copy Message</string>
+    <string name="stream_ui_message_list_edit_message">Edit Message</string>
+    <string name="stream_ui_message_list_flag_message">Flag Message</string>
+    <string name="stream_ui_message_list_mute_user">Mute User</string>
+    <string name="stream_ui_message_list_unmute_user">Unmute User</string>
+    <string name="stream_ui_message_list_block_user">Block user</string>
+    <string name="stream_ui_message_list_delete_message">Delete Message</string>
+    <plurals name="stream_ui_message_list_message_reactions">
         <item quantity="one">%d Message Reaction</item>
         <item quantity="other">%d Message Reactions</item>
     </plurals>

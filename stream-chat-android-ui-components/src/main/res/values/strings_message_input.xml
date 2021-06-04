@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stream_ui_message_input_send_to_channel">Also send to channel</string>
-    <string name="stream_ui_message_input_send_direct_message">Also send as direct message</string>
+    <string name="stream_ui_message_input_send_as_direct_message">Also send as direct message</string>
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
     <string name="stream_ui_message_input_hint_edit">Send a message</string>
