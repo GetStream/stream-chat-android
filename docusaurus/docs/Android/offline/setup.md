@@ -34,4 +34,4 @@ val chatDomain = ChatDomain.Builder(appContext, chatClient)
     .build()
 ```
 
-Every _Builder_ expose multiple methods that allow different SDK configuration.
+Every _Builder_ exposes methods for SDK configuration.
