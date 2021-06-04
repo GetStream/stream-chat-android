@@ -70,7 +70,6 @@ public class ChannelListViewModel(
                     handleChannelState(channelState, currentUser)
                 }.asLiveData()
 
-
                 stateMerger.addSource(channelState) { state -> stateMerger.value = state }
 
                 stateMerger.addSource(queryChannelsController.mutedChannelIds.asLiveData()) { mutedChannels ->
@@ -97,8 +96,8 @@ public class ChannelListViewModel(
 
     private fun handleChannelState(
         channelState: QueryChannelsController.ChannelsState,
-        currentUser: User)
-    : State {
+        currentUser: User,
+    ): State {
         return when (channelState) {
             is QueryChannelsController.ChannelsState.NoQueryActive,
             is QueryChannelsController.ChannelsState.Loading,
@@ -191,7 +190,6 @@ public class ChannelListViewModel(
 
         private val INITIAL_STATE: State = State.Result(isLoading = true, channels = emptyList())
     }
-
 }
 
 private fun userFilter(chatDomain: ChatDomain): FilterObject {

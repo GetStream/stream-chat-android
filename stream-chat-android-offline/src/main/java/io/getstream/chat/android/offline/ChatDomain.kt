@@ -639,6 +639,7 @@ public sealed interface ChatDomain {
             val handler = Handler(Looper.getMainLooper())
             return ChatDomainImpl(
                 client,
+                user,
                 database,
                 handler,
                 storageEnabled,
