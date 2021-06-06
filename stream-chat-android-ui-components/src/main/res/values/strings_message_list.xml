@@ -49,6 +49,12 @@
     <string name="stream_ui_message_list_flag_confirmation_positive_button">Flag</string>
     <string name="stream_ui_message_list_flag_confirmation_negative_button">Cancel</string>
 
+    <!-- Attachment Viewer -->
+    <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
+
     <!-- Errors -->
     <string name="stream_ui_message_list_error_mute_user">Failed to mute user</string>
     <string name="stream_ui_message_list_error_unmute_user">Failed to unmute user</string>

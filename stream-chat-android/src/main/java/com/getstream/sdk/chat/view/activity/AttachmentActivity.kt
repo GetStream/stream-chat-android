@@ -45,7 +45,7 @@ public class AttachmentActivity : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
             logger.logE("This file can't be displayed. TYPE or URL is missing.")
-            Toast.makeText(this, getString(R.string.stream_ui_attachment_display_error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()
             return
         }
         showAttachment(type, url)

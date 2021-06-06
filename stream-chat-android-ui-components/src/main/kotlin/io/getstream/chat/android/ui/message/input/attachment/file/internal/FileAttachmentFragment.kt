@@ -88,7 +88,7 @@ internal class FileAttachmentFragment : Fragment() {
     private fun setupViews() {
         binding.apply {
             grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_file)
-            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_ui_message_input_permission_file)
+            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_ui_message_input_files_access)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

@@ -45,7 +45,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         String url = intent.getStringExtra(URL_KEY);
         if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
             logger.logE("This file can't be displayed. The TYPE or the URL are null");
-            Toast.makeText(this, getString(R.string.stream_ui_attachment_display_error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show();
             return;
         }
         if (type.contains("audio"))
