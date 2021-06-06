@@ -2,6 +2,7 @@
 <resources>
     <string name="stream_ui_channel_list_empty">No channels available</string>
     <string name="stream_ui_channel_list_you">You</string>
+    <string name="stream_ui_channel_list_untitled_channel">Channel without name</string>
 
     <!-- Channel Actions Dialog -->
     <string name="stream_ui_channel_list_view_info">View info</string>

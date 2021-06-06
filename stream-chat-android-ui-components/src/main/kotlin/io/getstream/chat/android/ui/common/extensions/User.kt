@@ -17,7 +17,7 @@ public fun User.getLastSeenText(context: Context): String {
             context.getString(R.string.stream_ui_user_status_last_seen_just_now)
         } else {
             context.getString(
-                R.string.stream_ui_user_status_last_seen_template,
+                R.string.stream_ui_user_status_last_seen,
                 DateUtils.getRelativeTimeSpanString(it.time).toString()
             )
         }

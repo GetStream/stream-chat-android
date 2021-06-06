@@ -2,6 +2,7 @@
 <resources>
     <!-- Header Title -->
     <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
+    <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>
 
     <!-- Header Subtitle -->
     <string name="stream_ui_message_list_header_thread_subtitle">with %s</string>
