@@ -61,6 +61,7 @@ public class Push {
             int errorNotificationGroupSummaryTitle = R.string.stream_chat_error_notification_group_summary_content_text;
             int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
             boolean shouldGroupNotifications = true;
+            boolean pushNotificationsEnabled = true;
 
             NotificationConfig notificationsConfig = new NotificationConfig(
                     notificationChannelId,
@@ -80,7 +81,8 @@ public class Push {
                     notificationGroupSummaryContentText,
                     errorNotificationGroupSummaryTitle,
                     errorNotificationGroupSummaryContentText,
-                    shouldGroupNotifications
+                    shouldGroupNotifications,
+                    pushNotificationsEnabled
             );
 
             MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
