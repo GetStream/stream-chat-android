@@ -13,6 +13,7 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
 import kotlin.io.path.writer
 
+@ExperimentalPathApi
 abstract class GenerateSidebar : DefaultTask() {
     @get:InputDirectory
     abstract val inputDir: DirectoryProperty
@@ -61,24 +62,32 @@ abstract class GenerateSidebar : DefaultTask() {
 
     private fun fixDirectoriesForMultiModule(modulesToInclude: List<String>, inputDir: File) {
         modulesToInclude.map { module ->
-            File("${inputDir.path}/$module/index.md") to File("${inputDir.path}/$module/$module/index.md")
-        }.forEach { (indexFile, destinationFile) ->
+            Triple(
+                module,
+                File("${inputDir.path}/$module/index.md"),
+                File("${inputDir.path}/$module/$module/index.md")
+            )
+        }.forEach { (module, indexFile, destinationFile) ->
+            fixIndexFile(indexFile, module)
             indexFile.copyTo(destinationFile)
         }
+    }
+
+    private fun fixIndexFile(indexFile: File, module: String) {
+        indexFile.substituteInFile { line -> line.replace("$module/", "") }
     }
 
     private fun copyDirectories(modulesToInclude: List<String>, inputDir: File, outputFile: File) {
         modulesToInclude.map { module ->
             Pair(
                 File("${inputDir.path}/$module/$module/"),
-                File("${outputFile.path}/$module/$module/")
+                File("${outputFile.path}/$module")
             )
         }.forEach { (inputModule, outModule) ->
             inputModule.copyRecursively(outModule)
         }
     }
 
-    @ExperimentalPathApi
     private fun simplifyFiles(fileTree: FileTree, modulesToInclude: List<String>) {
         val selectedModuleFiles = fileTree.asSequence()
             .filter { file ->
@@ -91,16 +100,19 @@ abstract class GenerateSidebar : DefaultTask() {
             .forEach(::removeNotIndexLinksFromFile)
     }
 
-    @ExperimentalPathApi
     private fun removeNotIndexLinksFromFile(file: File) {
+        file.substituteInFile(::filterTagLinks)
+    }
+
+    private fun File.substituteInFile(func: (String) -> String) {
         val tempFile = kotlin.io.path.createTempFile()
 
         tempFile.writer().use { writer ->
-            file.forEachLine { line ->
-                writer.appendLine(filterTagLinks(line))
+            forEachLine { line ->
+                writer.appendLine(func(line))
             }
         }
 
-        tempFile.copyTo(file.toPath(), overwrite = true)
+        tempFile.copyTo(toPath(), overwrite = true)
     }
 }
