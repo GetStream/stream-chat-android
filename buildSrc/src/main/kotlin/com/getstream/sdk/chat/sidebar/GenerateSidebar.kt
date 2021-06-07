@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.sidebar
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
@@ -31,13 +29,6 @@ abstract class GenerateSidebar : DefaultTask() {
     @get:Input
     abstract val simplifyOutput: Property<Boolean>
 
-    private val moshiAdapter =
-        Moshi.Builder()
-            .build()
-            .adapter<Map<String, String>>(
-                Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-            )
-
     init {
         group = "Docusaurus"
         description = "Generates _category_.json files for sidebar"
@@ -46,11 +37,12 @@ abstract class GenerateSidebar : DefaultTask() {
     @ExperimentalPathApi
     @TaskAction
     fun run() {
-        val modulesToInclude = modulesFilterInput.get()
+        val modulesToInclude: List<String> = modulesFilterInput.get()
         val dokkaFileTree: FileTree = inputDir.asFileTree
-        val outputFile = outputDir.get().asFile
-        val removeFromLabel = removeFromLabels.get()
-        val simplifyOutput = simplifyOutput.get()
+        val inputFile: File = inputDir.get().asFile
+        val outputFile: File = outputDir.get().asFile
+        val removeFromLabel: String = removeFromLabels.get()
+        val simplifyOutput: Boolean = simplifyOutput.get()
 
         println("Remove: $removeFromLabel")
 
@@ -61,17 +53,29 @@ abstract class GenerateSidebar : DefaultTask() {
         }
 
         createSidebarFiles(dokkaFileTree, modulesToInclude, removeFromLabel)
+        fixDirectoriesForMultiModule(modulesToInclude, inputFile)
+        copyDirectories(modulesToInclude, inputFile, outputFile)
 
+        println("_category_.json files created")
+    }
+
+    private fun fixDirectoriesForMultiModule(modulesToInclude: List<String>, inputDir: File) {
+        modulesToInclude.map { module ->
+            File("${inputDir.path}/$module/index.md") to File("${inputDir.path}/$module/$module/index.md")
+        }.forEach { (indexFile, destinationFile) ->
+            indexFile.copyTo(destinationFile)
+        }
+    }
+
+    private fun copyDirectories(modulesToInclude: List<String>, inputDir: File, outputFile: File) {
         modulesToInclude.map { module ->
             Pair(
-                File("${inputDir.get().asFile.path}/$module"),
-                File("${outputFile.path}/$module")
+                File("${inputDir.path}/$module/$module/"),
+                File("${outputFile.path}/$module/$module/")
             )
         }.forEach { (inputModule, outModule) ->
             inputModule.copyRecursively(outModule)
         }
-
-        println("_category_.json files created")
     }
 
     @ExperimentalPathApi
@@ -99,36 +103,4 @@ abstract class GenerateSidebar : DefaultTask() {
 
         tempFile.copyTo(file.toPath(), overwrite = true)
     }
-
-    private fun createSidebarFiles(fileTree: FileTree, modulesToInclude: List<String>, removeFromLabel: String) {
-        fileTree.asSequence()
-            .filter { file ->
-                modulesToInclude.any { module ->
-                    file.absolutePath.contains(module)
-                }
-            }
-            .map { file -> file.parentFile }
-            .distinct()
-            .forEach { file ->
-                createCategoryFile(file, removeFromLabel)
-            }
-    }
-
-    private fun createCategoryFile(parentFile: File, removeFromLabel: String) {
-        val categoryFile = File("${parentFile.path}/_category_.json")
-
-        if (categoryFile.exists()) {
-            categoryFile.delete()
-        }
-
-        val isCreated = categoryFile.createNewFile()
-
-        if (isCreated) {
-            categoryFile.writeText(categoryContent(parentFile.name.replace(removeFromLabel, "")))
-        } else {
-            println("Category file could not be created: $categoryFile")
-        }
-    }
-
-    private fun categoryContent(label: String): String = moshiAdapter.toJson(mapOf("label" to label))
 }
