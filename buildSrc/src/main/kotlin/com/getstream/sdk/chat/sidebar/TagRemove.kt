@@ -46,15 +46,15 @@ private fun filterTagLink(line: String): String {
             tagState == TagState.INSIDE_LINK && char == ')' -> {
                 tagState = TagState.NO_TAG
                 removalEnd = i
-                return@forEachIndexed
+
+                val content = line.substring(contentInit, contentEnd)
+                return "${line.substring(0, removalInit)}$content${line.substring(removalEnd + 1, line.length)}"
             }
         }
 
     }
 
-    val content = line.substring(contentInit, contentEnd)
-
-    return "${line.substring(0, removalInit)}$content${line.substring(removalEnd + 1, line.length)}"
+    return line
 }
 
 private fun hasNonIndexLink(line: String): Boolean {
@@ -91,7 +91,9 @@ private fun hasNonIndexLink(line: String): Boolean {
 
                 linkEnd = i
 
-                if (!line.substring(linkInit, linkEnd).contains("index.md")) {
+                val linkContent = line.substring(linkInit, linkEnd)
+
+                if (linkContent.contains(".md") && !linkContent.contains("index.md")) {
                     return true
                 }
             }

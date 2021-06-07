@@ -60,16 +60,16 @@ abstract class GenerateSidebar : DefaultTask() {
             simplifyFiles(dokkaFileTree, modulesToInclude)
         }
 
-        // createSidebarFiles(dokkaFileTree, modulesToInclude, removeFromLabel)
-        //
-        // modulesToInclude.map { module ->
-        //     Pair(
-        //         File("${inputDir.get().asFile.path}/$module"),
-        //         File("${outputFile.path}/$module")
-        //     )
-        // }.forEach { (inputModule, outModule) ->
-        //     inputModule.copyRecursively(outModule)
-        // }
+        createSidebarFiles(dokkaFileTree, modulesToInclude, removeFromLabel)
+
+        modulesToInclude.map { module ->
+            Pair(
+                File("${inputDir.get().asFile.path}/$module"),
+                File("${outputFile.path}/$module")
+            )
+        }.forEach { (inputModule, outModule) ->
+            inputModule.copyRecursively(outModule)
+        }
 
         println("_category_.json files created")
     }
