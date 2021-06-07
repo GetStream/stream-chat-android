@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -23,7 +24,7 @@ import org.junit.runner.RunWith
 internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `When observing messages Should receive the correct number of events with messages`() = runBlocking {
+    fun `When observing messages Should receive the correct number of events with messages`() = runBlockingTest {
         val counter = DiffUtilOperationCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }

@@ -48,6 +48,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val backgroundSyncEnabled = false
         chatDomainImpl = ChatDomainImpl(
             client,
+            null,
             db,
             handler,
             offlineEnabled,

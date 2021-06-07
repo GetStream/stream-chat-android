@@ -30,6 +30,7 @@ internal class MessageListItemLiveDataTest {
     val rule = InstantTaskExecutorRule()
 
     private val currentUser = randomUser()
+    private val currentUserLd = MutableLiveData(randomUser())
 
     private fun simpleDateGroups(previous: Message?, message: Message): Boolean {
         return if (previous == null) {
@@ -54,7 +55,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUserLd, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
@@ -62,7 +63,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUserLd, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -84,7 +85,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUserLd, messagesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     // livedata testing
@@ -129,7 +130,7 @@ internal class MessageListItemLiveDataTest {
     fun `Should return messages with a typing indicator`() {
         val message = createMessage()
         val messageListItemLd = oneMessage(message)
-        messageListItemLd.messagesChanged(listOf(message))
+        messageListItemLd.messagesChanged(listOf(message), currentUser.id)
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items.size).isEqualTo(3)

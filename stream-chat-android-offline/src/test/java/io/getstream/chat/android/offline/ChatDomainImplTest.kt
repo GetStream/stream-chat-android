@@ -46,6 +46,7 @@ internal class ChatDomainImplTest {
         val recoveryEnabled = true
         sut = ChatDomainImpl(
             client,
+            null,
             db,
             handler,
             offlineEnabled,

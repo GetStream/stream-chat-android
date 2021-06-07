@@ -48,7 +48,7 @@ internal class IdGenerationDomainTest {
 
     @Test
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return not-empty messageId`() {
-        val messageId = chatDomainImpl.generateMessageId()
+        val messageId = chatDomainImpl.generateMessageId(chatDomainImpl.user.value!!.id)
 
         Truth.assertThat(messageId).isNotEmpty()
     }
@@ -57,7 +57,7 @@ internal class IdGenerationDomainTest {
     fun `Given ChatDomainImpl with valid currentUser When generateMessageId() called Should return unique messageId`() {
         val idMap = sortedSetOf<String>()
         repeat(1000000) {
-            val messageId = chatDomainImpl.generateMessageId()
+            val messageId = chatDomainImpl.generateMessageId(chatDomainImpl.user.value!!.id)
             Truth.assertThat(idMap).doesNotContain(messageId)
             idMap.add(messageId)
         }

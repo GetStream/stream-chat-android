@@ -12,17 +12,20 @@ import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.utils.ChannelDiffCallback
 import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.offline.utils.UpdateOperationCounts
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `When observing channels Should receive the correct number of events with channels`() = runBlocking {
+    fun `When observing channels Should receive the correct number of events with channels`() = runBlockingTest {
         val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
         }

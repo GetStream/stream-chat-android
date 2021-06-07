@@ -2,7 +2,8 @@ package io.getstream.chat.android.offline.integration
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -11,25 +12,26 @@ import org.junit.runner.RunWith
 /**
  * Verify that all events correctly update state in room
  */
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Before
     override fun setup() {
         super.setup()
-        runBlocking {
+        runBlockingTest {
             chatDomainImpl.repos.insertUsers(data.userMap.values)
         }
     }
 
     @Test
-    fun `verify that a missing channel config returns the default`() = runBlocking {
+    fun `verify that a missing channel config returns the default`() = runBlockingTest {
         val config = chatDomainImpl.getChannelConfig("missing")
         Truth.assertThat(config).isEqualTo((chatDomainImpl.defaultConfig))
     }
 
     @Test
-    fun `verify that a new message event is stored in room`() = runBlocking {
+    fun `verify that a new message event is stored in room`() = runBlockingTest {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
         val message = chatDomainImpl.repos.selectMessage(data.newMessageEvent.message.id)
@@ -37,7 +39,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `channel controller edit message event`() = runBlocking {
+    fun `channel controller edit message event`() = runBlockingTest {
         // setup the queryControllerImpl
         queryControllerImpl.query(10)
 
@@ -53,7 +55,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `new notification message event should be stored in room`() = runBlocking {
+    fun `new notification message event should be stored in room`() = runBlockingTest {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         val message =
@@ -62,7 +64,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `when you are added to a channel it should be stored in room`() = runBlocking {
+    fun `when you are added to a channel it should be stored in room`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
         val channel =
             chatDomainImpl.repos.selectChannelWithoutMessages(data.notificationAddedToChannel2Event.channel.cid)
@@ -70,7 +72,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `truncating a channel should remove all messages`() = runBlocking {
+    fun `truncating a channel should remove all messages`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
         val message =
@@ -82,7 +84,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `verify that a truncate notification event also works`() = runBlocking {
+    fun `verify that a truncate notification event also works`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
         val message =
@@ -95,7 +97,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Test
     fun `verify that a channel is correctly deleted when channel deleted event is received`() =
-        runBlocking {
+        runBlockingTest {
             chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
             chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
             val message =
@@ -111,7 +113,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         }
 
     @Test
-    fun `the current user information should be stored using users insertMe`() = runBlocking {
+    fun `the current user information should be stored using users insertMe`() = runBlockingTest {
         data.user1.extraData = mutableMapOf("snack" to "icecream")
         chatDomainImpl.repos.insertCurrentUser(data.user1)
         val me = chatDomainImpl.repos.selectCurrentUser()
@@ -121,20 +123,20 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
 
     @Ignore
     @Test
-    fun `handle unread counts on the connect event`() = runBlocking {
+    fun `handle unread counts on the connect event`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2)
         Truth.assertThat(chatDomainImpl.channelUnreadCount.value).isEqualTo(2)
         Truth.assertThat(chatDomainImpl.totalUnreadCount.value).isEqualTo(3)
     }
 
     @Test
-    fun `the mute user event should update the list of mutes users`() = runBlocking {
+    fun `the mute user event should update the list of mutes users`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.notificationMutesUpdated)
         Truth.assertThat(chatDomainImpl.muted.value).isEqualTo(data.notificationMutesUpdated.me.mutes)
     }
 
     @Test
-    fun `a message read event should be stored on the channel`() = runBlocking {
+    fun `a message read event should be stored on the channel`() = runBlockingTest {
         chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.readEvent)
         // check channel level read info
@@ -146,7 +148,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `a reaction event should update the denormalized message fields`() = runBlocking {
+    fun `a reaction event should update the denormalized message fields`() = runBlockingTest {
         // add the message
         val messageId = data.newMessageEvent.message.id
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
@@ -175,7 +177,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `verify that a channel update event works correctly`() = runBlocking {
+    fun `verify that a channel update event works correctly`() = runBlockingTest {
         chatDomainImpl.eventHandler.handleEvent(data.channelUpdatedEvent)
         // check channel level read info
         val cid = data.channelUpdatedEvent.cid
@@ -184,7 +186,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `add and remove member should update the room storage`() = runBlocking {
+    fun `add and remove member should update the room storage`() = runBlockingTest {
         // add the member to the channel
         chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
@@ -198,7 +200,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `member notification events should update room`() = runBlocking {
+    fun `member notification events should update room`() = runBlockingTest {
         // add the member to the channel
         chatDomainImpl.repos.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)

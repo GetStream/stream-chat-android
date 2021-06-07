@@ -35,6 +35,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -72,7 +73,7 @@ internal class WhenHandleEvent {
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should be updated`() {
+    fun `when user watching event arrives, last message should be updated`() = runBlockingTest{
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
         val newMessage = randomMessage(
@@ -93,7 +94,7 @@ internal class WhenHandleEvent {
 
     // New message event
     @Test
-    fun `when new message event arrives, messages should be propagated correctly`() {
+    fun `when new message event arrives, messages should be propagated correctly`() = runBlockingTest{
         val user = User(id = CURRENT_USER_ID)
         val message = randomMessage(
             createdAt = Date(1000L),
@@ -115,7 +116,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when new message event arrives from other user, unread number should be updated`() {
+    fun `when new message event arrives from other user, unread number should be updated`() = runBlockingTest{
         val createdAt = Date()
         val message = randomMessage(
             createdAt = createdAt,
@@ -140,7 +141,7 @@ internal class WhenHandleEvent {
 
     // Message update
     @Test
-    fun `when a message update for a non existing message arrives, it is added`() {
+    fun `when a message update for a non existing message arrives, it is added`() = runBlockingTest{
         val messageId = randomString()
         val message = randomMessage(
             id = messageId,
@@ -157,7 +158,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when a message update event is outdated, it should be ignored`() {
+    fun `when a message update event is outdated, it should be ignored`() = runBlockingTest{
         val messageId = randomString()
         val createdAt = randomDate()
         val createdLocallyAt = randomDateBefore(createdAt.time)
@@ -196,7 +197,7 @@ internal class WhenHandleEvent {
 
     // Member added event
     @Test
-    fun `when member is added, it should be propagated`() {
+    fun `when member is added, it should be propagated`() = runBlockingTest{
         val user = randomUser()
         val member = randomMember(user = user)
         val memberAddedEvent = randomMemberAddedEvent(user = user, member = member)
@@ -208,7 +209,7 @@ internal class WhenHandleEvent {
 
     // Typing events
     @Test
-    fun `when events of start and stop tying arrive, it should be correctly propagated`() {
+    fun `when events of start and stop tying arrive, it should be correctly propagated`() = runBlockingTest{
         val user1 = randomUser()
         val user2 = randomUser()
 
@@ -230,7 +231,7 @@ internal class WhenHandleEvent {
 
     // Read event
     @Test
-    fun `when read notification event arrives, it should be correctly propagated`() {
+    fun `when read notification event arrives, it should be correctly propagated`() = runBlockingTest{
         val readEvent = randomNotificationMarkReadEvent(user = currentUser)
 
         channelController.handleEvent(readEvent)
@@ -241,7 +242,7 @@ internal class WhenHandleEvent {
 
     // Read event notification
     @Test
-    fun `when read event arrives, it should be correctly propagated`() {
+    fun `when read event arrives, it should be correctly propagated`() = runBlockingTest{
         val readEvent = randomMessageReadEvent(user = currentUser)
 
         channelController.handleEvent(readEvent)
@@ -252,7 +253,7 @@ internal class WhenHandleEvent {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, the message of the event should be upsert`() {
+    fun `when reaction event arrives, the message of the event should be upsert`() = runBlockingTest{
         val message = randomMessage(
             showInChannel = true,
             silent = false,
@@ -268,7 +269,7 @@ internal class WhenHandleEvent {
 
     // Channel deleted event
     @Test
-    fun `when channel is deleted, messages are deleted too`() {
+    fun `when channel is deleted, messages are deleted too`() = runBlockingTest{
         val deleteChannelEvent = randomChannelDeletedEvent()
 
         channelController.handleEvent(deleteChannelEvent)
@@ -277,7 +278,7 @@ internal class WhenHandleEvent {
     }
 
     @Test
-    fun `when channel is deleted, the status is updated`() {
+    fun `when channel is deleted, the status is updated`() = runBlockingTest{
         val channel = randomChannel()
         val deleteChannelEvent = randomChannelDeletedEvent(channel = channel)
         val updateChannelEvent = randomChannelUpdatedEvent(channel = channel)
