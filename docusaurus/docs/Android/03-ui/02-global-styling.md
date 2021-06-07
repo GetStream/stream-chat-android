@@ -1,11 +1,5 @@
 # Global Styling
 
-The SDK provides two entry points for global customization:
-- The [ChatUI](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/ChatUI.kt) class to override such things as fonts, URL signing logic, etc.
-- The [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt) class to override view attributes programmatically.
-
-### Global View Style Customization
-
 If you want to customize view styles programmatically you can override the corresponding `StyleTransformer` in the `TransformStyle` class.
 
 > **Important: This doesn't apply the changes instantly, the view must be recreated for the

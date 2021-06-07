@@ -1,8 +1,4 @@
----
-id: client-moderation-tools
-title: Moderation Tools
-sidebar_position: 23
----
+# Moderation Tools
 
 ## Flagging a Message or a User
 
@@ -55,7 +51,7 @@ After muting a user messages will still be delivered via web-socket. Implementin
 
 > Messages from muted users are not delivered via push (APN/Firebase)
 
-## Banning a User
+## Banning Users
 
 Users can be banned from an app entirely or just from a single channel. When a user is banned, they will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
 
@@ -87,7 +83,7 @@ channelClient.unBanUser(targetId = "user-id").enqueue { result ->
 }
 ```
 
-## Shadow Banning a User
+### Shadow Banning a User
 
 Users can be shadow banned from an app entirely or just from a single channel. When a user is shadow banned, they will still be allowed to post messages, but any message sent during, will have `shadowed: true` field.
 
@@ -114,7 +110,7 @@ channelClient.removeShadowBan("user-id").enqueue { result ->
 
 > Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
 
-## Retrieving Banned Users
+### Retrieving Banned Users
 
 Banned users can be retrieved in different ways:
 1. Using the dedicated query bans endpoint
@@ -146,7 +142,7 @@ client.queryBannedUsers(filter = Filters.eq("channel_cid", "ChannelType:ChannelI
 }
 ```
 
-## Retrieving Banned Users From Specific Channels
+### Retrieving Banned Users From Specific Channels
 
 You can list banned users from a specific channel using the query banned users endpoint which allows you to get paginated results:
 

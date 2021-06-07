@@ -1,6 +1,6 @@
 # Logging
 
-SDK logs are disabled by default. You can enable logs and set a log level when initializing `ChatClient`:
+SDK logs are disabled by default. You can enable logs and set a log level when initializing `ChatClient`.
 
 You can set logs at the following levels:
 
@@ -15,6 +15,8 @@ val client = ChatClient.Builder("apiKey", context)
     .logLevel(ChatLogLevel.ALL)
     .build()
 ```
+
+It's recommended to only enable logging in development builds.
 
 ## Intercepting logs
 

@@ -1,9 +1,15 @@
 # Building a Message List Screen
 
-The SDK provides multiple views which combined together helps to create a chat experience out of the box. This section will show how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`:
- 
-### Creating Chat Layout
- 
+The SDK provides multiple views which combined together helps to create a chat experience out of the box. This section will show how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
+
+This is what a screen made build with these three components looks like:
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![Light mode](../assets/chat_view_light.png)|![Dark mode](../assets/chat_view_dark.png)| 
+
+To add these Views to your app, first create them in an XML layout:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,7 +52,7 @@ The SDK provides multiple views which combined together helps to create a chat e
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Just like other components, those three views come with ViewModels which are responsible for providing all necessary data for its views. However, unlike the other view models, they require some additional setup to pass information between different chat components:
+Just like other components, those three views come with ViewModels which are responsible for providing all necessary data for its views. However, unlike the other view models, they require some additional setup to pass information between the different chat components.
 
 ```kotlin
 // Create view models
@@ -93,11 +99,5 @@ messageListHeaderView.setBackButtonClickListener(backHandler)
 ```
 
 > `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
-
-At that point you should be able to display the default chat view:
-
-| Light Mode | Dark Mode |
-| --- | --- |
-|![chat view light](../assets/chat_view_light.png)|![chat view dark](../assets/chat_view_dark.png)|
 
 From that point, you will be able to display and send messages, conduct different actions, as well as view different channel info.

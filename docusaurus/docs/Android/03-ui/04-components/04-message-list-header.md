@@ -1,5 +1,17 @@
 # Message List Header
 
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_list_header_view/?language=kotlin -->
+
+## Overview
+
+<!-- TODO: Brief description and a couple screenshots with default styling. -->
+
+## Customizations
+
+### Customization with XML Attributes
+
+<!-- TODO: Review this example, possibly remove it. -->
+
 Let's slightly change the chat view by hiding the user avatar in the header and providing a custom empty state view.
 
 | Light Mode | Dark Mode |

@@ -1,11 +1,20 @@
 # Message Input
 
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_input_view/?language=kotlin -->
+
+## Overview
+
+<!-- TODO: Brief description and a couple screenshots with default styling. -->
+
+## Customizations
+
 `MessageInputView` can be customized in two ways: Using XML and programmatically.
 
-## Using XML
-Many attributes from this view can be configured, like changing its color, the border and the color of the message input, fonts, components visibility... The whole list can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_input_view.xml).
+### Customization with XML Attributes
 
-One example of configuration:
+Many attributes of this View can be configured, like changing its color, the border and the color of the message input, fonts, components visibility, and so on. The full list of available attributes can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_input_view.xml).
+
+Here's an example of setting some custom attributes:
 
 ```xml
 <io.getstream.chat.android.ui.message.input.MessageInputView
@@ -20,11 +29,12 @@ One example of configuration:
     />
 ```
 
-Will create this version of the `MessageInputView`:
+This will create this version of `MessageInputView`:
 
-![example1 1](../../assets/message_input_view_example1.jpeg)
+![First custom MessageInputView example](../../assets/message_input_view_example1.jpeg)
 
-With a different configuration:
+Here's another example with different attributes set:
+
 ```xml
 <io.getstream.chat.android.ui.message.input.MessageInputView
     android:id="@+id/messageInputView"
@@ -42,13 +52,14 @@ With a different configuration:
     />
 ```
 
-we get:
+This produces the following styling:
 
-![example2 1](../../assets/message_input_view_example2.jpeg)
+![Second custom MessageInputView example](../../assets/message_input_view_example2.jpeg)
 
-And different configurations can be used to achieve the desired appearance of `MessageListView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageInputViewStyle` as described in the next section.
+Different configurations can be used to achieve the desired appearance of `MessageListView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageInputViewStyle` as described in the next section.
 
-## Configuring programmatically using `MessageInputViewStyle`
+### Customization at Runtime
+
 Many views in this SDK can be configured by changing the configuration class inside [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt).
 
 Just change the instance of `messageInputStyleTransformer`. Example:
@@ -60,5 +71,5 @@ TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
     )
 }
 ```
-NOTE: The transformer should be set before the view is rendered to make sure that the new style was applied.
 
+Note: The transformer should be set before the View is rendered to make sure that the new style was applied.

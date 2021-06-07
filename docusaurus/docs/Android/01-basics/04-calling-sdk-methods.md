@@ -1,19 +1,19 @@
 # Calling SDK Methods
 
-Most SDK methods return a [`Call`](https://getstream.github.io/stream-chat-android/stream-chat-android-core/stream-chat-android-core/io.getstream.chat.android.client.call/-call/) object, which is a pending operation waiting to be executed.
+Many SDK methods return a `Call` object, which is a pending operation waiting to be executed.
 
-## Running calls synchronously
+### Running calls synchronously
 
-You can run a `Call` synchronously, in a blocking way, using the `execute` method:
+If you're on a background thread, you can run a `Call` synchronously, in a blocking way, using the `execute` method:
 
 ```kotlin
 // Only call this from a background thread
 val messageResult = channelClient.sendMessage(message).execute()
 ```
 
-## Running calls asynchronously
+### Running calls asynchronously
 
-You can run a `Call` asynchronously, on a background thread, using the `enqueue` method. The callback passed to `enqueue` will be called on the UI thread.
+You can run a `Call` asynchronously, automatically scheduled a background thread, using the `enqueue` method. The callback passed to `enqueue` will be called on the UI thread.
 
 ```kotlin
 // Safe to call from the main thread
@@ -35,9 +35,9 @@ viewModelScope.launch {
 }
 ```
 
-## Error handling
+### Error handling
 
-Actions defined in a `Call` return [`Result`](https://getstream.github.io/stream-chat-android/stream-chat-android-core/stream-chat-android-core/io.getstream.chat.android.client.utils/-result/) objects. These contain either the result of a successful operation or the error that caused the operation to fail.
+Actions defined in a `Call` return `Result` objects. These contain either the result of a successful operation or the error that caused the operation to fail.
 
 You can check whether a `Result` is successful or an error:
 

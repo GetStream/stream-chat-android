@@ -1,6 +1,6 @@
 # Channels
 
-TODO intro
+<!-- TODO: Add brief intro about what channels are -->
 
 ## Querying Channel List
 

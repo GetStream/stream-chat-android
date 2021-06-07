@@ -1,10 +1,19 @@
 # Search View
 
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/search_input_view/?language=kotlin -->
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/search_result_list_view/?language=kotlin -->
+
+## Overview
+
 The SDK provides two views: `SearchInputView` and `SearchResultListView` which can be used to search and display messages that contain specific text in all channels in which the current user is a member.
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![search view light](../../assets/search_view_hey_light.png)|![search view dark](../../assets/search_view_hey_dark.png)|
 
 ## Creating Search View Layout
 
-Here you can find an example layout:
+Here's an example layout using these two Views:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -33,12 +42,11 @@ Here you can find an example layout:
         app:layout_constraintTop_toBottomOf="@id/searchInputView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
 ```
 
 ## Binding Search View Components
 
-To display search results, you need to bind `SearchResultListView` with the view model and pass search query from `SearchInputView` to the same view model:
+To display search results, you need to bind `SearchResultListView` with the ViewModel and pass the search query from `SearchInputView` to the same ViewModel:
 
 ```kotlin
 // Get view model
@@ -68,9 +76,3 @@ searchResultView.setSearchResultSelectedListener { message ->
 ```
 
 > `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
-
-From that point, you should be able to conduct messages search and see result similarly to:
-
-| Light Mode | Dark Mode |
-| --- | --- |
-|![search view light](../../assets/search_view_hey_light.png)|![search view dark](../../assets/search_view_hey_dark.png)|

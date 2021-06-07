@@ -1,6 +1,6 @@
 # ChatUI
 
-The `ChatUI` object supports UI component customization by default. It's initialized with default implementations - no initialization is required.
+The `ChatUI` object supports the customization of UI components. It's initialized with default implementations - no initialization is required.
 
 You can access `ChatUI` to customize the global behaviour of UI elements.
 
@@ -36,7 +36,7 @@ public interface ChatNavigationHandler {
 
 Following there's a simple example of a customization of destination:
 
-```Kotlin
+```kotlin
 val navigationHandler : ChatNavigationHandler = ChatNavigationHandler { destination ->
     //Some custom action here!
     true
@@ -51,9 +51,9 @@ ChatUI.navigator = ChatNavigator(navigationHandler)
 `ChatUi` allows to use of a custom url signer by implementing the following interface:
 
 ```kotlin
-public interface UrlSigner {
-    public fun signFileUrl(url: String): String
-    public fun signImageUrl(url: String): String
+interface UrlSigner {
+    fun signFileUrl(url: String): String
+    fun signImageUrl(url: String): String
 }
 ```
 
@@ -81,10 +81,10 @@ It is possible to customize the fonts of the SDK. To change the fonts, just impl
 the `ChatFont` interface:
 
 ```kotlin
-public interface ChatFonts {
-    public fun setFont(textStyle: TextStyle, textView: TextView)
-    public fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface = Typeface.DEFAULT)
-    public fun getFont(textStyle: TextStyle): Typeface?
+interface ChatFonts {
+    fun setFont(textStyle: TextStyle, textView: TextView)
+    fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface = Typeface.DEFAULT)
+    fun getFont(textStyle: TextStyle): Typeface?
 }
 ```
 
@@ -105,6 +105,7 @@ val fonts: ChatFonts = object : ChatFonts {
 
 ChatUI.fonts = fonts
 ```
+
 
 ## Markdown
 
@@ -129,7 +130,8 @@ ChatUI.markdown = markdown
 
 Then the SDK will parse markdown automatically:
 
-![mardown messages](../assets/markdown_support.png)
+![Markdown messages](../assets/markdown_support.png)
+
 
 ## Avatar Factory
 

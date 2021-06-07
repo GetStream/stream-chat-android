@@ -1,6 +1,6 @@
 # Messages
 
-TODO intro
+<!-- TODO: Add brief intro about what messages are, what components they have (attachment, reactions, etc.) -->
 
 ## Sending Messages
 
@@ -94,9 +94,9 @@ channelClient.deleteMessage("message-id").enqueue { result ->
 
 The `channel.sendImage` and `channel.sendFile` methods make it easy to upload files.
 
-> This functionality defaults to using the Stream CDN. If you would like, you can easily change the logic to upload to your own CDN of choice.
+This functionality defaults to using the Stream CDN. If you would like, you can easily change the logic to upload to your own CDN of choice. The maximum file size is 20mb for the Stream Chat CDN.
 
-> The maximum file size is 20mb for the Stream Chat CDN.
+<!-- TODO: Add text to the below sections so that they're not just code snippets -->
 
 ### Uploading an Image
 
@@ -142,7 +142,7 @@ channelClient.sendFile(anyOtherFile, object : ProgressCallback {
 }).enqueue() // No callback passed to enqueue, as we'll get notified above anyway
 ```
 
-### Customizing Upload Logic
+### Using Your Own CDN
 
 The SDK allows you to use your own CDN by creating your own implementation of the `FileUploader` interface, and pass it to `ChatClient.Builder`.
 
@@ -185,6 +185,8 @@ Similar to other objects in _Stream Chat_, reactions allow you to add custom dat
 
 ### Sending a Reaction
 
+<!-- TODO: Add written text to this section, remove unnecessary table copied from CMS -->
+
 ```kotlin
 val channelClient = client.channel("messaging", "general") 
  
@@ -214,6 +216,8 @@ channelClient.sendReaction(reaction).enqueue { result ->
 
 ### Replacing a Reaction
 
+<!-- TODO: Add written text to this section -->
+
 ```kotlin
 // Add reaction 'like' and replace all other reactions of this user by it
 channelClient.sendReaction(reaction, enforceUnique = true).enqueue { result -> 
@@ -226,6 +230,8 @@ channelClient.sendReaction(reaction, enforceUnique = true).enqueue { result ->
 ```
 
 ### Deleting a Reaction
+
+<!-- TODO: Add written text to this section -->
 
 ```kotlin
 channelClient.deleteReaction( 
@@ -243,6 +249,8 @@ channelClient.deleteReaction(
 ### Paginating Reactions
 
 Messages returned by the APIs automatically include 10 most recent reactions. You can also retrieve more reactions and paginate using the following logic:
+
+<!-- TODO: Break up code snippets into smaller ones, with proper text inbetween -->
 
 ```kotlin
 // Get the first 10 reactions 
@@ -285,14 +293,13 @@ channelClient.sendReaction(reaction).enqueue { /* ... */ }
 ```
 
 
-
 ## Threads and Replies
 
 Threads and replies provide your users with a way to go into more detail about a specific topic. This can be very helpful to keep the conversation organized and reduce noise.
 
 ### Creating a Thread
 
-To create a thread you simply send a message with a `parent_id`. Have a look at the example below:
+To create a thread you simply send a message with a `parentId`. Have a look at the example below:
 
 ```kotlin
 val message = Message( 
@@ -310,9 +317,11 @@ channelClient.sendMessage(message).enqueue { result ->
 }
 ```
 
+<!-- TODO: show_in_channel is not Android API -->
+
 > If you specify `show_in_channel`, the message will be visible both in a thread of replies as well as the main channel.
 
-Messages inside a thread can also have reactions, attachments and mention as any other message.
+Messages inside a thread can also have reactions, attachments and mentions as any other message.
 
 ### Retrieving Thread Messages
 
@@ -338,7 +347,7 @@ client.getRepliesMore(
 
 ### Quoting a Message
 
-TODO is it Replies or Quotes?
+<!-- TODO: Are we calling these Replies or Quotes? Use just one, be consistent with other platforms/docs. -->
 
 Instead of replying in a thread, it's also possible to quote a message. Quoting a message doesn't result in the creation of a thread; the message is quoted inline.
 
@@ -351,6 +360,8 @@ val message = Message(
 ) 
 channelClient.sendMessage(message).enqueue { /* ... */ }
 ```
+
+<!-- TODO: Backend fields and JSON again, get rid of these, only talk about Android API -->
 
 Based on the provided `quoted_message_id`, the `quoted_message` field is automatically enriched when querying channels with messages. Example response:
 
@@ -365,9 +376,6 @@ Based on the provided `quoted_message_id`, the `quoted_message` field is automat
     } 
 }
 ```
-
-
-
 
 
 ## Searching Messages
@@ -394,6 +402,8 @@ client.searchMessages(
     } 
 }
 ```
+
+<!-- TODO: Do these MongoDB mentions here make any sense at all? -->
 
 Pagination works via the standard `limit` and `offset` parameters. The first argument, `filter`, uses a MongoDB style query expression.
 
@@ -438,19 +448,20 @@ channelClient.sendMessage(message).enqueue { /* ... */ }
 
 > Existing messages cannot be turned into a silent message or vice versa.
 
-> Silent messages do send push notifications by default. To skip our push notification service, mark the message with `skip_push: true`
+<!-- TODO: What's the Android API for skip_push? -->
 
+> Silent messages do send push notifications by default. To skip our push notification service, mark the message with `skip_push: true`
 
 
 ## Pinned Messages
 
 Pinned messages allow users to highlight important messages, make announcements, or temporarily promote content. Pinning a message is, by default, restricted to certain user roles, but this is flexible. Each channel can have multiple pinned messages and these can be created or updated with or without an expiration.
 
-## Pinning a Message
+### Pinning a Message
 
-An existing message can be updated to be pinned or unpinned by using the `channelClient::pinMessage` and `channelClient::unpinMessage` methods. 
+An existing message can be updated to be pinned or unpinned by using the `ChannelClient::pinMessage` and `ChannelClient::unpinMessage` methods. 
 
-A new message can be pinned when it is sent by setting the `pinned` and `pinExpires` fields.
+A new message can be pinned when it is sent by setting the `pinned` and `pinExpires` properties.
 
 ```kotlin
 // Create pinned message 
@@ -482,11 +493,9 @@ channelClient.pinMessage(message, expirationDate = null).enqueue { /* ... */ }
 | pinnedAt | Date | Date when the message got pinned | - | &check; |
 | pinExpires | Date | Date when the message pin expires. An empty value means that message does not expire | null | &check; |
 
-> To pin the message user has to have `PinMessage` permission.
-
 ### Retrieving Pinned Messages
 
-You can easily retrieve the last 10 pinned messages from the `channel.pinned_messages` field:
+You can easily retrieve the last 10 pinned messages of a `Channel` using the `pinnedMessages` property:
 
 ```kotlin
 channelClient.query(QueryChannelRequest()).enqueue { result -> 
@@ -498,11 +507,11 @@ channelClient.query(QueryChannelRequest()).enqueue { result ->
 }
 ```
 
-> To learn more about channels you can visit [Querying Channels](/client-sdk-querying-channels)
+Learn more about querying channels on the [Channels](./02-channels.md) page.
 
 ### Searching for Pinned Messages
 
-Stream Chat also provides a search filter in case if you need to display more than 10 pinned messages in a specific channel.
+You can also use a search filter if you need to display more than 10 pinned messages in a specific channel.
 
 ```kotlin 
 val request = SearchMessagesRequest( 
@@ -520,4 +529,3 @@ client.searchMessages(request).enqueue { result ->
     } 
 }
 ```
-

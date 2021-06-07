@@ -1,9 +1,59 @@
 # Message List
 
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_list_view/?language=kotlin -->
 
-It is possible to change the style of 2 ways: using XML and programatically.
+## Overview
 
-## Changing Messages Style Using XML
+<!-- TODO: Brief description and a couple screenshots with default styling. -->
+
+## Handling Actions
+
+`MessageListView` comes with a set of actions out of the box that are available by long-pressing a message. There are multiple available actions:
+
+* Adding reaction
+* Replies
+* Thread replies
+* Copy message
+* Edit message (if you are an owner)
+* Delete message (if you are an owner)
+* Flag message (if it doesn't belong to you)
+* Mute user who sends a message (if it doesn't belong to you)
+* Block user who sends a message (if it doesn't belong to you)
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
+
+Most of the actions work out of the box but you can change their behavior using different listeners and handlers:
+
+```kotlin
+messageListView.setMessageClickListener { message ->
+    // Handle message click
+}
+messageListView.setAttachmentClickListener { message, attachment ->
+    // Handle attachment click
+}
+messageListView.setMessageEditHandler { message ->
+    // Handle edit message
+}
+messageListView.setMessageDeleteHandler { message ->
+    // Handle edit message
+}
+messageInputView.setOnSendButtonClickListener {
+    // Handle send button click
+}
+```
+
+The full lists of available listeners and handlers are available [here (MessageListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view/index.html).
+
+## Customizations
+
+It is possible to change the style in two ways: using XML and programmatically.
+
+### Customization with XML Attributes
+
+<!-- TODO: Make this section better. -->
+
 Let's change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
@@ -29,9 +79,33 @@ In order to do that, we need to add additional attributes to `MessageListView`:
         />
 ```
 
-## Changing Messages Style Programmatically
-Both `MessageListView` and its view holders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/index.html) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/index.html)):
-Let's make an example and try to modify the default view which allows scrolling to the bottom when the new message arrives:
+### Customization at Runtime
+
+<!-- TODO: Make this section better. -->
+
+Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/index.html) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/index.html)).
+
+As an example, let's apply the green style from the previous section, but this time programmatically:
+
+| Before | After |
+| --- | --- |
+|![message style before](../../assets/message_style_programatically_message_before.png)|![message style after](../../assets/message_style_programatically_message_after.png)|
+
+We are going to use custom _TransformStyle.messageListItemStyleTransformer_:
+```kotlin
+TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+    defaultViewStyle.copy(
+        messageBackgroundColorMine = Color.parseColor("#70AF74"),
+        messageBackgroundColorTheirs = Color.WHITE,
+        textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
+        textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
+    )
+}
+```
+
+Note: The transformers should be set before the views are rendered to make sure that the new style was applied.
+
+As another example, let's modify the default view which allows scrolling to the bottom when the new message arrives:
 
 | Before | After |
 | --- | --- |
@@ -50,30 +124,10 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
 }
 ```
 
-Let's make another example and apply the green style from the previous paragraph, but this time programmatically:
 
-| Before | After |
-| --- | --- |
-|![message style before](../../assets/message_style_programatically_message_before.png)|![message style after](../../assets/message_style_programatically_message_after.png)|
+## Creating a Custom Empty State
 
-We are going to use custom _TransformStyle.messageListItemStyleTransformer_:
-```kotlin
-TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
-    defaultViewStyle.copy(
-        messageBackgroundColorMine = Color.parseColor("#70AF74"),
-        messageBackgroundColorTheirs = Color.WHITE,
-        textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
-        textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
-    )
-}
-```
-
-NOTE: The transformers should be set before the views are rendered to make sure that the new style was applied.
-
-
-
-
-TODO what's this
+<!-- TODO: Review this example, possibly remove it. -->
 
 2. Set new empty state view to _MessageListView_:
 ```kotlin
@@ -90,44 +144,3 @@ messageListView.setEmptyStateView(
      )
 )
 ```
-
-# ?
-
-`MessageListView` and `ChannelListView` come with a set of actions out of the box which is available by long-pressing a message. There are multiple available actions:
-
-* Adding reaction
-* Reply
-* Thread reply
-* Copy message
-* Edit message (if you are an owner)
-* Delete message (if you are an owner)
-* Flag message (if it doesn't belong to you)
-* Mute user who sends a message (if it doesn't belong to you)
-* Block user who sends a message (if it doesn't belong to you)
-
-| Light Mode | Dark Mode |
-| --- | --- |
-|![message_options_light](../../assets/message_options_light.png)|![message_options_dark](../../assets/message_options_dark.png)|
-
-Most of the actions work out of the box but there is a possibility to change its behavior using different listeners and handlers:
-```kotlin
-messageListHeaderView.setTitleClickListener {
-    // Handle title click
-}
-messageListView.setMessageClickListener { message ->
-    // Handle message click
-}
-messageListView.setAttachmentClickListener { message, attachment ->
-    // Handle attachment click
-}
-messageListView.setMessageEditHandler { message ->
-    // Handle edit message
-}
-messageListView.setMessageDeleteHandler { message ->
-    // Handle edit message
-}
-messageInputView.setOnSendButtonClickListener {
-    // Handle send button click
-}
-```
-The full lists of available listeners and handlers are available [here (MessageListHeaderView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.header/-message-list-header-view/index.html), [here (MessageListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view/index.html), and [here (MessageInputView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.input/-message-input-view/index.html)

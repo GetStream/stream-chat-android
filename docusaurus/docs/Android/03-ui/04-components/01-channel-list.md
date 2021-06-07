@@ -1,9 +1,47 @@
 # Channel List
 
-<!-- This whole page needs more information -->
-<!-- TODO: Add screen shots of what this page looks like with a default styles. -->
+<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/channel_list_view/?language=kotlin -->
 
-<!-- Do they have to work together or can they be used separately? -->
+## Overview
+
+<!-- TODO: Brief description and a couple screenshots with default styling. -->
+
+## Handling Actions
+
+`ChannelListView` comes with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
+* See channel members
+* Delete the channel if you have sufficient permissions
+* Leave the channel if it's a group channel
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![Light_mode](../../assets/channel_action_light.png)|![Dark_mode](../../assets/channel_action_dark.png)|
+
+There are some actions that require additional handling:
+
+```kotlin
+channelListView.setChannelItemClickListener { channel ->
+    // Handle Channel Click
+}
+channelListView.setChannelInfoClickListener { channel ->
+    // Handle Channel Info Click
+}
+channelListView.setUserClickListener { user ->
+    // Handle Member Click
+}
+```
+
+The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/index.html).
+
+## Customization
+
+### Customization with XML Attributes
+
+<!-- TODO: Customization description -->
+
+### Customization at Runtime
+
+<!-- TODO: Review this example, possibly remove it. -->
 
 Let's make an example and modify _ChannelListViewStyle_ programmatically. We want to change the title text appearance, some default icons, and colors, and disable some options:
 
@@ -148,46 +186,15 @@ In order to achieve such effect, we need to do the following steps. We are going
 channelListView.setViewHolderFactory(CustomChannelListItemViewHolderFactory())
 ```
 
-## ?
+## Creating a Custom Loading View
 
-`ChannelListHeaderView` and `ChannelListView` comes with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
-* See current user avatar
-* See current user online status
-* See channel members
-* Delete the channel if you have sufficient permissions
-* Leave the channel if it's a group channel
+Let's see an example of `ChannelListView` that will have a custom loading view with a shimmer effect:
+
+<!-- TODO: Actually show shimmer effect here in the screenshots. -->
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![light_mode](../../assets/channel_action_light.png)|![dark_mode](../../assets/channel_action_dark.png)|
-
-There are some actions (e.g. clicking on the current user avatar, member, channel, or _Viewing Info_) that require additional handling:
-```kotlin
-channelListHeaderView.setOnActionButtonClickListener {
-    // Handle Action Button Click
-}
-channelListHeaderView.setOnUserAvatarClickListener {
-    // Handle User Avatar Click
-}
-channelListView.setChannelItemClickListener { channel ->
-    // Handle Channel Click
-}
-channelListView.setChannelInfoClickListener { channel ->
-    // Handle Channel Info Click
-}
-channelListView.setUserClickListener { user ->
-    // Handle Member Click
-}
-```
-The full list of available listeners is available [here (ChannelListHeaderView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list.header/-channel-list-header-view/index.html) and [here (ChannelListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/index.html).
-
-## ??
-
-Let's make an example and create a custom layout in which `ChannelListHeaderView` won't contain `ActionButton` and `ChannelListView` will have a custom loading view with a shimmer effect:
-
-| Light Mode | Dark Mode |
-| --- | --- |
-|![light](../../assets/channel_action_light.png)|![dark](../../assets/channel_action_dark.png)|
+|![Light mode](../../assets/channel_action_light.png)|![Dark mode](../../assets/channel_action_dark.png)|
 
 Assuming that we have the setup similar to previous steps, we have to do the following steps:
 1. Add Shimmer dependency
@@ -312,19 +319,8 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 
 </com.facebook.shimmer.ShimmerFrameLayout>
 ```
-5. Modify `ChannelListHeaderView`'s attributes:
-```xml
-    <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-        android:id="@+id/channelListHeaderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:streamUiShowActionButton="false"
-        />
-```
-6. Change `ChannelListView`'s loading view:
+
+5. Change `ChannelListView`'s loading view:
 ```kotlin
 // Inflate loading view
 val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
