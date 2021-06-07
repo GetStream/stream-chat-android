@@ -37,6 +37,7 @@ internal class ChatDomainImplTest {
             on { messageDao() } doReturn mock()
             on { reactionDao() } doReturn mock()
             on { syncStateDao() } doReturn mock()
+            on { attachmentDao() } doReturn mock()
         }
         val handler: Handler = mock()
         val offlineEnabled = true

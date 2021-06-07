@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
@@ -781,7 +781,7 @@ internal class ChatDomainImpl internal constructor(
                 val cid = message.cid
                 val channelType = cid.split(":")[0]
                 val channelId = cid.split(":")[1]
-                UploadAttachmentsWorker.start(appContext, channelType, channelId, message.id)
+                UploadAttachmentsAndroidWorker.start(appContext, channelType, channelId, message.id)
                 break
             }
             val result = when {
@@ -809,7 +809,7 @@ internal class ChatDomainImpl internal constructor(
         return messages
     }
 
-    private suspend fun markMessageAttachmentSyncStatus(
+    internal suspend fun markMessageAttachmentSyncStatus(
         message: Message,
         syncStatus: SyncStatus,
     ) = repos.insertMessage(message.copy(attachmentsSyncStatus = syncStatus))

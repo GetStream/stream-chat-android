@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.same
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
@@ -123,9 +124,9 @@ internal class SendMessageWithFilesTest : BaseDomainTest2() {
 
         mockFileUploadsFailure(files)
 
-        val result = chatDomain.sendMessage(message).execute()
+        val result = chatDomain.sendMessage(message, mock()).execute()
 
-        Truth.assertThat(result).isEqualTo(expectedResult)
+        Truth.assertThat(result.data()).isEqualTo(expectedResult.data())
     }
 
     @Test

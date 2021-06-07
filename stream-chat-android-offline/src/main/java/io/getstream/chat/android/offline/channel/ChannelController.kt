@@ -52,9 +52,9 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.mapErrorSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.addMyReaction
