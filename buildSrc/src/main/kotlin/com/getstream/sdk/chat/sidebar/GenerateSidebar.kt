@@ -93,18 +93,11 @@ abstract class GenerateSidebar : DefaultTask() {
 
         tempFile.writer().use { writer ->
             file.forEachLine { line ->
-
-                writer.appendLine(line)
+                writer.appendLine(filterTagLinks(line))
             }
         }
 
         tempFile.copyTo(file.toPath(), overwrite = true)
-    }
-
-    private fun filterTagLinks(line: String) {
-        if (line.contains("<a")) {
-            
-        }
     }
 
     private fun createSidebarFiles(fileTree: FileTree, modulesToInclude: List<String>, removeFromLabel: String) {
