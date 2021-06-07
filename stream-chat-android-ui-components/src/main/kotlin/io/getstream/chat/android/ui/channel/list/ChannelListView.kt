@@ -26,14 +26,12 @@ import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListI
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.channel.list.internal.SimpleChannelListView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 
-public class ChannelListView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : FrameLayout(context, attrs, defStyleAttr) {
+public class ChannelListView : FrameLayout {
+
     private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
     private var emptyStateView: View = defaultEmptyStateView()
@@ -42,8 +40,7 @@ public class ChannelListView @JvmOverloads constructor(
 
     private var channelListItemPredicate: ChannelListItemPredicate = ChannelListItemPredicate { true }
 
-    private val simpleChannelListView: SimpleChannelListView =
-        SimpleChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
+    private lateinit var simpleChannelListView: SimpleChannelListView
 
     // These listeners live here because they are only triggered via ChannelActionsDialogFragment and don't need
     // to be passed to ViewHolders.
@@ -59,7 +56,28 @@ public class ChannelListView @JvmOverloads constructor(
         }.let(::showToast)
     }
 
-    init {
+    private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
+
+    public constructor(context: Context) : this(context, null, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(attrs, defStyleAttr)
+    }
+
+    private fun init(attrs: AttributeSet?, defStyleAttr: Int) {
+        actionDialogStyle = ChannelActionsDialogViewStyle(context, attrs)
+
+        simpleChannelListView = SimpleChannelListView(context, attrs, defStyleAttr)
+            .apply {
+                id = CHANNEL_LIST_VIEW_ID
+            }
+
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
         emptyStateView.apply {
@@ -295,13 +313,11 @@ public class ChannelListView @JvmOverloads constructor(
         setText(R.string.stream_ui_channels_empty_state_label)
     }
 
-    private fun configureDefaultMoreOptionsListener(
-        context: Context,
-    ) {
+    private fun configureDefaultMoreOptionsListener(context: Context) {
         setMoreOptionsClickListener { channel ->
             context.getFragmentManager()?.let { fragmentManager ->
                 ChannelActionsDialogFragment
-                    .newInstance(channel.cid, !channel.isDirectMessaging())
+                    .newInstance(channel.cid, !channel.isDirectMessaging(), actionDialogStyle)
                     .apply {
                         channelActionListener = object : ChannelActionsDialogFragment.ChannelActionListener {
                             override fun onDeleteConversationClicked(cid: String) {

@@ -4,7 +4,7 @@ title: Typing Indicators
 sidebar_position: 24
 ---
 
-In order to support typing events you will need to take care of four things:
+To support typing events you will need to take care of four things:
 1. Send `typing.start` event  when the user starts typing
 2. Send `typing.stop`  event after the user stopped typing
 3. Handle the two events and use them to toggle the typing indicator UI

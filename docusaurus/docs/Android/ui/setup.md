@@ -71,9 +71,9 @@ The `ChatUI` object supports UI component customization by default. It's initial
 You can access `ChatUI` to customize the global behaviour of UI elements.
 
  * `ChatUI.fonts`: allows you to overwrite fonts
- * `ChatUI.markdown` interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
- * `ChatUI.urlSigner` url signing logic, enables you to add authorization tokens for images, video etc
+ * `ChatUI.markdown` interface to customize the markdown parsing behaviour, useful if you want to use more markdown modules
+ * `ChatUI.urlSigner` URL signing logic, enables you to add authorization tokens for images, video, etc
  * `ChatUI.avatarBitmapFactory` allows to generate custom bitmap for avatarView
  * `ChatUI.mimeTypeIconProvider` allows to define own icons for different mime types
  * `ChatUI.supportedReactions` allows to define own set of supported message reaction
- * `ChatUI.style` allows to override global style of UI components, like the TextStyle.
+ * `ChatUI.style` allows to override the global style of UI components, like the TextStyle.

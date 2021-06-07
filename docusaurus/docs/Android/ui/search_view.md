@@ -38,7 +38,7 @@ Here you can find an example layout:
 
 ```
 ## Binding Search View Components
-In order to display search results, you need to bind `SearchResultListView` with the view model and pass search query from `SearchInputView` to the same view model:
+To display search results, you need to bind `SearchResultListView` with the view model and pass search query from `SearchInputView` to the same view model:
 ```kotlin
 // Get view model
 val searchViewModel: SearchViewModel by viewModels()
