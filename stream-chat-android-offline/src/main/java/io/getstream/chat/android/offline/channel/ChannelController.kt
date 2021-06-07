@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.attachment.AttachmentUploader
@@ -244,7 +245,7 @@ public class ChannelController internal constructor(
         return domainImpl.getChannelConfig(channelType)
     }
 
-    internal fun keystroke(parentId: String?): Result<Boolean> {
+    internal suspend fun keystroke(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
@@ -255,19 +256,14 @@ public class ChannelController internal constructor(
                 channelClient.keystroke(parentId)
             } else {
                 channelClient.keystroke()
-            }.execute()
+            }.await()
 
-            return if (result.isSuccess) {
-                keystrokeParentMessageId = parentId
-                Result(result.isSuccess)
-            } else {
-                Result(result.error())
-            }
+            return result.map { true.also { keystrokeParentMessageId = parentId } }
         }
         return Result(false)
     }
 
-    internal fun stopTyping(parentId: String?): Result<Boolean> {
+    internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
@@ -278,14 +274,9 @@ public class ChannelController internal constructor(
                 channelClient.stopTyping(parentId)
             } else {
                 channelClient.stopTyping()
-            }.execute()
+            }.await()
 
-            return if (result.isSuccess) {
-                keystrokeParentMessageId = null
-                Result(result.isSuccess)
-            } else {
-                Result(result.error())
-            }
+            return result.map { true.also { keystrokeParentMessageId = null } }
         }
         return Result(false)
     }
@@ -346,7 +337,7 @@ public class ChannelController internal constructor(
 
     internal suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
-        val result = channelClient.hide(clearHistory).execute()
+        val result = channelClient.hide(clearHistory).await()
         if (result.isSuccess) {
             if (clearHistory) {
                 val now = Date()
@@ -363,7 +354,7 @@ public class ChannelController internal constructor(
 
     internal suspend fun show(): Result<Unit> {
         setHidden(false)
-        val result = channelClient.show().execute()
+        val result = channelClient.show().await()
         if (result.isSuccess) {
             domainImpl.repos.setHiddenForChannel(cid, false)
         }
@@ -371,7 +362,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun leave(): Result<Unit> {
-        val result = channelClient.removeMembers(domainImpl.currentUser.id).execute()
+        val result = channelClient.removeMembers(domainImpl.currentUser.id).await()
 
         return if (result.isSuccess) {
             // Remove from query controllers
@@ -385,7 +376,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun delete(): Result<Unit> {
-        val result = channelClient.delete().execute()
+        val result = channelClient.delete().await()
 
         return if (result.isSuccess) {
             // Remove from query controllers
@@ -537,7 +528,7 @@ public class ChannelController internal constructor(
 
     internal suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
-        val response = channelClient.watch(request).execute()
+        val response = channelClient.watch(request).await()
 
         if (response.isSuccess) {
             recoveryNeeded = false
@@ -966,26 +957,28 @@ public class ChannelController internal constructor(
     }
 
     public fun clean() {
-        // cleanup your own typing state
-        val now = Date()
-        if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
-            stopTyping(keystrokeParentMessageId)
-        }
-
-        // Cleanup typing events that are older than 15 seconds
-        var copy = _typing.value
-        var changed = false
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -15)
-        val old = calendar.time
-        for ((userId, typing) in copy.toList()) {
-            if (typing.createdAt.before(old)) {
-                copy = copy - userId
-                changed = true
+        domainImpl.scope.launch {
+            // cleanup your own typing state
+            val now = Date()
+            if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
+                stopTyping(keystrokeParentMessageId)
             }
-        }
-        if (changed) {
-            _typing.value = copy
+
+            // Cleanup typing events that are older than 15 seconds
+            var copy = _typing.value
+            var changed = false
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.SECOND, -15)
+            val old = calendar.time
+            for ((userId, typing) in copy.toList()) {
+                if (typing.createdAt.before(old)) {
+                    copy = copy - userId
+                    changed = true
+                }
+            }
+            if (changed) {
+                _typing.value = copy
+            }
         }
     }
 
@@ -1416,15 +1409,15 @@ public class ChannelController internal constructor(
         return channel
     }
 
-    internal fun loadOlderThreadMessages(
+    internal suspend fun loadOlderThreadMessages(
         threadId: String,
         limit: Int,
         firstMessage: Message? = null,
     ): Result<List<Message>> {
         val result = if (firstMessage != null) {
-            client.getRepliesMore(threadId, firstMessage.id, limit).execute()
+            client.getRepliesMore(threadId, firstMessage.id, limit).await()
         } else {
-            client.getReplies(threadId, limit).execute()
+            client.getReplies(threadId, limit).await()
         }
         if (result.isSuccess) {
             val newMessages = result.data()

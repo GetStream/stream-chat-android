@@ -5,7 +5,6 @@ import android.os.Handler
 import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.work.Configuration
 import androidx.work.testing.SynchronousExecutor
@@ -34,6 +33,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -52,7 +52,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import java.util.Date
-import java.util.concurrent.Executors
 
 internal open class BaseDomainTest {
     lateinit var channelClientMock: ChannelClient
@@ -199,22 +198,13 @@ internal open class BaseDomainTest {
         return client
     }
 
-    fun createRoomDb(): ChatDatabase {
-        return Room.inMemoryDatabaseBuilder(
-            getApplicationContext(),
-            ChatDatabase::class.java
-        )
-            .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .build()
-    }
-
     fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
 
         if (setUser) {
             waitForSetUser(client, data.user1, data.user1Token)
         }
 
-        db = createRoomDb()
+        db = createRoomDB(testCoroutines.dispatcher)
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
         val offlineEnabled = true
@@ -232,6 +222,7 @@ internal open class BaseDomainTest {
             backgroundSyncEnabled,
             context
         )
+        chatDomainImpl.scope = testCoroutines.scope
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
 

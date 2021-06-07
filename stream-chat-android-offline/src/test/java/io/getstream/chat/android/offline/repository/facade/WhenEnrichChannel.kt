@@ -77,6 +77,26 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
     }
 
     @Test
+    fun `Given messages for channel in the map And channel messages are not empty And contain message with the same id but different data Should update channel with distinct set of messages`() {
+        sut.run {
+            val commonMessageId = "commonMessage"
+            val commonMessage = randomMessage(id = commonMessageId)
+            val message2 = randomMessage()
+            val message3 = randomMessage()
+            val channel = randomChannel(cid = "cid1", messages = listOf(randomMessage(id = commonMessageId), message3))
+            val messageMap = mapOf("cid1" to listOf(commonMessage, message2))
+
+            channel.enrichChannel(messageMap, Config())
+
+            val channelMessages = channel.messages
+            channelMessages.size `should be equal to` 3
+            channelMessages[0] `should be equal to` commonMessage
+            channelMessages[1] `should be equal to` message2
+            channelMessages[2] `should be equal to` message3
+        }
+    }
+
+    @Test
     fun `Given no messages for channel in the map Should not update channel messages`() {
         sut.run {
             val message1 = randomMessage()

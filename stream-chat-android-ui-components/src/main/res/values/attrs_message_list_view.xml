@@ -144,6 +144,7 @@
         <attr name="streamUiIconIndicatorSent" format="reference" />
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />
+        <attr name="streamUiIconOnlyVisibleToYou" format="reference" />
 
         <!-- Message deleted style -->
         <attr name="streamUiDeletedMessageBackgroundColor" format="color" />
@@ -233,5 +234,62 @@
 
         <!-- Options overly dialog -->
         <attr name="streamUiOptionsOverlayDimColor" format="color" />
+
+        <!-- Giphy view holder -->
+        <attr name="streamUiGiphyCardBackgroundColor" format="color|reference" />
+        <attr name="streamUiGiphyCardElevation" format="dimension|reference" />
+        <attr name="streamUiGiphyCardButtonDividerColor" format="color|reference" />
+        <attr name="streamUiGiphyIcon" format="reference" />
+
+        <attr name="streamUiGiphyLabelTextSize" format="dimension|reference" />
+        <attr name="streamUiGiphyLabelTextColor" format="color|reference" />
+        <attr name="streamUiGiphyLabelTextFont" format="reference" />
+        <attr name="streamUiGiphyLabelTextFontAssets" format="string" />
+        <attr name="streamUiGiphyLabelTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiGiphyQueryTextSize" format="dimension|reference" />
+        <attr name="streamUiGiphyQueryTextColor" format="color|reference" />
+        <attr name="streamUiGiphyQueryTextFont" format="reference" />
+        <attr name="streamUiGiphyQueryTextFontAssets" format="string" />
+        <attr name="streamUiGiphyQueryTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiGiphyCancelButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiGiphyCancelButtonTextColor" format="color|reference" />
+        <attr name="streamUiGiphyCancelButtonTextFont" format="reference" />
+        <attr name="streamUiGiphyCancelButtonTextFontAssets" format="string" />
+        <attr name="streamUiGiphyCancelButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiGiphyShuffleButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiGiphyShuffleButtonTextColor" format="color|reference" />
+        <attr name="streamUiGiphyShuffleButtonTextFont" format="reference" />
+        <attr name="streamUiGiphyShuffleButtonTextFontAssets" format="string" />
+        <attr name="streamUiGiphyShuffleButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiGiphySendButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiGiphySendButtonTextColor" format="color|reference" />
+        <attr name="streamUiGiphySendButtonTextFont" format="reference" />
+        <attr name="streamUiGiphySendButtonTextFontAssets" format="string" />
+        <attr name="streamUiGiphySendButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
     </declare-styleable>
 </resources>

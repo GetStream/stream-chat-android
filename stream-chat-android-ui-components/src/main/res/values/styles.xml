@@ -265,14 +265,13 @@
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
-
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
-
+        <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
     </style>
 
-    <style name="StreamUi" >
+    <style name="StreamUi">
         <!--Common styles properties-->
     </style>
 
@@ -306,5 +305,33 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
+        <!-- Channel actions dialog title with member names -->
+        <item name="streamUiChannelActionsMemberNamesTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiChannelActionsMemberNamesTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiChannelActionsMemberNamesTextStyle">bold</item>
+
+        <!-- Channel actions dialog subtitle with member info -->
+        <item name="streamUiChannelActionsMemberInfoTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiChannelActionsMemberInfoTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiChannelActionsMemberInfoTextStyle">normal</item>
+
+        <!-- Channel action item text style -->
+        <item name="streamUiChannelActionsItemTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiChannelActionsItemTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiChannelActionsItemTextStyle">bold</item>
+
+        <item name="streamUiChannelActionsViewInfoIcon">@drawable/stream_ui_ic_single_user</item>
+        <item name="streamUiChannelActionsViewInfoEnabled">false</item>
+        <item name="streamUiChannelActionsLeaveGroupIcon">@drawable/stream_ui_ic_leave_group</item>
+        <item name="streamUiChannelActionsLeaveGroupEnabled">true</item>
+        <item name="streamUiChannelActionsDeleteConversationIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiChannelActionsDeleteConversationEnabled">true</item>
+        <item name="streamUiChannelActionsCancelIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiChannelActionsCancelEnabled">true</item>
+        <item name="streamUiChannelActionsIconsTint">@color/stream_ui_grey</item>
+        <item name="streamUiChannelActionsWarningActionsTint">@color/stream_ui_accent_red</item>
     </style>
 </resources>

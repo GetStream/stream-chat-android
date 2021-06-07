@@ -9,10 +9,10 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
@@ -60,10 +60,8 @@ internal class MarkReadTest {
         whenever(chatDomain.client) doReturn client
         whenever(channelController.channelType) doReturn channelType
         whenever(channelController.channelId) doReturn channelId
-        val markReadCall = mock<Call<Unit>>()
+        val markReadCall = TestCall(Result(Unit))
         whenever(client.markRead(any(), any())) doReturn markReadCall
-        val markReadCallResult = mock<Result<Unit>>()
-        whenever(markReadCall.execute()) doReturn markReadCallResult
     }
 
     @Test

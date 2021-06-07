@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
+import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
@@ -38,6 +39,7 @@ public open class MessageListItemViewHolderFactory {
         private set
 
     private lateinit var style: MessageListItemStyle
+    private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
@@ -49,6 +51,10 @@ public open class MessageListItemViewHolderFactory {
 
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
         this.style = style
+    }
+
+    internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {
+        this.giphyViewHolderStyle = style
     }
 
     private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
@@ -129,7 +135,7 @@ public open class MessageListItemViewHolderFactory {
     protected fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return GiphyViewHolder(parentView, decoratorProvider.decorators, listenerContainer)
+        return GiphyViewHolder(parentView, decoratorProvider.decorators, listenerContainer, giphyViewHolderStyle)
     }
 
     protected fun createSystemMessageItemViewHolder(

@@ -50,7 +50,7 @@ we get:
 
 ![example2 1](../../../assets/message_input_view_example2.jpeg)
 
-And different configurations can be used to achieve the desired appearance of `MessageListView`. If you don't have the need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageInputViewStyle` as described in the next section.
+And different configurations can be used to achieve the desired appearance of `MessageListView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageInputViewStyle` as described in the next section.
 
 ## Configuring programmatically using `MessageInputViewStyle`
 Many views in this SDK can be configured by changing the configuration class inside [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt).
