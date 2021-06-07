@@ -98,6 +98,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListItemStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMessageReplyViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -108,6 +109,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListItemStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMessageReplyViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
@@ -1626,6 +1628,34 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/view/internal/MessageReplyViewStyle {
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;IIZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;IIFIFLio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun getEditReactionsViewStyle ()Lio/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle;
+	public final fun getIconIndicatorPendingSync ()Landroid/graphics/drawable/Drawable;
+	public final fun getIconIndicatorRead ()Landroid/graphics/drawable/Drawable;
+	public final fun getIconIndicatorSent ()Landroid/graphics/drawable/Drawable;
+	public final fun getIconOnlyVisibleToYou ()Landroid/graphics/drawable/Drawable;
+	public final fun getMessageBackgroundColorMine ()Ljava/lang/Integer;
+	public final fun getMessageBackgroundColorTheirs ()Ljava/lang/Integer;
+	public final fun getMessageDeletedBackground ()I
+	public final fun getMessageLinkBackgroundColorMine ()I
+	public final fun getMessageLinkBackgroundColorTheirs ()I
+	public final fun getMessageLinkTextColorMine ()Ljava/lang/Integer;
+	public final fun getMessageLinkTextColorTheirs ()Ljava/lang/Integer;
+	public final fun getMessageStrokeColorMine ()I
+	public final fun getMessageStrokeColorTheirs ()I
+	public final fun getMessageStrokeWidthMine ()F
+	public final fun getMessageStrokeWidthTheirs ()F
+	public final fun getMessageTextColorTheirs ()Ljava/lang/Integer;
+	public final fun getReactionsEnabled ()Z
+	public final fun getReactionsViewStyle ()Lio/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle;
+	public final fun getTextStyleErrorMessage ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getTextStyleMessageDate ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getTextStyleMessageDeleted ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getTextStyleMine ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getTextStyleTheirs ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
