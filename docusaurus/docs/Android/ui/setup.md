@@ -26,7 +26,7 @@ If you prefer to use low-level chat Client only with Offline support library you
 
 ## Initializing SDK
 
-First, initialize each of the SDK components.  will happen only once in the _Application_ class:
+First, initialize each of the SDK components. For most apps, this will happen only once in the _Application_ class:
 
 ```kotlin
 val client = ChatClient.Builder(apiKey = "apiKey", appContext = applicationContext)
