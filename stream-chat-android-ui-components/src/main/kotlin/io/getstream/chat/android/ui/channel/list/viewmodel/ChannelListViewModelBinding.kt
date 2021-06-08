@@ -49,13 +49,13 @@ public fun ChannelListViewModel.bindView(
 
     view.setChannelDeleteClickListener {
         AlertDialog.Builder(view.context)
-            .setTitle(R.string.stream_ui_channel_option_delete_confirmation_title)
-            .setMessage(R.string.stream_ui_channel_option_delete_confirmation_message)
-            .setPositiveButton(R.string.stream_ui_channel_option_delete_positive_button) { dialog, _ ->
+            .setTitle(R.string.stream_ui_channel_list_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_channel_list_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_channel_list_delete_confirmation_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 deleteChannel(it)
             }
-            .setNegativeButton(R.string.stream_ui_channel_option_delete_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_channel_list_delete_confirmation_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()

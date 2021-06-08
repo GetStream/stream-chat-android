@@ -93,10 +93,10 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         fun newDeleteMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.ic_delete,
             iconTintResId = R.color.red,
-            title = context.getString(R.string.stream_ui_message_option_delete_confirmation_title),
-            description = context.getString(R.string.stream_ui_message_option_delete_confirmation_message),
-            confirmText = context.getString(R.string.stream_ui_message_option_delete_positive_button),
-            cancelText = context.getString(R.string.stream_ui_message_option_delete_negative_button),
+            title = context.getString(R.string.stream_ui_message_list_delete_confirmation_title),
+            description = context.getString(R.string.stream_ui_message_list_delete_confirmation_message),
+            confirmText = context.getString(R.string.stream_ui_message_list_delete_confirmation_positive_button),
+            cancelText = context.getString(R.string.stream_ui_message_list_delete_confirmation_negative_button),
         )
 
         fun newDeleteChannelInstance(context: Context): ConfirmationDialogFragment = newInstance(
@@ -120,9 +120,9 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         fun newFlagMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.stream_ui_ic_flag,
             iconTintResId = R.color.red,
-            title = context.getString(R.string.stream_ui_message_option_flag),
-            description = context.getString(R.string.stream_ui_message_option_flag_confirmation_message),
-            confirmText = context.getString(R.string.stream_ui_message_option_flag_positive_button),
+            title = context.getString(R.string.stream_ui_message_list_flag_confirmation_title),
+            description = context.getString(R.string.stream_ui_message_list_flag_confirmation_message),
+            confirmText = context.getString(R.string.stream_ui_message_list_flag_confirmation_positive_button),
             cancelText = context.getString(R.string.cancel),
         )
 

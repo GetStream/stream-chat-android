@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
-        view.setTitle(it.getDisplayName(view.context))
+        view.setTitle(it.getDisplayName(view.context, R.string.stream_ui_message_list_header_untitled_channel))
         view.setAvatar(it)
     }
 
@@ -74,14 +74,14 @@ private fun getGroupSubtitle(context: Context, members: List<Member>): String {
     val allUsers = members.map { it.user }
     val onlineUsers = allUsers.count { it.online }
     val groupMembers = context.resources.getQuantityString(
-        R.plurals.stream_ui_message_list_header_group_member_count,
+        R.plurals.stream_ui_message_list_header_member_count,
         allUsers.size,
         allUsers.size
     )
 
     return if (onlineUsers > 0) {
         context.getString(
-            R.string.stream_ui_message_list_header_group_member_count_with_online,
+            R.string.stream_ui_message_list_header_member_count_online,
             groupMembers,
             onlineUsers
         )

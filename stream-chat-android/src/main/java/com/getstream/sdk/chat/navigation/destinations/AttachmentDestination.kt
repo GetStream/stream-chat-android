@@ -56,7 +56,7 @@ public open class AttachmentDestination(
         }
 
         if (url.isNullOrEmpty()) {
-            Toast.makeText(context, context.getString(R.string.stream_attachment_invalid_url), Toast.LENGTH_SHORT)
+            Toast.makeText(context, context.getString(R.string.stream_ui_message_list_attachment_invalid_url), Toast.LENGTH_SHORT)
                 .show()
             return
         }
@@ -76,7 +76,7 @@ public open class AttachmentDestination(
             ChatLogger.instance.logE("AttachmentDestination", "MimeType is null for url $url")
             Toast.makeText(
                 context,
-                context.getString(R.string.stream_attachment_invalid_mime_type, attachment.name),
+                context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
                 Toast.LENGTH_SHORT
             ).show()
             return

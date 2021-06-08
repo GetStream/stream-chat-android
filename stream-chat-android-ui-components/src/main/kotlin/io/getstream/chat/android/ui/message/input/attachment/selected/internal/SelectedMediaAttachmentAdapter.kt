@@ -55,7 +55,7 @@ internal class SelectedMediaAttachmentAdapter(
             if (attachment.type == ModelType.attach_video) {
                 binding.ivMedia.loadVideoThumbnail(
                     uri = attachment.uri,
-                    placeholderResId = R.drawable.stream_placeholder,
+                    placeholderResId = R.drawable.stream_ui_placeholder,
                 )
             } else {
                 binding.ivMedia.load(data = attachment.uri)
@@ -65,7 +65,7 @@ internal class SelectedMediaAttachmentAdapter(
         private fun bindErrorBadge(attachment: AttachmentMetaData) {
             if (attachment.size > attachmentMaxFileSize) {
                 binding.tvError.isVisible = true
-                binding.tvError.text = context.getString(R.string.stream_ui_file_too_big)
+                binding.tvError.text = context.getString(R.string.stream_ui_message_input_error_file_size)
             } else {
                 binding.tvError.isVisible = false
             }

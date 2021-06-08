@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/stream_ui_reply_to_message"
+            android:text="@string/stream_ui_message_input_reply"
             android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/dismissInputMode"

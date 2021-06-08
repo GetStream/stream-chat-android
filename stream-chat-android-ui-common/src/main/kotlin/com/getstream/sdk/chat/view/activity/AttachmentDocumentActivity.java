@@ -90,7 +90,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
                     reloadCount++;
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    String errorMsg = AttachmentDocumentActivity.this.getString(R.string.stream_attachment_load_failed_unknown);
+                    String errorMsg = AttachmentDocumentActivity.this.getString(R.string.stream_ui_message_list_attachment_load_failed);
                     Toast.makeText(AttachmentDocumentActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                 }
             } else {

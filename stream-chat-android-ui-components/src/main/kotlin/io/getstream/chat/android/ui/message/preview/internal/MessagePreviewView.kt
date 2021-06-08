@@ -72,7 +72,7 @@ internal class MessagePreviewView : FrameLayout {
         return if (channel?.name != null && channel.memberCount > 2) {
             Html.fromHtml(
                 context.getString(
-                    R.string.stream_ui_message_sender_title_in_channel,
+                    R.string.stream_ui_message_preview_sender,
                     message.user.name,
                     channel.name,
                 )
@@ -90,7 +90,7 @@ internal class MessagePreviewView : FrameLayout {
             }
 
         if (fileAttachmentsNames.isNotEmpty()) {
-            return context.getString(R.string.stream_ui_message_file, fileAttachmentsNames.joinToString())
+            return context.getString(R.string.stream_ui_message_preview_file, fileAttachmentsNames.joinToString())
         }
 
         if (currentUserMention != null) {
