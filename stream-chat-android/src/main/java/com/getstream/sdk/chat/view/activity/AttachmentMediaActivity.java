@@ -12,10 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import com.getstream.sdk.chat.ChatUI;
+import com.getstream.sdk.chat.R;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
-import io.getstream.chat.android.ui.common.R;
 
 /**
  * An Activity playing attachments such as stream_ic_audio and videos.
