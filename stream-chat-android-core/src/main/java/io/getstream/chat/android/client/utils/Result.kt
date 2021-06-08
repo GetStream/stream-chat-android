@@ -110,7 +110,7 @@ public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -
     }
 }
 
-public fun <T: Any> Result<T>.mapError(errorMapper: (ChatError) -> T): Result<T> {
+public fun <T: Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
     } else {
@@ -118,7 +118,7 @@ public fun <T: Any> Result<T>.mapError(errorMapper: (ChatError) -> T): Result<T>
     }
 }
 
-public suspend fun <T: Any> Result<T>.mapErrorSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
+public suspend fun <T: Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
     } else {

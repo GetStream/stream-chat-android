@@ -9,10 +9,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.flatMapSuspend
-import io.getstream.chat.android.client.utils.mapErrorSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 internal class MessageSendingService private constructor() {
-    private val logger = ChatLogger.get("ChatDomain MessageSender")
+    private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
 
     internal suspend fun sendMessage(
@@ -74,7 +74,6 @@ internal class MessageSendingService private constructor() {
         channelClient: ChannelClient,
         channelController: ChannelController,
     ): Result<Message> {
-
         return if (domainImpl.online.value) {
             return if (newMessage.hasAttachments()) {
                 waitForAttachmentsToBeSent(newMessage, domainImpl, channelClient, channelController)
@@ -94,7 +93,6 @@ internal class MessageSendingService private constructor() {
         channelController: ChannelController,
     ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
-        logger.logW("Waiting for attachment for message with id ${newMessage.id}")
         jobsMap = jobsMap + (
             newMessage.id to domainImpl.scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
@@ -105,9 +103,10 @@ internal class MessageSendingService private constructor() {
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
                                 ephemeralUploadStatusMessage?.let { channelController.cancelEphemeralMessage(it) }
-                                logger.logW("Attachments are sent. Starting do send message ${newMessage.id}")
-                                doSend(newMessage, domainImpl, channelClient, channelController)
-                                logger.logW("Message is sent ${newMessage.id}")
+                                val messageToBeSent = domainImpl.repos.selectMessage(newMessage.id) ?: newMessage.copy(
+                                    attachments = attachments.toMutableList()
+                                )
+                                doSend(messageToBeSent, domainImpl, channelClient, channelController)
                                 jobsMap[newMessage.id]?.cancel()
                             }
                             attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
@@ -135,10 +134,10 @@ internal class MessageSendingService private constructor() {
     ): Result<Message> {
         val messageToSend = message.copy(type = "regular")
         return Result.success(messageToSend)
-            .onSuccess { logger.logW("Starting to send message with id ${it.id} and text ${it.text}") }
+            .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
             .flatMapSuspend { newMessage -> domainImpl.runAndRetry { channelClient.sendMessage(newMessage) } }
             .mapSuspend(channelController::handleSendMessageSuccess)
-            .mapErrorSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
+            .recoverSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
     }
 
     internal companion object {

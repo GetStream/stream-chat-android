@@ -6,28 +6,20 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import io.getstream.chat.android.client.logger.ChatLogger
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    private val logger = ChatLogger.get("UploadAttachmentsAndroidWorker")
-
     override suspend fun doWork(): Result {
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        logger.logW("Start sending attachments for message $messageId")
-
         return UploadAttachmentsWorker()
             .uploadAttachmentsForMessage(channelType, channelId, messageId)
             .run { if (isSuccess) Result.success() else Result.failure() }
-            .also {
-                logger.logW("Finish sending attachments for message $messageId. Is successful? ${it is Result.Success}")
-            }
     }
 
     companion object {

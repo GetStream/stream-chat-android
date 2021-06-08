@@ -53,8 +53,9 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.client.utils.mapErrorSuspend
 import io.getstream.chat.android.client.utils.mapSuspend
+import io.getstream.chat.android.client.utils.recover
+import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.addMyReaction
@@ -67,6 +68,7 @@ import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import io.getstream.chat.android.offline.message.getMessageType
+import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.wasCreatedAfter
 import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
@@ -634,7 +636,7 @@ public class ChannelController internal constructor(
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
             domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
                 .mapSuspend(::handleSendMessageSuccess)
-                .mapErrorSuspend { handleSendMessageFail(newMessage, it) }
+                .recoverSuspend { handleSendMessageFail(newMessage, it) }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
@@ -647,14 +649,10 @@ public class ChannelController internal constructor(
     ): List<Attachment> {
         return try {
             message.attachments.map { attachment ->
-                val result = AttachmentUploader(client)
+                AttachmentUploader(client)
                     .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
-
-                if (result.isSuccess) {
-                    result.data()
-                } else {
-                    attachment.apply { uploadState = Attachment.UploadState.Failed(result.error()) }
-                }
+                    .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+                    .data()
             }.toMutableList()
         } catch (e: Exception) {
             message.attachments.map {
@@ -673,7 +671,6 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        logger.logW("handleSendMessageSuccess with message id ${processedMessage.id}")
         return processedMessage.apply { enrichWithCid(this.cid) }
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also { domainImpl.repos.insertMessage(it) }
@@ -703,10 +700,7 @@ public class ChannelController internal constructor(
      * Removes message from the offline storage and memory and notifies about update.
      */
     internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
-        if ("ephemeral" != message.type) {
-            throw IllegalArgumentException("Only ephemeral message can be canceled")
-        }
-
+        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
         domainImpl.repos.deleteChannelMessage(message)
         removeLocalMessage(message)
         return Result(true)
