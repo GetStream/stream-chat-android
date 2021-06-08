@@ -52,7 +52,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="4dp"
-        android:src="@drawable/stream_ic_video"
+        android:src="@drawable/stream_ui_ic_video"
         android:scaleType="center"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mediaThumbnailImageView"

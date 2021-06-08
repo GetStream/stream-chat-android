@@ -55,7 +55,7 @@ internal class SelectedMediaAttachmentAdapter(
             if (attachment.type == ModelType.attach_video) {
                 binding.ivMedia.loadVideoThumbnail(
                     uri = attachment.uri,
-                    placeholderResId = R.drawable.stream_placeholder,
+                    placeholderResId = R.drawable.stream_ui_placeholder,
                 )
             } else {
                 binding.ivMedia.load(data = attachment.uri)

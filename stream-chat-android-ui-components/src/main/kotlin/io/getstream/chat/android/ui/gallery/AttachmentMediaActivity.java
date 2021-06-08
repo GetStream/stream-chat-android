@@ -15,7 +15,7 @@ import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.ui.ChatUI;
-import io.getstream.chat.android.ui.common.R;
+import io.getstream.chat.android.ui.R;
 
 /**
  * An Activity playing attachments such as stream_ic_audio and videos.
@@ -33,7 +33,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.stream_activity_attachment_media);
+        setContentView(R.layout.stream_ui_activity_attachment_media);
         videoView = findViewById(R.id.videoView);
         iv_audio = findViewById(R.id.iv_audio);
         init();
