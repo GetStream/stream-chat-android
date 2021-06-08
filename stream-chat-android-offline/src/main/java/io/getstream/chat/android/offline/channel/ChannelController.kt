@@ -73,7 +73,6 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
@@ -159,7 +158,11 @@ public class ChannelController internal constructor(
                     .sortedBy { it.createdAt ?: it.createdLocallyAt }
                     .toList()
             }
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
+        }.stateIn(
+            domainImpl.scope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
     }
 
     /** the number of people currently watching the channel */
@@ -186,7 +189,12 @@ public class ChannelController internal constructor(
 
                     TypingEvent(channelId, userList)
                 }
-            }.stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
+            }
+            .stateIn(
+                domainImpl.scope,
+                SharingStarted.Eagerly,
+                TypingEvent(channelId, emptyList())
+            )
 
     /** how far every user in this channel has read */
     public val reads: StateFlow<List<ChannelUserRead>> = _reads
@@ -1323,8 +1331,8 @@ public class ChannelController internal constructor(
         this._watchers.value = (this._watchers.value + watchers.associateBy { it.id })
     }
 
-    private suspend fun incrementUnreadCountIfNecessary(message: Message) {
-        domainImpl.user.filterNotNull().collect { currentUser ->
+    private fun incrementUnreadCountIfNecessary(message: Message) {
+        domainImpl.user.value?.let { currentUser ->
             val currentUserId = currentUser.id
             if (message.shouldIncrementUnreadCount(currentUserId)) {
                 val newUnreadCount = _unreadCount.value + 1

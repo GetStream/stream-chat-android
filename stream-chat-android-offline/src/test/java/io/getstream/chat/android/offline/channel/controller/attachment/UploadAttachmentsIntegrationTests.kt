@@ -22,8 +22,10 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -46,21 +48,19 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
     private val channelId: String = randomString()
     private lateinit var channelController: ChannelController
 
-    private lateinit var domainImpl: ChatDomainImpl
-
     @Before
     override fun setup() {
         super.setup()
         Shadows.shadowOf(MimeTypeMap.getSingleton())
 
-        domainImpl = mock {
+        val domainImpl = mock<ChatDomainImpl> {
             on(it.scope) doReturn testCoroutines.scope
             on(it.generateMessageId(any())) doReturn randomString()
-            on(it.currentUser) doReturn User()
             on(it.repos) doReturn repositoryFacade
             on(it.isOnline()) doReturn true
             on(it.getActiveQueries()) doReturn emptyList()
             on(it.client) doReturn chatClient
+            on(it.user) doReturn MutableStateFlow(randomUser())
         }
 
         channelController = ChannelController(channelType, channelId, chatClient, domainImpl)

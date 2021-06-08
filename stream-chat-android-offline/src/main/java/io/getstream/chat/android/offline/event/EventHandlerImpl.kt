@@ -396,8 +396,7 @@ internal class EventHandlerImpl(
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
-            .forEach {
-                val (cid, eventList) = it
+            .forEach { (cid, eventList) ->
                 if (domainImpl.isActiveChannel(cid)) {
                     domainImpl.channel(cid).handleEvents(eventList)
                 }

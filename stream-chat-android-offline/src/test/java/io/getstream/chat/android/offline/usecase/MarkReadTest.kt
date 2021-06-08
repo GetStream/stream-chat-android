@@ -80,7 +80,10 @@ internal class MarkReadTest {
 
     @Test
     fun `Given valid cid Should invoke markRead() on ChannelController`() = runBlockingTest {
-        val channelController = mock<ChannelController>()
+        val channelController = mock<ChannelController> {
+            on(it.markRead()) doReturn false
+        }
+
         val cid = randomCID()
         whenever(chatDomain.channel(cid)) doReturn channelController
 
