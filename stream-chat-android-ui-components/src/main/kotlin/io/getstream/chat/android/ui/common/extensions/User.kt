@@ -9,15 +9,15 @@ import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 
 public fun User.getLastSeenText(context: Context): String {
     if (online) {
-        return context.getString(R.string.stream_ui_message_list_header_online)
+        return context.getString(R.string.stream_ui_user_status_online)
     }
 
     return (lastActive ?: updatedAt ?: createdAt)?.let {
         if (it.isInLastMinute()) {
-            context.getString(R.string.stream_ui_message_list_header_last_seen_just_now)
+            context.getString(R.string.stream_ui_user_status_last_seen_just_now)
         } else {
             context.getString(
-                R.string.stream_ui_message_list_header_last_seen_template,
+                R.string.stream_ui_user_status_last_seen,
                 DateUtils.getRelativeTimeSpanString(it.time).toString()
             )
         }

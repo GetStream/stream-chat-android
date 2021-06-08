@@ -79,7 +79,7 @@ internal class MediaAttachmentAdapter(
             if (attachment.type == ModelType.attach_video) {
                 binding.mediaThumbnailImageView.loadVideoThumbnail(
                     uri = attachment.uri,
-                    placeholderResId = R.drawable.stream_placeholder
+                    placeholderResId = R.drawable.stream_ui_placeholder,
                 )
                 val color = ContextCompat.getColor(itemView.context, R.color.stream_ui_white_smoke)
                 binding.mediaThumbnailImageView.setBackgroundColor(color)

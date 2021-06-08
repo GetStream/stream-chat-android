@@ -25,7 +25,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/stream_ui_content_description_back_button"
+            android:contentDescription="@string/stream_ui_message_list_header_back_button_content_description"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_arrow_left"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -102,7 +102,7 @@
                 android:id="@+id/connectingTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stream_ui_message_list_header_searching_for_network"
+                android:text="@string/stream_ui_message_list_header_disconnected"
                 android:textAppearance="@style/StreamUiTextAppearance.Footnote"
                 />
 
@@ -133,7 +133,7 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/stream_ui_message_list_header_try_again"
+                android:text="@string/stream_ui_message_list_header_retry"
                 android:textColor="@color/stream_ui_accent_blue"
                 />
         </LinearLayout>
