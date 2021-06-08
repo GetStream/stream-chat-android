@@ -15,6 +15,8 @@ private fun filterTagLink(line: String): String {
     var removalEnd = 0
     var contentInit = 0
     var contentEnd = 0
+    var linkInit = 0
+    var linkEnd = 0
 
     var tagState = TagState.NO_TAG
 
@@ -29,6 +31,12 @@ private fun filterTagLink(line: String): String {
                 tagState = TagState.OUTSIDE_HTML_TAG
             }
 
+            tagState == TagState.NO_TAG && char == '[' -> {
+                tagState = TagState.INSIDE_MD_LINK_CONTENT
+                removalInit = i
+                contentInit = i + 1
+            }
+
             tagState == TagState.OUTSIDE_HTML_TAG && char == '[' -> {
                 tagState = TagState.INSIDE_MD_LINK_CONTENT
                 contentInit = i + 1
@@ -41,14 +49,20 @@ private fun filterTagLink(line: String): String {
 
             tagState == TagState.OUTSIDE_MD_LINK_CONTENT && char == '(' -> {
                 tagState = TagState.INSIDE_LINK
+                linkInit = i + 1
             }
 
             tagState == TagState.INSIDE_LINK && char == ')' -> {
                 tagState = TagState.NO_TAG
+                linkEnd = i
                 removalEnd = i
 
                 val content = line.substring(contentInit, contentEnd)
-                return "${line.substring(0, removalInit)}$content${line.substring(removalEnd + 1, line.length)}"
+                val linkContent = line.substring(linkInit, linkEnd)
+
+                if (isRemovableLink(linkContent)) {
+                    return "${line.substring(0, removalInit)}$content${line.substring(removalEnd + 1, line.length)}"
+                }
             }
         }
 
@@ -73,7 +87,7 @@ private fun hasRemovableIndexLink(line: String): Boolean {
                 tagState = TagState.OUTSIDE_HTML_TAG
             }
 
-            tagState == TagState.OUTSIDE_HTML_TAG && char == '[' -> {
+            tagState == TagState.OUTSIDE_HTML_TAG || tagState == TagState.NO_TAG && char == '[' -> {
                 tagState = TagState.INSIDE_MD_LINK_CONTENT
             }
 
@@ -93,10 +107,7 @@ private fun hasRemovableIndexLink(line: String): Boolean {
 
                 val linkContent = line.substring(linkInit, linkEnd)
 
-                if (linkContent.contains(".md") &&
-                    !linkContent.contains("index.md") ||
-                    linkContent.contains("FFunctions")
-                ) {
+                if (isRemovableLink(linkContent)) {
                     return true
                 }
             }
@@ -104,6 +115,12 @@ private fun hasRemovableIndexLink(line: String): Boolean {
     }
 
     return false
+}
+
+private fun isRemovableLink(linkContent: String): Boolean {
+    return linkContent.contains(".md") &&
+        !linkContent.contains("index.md") ||
+        linkContent.contains("FFunctions")
 }
 
 enum class TagState {
