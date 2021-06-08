@@ -47,6 +47,10 @@ private fun filterTagLink(line: String): String {
                 contentEnd = i
             }
 
+            tagState == TagState.OUTSIDE_MD_LINK_CONTENT && char != '(' -> {
+                tagState = TagState.NO_TAG
+            }
+
             tagState == TagState.OUTSIDE_MD_LINK_CONTENT && char == '(' -> {
                 tagState = TagState.INSIDE_LINK
                 linkInit = i + 1
@@ -93,6 +97,10 @@ private fun hasRemovableIndexLink(line: String): Boolean {
 
             tagState == TagState.INSIDE_MD_LINK_CONTENT && char == ']' -> {
                 tagState = TagState.OUTSIDE_MD_LINK_CONTENT
+            }
+
+            tagState == TagState.OUTSIDE_MD_LINK_CONTENT && char != '(' -> {
+                tagState = TagState.NO_TAG
             }
 
             tagState == TagState.OUTSIDE_MD_LINK_CONTENT && char == '(' -> {
