@@ -673,6 +673,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
+        logger.logW("handleSendMessageSuccess with message id ${processedMessage.id}")
         return processedMessage.apply { enrichWithCid(this.cid) }
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also { domainImpl.repos.insertMessage(it) }
@@ -998,6 +999,7 @@ public class ChannelController internal constructor(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
+                logger.logW("NewMessageEvent with message id ${event.message.id}")
                 upsertEventMessage(event.message)
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
