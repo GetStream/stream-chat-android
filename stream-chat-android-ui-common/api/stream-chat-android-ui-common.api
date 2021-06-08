@@ -366,6 +366,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
+	public final fun getCurrentUserLd ()Landroidx/lifecycle/LiveData;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
 	public final fun getLogger ()Lio/getstream/chat/android/client/logger/TaggedLogger;
