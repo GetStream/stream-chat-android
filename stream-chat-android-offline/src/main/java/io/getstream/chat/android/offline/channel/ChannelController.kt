@@ -560,75 +560,84 @@ public class ChannelController internal constructor(
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
-
     internal suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
-        if (attachmentTransformer != null) {
-            val online = domainImpl.isOnline()
-            val newMessage = message.copy()
-            val hasAttachments = newMessage.attachments.isNotEmpty()
-
-            // set defaults for id, cid and created at
-            if (newMessage.id.isEmpty()) {
-                newMessage.id = domainImpl.generateMessageId()
-            }
-            if (newMessage.cid.isEmpty()) {
-                newMessage.enrichWithCid(cid)
-            }
-
-            newMessage.user = domainImpl.currentUser
-
-            newMessage.attachments.forEach { attachment ->
-                attachment.uploadId = generateUploadId()
-                attachment.uploadState = Attachment.UploadState.InProgress
-            }
-
-            newMessage.type = getMessageType(message)
-            newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-            newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-
-            var uploadStatusMessage: Message? = null
-
-            if (hasAttachments) {
-                uploadStatusMessage = newMessage
-            }
-
-            // Update flow in channel controller
-            upsertMessage(newMessage)
-            // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-            // Update flow for currently running queries
-            for (query in domainImpl.getActiveQueries()) {
-                query.refreshChannel(cid)
-            }
-
-            // we insert early to ensure we don't lose messages
-            domainImpl.repos.insertMessage(newMessage)
-            domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-
-            return if (online) {
-                // upload attachments
-                if (hasAttachments) {
-                    logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
-
-                    newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
-
-                    uploadStatusMessage?.let { cancelEphemeralMessage(it) }
-                }
-
-                newMessage.type = "regular"
-
-                logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-                domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
-                    .mapSuspend(::handleSendMessageSuccess)
-                    .mapErrorSuspend { handleSendMessageFail(newMessage, it) }
-            } else {
-                logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
-                Result(newMessage)
-            }
+        return if (attachmentTransformer != null) {
+            sendMessage(message, attachmentTransformer)
         } else {
-            return MessageSendingService.instance().sendMessage(message, cid, domainImpl, this, channelClient)
+            sendMessage(message)
+        }
+    }
+
+    private suspend fun sendMessage(message: Message): Result<Message> =
+        MessageSendingService.instance().sendMessage(message, cid, domainImpl, this, channelClient)
+
+    private suspend fun sendMessage(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment),
+    ): Result<Message> {
+        val online = domainImpl.isOnline()
+        val newMessage = message.copy()
+        val hasAttachments = newMessage.attachments.isNotEmpty()
+
+        // set defaults for id, cid and created at
+        if (newMessage.id.isEmpty()) {
+            newMessage.id = domainImpl.generateMessageId()
+        }
+        if (newMessage.cid.isEmpty()) {
+            newMessage.enrichWithCid(cid)
+        }
+
+        newMessage.user = domainImpl.currentUser
+
+        newMessage.attachments.forEach { attachment ->
+            attachment.uploadId = generateUploadId()
+            attachment.uploadState = Attachment.UploadState.InProgress
+        }
+
+        newMessage.type = getMessageType(message)
+        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
+        newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+
+        var uploadStatusMessage: Message? = null
+
+        if (hasAttachments) {
+            uploadStatusMessage = newMessage
+        }
+
+        // Update flow in channel controller
+        upsertMessage(newMessage)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update flow for currently running queries
+        for (query in domainImpl.getActiveQueries()) {
+            query.refreshChannel(cid)
+        }
+
+        // we insert early to ensure we don't lose messages
+        domainImpl.repos.insertMessage(newMessage)
+        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+
+        return if (online) {
+            // upload attachments
+            if (hasAttachments) {
+                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
+                newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
+
+                uploadStatusMessage?.let { cancelEphemeralMessage(it) }
+            }
+
+            newMessage.type = "regular"
+
+            logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
+            domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+                .mapSuspend(::handleSendMessageSuccess)
+                .mapErrorSuspend { handleSendMessageFail(newMessage, it) }
+        } else {
+            logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
+            Result(newMessage)
         }
     }
 
