@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.sidebar
 
+import com.getstream.sdk.chat.sidebar.utils.substituteLinesInFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
@@ -10,8 +11,6 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.copyTo
-import kotlin.io.path.writer
 
 @ExperimentalPathApi
 abstract class GenerateSidebar : DefaultTask() {
@@ -55,11 +54,13 @@ abstract class GenerateSidebar : DefaultTask() {
 
         createSidebarFiles(dokkaFileTree, modulesToInclude, removeFromLabel)
         fixDirectoriesForMultiModule(modulesToInclude, inputFile)
+        fixNavigationLinks(dokkaFileTree, modulesToInclude)
         copyDirectories(modulesToInclude, inputFile, outputFile)
 
         println("_category_.json files created")
     }
 
+    //This should not be necessary if using multi module for Dokka.
     private fun fixDirectoriesForMultiModule(modulesToInclude: List<String>, inputDir: File) {
         modulesToInclude.map { module ->
             Triple(
@@ -74,7 +75,7 @@ abstract class GenerateSidebar : DefaultTask() {
     }
 
     private fun fixIndexFile(indexFile: File, module: String) {
-        indexFile.substituteInFile { line -> line.replace("$module/", "") }
+        indexFile.substituteLinesInFile { line -> line.replace("$module/", "") }
     }
 
     private fun copyDirectories(modulesToInclude: List<String>, inputDir: File, outputFile: File) {
@@ -100,19 +101,17 @@ abstract class GenerateSidebar : DefaultTask() {
             .forEach(::removeNotIndexLinksFromFile)
     }
 
-    private fun removeNotIndexLinksFromFile(file: File) {
-        file.substituteInFile(::filterTagLinks)
+    private fun fixNavigationLinks(fileTree: FileTree, modulesToInclude: List<String>) {
+        fileTree.asSequence()
+            .filter { file ->
+                modulesToInclude.any(file.absolutePath::contains) && file.name.contains("index.md")
+            }
+            .forEach { file ->
+                fixFirstIndexLinksForFile(file, modulesToInclude)
+            }
     }
 
-    private fun File.substituteInFile(func: (String) -> String) {
-        val tempFile = kotlin.io.path.createTempFile()
-
-        tempFile.writer().use { writer ->
-            forEachLine { line ->
-                writer.appendLine(func(line))
-            }
-        }
-
-        tempFile.copyTo(toPath(), overwrite = true)
+    private fun removeNotIndexLinksFromFile(file: File) {
+        file.substituteLinesInFile(::filterTagLinks)
     }
 }

@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.sidebar
 fun filterTagLinks(line: String): String {
     var currentLine = line
 
-    while (hasNonIndexLink(currentLine)) {
+    while (hasRemovableIndexLink(currentLine)) {
         currentLine = filterTagLink(currentLine)
     }
 
@@ -57,7 +57,7 @@ private fun filterTagLink(line: String): String {
     return line
 }
 
-private fun hasNonIndexLink(line: String): Boolean {
+private fun hasRemovableIndexLink(line: String): Boolean {
     var tagState = TagState.NO_TAG
 
     var linkInit = 0
@@ -93,7 +93,10 @@ private fun hasNonIndexLink(line: String): Boolean {
 
                 val linkContent = line.substring(linkInit, linkEnd)
 
-                if (linkContent.contains(".md") && !linkContent.contains("index.md")) {
+                if (linkContent.contains(".md") &&
+                    !linkContent.contains("index.md") ||
+                    linkContent.contains("FFunctions")
+                ) {
                     return true
                 }
             }
