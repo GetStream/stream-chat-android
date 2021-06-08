@@ -15,4 +15,4 @@ internal fun User.isCurrentUser(): Boolean {
 }
 
 internal fun User.asMention(context: Context): String =
-    context.getString(R.string.stream_ui_mention_user_name_template, name)
+    context.getString(R.string.stream_ui_mention, name)

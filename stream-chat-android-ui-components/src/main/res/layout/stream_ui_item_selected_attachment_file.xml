@@ -65,7 +65,7 @@
         android:cropToPadding="true"
         android:padding="6dp"
         android:scaleType="center"
-        android:src="@drawable/stream_ic_close"
+        android:src="@drawable/stream_ui_ic_close"
         android:tint="@color/stream_ui_white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

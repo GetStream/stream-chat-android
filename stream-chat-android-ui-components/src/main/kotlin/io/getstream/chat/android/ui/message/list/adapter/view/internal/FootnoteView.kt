@@ -66,7 +66,7 @@ internal class FootnoteView : ConstraintLayout {
             threadsOrnamentRight.isVisible = isMine
 
             threadRepliesButton.text =
-                resources.getQuantityString(R.plurals.stream_ui_thread_messages_indicator, replyCount, replyCount)
+                resources.getQuantityString(R.plurals.stream_ui_message_list_thread_reply, replyCount, replyCount)
             style.textStyleThreadCounter.apply(threadRepliesButton)
         }
         setupUserAvatars(isMine, threadParticipants)

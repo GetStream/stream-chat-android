@@ -2,6 +2,8 @@ package io.getstream.chat.docs.kotlin
 
 import android.content.Context
 import android.content.Intent
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
@@ -45,6 +47,42 @@ class Push(val context: Context, val client: ChatClient) {
                 .notifications(notificationHandler)
                 .build()
         }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
+         */
+        inner class CustomChatNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
+            ChatNotificationHandler(context, notificationConfig) {
+
+            override fun onFirebaseMessage(message: RemoteMessage): Boolean {
+                // Handle remote message and return true if message should be handled by SDK
+                return true
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
+         */
+        inner class CustomFirebaseMessagingService : FirebaseMessagingService() {
+
+            override fun onNewToken(token: String) {
+                // Update device's token on Stream backend
+                try {
+                    ChatClient.setFirebaseToken(token)
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+
+            override fun onMessageReceived(message: RemoteMessage) {
+                try {
+                    // Handle RemoteMessage sent from Stream backend
+                    ChatClient.handleRemoteMessage(message)
+                } catch (exception: IllegalStateException) {
+                    // ChatClient was not initialized
+                }
+            }
+        }
     }
 
     /**
@@ -69,30 +107,6 @@ class Push(val context: Context, val client: ChatClient) {
             const val EXTRA_MESSAGE_ID = "extra_message_id"
         }
     }
-
-    // Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
-    /**
-     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
-     */
-    // class CustomFirebaseMessagingService : FirebaseMessagingService() {
-    //     private val pushDataSyncHandler: PushMessageSyncHandler =
-    //         PushMessageSyncHandler(this)
-    //
-    //     override fun onNewToken(token: String) {
-    //         // update device's token on Stream backend
-    //         pushDataSyncHandler.onNewToken(token)
-    //     }
-    //
-    //     override fun onMessageReceived(message: RemoteMessage) {
-    //         if (pushDataSyncHandler.isStreamMessage(message)) {
-    //             // handle RemoteMessage sent from Stream backend
-    //             pushDataSyncHandler.onMessageReceived(message)
-    //         } else {
-    //             // handle RemoteMessage from other source
-    //         }
-    //         stopSelf()
-    //     }
-    // }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin">Device</a>

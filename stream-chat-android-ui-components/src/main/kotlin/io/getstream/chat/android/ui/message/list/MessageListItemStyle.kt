@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property iconIndicatorSent - icon for message's sent status. Default - [R.drawable.stream_ui_ic_check_single]
  * @property iconIndicatorRead - icon for message's read status. Default - [R.drawable.stream_ui_ic_check_double]
  * @property iconIndicatorPendingSync - icon for message's pending status. Default - [R.drawable.stream_ui_ic_clock]
+ * @property iconOnlyVisibleToYou - icon for message's pending status. Default - [R.drawable.stream_ui_ic_icon_eye_off]
  * @property textStyleMessageDeleted - appearance for message deleted text
  * @property messageDeletedBackground - background color for deleted message. Default - [R.color.stream_ui_grey_whisper]
  * @property messageStrokeColorMine - stroke color for message sent by the current user. Default - [MESSAGE_STROKE_COLOR_MINE]
@@ -94,6 +95,7 @@ public data class MessageListItemStyle(
     public val iconIndicatorSent: Drawable,
     public val iconIndicatorRead: Drawable,
     public val iconIndicatorPendingSync: Drawable,
+    public val iconOnlyVisibleToYou: Drawable,
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
     @ColorInt public val messageStrokeColorMine: Int,
@@ -385,6 +387,10 @@ public data class MessageListItemStyle(
                 R.styleable.MessageListView_streamUiIconIndicatorPendingSync
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clock)!!
 
+            val iconOnlyVisibleToYou = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiIconOnlyVisibleToYou
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_icon_eye_off)!!
+
             val messageDeletedBackground =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiDeletedMessageBackgroundColor,
@@ -487,6 +493,7 @@ public data class MessageListItemStyle(
                 iconIndicatorSent = iconIndicatorSent,
                 iconIndicatorRead = iconIndicatorRead,
                 iconIndicatorPendingSync = iconIndicatorPendingSync,
+                iconOnlyVisibleToYou = iconOnlyVisibleToYou,
                 messageDeletedBackground = messageDeletedBackground,
                 textStyleMessageDeleted = textStyleMessageDeleted,
                 messageStrokeColorMine = messageStrokeColorMine,

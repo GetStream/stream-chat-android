@@ -1654,6 +1654,7 @@ public class ChatClient internal constructor(
          *
          * @return true if message can be handled
          */
+        @JvmStatic
         public fun isValidRemoteMessage(
             remoteMessage: RemoteMessage,
             defaultNotificationConfig: NotificationConfig = NotificationConfig(),
@@ -1673,6 +1674,7 @@ public class ChatClient internal constructor(
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
+        @JvmStatic
         public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
             ensureClientInitialized().run {
                 setUserWithoutConnectingIfNeeded()
@@ -1696,13 +1698,14 @@ public class ChatClient internal constructor(
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
+        @JvmStatic
         public fun setFirebaseToken(token: String) {
             ensureClientInitialized().notifications.setFirebaseToken(token)
         }
 
         @Throws(IllegalStateException::class)
         private fun ensureClientInitialized(): ChatClient {
-            require(isInitialized) { "ChatClient should be initialized first!" }
+            check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
         }
     }

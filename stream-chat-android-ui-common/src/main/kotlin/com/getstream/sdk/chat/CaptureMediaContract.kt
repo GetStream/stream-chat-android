@@ -36,7 +36,7 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
             }
         val intents = takePictureIntents + recordVideoIntents
         val initialIntent = intents.lastOrNull() ?: Intent()
-        return Intent.createChooser(initialIntent, context.getString(R.string.stream_input_camera_title))
+        return Intent.createChooser(initialIntent, context.getString(R.string.stream_ui_message_input_capture_media))
             .apply {
                 putExtra(
                     Intent.EXTRA_INITIAL_INTENTS,

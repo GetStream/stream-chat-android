@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
+import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
@@ -14,6 +15,7 @@ internal class GiphyViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     listeners: MessageListListenerContainer,
+    private val style: GiphyViewHolderStyle,
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -38,6 +40,7 @@ internal class GiphyViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
+        applyStyle()
         data.message
             .attachments
             .firstOrNull()
@@ -46,6 +49,25 @@ internal class GiphyViewHolder(
         binding.giphyQueryTextView.text = data.message
             .text
             .replace(GIPHY_PREFIX, "")
+    }
+
+    private fun applyStyle() {
+        binding.apply {
+            cardView.setCardBackgroundColor(style.cardBackgroundColor)
+            cardView.elevation = style.cardElevation
+
+            horizontalDivider.setBackgroundColor(style.cardButtonDividerColor)
+            verticalDivider1.setBackgroundColor(style.cardButtonDividerColor)
+            verticalDivider2.setBackgroundColor(style.cardButtonDividerColor)
+
+            giphyIconImageView.setImageDrawable(style.giphyIcon)
+
+            style.labelTextStyle.apply(giphyLabelTextView)
+            style.queryTextStyle.apply(giphyQueryTextView)
+            style.cancelButtonTextStyle.apply(cancelButton)
+            style.shuffleButtonTextStyle.apply(shuffleButton)
+            style.sendButtonTextStyle.apply(sendButton)
+        }
     }
 
     private companion object {

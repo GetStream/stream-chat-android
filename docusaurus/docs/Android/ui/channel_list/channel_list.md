@@ -3,6 +3,11 @@ id: ui-channel-list-creating-layout
 title: Creating Layout
 sidebar_position: 1
 ---
+
+<!-- This whole page needs more information -->
+<!-- TODO: Add screen shots of what this page looks like with a default styles. -->
+
+<!-- Do they have to work together or can they be used separately?s -->
 The SDK provides two views: `ChannelListHeaderView` and `ChannelListView` which work best together to display the channel and other useful information.
 
 ```xml
@@ -35,3 +40,5 @@ The SDK provides two views: `ChannelListHeaderView` and `ChannelListView` which 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+
+<!-- This page is too small to warrant being its own page, probably. We should merge this. -->

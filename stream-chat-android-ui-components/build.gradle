@@ -98,9 +98,6 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
-
-    dokkaHtmlPlugin(Dependencies.dokkasaurus)
-    dokkaHtmlPartialPlugin(Dependencies.dokkasaurus)
 }
 
 tasks.register('dokkaDokkasaurus', DokkaTask) {

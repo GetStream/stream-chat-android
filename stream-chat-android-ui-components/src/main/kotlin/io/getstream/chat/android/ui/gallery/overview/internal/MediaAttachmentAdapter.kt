@@ -44,7 +44,7 @@ internal class MediaAttachmentAdapter(
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
             binding.mediaImageView.load(
                 data = attachmentGalleryItem.attachment.imagePreviewUrl,
-                placeholderResId = R.drawable.stream_placeholder,
+                placeholderResId = R.drawable.stream_ui_placeholder,
             )
 
             val user = attachmentGalleryItem.user

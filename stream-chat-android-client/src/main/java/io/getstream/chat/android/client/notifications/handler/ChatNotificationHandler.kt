@@ -45,7 +45,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     /**
-     * Override this method to customize remote message handling
+     * Handles showing notification after receiving [RemoteMessage].
+     * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
      *
      * @return false if remote message should be handled internally
      */

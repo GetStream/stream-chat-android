@@ -316,7 +316,7 @@ public class ChannelListView : FrameLayout {
     private fun defaultLoadingView(): View = ProgressBar(context)
 
     private fun defaultEmptyStateView(): View = TextView(context).apply {
-        setText(R.string.stream_ui_channels_empty_state_label)
+        setText(R.string.stream_ui_channel_list_empty)
     }
 
     private fun configureDefaultMoreOptionsListener(context: Context) {

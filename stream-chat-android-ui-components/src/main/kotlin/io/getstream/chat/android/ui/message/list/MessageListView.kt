@@ -174,13 +174,13 @@ public class MessageListView : ConstraintLayout {
 
     private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
-            .setTitle(R.string.stream_ui_message_option_delete_confirmation_title)
-            .setMessage(R.string.stream_ui_message_option_delete_confirmation_message)
-            .setPositiveButton(R.string.stream_ui_message_option_delete_positive_button) { dialog, _ ->
+            .setTitle(R.string.stream_ui_message_list_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_message_list_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_list_delete_confirmation_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 confirmCallback()
             }
-            .setNegativeButton(R.string.stream_ui_message_option_delete_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_message_list_delete_confirmation_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -188,13 +188,13 @@ public class MessageListView : ConstraintLayout {
 
     private var confirmFlagMessageHandler = ConfirmFlagMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
-            .setTitle(R.string.stream_ui_message_option_flag_confirmation_title)
-            .setMessage(R.string.stream_ui_message_option_flag_confirmation_message)
-            .setPositiveButton(R.string.stream_ui_message_option_flag_positive_button) { dialog, _ ->
+            .setTitle(R.string.stream_ui_message_list_flag_confirmation_title)
+            .setMessage(R.string.stream_ui_message_list_flag_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_list_flag_confirmation_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 confirmCallback()
             }
-            .setNegativeButton(R.string.stream_ui_message_option_flag_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_message_list_flag_confirmation_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -354,7 +354,7 @@ public class MessageListView : ConstraintLayout {
             attachmentDownloadHandler.onAttachmentDownload(attachment)
             Toast.makeText(
                 context,
-                context.getString(R.string.stream_ui_attachment_downloading_started),
+                context.getString(R.string.stream_ui_message_list_download_started),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -581,6 +581,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
         messageListItemViewHolderFactory.setMessageListItemStyle(messageListViewStyle.itemStyle)
+        messageListItemViewHolderFactory.setGiphyViewHolderStyle(messageListViewStyle.giphyViewHolderStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)

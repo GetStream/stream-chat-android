@@ -44,7 +44,7 @@ internal class CameraAttachmentFragment : Fragment() {
     private fun setupViews() {
         binding.grantPermissionsInclude.apply {
             grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_camera)
-            grantPermissionsTextView.setText(R.string.stream_ui_attachment_dialog_permission_camera)
+            grantPermissionsTextView.setText(R.string.stream_ui_message_input_camera_access)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
