@@ -115,9 +115,6 @@ dependencies {
     androidTestImplementation Dependencies.kluent
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
-
-    dokkaHtmlPlugin(Dependencies.dokkasaurus)
-    dokkaHtmlPartialPlugin(Dependencies.dokkasaurus)
 }
 
 tasks.register('dokkaDokkasaurus', DokkaTask) {

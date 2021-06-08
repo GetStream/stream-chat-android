@@ -56,10 +56,12 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getVersion ()Ljava/lang/String;
+	public static final fun handleRemoteMessage (Lcom/google/firebase/messaging/RemoteMessage;)V
 	public final fun hideChannel (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun hideChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun instance ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun isSocketConnected ()Z
+	public static final fun isValidRemoteMessage (Lcom/google/firebase/messaging/RemoteMessage;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)Z
 	public final fun markAllRead ()Lio/getstream/chat/android/client/call/Call;
 	public final fun markMessageRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun markRead (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -107,6 +109,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun setAnonymousUser (Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
 	public static synthetic fun setAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
+	public static final fun setFirebaseToken (Ljava/lang/String;)V
 	public final fun setGuestUser (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
 	public static synthetic fun setGuestUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
