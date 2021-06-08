@@ -16,16 +16,22 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.TestObserver
 import io.getstream.chat.android.ui.createUser
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class ChannelListViewModelTest {
+
+    @get:Rule
+    val testCoroutines = TestCoroutineRule()
 
     @Test
     fun `Should display channels when there are channels available`() {
@@ -52,7 +58,7 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Should load more channels when list is scrolled to the end region`() {
+    fun `Should load more channels when list is scrolled to the end region`(): Unit = runBlocking {
         // given
         val viewModel = Fixture()
             .givenInitialChannelList(mockChannels)
@@ -92,6 +98,7 @@ private class Fixture {
 
     init {
         whenever(chatDomain.user) doReturn MutableStateFlow(user)
+        whenever(chatDomain.user) doReturn MutableStateFlow(user)
         whenever(
             chatDomain.queryChannels(
                 any(),
@@ -106,6 +113,8 @@ private class Fixture {
         whenever(queryChannelsController.channelsState) doReturn channelsState
         whenever(queryChannelsController.loading) doReturn MutableStateFlow(true)
         whenever(queryChannelsController.loadingMore) doReturn MutableStateFlow(false)
+        whenever(queryChannelsController.loadingMore) doReturn MutableStateFlow(false)
+        whenever(queryChannelsController.endOfChannels) doReturn MutableStateFlow(false)
     }
 
     fun givenNoChannelsAvailable(): Fixture = apply {
@@ -120,6 +129,7 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
+        whenever(queryChannelsController.endOfChannels) doReturn MutableStateFlow(true)
         whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue()) doAnswer {
             val channels = channelsLiveData.value + moreChannels

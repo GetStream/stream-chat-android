@@ -112,7 +112,7 @@ internal class MessageListItemLiveDataTest {
     fun `Should exclude the current user`() {
         val messageListItemLd = emptyMessages()
         val typing = listOf(currentUser)
-        messageListItemLd.typingChanged(typing)
+        messageListItemLd.handleTypingUsersChange(typing, currentUser)
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items).isEmpty()
     }

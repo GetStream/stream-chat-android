@@ -95,20 +95,23 @@ internal class MessageListItemLiveData(
     }
 
     private fun configTypingChange(typingLd: LiveData<List<User>>, getCurrentUser: LiveData<User?>) {
-        val typingChange = getCurrentUser.changeOnUserLoaded(typingLd) { typingUsers, currentUser ->
-            val newTypingUsers = typingUsers.filter { typingUser ->
-                typingUser.id != currentUser?.id
-            }
-
-            if (newTypingUsers != typingUsers) {
-                typingChanged(newTypingUsers)
-            } else {
-                null
-            }
-        }
+        val typingChange: LiveData<MessageListItemWrapper?> =
+            getCurrentUser.changeOnUserLoaded(typingLd, ::handleTypingUsersChange)
 
         addSource(typingChange) { value ->
             value?.let { this.value = it }
+        }
+    }
+
+    internal fun handleTypingUsersChange(typingUsers: List<User>, currentUser: User?): MessageListItemWrapper? {
+        val newTypingUsers = typingUsers.filter { typingUser ->
+            typingUser.id != currentUser?.id
+        }
+
+        return if (newTypingUsers != typingUsers) {
+            typingChanged(newTypingUsers)
+        } else {
+            null
         }
     }
 
