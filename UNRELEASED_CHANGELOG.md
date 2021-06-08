@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed thrown exception type while checking if `ChatClient` is initialized
 
 ### ⬆️ Improved
 
