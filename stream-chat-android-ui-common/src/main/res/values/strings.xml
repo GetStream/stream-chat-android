@@ -21,7 +21,4 @@
 
     <!--Attachment Display-->
     <string name="stream_ui_attachment_display_error">Error. File can\'t be displayed</string>
-
-    <!-- Hint default message -->
-    <string name="stream_ui_message_input_default_hint">Write something here</string>
 </resources>

@@ -87,7 +87,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     private fun showMoreCount(andMoreCount: Int) {
         binding.moreCount.isVisible = true
         binding.moreCountLabel.text =
-            context.resources.getString(R.string.stream_ui_attachments_more_count_prefix, andMoreCount)
+            context.resources.getString(R.string.stream_ui_message_list_attachment_more_count, andMoreCount)
     }
 
     fun setImageShapeByCorners(

@@ -27,7 +27,7 @@ internal class ThreadSeparatorViewHolder(
         super.bindData(data, diff)
 
         binding.threadSeparatorLabel.text = context.resources.getQuantityString(
-            R.plurals.stream_ui_thread_separator_replies_label,
+            R.plurals.stream_ui_message_list_thread_separator,
             data.messageCount,
             data.messageCount,
         )

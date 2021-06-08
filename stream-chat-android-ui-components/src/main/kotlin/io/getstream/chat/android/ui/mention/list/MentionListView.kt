@@ -83,7 +83,7 @@ public class MentionListView : ViewFlipper {
     }
 
     public fun showError() {
-        Toast.makeText(context, R.string.stream_ui_mentions_list_error, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.stream_ui_mention_list_error, Toast.LENGTH_SHORT).show()
     }
 
     public fun setMentionSelectedListener(mentionSelectedListener: MentionSelectedListener?) {

@@ -86,7 +86,7 @@ public class MessageListHeaderView : FrameLayout {
         reduceHeaderState(
             isTitleEnabled = true,
             normalModeTitle = title,
-            threadModeSubtitle = context.getString(R.string.stream_ui_subtitle_thread, title)
+            threadModeSubtitle = context.getString(R.string.stream_ui_message_list_header_thread_subtitle, title)
         )
     }
 
@@ -416,7 +416,7 @@ public class MessageListHeaderView : FrameLayout {
                 isThread = false,
                 isTitleEnabled = true,
                 normalModeTitle = String.EMPTY,
-                threadModeTitle = context.getString(R.string.stream_ui_title_thread_reply),
+                threadModeTitle = context.getString(R.string.stream_ui_message_list_header_thread_title),
                 isSubtitleEnabled = true,
                 normalModeSubtitle = String.EMPTY,
                 threadModeSubtitle = String.EMPTY,

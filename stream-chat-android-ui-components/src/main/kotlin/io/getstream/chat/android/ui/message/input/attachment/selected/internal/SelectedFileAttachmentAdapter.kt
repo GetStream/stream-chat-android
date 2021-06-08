@@ -41,7 +41,7 @@ internal class SelectedFileAttachmentAdapter(
                 ivFileThumb.loadAttachmentThumb(attachment)
                 tvFileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 if (item.size > attachmentMaxFileSize) {
-                    tvFileTitle.text = context.getString(R.string.stream_ui_file_too_big)
+                    tvFileTitle.text = context.getString(R.string.stream_ui_message_input_error_file_size)
                     tvFileTitle.setTextColor(ContextCompat.getColor(context, R.color.stream_ui_accent_red))
                 } else {
                     tvFileTitle.text = attachment.title

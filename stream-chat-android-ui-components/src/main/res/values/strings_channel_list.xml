@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">No channels available</string>
+    <string name="stream_ui_channel_list_you">You</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">View info</string>
+    <string name="stream_ui_channel_list_leave_channel">Leave Group</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">Cancel</string>
+    <string name="stream_ui_channel_list_delete_channel">Delete conversation</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="one">%1d Member, %2d Online</item>
+        <item quantity="other">%1d Members, %2d Online</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">Delete Channel</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">Are you sure you want to permanently delete this conversation?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">Delete</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">Cancel</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
+    <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
+</resources>
