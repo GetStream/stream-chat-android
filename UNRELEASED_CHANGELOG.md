@@ -97,5 +97,15 @@ Fixed bug where files without extension in their name lost the mime type.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
 
 ### ⚠️ Changed
+- Changed the naming of string resources. The updated names can be reviewed in:
+  - `strings_common.xml`
+  - `strings_attachment_gallery.xml`
+  - `strings_channel_list.xml`
+  - `strings_channel_list_header.xml`
+  - `strings_mention_list.xml`
+  - `strings_message_input.xml`
+  - `strings_message_list.xml`
+  - `strings_message_list_header.xml`
+  - `strings_search.xml`
 
 ### ❌ Removed

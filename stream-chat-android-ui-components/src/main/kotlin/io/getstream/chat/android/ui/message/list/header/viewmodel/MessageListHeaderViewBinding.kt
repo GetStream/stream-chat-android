@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 @JvmName("bind")
 public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, lifecycle: LifecycleOwner) {
     channelState.observe(lifecycle) {
-        view.setTitle(it.getDisplayName(view.context))
+        view.setTitle(it.getDisplayName(view.context, R.string.stream_ui_message_list_header_untitled_channel))
         view.setAvatar(it)
     }
 

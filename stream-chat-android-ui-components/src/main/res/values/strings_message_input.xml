@@ -11,11 +11,20 @@
     <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
 
     <!-- File Picker Dialog -->
-    <string name="stream_ui_message_input_permission_camera">Allow access to your Camera</string>
-    <string name="stream_ui_message_input_permission_file">Allow access to your Files</string>
-    <string name="stream_ui_message_input_permission_media">Allow access to your Gallery</string>
+    <string name="stream_ui_message_input_camera_access">Allow access to your Camera</string>
+    <string name="stream_ui_message_input_files_access">Allow access to your Files</string>
+    <string name="stream_ui_message_input_gallery_access">Allow access to your Gallery</string>
     <string name="stream_ui_message_input_recent_files">Recent Files</string>
     <string name="stream_ui_message_input_no_files">There is no photo or video.</string>
+    <string name="stream_ui_message_input_capture_media">Capture Image or Video</string>
+
+    <!-- System Permission Dialog -->
+    <string name="stream_ui_message_input_permission_camera_title">Camera and Storage Access Permission</string>
+    <string name="stream_ui_message_input_permission_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
+    <string name="stream_ui_message_input_permission_storage_title">Storage Access Permissions</string>
+    <string name="stream_ui_message_input_permission_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_ui_message_input_permission_setting_message">Enable permissions on App Settings</string>
+    <string name="stream_ui_message_input_permissions_setting_button">Settings</string>
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">File too big</string>

@@ -588,6 +588,8 @@ public final class io/getstream/chat/android/ui/common/UrlSigner$DefaultUrlSigne
 
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;)Ljava/lang/String;
+	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;I)Ljava/lang/String;
+	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;IILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/MemberKt {
