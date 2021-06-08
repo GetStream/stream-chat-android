@@ -100,28 +100,6 @@ internal class WhenSendMessage {
         )
     }
 
-    @Test
-    fun `Attachments should be sent with success as uploadState when request success`() = scope.runBlockingTest {
-        whenever(domainImpl.runAndRetry<Message>(any())) doAnswer {
-            (it.arguments[0] as () -> Call<Message>).invoke().execute()
-        }
-
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploadsSuccess(files)
-
-        channelController.sendMessage(Message(attachments = attachments))
-
-        verify(channelClient).sendMessage(
-            argThat { message ->
-                message.attachments.all { attach ->
-                    attach.uploadState is Attachment.UploadState.Success
-                }
-            }
-        )
-    }
-
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
             val result = Result<String>(ChatError())
