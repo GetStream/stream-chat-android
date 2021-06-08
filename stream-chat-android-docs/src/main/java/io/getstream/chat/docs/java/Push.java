@@ -54,33 +54,90 @@ public class Push {
             int errorCaseNotificationTitle = R.string.stream_chat_notification_title;
             int errorCaseNotificationContent = R.string.stream_chat_notification_content;
             boolean useProvidedFirebaseInstance = true;
+            int loadNotificationDataChannelName = R.string.stream_chat_load_notification_data_title;
+            int loadNotificationDataIcon = R.drawable.stream_ic_notification;
+            int loadNotificationDataTitle = R.string.stream_chat_load_notification_data_title;
+            int notificationGroupSummaryContentText = R.string.stream_chat_notification_group_summary_content_text;
+            int errorNotificationGroupSummaryTitle = R.string.stream_chat_error_notification_group_summary_content_text;
+            int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
+            boolean shouldGroupNotifications = true;
+            boolean pushNotificationsEnabled = true;
 
-            //TODO Docs will be updated in a separate task
-//            NotificationConfig notificationsConfig = new NotificationConfig(
-//                    notificationChannelId,
-//                    notificationChannelName,
-//                    smallIcon,
-//                    firebaseMessageIdKey,
-//                    firebaseMessageTextKey,
-//                    firebaseChannelIdKey,
-//                    firebaseChannelTypeKey,
-//                    firebaseChannelNameKey,
-//                    errorCaseNotificationTitle,
-//                    errorCaseNotificationContent,
-//                    useProvidedFirebaseInstance
-//            );
-//
-//            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
-//
-//            new ChatClient.Builder("{{ api_key }}", context)
-//                    .notifications(notificationHandler)
-//                    .build();
+            NotificationConfig notificationsConfig = new NotificationConfig(
+                    notificationChannelId,
+                    notificationChannelName,
+                    smallIcon,
+                    firebaseMessageIdKey,
+                    firebaseMessageTextKey,
+                    firebaseChannelIdKey,
+                    firebaseChannelTypeKey,
+                    firebaseChannelNameKey,
+                    errorCaseNotificationTitle,
+                    errorCaseNotificationContent,
+                    useProvidedFirebaseInstance,
+                    loadNotificationDataChannelName,
+                    loadNotificationDataIcon,
+                    loadNotificationDataTitle,
+                    notificationGroupSummaryContentText,
+                    errorNotificationGroupSummaryTitle,
+                    errorNotificationGroupSummaryContentText,
+                    shouldGroupNotifications,
+                    pushNotificationsEnabled
+            );
+
+            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
+
+            new ChatClient.Builder("{{ api_key }}", context)
+                    .notifications(notificationHandler)
+                    .build();
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
+         */
+        class CustomChatNotificationHandler extends ChatNotificationHandler {
+
+            public CustomChatNotificationHandler(@NotNull Context context, @NotNull NotificationConfig config) {
+                super(context, config);
+            }
+
+            @Override
+            public boolean onFirebaseMessage(@NotNull RemoteMessage message) {
+                // Handle remote message and return true if message should be handled by SDK
+                return true;
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
+         */
+        class CustomFirebaseMessagingService extends FirebaseMessagingService {
+
+            @Override
+            public void onNewToken(@NotNull String token) {
+                // Update device's token on Stream backend
+                try {
+                    ChatClient.setFirebaseToken(token);
+                } catch (IllegalStateException exception) {
+                    // ChatClient was not initialized
+                }
+            }
+
+            @Override
+            public void onMessageReceived(@NotNull  RemoteMessage message) {
+                try {
+                    // Handle RemoteMessage sent from Stream backend
+                    ChatClient.handleRemoteMessage(message);
+                } catch (IllegalStateException exception) {
+                    // ChatClient was not initialized
+                }
+            }
         }
     }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#redirection-from-notification-to-app">Redirection from notification to app
-    </a>
+     * </a>
      */
     class MyNotificationHandler extends ChatNotificationHandler {
 
