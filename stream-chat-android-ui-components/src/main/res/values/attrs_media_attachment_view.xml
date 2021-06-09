@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MediaAttachmentView -->
+    <declare-styleable name="MediaAttachmentView">
+        <attr name="streamUiMediaAttachmentProgressIcon" format="reference" />
+        <attr name="streamUiMediaAttachmentGiphyIcon" format="reference" />
+        <attr name="streamUiMediaAttachmentImageBackgroundColor" format="color|reference" />
+        <attr name="streamUiMediaAttachmentMoreCountOverlayColor" format="color|reference" />
+
+        <attr name="streamUiMediaAttachmentMoreCountTextSize" format="dimension|reference" />
+        <attr name="streamUiMediaAttachmentMoreCountTextColor" format="color|reference" />
+        <attr name="streamUiMediaAttachmentMoreCountTextFont" format="reference" />
+        <attr name="streamUiMediaAttachmentMoreCountFontAssets" format="string" />
+        <attr name="streamUiMediaAttachmentMoreCountTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

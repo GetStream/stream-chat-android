@@ -96,6 +96,12 @@ Fixed bug where files without extension in their name lost the mime type.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
+- Added `MediaAttachmentViewStyle` to allow customizing the appearance of media attachments in the message list. The new style comes together with following `MediaAttachmentView` attributes:
+  - `progressIcon` - attribute to customize animated progress drawable when image is loading
+  - `giphyIcon` - attribute to customize Giphy icon
+  - `imageBackgroundColor` - attribute to customize image background color
+  - `moreCountOverlayColor` - attribute to customize the color of "more count" semi-transparent overlay
+  - `moreCountTextStyle` - attribute to customize text appearance of more count text
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:

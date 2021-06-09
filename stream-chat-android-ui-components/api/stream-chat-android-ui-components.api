@@ -95,6 +95,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getChannelListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getEditReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMediaAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListItemStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -105,6 +106,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setChannelListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setEditReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMediaAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListItemStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -1626,6 +1628,26 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$ThreadClickListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle$Companion;
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun component1 ()Landroid/graphics/drawable/Drawable;
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getImageBackgroundColor ()I
+	public final fun getMoreCountOverlayColor ()I
+	public final fun getMoreCountTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewFactory {
