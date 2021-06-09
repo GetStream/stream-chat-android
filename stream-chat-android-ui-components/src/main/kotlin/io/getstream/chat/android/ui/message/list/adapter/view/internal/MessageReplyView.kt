@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 
 internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
@@ -53,12 +54,12 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    fun setMessage(message: Message, isMine: Boolean) {
+    fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
         setAvatarPosition(isMine)
-        setReplyBackground(message, isMine)
+        setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
-        setReplyText(message)
+        setReplyText(message, isMine, style)
     }
 
     private fun setUserAvatar(message: Message) {
@@ -99,7 +100,7 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun setReplyBackground(message: Message, isMine: Boolean) {
+    private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(REPLY_CORNER_RADIUS)
             .setBottomLeftCornerSize(if (isMine.not()) 0f else REPLY_CORNER_RADIUS)
@@ -116,13 +117,15 @@ internal class MessageReplyView : FrameLayout {
                 }
                 isMine -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    val color = style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    setTint(color)
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
                     strokeWidth = DEFAULT_STROKE_WIDTH
-                    setTint(context.getColorCompat(R.color.stream_ui_white))
+                    val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
+                    setTint(tintColor)
                 }
             }
         }
@@ -143,7 +146,7 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun setReplyText(message: Message) {
+    private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val attachment = message.attachments.lastOrNull()
         binding.replyText.text = if (attachment == null || message.text.isNotBlank()) {
             if (ellipsize) {
@@ -158,6 +161,11 @@ internal class MessageReplyView : FrameLayout {
             } else {
                 attachment.title ?: attachment.name
             }
+        }
+        if (isMine) {
+            style?.textStyleMine?.apply(binding.replyText)
+        } else {
+            style?.textStyleTheirs?.apply(binding.replyText)
         }
     }
 
