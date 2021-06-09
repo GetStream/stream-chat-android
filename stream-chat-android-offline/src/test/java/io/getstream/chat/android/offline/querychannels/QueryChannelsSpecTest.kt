@@ -14,33 +14,22 @@ internal class QueryChannelsSpecTest {
                 "type",
                 "messaging"
             ),
-            QuerySort()
         )
         val query2 = QueryChannelsSpec(
             Filters.eq(
                 "type",
                 "messaging"
             ),
-            QuerySort()
         )
         val query3 = QueryChannelsSpec(
             Filters.eq(
                 "type",
                 "commerce"
             ),
-            QuerySort()
-        )
-        val query4 = QueryChannelsSpec(
-            Filters.eq(
-                "type",
-                "messaging"
-            ),
-            QuerySort<Channel>().asc("name")
         )
         // verify that 1 and 2 are equal
         Truth.assertThat(query2.id).isEqualTo(query.id)
-        // verify that 3 and 4 are not equal to 2
+        // verify that 3 is not equal to 2
         Truth.assertThat(query2.id).isNotEqualTo(query3.id)
-        Truth.assertThat(query2.id).isNotEqualTo(query4.id)
     }
 }

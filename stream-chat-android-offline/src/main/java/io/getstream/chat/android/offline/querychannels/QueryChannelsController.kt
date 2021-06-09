@@ -60,7 +60,7 @@ public class QueryChannelsController internal constructor(
         { channel, filterObject -> filterObject.filter(channel) }
     public var recoveryNeeded: Boolean = false
 
-    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
+    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter)
 
     private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     private val _loading = MutableStateFlow(false)
