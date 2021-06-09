@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
  * @property backgroundColor - [MessageListView] background color. Default - [R.color.stream_ui_white_snow]
  * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
- * @property replyIcon - icon for reply option. Default - [R.drawable.stream_ui_ic_arrow_curve_left]
+ * @property replyIcon - icon for reply option. Default - [R.drawable.stream_ui_ic_arrow_curve_left_grey]
  * @property replyEnabled - enables/disables reply feature. Enabled by default
  * @property threadReplyIcon - icon for thread option. Default - [R.drawable.stream_ui_ic_thread_reply]
  * @property threadsEnabled - enables/disables threads feature. Enabled by default
@@ -151,7 +151,7 @@ public data class MessageListViewStyle(
 
                 val replyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
-                    R.drawable.stream_ui_ic_arrow_curve_left
+                    R.drawable.stream_ui_ic_arrow_curve_left_grey
                 )
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
