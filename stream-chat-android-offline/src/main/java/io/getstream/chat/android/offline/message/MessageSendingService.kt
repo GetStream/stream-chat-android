@@ -75,7 +75,7 @@ internal class MessageSendingService private constructor() {
         channelController: ChannelController,
     ): Result<Message> {
         return if (domainImpl.online.value) {
-            return if (message.hasAttachments()) {
+            return if (message.hasPendingAttachments()) {
                 waitForAttachmentsToBeSent(message, domainImpl, channelClient, channelController)
             } else {
                 doSend(message, domainImpl, channelClient, channelController)

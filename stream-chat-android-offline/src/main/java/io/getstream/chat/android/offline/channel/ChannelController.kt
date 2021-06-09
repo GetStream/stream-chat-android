@@ -648,12 +648,13 @@ public class ChannelController internal constructor(
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): List<Attachment> {
         return try {
-            message.attachments.map { attachment ->
-                AttachmentUploader(client)
-                    .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
-                    .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
-                    .data()
-            }.toMutableList()
+            message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
+                .map { attachment ->
+                    AttachmentUploader(client)
+                        .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
+                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+                        .data()
+                }.toMutableList()
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {

@@ -1,7 +1,9 @@
 package io.getstream.chat.android.offline.message.attachment
 
 import android.content.Context
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -34,6 +36,7 @@ internal class UploadAttachmentsAndroidWorker(
             messageId: String,
         ) {
             val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.NOT_ROAMING).build())
                 .setInputData(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,
