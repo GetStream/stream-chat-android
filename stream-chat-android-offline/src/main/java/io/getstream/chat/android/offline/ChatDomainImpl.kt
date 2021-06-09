@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
+import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
@@ -169,6 +169,7 @@ internal class ChatDomainImpl internal constructor(
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
+
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
@@ -753,37 +754,33 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        val messages = repos.selectMessagesSyncNeeded()
-        for (message in messages) {
-            val channelClient = client.channel(message.cid)
-            val hasPendingAttachments = message.attachments.any {
-                val uploadState = it.uploadState
-                uploadState == null || uploadState == Attachment.UploadState.InProgress
-            }
-            val hasFailedAttachments = message.attachments.any {
-                it.uploadState is Attachment.UploadState.Failed
-            }
-            val hasAttachmentsUploadInProgress = message.attachmentsSyncStatus == SyncStatus.IN_PROGRESS
+        return retryMessagesWithoutAttachments() + retryMessagesWithAttachments()
+    }
 
-            if (hasFailedAttachments) {
-                logger.logD("Failed attachments upload for message: ${message.id}")
-                markMessageAsFailed(message)
-                break
-            }
-            if (hasAttachmentsUploadInProgress) {
-                // wait until upload completes until starting another worker
-                logger.logD("Upload of attachments already in progress for message: ${message.id}")
-                break
-            }
-            if (hasPendingAttachments) {
-                logger.logD("Starting upload worker for message: ${message.id}")
-                markMessageAttachmentSyncStatus(message, SyncStatus.IN_PROGRESS)
-                val cid = message.cid
-                val channelType = cid.split(":")[0]
-                val channelId = cid.split(":")[1]
-                UploadAttachmentsAndroidWorker.start(appContext, channelType, channelId, message.id)
-                break
-            }
+    private suspend fun retryMessagesWithAttachments(): List<Message> {
+        val retriedMessages = repos.selectMessagesWaitForAttachments()
+            .filter { message -> message.attachments.any { it.uploadState == Attachment.UploadState.InProgress } }
+        val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
+            message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
+        }
+
+        failedMessages.forEach { markMessageAsFailed(it) }
+
+        needToBeSync.forEach { message ->
+            MessageSendingService.instance()
+                .sendMessage(message, this, client.channel(message.cid), channel(message.cid))
+        }
+
+        return retriedMessages
+    }
+
+    private suspend fun retryMessagesWithoutAttachments(): List<Message> {
+        val messages = repos.selectMessagesSyncNeeded()
+        require(messages.all { it.attachments.isEmpty() }) { "Logical error. Messages with attachments should have another sync status!" }
+
+        messages.forEach { message ->
+            val channelClient = client.channel(message.cid)
+
             val result = when {
                 message.deletedAt != null -> {
                     logger.logD("Deleting message: ${message.id}")
@@ -808,11 +805,6 @@ internal class ChatDomainImpl internal constructor(
 
         return messages
     }
-
-    internal suspend fun markMessageAttachmentSyncStatus(
-        message: Message,
-        syncStatus: SyncStatus,
-    ) = repos.insertMessage(message.copy(attachmentsSyncStatus = syncStatus))
 
     private suspend fun markMessageAsFailed(message: Message) =
         repos.insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))

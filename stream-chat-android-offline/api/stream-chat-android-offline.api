@@ -755,8 +755,9 @@ public final class io/getstream/chat/android/offline/repository/domain/message/M
 	public static synthetic fun messagesForChannelOlderThan$default (Lio/getstream/chat/android/offline/repository/domain/message/MessageDao;Ljava/lang/String;ILjava/util/Date;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun selectSyncNeeded$default (Lio/getstream/chat/android/offline/repository/domain/message/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun selectSyncNeeded (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectWaitForAttachments (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun selectWaitForAttachments$default (Lio/getstream/chat/android/offline/repository/domain/message/MessageDao;Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

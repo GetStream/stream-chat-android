@@ -41,10 +41,6 @@ public data class Message(
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
-    /** if all the message's attachments has been uploaded to the servers */
-    @IgnoreSerialisation
-    var attachmentsSyncStatus: SyncStatus = SyncStatus.COMPLETED,
-
     @IgnoreSerialisation
     var type: String = "",
 

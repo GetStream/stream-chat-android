@@ -574,7 +574,7 @@ public class ChannelController internal constructor(
     }
 
     private suspend fun sendMessage(message: Message): Result<Message> =
-        MessageSendingService.instance().sendMessage(message, cid, domainImpl, this, channelClient)
+        MessageSendingService.instance().sendNewMessage(message, cid, domainImpl, this, channelClient)
 
     private suspend fun sendMessage(
         message: Message,

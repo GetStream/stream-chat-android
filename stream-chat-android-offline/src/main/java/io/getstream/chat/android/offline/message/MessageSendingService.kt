@@ -28,7 +28,7 @@ internal class MessageSendingService private constructor() {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
 
-    internal suspend fun sendMessage(
+    internal suspend fun sendNewMessage(
         message: Message,
         cid: String,
         domainImpl: ChatDomainImpl,
@@ -64,25 +64,25 @@ internal class MessageSendingService private constructor() {
             domainImpl.repos.insertMessage(newMessage)
             domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
         }.flatMapSuspend { newMessage ->
-            send(newMessage, domainImpl, channelClient, channelController)
+            sendMessage(newMessage, domainImpl, channelClient, channelController)
         }
     }
 
-    private suspend fun send(
-        newMessage: Message,
+    internal suspend fun sendMessage(
+        message: Message,
         domainImpl: ChatDomainImpl,
         channelClient: ChannelClient,
         channelController: ChannelController,
     ): Result<Message> {
         return if (domainImpl.online.value) {
-            return if (newMessage.hasAttachments()) {
-                waitForAttachmentsToBeSent(newMessage, domainImpl, channelClient, channelController)
+            return if (message.hasAttachments()) {
+                waitForAttachmentsToBeSent(message, domainImpl, channelClient, channelController)
             } else {
-                doSend(newMessage, domainImpl, channelClient, channelController)
+                doSend(message, domainImpl, channelClient, channelController)
             }
         } else {
-            logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
-            Result(newMessage)
+            logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
+            Result(message)
         }
     }
 

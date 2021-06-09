@@ -21,6 +21,7 @@ internal interface MessageRepository {
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
     suspend fun deleteChannelMessage(message: Message)
     suspend fun selectMessagesSyncNeeded(): List<Message>
+    suspend fun selectMessagesWaitForAttachments(): List<Message>
 }
 
 internal class MessageRepositoryImpl(
@@ -114,6 +115,10 @@ internal class MessageRepositoryImpl(
 
     override suspend fun selectMessagesSyncNeeded(): List<Message> {
         return messageDao.selectSyncNeeded().map { it.toModel(getUser, ::selectMessage) }
+    }
+
+    override suspend fun selectMessagesWaitForAttachments(): List<Message> {
+        return messageDao.selectWaitForAttachments().map { it.toModel(getUser, ::selectMessage) }
     }
 
     private fun List<Message>.filterReactions(): List<Message> = also {
