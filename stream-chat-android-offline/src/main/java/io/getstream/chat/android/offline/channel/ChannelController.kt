@@ -562,6 +562,10 @@ public class ChannelController internal constructor(
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
+    @Deprecated(
+        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        replaceWith = ReplaceWith("sendMessage(message: Message)")
+    )
     internal suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
@@ -573,9 +577,13 @@ public class ChannelController internal constructor(
         }
     }
 
-    private suspend fun sendMessage(message: Message): Result<Message> =
+    internal suspend fun sendMessage(message: Message): Result<Message> =
         MessageSendingService.instance().sendNewMessage(message, cid, domainImpl, this, channelClient)
 
+    @Deprecated(
+        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        replaceWith = ReplaceWith("sendMessage(message: Message)")
+    )
     private suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment),

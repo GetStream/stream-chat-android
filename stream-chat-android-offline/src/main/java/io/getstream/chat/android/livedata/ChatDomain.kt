@@ -345,7 +345,10 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-
+    @Deprecated(
+        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        replaceWith = ReplaceWith("sendMessage(message: Message)")
+    )
     public fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
