@@ -114,5 +114,5 @@ tasks.register('dokkaDokkasaurus', DokkaTask) {
         dokkaPlugin(Dependencies.dokkasaurus)
     }
 
-    outputDirectory = file("../build/dokka/docusaurus")
+    outputDirectory = file("../build/dokka/docusaurus/stream-chat-android-client")
 }

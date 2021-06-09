@@ -67,6 +67,8 @@ tasks.register('docusaurusSidebar', GenerateSidebar) {
             'stream-chat-android-offline',
             'stream-chat-android-ui-components',
     ]
+    removeFromLabels = "io.getstream.chat.android."
+    simplifyOutput = true
 }
 
 dependencyUpdates {
