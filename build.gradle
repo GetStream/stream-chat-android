@@ -57,19 +57,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-// Task to generate docusaurus sidebar. Uncomment if dokka for docusaurus is desired.
-//tasks.register('docusaurusSidebar', GenerateSidebar) {
-//    inputDir = file("build/dokka/docusaurus")
-//    outputDir = file("docusaurus/docs/Android/Dokka")
-//    modulesFilterInput = [
-//            'stream-chat-android-client',
-//            'stream-chat-android-offline',
-//            'stream-chat-android-ui-components',
-//    ]
-//    removeFromLabels = "io.getstream.chat.android."
-//    simplifyOutput = true
-//}
-
 dependencyUpdates {
     rejectVersionIf {
         Dependencies.isStable(it.currentVersion) && Dependencies.isNonStable(it.candidate.version)
