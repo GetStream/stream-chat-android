@@ -56,6 +56,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMe
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
@@ -247,7 +248,6 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
-    private lateinit var getCurrentUser: () -> User
 
     /**
      * If you are allowed to scroll up or not
@@ -541,12 +541,7 @@ public class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    public fun init(channel: Channel, currentUser: User) {
-        init(channel) { currentUser }
-    }
-
-    public fun init(channel: Channel, getCurrentUser: () -> User) {
-        this.getCurrentUser = getCurrentUser
+    public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
 
@@ -572,10 +567,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
-            getCurrentUser = getCurrentUser,
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
-            messageListViewStyle.itemStyle,
+            messageStyle = messageListViewStyle.itemStyle,
+            messageReplyStyle = messageListViewStyle.replyMessageStyle,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
