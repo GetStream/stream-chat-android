@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
 
-internal class MessageSendingService private constructor() {
+internal class MessageSendingService {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
 
@@ -140,14 +140,7 @@ internal class MessageSendingService private constructor() {
             .recoverSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
     }
 
-    internal companion object {
-        private var instance: MessageSendingService? = null
-
-        internal fun instance(): MessageSendingService {
-            if (instance == null) {
-                instance = MessageSendingService()
-            }
-            return instance!!
-        }
+    fun cancelJobs() {
+        jobsMap.values.forEach { it.cancel() }
     }
 }

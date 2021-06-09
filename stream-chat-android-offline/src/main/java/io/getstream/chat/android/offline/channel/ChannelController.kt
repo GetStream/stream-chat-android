@@ -99,6 +99,7 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val messageSendingService: MessageSendingService = domainImpl.messageSendingService,
 ) {
     internal constructor(
         channelType: String,
@@ -578,7 +579,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun sendMessage(message: Message): Result<Message> =
-        MessageSendingService.instance().sendNewMessage(message, cid, domainImpl, this, channelClient)
+        messageSendingService.sendNewMessage(message, cid, domainImpl, this, channelClient)
 
     @Deprecated(
         message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",

@@ -174,6 +174,8 @@ internal class ChatDomainImpl internal constructor(
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
 
+    internal val messageSendingService: MessageSendingService = MessageSendingService()
+
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
     private val _totalUnreadCount = MutableStateFlow(0)
@@ -378,6 +380,7 @@ internal class ChatDomainImpl internal constructor(
         stopClean()
         clearState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
+        messageSendingService.cancelJobs()
     }
 
     override fun getVersion(): String {
@@ -535,13 +538,13 @@ internal class ChatDomainImpl internal constructor(
     ): ChannelController {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
-            val channelController =
-                ChannelController(
-                    channelType,
-                    channelId,
-                    client,
-                    this
-                )
+            val channelController = ChannelController(
+                channelType = channelType,
+                channelId = channelId,
+                client = client,
+                domainImpl = this,
+                messageSendingService = messageSendingService,
+            )
             activeChannelMapImpl[cid] = channelController
             addTypingChannel(channelController)
         }
@@ -767,7 +770,7 @@ internal class ChatDomainImpl internal constructor(
         failedMessages.forEach { markMessageAsFailed(it) }
 
         needToBeSync.forEach { message ->
-            MessageSendingService.instance()
+            messageSendingService
                 .sendMessage(message, this, client.channel(message.cid), channel(message.cid))
         }
 
