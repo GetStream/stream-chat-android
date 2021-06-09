@@ -7,8 +7,8 @@ import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 
@@ -23,7 +23,7 @@ public object TransformStyle {
     public var editReactionsStyleTransformer: StyleTransformer<EditReactionsViewStyle> = noopTransformer()
     public var channelActionsDialogStyleTransformer: StyleTransformer<ChannelActionsDialogViewStyle> = noopTransformer()
     public var giphyViewHolderStyleTransformer: StyleTransformer<GiphyViewHolderStyle> = noopTransformer()
-    public var messageReplyViewStyleTransformer: StyleTransformer<MessageReplyViewStyle> = noopTransformer()
+    public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }
