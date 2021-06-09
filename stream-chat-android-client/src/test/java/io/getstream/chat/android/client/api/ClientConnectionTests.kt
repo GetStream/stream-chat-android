@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
@@ -21,6 +22,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.jupiter.api.BeforeEach
@@ -79,6 +81,8 @@ internal class ClientConnectionTests {
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(mock(), socketStateService, testCoroutines.scope)
+        val tokenUtils: TokenUtils = mock()
+        whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
         retrofitApi = mock()
         retrofitAnonymousApi = mock()
@@ -109,6 +113,7 @@ internal class ClientConnectionTests {
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
             encryptedPushNotificationsConfigStore = mock(),
+            tokenUtils = tokenUtils,
         )
     }
 
