@@ -59,7 +59,8 @@ Fixed bug where files without extension in their name lost the mime type.
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixing the save of pictures from AttachmentGalleryActivity. When external storage
+permission is not granted, now it asks for it.
 ### ⬆️ Improved
 - Added default implementation of "Leave channel" click listener to `ChannelListViewModelBinding`
 
