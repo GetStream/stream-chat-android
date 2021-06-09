@@ -19,7 +19,6 @@ import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAnd
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -97,7 +96,6 @@ internal class MessageSendingService {
             newMessage.id to domainImpl.scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
                 domainImpl.repos.observerAttachmentsForMessage(newMessage.id)
-                    .distinctUntilChanged()
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
