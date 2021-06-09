@@ -2,7 +2,7 @@
 
 ## Repositories
 
-The Stream Android libraries are available from MavenCentral, with some of their dependencies hosted on Jitpack. 
+All Stream Android libraries are available from MavenCentral, with some of their transitive dependencies hosted on Jitpack. 
 
 To add Stream dependencies, update your repositories in the project level `build.gradle` file to include these two repositories:
 
@@ -19,8 +19,6 @@ Check the [Releases page](https://github.com/GetStream/stream-chat-android/relea
 
 ## Client
 
-<!-- TODO: Add brief description about what the client module contains -->
-
 To add the low-level Chat client library to your app, open your module's `build.gradle` script and add the following:
 
 ```groovy
@@ -31,17 +29,7 @@ dependencies {
 
 ## Offline support
 
-<!-- TODO: Review this marketing description -->
-
-The offline library exposes easy to use LiveData/StateFlow objects for messages, reads, typing, members, watchers and more.
-It also adds support for offline chat. This means you can send messages, reactions and even create channels while you're offline. When the user comes back online, the library will automatically recover lost events and retry sending messages.
-The offline storage also provides support for implementing optimistic UI updates.
-
-:::note Optimistic UI Updates explained
-If you send a message using the offline support lib it will immediately update the underlying LiveData objects and the connected UI. The actual API call happens in the background. This tends to improve a user's perceived performance of the chat interface. This is especially for applications running in high latency or unreliable network conditions such as mobile applications.
-:::
-
-Offline package is built on top of the Client package. You need to add the following dependency to use the Offline package:
+To use offline support in your application, add the following dependency:
 
 ```kotlin
 dependencies {
@@ -49,14 +37,16 @@ dependencies {
 }
 ```
 
+This also adds the client library automatically.
+
 ## UI Components
 
-<!-- TODO: Add brief description about what the UI Components module contains -->
-
-The UI package is built on top of the Client and Offline packages. To use the UI components, add the following dependency:
+To use UI components in your application, add the following dependency:
 
 ```kotlin
 dependencies {
     implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
 }
 ```
+
+Adding the UI Components library as a dependency will automatically include the client and offline libraries as well.
