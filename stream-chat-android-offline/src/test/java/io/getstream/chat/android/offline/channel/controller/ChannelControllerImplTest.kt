@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.errors.ChatError
@@ -34,7 +35,7 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
     override fun setup() {
         super.setup()
         channelController =
-            ChannelController(channelType, channelId, clientMock, chatDomainImpl)
+            ChannelController(channelType, channelId, clientMock, chatDomainImpl, messageSendingService = mock())
     }
 
     @Test

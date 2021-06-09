@@ -65,7 +65,8 @@ internal class WhenHandleEvent {
             channelId = channelId,
             client = chatClient,
             domainImpl = chatDomain,
-            attachmentUrlValidator = attachmentUrlValidator
+            attachmentUrlValidator = attachmentUrlValidator,
+            messageSendingService = mock()
         )
     }
 

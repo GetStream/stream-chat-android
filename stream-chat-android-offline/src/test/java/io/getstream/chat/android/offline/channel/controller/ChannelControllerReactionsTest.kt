@@ -247,7 +247,13 @@ internal class ChannelControllerReactionsTest {
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
-            channelControllerImpl = ChannelController("channelType", "channelId", chatClient, chatDomainImpl)
+            channelControllerImpl = ChannelController(
+                "channelType",
+                "channelId",
+                chatClient,
+                chatDomainImpl,
+                messageSendingService = mock()
+            )
         }
 
         fun givenMockedRepositories(): Fixture {

@@ -131,7 +131,13 @@ internal class ChannelControllerTypingTests {
         }
 
         fun get(): ChannelController {
-            return ChannelController("channelType", "channelId", chatClient, chatDomainImpl)
+            return ChannelController(
+                "channelType",
+                "channelId",
+                chatClient,
+                chatDomainImpl,
+                messageSendingService = mock()
+            )
         }
     }
 }
