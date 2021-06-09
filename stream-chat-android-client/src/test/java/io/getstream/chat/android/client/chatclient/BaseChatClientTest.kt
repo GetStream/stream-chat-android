@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.TokenUtils
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -27,6 +28,7 @@ internal open class BaseChatClientTest {
     protected lateinit var api: ChatApi
 
     protected lateinit var chatClient: ChatClient
+    internal val tokenUtils: TokenUtils = mock()
 
     @BeforeEach
     fun before() {
@@ -41,6 +43,7 @@ internal open class BaseChatClientTest {
             queryChannelsPostponeHelper = mock(),
             userStateService = userStateService,
             encryptedPushNotificationsConfigStore = mock(),
+            tokenUtils = tokenUtils,
         )
     }
 }

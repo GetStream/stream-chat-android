@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client
 
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.GsonChatApi
@@ -16,9 +17,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import kotlinx.coroutines.test.TestCoroutineScope
+import org.mockito.Mockito
 import java.util.Date
 
 /**
@@ -28,12 +31,12 @@ import java.util.Date
 internal class MockClientBuilder(
     private val testCoroutineScope: TestCoroutineScope,
 ) {
-    val userId = "test-id"
+    val userId = "jc"
     val connectionId = "connection-id"
     val apiKey = "api-key"
     val channelType = "channel-type"
     val channelId = "channel-id"
-    val token = "token"
+    val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
     val serverErrorCode = 500
     val user = User().apply { id = userId }
     val connectedEvent = ConnectedEvent(
@@ -64,6 +67,8 @@ internal class MockClientBuilder(
             ChatLogger.Config(ChatLogLevel.NOTHING, null)
         )
 
+        val tokenUtil: TokenUtils = mock()
+        Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
         socket = FakeChatSocket()
         retrofitApi = mock()
         retrofitAnonymousApi = mock()
@@ -90,6 +95,7 @@ internal class MockClientBuilder(
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
             encryptedPushNotificationsConfigStore = mock(),
+            tokenUtils = tokenUtil,
         )
 
         client.connectUser(user, token).enqueue()
