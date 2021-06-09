@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -29,6 +31,10 @@ public data class MessageReplyStyle(
     public val textStyleTheirs: TextStyle,
     public val linkStyleMine: TextStyle,
     public val linkStyleTheirs: TextStyle,
+    @ColorInt public val messageStrokeColorMine: Int,
+    @Px public val messageStrokeWidthMine: Float,
+    @ColorInt public val messageStrokeColorTheirs: Int,
+    @Px public val messageStrokeWidthTheirs: Float,
 ) {
     internal companion object {
         operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
@@ -103,6 +109,26 @@ public data class MessageReplyStyle(
                 )
                 .build()
 
+            val messageStrokeColorMine = attributes.getColor(
+                R.styleable.MessageListView_streamUiMessageReplyStrokeColorMine,
+                context.getColorCompat(MESSAGE_STROKE_COLOR_MINE)
+            )
+            val messageStrokeWidthMine =
+                attributes.getDimension(
+                    R.styleable.MessageListView_streamUiMessageReplyStrokeWidthMine,
+                    MESSAGE_STROKE_WIDTH_MINE
+                )
+            val messageStrokeColorTheirs =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiMessageReplyStrokeColorTheirs,
+                    context.getColorCompat(MESSAGE_STROKE_COLOR_THEIRS)
+                )
+            val messageStrokeWidthTheirs =
+                attributes.getDimension(
+                    R.styleable.MessageListView_streamUiMessageReplyStrokeWidthTheirs,
+                    MESSAGE_STROKE_WIDTH_THEIRS
+                )
+
             return MessageReplyStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine,
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs,
@@ -112,12 +138,20 @@ public data class MessageReplyStyle(
                 linkBackgroundColorTheirs = linkBackgroundColorTheirs,
                 textStyleMine = textStyleMine,
                 textStyleTheirs = textStyleTheirs,
+                messageStrokeColorMine = messageStrokeColorMine,
+                messageStrokeColorTheirs = messageStrokeColorTheirs,
+                messageStrokeWidthMine = messageStrokeWidthMine,
+                messageStrokeWidthTheirs = messageStrokeWidthTheirs,
             ).let(TransformStyle.messageReplyStyleTransformer::transform)
         }
 
+        private val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
         private const val VALUE_NOT_SET = Integer.MAX_VALUE
         private val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
         private val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
         private const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
+        internal val MESSAGE_STROKE_COLOR_MINE = R.color.stream_ui_literal_transparent
+        internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
+        internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
     }
 }

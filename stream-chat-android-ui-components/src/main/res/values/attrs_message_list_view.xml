@@ -118,7 +118,6 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!--  Message Reply -->
         <!-- Message Reply background color -->
         <attr name="streamUiMessageReplyBackgroundColorMine" format="color" />
         <attr name="streamUiMessageReplyBackgroundColorTheirs" format="color" />
@@ -144,11 +143,17 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Message link -->
+        <!-- Message Reply link -->
         <attr name="streamUiMessageReplyLinkColorMine" format="color" />
         <attr name="streamUiMessageReplyLinkColorTheirs" format="color" />
         <attr name="streamUiMessageReplyLinkBackgroundColorMine" format="color" />
         <attr name="streamUiMessageReplyLinkBackgroundColorTheirs" format="color" />
+
+        <!-- Message Reply stroke -->
+        <attr name="streamUiMessageReplyStrokeColorMine" format="color" />
+        <attr name="streamUiMessageReplyStrokeWidthMine" format="dimension|reference" />
+        <attr name="streamUiMessageReplyStrokeColorTheirs" format="color" />
+        <attr name="streamUiMessageReplyStrokeWidthTheirs" format="dimension|reference" />
 
         <!-- Date separator -->
         <attr name="streamUiDateSeparatorBackgroundColor" format="color" />

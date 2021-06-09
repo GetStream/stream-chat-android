@@ -118,14 +118,19 @@ internal class MessageReplyView : FrameLayout {
                     setTint(color)
                 }
                 isMine -> {
-                    paintStyle = Paint.Style.FILL
-                    val color = style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    paintStyle = Paint.Style.FILL_AND_STROKE
+                    val color =
+                        style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
                     setTint(color)
+                    style?.messageStrokeColorMine?.let {
+                        setStrokeTint(it)
+                    }
+                    strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    setStrokeTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
-                    strokeWidth = DEFAULT_STROKE_WIDTH
+                    setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
                     val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
                     setTint(tintColor)
                 }
@@ -146,7 +151,8 @@ internal class MessageReplyView : FrameLayout {
                 ModelType.attach_file -> showFileTypeLogo(attachment.mimeType)
                 ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
                 ModelType.attach_giphy,
-                ModelType.attach_video -> showAttachmentThumb(attachment.thumbUrl)
+                ModelType.attach_video,
+                -> showAttachmentThumb(attachment.thumbUrl)
                 else -> showAttachmentThumb(attachment.image)
             }
         }
