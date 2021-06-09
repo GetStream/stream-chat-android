@@ -144,6 +144,12 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message link -->
+        <attr name="streamUiMessageReplyLinkColorMine" format="color" />
+        <attr name="streamUiMessageReplyLinkColorTheirs" format="color" />
+        <attr name="streamUiMessageReplyLinkBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageReplyLinkBackgroundColorTheirs" format="color" />
+
         <!-- Date separator -->
         <attr name="streamUiDateSeparatorBackgroundColor" format="color" />
 

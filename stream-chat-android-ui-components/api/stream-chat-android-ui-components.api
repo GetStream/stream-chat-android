@@ -1535,14 +1535,22 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 
 public final class io/getstream/chat/android/ui/message/list/MessageReplyStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/MessageReplyStyle$Companion;
-	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Ljava/lang/Integer;
 	public final fun component2 ()Ljava/lang/Integer;
-	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component6 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component7 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLinkBackgroundColorMine ()Ljava/lang/Integer;
+	public final fun getLinkBackgroundColorTheirs ()Ljava/lang/Integer;
+	public final fun getLinkStyleMine ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getLinkStyleTheirs ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getMessageBackgroundColorMine ()Ljava/lang/Integer;
 	public final fun getMessageBackgroundColorTheirs ()Ljava/lang/Integer;
 	public final fun getTextStyleMine ()Lio/getstream/chat/android/ui/common/style/TextStyle;

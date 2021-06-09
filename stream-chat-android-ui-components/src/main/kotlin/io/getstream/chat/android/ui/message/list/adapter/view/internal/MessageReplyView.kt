@@ -106,14 +106,16 @@ internal class MessageReplyView : FrameLayout {
             .setBottomLeftCornerSize(if (isMine.not()) 0f else REPLY_CORNER_RADIUS)
             .setBottomRightCornerSize(if (isMine) 0f else REPLY_CORNER_RADIUS)
             .build()
-        val isLink = message.attachments
-            .lastOrNull()
-            ?.type == ModelType.attach_link
         binding.replyContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             when {
-                isLink -> {
+                isLink(message) -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_blue_alice))
+                    val color = if (isMine) {
+                        style?.linkBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_blue_alice)
+                    } else {
+                        style?.linkBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_blue_alice)
+                    }
+                    setTint(color)
                 }
                 isMine -> {
                     paintStyle = Paint.Style.FILL
@@ -130,6 +132,10 @@ internal class MessageReplyView : FrameLayout {
             }
         }
     }
+
+    private fun isLink(message: Message) = message.attachments
+        .lastOrNull()
+        ?.type == ModelType.attach_link
 
     private fun setAttachmentImage(message: Message) {
         val attachment = message.attachments.lastOrNull()
@@ -162,10 +168,23 @@ internal class MessageReplyView : FrameLayout {
                 attachment.title ?: attachment.name
             }
         }
-        if (isMine) {
+        if (isLink(message)) {
+            configureLinkTextStyle(isMine, style)
+        } else if (isMine) {
             style?.textStyleMine?.apply(binding.replyText)
         } else {
             style?.textStyleTheirs?.apply(binding.replyText)
+        }
+    }
+
+    private fun configureLinkTextStyle(
+        isMine: Boolean,
+        style: MessageReplyStyle?,
+    ) {
+        if (isMine) {
+            style?.linkStyleMine?.apply(binding.replyText)
+        } else {
+            style?.linkStyleTheirs?.apply(binding.replyText)
         }
     }
 
