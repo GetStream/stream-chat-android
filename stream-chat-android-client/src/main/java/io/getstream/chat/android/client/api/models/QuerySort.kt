@@ -130,9 +130,10 @@ public class QuerySort<T : Any> {
         val sortDirection: SortDirection,
     )
 
-    private sealed class SortAttribute<T>(val name: String) {
-        class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, name: String) : SortAttribute<T>(name)
-        class FieldNameSortAttribute<T>(fieldName: String) : SortAttribute<T>(fieldName)
+    private sealed class SortAttribute<T> {
+        abstract val name: String
+        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) : SortAttribute<T>()
+        data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
     }
 
     public enum class SortDirection(public val value: Int) {
