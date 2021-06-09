@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
+import com.getstream.sdk.chat.utils.PermissionChecker
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
@@ -40,6 +41,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private val viewModel: AttachmentGalleryViewModel by viewModels()
     private val dateFormatter: DateFormatter by lazy { DateFormatter.from(this) }
     private lateinit var adapter: AttachmentGalleryPagerAdapter
+    private val permissionChecker = PermissionChecker()
 
     private var attachmentGalleryItems: List<AttachmentGalleryItem> = emptyList()
     private val attachmentGalleryResultItem: AttachmentGalleryResultItem
@@ -122,7 +124,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
                 deleteHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
-                saveImageHandler = { setResultAndFinish(AttachmentOptionResult.Download(attachmentGalleryResultItem)) },
+                saveImageHandler = handleSaveImage,
                 isMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
         }
@@ -137,6 +139,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             }
         )
         onGalleryPageSelected(initialIndex)
+    }
+
+    private val handleSaveImage = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+        permissionChecker.checkWriteStoragePermissions(
+            binding.root,
+            onPermissionGranted = {
+                setResultAndFinish(AttachmentOptionResult.Download(attachmentGalleryResultItem))
+            }
+        )
     }
 
     private fun setResultAndFinish(result: AttachmentOptionResult) {
