@@ -56,7 +56,6 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.client.utils.recoverSuspend
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
@@ -99,16 +98,8 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    private val messageSendingService: MessageSendingService = domainImpl.messageSendingService,
+    private val messageSendingService: MessageSendingService,
 ) {
-    internal constructor(
-        channelType: String,
-        channelId: String,
-        client: ChatClient,
-        domain: ChatDomain,
-        attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    ) : this(channelType, channelId, client, domain as ChatDomainImpl, attachmentUrlValidator)
-
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())

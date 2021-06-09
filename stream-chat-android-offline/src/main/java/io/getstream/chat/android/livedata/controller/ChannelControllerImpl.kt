@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -14,8 +13,6 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChannelData
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -25,22 +22,6 @@ import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelDa
 
 internal class ChannelControllerImpl(private val channelControllerStateFlow: ChannelControllerStateFlow) :
     ChannelController {
-
-    internal constructor(
-        channelType: String,
-        channelId: String,
-        client: ChatClient,
-        domainImpl: ChatDomainImpl,
-        attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    ) : this(
-        ChannelControllerStateFlow(
-            channelType,
-            channelId,
-            client,
-            domainImpl.chatDomainStateFlow,
-            attachmentUrlValidator
-        )
-    )
 
     override val channelType: String = channelControllerStateFlow.channelType
     override val channelId: String = channelControllerStateFlow.channelId
@@ -112,7 +93,8 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> = channelControllerStateFlow.sendMessage(message, attachmentTransformer)
 
-    suspend fun cancelMessage(message: Message): Result<Boolean> = channelControllerStateFlow.cancelEphemeralMessage(message)
+    suspend fun cancelMessage(message: Message): Result<Boolean> =
+        channelControllerStateFlow.cancelEphemeralMessage(message)
 
     suspend fun sendGiphy(message: Message): Result<Message> = channelControllerStateFlow.sendGiphy(message)
     suspend fun shuffleGiphy(message: Message): Result<Message> = channelControllerStateFlow.shuffleGiphy(message)
