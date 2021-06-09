@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
@@ -32,7 +33,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
-import com.getstream.sdk.chat.utils.PermissionChecker
 
 public class AttachmentGalleryActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
