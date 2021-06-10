@@ -323,8 +323,7 @@ public class ChannelController internal constructor(
 
                 // update live data with new read
                 domainImpl.user.value?.let { currentUser ->
-                    updateRead(ChannelUserRead(currentUser,
-                        lastMarkReadEvent))
+                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
                 }
 
                 shouldUpdate
