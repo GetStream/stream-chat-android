@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.users
@@ -56,6 +57,7 @@ public class QueryChannelsController internal constructor(
         domain: ChatDomain,
     ) : this(filter, sort, client, domain as ChatDomainImpl)
 
+    private var channelOffset = 0
     public var newChannelEventFilter: (Channel, FilterObject) -> Boolean =
         { channel, filterObject -> filterObject.filter(channel) }
     public var recoveryNeeded: Boolean = false
@@ -94,7 +96,7 @@ public class QueryChannelsController internal constructor(
     ): QueryChannelsPaginationRequest {
         return QueryChannelsPaginationRequest(
             sort,
-            _channels.value.size,
+            channelOffset,
             channelLimit,
             messageLimit,
             memberLimit
@@ -308,7 +310,10 @@ public class QueryChannelsController internal constructor(
 
         val output: Result<List<Channel>> = queryOnlineJob.await().let { onlineResult ->
             if (onlineResult.isSuccess) {
-                onlineResult.also { updateChannelsAndQueryResults(it.data(), pagination.isFirstPage) }
+                onlineResult.also {
+                    channelOffset += it.data().size
+                    updateChannelsAndQueryResults(it.data(), pagination.isFirstPage)
+                }
             } else {
                 channels?.let(::Result) ?: onlineResult
             }
