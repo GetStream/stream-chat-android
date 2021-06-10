@@ -63,8 +63,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.client) doReturn chatClient
         }
 
-        channelController =
-            ChannelController(channelType, channelId, chatClient, domainImpl, messageSendingService = mock())
+        channelController = ChannelController(channelType, channelId, chatClient, domainImpl)
     }
 
     @Test

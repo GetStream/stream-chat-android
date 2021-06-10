@@ -45,7 +45,6 @@ internal open class BaseChannelControllerTests {
             channelId,
             chatClient,
             chatDomainImpl,
-            messageSendingService = messageSendingService
         )
     }
 }

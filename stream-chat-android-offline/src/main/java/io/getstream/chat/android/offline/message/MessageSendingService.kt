@@ -23,24 +23,22 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.Date
 
-internal class MessageSendingService {
+internal class MessageSendingService(
+    private val domainImpl: ChatDomainImpl,
+    private val channelController: ChannelController,
+    private val channelClient: ChannelClient,
+) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
 
-    internal suspend fun sendNewMessage(
-        message: Message,
-        cid: String,
-        domainImpl: ChatDomainImpl,
-        channelController: ChannelController,
-        channelClient: ChannelClient,
-    ): Result<Message> {
+    internal suspend fun sendNewMessage(message: Message): Result<Message> {
         return Result.success(
             message.copy().apply {
                 if (id.isEmpty()) {
                     id = domainImpl.generateMessageId()
                 }
                 if (cid.isEmpty()) {
-                    enrichWithCid(cid)
+                    enrichWithCid(channelController.cid)
                 }
                 user = requireNotNull(domainImpl.user.value)
                 attachments.forEach { attachment ->
@@ -57,27 +55,20 @@ internal class MessageSendingService {
             channelController.upsertMessage(newMessage)
             // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
             // Update flow for currently running queries
-            domainImpl.getActiveQueries().forEach { query -> query.refreshChannel(cid) }
+            domainImpl.getActiveQueries().forEach { query -> query.refreshChannel(channelController.cid) }
         }.onSuccessSuspend { newMessage ->
             // we insert early to ensure we don't lose messages
             domainImpl.repos.insertMessage(newMessage)
             domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-        }.flatMapSuspend { newMessage ->
-            sendMessage(newMessage, domainImpl, channelClient, channelController)
-        }
+        }.flatMapSuspend(::sendMessage)
     }
 
-    internal suspend fun sendMessage(
-        message: Message,
-        domainImpl: ChatDomainImpl,
-        channelClient: ChannelClient,
-        channelController: ChannelController,
-    ): Result<Message> {
+    internal suspend fun sendMessage(message: Message): Result<Message> {
         return if (domainImpl.online.value) {
             return if (message.hasPendingAttachments()) {
-                waitForAttachmentsToBeSent(message, domainImpl, channelClient, channelController)
+                waitForAttachmentsToBeSent(message)
             } else {
-                doSend(message, domainImpl, channelClient, channelController)
+                doSend(message)
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
@@ -85,12 +76,7 @@ internal class MessageSendingService {
         }
     }
 
-    private fun waitForAttachmentsToBeSent(
-        newMessage: Message,
-        domainImpl: ChatDomainImpl,
-        channelClient: ChannelClient,
-        channelController: ChannelController,
-    ): Result<Message> {
+    private fun waitForAttachmentsToBeSent(newMessage: Message): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         jobsMap = jobsMap + (
             newMessage.id to domainImpl.scope.launch {
@@ -104,7 +90,7 @@ internal class MessageSendingService {
                                 val messageToBeSent = domainImpl.repos.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
-                                doSend(messageToBeSent, domainImpl, channelClient, channelController)
+                                doSend(messageToBeSent)
                                 jobsMap[newMessage.id]?.cancel()
                             }
                             attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
@@ -124,12 +110,7 @@ internal class MessageSendingService {
         return Result.success(newMessage)
     }
 
-    private suspend fun doSend(
-        message: Message,
-        domainImpl: ChatDomainImpl,
-        channelClient: ChannelClient,
-        channelController: ChannelController,
-    ): Result<Message> {
+    private suspend fun doSend(message: Message): Result<Message> {
         val messageToSend = message.copy(type = "regular")
         return Result.success(messageToSend)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }

@@ -75,8 +75,7 @@ internal class WhenSendMessage {
     @Before
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
-        channelController =
-            ChannelController(channelType, channelId, chatClient, domainImpl, messageSendingService = mock())
+        channelController = ChannelController(channelType, channelId, chatClient, domainImpl)
     }
 
     @Test

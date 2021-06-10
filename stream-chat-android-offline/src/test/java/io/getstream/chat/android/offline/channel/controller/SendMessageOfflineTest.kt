@@ -101,7 +101,6 @@ internal class SendMessageOfflineTest {
                 "channelId",
                 chatClient,
                 chatDomainImpl,
-                messageSendingService = mock()
             )
         }
     }

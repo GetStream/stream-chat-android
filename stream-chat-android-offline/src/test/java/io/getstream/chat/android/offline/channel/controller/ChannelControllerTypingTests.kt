@@ -136,7 +136,6 @@ internal class ChannelControllerTypingTests {
                 "channelId",
                 chatClient,
                 chatDomainImpl,
-                messageSendingService = mock()
             )
         }
     }

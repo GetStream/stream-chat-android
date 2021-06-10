@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -62,6 +61,7 @@ import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
 import io.getstream.chat.android.offline.message.MessageSendingService
+import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
@@ -98,7 +98,7 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    private val messageSendingService: MessageSendingService,
+    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
     private val editJobs = mutableMapOf<String, Job>()
 
@@ -232,6 +232,9 @@ public class ChannelController internal constructor(
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
+
+    private val messageSendingService: MessageSendingService =
+        messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
     internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
         ThreadController(threadId, this, domainImpl)
@@ -569,8 +572,10 @@ public class ChannelController internal constructor(
         }
     }
 
-    internal suspend fun sendMessage(message: Message): Result<Message> =
-        messageSendingService.sendNewMessage(message, cid, domainImpl, this, channelClient)
+    internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
+
+    internal suspend fun retrySendMessage(message: Message): Result<Message> =
+        messageSendingService.sendMessage(message)
 
     @Deprecated(
         message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
@@ -1432,9 +1437,7 @@ public class ChannelController internal constructor(
         _repliedMessage.value = repliedMessage
     }
 
-    private fun String?.isSupportedImageMimetype() = StreamCdnImageMimeTypes.isImageMimeTypeSupported(this)
-
-    private fun String?.isVideoMimetype() = this?.contains("video") ?: false
+    internal fun cancelJobs() = messageSendingService.cancelJobs()
 
     private fun Message.lastUpdateTime(): Long = listOfNotNull(
         createdAt,

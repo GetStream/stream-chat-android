@@ -39,7 +39,6 @@ import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
-import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
@@ -173,8 +172,6 @@ internal class ChatDomainImpl internal constructor(
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
-
-    internal val messageSendingService: MessageSendingService = MessageSendingService()
 
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
@@ -380,7 +377,7 @@ internal class ChatDomainImpl internal constructor(
         stopClean()
         clearState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
-        messageSendingService.cancelJobs()
+        activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
     }
 
     override fun getVersion(): String {
@@ -543,7 +540,6 @@ internal class ChatDomainImpl internal constructor(
                 channelId = channelId,
                 client = client,
                 domainImpl = this,
-                messageSendingService = messageSendingService,
             )
             activeChannelMapImpl[cid] = channelController
             addTypingChannel(channelController)
@@ -769,10 +765,7 @@ internal class ChatDomainImpl internal constructor(
 
         failedMessages.forEach { markMessageAsFailed(it) }
 
-        needToBeSync.forEach { message ->
-            messageSendingService
-                .sendMessage(message, this, client.channel(message.cid), channel(message.cid))
-        }
+        needToBeSync.forEach { message -> channel(message.cid).retrySendMessage(message) }
 
         return retriedMessages
     }
