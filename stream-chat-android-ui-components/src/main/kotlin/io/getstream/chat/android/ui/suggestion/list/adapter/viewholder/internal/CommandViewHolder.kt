@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -13,21 +12,17 @@ internal class CommandViewHolder(
     parent: ViewGroup,
     commandsNameStyle: TextStyle? = null,
     commandsDescriptionStyle: TextStyle? = null,
-    // private val commandClickListener: (Command) -> Unit,
     private val binding: StreamUiItemCommandBinding = StreamUiItemCommandBinding
         .inflate(parent.streamThemeInflater, parent, false),
 ) : BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem>(binding.root) {
 
-    lateinit var command: Command
-
     init {
         commandsNameStyle?.apply(binding.commandNameTextView)
         commandsDescriptionStyle?.apply(binding.commandQueryTextView)
-        // binding.root.setOnClickListener { commandClickListener(command) }
     }
 
     override fun bindItem(item: SuggestionListItem.CommandItem) {
-        this.command = item.command
+        val command = item.command
         binding.apply {
             commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
             commandQueryTextView.text = itemView.context.getString(
