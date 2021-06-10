@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.suggestion.internal
+package io.getstream.chat.android.ui.suggestion.list.internal
 
 import android.view.View
 import android.view.ViewGroup

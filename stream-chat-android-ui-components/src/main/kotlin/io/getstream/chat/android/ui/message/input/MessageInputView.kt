@@ -27,9 +27,11 @@ import io.getstream.chat.android.ui.message.input.attachment.internal.Attachment
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
-import io.getstream.chat.android.ui.suggestion.internal.SuggestionListController
-import io.getstream.chat.android.ui.suggestion.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
+import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListController
+import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 import kotlinx.coroutines.flow.collect
 import java.io.File
 import kotlin.properties.Delegates
@@ -47,6 +49,7 @@ public class MessageInputView : ConstraintLayout {
 
     private lateinit var binding: StreamUiMessageInputBinding
     private lateinit var style: MessageInputViewStyle
+    private lateinit var suggestionListView: SuggestionListView
 
     private var currentAnimatorSet: AnimatorSet? = null
     private var sendMessageHandler: MessageSendHandler = EMPTY_MESSAGE_SEND_HANDLER
@@ -183,7 +186,12 @@ public class MessageInputView : ConstraintLayout {
         setSuggestionListViewInternal(suggestionListView, popupWindow = false)
     }
 
+    public fun setSuggestionListViewHolderFactory(viewHolderFactory: SuggestionListItemViewHolderFactory) {
+        suggestionListView.setSuggestionListViewHolderFactory(viewHolderFactory)
+    }
+
     private fun setSuggestionListViewInternal(suggestionListView: SuggestionListView, popupWindow: Boolean = true) {
+        this.suggestionListView = suggestionListView
         suggestionListView.configStyle(style)
 
         suggestionListView.setOnSuggestionClickListener(
@@ -197,8 +205,6 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
         )
-
-        suggestionListView.binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
 
         val dismissListener = PopupWindow.OnDismissListener {
             binding.commandsButton.postDelayed(CLICK_DELAY) { binding.commandsButton.isSelected = false }
@@ -222,12 +228,17 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun SuggestionListView.configStyle(style: MessageInputViewStyle) {
-        style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
-        styleCommandsName(style.commandsNameTextStyle)
-        styleCommandsDescription(style.commandsDescriptionTextStyle)
-        styleMentionsUsername(style.mentionsUsernameTextStyle)
-        styleMentionsName(style.mentionsNameTextStyle)
-        styleMentionsIcon(style.mentionsIcon)
+        setSuggestionListViewStyle(
+            SuggestionListViewStyle(
+                suggestionsBackground = style.suggestionsBackground,
+                commandsTitleTextStyle = style.commandsTitleTextStyle,
+                commandsNameTextStyle = style.commandsNameTextStyle,
+                commandsDescriptionStyle = style.commandsDescriptionTextStyle,
+                mentionsUsernameTextStyle = style.mentionsUsernameTextStyle,
+                mentionsNameTextStyle = style.mentionsNameTextStyle,
+                mentionIcon = style.mentionsIcon
+            )
+        )
     }
 
     public fun setMaxMessageLength(maxMessageLength: Int) {
