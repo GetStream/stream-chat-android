@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 internal data class SuggestionListViewStyle(
-    @ColorInt public val suggestionsBackground: Int,
+    @ColorInt val suggestionsBackground: Int,
     val commandsTitleTextStyle: TextStyle,
     val commandsNameTextStyle: TextStyle,
     val commandsDescriptionStyle: TextStyle,

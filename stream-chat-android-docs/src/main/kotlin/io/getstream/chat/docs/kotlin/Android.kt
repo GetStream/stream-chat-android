@@ -72,6 +72,9 @@ import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
+import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -222,6 +225,28 @@ class Android {
                     }
                 }
             )
+        }
+
+        fun customSuggestionListviewHolderFactory() {
+            val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
+            messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
+        }
+
+        class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
+
+            override fun createCommandViewHolder(
+                parentView: ViewGroup,
+            ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+                // Create custom command view holder here
+                return super.createCommandViewHolder(parentView)
+            }
+
+            override fun createMentionViewHolder(
+                parentView: ViewGroup,
+            ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
+                // Create custom mention view holder here
+                return super.createMentionViewHolder(parentView)
+            }
         }
     }
 
