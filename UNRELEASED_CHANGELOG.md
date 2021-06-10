@@ -68,6 +68,7 @@ Fixed bug where files without extension in their name lost the mime type.
   - `streamUiChannelActionsMemberNamesTextSize`, `streamUiChannelActionsMemberNamesTextColor`, `streamUiChannelActionsMemberNamesTextFont`, `streamUiChannelActionsMemberNamesTextFontAssets`, `streamUiChannelActionsMemberNamesTextStyle` attributes to customize dialog title with member names
   - `streamUiChannelActionsMemberInfoTextSize`, `streamUiChannelActionsMemberInfoTextColor`, `streamUiChannelActionsMemberInfoTextFont`, `streamUiChannelActionsMemberInfoTextFontAssets`, `streamUiChannelActionsMemberInfoTextStyle` attributes to customize dialog subtitle with member info
   - `streamUiChannelActionsItemTextSize`, `streamUiChannelActionsItemTextColor`, `streamUiChannelActionsItemTextFont`, `streamUiChannelActionsItemTextFontAssets`, `streamUiChannelActionsItemTextStyle` attributes to customize action item text style
+  - `streamUiChannelActionsWarningItemTextSize`, `streamUiChannelActionsWarningItemTextColor`, `streamUiChannelActionsWarningItemTextFont`, `streamUiChannelActionsWarningItemTextFontAssets`, `streamUiChannelActionsWarningItemTextStyle` attributes to customize warning action item text style
   - `streamUiChannelActionsViewInfoIcon` attribute to customize "View Info" action icon
   - `streamUiChannelActionsViewInfoEnabled` attribute to hide/show "View Info" action item
   - `streamUiChannelActionsLeaveGroupIcon` attribute to customize "Leave Group" action icon
@@ -94,6 +95,8 @@ Fixed bug where files without extension in their name lost the mime type.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
+- Added `streamUiWarningMessageOptionsTextSize`, `streamUiWarningMessageOptionsTextColor`, `streamUiWarningMessageOptionsTextFont`, `streamUiWarningMessageOptionsFontAssets`, `streamUiWarningMessageOptionsTextStyle` attributes to `MessageListView` for customizing warning actions text appearance
+- Deprecated multiple views' tint properties and attributes. Use custom drawables instead.
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:
