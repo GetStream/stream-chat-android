@@ -97,6 +97,7 @@ permission is not granted, now it asks for it.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
+- Added `MessageInputView::setSuggestionListViewHolderFactory` method which allows to provide custom views from suggestion list popup.
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:
