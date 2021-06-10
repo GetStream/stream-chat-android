@@ -51,6 +51,22 @@ public class PermissionChecker {
         )
     }
 
+    public fun checkWriteStoragePermissions(
+        view: View,
+        onPermissionDenied: () -> Unit = { },
+        onPermissionGranted: () -> Unit
+    ) {
+        checkPermissions(
+            view,
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
+            listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            onPermissionDenied,
+            onPermissionGranted
+        )
+    }
+
     public fun checkCameraPermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
