@@ -33,6 +33,7 @@ import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,7 +48,7 @@ internal class WhenHandleEvent {
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomainImpl = mock {
         on(it.scope) doReturn TestCoroutineScope()
-        on(it.currentUser) doReturn currentUser
+        on(it.user) doReturn MutableStateFlow(currentUser)
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
     }
     private val messageHelper: MessageHelper = mock()
