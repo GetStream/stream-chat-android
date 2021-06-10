@@ -23,7 +23,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user set and socket in idle state and user with the same id Should connect socket`() {
         val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture().givenIdleConnectionState().givenUserSetState(Mother.randomUser { id = "userId" }).get()
+        val sut = Fixture()
+            .givenUserAndToken(user, "token")
+            .givenIdleConnectionState()
+            .givenUserSetState(Mother.randomUser { id = "userId" })
+            .get()
 
         sut.connectUser(user, "token").enqueue()
 
@@ -33,7 +37,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user set and socket in idle state and user with the same id Should update user`() {
         val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture().givenIdleConnectionState().givenUserSetState(Mother.randomUser { id = "userId" }).get()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenIdleConnectionState()
+            .givenUserSetState(Mother.randomUser { id = "userId" })
+            .get()
 
         sut.connectUser(user, "token").enqueue()
 
@@ -42,7 +50,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
     @Test
     fun `Given user set and socket in idle state and user with different id Should Not connect to the socket, update the user and token provider`() {
-        val sut = Fixture().givenIdleConnectionState().givenUserSetState(Mother.randomUser { id = "userId" }).get()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "differentUserId" }, "token")
+            .givenIdleConnectionState()
+            .givenUserSetState(Mother.randomUser { id = "userId" })
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "differentUserId" }, "token").enqueue()
 
@@ -54,7 +66,13 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user set and socket in idle state and user with the same id Should update token provider`() {
         val tokenProviderMock = mock<TokenProvider>()
-        val sut = Fixture().givenIdleConnectionState().givenUserSetState(Mother.randomUser { id = "userId" }).get()
+        val token = randomString()
+        whenever(tokenProviderMock.loadToken()) doReturn token
+        val sut = Fixture()
+            .givenIdleConnectionState()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, token)
+            .givenUserSetState(Mother.randomUser { id = "userId" })
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
@@ -65,6 +83,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
     fun `Given user set and socket in idle state and user with the same id Should invoke pre set listeners`() {
         val listener: (User) -> Unit = mock()
         val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
             .givenIdleConnectionState()
             .givenUserSetState(Mother.randomUser { id = "userId" })
             .givenPreSetUserListener(listener)
@@ -78,7 +97,10 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user not set Should set the user`() {
         val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture().givenUserNotSetState().get()
+        val sut = Fixture()
+            .givenUserAndToken(user, "token")
+            .givenUserNotSetState()
+            .get()
 
         sut.connectUser(user, "token").enqueue()
 
@@ -88,7 +110,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user not set Should update token provider`() {
         val tokenProviderMock = mock<TokenProvider>()
-        val sut = Fixture().givenUserNotSetState().get()
+        whenever(tokenProviderMock.loadToken()) doReturn "token"
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenUserNotSetState()
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "userId" }, tokenProviderMock).enqueue()
 
@@ -98,7 +124,10 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user not set Should connect to the socket`() {
         val user = Mother.randomUser { id = "userId" }
-        val sut = Fixture().givenUserNotSetState().get()
+        val sut = Fixture()
+            .givenUserAndToken(user, "token")
+            .givenUserNotSetState()
+            .get()
 
         sut.connectUser(user, "token").enqueue()
 
@@ -107,7 +136,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
     @Test
     fun `Given user not set and config with warmup Should do warmup`() {
-        val sut = Fixture().givenUserNotSetState().givenWarmUpEnabled().get()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenUserNotSetState()
+            .givenWarmUpEnabled()
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
@@ -117,7 +150,11 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user not set Should invoke pre set listeners`() {
         val listener: (User) -> Unit = mock()
-        val sut = Fixture().givenUserNotSetState().givenPreSetUserListener(listener).get()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenUserNotSetState()
+            .givenPreSetUserListener(listener)
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
@@ -127,7 +164,10 @@ internal class WhenConnectUser : BaseChatClientTest() {
     @Test
     fun `Given user set and user with different id Should call init connection listener with error`() {
         val connectionDataCallback: Call.Callback<ConnectionData> = mock()
-        val sut = Fixture().givenUserSetState(Mother.randomUser { id = "userId1" }).get()
+        val sut = Fixture()
+            .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
+            .givenUserSetState(Mother.randomUser { id = "userId1" })
+            .get()
 
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
 
@@ -173,6 +213,10 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
             chatClient.preSetUserListeners.add(listener)
+        }
+
+        fun givenUserAndToken(user: User, token: String) = apply {
+            whenever(tokenUtils.getUserId(token)) doReturn user.id
         }
 
         fun clearSocketInvocations() = apply {
