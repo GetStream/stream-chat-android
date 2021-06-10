@@ -1,8 +1,11 @@
 package io.getstream.chat.android.offline.message
 
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -42,14 +45,35 @@ internal class MessageSendingServiceTests {
             Truth.assertThat(result.data().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         }
 
+    @Test
+    fun `Given message without attachments And offline When send new message Should update channel controller and repository`() =
+        runBlockingTest {
+            val message = randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf())
+            val channelController = mock<ChannelController>()
+            val repositoryFacade = mock<RepositoryFacade>()
+            val sut = Fixture()
+                .givenChannelController(channelController)
+                .givenRepositories(repositoryFacade)
+                .givenOffline()
+                .givenCid("cid1")
+                .get()
+
+            sut.sendNewMessage(message)
+
+            verify(channelController).upsertMessage(argThat { id == "messageId1" })
+            verify(repositoryFacade).insertMessage(argThat { id == "messageId1" }, eq(false))
+            verify(repositoryFacade).updateLastMessageForChannel(eq("cid1"), argThat { id == "messageId1" })
+        }
+
     private class Fixture {
-        private val repositoryFacade = mock<RepositoryFacade>()
+        private var repositoryFacade = mock<RepositoryFacade>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
             on(it.user) doReturn MutableStateFlow(randomUser())
             on(it.repos) doReturn repositoryFacade
             on { generateMessageId() } doReturn randomString()
+            on { getActiveQueries() } doReturn emptyList()
         }
-        private val channelController = mock<ChannelController>()
+        private var channelController = mock<ChannelController>()
 
         fun givenOffline() = apply {
             whenever(chatDomainImpl.online) doReturn MutableStateFlow(false)
@@ -59,6 +83,15 @@ internal class MessageSendingServiceTests {
 
         fun givenCid(cid: String) = apply {
             whenever(channelController.cid) doReturn cid
+        }
+
+        fun givenChannelController(channelController: ChannelController) = apply {
+            this.channelController = channelController
+        }
+
+        fun givenRepositories(repositoryFacade: RepositoryFacade) = apply {
+            this.repositoryFacade = repositoryFacade
+            whenever(chatDomainImpl.repos) doReturn repositoryFacade
         }
     }
 }
