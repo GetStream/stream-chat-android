@@ -13,18 +13,14 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_COLOR_MINE
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_COLOR_THEIRS
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_WIDTH_MINE
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_WIDTH_THEIRS
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_COLOR_MINE
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_COLOR_THEIRS
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_WIDTH_MINE
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_WIDTH_THEIRS
 
 /**
- * Style for view holders used inside [MessageListView].
- * Use this class together with [TransformStyle.messageListItemStyleTransformer] to change styles programmatically.
+ * Style for view holders used inside [MessageListView] allowing to customize message "reply" view.
+ * Use this class together with [TransformStyle.messageReplyStyleTransformer] to change styles programmatically.
  *
  * @property messageBackgroundColorMine - background color for message sent by the current user. Default - [R.color.stream_ui_grey_gainsboro]
  * @property messageBackgroundColorTheirs - background color for message sent by other user. Default - [R.color.stream_ui_white]
@@ -81,21 +77,18 @@ public data class MessageReplyStyle(
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageReplyTextSizeMine,
-                    context.getDimension(MessageListItemStyle.DEFAULT_TEXT_SIZE)
+                    context.getDimension(DEFAULT_TEXT_SIZE)
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyTextColorMine,
-                    context.getColorCompat(MessageListItemStyle.DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(DEFAULT_TEXT_COLOR)
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageReplyTextFontAssetsMine,
                     R.styleable.MessageListView_streamUiMessageReplyTextFontMine,
                     mediumTypeface
                 )
-                .style(
-                    R.styleable.MessageListView_streamUiMessageReplyTextStyleMine,
-                    MessageListItemStyle.DEFAULT_TEXT_STYLE
-                )
+                .style(R.styleable.MessageListView_streamUiMessageReplyTextStyleMine, DEFAULT_TEXT_STYLE)
                 .build()
 
             val textStyleTheirs = TextStyle.Builder(attributes)
