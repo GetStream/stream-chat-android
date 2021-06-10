@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
@@ -18,7 +17,9 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
+import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
 
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -36,10 +37,26 @@ internal class MediaAttachmentView : ConstraintLayout {
                 constrainViewToParentBySide(it.root, ConstraintSet.TOP)
             }
         }
+    private lateinit var style: MediaAttachmentViewStyle
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper())
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context) : this(context, null, 0)
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(attrs)
+    }
+
+    private fun init(attrs: AttributeSet?) {
+        style = MediaAttachmentViewStyle(context, attrs)
+        binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
+        binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
+        binding.giphyLabel.setImageDrawable(style.giphyIcon)
+    }
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url = attachment.imagePreviewUrl ?: attachment.ogUrl ?: return
@@ -87,7 +104,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     private fun showMoreCount(andMoreCount: Int) {
         binding.moreCount.isVisible = true
         binding.moreCountLabel.text =
-            context.resources.getString(R.string.stream_ui_message_list_attachment_more_count, andMoreCount)
+            context.getString(R.string.stream_ui_message_list_attachment_more_count, andMoreCount)
     }
 
     fun setImageShapeByCorners(
@@ -96,17 +113,22 @@ internal class MediaAttachmentView : ConstraintLayout {
         bottomRight: Float,
         bottomLeft: Float,
     ) {
-        ShapeAppearanceModel.Builder().setTopLeftCornerSize(topLeft).setTopRightCornerSize(topRight)
-            .setBottomRightCornerSize(bottomRight).setBottomLeftCornerSize(bottomLeft).build().let(this::setImageShape)
+        ShapeAppearanceModel.Builder()
+            .setTopLeftCornerSize(topLeft)
+            .setTopRightCornerSize(topRight)
+            .setBottomRightCornerSize(bottomRight)
+            .setBottomLeftCornerSize(bottomLeft)
+            .build()
+            .let(this::setImageShape)
     }
 
     fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(context, R.color.stream_ui_grey))
+            setTint(style.imageBackgroundColor)
         }
         binding.moreCount.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-            setTint(ContextCompat.getColor(context, R.color.stream_ui_overlay))
+            setTint(style.moreCountOverlayColor)
         }
     }
 
