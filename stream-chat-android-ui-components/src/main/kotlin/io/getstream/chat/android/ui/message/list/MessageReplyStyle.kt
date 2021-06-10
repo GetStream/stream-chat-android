@@ -1,3 +1,4 @@
+
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -12,11 +13,33 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_COLOR_MINE
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_COLOR_THEIRS
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_WIDTH_MINE
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle.Companion.MESSAGE_STROKE_WIDTH_THEIRS
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_COLOR_MINE
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_COLOR_THEIRS
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_WIDTH_MINE
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MESSAGE_STROKE_WIDTH_THEIRS
 
 /**
  * Style for view holders used inside [MessageListView].
  * Use this class together with [TransformStyle.messageListItemStyleTransformer] to change styles programmatically.
  *
+ * @property messageBackgroundColorMine - background color for message sent by the current user. Default - [R.color.stream_ui_grey_gainsboro]
+ * @property messageBackgroundColorTheirs - background color for message sent by other user. Default - [R.color.stream_ui_white]
+ * @property messageLinkTextColorMine - color for links sent by the current user. Default - [R.color.stream_ui_accent_blue]
+ * @property messageLinkTextColorTheirs - color for links sent by other user. Default - [R.color.stream_ui_accent_blue]
+ * @property messageLinkBackgroundColorMine - background color for message with link, sent by the current user. Default - [R.color.stream_ui_blue_alice]
+ * @property messageLinkBackgroundColorTheirs - background color for message with link, sent by other user. Default - [R.color.stream_ui_blue_alice]
+ * @property linkStyleMine - appearance for message link sent by the current user
+ * @property linkStyleTheirs - appearance for message link sent by other user
+ * @property textStyleMine - appearance for message text sent by the current user
+ * @property textStyleTheirs - appearance for message text sent by other user
+ * @property messageStrokeColorMine - stroke color for message sent by the current user. Default - [MESSAGE_STROKE_COLOR_MINE]
+ * @property messageStrokeWidthMine - stroke width for message sent by the current user. Default - [MESSAGE_STROKE_WIDTH_MINE]
+ * @property messageStrokeColorTheirs - stroke color for message sent by other user. Default - [MESSAGE_STROKE_COLOR_THEIRS]
+ * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
  */
 public data class MessageReplyStyle(
     @ColorInt
