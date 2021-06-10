@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 internal interface AttachmentRepository {
-    fun observerAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
+    fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>>
 }
 
 internal class AttachmentRepositoryImpl(private val attachmentDao: AttachmentDao) : AttachmentRepository {
-    override fun observerAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
+    override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> {
         return attachmentDao.observeAttachmentsForMessage(messageId)
             .distinctUntilChanged()
             .map { attachments -> attachments.map(AttachmentEntity::toModel) }

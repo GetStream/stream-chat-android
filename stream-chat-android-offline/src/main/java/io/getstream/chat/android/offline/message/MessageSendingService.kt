@@ -81,7 +81,7 @@ internal class MessageSendingService(
         jobsMap = jobsMap + (
             newMessage.id to domainImpl.scope.launch {
                 val ephemeralUploadStatusMessage: Message? = if (newMessage.isEphemeral()) newMessage else null
-                domainImpl.repos.observerAttachmentsForMessage(newMessage.id)
+                domainImpl.repos.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
@@ -114,7 +114,9 @@ internal class MessageSendingService(
         val messageToSend = message.copy(type = "regular")
         return Result.success(messageToSend)
             .onSuccess { logger.logI("Starting to send message with id ${it.id} and text ${it.text}") }
-            .flatMapSuspend { newMessage -> domainImpl.runAndRetry { channelClient.sendMessage(newMessage) } }
+            .flatMapSuspend { newMessage ->
+                domainImpl.callRetryService().runAndRetry { channelClient.sendMessage(newMessage) }
+            }
             .mapSuspend(channelController::handleSendMessageSuccess)
             .recoverSuspend { error -> channelController.handleSendMessageFail(messageToSend, error) }
     }

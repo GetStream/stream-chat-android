@@ -83,6 +83,7 @@ import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.StopTyping
 import io.getstream.chat.android.offline.usecase.ThreadLoadMore
 import io.getstream.chat.android.offline.usecase.WatchChannel
+import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
@@ -392,33 +393,13 @@ internal class ChatDomainImpl internal constructor(
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
-    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
-        var attempt = 1
-        var result: Result<T>
+    internal fun callRetryService() = CallRetryService(retryPolicy, client)
 
-        while (true) {
-            result = runnable().await()
-            if (result.isSuccess || result.error().isPermanent()) {
-                break
-            } else {
-                // retry logic
-                val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
-                val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
-
-                if (shouldRetry) {
-                    // temporary failure, continue
-                    logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")
-                    delay(timeout.toLong())
-                    attempt += 1
-                } else {
-                    logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
-                    break
-                }
-            }
-        }
-        // permanent failure case return
-        return result
-    }
+    @Deprecated(
+        message = "This utility method is extracted to CallRetryService",
+        replaceWith = ReplaceWith("ChatDomainImpl::callRetryService::runAndRetry")
+    )
+    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> = callRetryService().runAndRetry(runnable)
 
     internal suspend fun createNewChannel(c: Channel): Result<Channel> =
         try {
