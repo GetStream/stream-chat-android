@@ -69,8 +69,6 @@ class ChatFragment : Fragment() {
         configureMessageInputView()
         initMessageInputViewModel()
         configureBackButtonHandling()
-
-        binding.messageInputView.setSuggestionListViewHolderFactory(CustomSuggestionListViewHolderFactory())
     }
 
     private fun configureMessageInputView() {
