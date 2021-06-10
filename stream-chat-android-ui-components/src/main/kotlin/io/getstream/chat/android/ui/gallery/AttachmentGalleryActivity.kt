@@ -81,11 +81,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     private fun setupGallery(attachmentGalleryItems: List<AttachmentGalleryItem>) {
-        this.attachmentGalleryItems = attachmentGalleryItems
-        setupGalleryAdapter()
-        setupShareImageButton()
-        setupAttachmentActionsButton()
-        observePageChanges()
+        if (attachmentGalleryItems.isEmpty()) {
+            onBackPressed()
+        } else {
+            this.attachmentGalleryItems = attachmentGalleryItems
+            setupGalleryAdapter()
+            setupShareImageButton()
+            setupAttachmentActionsButton()
+            observePageChanges()
+        }
     }
 
     private fun setupGalleryAdapter() {
