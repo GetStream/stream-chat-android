@@ -219,6 +219,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiWarningMessageOptionsTextSize" format="dimension|reference" />
+        <attr name="streamUiWarningMessageOptionsTextColor" format="color|reference" />
+        <attr name="streamUiWarningMessageOptionsTextFont" format="reference" />
+        <attr name="streamUiWarningMessageOptionsTextFontAssets" format="string" />
+        <attr name="streamUiWarningMessageOptionsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- User reactions card -->
         <attr name="streamUiUserReactionsBackgroundColor" format="color" />
 

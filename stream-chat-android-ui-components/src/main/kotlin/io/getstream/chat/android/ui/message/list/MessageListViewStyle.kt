@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property flagMessageConfirmationEnabled - enables/disables showing confirmation dialog before flagging message. Disabled by default
  * @property warningActionsTintColor - color of dangerous option such as delete. Default - [R.color.stream_ui_accent_red].
  * @property messageOptionsText - text appearance of message option items
+ * @property warningMessageOptionsText - text appearance of warning message option items
  * @property messageOptionsBackgroundColor - background color of message options. Default - [R.color.stream_ui_white]
  * @property userReactionsBackgroundColor - background color of user reactions card. Default - [R.color.stream_ui_white]
  * @property userReactionsTitleText - text appearance of of user reactions card title
@@ -57,7 +58,8 @@ public data class MessageListViewStyle(
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
-    @ColorInt val iconsTint: Int,
+    @Deprecated(message = "Use custom icons instead", level = DeprecationLevel.WARNING)
+    @ColorInt val iconsTint: Int?,
     val replyIcon: Int,
     val replyEnabled: Boolean,
     val threadReplyIcon: Int,
@@ -78,8 +80,10 @@ public data class MessageListViewStyle(
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
-    @ColorInt val warningActionsTintColor: Int,
+    @Deprecated(message = "Use deleteIcon instead", level = DeprecationLevel.WARNING)
+    @ColorInt val warningActionsTintColor: Int?,
     val messageOptionsText: TextStyle,
+    val warningMessageOptionsText: TextStyle,
     @ColorInt val messageOptionsBackgroundColor: Int,
     @ColorInt val userReactionsBackgroundColor: Int,
     val userReactionsTitleText: TextStyle,
@@ -144,10 +148,7 @@ public data class MessageListViewStyle(
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
 
-                val iconsTint = attributes.getColor(
-                    R.styleable.MessageListView_streamUiMessageOptionIconColor,
-                    ContextCompat.getColor(context, R.color.stream_ui_grey)
-                )
+                val iconsTint = attributes.getColorOrNull(R.styleable.MessageListView_streamUiMessageOptionIconColor)
 
                 val replyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
@@ -158,27 +159,27 @@ public data class MessageListViewStyle(
 
                 val threadReplyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiThreadReplyOptionIcon,
-                    R.drawable.stream_ui_ic_thread_reply
+                    R.drawable.stream_ui_ic_thread_reply,
                 )
 
                 val retryIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiRetryOptionIcon,
-                    R.drawable.stream_ui_ic_send
+                    R.drawable.stream_ui_ic_send,
                 )
 
                 val copyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiCopyOptionIcon,
-                    R.drawable.stream_ui_ic_copy
+                    R.drawable.stream_ui_ic_copy,
                 )
 
                 val editIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiEditOptionIcon,
-                    R.drawable.stream_ui_ic_edit
+                    R.drawable.stream_ui_ic_edit,
                 )
 
                 val flagIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiFlagOptionIcon,
-                    R.drawable.stream_ui_ic_flag
+                    R.drawable.stream_ui_ic_flag,
                 )
 
                 val muteIcon = attributes.getResourceId(
@@ -188,17 +189,17 @@ public data class MessageListViewStyle(
 
                 val unmuteIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiUnmuteOptionIcon,
-                    R.drawable.stream_ui_ic_umnute
+                    R.drawable.stream_ui_ic_umnute,
                 )
 
                 val blockIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiBlockOptionIcon,
-                    R.drawable.stream_ui_ic_user_block
+                    R.drawable.stream_ui_ic_user_block,
                 )
 
                 val deleteIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiDeleteOptionIcon,
-                    R.drawable.stream_ui_ic_delete
+                    R.drawable.stream_ui_ic_delete,
                 )
 
                 val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
@@ -223,10 +224,8 @@ public data class MessageListViewStyle(
 
                 val threadsEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
 
-                val warningActionsTintColor = attributes.getColor(
-                    R.styleable.MessageListView_streamUiWarningActionsTintColor,
-                    context.getColorCompat(R.color.stream_ui_accent_red)
-                )
+                val warningActionsTintColor =
+                    attributes.getColorOrNull(R.styleable.MessageListView_streamUiWarningActionsTintColor)
 
                 val messageOptionsText = TextStyle.Builder(attributes)
                     .size(
@@ -243,6 +242,25 @@ public data class MessageListViewStyle(
                     )
                     .style(
                         R.styleable.MessageListView_streamUiMessageOptionsTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val warningMessageOptionsText = TextStyle.Builder(attributes)
+                    .size(
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_red)
+                    )
+                    .font(
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextFontAssets,
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextFont
+                    )
+                    .style(
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextStyle,
                         Typeface.NORMAL
                     )
                     .build()
@@ -310,6 +328,7 @@ public data class MessageListViewStyle(
                     threadsEnabled = threadsEnabled,
                     warningActionsTintColor = warningActionsTintColor,
                     messageOptionsText = messageOptionsText,
+                    warningMessageOptionsText = warningMessageOptionsText,
                     messageOptionsBackgroundColor = messageOptionsBackgroundColor,
                     userReactionsBackgroundColor = userReactionsBackgroundColor,
                     userReactionsTitleText = userReactionsTitleText,

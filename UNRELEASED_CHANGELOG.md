@@ -76,8 +76,6 @@ Fixed bug where files without extension in their name lost the mime type.
   - `streamUiChannelActionsDeleteConversationEnabled` attribute to hide/show "Delete Conversation" action item
   - `streamUiChannelActionsCancelIcon` attribute to customize "Cancel" action icon
   - `streamUiChannelActionsCancelEnabled` attribute to hide/show "Cancel" action item
-  - `streamUiChannelActionsIconsTint` attribute to customize action ions tint color
-  - `streamUiChannelActionsWarningActionsTint` attribute to customize the color of "Delete Conversation" action item
 - Added `streamUiIconOnlyVisibleToYou` attribute to `MessageListView` to allow customizing "Only visible to you" icon placed in messages footer
 - Added `GiphyViewHolderStyle` to `MessageListViewStyle` to allow customizing `GiphyViewHolder`. The new style comes together with following `MessageListView` attributes:
   - `streamUiGiphyCardBackgroundColor` attribute to customize card's background color
