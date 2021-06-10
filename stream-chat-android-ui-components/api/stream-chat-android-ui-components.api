@@ -1151,10 +1151,6 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle {
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/ui/message/list/GiphyViewHolderStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle$Companion;
 	public fun <init> (IFILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
