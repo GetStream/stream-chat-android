@@ -122,9 +122,7 @@ internal class MessageReplyView : FrameLayout {
                     val color =
                         style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
                     setTint(color)
-                    style?.messageStrokeColorMine?.let {
-                        setStrokeTint(it)
-                    }
+                    style?.messageStrokeColorMine?.let(::setStrokeTint)
                     strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH
                 }
                 else -> {
@@ -138,9 +136,9 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun isLink(message: Message) = message.attachments
-        .lastOrNull()
-        ?.type == ModelType.attach_link
+    private fun isLink(message: Message) = message.attachments.run {
+        size == 1 && last().type == ModelType.attach_link
+    }
 
     private fun setAttachmentImage(message: Message) {
         val attachment = message.attachments.lastOrNull()
