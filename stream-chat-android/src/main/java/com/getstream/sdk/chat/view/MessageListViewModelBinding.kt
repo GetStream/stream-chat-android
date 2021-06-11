@@ -3,6 +3,7 @@
 package com.getstream.sdk.chat.view
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -18,6 +19,16 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+    Transformations.switchMap(user) { user ->
+        Transformations.map(channel) { channel ->
+            channel to user
+        }
+    }.observe(lifecycleOwner) { (channel, user) ->
+        if (user != null) {
+            view.init(channel, user)
+        } 
+    }
+
     channel.observe(lifecycleOwner) {
         view.init(it, currentUser)
     }

@@ -3,7 +3,6 @@ package io.getstream.chat.ui.sample.feature.chat.info.group.member
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,16 +10,20 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.ui.sample.common.isDraft
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val chatDomain: io.getstream.chat.android.offline.ChatDomain = io.getstream.chat.android.offline.ChatDomain.instance(),
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -32,23 +35,31 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            val result = chatDomain.queryChannels(
-                filter = Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.distinct(listOf(memberId, chatDomain.currentUser.id)),
-                ),
-                sort = QuerySort.desc(Channel::lastUpdated),
-                messageLimit = 0,
-                limit = 1,
-            ).await()
-            if (result.isSuccess) {
-                _state.addSource(
-                    Transformations.map(
-                        result.data().channelsState,
-                        this@GroupChatInfoMemberOptionsViewModel::mapChannelState,
-                    )
-                ) { newState -> _state.value = newState }
-            }
+            chatDomain.user
+                .filterNotNull()
+                .map { user ->
+                    chatDomain.queryChannels(
+                        filter = Filters.and(
+                            Filters.eq("type", "messaging"),
+                            Filters.distinct(listOf(memberId, user.id)),
+                        ),
+                        sort = QuerySort.desc(Channel::lastUpdated),
+                        messageLimit = 0,
+                        limit = 1,
+                    ).await()
+                }.flatMapConcat { result ->
+                    if (result.isSuccess) {
+                        result.data()
+                            .channelsState
+                            .map(this@GroupChatInfoMemberOptionsViewModel::mapChannelState)
+                    } else {
+                        MutableStateFlow(null)
+                    }
+                }
+                .filterNotNull()
+                .collect { state ->
+                    _state.value = state
+                }
         }
     }
 
