@@ -31,11 +31,18 @@ internal class RepositoryFacadeBuilder {
     fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
 
-    private fun createDatabase(scope: CoroutineScope, context: Context, user: User?, offlineEnabled: Boolean) = if (offlineEnabled && user != null) {
-        ChatDatabase.getDatabase(context, user.id)
-    } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
-            scope.launch { inMemoryDatabase.clearAllTables() }
+    private fun createDatabase(
+        scope: CoroutineScope,
+        context: Context,
+        user: User?,
+        offlineEnabled: Boolean,
+    ): ChatDatabase {
+        return if (offlineEnabled && user != null) {
+            ChatDatabase.getDatabase(context, user.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
+                scope.launch { inMemoryDatabase.clearAllTables() }
+            }
         }
     }
 
@@ -54,7 +61,7 @@ internal class RepositoryFacadeBuilder {
             requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
         }
 
-        val messageRepository = factory.createMessageRepository(getUser)
+        val messageRepository = factory.createMessageRepository(getUser, userRepository::selectCurrentUser)
         val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
         return RepositoryFacade(

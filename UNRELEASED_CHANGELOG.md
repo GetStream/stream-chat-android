@@ -36,6 +36,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug where reactions of other users were sometimes displayed as reactions of the current user.
+- Fixed bug where deleted user reactions were sometimes displayed on the message options overlay.
 
 ### ⬆️ Improved
 

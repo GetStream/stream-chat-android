@@ -10,6 +10,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
@@ -51,7 +52,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message with theirs reaction When querying message Should return massage without own reactions`() =
         runBlocking {
             val messageId = randomString()
-            val user = randomUser(
+            val theirsUser = randomUser(
                 // ignoring fields that are not persisted on purpose
                 totalUnreadCount = 0,
                 unreadChannels = 0,
@@ -59,27 +60,55 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             )
             val theirsReaction = randomReaction(
                 messageId = messageId,
-                type = "haha",
-                user = user,
-                userId = user.id
+                user = theirsUser,
+                userId = theirsUser.id,
+                deletedAt = null
+
             )
             val message = randomMessage(
                 id = messageId,
                 ownReactions = mutableListOf(),
                 latestReactions = mutableListOf(theirsReaction),
-                reactionCounts = mutableMapOf("haha" to 1),
-                reactionScores = mutableMapOf("haha" to 1),
             )
 
+            repositoryFacade.insertCurrentUser(randomUser())
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 
             Truth.assertThat(result).isNotNull()
             Truth.assertThat(result!!.latestReactions).isEqualTo(mutableListOf(theirsReaction))
             Truth.assertThat(result!!.ownReactions).isEmpty()
-            Truth.assertThat(result!!.reactionCounts.size).isEqualTo(1)
-            Truth.assertThat(result!!.reactionCounts["haha"]).isEqualTo(1)
-            Truth.assertThat(result!!.reactionScores.size).isEqualTo(1)
-            Truth.assertThat(result!!.reactionScores["haha"]).isEqualTo(1)
+        }
+
+    @Test
+    fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`() =
+        runBlocking {
+            val messageId = randomString()
+            val currentUser = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            )
+            val mineDeletedReaction = randomReaction(
+                messageId = messageId,
+                user = currentUser,
+                userId = currentUser.id,
+                deletedAt = Date()
+
+            )
+            val message = randomMessage(
+                id = messageId,
+                ownReactions = mutableListOf(mineDeletedReaction),
+                latestReactions = mutableListOf(mineDeletedReaction),
+            )
+
+            repositoryFacade.insertCurrentUser(currentUser)
+            repositoryFacade.insertMessages(listOf(message), cache = false)
+            val result = repositoryFacade.selectMessage(message.id)
+
+            Truth.assertThat(result).isNotNull()
+            Truth.assertThat(result!!.latestReactions).isEmpty()
+            Truth.assertThat(result!!.ownReactions).isEmpty()
         }
 }

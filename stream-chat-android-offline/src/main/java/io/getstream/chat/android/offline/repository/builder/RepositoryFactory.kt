@@ -34,8 +34,11 @@ internal class RepositoryFactory(
     fun createQueryChannelsRepository(): QueryChannelsRepository =
         QueryChannelsRepositoryImpl(database.queryChannelsDao())
 
-    fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
-        MessageRepositoryImpl(database.messageDao(), getUser, 100)
+    fun createMessageRepository(
+        getUser: suspend (userId: String) -> User,
+        getCurrentUser: suspend () -> User?,
+    ): MessageRepository =
+        MessageRepositoryImpl(database.messageDao(), getUser, getCurrentUser, 100)
 
     fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
         ReactionRepositoryImpl(database.reactionDao(), getUser)
