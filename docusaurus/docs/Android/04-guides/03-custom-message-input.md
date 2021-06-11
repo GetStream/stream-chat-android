@@ -13,7 +13,9 @@ Note that the UI Components Input View supports many advanced features that you'
 
 With that, let's see how you can build an Input View from scratch.
 
-> Note that this sample is meant to be as simple as possible. You might want to architect your actual custom views in more advanced ways than shown here.
+:::note
+This sample is meant to be as simple as possible. You might want to architect your actual custom views in more advanced ways than shown here.
+:::
 
 ### Creating a layout
 
@@ -159,7 +161,9 @@ val stopTyping: Runnable = Runnable {
 
 Note that `enqueue` is called without a callback, so you're not checking whether or not the operation succeeded or what its result was. This is simplification as these events are not usually high priority.
 
-> The `parentId` here would be the ID of the parent message in case you're typing in a thread (see below about supporting threading).
+:::note
+The `parentId` here would be the ID of the parent message in case you're typing in a thread (see below about supporting threading).
+:::
 
 Then, inside the `init` block, add a `TextWatcher` to the `inputField` that will detect changes in the text input:
 
@@ -209,7 +213,9 @@ fun editMessage(message: Message) {
 
 The input field is also updated here to reflect the original text of the message.
 
-> You might want to add additional UI and listeners to cancel a pending edit and clear this value. You could also update the text / icon of the _Send_ button when a message is being edited.
+:::note
+You might want to add additional UI and listeners to cancel a pending edit and clear this value. You could also update the text / icon of the _Send_ button when a message is being edited.
+:::
 
 Next, the listener of the _Send_ button has to be updated:
 
@@ -290,7 +296,9 @@ chatDomain.sendMessage(message).enqueue { /* ... */ }
 
 This sets the `parentId` value on the newly created message if there is a parent message available.
 
-> Another message property related to threading is `showInChannel`. Setting this to `true` will show a message sent to a thread in the main channel as well. You can add additional UI to let users choose this option, for example, the UI Components message input implementation shows a checkbox for this.
+:::note
+Another message property related to threading is `showInChannel`. Setting this to `true` will show a message sent to a thread in the main channel as well. You can add additional UI to let users choose this option, for example, the UI Components message input implementation shows a checkbox for this.
+:::
 
 To connect this with the thread handling of the Message List View, add the following calls in your screen's implementation (this assumes that you're also using the default Message List Header View):
 

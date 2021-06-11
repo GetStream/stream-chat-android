@@ -65,7 +65,9 @@ channelListHeaderViewModel.bindView(channelListHeaderView, viewLifecycleOwner)
 channelListViewModel.bindView(channelListView, viewLifecycleOwner)
 ```
 
-> Note that `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::note
+`bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::
 
 From that point, `ChannelListHeaderView` will be able to display the current user avatar as well as online status, while `ChannelListView` will display different channels view states, as well as the channel’s pagination, which will be handled automatically.
 
