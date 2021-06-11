@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     channel.observe(lifecycleOwner) {
-        view.init(it) { currentUser }
+        view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }

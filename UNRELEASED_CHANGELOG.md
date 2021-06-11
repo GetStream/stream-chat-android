@@ -105,6 +105,28 @@ permission is not granted, now it asks for it.
   - `imageBackgroundColor` - attribute to customize image background color
   - `moreCountOverlayColor` - attribute to customize the color of "more count" semi-transparent overlay
   - `moreCountTextStyle` - attribute to customize text appearance of more count text
+- Added `MessageReplyStyle` class allowing to customize MessageReply item view on MessageListView.
+Customization can be done using `TransformStyle` API or XML attributes of `MessageListView`:
+  - `streamUiMessageReplyBackgroundColorMine`
+  - `streamUiMessageReplyBackgroundColorTheirs`
+  - `streamUiMessageReplyTextSizeMine`
+  - `streamUiMessageReplyTextColorMine`
+  - `streamUiMessageReplyTextFontMine`
+  - `streamUiMessageReplyTextFontAssetsMine`
+  - `streamUiMessageReplyTextStyleMine`
+  - `streamUiMessageReplyTextSizeTheirs`
+  - `streamUiMessageReplyTextColorTheirs`
+  - `streamUiMessageReplyTextFontTheirs`
+  - `streamUiMessageReplyTextFontAssetsTheirs`
+  - `streamUiMessageReplyTextStyleTheirs`
+  - `streamUiMessageReplyLinkColorMine`
+  - `streamUiMessageReplyLinkColorTheirs`
+  - `streamUiMessageReplyLinkBackgroundColorMine`
+  - `streamUiMessageReplyLinkBackgroundColorTheirs`
+  - `streamUiMessageReplyStrokeColorMine`
+  - `streamUiMessageReplyStrokeWidthMine`
+  - `streamUiMessageReplyStrokeColorTheirs`
+  - `streamUiMessageReplyStrokeWidthTheirs`
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:
