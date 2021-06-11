@@ -4,20 +4,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.isMuted
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.ui.utils.FilterUtils
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -33,7 +39,7 @@ public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
+        FilterUtils.userFilter(chatDomain),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
@@ -43,7 +49,7 @@ public class ChannelListViewModel(
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
     public val typingEvents: LiveData<TypingEvent>
-        get() = chatDomain.typingUpdates
+        get() = chatDomain.typingUpdates.asLiveData()
 
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
@@ -52,49 +58,61 @@ public class ChannelListViewModel(
 
     init {
         stateMerger.value = INITIAL_STATE
+
         chatDomain.queryChannels(filter, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
-            val currentState = stateMerger.value!!
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
-                stateMerger.addSource(
-                    map(queryChannelsController.channelsState) { channelState ->
-                        when (channelState) {
-                            is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading,
-                            -> currentState.copy(isLoading = true)
-                            is QueryChannelsController.ChannelsState.OfflineNoResults -> currentState.copy(
-                                isLoading = false,
-                                channels = emptyList(),
-                            )
-                            is QueryChannelsController.ChannelsState.Result -> currentState.copy(
-                                isLoading = false,
-                                channels = parseMutedChannels(
-                                    channelState.channels,
-                                    chatDomain.currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
-                                ),
-                            )
-                        }
-                    }
-                ) { state -> stateMerger.value = state }
 
-                stateMerger.addSource(queryChannelsController.mutedChannelIds) { mutedChannels ->
-                    stateMerger.value?.let { state ->
+                val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
+                    queryChannelsController.channelsState.map { channelState ->
+                        channelState to currentUser
+                    }
+                }.map { (channelState, currentUser) ->
+                    handleChannelState(channelState, currentUser)
+                }.asLiveData()
+
+                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+
+                stateMerger.addSource(queryChannelsController.mutedChannelIds.asLiveData()) { mutedChannels ->
+                    val state = stateMerger.value
+
+                    if (state?.channels?.isNotEmpty() == true) {
                         stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                    } else {
+                        stateMerger.value = state?.copy()
                     }
                 }
 
-                paginationStateMerger.addSource(queryChannelsController.loadingMore) { loadingMore ->
+                paginationStateMerger.addSource(queryChannelsController.loadingMore.asLiveData()) { loadingMore ->
                     setPaginationState { copy(loadingMore = loadingMore) }
                 }
-                paginationStateMerger.addSource(queryChannelsController.endOfChannels) { endOfChannels ->
+                paginationStateMerger.addSource(queryChannelsController.endOfChannels.asLiveData()) { endOfChannels ->
                     setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
-            } else {
-                stateMerger.value = currentState.copy(
-                    isLoading = false,
-                    channels = emptyList(),
-                )
             }
+        }
+    }
+
+    private fun handleChannelState(
+        channelState: QueryChannelsController.ChannelsState,
+        currentUser: User,
+    ): State {
+        return when (channelState) {
+            is QueryChannelsController.ChannelsState.NoQueryActive,
+            is QueryChannelsController.ChannelsState.Loading,
+            -> State(isLoading = true, emptyList())
+            is QueryChannelsController.ChannelsState.OfflineNoResults -> State(
+                isLoading = false,
+                channels = emptyList(),
+            )
+            is QueryChannelsController.ChannelsState.Result ->
+                State(
+                    isLoading = false,
+                    channels = parseMutedChannels(
+                        channelState.channels,
+                        currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
+                    ),
+                )
         }
     }
 
@@ -134,6 +152,8 @@ public class ChannelListViewModel(
         paginationStateMerger.value = reducer(paginationStateMerger.value ?: PaginationState())
     }
 
+    public data class State(val isLoading: Boolean, val channels: List<Channel>)
+
     private fun parseMutedChannels(
         channelsMap: List<Channel>,
         channelMutesIds: List<String>?,
@@ -144,8 +164,6 @@ public class ChannelListViewModel(
             }
         }
     }
-
-    public data class State(val isLoading: Boolean, val channels: List<Channel>)
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
@@ -167,5 +185,14 @@ public class ChannelListViewModel(
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
 
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
+    }
+}
+
+private fun userFilter(chatDomain: io.getstream.chat.android.offline.ChatDomain): FilterObject {
+    return chatDomain.user.value?.id?.let { id ->
+        Filters.`in`("members", id)
+    } ?: Filters.neutral().also {
+        ChatLogger.get("ChannelListViewModel")
+            .logE("User is not set in ChatDomain, default filter for ChannelListViewModel won't work")
     }
 }

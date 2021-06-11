@@ -79,6 +79,7 @@ dependencies {
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
     implementation Dependencies.stfalconImageViewer
+    implementation Dependencies.androidxLifecycleLiveDataKtx
 
     // Markdown
     implementation Dependencies.markwonCore

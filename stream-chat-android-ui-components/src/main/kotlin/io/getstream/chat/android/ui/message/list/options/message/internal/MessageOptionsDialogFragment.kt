@@ -155,7 +155,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, currentUser)
+                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
                 setMessageListItemStyle(style.itemStyle)
