@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.list.internal
 
+import android.content.res.Resources
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
@@ -23,8 +24,9 @@ internal class SuggestionListPopupWindow(
         suggestionListView.renderSuggestions(suggestions)
 
         if (suggestions.hasSuggestions()) {
+            val displayWidth = Resources.getSystem().displayMetrics.widthPixels
             suggestionListView.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(displayWidth, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             )
             val popupWindowOffset: Int = suggestionListView.measuredHeight + anchor.height
