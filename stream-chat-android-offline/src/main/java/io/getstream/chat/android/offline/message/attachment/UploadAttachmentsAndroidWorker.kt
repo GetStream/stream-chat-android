@@ -19,7 +19,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        return UploadAttachmentsWorker()
+        return UploadAttachmentsWorker(applicationContext)
             .uploadAttachmentsForMessage(channelType, channelId, messageId)
             .run { if (isSuccess) Result.success() else Result.failure() }
     }

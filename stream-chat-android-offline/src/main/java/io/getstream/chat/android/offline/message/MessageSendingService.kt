@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsAndroidWorker
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -27,6 +27,7 @@ internal class MessageSendingService(
     private val domainImpl: ChatDomainImpl,
     private val channelController: ChannelController,
     private val channelClient: ChannelClient,
+    private val uploadAttachmentsWorker: UploadAttachmentsWorker,
 ) {
     private val logger = ChatLogger.get("MessageSendingService")
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -101,8 +102,7 @@ internal class MessageSendingService(
                     }
             }
             )
-        UploadAttachmentsAndroidWorker.start(
-            domainImpl.appContext,
+        uploadAttachmentsWorker.enqueueJob(
             channelController.channelType,
             channelController.channelId,
             newMessage.id

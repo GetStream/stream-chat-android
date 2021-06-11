@@ -14,6 +14,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -23,6 +25,7 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 
@@ -76,7 +79,8 @@ internal class MessageSendingServiceTests {
     @Test
     fun `Given message without attachments And online And success network call When send new message Should send to BE`() =
         runBlockingTest {
-            val message = randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
+            val message =
+                randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
             val channelClient = mock<ChannelClient>()
             val sut = Fixture()
                 .givenOnline()
@@ -93,7 +97,8 @@ internal class MessageSendingServiceTests {
     @Test
     fun `Given message without attachments And online And success network call When send new message Should return message from BE`() =
         runBlockingTest {
-            val message = randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
+            val message =
+                randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
             val networkMessage = message.copy(updatedAt = randomDate())
             val sut = Fixture()
                 .givenOnline()
@@ -107,17 +112,37 @@ internal class MessageSendingServiceTests {
             Truth.assertThat(result.data()).isEqualTo(networkMessage)
         }
 
+    @Test
+    fun `Given message with attachments And online When send new message Should enqueue work to upload attachments`() =
+        runBlockingTest {
+            val message = randomMessage(id = "messageId1", attachments = mutableListOf(randomAttachment { }))
+            val uploadWorker = mock<UploadAttachmentsWorker>()
+            val sut = Fixture()
+                .givenOnline()
+                .givenCid("cid1")
+                .givenChannelType("channelType")
+                .givenChannelId("channelId")
+                .givenAttachmentUploadWorker(uploadWorker)
+                .get()
+
+            sut.sendNewMessage(message)
+
+            verify(uploadWorker).enqueueJob(eq("channelType"), eq("channelId"), eq("messageId1"))
+        }
+
     private class Fixture {
         private var repositoryFacade = mock<RepositoryFacade>()
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
             on(it.user) doReturn MutableStateFlow(randomUser())
             on(it.repos) doReturn repositoryFacade
+            on(it.scope) doReturn TestCoroutineScope()
             on { generateMessageId() } doReturn randomString()
             on { getActiveQueries() } doReturn emptyList()
             on { callRetryService() } doReturn CallRetryService(DefaultRetryPolicy(), mock())
         }
         private var channelController = mock<ChannelController>()
+        private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
 
         fun givenOffline() = apply {
             whenever(chatDomainImpl.online) doReturn MutableStateFlow(false)
@@ -140,9 +165,8 @@ internal class MessageSendingServiceTests {
             whenever(chatDomainImpl.repos) doReturn repositoryFacade
         }
 
-        suspend fun get(): MessageSendingService {
-            whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock -> invocationOnMock.arguments.first() as Message }
-            return MessageSendingService(chatDomainImpl, channelController, channelClient)
+        fun givenAttachmentUploadWorker(attachmentsWorker: UploadAttachmentsWorker) = apply {
+            this.uploadAttachmentsWorker = attachmentsWorker
         }
 
         fun givenNetworkResponse(message: Message) = apply {
@@ -151,6 +175,19 @@ internal class MessageSendingServiceTests {
 
         fun givenChannelClient(channelClient: ChannelClient) = apply {
             this.channelClient = channelClient
+        }
+
+        fun givenChannelType(channelType: String) = apply {
+            whenever(channelController.channelType) doReturn channelType
+        }
+
+        fun givenChannelId(channelId: String) = apply {
+            whenever(channelController.channelId) doReturn channelId
+        }
+
+        suspend fun get(): MessageSendingService {
+            whenever(channelController.handleSendMessageSuccess(any())) doAnswer { invocationOnMock -> invocationOnMock.arguments.first() as Message }
+            return MessageSendingService(chatDomainImpl, channelController, channelClient, uploadAttachmentsWorker)
         }
     }
 }
