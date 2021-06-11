@@ -40,11 +40,7 @@ internal class FileAttachmentsView : RecyclerView {
 
     private lateinit var style: FileAttachmentsViewStyle
 
-    private val fileAttachmentsAdapter = FileAttachmentsAdapter(
-        attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
-        attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
-        attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) }
-    )
+    private lateinit var fileAttachmentsAdapter: FileAttachmentsAdapter
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
@@ -70,6 +66,12 @@ internal class FileAttachmentsView : RecyclerView {
 
     fun init(attrs: AttributeSet?) {
         style = FileAttachmentsViewStyle(context, attrs)
+        fileAttachmentsAdapter = FileAttachmentsAdapter(
+            attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
+            attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
+            attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) },
+            style,
+        )
     }
 
     fun setAttachments(attachments: List<Attachment>) {
@@ -91,6 +93,7 @@ private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val style: FileAttachmentsViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -101,7 +104,8 @@ private class FileAttachmentsAdapter(
                     it,
                     attachmentClickListener,
                     attachmentLongClickListener,
-                    attachmentDownloadClickListener
+                    attachmentDownloadClickListener,
+                    style,
                 )
             }
     }
@@ -112,6 +116,7 @@ private class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val style: FileAttachmentsViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
