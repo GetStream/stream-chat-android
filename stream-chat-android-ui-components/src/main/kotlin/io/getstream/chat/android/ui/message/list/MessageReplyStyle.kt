@@ -38,14 +38,10 @@ import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MES
  * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
  */
 public data class MessageReplyStyle(
-    @ColorInt
-    public val messageBackgroundColorMine: Int?,
-    @ColorInt
-    public val messageBackgroundColorTheirs: Int?,
-    @ColorInt
-    public val linkBackgroundColorMine: Int?,
-    @ColorInt
-    public val linkBackgroundColorTheirs: Int?,
+    @ColorInt public val messageBackgroundColorMine: Int,
+    @ColorInt public val messageBackgroundColorTheirs: Int,
+    @ColorInt public val linkBackgroundColorMine: Int,
+    @ColorInt public val linkBackgroundColorTheirs: Int,
     public val textStyleMine: TextStyle,
     public val textStyleTheirs: TextStyle,
     public val linkStyleMine: TextStyle,
