@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MediaAttachmentView -->
+    <declare-styleable name="FileAttachmentView">
+        <attr name="streamUiFileAttachmentProgressIcon" format="reference" />
+        <attr name="streamUiFileAttachmentActionButton" format="reference" />
+        <attr name="streamUiFileAttachmentBackgroundColor" format="color|reference" />
+
+        <attr name="streamUiFileAttachmentTitleTextSize" format="dimension|reference" />
+        <attr name="streamUiFileAttachmentTitleTextColor" format="color|reference" />
+        <attr name="streamUiFileAttachmentTitleTextFont" format="reference" />
+        <attr name="streamUiFileAttachmentTitleFontAssets" format="string" />
+        <attr name="streamUiFileAttachmentTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiFileAttachmentFileSizeTextSize" format="dimension|reference" />
+        <attr name="streamUiFileAttachmentFileSizeTextColor" format="color|reference" />
+        <attr name="streamUiFileAttachmentFileSizeTextFont" format="reference" />
+        <attr name="streamUiFileAttachmentFileSizeFontAssets" format="string" />
+        <attr name="streamUiFileAttachmentFileSizeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
