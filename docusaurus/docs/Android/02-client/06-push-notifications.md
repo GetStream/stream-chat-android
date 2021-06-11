@@ -127,7 +127,7 @@ class CustomChatNotificationHandler(context: Context, notificationConfig: Notifi
     ChatNotificationHandler(context, notificationConfig) {
 
     override fun onFirebaseMessage(message: RemoteMessage): Boolean {
-        // Handle remote message and return true if message should be handled by SDK
+        // Handle remote message and return true if message should not be handled by SDK
         return true
     }
 }
