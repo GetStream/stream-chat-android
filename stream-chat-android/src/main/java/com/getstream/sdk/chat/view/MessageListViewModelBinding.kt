@@ -26,7 +26,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     }.observe(lifecycleOwner) { (channel, user) ->
         if (user != null) {
             view.init(channel, user)
-        } 
+        }
     }
 
     channel.observe(lifecycleOwner) {
