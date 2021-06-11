@@ -1151,6 +1151,18 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
+public final class io/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle$Companion;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;IILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/message/list/GiphyViewHolderStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle$Companion;
 	public fun <init> (IFILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V

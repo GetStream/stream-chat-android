@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
+import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -37,20 +38,38 @@ internal class FileAttachmentsView : RecyclerView {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
 
+    private lateinit var style: FileAttachmentsViewStyle
+
     private val fileAttachmentsAdapter = FileAttachmentsAdapter(
         attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
         attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
         attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) }
     )
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper())
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
+        init(null)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
+        init(attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(attrs)
+    }
 
     init {
         layoutManager = LinearLayoutManager(context)
         adapter = fileAttachmentsAdapter
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
+    }
+
+    fun init(attrs: AttributeSet?) {
+        style = FileAttachmentsViewStyle(context, attrs)
     }
 
     fun setAttachments(attachments: List<Attachment>) {
@@ -188,7 +207,11 @@ private class FileAttachmentViewHolder(
             val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
 
             fileSizeView.text =
-                context.getString(R.string.stream_ui_message_list_attachment_upload_progress, nominalProgress, targetValue)
+                context.getString(
+                    R.string.stream_ui_message_list_attachment_upload_progress,
+                    nominalProgress,
+                    targetValue
+                )
         } else {
             binding.progressBar.isVisible = false
             fileSizeView.text = attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
