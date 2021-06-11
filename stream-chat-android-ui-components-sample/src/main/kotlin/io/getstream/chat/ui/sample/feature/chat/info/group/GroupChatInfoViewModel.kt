@@ -43,7 +43,7 @@ class GroupChatInfoViewModel(
 
                 getOwnerOrAdmin(controller.members.value)?.let { member ->
                     _state.value = _state.value?.copy(
-                        isCurrentUserOwnerOrAdmin = chatDomain.currentUser.id == member.getUserId()
+                        isCurrentUserOwnerOrAdmin = chatDomain.user.value?.id == member.getUserId()
                     )
                 }
 
@@ -72,7 +72,7 @@ class GroupChatInfoViewModel(
     }
 
     private fun handleMemberClick(member: Member) {
-        if (member.getUserId() != chatDomain.currentUser.id) {
+        if (member.getUserId() != chatDomain.user.value?.id) {
             val currentState = _state.value!!
             _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
         }

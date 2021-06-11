@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Transformations
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.ChatUI
@@ -90,7 +91,12 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        ChatDomain.instance().user
+        Transformations.switchMap(viewModel.state) { state ->
+            Transformations.map(ChatDomain.instance().user) { user ->
+                user to state
+            }
+        }.observe(viewLifecycleOwner) { (user, state) ->
             if (state.isLoading) {
                 showLoading()
             } else {
@@ -103,7 +109,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
                                 createdAt = it.createdAt,
                                 messageId = it.message.id,
                                 cid = it.message.cid,
-                                isMine = it.message.user.id == ChatDomain.instance().currentUser.id
+                                isMine = it.message.user.id == user?.id
                             )
                         } else {
                             null
