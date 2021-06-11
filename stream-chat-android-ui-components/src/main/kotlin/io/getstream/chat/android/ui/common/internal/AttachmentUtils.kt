@@ -68,7 +68,7 @@ internal object AttachmentUtils {
         val totalFiles = uploadIdList.size
 
         sentFilesView.isVisible = true
-        sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, filesSent, totalFiles)
+        sentFilesView.text = context.getString(R.string.stream_ui_message_list_attachment_uploading, filesSent, totalFiles)
 
         val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
             ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
@@ -78,9 +78,9 @@ internal object AttachmentUtils {
             isCompleteArray.count { isComplete -> isComplete }
         }.collect { completedCount ->
             if (completedCount == totalFiles) {
-                sentFilesView.text = context.getString(R.string.stream_ui_upload_complete)
+                sentFilesView.text = context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
             } else {
-                sentFilesView.text = context.getString(R.string.stream_ui_upload_sending, completedCount, totalFiles)
+                sentFilesView.text = context.getString(R.string.stream_ui_message_list_attachment_uploading, completedCount, totalFiles)
             }
         }
     }

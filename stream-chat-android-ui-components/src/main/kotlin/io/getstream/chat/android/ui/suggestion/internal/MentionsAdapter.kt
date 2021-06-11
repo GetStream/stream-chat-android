@@ -48,7 +48,7 @@ internal class MentionsAdapter(
                 avatarView.setUserData(user)
                 usernameTextView.text = user.name
                 mentionNameTextView.text = itemView.context.getString(
-                    R.string.stream_ui_mention_user_name_template,
+                    R.string.stream_ui_mention,
                     user.name.lowercase()
                 )
             }

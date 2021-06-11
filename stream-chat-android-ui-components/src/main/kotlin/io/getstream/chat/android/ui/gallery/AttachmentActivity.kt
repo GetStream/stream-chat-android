@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.UrlSigner
 
 /**
@@ -33,7 +33,7 @@ public class AttachmentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.stream_activity_attachment)
+        setContentView(R.layout.stream_ui_activity_attachment)
 
         webView = findViewById(R.id.webView)
         iv_image = findViewById(R.id.iv_image)
@@ -45,7 +45,7 @@ public class AttachmentActivity : AppCompatActivity() {
         val url = intent.getStringExtra("url")
         if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
             logger.logE("This file can't be displayed. TYPE or URL is missing.")
-            Toast.makeText(this, getString(R.string.stream_ui_attachment_display_error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()
             return
         }
         showAttachment(type, url)
@@ -105,7 +105,7 @@ public class AttachmentActivity : AppCompatActivity() {
 
         iv_image.load(
             data = urlSigner.signImageUrl(url),
-            placeholderResId = R.drawable.stream_placeholder
+            placeholderResId = R.drawable.stream_ui_placeholder,
         )
     }
 

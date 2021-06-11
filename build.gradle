@@ -1,5 +1,4 @@
 import com.getstream.sdk.chat.Dependencies
-import com.getstream.sdk.chat.sidebar.GenerateSidebar
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -56,17 +55,6 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-// Use the default greeting
-tasks.register('docusaurusSidebar', GenerateSidebar) {
-    inputDir = file("build/dokka/docusaurus")
-    outputDir = file("docusaurus/docs/Android/Dokka")
-    modulesFilterInput = [
-            'stream-chat-android-client',
-            'stream-chat-android-offline',
-            'stream-chat-android-ui-components',
-    ]
 }
 
 dependencyUpdates {

@@ -1,6 +1,5 @@
 import com.getstream.sdk.chat.Dependencies
 import com.getstream.sdk.chat.Configuration
-import org.jetbrains.dokka.gradle.DokkaTask
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
@@ -97,12 +96,4 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
-}
-
-tasks.register('dokkaDokkasaurus', DokkaTask) {
-    dependencies {
-        dokkaPlugin(Dependencies.dokkasaurus)
-    }
-
-    outputDirectory = file("../build/dokka/docusaurus")
 }

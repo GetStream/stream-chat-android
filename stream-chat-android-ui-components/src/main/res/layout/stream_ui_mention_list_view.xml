@@ -43,7 +43,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="@string/stream_ui_mentions_list_empty"
+            android:text="@string/stream_ui_mention_list_empty"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColor="@color/stream_ui_text_color_secondary"
             />

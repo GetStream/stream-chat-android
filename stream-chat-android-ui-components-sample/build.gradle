@@ -14,7 +14,6 @@ android {
         applicationId "io.getstream.chat.ui.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName
-        ndkVersion "21.3.6528147"
     }
 
     File signFile = rootProject.file('.sign/keystore.properties')

@@ -33,6 +33,7 @@
         >
 
         <ProgressBar
+            android:id="@+id/loadingProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -40,7 +41,6 @@
             />
 
     </FrameLayout>
-
 
     <FrameLayout
         android:id="@+id/moreCount"
@@ -61,7 +61,7 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/stream_ui_literal_white"
-            android:textSize="26sp"
+            android:textSize="@dimen/stream_ui_message_media_attachment_more_count_text_size"
             tools:text="+9"
             />
 

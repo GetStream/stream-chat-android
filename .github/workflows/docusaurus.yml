@@ -14,15 +14,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Create Dokka folder
-        run: mkdir -p docusaurus/docs/Android/Dokka
-      - name: Create Dokka files
-        run: |
-          ./gradlew stream-chat-android-client:dokkaDokkasaurus \
-            stream-chat-android-offline:dokkaDokkasaurus \
-            stream-chat-android-ui-components:dokkaDokkasaurus
-      - name: Update Dokka Sidebar
-        run: ./gradlew docusaurusSidebar
       - name: push
         uses: GetStream/push-stream-chat-docusaurus-action@main
         env:

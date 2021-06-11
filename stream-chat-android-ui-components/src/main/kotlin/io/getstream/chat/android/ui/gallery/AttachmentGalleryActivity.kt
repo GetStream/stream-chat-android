@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
@@ -40,6 +41,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private val viewModel: AttachmentGalleryViewModel by viewModels()
     private val dateFormatter: DateFormatter by lazy { DateFormatter.from(this) }
     private lateinit var adapter: AttachmentGalleryPagerAdapter
+    private val permissionChecker = PermissionChecker()
 
     private var attachmentGalleryItems: List<AttachmentGalleryItem> = emptyList()
     private val attachmentGalleryResultItem: AttachmentGalleryResultItem
@@ -63,7 +65,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, pictureUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
-                getString(R.string.stream_ui_gallery_share_sheet_title),
+                getString(R.string.stream_ui_attachment_gallery_share),
             ),
             null
         )
@@ -79,11 +81,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     private fun setupGallery(attachmentGalleryItems: List<AttachmentGalleryItem>) {
-        this.attachmentGalleryItems = attachmentGalleryItems
-        setupGalleryAdapter()
-        setupShareImageButton()
-        setupAttachmentActionsButton()
-        observePageChanges()
+        if (attachmentGalleryItems.isEmpty()) {
+            onBackPressed()
+        } else {
+            this.attachmentGalleryItems = attachmentGalleryItems
+            setupGalleryAdapter()
+            setupShareImageButton()
+            setupAttachmentActionsButton()
+            observePageChanges()
+        }
     }
 
     private fun setupGalleryAdapter() {
@@ -122,7 +128,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 showInChatHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
                 deleteHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
-                saveImageHandler = { setResultAndFinish(AttachmentOptionResult.Download(attachmentGalleryResultItem)) },
+                saveImageHandler = handleSaveImage,
                 isMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentOptionsDialogFragment.TAG)
         }
@@ -139,6 +145,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         onGalleryPageSelected(initialIndex)
     }
 
+    private val handleSaveImage = AttachmentOptionsDialogFragment.AttachmentOptionHandler {
+        permissionChecker.checkWriteStoragePermissions(
+            binding.root,
+            onPermissionGranted = {
+                setResultAndFinish(AttachmentOptionResult.Download(attachmentGalleryResultItem))
+            }
+        )
+    }
+
     private fun setResultAndFinish(result: AttachmentOptionResult) {
         Intent().apply {
             putExtra(EXTRA_ATTACHMENT_OPTION_RESULT, result)
@@ -149,7 +164,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private fun onGalleryPageSelected(position: Int) {
         binding.imageCountTextView.text = getString(
-            R.string.stream_ui_gallery_count_template,
+            R.string.stream_ui_attachment_gallery_count,
             position + 1,
             attachmentGalleryItems.size
         )
@@ -171,7 +186,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             .replaceFirstChar(Char::lowercase)
 
         return getString(
-            R.string.stream_ui_date_and_time_pattern,
+            R.string.stream_ui_attachment_gallery_date,
             relativeDay,
             dateFormatter.formatTime(createdAt)
         )

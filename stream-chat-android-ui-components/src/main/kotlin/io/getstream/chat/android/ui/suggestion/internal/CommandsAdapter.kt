@@ -40,7 +40,7 @@ internal class CommandsAdapter(
             binding.apply {
                 commandNameTextView.text = command.name.replaceFirstChar(Char::uppercase)
                 commandQueryTextView.text = itemView.context.getString(
-                    R.string.stream_ui_command_command_template,
+                    R.string.stream_ui_message_input_command_template,
                     command.name,
                     command.args
                 )
