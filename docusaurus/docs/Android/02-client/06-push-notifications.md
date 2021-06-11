@@ -10,7 +10,9 @@ The Android SDK handles push notifications by default, including:
 
 See [Customizing Push Notifications](#customizing-push-notifications) for customization options.
 
-> **NOTE:** Make sure _ChatClient_ is initialized before handling push notifications. We highly recommend initializing it in the `Application` class.
+:::note
+Make sure _ChatClient_ is initialized before handling push notifications. We highly recommend initializing it in the `Application` class.
+:::
 
 In order to configure push notifications on Android devices, you need to:
 
@@ -34,7 +36,9 @@ Enable _Android & Firebase_ push notifications and upload the _Server Key_ to th
 Save the push notification settings changes:
 ![notifications step 5](../assets/notifications_firebase_setup_step_5.jpeg)
 
-> **NOTE:** Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
+:::note
+Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
+:::
 
 #### Step 6
 Setup the following push notification data payload at Stream Dashboard:
@@ -99,7 +103,9 @@ In order to redirect from notification to the specific _Activity_ in your app, y
     }
 ```
 
-> **NOTE**: Consider overriding _ChatNotificationHandler#getErrorCaseIntent_ for error case notifications
+:::note
+Consider overriding _ChatNotificationHandler#getErrorCaseIntent_ for error case notifications
+:::
 
 ## Handling Push Notifications From Multiple Providers
 
@@ -108,7 +114,9 @@ _ChatClient_ provides following static methods that might be helpful for push no
 * `ChatClient.handleRemoteMessage` - handles remote message internally
 * `ChatClient.setFirebaseToken` - sets Firebase token
 
-> **NOTE**: Each method should be called after initializing _ChatClient_
+:::note
+Each method should be called after initializing _ChatClient_
+:::
 
 Push notifications from multiple providers can be handled in two different ways:
 
@@ -155,5 +163,6 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
 }
 ```
 
-> **NOTE**: Make sure that CustomMessageFirebaseService's priority is higher than -1 to override the default service
-
+:::note
+Make sure that CustomMessageFirebaseService's priority is higher than -1 to override the default service
+:::
