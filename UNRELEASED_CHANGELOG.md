@@ -49,6 +49,8 @@
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 Fixed bug where files without extension in their name lost the mime type.
+
+Using offline.ChatDomain instead of livedata.ChatDomain in ChannelListViewModel.
 ### ⬆️ Improved
 
 ### ✅ Added

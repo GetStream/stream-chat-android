@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.channel.list.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -13,12 +12,13 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestObserver
 import io.getstream.chat.android.ui.createUser
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -82,14 +82,16 @@ private class Fixture {
     private val queryChannelsCall = TestCall(queryChannelsControllerResult)
     private val queryChannelsLoadMoreCall: Call<List<Channel>> = mock()
     private val queryChannelsController: QueryChannelsController = mock {
-        on(it.mutedChannelIds) doReturn MutableLiveData(emptyList())
+        on(it.mutedChannelIds) doReturn MutableStateFlow(emptyList())
     }
 
-    private val channelsLiveData: MutableLiveData<List<Channel>> = MutableLiveData()
-    private val channelsState = MutableLiveData<QueryChannelsController.ChannelsState>()
+    private val channelsStateFlow: MutableStateFlow<List<Channel>> = MutableStateFlow(emptyList())
+    private val channelsState = MutableStateFlow<QueryChannelsController.ChannelsState>(
+        QueryChannelsController.ChannelsState.NoQueryActive
+    )
 
     init {
-        whenever(chatDomain.currentUser) doReturn user
+        whenever(chatDomain.user) doReturn MutableStateFlow(user)
         whenever(
             chatDomain.queryChannels(
                 any(),
@@ -100,29 +102,30 @@ private class Fixture {
         ) doReturn queryChannelsCall
         whenever(queryChannelsControllerResult.isSuccess) doReturn true
         whenever(queryChannelsControllerResult.data()) doReturn queryChannelsController
-        whenever(queryChannelsController.channels) doReturn channelsLiveData
+        whenever(queryChannelsController.channels) doReturn channelsStateFlow
         whenever(queryChannelsController.channelsState) doReturn channelsState
-        whenever(queryChannelsController.loading) doReturn MutableLiveData()
-        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
+        whenever(queryChannelsController.loading) doReturn MutableStateFlow(true)
+        whenever(queryChannelsController.loadingMore) doReturn MutableStateFlow(false)
+        whenever(queryChannelsController.endOfChannels) doReturn MutableStateFlow(false)
     }
 
     fun givenNoChannelsAvailable(): Fixture = apply {
-        channelsLiveData.postValue(emptyList())
-        channelsState.postValue(QueryChannelsController.ChannelsState.OfflineNoResults)
+        channelsStateFlow.value = emptyList()
+        channelsState.value = QueryChannelsController.ChannelsState.OfflineNoResults
     }
 
     fun givenInitialChannelList(channels: List<Channel>): Fixture {
-        channelsLiveData.postValue(channels)
-        channelsState.postValue(QueryChannelsController.ChannelsState.Result(channels))
+        channelsStateFlow.value = channels
+        channelsState.value = QueryChannelsController.ChannelsState.Result(channels)
         return this
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
         whenever(chatDomain.queryChannelsLoadMore(any(), any())) doReturn queryChannelsLoadMoreCall
         whenever(queryChannelsLoadMoreCall.enqueue()) doAnswer {
-            val channels = (channelsLiveData.value ?: emptyList()) + moreChannels
-            channelsLiveData.postValue(channels)
-            channelsState.postValue(QueryChannelsController.ChannelsState.Result(channels))
+            val channels = channelsStateFlow.value + moreChannels
+            channelsStateFlow.value = channels
+            channelsState.value = QueryChannelsController.ChannelsState.Result(channels)
         }
         return this
     }
