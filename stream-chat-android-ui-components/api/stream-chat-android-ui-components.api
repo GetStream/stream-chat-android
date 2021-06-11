@@ -1153,19 +1153,25 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 
 public final class io/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle$Companion;
-	public fun <init> (ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public fun <init> (ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()I
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
-	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
+	public final fun component4 ()I
+	public final fun component5 ()Landroid/graphics/drawable/Drawable;
+	public final fun component6 ()I
+	public final fun component7 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;ILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/FileAttachmentsViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActionButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getActionButtonTintColor ()I
 	public final fun getBackgroundColor ()I
+	public final fun getFailedAttachmentIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getFailedAttachmentIconTintColor ()I
 	public final fun getFileSizeTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getProgressBarDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getTitleTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

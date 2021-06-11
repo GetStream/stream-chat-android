@@ -12,17 +12,20 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class FileAttachmentsViewStyle(
-    @ColorInt public val backgroundColor: Int,
-    public val progressIcon: Drawable,
+    @ColorInt val backgroundColor: Int,
+    val progressBarDrawable: Drawable,
     public val actionButtonIcon: Drawable,
+    @ColorInt val actionButtonTintColor: Int,
+    public val failedAttachmentIcon: Drawable,
+    @ColorInt val failedAttachmentIconTintColor: Int,
     val titleTextStyle: TextStyle,
     val fileSizeTextStyle: TextStyle,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentsViewStyle {
             context.obtainStyledAttributes(attrs, R.styleable.FileAttachmentView).use { attrsArray ->
-                val progressIcon =
-                    attrsArray.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentProgressIcon)
+                val progressBarDrawable =
+                    attrsArray.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentProgressBarDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
                 val bgColor = attrsArray.getColor(
@@ -60,12 +63,29 @@ public data class FileAttachmentsViewStyle(
                     .style(R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextStyle, Typeface.NORMAL)
                     .build()
 
+                val actionButtonTintColor = attrsArray.getColor(
+                    R.styleable.FileAttachmentView_streamUiFileAttachmentActionButtonTintColor,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+
+                val failedAttachmentIcon =
+                    attrsArray.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentFailedAttachmentIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_warning)!!
+
+                val failedAttachmentIconTinColor = attrsArray.getColor(
+                    R.styleable.FileAttachmentView_streamUiFileAttachmentFailedAttachmentIconTintColor,
+                    context.getColorCompat(R.color.stream_ui_accent_red)
+                )
+
                 return FileAttachmentsViewStyle(
                     backgroundColor = bgColor,
-                    progressIcon = progressIcon,
+                    progressBarDrawable = progressBarDrawable,
                     actionButtonIcon = actionIcon,
                     titleTextStyle = titleTextStyle,
                     fileSizeTextStyle = fileSizeTextStyle,
+                    actionButtonTintColor = actionButtonTintColor,
+                    failedAttachmentIcon = failedAttachmentIcon,
+                    failedAttachmentIconTintColor = failedAttachmentIconTinColor,
                 )
             }
         }

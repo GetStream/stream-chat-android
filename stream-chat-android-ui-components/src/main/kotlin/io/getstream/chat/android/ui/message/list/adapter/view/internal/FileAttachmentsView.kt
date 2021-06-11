@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -25,6 +27,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +63,6 @@ internal class FileAttachmentsView : RecyclerView {
 
     init {
         layoutManager = LinearLayoutManager(context)
-        adapter = fileAttachmentsAdapter
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
     }
 
@@ -72,6 +74,7 @@ internal class FileAttachmentsView : RecyclerView {
             attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) },
             style,
         )
+        adapter = fileAttachmentsAdapter
     }
 
     fun setAttachments(attachments: List<Attachment>) {
@@ -158,6 +161,9 @@ private class FileAttachmentViewHolder(
         this.attachment = item
 
         binding.apply {
+            fileTitle.setTextStyle(style.titleTextStyle)
+            fileSize.setTextStyle(style.fileSizeTextStyle)
+
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
 
@@ -165,13 +171,18 @@ private class FileAttachmentViewHolder(
                 actionButton.setImageDrawable(null)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
+                actionButton.setImageDrawable(style.failedAttachmentIcon)
+                val tintColor = style.failedAttachmentIconTintColor
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
+                actionButton.setImageDrawable(style.actionButtonIcon)
+                val tintColor = style.actionButtonTintColor
+                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
+            binding.progressBar.indeterminateDrawable = style.progressBarDrawable
             binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
 
             if (attachment.uploadState is Attachment.UploadState.InProgress) {
