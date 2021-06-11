@@ -120,3 +120,7 @@ public data class TextStyle(
         }
     }
 }
+
+internal fun TextView.setTextStyle(textStyle: TextStyle) {
+    textStyle.apply(this)
+}
