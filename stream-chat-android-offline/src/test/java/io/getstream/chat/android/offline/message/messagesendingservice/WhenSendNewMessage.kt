@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.message
+package io.getstream.chat.android.offline.message.messagesendingservice
 
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
@@ -29,10 +30,9 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 
-internal class MessageSendingServiceTests {
-
+internal class WhenSendNewMessage {
     @Test
-    fun `Given message without attachments And offline When send new message Should return message as result with right data`() =
+    fun `Given message without attachments And offline Should return message as result with right data`() =
         runBlockingTest {
             val message = randomMessage(
                 cid = "",
@@ -57,7 +57,7 @@ internal class MessageSendingServiceTests {
         }
 
     @Test
-    fun `Given message without attachments And offline When send new message Should update channel controller and repository`() =
+    fun `Given message without attachments And offline Should update channel controller and repository`() =
         runBlockingTest {
             val message = randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf())
             val channelController = mock<ChannelController>()
@@ -77,7 +77,7 @@ internal class MessageSendingServiceTests {
         }
 
     @Test
-    fun `Given message without attachments And online And success network call When send new message Should send to BE`() =
+    fun `Given message without attachments And online And success network call Should send to BE`() =
         runBlockingTest {
             val message =
                 randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
@@ -95,7 +95,7 @@ internal class MessageSendingServiceTests {
         }
 
     @Test
-    fun `Given message without attachments And online And success network call When send new message Should return message from BE`() =
+    fun `Given message without attachments And online And success network call Should return message from BE`() =
         runBlockingTest {
             val message =
                 randomMessage(id = "messageId1", cid = "cid1", attachments = mutableListOf(), updatedAt = null)
@@ -113,7 +113,7 @@ internal class MessageSendingServiceTests {
         }
 
     @Test
-    fun `Given message with attachments And online When send new message Should enqueue work to upload attachments`() =
+    fun `Given message with attachments And online Should enqueue work to upload attachments`() =
         runBlockingTest {
             val message = randomMessage(id = "messageId1", attachments = mutableListOf(randomAttachment { }))
             val uploadWorker = mock<UploadAttachmentsWorker>()
