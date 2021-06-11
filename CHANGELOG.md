@@ -27,7 +27,7 @@
     - Added `ChatClient.handleRemoteMessage` for remote message handling
     - Added `ChatClient.setFirebaseToken` for setting Firebase token
     - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
-    - Deprecated `ChatClient.handleRemoteMessage`
+    - Deprecated `ChatClient.onMessageReceived`
     - Deprecated `ChatClient.onNewTokenReceived`
     - Changed `ChatNotificationHandler::buildNotification` signature - it now receives `Channel` and `Message` and returns `NotificationCompat.Builder` for better customization
     - Deprecated `ChatNotificationHandler.getSmallIcon`
@@ -45,8 +45,8 @@
     - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
     - If enabled, by default notifications are grouped by Channel's cid
     - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
-- Added `ChatNotificationHandler::getFirebaseInstallations()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`.
-It should be used now to fetch Firebase token in the following way: `handler.getFirebaseInstallations()?.getToken(true)?.addOnCompleteListener {...}`.
+- Added `ChatNotificationHandler::getFirebaseMessaging()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`.
+It should be used now to fetch Firebase token in the following way: `handler.getFirebaseMessaging()?.token?.addOnCompleteListener {...}`.
 - Added `Message.attachmentsSyncStatus: SyncStatus` property.
 
 ### ⚠️ Changed
