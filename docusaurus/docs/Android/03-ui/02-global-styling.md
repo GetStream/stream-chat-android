@@ -2,8 +2,9 @@
 
 If you want to customize view styles programmatically you can override the corresponding `StyleTransformer` in the `TransformStyle` class.
 
-> **Important: This doesn't apply the changes instantly, the view must be recreated for the
-changes to take effect.**
+:::caution
+This doesn't apply the changes instantly, the view must be recreated for the changes to take effect.
+:::
 
 Here are some examples of styling you can perform here:
 

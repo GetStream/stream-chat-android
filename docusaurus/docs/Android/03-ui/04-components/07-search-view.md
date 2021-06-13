@@ -75,4 +75,6 @@ searchResultView.setSearchResultSelectedListener { message ->
 }
 ```
 
-> `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::note
+`bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::

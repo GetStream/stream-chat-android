@@ -121,7 +121,9 @@ channelClient.sendImage(imageFile).enqueue { result->
 }
 ```
 
-> **NOTE**: Attachments need to be linked to the message after the upload is completed.
+:::note
+Attachments need to be linked to the message after the upload is completed.
+:::
 
 ### Uploading a File
 
@@ -212,7 +214,9 @@ channelClient.sendReaction(reaction).enqueue { result ->
 | reaction.score | Int | Score of the reaction for cumulative reactions (see example below) | 1 | &check; |
 | enforceUnique | Boolean | If set to true, new reaction will replace all reactions the user has (if any) on this message | false | &check; |
 
-> Custom data for reactions is limited to 1KB.
+:::note
+Custom data for reactions is limited to 1KB.
+:::
 
 ### Replacing a Reaction
 
@@ -319,7 +323,9 @@ channelClient.sendMessage(message).enqueue { result ->
 
 <!-- TODO: show_in_channel is not Android API -->
 
-> If you specify `show_in_channel`, the message will be visible both in a thread of replies as well as the main channel.
+:::note
+If you specify `show_in_channel`, the message will be visible both in a thread of replies as well as the main channel.
+:::
 
 Messages inside a thread can also have reactions, attachments and mentions as any other message.
 
@@ -407,7 +413,9 @@ client.searchMessages(
 
 Pagination works via the standard `limit` and `offset` parameters. The first argument, `filter`, uses a MongoDB style query expression.
 
-> We do not run MongoDB on the backend, so only a subset of the standard MongoDB filters are supported.
+:::note
+We do not run MongoDB on the backend, so only a subset of the standard MongoDB filters are supported.
+:::
 
 ### Searching for Messages with Attachments
 
@@ -446,12 +454,14 @@ val message = Message(
 channelClient.sendMessage(message).enqueue { /* ... */ }
 ```
 
-> Existing messages cannot be turned into a silent message or vice versa.
+:::note
+Existing messages cannot be turned into a silent message or vice versa.
+:::
 
 <!-- TODO: What's the Android API for skip_push? -->
-
-> Silent messages do send push notifications by default. To skip our push notification service, mark the message with `skip_push: true`
-
+:::note
+Silent messages do send push notifications by default. To skip our push notification service, mark the message with `skip_push: true`
+:::
 
 ## Pinned Messages
 
