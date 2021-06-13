@@ -36,8 +36,8 @@ internal class MessageInputFieldView : FrameLayout {
     internal val binding: StreamUiMessageInputFieldBinding =
         StreamUiMessageInputFieldBinding.inflate(streamThemeInflater, this, true)
 
-    private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_field_attachment_hint)
-    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_field_message_hint)
+    private val attachmentModeHint: String = context.getString(R.string.stream_ui_message_input_only_attachments_hint)
+    private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_hint)
     private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter()
     private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter()
     private val storageHelper = StorageHelper()
@@ -235,7 +235,8 @@ internal class MessageInputFieldView : FrameLayout {
         switchToMessageMode()
         binding.messageReplyView.setMessage(
             currentMode.repliedMessage,
-            ChatDomain.instance().currentUser.id == currentMode.repliedMessage.user.id
+            ChatDomain.instance().currentUser.id == currentMode.repliedMessage.user.id,
+            null,
         )
         binding.messageReplyView.isVisible = true
     }
@@ -323,7 +324,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun configInputEditTextError() {
         binding.messageEditText.error = if (isMaxMessageLengthExceeded()) {
-            context.getString(R.string.stream_Ui_message_input_field_max_length_error, maxMessageLength)
+            context.getString(R.string.stream_ui_message_input_error_max_length, maxMessageLength)
         } else {
             null
         }

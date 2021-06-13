@@ -65,7 +65,7 @@ internal class DefaultDateFormatter(
         override fun now(): LocalDate = LocalDate.now()
 
         override fun yesterdayString(): String {
-            return context.getString(R.string.stream_date_yesterday)
+            return context.getString(R.string.stream_ui_yesterday)
         }
 
         override fun is24Hour(): Boolean {

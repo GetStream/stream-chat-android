@@ -33,7 +33,7 @@
         android:padding="@dimen/stream_ui_spacing_medium"
         android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-        tools:text="@string/stream_ui_attachment_dialog_permission_camera"
+        tools:text="@string/stream_ui_message_input_camera_access"
         />
 
 </LinearLayout>

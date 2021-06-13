@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -100,6 +101,7 @@ public class ChatClient internal constructor(
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
+    private val tokenUtils: TokenUtils = TokenUtils
 ) {
 
     @InternalStreamChatApi
@@ -249,6 +251,11 @@ public class ChatClient internal constructor(
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
     ) {
+        if (tokenUtils.getUserId(tokenProvider.loadToken()) != user.id) {
+            logger.logE("The user_id provided on the JWT token doesn't match with the current user you try to connect")
+            listener?.onError(ChatError("The user_id provided on the JWT token doesn't match with the current user you try to connect"))
+            return
+        }
         val userState = userStateService.state
         when {
             userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
@@ -1705,7 +1712,7 @@ public class ChatClient internal constructor(
 
         @Throws(IllegalStateException::class)
         private fun ensureClientInitialized(): ChatClient {
-            require(isInitialized) { "ChatClient should be initialized first!" }
+            check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
         }
     }

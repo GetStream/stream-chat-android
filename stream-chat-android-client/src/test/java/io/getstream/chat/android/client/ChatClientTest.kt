@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client
 
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -16,8 +18,10 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,6 +47,10 @@ internal class ChatClientTest {
     lateinit var socket: FakeChatSocket
     lateinit var client: ChatClient
     lateinit var result: MutableList<ChatEvent>
+    val token = randomString()
+    val userId = randomString()
+    val user = Mother.randomUser { id = userId }
+    val tokenUtils: TokenUtils = mock()
 
     @BeforeEach
     fun setUp() {
@@ -55,9 +63,8 @@ internal class ChatClientTest {
             1000,
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
-
         )
-
+        whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = FakeChatSocket()
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
@@ -72,8 +79,9 @@ internal class ChatClientTest {
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
             encryptedPushNotificationsConfigStore = mock(),
+            tokenUtils = tokenUtils,
         ).apply {
-            connectUser(User(), "someToken").enqueue()
+            connectUser(user, token).enqueue()
         }
         result = mutableListOf()
     }

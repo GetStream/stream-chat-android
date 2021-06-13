@@ -194,7 +194,7 @@ private class FileAttachmentViewHolder(
             val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
 
             fileSizeView.text =
-                context.getString(R.string.stream_ui_upload_sending_percentage, nominalProgress, targetValue)
+                context.getString(R.string.stream_ui_message_list_attachment_upload_progress, nominalProgress, targetValue)
         } else {
             binding.progressBar.isVisible = false
             fileSizeView.text = attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)

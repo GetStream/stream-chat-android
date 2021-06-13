@@ -42,10 +42,26 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_permissions_storage_title),
-            view.context.getString(R.string.stream_permissions_storage_message),
-            view.context.getString(R.string.stream_permissions_setting_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
             listOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            onPermissionDenied,
+            onPermissionGranted
+        )
+    }
+
+    public fun checkWriteStoragePermissions(
+        view: View,
+        onPermissionDenied: () -> Unit = { },
+        onPermissionGranted: () -> Unit
+    ) {
+        checkPermissions(
+            view,
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
+            view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
+            listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
             onPermissionDenied,
             onPermissionGranted
         )
@@ -58,9 +74,9 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_permissions_camera_title),
-            view.context.getString(R.string.stream_permissions_camera_message),
-            view.context.getString(R.string.stream_permissions_camera_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_camera_title),
+            view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
+            view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
             listOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
@@ -114,7 +130,7 @@ public class PermissionChecker {
     ): SnackbarOnAnyDeniedMultiplePermissionsListener =
         SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
             .with(view, snackbarMessage)
-            .withOpenSettingsButton(R.string.stream_permissions_setting_button)
+            .withOpenSettingsButton(R.string.stream_ui_message_input_permissions_setting_button)
             .build()
 
     private fun dialogPermissionsListener(

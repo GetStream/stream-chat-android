@@ -7,6 +7,7 @@
     <color name="stream_gray">#ebebeb</color>
     <color name="stream_gray_light">#e8e8e8</color>
     <color name="stream_white">#FFFFFF</color>
+    <color name="stream_black">#000000</color>
     <color name="stream_black_54">#8A000000</color>
 
     <!--Channel Item-->

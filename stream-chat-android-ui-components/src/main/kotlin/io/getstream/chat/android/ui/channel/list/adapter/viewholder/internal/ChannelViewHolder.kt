@@ -189,7 +189,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
-        channelNameLabel.text = channel.getDisplayName(context)
+        channelNameLabel.text = channel.getDisplayName(context, R.string.stream_ui_channel_list_untitled_channel)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {

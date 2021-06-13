@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed thrown exception type while checking if `ChatClient` is initialized
 
 ### ⬆️ Improved
 
@@ -50,6 +51,8 @@
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 Fixed bug where files without extension in their name lost the mime type.
+
+Using offline.ChatDomain instead of livedata.ChatDomain in ChannelListViewModel.
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -60,7 +63,8 @@ Fixed bug where files without extension in their name lost the mime type.
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixing the save of pictures from AttachmentGalleryActivity. When external storage
+permission is not granted, now it asks for it.
 ### ⬆️ Improved
 - Added default implementation of "Leave channel" click listener to `ChannelListViewModelBinding`
 
@@ -97,7 +101,45 @@ Fixed bug where files without extension in their name lost the mime type.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
+- Added `MediaAttachmentViewStyle` to allow customizing the appearance of media attachments in the message list. The new style comes together with following `MediaAttachmentView` attributes:
+  - `progressIcon` - attribute to customize animated progress drawable when image is loading
+  - `giphyIcon` - attribute to customize Giphy icon
+  - `imageBackgroundColor` - attribute to customize image background color
+  - `moreCountOverlayColor` - attribute to customize the color of "more count" semi-transparent overlay
+  - `moreCountTextStyle` - attribute to customize text appearance of more count text
+- Added `MessageReplyStyle` class allowing to customize MessageReply item view on MessageListView.
+Customization can be done using `TransformStyle` API or XML attributes of `MessageListView`:
+  - `streamUiMessageReplyBackgroundColorMine`
+  - `streamUiMessageReplyBackgroundColorTheirs`
+  - `streamUiMessageReplyTextSizeMine`
+  - `streamUiMessageReplyTextColorMine`
+  - `streamUiMessageReplyTextFontMine`
+  - `streamUiMessageReplyTextFontAssetsMine`
+  - `streamUiMessageReplyTextStyleMine`
+  - `streamUiMessageReplyTextSizeTheirs`
+  - `streamUiMessageReplyTextColorTheirs`
+  - `streamUiMessageReplyTextFontTheirs`
+  - `streamUiMessageReplyTextFontAssetsTheirs`
+  - `streamUiMessageReplyTextStyleTheirs`
+  - `streamUiMessageReplyLinkColorMine`
+  - `streamUiMessageReplyLinkColorTheirs`
+  - `streamUiMessageReplyLinkBackgroundColorMine`
+  - `streamUiMessageReplyLinkBackgroundColorTheirs`
+  - `streamUiMessageReplyStrokeColorMine`
+  - `streamUiMessageReplyStrokeWidthMine`
+  - `streamUiMessageReplyStrokeColorTheirs`
+  - `streamUiMessageReplyStrokeWidthTheirs`
 
 ### ⚠️ Changed
+- Changed the naming of string resources. The updated names can be reviewed in:
+  - `strings_common.xml`
+  - `strings_attachment_gallery.xml`
+  - `strings_channel_list.xml`
+  - `strings_channel_list_header.xml`
+  - `strings_mention_list.xml`
+  - `strings_message_input.xml`
+  - `strings_message_list.xml`
+  - `strings_message_list_header.xml`
+  - `strings_search.xml`
 
 ### ❌ Removed

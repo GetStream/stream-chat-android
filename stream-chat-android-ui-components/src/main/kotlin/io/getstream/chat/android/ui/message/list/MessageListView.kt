@@ -56,6 +56,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMe
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
@@ -174,13 +175,13 @@ public class MessageListView : ConstraintLayout {
 
     private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
-            .setTitle(R.string.stream_ui_message_option_delete_confirmation_title)
-            .setMessage(R.string.stream_ui_message_option_delete_confirmation_message)
-            .setPositiveButton(R.string.stream_ui_message_option_delete_positive_button) { dialog, _ ->
+            .setTitle(R.string.stream_ui_message_list_delete_confirmation_title)
+            .setMessage(R.string.stream_ui_message_list_delete_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_list_delete_confirmation_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 confirmCallback()
             }
-            .setNegativeButton(R.string.stream_ui_message_option_delete_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_message_list_delete_confirmation_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -188,13 +189,13 @@ public class MessageListView : ConstraintLayout {
 
     private var confirmFlagMessageHandler = ConfirmFlagMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
-            .setTitle(R.string.stream_ui_message_option_flag_confirmation_title)
-            .setMessage(R.string.stream_ui_message_option_flag_confirmation_message)
-            .setPositiveButton(R.string.stream_ui_message_option_flag_positive_button) { dialog, _ ->
+            .setTitle(R.string.stream_ui_message_list_flag_confirmation_title)
+            .setMessage(R.string.stream_ui_message_list_flag_confirmation_message)
+            .setPositiveButton(R.string.stream_ui_message_list_flag_confirmation_positive_button) { dialog, _ ->
                 dialog.dismiss()
                 confirmCallback()
             }
-            .setNegativeButton(R.string.stream_ui_message_option_flag_negative_button) { dialog, _ ->
+            .setNegativeButton(R.string.stream_ui_message_list_flag_confirmation_negative_button) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -247,7 +248,6 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
-    private lateinit var getCurrentUser: () -> User
 
     /**
      * If you are allowed to scroll up or not
@@ -354,7 +354,7 @@ public class MessageListView : ConstraintLayout {
             attachmentDownloadHandler.onAttachmentDownload(attachment)
             Toast.makeText(
                 context,
-                context.getString(R.string.stream_ui_attachment_downloading_started),
+                context.getString(R.string.stream_ui_message_list_download_started),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -541,12 +541,7 @@ public class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    public fun init(channel: Channel, currentUser: User) {
-        init(channel) { currentUser }
-    }
-
-    public fun init(channel: Channel, getCurrentUser: () -> User) {
-        this.getCurrentUser = getCurrentUser
+    public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
 
@@ -572,10 +567,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
-            getCurrentUser = getCurrentUser,
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
-            messageListViewStyle.itemStyle,
+            messageStyle = messageListViewStyle.itemStyle,
+            messageReplyStyle = messageListViewStyle.replyMessageStyle,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
