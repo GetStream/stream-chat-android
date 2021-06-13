@@ -39,7 +39,7 @@ internal class MessageRepositoryTests {
     fun setup() {
         messageDao = mock()
         cache = mock()
-        sut = MessageRepositoryImpl(messageDao, ::randomUser, ::randomUser, 100, cache)
+        sut = MessageRepositoryImpl(messageDao, ::randomUser, null, 100, cache)
     }
 
     @Test

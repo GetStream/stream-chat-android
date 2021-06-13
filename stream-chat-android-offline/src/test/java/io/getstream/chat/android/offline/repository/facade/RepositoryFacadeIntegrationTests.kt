@@ -84,12 +84,6 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`() =
         runBlocking {
             val messageId = randomString()
-            val currentUser = randomUser(
-                // ignoring fields that are not persisted on purpose
-                totalUnreadCount = 0,
-                unreadChannels = 0,
-                online = false
-            )
             val mineDeletedReaction = randomReaction(
                 messageId = messageId,
                 user = currentUser,
@@ -103,7 +97,6 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
                 latestReactions = mutableListOf(mineDeletedReaction),
             )
 
-            repositoryFacade.insertCurrentUser(currentUser)
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 

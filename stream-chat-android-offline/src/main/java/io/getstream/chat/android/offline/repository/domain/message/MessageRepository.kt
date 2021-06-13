@@ -26,7 +26,7 @@ internal interface MessageRepository {
 internal class MessageRepositoryImpl(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
-    private val getCurrentUser: suspend () -> User?,
+    private val currentUser: User?,
     private val cacheSize: Int = 100,
     private var messageCache: LruCache<String, Message> = LruCache(cacheSize)
 ) : MessageRepository {
@@ -38,7 +38,7 @@ internal class MessageRepositoryImpl(
     ): List<Message> {
         return selectMessagesEntitiesForChannel(cid, pagination)
             .map { it.toModel(getUser, ::selectMessage) }
-            .filterReactions(getCurrentUser())
+            .filterReactions()
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
@@ -74,11 +74,11 @@ internal class MessageRepositoryImpl(
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
         val cachedIds = messageIds - missingMessageIds
         return cachedIds.mapNotNull { messageCache[it] } + messageDao.select(missingMessageIds)
-            .map { entity -> entity.toModel(getUser, ::selectMessage).filterReactions(getCurrentUser()).also { messageCache.put(it.id, it) } }
+            .map { entity -> entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) } }
     }
 
     override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)?.filterReactions(getCurrentUser())
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)?.filterReactions()
             ?.also { messageCache.put(it.id, it) }
     }
 
@@ -116,15 +116,15 @@ internal class MessageRepositoryImpl(
         return messageDao.selectSyncNeeded().map { it.toModel(getUser, ::selectMessage) }
     }
 
-    private fun List<Message>.filterReactions(currentUser: User?): List<Message> = also {
-        forEach { it.filterReactions(currentUser) }
+    private fun List<Message>.filterReactions(): List<Message> = also {
+        forEach { it.filterReactions() }
     }
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering
      * should be done in `MessageDao`.
      */
-    private fun Message.filterReactions(currentUser: User?): Message = also {
+    private fun Message.filterReactions(): Message = also {
         if (ownReactions.isNotEmpty()) {
             ownReactions = ownReactions
                 .filter { it.deletedAt == null }

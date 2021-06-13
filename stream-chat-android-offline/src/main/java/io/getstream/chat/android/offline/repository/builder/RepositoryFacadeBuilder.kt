@@ -61,7 +61,7 @@ internal class RepositoryFacadeBuilder {
             requireNotNull(userRepository.selectUser(userId)) { "User with the userId: `$userId` has not been found" }
         }
 
-        val messageRepository = factory.createMessageRepository(getUser, userRepository::selectCurrentUser)
+        val messageRepository = factory.createMessageRepository(getUser)
         val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
         return RepositoryFacade(
