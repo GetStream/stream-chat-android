@@ -29,7 +29,7 @@ internal class MessageListItemLiveDataTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    private val currentUser = randomUser()
+    private val currentUser = MutableLiveData(randomUser())
 
     private fun simpleDateGroups(previous: Message?, message: Message): Boolean {
         return if (previous == null) {
@@ -54,7 +54,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
@@ -62,7 +62,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -84,7 +84,7 @@ internal class MessageListItemLiveDataTest {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     // livedata testing
@@ -110,8 +110,8 @@ internal class MessageListItemLiveDataTest {
     @Test
     fun `Should exclude the current user`() {
         val messageListItemLd = emptyMessages()
-        val typing = listOf(currentUser)
-        messageListItemLd.typingChanged(typing)
+        val typing = listOf(currentUser.value!!)
+        messageListItemLd.handleTypingUsersChange(typing, currentUser.value!!)
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items).isEmpty()
     }
@@ -129,7 +129,7 @@ internal class MessageListItemLiveDataTest {
     fun `Should return messages with a typing indicator`() {
         val message = createMessage()
         val messageListItemLd = oneMessage(message)
-        messageListItemLd.messagesChanged(listOf(message))
+        messageListItemLd.messagesChanged(listOf(message), currentUser.value!!.id)
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items.size).isEqualTo(3)
@@ -193,7 +193,7 @@ internal class MessageListItemLiveDataTest {
         val messageListItemLd = manyMessages()
         val testObserver: Observer<MessageListItemWrapper> = mock()
         messageListItemLd.observeForever(testObserver)
-        messageListItemLd.typingChanged(listOf(currentUser))
+        messageListItemLd.typingChanged(listOf(currentUser.value!!))
         verify(testObserver, times(2)).onChanged(any())
     }
 }
