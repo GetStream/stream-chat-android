@@ -34,6 +34,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiChannelActionsWarningItemTextSize" format="dimension|reference" />
+        <attr name="streamUiChannelActionsWarningItemTextColor" format="color|reference" />
+        <attr name="streamUiChannelActionsWarningItemTextFont" format="reference" />
+        <attr name="streamUiChannelActionsWarningItemTextFontAssets" format="string" />
+        <attr name="streamUiChannelActionsWarningItemTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiChannelActionsViewInfoIcon" format="reference" />
         <attr name="streamUiChannelActionsViewInfoEnabled" format="boolean" />
         <attr name="streamUiChannelActionsLeaveGroupIcon" format="reference" />
@@ -42,7 +52,5 @@
         <attr name="streamUiChannelActionsDeleteConversationEnabled" format="boolean" />
         <attr name="streamUiChannelActionsCancelIcon" format="reference" />
         <attr name="streamUiChannelActionsCancelEnabled" format="boolean" />
-        <attr name="streamUiChannelActionsIconsTint" format="color|reference" />
-        <attr name="streamUiChannelActionsWarningActionsTint" format="color|reference" />
     </declare-styleable>
 </resources>

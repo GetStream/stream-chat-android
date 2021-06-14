@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AttachmentOptionsView">
+        <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiIconsDefaultTint" format="color" />
         <attr name="streamUiReplyIcon" format="reference" />
         <attr name="streamUiShowInChatIcon" format="reference" />
         <attr name="streamUiSaveImageIcon" format="reference" />
         <attr name="streamUiDeleteIcon" format="reference" />
+        <!-- {@deprecated Use streamUiDeleteIcon instead.} -->
         <attr name="streamUiDeleteIconTint" format="reference" />
         <attr name="streamUiDeleteTextTint" format="reference" />
     </declare-styleable>

@@ -55,7 +55,7 @@
             android:background="@drawable/shape_circle_white"
             android:elevation="4dp"
             android:padding="8dp"
-            android:src="@drawable/stream_ui_ic_create_group"
+            android:src="@drawable/ic_create_group"
             app:tint="@color/stream_ui_accent_blue"
             />
 

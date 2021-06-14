@@ -51,7 +51,6 @@
         android:background="@null"
         android:scaleType="center"
         android:src="@drawable/stream_ui_ic_next"
-        android:tint="@color/stream_ui_attach_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"

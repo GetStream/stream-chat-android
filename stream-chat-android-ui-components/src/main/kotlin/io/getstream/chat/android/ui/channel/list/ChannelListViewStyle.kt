@@ -9,6 +9,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -33,7 +34,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property foregroundLayoutColor - foreground color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_snow]
  * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
  * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
- * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute]
+ * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute_black]
  * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
  */
 public data class ChannelListViewStyle(
@@ -53,7 +54,8 @@ public data class ChannelListViewStyle(
     public val unreadMessageCounterText: TextStyle,
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
     public val mutedChannelIcon: Drawable,
-    @ColorInt public val mutedChannelIconTint: Int
+    @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.WARNING)
+    @ColorInt public val mutedChannelIconTint: Int?
 ) {
 
     internal companion object {
@@ -188,12 +190,11 @@ public data class ChannelListViewStyle(
 
                 val mutedChannelIcon = a.getDrawable(
                     R.styleable.ChannelListView_streamUiMutedChannelIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute)!!
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute_black)!!
 
-                val mutedChannelIconTint = a.getColor(
-                    R.styleable.ChannelListView_streamUiMutedChannelIconTint,
-                    context.getColorCompat(R.color.stream_ui_black)
-                )
+                val mutedChannelIconTint = a.getColorOrNull(R.styleable.ChannelListView_streamUiMutedChannelIconTint)?.also { tint ->
+                    mutedChannelIcon.setTint(tint)
+                }
 
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,

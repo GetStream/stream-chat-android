@@ -21,7 +21,7 @@
             android:id="@+id/reply"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_reply"
-            tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
+            tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
             />
 
         <TextView
@@ -42,7 +42,6 @@
             android:id="@+id/delete"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_delete"
-            app:drawableTint="@color/stream_ui_accent_red"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />
 

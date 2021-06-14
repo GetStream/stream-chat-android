@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -27,7 +29,11 @@ internal class AttachmentOptionsView : FrameLayout {
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
         init(context, attrs)
     }
 
@@ -72,34 +78,28 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     private fun readConfiguration(array: TypedArray): Configuration {
-        val iconsTint = array.getColor(
-            R.styleable.AttachmentOptionsView_streamUiIconsDefaultTint,
-            ContextCompat.getColor(context, R.color.stream_ui_grey)
-        )
+        val iconsTint = array.getColorOrNull(R.styleable.AttachmentOptionsView_streamUiIconsDefaultTint)
 
         val replyIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiReplyIcon,
-            R.drawable.stream_ui_ic_arrow_curve_left
+            R.drawable.stream_ui_ic_arrow_curve_left_grey,
         )
 
         val showInChatIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiShowInChatIcon,
-            R.drawable.stream_ui_ic_show_in_chat
+            R.drawable.stream_ui_ic_show_in_chat,
         )
 
         val saveImageIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiSaveImageIcon,
-            R.drawable.stream_ui_ic_download
+            R.drawable.stream_ui_ic_download,
         )
 
         val deleteIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiDeleteIcon,
-            R.drawable.stream_ui_ic_delete
+            R.drawable.stream_ui_ic_delete,
         )
-        val deleteIconTint = array.getColor(
-            R.styleable.AttachmentOptionsView_streamUiDeleteIconTint,
-            ContextCompat.getColor(context, R.color.stream_ui_accent_red)
-        )
+        val deleteIconTint = array.getColorOrNull(R.styleable.AttachmentOptionsView_streamUiDeleteIconTint)
 
         val deleteTextTint = array.getColor(
             R.styleable.AttachmentOptionsView_streamUiDeleteTextTint,
@@ -118,12 +118,12 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     internal data class Configuration(
-        val iconsDefaultTint: Int,
+        val iconsDefaultTint: Int?,
         val replyIcon: Int,
         val showInChatIcon: Int,
         val saveImageIcon: Int,
         val deleteIcon: Int,
-        val deleteIconTint: Int,
+        val deleteIconTint: Int?,
         val deleteTextTint: Int,
     ) : Serializable
 
@@ -143,12 +143,16 @@ internal class AttachmentOptionsView : FrameLayout {
         fun onClick()
     }
 
-    private fun TextView.configureListItem(icon: Int, iconTint: Int) {
-        this.setLeftDrawableWithTint(icon, iconTint)
+    private fun TextView.configureListItem(icon: Int, iconTint: Int?) {
+        if (iconTint != null) {
+            this.setLeftDrawableWithTint(icon, iconTint)
+        } else {
+            setLeftDrawable(icon)
+        }
     }
 
-    private fun TextView.configureListItem(icon: Int, iconTint: Int, textTint: Int) {
+    private fun TextView.configureListItem(icon: Int, iconTint: Int?, textTint: Int) {
         this.setTextColor(textTint)
-        this.setLeftDrawableWithTint(icon, iconTint)
+        configureListItem(icon, iconTint)
     }
 }
