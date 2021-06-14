@@ -252,6 +252,7 @@ internal class ChannelControllerReactionsTest {
                 "channelId",
                 chatClient,
                 chatDomainImpl,
+                messageSendingServiceFactory = mock(),
             )
         }
 

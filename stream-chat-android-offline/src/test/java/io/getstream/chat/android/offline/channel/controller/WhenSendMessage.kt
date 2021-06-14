@@ -51,6 +51,7 @@ internal class WhenSendMessage {
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any(), any())) doReturn channelClient
+        on(it.channel(any())) doReturn channelClient
     }
 
     private val channelType: String = randomString()
@@ -62,6 +63,7 @@ internal class WhenSendMessage {
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     private val domainImpl: ChatDomainImpl = mock {
+        on(it.appContext) doReturn mock()
         on(it.scope) doReturn testCoroutines.scope
         on(it.generateMessageId()) doReturn randomString()
         on(it.currentUser) doReturn User()

@@ -40,6 +40,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any(), any())) doReturn channelClient
+        on(it.channel(any())) doReturn channelClient
     }
 
     private val channelType: String = randomString()
@@ -54,6 +55,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
         Shadows.shadowOf(MimeTypeMap.getSingleton())
 
         domainImpl = mock {
+            on(it.appContext) doReturn mock()
             on(it.scope) doReturn testCoroutines.scope
             on(it.generateMessageId()) doReturn randomString()
             on(it.currentUser) doReturn User()

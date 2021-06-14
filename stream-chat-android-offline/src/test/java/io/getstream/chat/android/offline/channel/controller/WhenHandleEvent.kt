@@ -44,8 +44,11 @@ internal class WhenHandleEvent {
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
 
-    private val chatClient: ChatClient = mock()
+    private val chatClient: ChatClient = mock {
+        on(it.channel(any())) doReturn mock()
+    }
     private val chatDomain: ChatDomainImpl = mock {
+        on(it.appContext) doReturn mock()
         on(it.scope) doReturn TestCoroutineScope()
         on(it.currentUser) doReturn currentUser
         on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)

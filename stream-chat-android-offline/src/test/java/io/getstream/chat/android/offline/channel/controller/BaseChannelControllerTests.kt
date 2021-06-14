@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.channel.controller
 
 import androidx.annotation.CallSuper
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
@@ -34,11 +35,12 @@ internal open class BaseChannelControllerTests {
         messageSendingService = mock()
         chatClient = mock {
             on { channel(channelType, channelId) } doReturn channelClient
+            on { channel(any()) } doReturn channelClient
         }
         chatDomainImpl = mock {
+            on(it.appContext) doReturn mock()
             on { scope } doReturn TestCoroutineScope()
             on { repos } doReturn repos
-            on { messageSendingService } doReturn messageSendingService
         }
         sut = ChannelController(
             channelType,
