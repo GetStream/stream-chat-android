@@ -180,11 +180,12 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicato
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle$Companion;
-	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Z)V
+	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component10 ()Z
 	public final fun component11 ()Landroid/graphics/drawable/Drawable;
 	public final fun component12 ()Z
+	public final fun component13 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -193,9 +194,10 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelActionsDialo
 	public final fun component7 ()Landroid/graphics/drawable/Drawable;
 	public final fun component8 ()Z
 	public final fun component9 ()Landroid/graphics/drawable/Drawable;
-	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Z)Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackground ()Landroid/graphics/drawable/Drawable;
 	public final fun getCancelEnabled ()Z
 	public final fun getCancelIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getDeleteConversationEnabled ()Z
