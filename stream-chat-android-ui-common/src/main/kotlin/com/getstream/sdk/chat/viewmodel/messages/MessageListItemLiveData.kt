@@ -51,7 +51,7 @@ import java.util.Date
  *
  */
 internal class MessageListItemLiveData(
-    private val getCurrentUser: LiveData<User?>,
+    private val currentUser: LiveData<User?>,
     messages: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
@@ -69,9 +69,9 @@ internal class MessageListItemLiveData(
     private var lastMessageID = ""
 
     init {
-        configMessagesChange(messages, getCurrentUser)
-        configReadsChange(readsLd, getCurrentUser)
-        typingLd?.let { typing -> configTypingChange(typing, getCurrentUser) }
+        configMessagesChange(messages, currentUser)
+        configReadsChange(readsLd, currentUser)
+        typingLd?.let { typing -> configTypingChange(typing, currentUser) }
     }
 
     private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
