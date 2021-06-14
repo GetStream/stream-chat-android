@@ -3,7 +3,7 @@ name: docusaurus
 on:
   push:
     branches:
-      - main # default branch name for each repo that docs should be push from
+      - docusaurusTesting # default branch name for each repo that docs should be push from
 jobs:
   push_docusaurus:
     name: Publish docusaurus docs
