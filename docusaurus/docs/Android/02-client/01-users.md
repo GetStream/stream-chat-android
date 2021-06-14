@@ -94,7 +94,9 @@ Guest sessions can be created client-side and do not require any server-side aut
 
 Guest users are not available to application using multi-tenancy (teams).
 
-> Unlike anonymous users, guest users are counted towards your MAU usage.
+:::note
+Unlike anonymous users, guest users are counted towards your MAU usage.
+:::
 
 Guest users have a limited set of permissions. You can create a guest user session by using `connectGuestUser` instead of `connectUser`.
 
@@ -132,8 +134,9 @@ When you connect to chat using anonymously you receive a special user back with 
 	"language": ""
 }
 ```
-> Anonymous users are not counted toward your MAU number and only have an impact on the number of concurrent connected clients.
-
+:::note
+Anonymous users are not counted toward your MAU number and only have an impact on the number of concurrent connected clients.
+:::
 
 ## Querying Users
 
@@ -228,7 +231,9 @@ User presence allows you to show when a user was last active and if they are onl
 
 <!-- TODO: Check if this status field is actuallz used anywhere -->
 
-> The online field indicates if the user is online. The status field stores text indicating the current user status.
+:::note
+The online field indicates if the user is online. The status field stores text indicating the current user status.
+:::
 
 ### Marking a User Invisible
 
@@ -250,7 +255,9 @@ client.connectUser(user, "user-token").enqueue { result ->
 }
 ```
 
-> **Note**: a User's invisible status can be only set while calling `connectUser` method.
+:::note
+User's invisible status can be only set while calling `connectUser` method.
+:::
 
 ### Listening to User Presence Changes
 

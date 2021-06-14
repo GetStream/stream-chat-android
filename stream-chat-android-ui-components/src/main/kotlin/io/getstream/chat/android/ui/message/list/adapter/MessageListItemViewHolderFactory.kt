@@ -7,6 +7,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
@@ -39,6 +40,9 @@ public open class MessageListItemViewHolderFactory {
         private set
 
     private lateinit var style: MessageListItemStyle
+
+    private lateinit var messageReplyStyle: MessageReplyStyle
+
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
@@ -51,6 +55,10 @@ public open class MessageListItemViewHolderFactory {
 
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
         this.style = style
+    }
+
+    internal fun setReplyMessageListItemViewStyle(style: MessageReplyStyle) {
+        this.messageReplyStyle = style
     }
 
     internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {

@@ -67,7 +67,9 @@ TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     )
 }
 ```
-> **NOTE**: The transformer should be set before the view is rendered to make sure that the new style was applied.
+:::note
+The transformer should be set before the view is rendered to make sure that the new style was applied.
+:::
 
 ## Creating a Custom ViewHolder Factory
 

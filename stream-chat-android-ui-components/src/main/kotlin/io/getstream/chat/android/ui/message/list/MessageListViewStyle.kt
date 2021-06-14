@@ -56,6 +56,7 @@ public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
+    public val replyMessageStyle: MessageReplyStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
     @Deprecated(message = "Use custom icons instead", level = DeprecationLevel.WARNING)
@@ -147,6 +148,7 @@ public data class MessageListViewStyle(
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
+                val replyMessageStyle = MessageReplyStyle(context = context, attributes = attributes)
 
                 val iconsTint = attributes.getColorOrNull(R.styleable.MessageListView_streamUiMessageOptionIconColor)
 
@@ -304,6 +306,7 @@ public data class MessageListViewStyle(
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
+                    replyMessageStyle = replyMessageStyle,
                     backgroundColor = backgroundColor,
                     iconsTint = iconsTint,
                     replyIcon = replyIcon,
