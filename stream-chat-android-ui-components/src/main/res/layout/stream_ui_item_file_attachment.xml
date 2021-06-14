@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/stream_ui_shape_selected_media_round"
     android:foreground="?selectableItemBackground"
     android:padding="8dp"
     >

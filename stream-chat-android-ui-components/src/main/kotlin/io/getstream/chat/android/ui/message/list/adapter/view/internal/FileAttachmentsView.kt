@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
+import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.extensions.uploadId
@@ -143,6 +144,20 @@ private class FileAttachmentViewHolder(
         }
     }
 
+    private fun setupBackground() {
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder()
+            .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
+            .build()
+        val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+        bgShapeDrawable.apply {
+            fillColor = ColorStateList.valueOf(style.backgroundColor)
+            strokeColor = ColorStateList.valueOf(style.strokeColor)
+            strokeWidth = style.strokeWidth.toFloat()
+        }
+
+        binding.root.background = bgShapeDrawable
+    }
+
     init {
         binding.root.background = ShapeAppearanceModel.builder()
             .setAllCornerSizes(CORNER_SIZE_PX)
@@ -188,6 +203,7 @@ private class FileAttachmentViewHolder(
             if (attachment.uploadState is Attachment.UploadState.InProgress) {
                 handleInProgressAttachment(fileSize)
             }
+            setupBackground()
         }
     }
 

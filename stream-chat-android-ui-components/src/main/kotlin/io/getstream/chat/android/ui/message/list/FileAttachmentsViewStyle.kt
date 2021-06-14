@@ -5,7 +5,10 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -13,6 +16,9 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class FileAttachmentsViewStyle(
     @ColorInt val backgroundColor: Int,
+    @ColorInt val strokeColor: Int,
+    @Px val strokeWidth: Int,
+    @Px val cornerRadius: Int,
     val progressBarDrawable: Drawable,
     public val actionButtonIcon: Drawable,
     @ColorInt val actionButtonTintColor: Int,
@@ -30,7 +36,7 @@ public data class FileAttachmentsViewStyle(
 
                 val bgColor = attrsArray.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    context.getColorCompat(R.color.stream_ui_white)
                 )
 
                 val actionIcon =
@@ -76,6 +82,22 @@ public data class FileAttachmentsViewStyle(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentFailedAttachmentIconTintColor,
                     context.getColorCompat(R.color.stream_ui_accent_red)
                 )
+                val strokeColor = attrsArray.getColor(
+                    R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeColor,
+                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                )
+
+                val strokeWidth =
+                    attrsArray.getDimensionPixelSize(
+                        R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeWidth,
+                        1.dpToPx()
+                    )
+
+                val cornerRadius =
+                    attrsArray.getDimensionPixelSize(
+                        R.styleable.FileAttachmentView_streamUiFileAttachmentCornerRadius,
+                        12.dpToPx()
+                    )
 
                 return FileAttachmentsViewStyle(
                     backgroundColor = bgColor,
@@ -86,7 +108,10 @@ public data class FileAttachmentsViewStyle(
                     actionButtonTintColor = actionButtonTintColor,
                     failedAttachmentIcon = failedAttachmentIcon,
                     failedAttachmentIconTintColor = failedAttachmentIconTinColor,
-                )
+                    strokeColor = strokeColor,
+                    strokeWidth = strokeWidth,
+                    cornerRadius = cornerRadius,
+                ).let(TransformStyle.fileAttachmentStyleTransformer::transform)
             }
         }
     }

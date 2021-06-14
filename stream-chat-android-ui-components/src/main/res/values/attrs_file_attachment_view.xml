@@ -8,6 +8,9 @@
         <attr name="streamUiFileAttachmentFailedAttachmentIcon" format="reference" />
         <attr name="streamUiFileAttachmentFailedAttachmentIconTintColor" format="color|reference" />
         <attr name="streamUiFileAttachmentBackgroundColor" format="color|reference" />
+        <attr name="streamUiFileAttachmentStrokeColor" format="color|reference" />
+        <attr name="streamUiFileAttachmentStrokeWidth" format="dimension" />
+        <attr name="streamUiFileAttachmentCornerRadius" format="dimension" />
 
         <attr name="streamUiFileAttachmentTitleTextSize" format="dimension|reference" />
         <attr name="streamUiFileAttachmentTitleTextColor" format="color|reference" />
