@@ -69,7 +69,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val currentUser: User
         get() = domain.currentUser
 
-    private val user: LiveData<User?> = domain.user
+    public val user: LiveData<User?> = domain.user
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
