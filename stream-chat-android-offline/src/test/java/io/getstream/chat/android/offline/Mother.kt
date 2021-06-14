@@ -499,7 +499,7 @@ internal fun randomReaction(
 )
 
 internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
-    (SyncStatus.values().asList() - exclude).random()
+    (SyncStatus.values().asList() - exclude - SyncStatus.WAIT_ATTACHMENTS).random()
 
 internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
     return KFixture(fixture) {
