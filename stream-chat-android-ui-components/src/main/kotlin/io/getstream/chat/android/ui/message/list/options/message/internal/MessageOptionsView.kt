@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -136,7 +137,7 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureReply(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+    private fun configureReply(configuration: Configuration, style: MessageListViewStyle, iconTint: Int?) {
         if (configuration.replyEnabled) {
             binding.replyTV.configureListItem(style.messageOptionsText, style.replyIcon, iconTint)
         } else {
@@ -144,7 +145,7 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureFlag(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+    private fun configureFlag(configuration: Configuration, style: MessageListViewStyle, iconTint: Int?) {
         if (configuration.flagEnabled) {
             binding.flagTV.configureListItem(style.messageOptionsText, style.flagIcon, iconTint)
         } else {
@@ -155,7 +156,7 @@ internal class MessageOptionsView : FrameLayout {
     private fun configureMute(
         configuration: Configuration,
         style: MessageListViewStyle,
-        iconTint: Int,
+        iconTint: Int?,
         isMessageAuthorMuted: Boolean,
     ) {
         if (configuration.muteEnabled) {
@@ -167,7 +168,7 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureBlock(configuration: Configuration, style: MessageListViewStyle, iconTint: Int) {
+    private fun configureBlock(configuration: Configuration, style: MessageListViewStyle, iconTint: Int?) {
         if (configuration.blockEnabled) {
             binding.blockTV.configureListItem(style.messageOptionsText, style.replyIcon, iconTint)
         } else {
@@ -175,7 +176,7 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun configureCopyMessage(iconsTint: Int, configuration: Configuration, style: MessageListViewStyle) {
+    private fun configureCopyMessage(iconsTint: Int?, configuration: Configuration, style: MessageListViewStyle) {
         if (configuration.copyTextEnabled) {
             binding.copyTV.isVisible = true
             binding.copyTV.configureListItem(style.messageOptionsText, style.copyIcon, iconsTint)
@@ -188,8 +189,10 @@ internal class MessageOptionsView : FrameLayout {
         if (configuration.deleteMessageEnabled) {
             binding.deleteTV.apply {
                 isVisible = true
-                configureListItem(style.messageOptionsText, style.deleteIcon, style.warningActionsTintColor)
-                setTextColor(style.warningActionsTintColor)
+                configureListItem(style.warningMessageOptionsText, style.deleteIcon, style.warningActionsTintColor)
+                if (style.warningActionsTintColor != null) {
+                    setTextColor(style.warningActionsTintColor)
+                }
             }
         } else {
             binding.deleteTV.isVisible = false
@@ -283,8 +286,12 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
-    private fun TextView.configureListItem(textStyle: TextStyle, icon: Int, iconTint: Int) {
-        this.setLeftDrawableWithTint(icon, iconTint)
+    private fun TextView.configureListItem(textStyle: TextStyle, icon: Int, iconTint: Int?) {
+        if (iconTint != null) {
+            this.setLeftDrawableWithTint(icon, iconTint)
+        } else {
+            setLeftDrawable(icon)
+        }
         textStyle.apply(this)
     }
 }

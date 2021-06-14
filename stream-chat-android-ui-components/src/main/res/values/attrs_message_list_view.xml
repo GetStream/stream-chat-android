@@ -242,7 +242,9 @@
         <attr name="streamUiDeleteMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
+        <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiMessageOptionIconColor" format="color" />
+        <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiWarningActionsTintColor" format="color" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
 
@@ -251,6 +253,16 @@
         <attr name="streamUiMessageOptionsTextFont" format="reference" />
         <attr name="streamUiMessageOptionsTextFontAssets" format="string" />
         <attr name="streamUiMessageOptionsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiWarningMessageOptionsTextSize" format="dimension|reference" />
+        <attr name="streamUiWarningMessageOptionsTextColor" format="color|reference" />
+        <attr name="streamUiWarningMessageOptionsTextFont" format="reference" />
+        <attr name="streamUiWarningMessageOptionsTextFontAssets" format="string" />
+        <attr name="streamUiWarningMessageOptionsTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

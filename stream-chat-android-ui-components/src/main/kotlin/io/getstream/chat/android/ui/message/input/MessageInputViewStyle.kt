@@ -1,15 +1,17 @@
 package io.getstream.chat.android.ui.message.input
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.StyleableRes
 import androidx.core.graphics.drawable.DrawableCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -56,12 +58,7 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * @property attachmentMaxFileSize the max attachment size. Be aware that currently the back end of Stream allow 20MB as
 * the max size, use this only if you use your own backend.
 * @property dividerBackground the background of the divider in the top of MessageInputView.
-* @property pictureAttachmentIcon the icon for picture selection in the attachment selection dialog
-* @property pictureAttachmentIconTint tint list for pictureAttachmentIcon
-* @property fileAttachmentIcon the icon for file selection in the attachment selection dialog
-* @property fileAttachmentIconTint tint list for fileAttachmentIcon
-* @property cameraAttachmentIcon the icon for camera selection in the attachment selection dialog
-* @property cameraAttachmentIconTint tint list for cameraAttachmentIcon
+* @property attachmentDialogStyle style for attachment selection dialog
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -96,7 +93,7 @@ public data class MessageInputViewStyle(
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
-    public val attachmentDialogStyle: AttachmentDialogStyle
+    public val attachmentDialogStyle: AttachmentDialogStyle,
 ) {
 
     internal companion object {
@@ -114,22 +111,12 @@ public data class MessageInputViewStyle(
                 val attachButtonIcon = a.getDrawable(R.styleable.MessageInputView_streamUiAttachButtonIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
                         .apply {
-                            DrawableCompat.setTintList(
-                                this,
-                                getColorList(
-                                    normalColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiAttachButtonIconColor,
-                                        context.getColorCompat(R.color.stream_ui_grey)
-                                    ),
-                                    selectedColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiAttachButtonIconPressedColor,
-                                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                                    ),
-                                    disabledColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiAttachButtonIconDisabledColor,
-                                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
-                                    )
-                                )
+                            setTintListIfNeeded(
+                                typedArray = a,
+                                drawable = this,
+                                normalColorIndex = R.styleable.MessageInputView_streamUiAttachButtonIconColor,
+                                selectedColorIndex = R.styleable.MessageInputView_streamUiAttachButtonIconPressedColor,
+                                disabledColorIndex = R.styleable.MessageInputView_streamUiAttachButtonIconDisabledColor,
                             )
                         }
 
@@ -140,22 +127,12 @@ public data class MessageInputViewStyle(
                 val lightningButtonIcon = a.getDrawable(R.styleable.MessageInputView_streamUiLightningButtonIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
                         .apply {
-                            DrawableCompat.setTintList(
-                                this,
-                                getColorList(
-                                    normalColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiLightningButtonIconColor,
-                                        context.getColorCompat(R.color.stream_ui_grey)
-                                    ),
-                                    selectedColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiLightningButtonIconPressedColor,
-                                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                                    ),
-                                    disabledColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiLightningButtonIconDisabledColor,
-                                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
-                                    )
-                                )
+                            setTintListIfNeeded(
+                                typedArray = a,
+                                drawable = this,
+                                normalColorIndex = R.styleable.MessageInputView_streamUiLightningButtonIconColor,
+                                selectedColorIndex = R.styleable.MessageInputView_streamUiLightningButtonIconPressedColor,
+                                disabledColorIndex = R.styleable.MessageInputView_streamUiLightningButtonIconDisabledColor,
                             )
                         }
 
@@ -184,38 +161,26 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiSendButtonEnabled,
                     true
                 )
-                val sendButtonDisabledIconColor = a.getColor(
-                    R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
-                    context.getColorCompat(R.color.stream_ui_grey_gainsboro)
-                )
                 val sendButtonEnabledIcon = a.getDrawable(R.styleable.MessageInputView_streamUiSendButtonEnabledIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_up_arrow)!!
                         .apply {
-                            DrawableCompat.setTintList(
-                                this,
-                                getColorList(
-                                    normalColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiSendButtonEnabledIconColor,
-                                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                                    ),
-                                    selectedColor = a.getColor(
-                                        R.styleable.MessageInputView_streamUiSendButtonPressedIconColor,
-                                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                                    ),
-                                    disabledColor = sendButtonDisabledIconColor
-                                )
+                            setTintListIfNeeded(
+                                typedArray = a,
+                                drawable = this,
+                                normalColorIndex = R.styleable.MessageInputView_streamUiSendButtonEnabledIconColor,
+                                selectedColorIndex = R.styleable.MessageInputView_streamUiSendButtonPressedIconColor,
+                                disabledColorIndex = R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
                             )
                         }
                 val sendButtonDisabledIcon = a.getDrawable(R.styleable.MessageInputView_streamUiSendButtonDisabledIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_filled_right_arrow)!!
                         .apply {
-                            DrawableCompat.setTintList(
-                                this,
-                                getColorList(
-                                    normalColor = sendButtonDisabledIconColor,
-                                    selectedColor = sendButtonDisabledIconColor,
-                                    disabledColor = sendButtonDisabledIconColor
-                                )
+                            setTintListIfNeeded(
+                                typedArray = a,
+                                drawable = this,
+                                normalColorIndex = R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
+                                selectedColorIndex = R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
+                                disabledColorIndex = R.styleable.MessageInputView_streamUiSendButtonDisabledIconColor,
                             )
                         }
 
@@ -247,7 +212,8 @@ public data class MessageInputViewStyle(
                         Typeface.NORMAL
                     )
                     .build()
-                val sendAlsoToChannelCheckboxDrawable = a.getDrawable(R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxDrawable)
+                val sendAlsoToChannelCheckboxDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiSendAlsoToChannelCheckboxDrawable)
 
                 val mentionsEnabled = a.getBoolean(
                     R.styleable.MessageInputView_streamUiMentionsEnabled,
@@ -413,25 +379,22 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiPictureAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
-                val pictureAttachmentIconTint = a.getColorStateList(
-                    R.styleable.MessageInputView_streamUiPictureAttachmentIconTint
-                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
+                val pictureAttachmentIconTint =
+                    a.getColorStateList(R.styleable.MessageInputView_streamUiPictureAttachmentIconTint)
 
                 val fileAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiFileAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
-                val fileAttachmentIconTint = a.getColorStateList(
-                    R.styleable.MessageInputView_streamUiFileAttachmentIconTint
-                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
+                val fileAttachmentIconTint =
+                    a.getColorStateList(R.styleable.MessageInputView_streamUiFileAttachmentIconTint)
 
                 val cameraAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
-                val cameraAttachmentIconTint = a.getColorStateList(
-                    R.styleable.MessageInputView_streamUiCameraAttachmentIconTint
-                ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)!!
+                val cameraAttachmentIconTint =
+                    a.getColorStateList(R.styleable.MessageInputView_streamUiCameraAttachmentIconTint)
 
                 val attachmentDialogStyle = AttachmentDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
@@ -477,6 +440,29 @@ public data class MessageInputViewStyle(
                     attachmentMaxFileSize = attachmentMaxFileSize,
                     attachmentDialogStyle = attachmentDialogStyle,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
+            }
+        }
+
+        private fun setTintListIfNeeded(
+            typedArray: TypedArray,
+            drawable: Drawable,
+            @StyleableRes normalColorIndex: Int,
+            @StyleableRes selectedColorIndex: Int,
+            @StyleableRes disabledColorIndex: Int,
+        ) {
+            val normalColor = typedArray.getColorOrNull(normalColorIndex)
+            val selectedColor = typedArray.getColorOrNull(selectedColorIndex)
+            val disabledColor = typedArray.getColorOrNull(disabledColorIndex)
+
+            if (normalColor != null && selectedColor != null && disabledColor != null) {
+                DrawableCompat.setTintList(
+                    drawable,
+                    getColorList(
+                        normalColor = normalColor,
+                        selectedColor = selectedColor,
+                        disabledColor = disabledColor,
+                    ),
+                )
             }
         }
     }

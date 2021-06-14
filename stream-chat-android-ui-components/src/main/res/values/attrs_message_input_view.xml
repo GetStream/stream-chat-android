@@ -5,15 +5,21 @@
         <!--Attachment Button-->
         <attr name="streamUiAttachButtonEnabled" format="boolean" />
         <attr name="streamUiAttachButtonIcon" format="reference" />
+        <!-- {@deprecated Use streamUiAttachButtonIcon instead.} -->
         <attr name="streamUiAttachButtonIconColor" format="color|reference" />
+        <!-- {@deprecated Use streamUiAttachButtonIcon instead.} -->
         <attr name="streamUiAttachButtonIconPressedColor" format="color|reference" />
+        <!-- {@deprecated Use streamUiAttachButtonIcon instead.} -->
         <attr name="streamUiAttachButtonIconDisabledColor" format="color|reference" />
 
         <!--Lightning Button-->
         <attr name="streamUiLightningButtonEnabled" format="boolean" />
         <attr name="streamUiLightningButtonIcon" format="reference" />
+        <!-- {@deprecated Use streamUiLightningButtonIcon instead.} -->
         <attr name="streamUiLightningButtonIconColor" format="color|reference" />
+        <!-- {@deprecated Use streamUiLightningButtonIcon instead.} -->
         <attr name="streamUiLightningButtonIconPressedColor" format="color|reference" />
+        <!-- {@deprecated Use streamUiLightningButtonIcon instead.} -->
         <attr name="streamUiLightningButtonIconDisabledColor" format="color|reference" />
 
         <!--Input Text-->
@@ -35,8 +41,11 @@
         <attr name="streamUiMessageInputDividerBackgroundDrawable" format="reference" />
 
         <!--Send Button-->
+        <!-- {@deprecated Use sendButton icons instead.} -->
         <attr name="streamUiSendButtonEnabledIconColor" format="color|reference" />
+        <!-- {@deprecated Use sendButton icons instead.} -->
         <attr name="streamUiSendButtonDisabledIconColor" format="color|reference" />
+        <!-- {@deprecated Use sendButton icons instead.} -->
         <attr name="streamUiSendButtonPressedIconColor" format="color|reference" />
         <attr name="streamUiSendButtonEnabledIcon" format="reference" />
         <attr name="streamUiSendButtonDisabledIcon" format="reference" />
@@ -118,10 +127,13 @@
 
         <!--Attachment Dialog-->
         <attr name="streamUiPictureAttachmentIcon" format="reference" />
+        <!-- {@deprecated Use streamUiPictureAttachmentIcon instead.} -->
         <attr name="streamUiPictureAttachmentIconTint" format="color|reference" />
         <attr name="streamUiFileAttachmentIcon" format="reference" />
+        <!-- {@deprecated Use streamUiFileAttachmentIcon instead.} -->
         <attr name="streamUiFileAttachmentIconTint" format="color|reference" />
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
+        <!-- {@deprecated Use streamUiCameraAttachmentIcon instead.} -->
         <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
     </declare-styleable>
 

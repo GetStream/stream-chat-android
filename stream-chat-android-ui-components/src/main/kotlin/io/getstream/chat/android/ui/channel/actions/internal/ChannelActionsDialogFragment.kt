@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
@@ -76,7 +76,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun configureViewInfoAction() {
         binding.viewInfoButton.apply {
             if (style.viewInfoEnabled) {
-                configureActionItem(style.itemTextStyle, style.viewInfoIcon, style.iconsTint)
+                configureActionItem(style.itemTextStyle, style.viewInfoIcon)
                 setOnClickListener {
                     channelActionListener?.onChannelInfoSelected(cid)
                     dismiss()
@@ -91,7 +91,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         binding.leaveGroupButton.apply {
             if (style.leaveGroupEnabled) {
                 isVisible = isGroup
-                configureActionItem(style.itemTextStyle, style.leaveGroupIcon, style.iconsTint)
+                configureActionItem(style.itemTextStyle, style.leaveGroupIcon)
                 setOnClickListener {
                     channelActionListener?.onLeaveChannelClicked(cid)
                     dismiss()
@@ -105,8 +105,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun configureDeleteConversationButton() {
         binding.deleteButton.apply {
             if (style.deleteConversationEnabled) {
-                configureActionItem(style.itemTextStyle, style.deleteConversationIcon, style.warningActionsTint)
-                setTextColor(style.warningActionsTint)
+                configureActionItem(style.warningItemTextStyle, style.deleteConversationIcon)
                 setOnClickListener {
                     channelActionListener?.onDeleteConversationClicked(cid)
                     dismiss()
@@ -120,7 +119,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun configureCancelButton() {
         binding.cancelButton.apply {
             if (style.cancelEnabled) {
-                configureActionItem(style.itemTextStyle, style.cancelIcon, style.iconsTint)
+                configureActionItem(style.itemTextStyle, style.cancelIcon)
                 setOnClickListener {
                     dismiss()
                 }
@@ -168,8 +167,8 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         } ?: dismiss()
     }
 
-    private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable, tint: Int) {
-        setLeftDrawableWithTint(icon, tint)
+    private fun TextView.configureActionItem(textStyle: TextStyle, icon: Drawable) {
+        setLeftDrawable(icon)
         textStyle.apply(this)
     }
 

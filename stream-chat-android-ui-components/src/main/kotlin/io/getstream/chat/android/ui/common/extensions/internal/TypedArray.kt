@@ -1,6 +1,9 @@
 package io.getstream.chat.android.ui.common.extensions.internal
 
 import android.content.res.TypedArray
+import androidx.annotation.ColorInt
+import androidx.annotation.StyleableRes
+import androidx.core.content.res.getColorOrThrow
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -17,3 +20,7 @@ internal inline fun <reified T : Enum<T>> TypedArray.getEnum(index: Int, default
         if (it >= 0) enumValues<T>()[it] else default
     }
 }
+
+@ColorInt
+internal fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? =
+    runCatching { getColorOrThrow(index) }.getOrNull()
