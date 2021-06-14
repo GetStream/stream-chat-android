@@ -33,6 +33,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed the `Message::attachmentsSyncStatus` field
 
 
 ## stream-chat-android-offline
@@ -41,6 +42,7 @@
 - Fixed bug where deleted user reactions were sometimes displayed on the message options overlay.
 
 ### ⬆️ Improved
+- Now attachments can be sent while being in offline
 
 ### ✅ Added
 
