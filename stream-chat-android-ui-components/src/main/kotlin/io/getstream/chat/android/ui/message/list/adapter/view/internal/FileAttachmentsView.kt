@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.view.internal
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -144,13 +142,9 @@ private class FileAttachmentViewHolder(
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else {
                 actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 

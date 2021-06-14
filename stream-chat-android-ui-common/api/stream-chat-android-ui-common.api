@@ -3,7 +3,6 @@ public abstract interface class com/getstream/sdk/chat/ChatMarkdown {
 }
 
 public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/content/FileProvider {
-	public static final field Companion Lcom/getstream/sdk/chat/StreamFileProvider$Companion;
 	public fun <init> ()V
 }
 

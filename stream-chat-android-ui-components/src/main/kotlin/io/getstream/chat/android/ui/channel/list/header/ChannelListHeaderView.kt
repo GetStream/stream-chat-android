@@ -81,8 +81,10 @@ public class ChannelListHeaderView : ConstraintLayout {
             isInvisible = !showActionButton
             isClickable = showActionButton
 
-            imageTintList = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)
-                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
+            typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)?.let { colorStateList ->
+                imageTintList = colorStateList
+            }
+
             val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiActionButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
             setImageDrawable(drawable)

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.model
 
 import android.content.Context
 import android.net.Uri
-import com.getstream.sdk.chat.StreamFileProvider
+import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -30,7 +30,7 @@ public data class AttachmentMetaData(
     public constructor(
         context: Context,
         file: File
-    ) : this(file = file, uri = StreamFileProvider.getUriForFile(context, file)) {
+    ) : this(file = file, uri = StreamFileUtil.getUriForFile(context, file)) {
         mimeType = Utils.getMimeType(file)
         type = getTypeFromMimeType(mimeType)
         size = file.length()

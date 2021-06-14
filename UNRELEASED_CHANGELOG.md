@@ -37,6 +37,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug where reactions of other users were sometimes displayed as reactions of the current user.
+- Fixed bug where deleted user reactions were sometimes displayed on the message options overlay.
 
 ### ⬆️ Improved
 
@@ -71,6 +73,7 @@ permission is not granted, now it asks for it.
   - `streamUiChannelActionsMemberNamesTextSize`, `streamUiChannelActionsMemberNamesTextColor`, `streamUiChannelActionsMemberNamesTextFont`, `streamUiChannelActionsMemberNamesTextFontAssets`, `streamUiChannelActionsMemberNamesTextStyle` attributes to customize dialog title with member names
   - `streamUiChannelActionsMemberInfoTextSize`, `streamUiChannelActionsMemberInfoTextColor`, `streamUiChannelActionsMemberInfoTextFont`, `streamUiChannelActionsMemberInfoTextFontAssets`, `streamUiChannelActionsMemberInfoTextStyle` attributes to customize dialog subtitle with member info
   - `streamUiChannelActionsItemTextSize`, `streamUiChannelActionsItemTextColor`, `streamUiChannelActionsItemTextFont`, `streamUiChannelActionsItemTextFontAssets`, `streamUiChannelActionsItemTextStyle` attributes to customize action item text style
+  - `streamUiChannelActionsWarningItemTextSize`, `streamUiChannelActionsWarningItemTextColor`, `streamUiChannelActionsWarningItemTextFont`, `streamUiChannelActionsWarningItemTextFontAssets`, `streamUiChannelActionsWarningItemTextStyle` attributes to customize warning action item text style
   - `streamUiChannelActionsViewInfoIcon` attribute to customize "View Info" action icon
   - `streamUiChannelActionsViewInfoEnabled` attribute to hide/show "View Info" action item
   - `streamUiChannelActionsLeaveGroupIcon` attribute to customize "Leave Group" action icon
@@ -79,8 +82,6 @@ permission is not granted, now it asks for it.
   - `streamUiChannelActionsDeleteConversationEnabled` attribute to hide/show "Delete Conversation" action item
   - `streamUiChannelActionsCancelIcon` attribute to customize "Cancel" action icon
   - `streamUiChannelActionsCancelEnabled` attribute to hide/show "Cancel" action item
-  - `streamUiChannelActionsIconsTint` attribute to customize action ions tint color
-  - `streamUiChannelActionsWarningActionsTint` attribute to customize the color of "Delete Conversation" action item
 - Added `streamUiIconOnlyVisibleToYou` attribute to `MessageListView` to allow customizing "Only visible to you" icon placed in messages footer
 - Added `GiphyViewHolderStyle` to `MessageListViewStyle` to allow customizing `GiphyViewHolder`. The new style comes together with following `MessageListView` attributes:
   - `streamUiGiphyCardBackgroundColor` attribute to customize card's background color
@@ -99,6 +100,8 @@ permission is not granted, now it asks for it.
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextStyle`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextColor`
   - `MessageInputView.streamUiSendAlsoToChannelCheckboxTextSize`
+- Added `streamUiWarningMessageOptionsTextSize`, `streamUiWarningMessageOptionsTextColor`, `streamUiWarningMessageOptionsTextFont`, `streamUiWarningMessageOptionsFontAssets`, `streamUiWarningMessageOptionsTextStyle` attributes to `MessageListView` for customizing warning actions text appearance
+- Deprecated multiple views' tint properties and attributes. Use custom drawables instead.
 - Added `MediaAttachmentViewStyle` to allow customizing the appearance of media attachments in the message list. The new style comes together with following `MediaAttachmentView` attributes:
   - `progressIcon` - attribute to customize animated progress drawable when image is loading
   - `giphyIcon` - attribute to customize Giphy icon

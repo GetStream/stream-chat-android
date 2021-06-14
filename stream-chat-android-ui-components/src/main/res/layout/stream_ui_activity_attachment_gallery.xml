@@ -26,7 +26,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_black"
             tools:ignore="ContentDescription"
             />
 
@@ -70,7 +69,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_black"
             tools:ignore="ContentDescription"
             />
 
@@ -140,7 +138,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_black"
             tools:ignore="ContentDescription"
             />
 
@@ -154,7 +151,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/stream_ui_black"
             tools:ignore="ContentDescription"
             />
 

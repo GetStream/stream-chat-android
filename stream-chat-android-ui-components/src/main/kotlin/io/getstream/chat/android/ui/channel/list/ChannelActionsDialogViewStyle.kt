@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsDialogFragment
@@ -21,6 +20,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property memberNamesTextStyle - test appearance for dialog title with member names
  * @property memberInfoTextStyle - test appearance for dialog subtitle with member info
  * @property itemTextStyle - text appearance for action item
+ * @property itemTextStyle - text appearance for warning action item
  * @property viewInfoIcon - icon for view info action. Default - [R.drawable.stream_ui_ic_single_user]
  * @property viewInfoEnabled - shows/hides view info action. Hidden by default
  * @property leaveGroupIcon - icon for leave group action. Default - [R.drawable.stream_ui_ic_leave_group]
@@ -29,13 +29,12 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property deleteConversationEnabled - shows/hides delete conversation action. Shown by default
  * @property cancelIcon - icon for dismiss dialog action. Default - [R.drawable.stream_ui_ic_clear]
  * @property cancelEnabled - shows/hides dismiss dialog action. Shown by default
- * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
- * @property warningActionsTint - color of dangerous actions such as delete conversation. Default - [R.color.stream_ui_accent_red].
  */
 public data class ChannelActionsDialogViewStyle(
     public val memberNamesTextStyle: TextStyle,
     public val memberInfoTextStyle: TextStyle,
     public val itemTextStyle: TextStyle,
+    public val warningItemTextStyle: TextStyle,
     public val viewInfoIcon: Drawable,
     public val viewInfoEnabled: Boolean,
     public val leaveGroupIcon: Drawable,
@@ -44,8 +43,6 @@ public data class ChannelActionsDialogViewStyle(
     public val deleteConversationEnabled: Boolean,
     public val cancelIcon: Drawable,
     public val cancelEnabled: Boolean,
-    @ColorInt public val iconsTint: Int,
-    @ColorInt public val warningActionsTint: Int,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle {
@@ -121,6 +118,25 @@ public data class ChannelActionsDialogViewStyle(
                     )
                     .build()
 
+                val warningItemTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_red)
+                    )
+                    .font(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextFontAssets,
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextFont
+                    )
+                    .style(
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
                 val viewInfoIcon = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsViewInfoIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_single_user)!!
 
@@ -155,20 +171,11 @@ public data class ChannelActionsDialogViewStyle(
                     true
                 )
 
-                val iconsTint = a.getColor(
-                    R.styleable.ChannelActionsDialog_streamUiChannelActionsIconsTint,
-                    context.getColorCompat(R.color.stream_ui_grey)
-                )
-
-                val warningActionsTint = a.getColor(
-                    R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningActionsTint,
-                    context.getColorCompat(R.color.stream_ui_accent_red)
-                )
-
                 return ChannelActionsDialogViewStyle(
                     memberNamesTextStyle = memberNamesTextStyle,
                     memberInfoTextStyle = memberInfoTextStyle,
                     itemTextStyle = itemTextStyle,
+                    warningItemTextStyle = warningItemTextStyle,
                     viewInfoIcon = viewInfoIcon,
                     viewInfoEnabled = viewInfoEnabled,
                     leaveGroupIcon = leaveGroupIcon,
@@ -177,8 +184,6 @@ public data class ChannelActionsDialogViewStyle(
                     deleteConversationEnabled = deleteConversationEnabled,
                     cancelIcon = cancelIcon,
                     cancelEnabled = cancelEnabled,
-                    iconsTint = iconsTint,
-                    warningActionsTint = warningActionsTint,
                 ).let(TransformStyle.channelActionsDialogStyleTransformer::transform)
             }
         }

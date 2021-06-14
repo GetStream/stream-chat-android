@@ -23,7 +23,7 @@ internal class MessageListItemLiveDataBenchmark {
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    private val currentUser = randomUser()
+    private val currentUser = MutableLiveData(randomUser())
 
     private val threeHours = 1000 * 60 * 60 * 3
 
@@ -52,7 +52,7 @@ internal class MessageListItemLiveDataBenchmark {
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData({ currentUser.id }, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     @Test
@@ -81,7 +81,7 @@ internal class MessageListItemLiveDataBenchmark {
 
         val duration = measureTimeMillis {
             for (x in 0..100) {
-                messageLd.readsChanged(reads)
+                messageLd.readsChanged(reads, currentUser.value!!.id)
             }
         }
         println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")
@@ -98,7 +98,7 @@ internal class MessageListItemLiveDataBenchmark {
         val duration = measureTimeMillis {
             for (x in 0..100) {
                 val newMessages = messages + createMessage()
-                messageLd.messagesChanged(newMessages)
+                messageLd.messagesChanged(newMessages, currentUser.value!!.id)
             }
         }
         println("changing messages 100 times on a message list with ${items.size} items took $duration milliseconds")
