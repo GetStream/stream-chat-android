@@ -1,5 +1,7 @@
 # Moderation Tools
 
+Moderation tools are features you can utilize to moderate content.
+
 ## Flagging a Message or a User
 
 Any user is allowed to flag a message or a user. Flagging does not perform any particular action on the chat. The API will only trigger the related webhook event and make the message appear on your _Dashboard Chat Moderation_ view.

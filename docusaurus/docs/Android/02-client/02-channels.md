@@ -1,6 +1,8 @@
 # Channels
 
-<!-- TODO: Add brief intro about what channels are -->
+Channel allows to make conversation between two or more chat users. It can be identified by `id` and `type`, or `cid` which is a combination of `type:id`
+Almost all API requests are specific to a channel (e.g. add a message to channel “livestream:rockets”) and as we saw already, channels are organized in groups called channel types. You can read more about channel types [here](https://getstream.io/chat/docs/android/channel_features/?language=kotlin).
+Channels are unique either by the specified channel id or by the list of members.
 
 ## Querying Channel List
 
@@ -752,4 +754,3 @@ channelClient.query(QueryChannelRequest()).enqueue { result ->
     }
 }
 ```
-
