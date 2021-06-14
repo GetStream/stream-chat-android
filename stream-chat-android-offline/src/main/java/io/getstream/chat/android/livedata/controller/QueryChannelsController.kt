@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 
 /**
  * The QueryChannelsController is a small helper to show a list of channels
@@ -31,7 +32,7 @@ public sealed interface QueryChannelsController {
      * Return true to add the channel, return false to ignore it.
      * By default it will simply add every channel for which this event is received
      */
-    public var newChannelEventFilter: (Channel, FilterObject) -> Boolean
+    public fun setNewChannelEventFilter(filter: (Channel, FilterObject) -> Boolean)
     /**
      * If the API call failed and we need to rerun this query
      */

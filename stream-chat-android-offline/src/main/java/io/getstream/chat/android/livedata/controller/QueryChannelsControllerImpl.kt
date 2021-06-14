@@ -9,10 +9,12 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController as QueryChannelsControllerStateFlow
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController.ChannelsState as OfflineChannelState
 
@@ -36,11 +38,12 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
     override val sort: QuerySort<Channel>
         get() = queryChannels.sort
 
-    override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
-        get() = queryChannels.newChannelEventFilter
-        set(value) {
-            queryChannels.newChannelEventFilter = value
-        }
+    override fun setNewChannelEventFilter(filter: (Channel, FilterObject) -> Boolean) {
+        queryChannels.newChannelEventFilter =
+            { string: Channel, int: FilterObject -> withContext(DispatcherProvider.IO) { filter(string, int) } }
+    }
+
+    var a: suspend (Boolean, Boolean) -> Boolean = { b: Boolean, b1: Boolean -> true }
 
     override var recoveryNeeded: Boolean
         get() = queryChannels.recoveryNeeded
@@ -78,22 +81,11 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         return queryChannels.loadMoreRequest(channelLimit, messageLimit, memberLimit)
     }
 
-    /**
-     * Members of a channel receive the
-     *
-     * @see NotificationAddedToChannelEvent
-     *
-     * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
-     */
-    internal fun addChannelIfFilterMatches(channel: Channel) {
-        queryChannels.addChannelIfFilterMatches(channel)
-    }
-
     internal fun handleEvents(events: List<ChatEvent>) {
         queryChannels.handleEvents(events)
     }
 
-    internal fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         queryChannels.handleEvent(event)
     }
 
@@ -124,20 +116,8 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         return queryChannels.runQuery(pagination)
     }
 
-    /**
-     * Updates the state on the channelController based on the channel object we received
-     * This is used for both the online and offline query flow
-     *
-     * @param channels the list of channels to update
-     * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
-     *
-     */
-    internal fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
-        return queryChannels.updateChannelsAndQueryResults(channels, isFirstPage)
-    }
-
     internal suspend fun removeChannel(cid: String) {
-        queryChannels.removeChannel(cid)
+        queryChannels.removeChannelFromQueryChannelsSpec(cid)
     }
 
     /**
@@ -164,19 +144,5 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
      */
     private fun refreshChannels(cIds: List<String>) {
         queryChannels.refreshChannels(cIds)
-    }
-
-    /**
-     * Adds the list of channels to the current query.
-     * Channels are sorted based on the specified QuerySort
-     * Triggers a refresh of these channels based on the current state on the ChannelController
-     *
-     * @param cIds the list of channel ids to add to the query result
-     *
-     * @see QuerySort
-     * @see ChannelController
-     */
-    private fun addToQueryResult(cIds: List<String>) {
-        queryChannels.addToQueryResult(cIds)
     }
 }

@@ -418,7 +418,7 @@ internal class ChatDomainImpl internal constructor(
 
             // Add to query controllers
             for (query in activeQueryMapImpl.values) {
-                query.addChannelIfFilterMatches(c)
+                query.updateQueryChannelSpec(c)
             }
 
             // make the API call and follow retry policy
@@ -648,7 +648,7 @@ internal class ChatDomainImpl internal constructor(
             )
             val response = queryChannelController.runQueryOnline(pagination)
             if (response.isSuccess) {
-                queryChannelController.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
+                queryChannelController.updateOnlineChannels(response.data(), pagination.isFirstPage)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
