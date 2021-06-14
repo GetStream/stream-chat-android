@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
-import com.getstream.sdk.chat.StreamFileProvider
+import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.PermissionChecker
@@ -113,7 +113,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     context = applicationContext,
                     url = adapter.getItem(binding.galleryViewPager.currentItem)
                 )?.let { bitmap ->
-                    StreamFileProvider.writeImageToSharableFile(applicationContext, bitmap)
+                    StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
                 }?.let(onSharePictureListener)
 
                 delay(500)
