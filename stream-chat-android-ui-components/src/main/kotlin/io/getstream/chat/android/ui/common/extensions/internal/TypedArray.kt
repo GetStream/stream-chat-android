@@ -22,8 +22,5 @@ internal inline fun <reified T : Enum<T>> TypedArray.getEnum(index: Int, default
 }
 
 @ColorInt
-internal fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? = try {
-    getColorOrThrow(index)
-} catch (ex: Exception) {
-    null
-}
+internal fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? =
+    runCatching { getColorOrThrow(index) }.getOrNull()
