@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
-    private val chatDomain: io.getstream.chat.android.offline.ChatDomain = io.getstream.chat.android.offline.ChatDomain.instance(),
+    private val chatDomain: ChatDomain = ChatDomain.instance(),
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
