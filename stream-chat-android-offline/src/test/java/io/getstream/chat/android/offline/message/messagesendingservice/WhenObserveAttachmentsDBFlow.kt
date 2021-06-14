@@ -1,9 +1,11 @@
 package io.getstream.chat.android.offline.message.messagesendingservice
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Attachment
@@ -12,6 +14,8 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.randomAttachment
+import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.CallRetryService
@@ -23,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 
 internal class WhenObserveAttachmentsDBFlow {
 
@@ -31,40 +36,44 @@ internal class WhenObserveAttachmentsDBFlow {
     @Test
     fun `Given db attachments flow is observed And all attachments has success upload state Should send message through BE`() =
         testCoroutineRule.scope.runBlockingTest {
-            /*val attachment = randomAttachment {
+            val attachment = randomAttachment {
                 title = "attachmentTitle"
                 uploadState = Attachment.UploadState.InProgress
             }
             val channelClient = mock<ChannelClient>()
             val sendMessage = randomMessage(id = "messageId1", attachments = mutableListOf(attachment))
-            val sut = Fixture()
+            val flow = Fixture()
                 .givenChannelClient(channelClient)
-                .givenSendMessage(sendMessage)
-                .givenDbFlowValue(listOf(attachment.copy(uploadState = Attachment.UploadState.Success)))
+                .givenSendMessageCalled(sendMessage)
                 .get()
 
-            sut.sendMessage(sendMessage)
+            flow.value = listOf(attachment.copy(uploadState = Attachment.UploadState.Success))
 
-            verify(channelClient).sendMessage(argThat { id == "messageId1" && attachments.first().title == "attachmentTitle" })*/
+            verify(channelClient).sendMessage(argThat { id == "messageId1" && attachments.first().title == "attachmentTitle" })
         }
 
     @Test
     fun `Given db attachments flow is observed And not all attachments has success upload state Should not send message through BE`() =
-        runBlockingTest {
-            /*val attachment1 = randomAttachment { uploadState = Attachment.UploadState.InProgress }
+        testCoroutineRule.scope.runBlockingTest {
+            val attachment1 = randomAttachment { uploadState = Attachment.UploadState.InProgress }
             val attachment2 = randomAttachment { uploadState = Attachment.UploadState.InProgress }
             val sendMessage = randomMessage(attachments = mutableListOf(attachment1, attachment2))
             val channelClient = mock<ChannelClient>()
-            val sut = Fixture().givenChannelClient(channelClient)
-                .givenSendMessage(sendMessage)
+            val flow = Fixture()
+                .givenChannelClient(channelClient)
+                .givenSendMessageCalled(sendMessage)
                 .get()
 
-            sut.sendNewMessage(sendMessage)
+            flow.value = listOf(
+                attachment1.copy(uploadState = Attachment.UploadState.InProgress),
+                attachment2.copy(uploadState = Attachment.UploadState.Success)
+            )
 
-            Mockito.verifyNoInteractions(channelClient)*/
+            Mockito.verifyNoInteractions(channelClient)
         }
 
     private inner class Fixture {
+        private val flow = MutableStateFlow<List<Attachment>>(emptyList())
         private val repositoryFacade = mock<RepositoryFacade>()
         private var channelClient = mock<ChannelClient>()
         private val chatDomainImpl = mock<ChatDomainImpl> {
@@ -91,20 +100,15 @@ internal class WhenObserveAttachmentsDBFlow {
             this.channelClient = channelClient
         }
 
-        suspend fun givenSendMessage(message: Message) = apply {
+        suspend fun givenSendMessageCalled(message: Message) = apply {
             whenever(chatDomainImpl.online) doReturn MutableStateFlow(true)
             whenever(channelClient.sendMessage(any())) doReturn message.asCall()
+            whenever(repositoryFacade.observeAttachmentsForMessage(any())) doReturn flow
             messageSendingService.sendMessage(message)
         }
 
-        fun get(): MessageSendingService {
-            return messageSendingService
-        }
-
-        fun givenDbFlowValue(attachments: List<Attachment>): Fixture = apply {
-            whenever(repositoryFacade.observeAttachmentsForMessage(any())) doReturn MutableStateFlow<List<Attachment>>(
-                attachments
-            )
+        fun get(): MutableStateFlow<List<Attachment>> {
+            return flow
         }
     }
 }

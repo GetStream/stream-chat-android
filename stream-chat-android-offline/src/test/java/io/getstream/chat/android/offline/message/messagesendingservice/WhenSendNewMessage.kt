@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -113,21 +114,24 @@ internal class WhenSendNewMessage {
         }
 
     @Test
-    fun `Given message with attachments And online Should enqueue work to upload attachments`() =
+    fun `Given message with attachments And online Should enqueue work to upload attachments and Should not upload message`() =
         runBlockingTest {
             val message = randomMessage(id = "messageId1", attachments = mutableListOf(randomAttachment { }))
             val uploadWorker = mock<UploadAttachmentsWorker>()
+            val channelClient = mock<ChannelClient>()
             val sut = Fixture()
                 .givenOnline()
                 .givenCid("cid1")
                 .givenChannelType("channelType")
                 .givenChannelId("channelId")
+                .givenChannelClient(channelClient)
                 .givenAttachmentUploadWorker(uploadWorker)
                 .get()
 
             sut.sendNewMessage(message)
 
             verify(uploadWorker).enqueueJob(eq("channelType"), eq("channelId"), eq("messageId1"))
+            verify(channelClient, never()).sendMessage(any())
         }
 
     private class Fixture {
