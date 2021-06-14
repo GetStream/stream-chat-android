@@ -38,7 +38,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
             setReactionViewClickListener {}
             setUserClickListener {}
 
-            init(Channel(), currentUser)
+            init(Channel())
             displayNewMessages(MessageListItemWrapper(getItems()))
         }
     }

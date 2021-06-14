@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 
 internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
@@ -53,12 +54,12 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    fun setMessage(message: Message, isMine: Boolean) {
+    fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
         setAvatarPosition(isMine)
-        setReplyBackground(message, isMine)
+        setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
-        setReplyText(message)
+        setReplyText(message, isMine, style)
     }
 
     private fun setUserAvatar(message: Message) {
@@ -99,33 +100,44 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun setReplyBackground(message: Message, isMine: Boolean) {
+    private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(REPLY_CORNER_RADIUS)
             .setBottomLeftCornerSize(if (isMine.not()) 0f else REPLY_CORNER_RADIUS)
             .setBottomRightCornerSize(if (isMine) 0f else REPLY_CORNER_RADIUS)
             .build()
-        val isLink = message.attachments
-            .lastOrNull()
-            ?.type == ModelType.attach_link
         binding.replyContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             when {
-                isLink -> {
+                isLink(message) -> {
                     paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_blue_alice))
+                    val color = if (isMine) {
+                        style?.linkBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_blue_alice)
+                    } else {
+                        style?.linkBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_blue_alice)
+                    }
+                    setTint(color)
                 }
                 isMine -> {
-                    paintStyle = Paint.Style.FILL
-                    setTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    paintStyle = Paint.Style.FILL_AND_STROKE
+                    val color =
+                        style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    setTint(color)
+                    style?.messageStrokeColorMine?.let(::setStrokeTint)
+                    strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    setStrokeTint(context.getColorCompat(R.color.stream_ui_grey_whisper))
-                    strokeWidth = DEFAULT_STROKE_WIDTH
-                    setTint(context.getColorCompat(R.color.stream_ui_white))
+                    setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
+                    val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
+                    setTint(tintColor)
                 }
             }
         }
+    }
+
+    private fun isLink(message: Message) = message.attachments.run {
+        size == 1 && last().type == ModelType.attach_link
     }
 
     private fun setAttachmentImage(message: Message) {
@@ -137,13 +149,14 @@ internal class MessageReplyView : FrameLayout {
                 ModelType.attach_file -> showFileTypeLogo(attachment.mimeType)
                 ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
                 ModelType.attach_giphy,
-                ModelType.attach_video -> showAttachmentThumb(attachment.thumbUrl)
+                ModelType.attach_video,
+                -> showAttachmentThumb(attachment.thumbUrl)
                 else -> showAttachmentThumb(attachment.image)
             }
         }
     }
 
-    private fun setReplyText(message: Message) {
+    private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val attachment = message.attachments.lastOrNull()
         binding.replyText.text = if (attachment == null || message.text.isNotBlank()) {
             if (ellipsize) {
@@ -158,6 +171,24 @@ internal class MessageReplyView : FrameLayout {
             } else {
                 attachment.title ?: attachment.name
             }
+        }
+        if (isLink(message)) {
+            configureLinkTextStyle(isMine, style)
+        } else if (isMine) {
+            style?.textStyleMine?.apply(binding.replyText)
+        } else {
+            style?.textStyleTheirs?.apply(binding.replyText)
+        }
+    }
+
+    private fun configureLinkTextStyle(
+        isMine: Boolean,
+        style: MessageReplyStyle?,
+    ) {
+        if (isMine) {
+            style?.linkStyleMine?.apply(binding.replyText)
+        } else {
+            style?.linkStyleTheirs?.apply(binding.replyText)
         }
     }
 
