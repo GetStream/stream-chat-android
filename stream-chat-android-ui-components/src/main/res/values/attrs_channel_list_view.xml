@@ -61,6 +61,7 @@
         <attr name="streamUiUnreadMessageCounterBackgroundColor" format="color|reference" />
 
         <attr name="streamUiMutedChannelIcon" format="reference" />
+        <!-- {@deprecated Use custom icon instead.} -->
         <attr name="streamUiMutedChannelIconTint" format="color|reference" />
 
         <attr name="streamUiChannelActionsDialogStyle" />
