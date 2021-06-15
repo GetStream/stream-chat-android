@@ -1,6 +1,6 @@
 # Events
 
-Events allow the client to stay up to date with changes to the chat. Examples are a new message, a user's image that updated, a reaction, or a member joining the channel.
+Events allow the client to stay up to date with changes to the chat. For example, you get events when a new message was sent, a user's image was updated, a reaction was added, or a member joined the channel.
 Events are only received when the client is connected to the socket and the application is in the foreground.
 
 ## Listening for Channel Events
