@@ -82,6 +82,7 @@ permission is not granted, now it asks for it.
   - `streamUiChannelActionsDeleteConversationEnabled` attribute to hide/show "Delete Conversation" action item
   - `streamUiChannelActionsCancelIcon` attribute to customize "Cancel" action icon
   - `streamUiChannelActionsCancelEnabled` attribute to hide/show "Cancel" action item
+  - `streamUiChannelActionsBackground` attribute for dialog's background
 - Added `streamUiIconOnlyVisibleToYou` attribute to `MessageListView` to allow customizing "Only visible to you" icon placed in messages footer
 - Added `GiphyViewHolderStyle` to `MessageListViewStyle` to allow customizing `GiphyViewHolder`. The new style comes together with following `MessageListView` attributes:
   - `streamUiGiphyCardBackgroundColor` attribute to customize card's background color
@@ -130,6 +131,8 @@ Customization can be done using `TransformStyle` API or XML attributes of `Messa
   - `streamUiMessageReplyStrokeWidthMine`
   - `streamUiMessageReplyStrokeColorTheirs`
   - `streamUiMessageReplyStrokeWidthTheirs`
+- Added `FileAttachmentsViewStyle` class allowing to customize FileAttachmentsView item view on MessageListView.
+- Added `MessageInputView::setSuggestionListViewHolderFactory` method which allows to provide custom views from suggestion list popup.
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:

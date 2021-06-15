@@ -73,3 +73,61 @@ TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
 ```
 
 Note: The transformer should be set before the View is rendered to make sure that the new style was applied.
+
+### Customizing suggestion list popup items
+
+The suggestion list popup is used to provide autocomplete suggestions for commands and mentions. To customize the appearance of suggestion list items you need to provide your own `SuggestionListViewHolderFactory`. Here's an example of a custom command item that displays just a command name:
+
+1. Create `item_command.xml` layout:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/commandNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>
+```
+
+2. Create custom view holder and view holder factory
+
+```kotlin
+class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
+
+    override fun createCommandViewHolder(
+        parent: ViewGroup,
+    ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+        return ItemCommandBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
+            .let(::CustomCommandViewHolder)
+    }
+}
+
+class CustomCommandViewHolder(
+    private val binding: ItemCommandBinding,
+) : BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem>(binding.root) {
+
+    override fun bindItem(item: SuggestionListItem.CommandItem) {
+        binding.commandNameTextView.text = item.command.name
+    }
+}
+```
+
+4. Set custom view holder factory
+```kotlin
+messageInputView.setSuggestionListViewHolderFactory(CustomSuggestionListViewHolderFactory())
+```
+
+This produces the following result:
+
+![Custom suggestion item](../../assets/custom_suggestion_item.jpg)

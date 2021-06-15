@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.suggestion.internal
+package io.getstream.chat.android.ui.suggestion.list.internal
 
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
