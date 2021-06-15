@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property deleteConversationEnabled - shows/hides delete conversation action. Shown by default
  * @property cancelIcon - icon for dismiss dialog action. Default - [R.drawable.stream_ui_ic_clear]
  * @property cancelEnabled - shows/hides dismiss dialog action. Shown by default
+ * @property background - dialog's background
  */
 public data class ChannelActionsDialogViewStyle(
     public val memberNamesTextStyle: TextStyle,
@@ -43,6 +44,7 @@ public data class ChannelActionsDialogViewStyle(
     public val deleteConversationEnabled: Boolean,
     public val cancelIcon: Drawable,
     public val cancelEnabled: Boolean,
+    public val background: Drawable,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle {
@@ -171,6 +173,9 @@ public data class ChannelActionsDialogViewStyle(
                     true
                 )
 
+                val background = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsBackground)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_round_bottom_sheet)!!
+
                 return ChannelActionsDialogViewStyle(
                     memberNamesTextStyle = memberNamesTextStyle,
                     memberInfoTextStyle = memberInfoTextStyle,
@@ -184,6 +189,7 @@ public data class ChannelActionsDialogViewStyle(
                     deleteConversationEnabled = deleteConversationEnabled,
                     cancelIcon = cancelIcon,
                     cancelEnabled = cancelEnabled,
+                    background = background,
                 ).let(TransformStyle.channelActionsDialogStyleTransformer::transform)
             }
         }

@@ -52,5 +52,6 @@
         <attr name="streamUiChannelActionsDeleteConversationEnabled" format="boolean" />
         <attr name="streamUiChannelActionsCancelIcon" format="reference" />
         <attr name="streamUiChannelActionsCancelEnabled" format="boolean" />
+        <attr name="streamUiChannelActionsBackground" format="reference" />
     </declare-styleable>
 </resources>
