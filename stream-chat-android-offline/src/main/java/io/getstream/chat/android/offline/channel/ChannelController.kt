@@ -82,6 +82,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -149,7 +150,7 @@ public class ChannelController internal constructor(
             messageMap.values
                 .asSequence()
                 .filter { it.parentId == null || it.showInChannel }
-                .filter { it.user.id == domainImpl.currentUser.id || !it.shadowed }
+                .filter { it.user.id == domainImpl.user.value?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
@@ -164,19 +165,26 @@ public class ChannelController internal constructor(
         .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
 
     /** who is currently typing (current user is excluded from this) */
-    public val typing: StateFlow<TypingEvent> = _typing
-        .map {
-            val userList = it.values
+    public val typing: StateFlow<TypingEvent> = domainImpl.user
+        .filterNotNull()
+        .flatMapConcat { currentUser ->
+            _typing.map { typingMap ->
+                currentUser to typingMap
+            }
+        }
+        .map { (currentUser, typingMap) ->
+            val userList = typingMap.values
                 .sortedBy(ChatEvent::createdAt)
                 .mapNotNull { event ->
                     when (event) {
-                        is TypingStartEvent -> event.user.takeIf { user -> user != domainImpl.currentUser }
+                        is TypingStartEvent -> event.user.takeIf { user -> user != currentUser }
                         else -> null
                     }
                 }
 
             TypingEvent(channelId, userList)
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
+        }
+        .stateIn(domainImpl.scope, SharingStarted.Eagerly, TypingEvent(channelId, emptyList()))
 
     /** how far every user in this channel has read */
     public val reads: StateFlow<List<ChannelUserRead>> = _reads
@@ -314,7 +322,9 @@ public class ChannelController internal constructor(
                 lastMarkReadEvent = lastMessageDate
 
                 // update live data with new read
-                updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+                domainImpl.user.value?.let { currentUser ->
+                    updateRead(ChannelUserRead(currentUser, lastMarkReadEvent))
+                }
 
                 shouldUpdate
             }
@@ -362,16 +372,18 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun leave(): Result<Unit> {
-        val result = channelClient.removeMembers(domainImpl.currentUser.id).await()
+        val result = domainImpl.user.value?.let { currentUser ->
+            channelClient.removeMembers(currentUser.id).await()
+        }
 
-        return if (result.isSuccess) {
+        return if (result?.isSuccess == true) {
             // Remove from query controllers
             for (activeQuery in domainImpl.getActiveQueries()) {
                 activeQuery.removeChannel(cid)
             }
             Result(Unit)
         } else {
-            Result(result.error())
+            Result(result?.error() ?: ChatError("Current user null"))
         }
     }
 
@@ -585,8 +597,10 @@ public class ChannelController internal constructor(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment),
     ): Result<Message> {
-        val online = domainImpl.isOnline()
         val newMessage = message.copy()
+        newMessage.user = domainImpl.user.value ?: return Result(ChatError("Current user null"))
+
+        val online = domainImpl.isOnline()
         val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
@@ -596,8 +610,6 @@ public class ChannelController internal constructor(
         if (newMessage.cid.isEmpty()) {
             newMessage.enrichWithCid(cid)
         }
-
-        newMessage.user = domainImpl.currentUser
 
         newMessage.attachments.forEach { attachment ->
             attachment.uploadId = generateUploadId()
@@ -770,7 +782,8 @@ public class ChannelController internal constructor(
      * If the request fails we retry according to the retry policy set on the repo
      */
     internal suspend fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Result<Reaction> {
-        val currentUser = domainImpl.currentUser
+        val currentUser = domainImpl.user.value ?: return Result(ChatError("Current user null in Chatdomain"))
+
         reaction.apply {
             user = currentUser
             userId = currentUser.id
@@ -825,8 +838,9 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun deleteReaction(reaction: Reaction): Result<Message> {
+        val currentUser = domainImpl.user.value ?: return Result(ChatError("Current user null in Chatdomain"))
+
         val online = domainImpl.isOnline()
-        val currentUser = domainImpl.currentUser
         reaction.apply {
             user = currentUser
             userId = currentUser.id
@@ -978,7 +992,7 @@ public class ChannelController internal constructor(
         } else {
             copy[userId] = event
         }
-        copy.remove(domainImpl.currentUser.id)
+        domainImpl.user.value?.id.let(copy::remove)
         _typing.value = copy.toMap()
     }
 
@@ -1187,38 +1201,41 @@ public class ChannelController internal constructor(
     }
 
     private fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserId = domainImpl.currentUser.id
-        val previousUserIdToReadMap = _reads.value
-        val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
+        domainImpl.user.value?.let { currentUser ->
 
-        /**
-         * It's possible that the data coming back from the online channel query has a last read date that's
-         * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
-         * to show in the channel list.
-         */
-        incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
+            val currentUserId = currentUser.id
+            val previousUserIdToReadMap = _reads.value
+            val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
-            // the previous last Read date that is most current
-            val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+            /**
+             * It's possible that the data coming back from the online channel query has a last read date that's
+             * before what we've last pushed to the UI. We want to ignore this, as it will cause an unread state
+             * to show in the channel list.
+             */
+            incomingUserIdToReadMap[currentUserId]?.let { incomingUserRead ->
 
-            // Use AFTER to determine if the incoming read is more current.
-            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
-            val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
-                previousLastRead,
-                OFFSET_EVENT_TIME
-            ) == true
+                // the previous last Read date that is most current
+                val previousLastRead = _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
 
-            if (shouldUpdateByIncoming) {
-                _read.value = incomingUserRead
-                _unreadCount.value = incomingUserRead.unreadMessages
-            } else {
-                // if the previous Read was more current, replace the item in the update map
-                incomingUserIdToReadMap[currentUserId] = ChannelUserRead(domainImpl.currentUser, previousLastRead)
+                // Use AFTER to determine if the incoming read is more current.
+                // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+                val shouldUpdateByIncoming = previousLastRead == null || incomingUserRead.lastRead?.inOffsetWith(
+                    previousLastRead,
+                    OFFSET_EVENT_TIME
+                ) == true
+
+                if (shouldUpdateByIncoming) {
+                    _read.value = incomingUserRead
+                    _unreadCount.value = incomingUserRead.unreadMessages
+                } else {
+                    // if the previous Read was more current, replace the item in the update map
+                    incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
+                }
             }
-        }
 
-        // always post the newly updated map
-        _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+            // always post the newly updated map
+            _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
+        }
     }
 
     private fun updateRead(
@@ -1279,8 +1296,8 @@ public class ChannelController internal constructor(
     }
 
     private fun incrementUnreadCountIfNecessary(message: Message) {
-        val currentUserId = domainImpl.currentUser.id
-        if (message.shouldIncrementUnreadCount(currentUserId)) {
+        val currentUserId = domainImpl.user.value?.id
+        if (currentUserId?.let(message::shouldIncrementUnreadCount) == true) {
             val newUnreadCount = _unreadCount.value + 1
             _unreadCount.value = newUnreadCount
             _read.value = _read.value?.copy(unreadMessages = newUnreadCount)

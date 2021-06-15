@@ -24,6 +24,7 @@ import io.getstream.chat.android.offline.randomAttachmentsWithFile
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -58,7 +59,7 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
             on(it.appContext) doReturn mock()
             on(it.scope) doReturn testCoroutines.scope
             on(it.generateMessageId()) doReturn randomString()
-            on(it.currentUser) doReturn User()
+            on(it.user) doReturn MutableStateFlow(User())
             on(it.repos) doReturn repositoryFacade
             on(it.isOnline()) doReturn true
             on(it.getActiveQueries()) doReturn emptyList()

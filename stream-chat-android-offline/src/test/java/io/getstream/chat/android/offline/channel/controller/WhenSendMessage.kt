@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.utils.RetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -66,7 +67,7 @@ internal class WhenSendMessage {
         on(it.appContext) doReturn mock()
         on(it.scope) doReturn testCoroutines.scope
         on(it.generateMessageId()) doReturn randomString()
-        on(it.currentUser) doReturn User()
+        on(it.user) doReturn MutableStateFlow(User())
         on(it.repos) doReturn repos
         on(it.isOnline()) doReturn true
         on(it.getActiveQueries()) doReturn emptyList()
