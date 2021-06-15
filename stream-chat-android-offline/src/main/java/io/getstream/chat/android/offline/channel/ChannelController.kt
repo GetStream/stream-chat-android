@@ -999,7 +999,6 @@ public class ChannelController internal constructor(
     internal fun handleEvent(event: ChatEvent) {
         when (event) {
             is NewMessageEvent -> {
-                logger.logW("NewMessageEvent with message id ${event.message.id}")
                 upsertEventMessage(event.message)
                 incrementUnreadCountIfNecessary(event.message)
                 setHidden(false)
