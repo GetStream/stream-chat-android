@@ -131,6 +131,7 @@ Customization can be done using `TransformStyle` API or XML attributes of `Messa
   - `streamUiMessageReplyStrokeWidthMine`
   - `streamUiMessageReplyStrokeColorTheirs`
   - `streamUiMessageReplyStrokeWidthTheirs`
+- Added `FileAttachmentsViewStyle` class allowing to customize FileAttachmentsView item view on MessageListView.
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:
