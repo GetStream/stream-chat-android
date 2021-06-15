@@ -376,8 +376,9 @@ client.searchMessages(
 }
 ```
 
-Pagination works via the standard `limit` and `offset` parameters. The first argument, `filter`, uses a MongoDB style query expression.
-
+:::note
+Pagination works via the standard `limit` and `offset` parameters.
+:::
 
 ### Searching for Messages with Attachments
 
