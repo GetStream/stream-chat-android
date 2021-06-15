@@ -132,6 +132,7 @@ Customization can be done using `TransformStyle` API or XML attributes of `Messa
   - `streamUiMessageReplyStrokeColorTheirs`
   - `streamUiMessageReplyStrokeWidthTheirs`
 - Added `FileAttachmentsViewStyle` class allowing to customize FileAttachmentsView item view on MessageListView.
+- Added `MessageInputView::setSuggestionListViewHolderFactory` method which allows to provide custom views from suggestion list popup.
 
 ### ⚠️ Changed
 - Changed the naming of string resources. The updated names can be reviewed in:

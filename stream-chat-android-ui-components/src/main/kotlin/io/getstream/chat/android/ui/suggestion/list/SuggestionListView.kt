@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.list
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -11,25 +10,34 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.Suggestions
-import io.getstream.chat.android.ui.suggestion.internal.CommandsAdapter
-import io.getstream.chat.android.ui.suggestion.internal.MentionsAdapter
-import io.getstream.chat.android.ui.suggestion.internal.SuggestionListUi
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
+import io.getstream.chat.android.ui.suggestion.list.adapter.internal.CommandListAdapter
+import io.getstream.chat.android.ui.suggestion.list.adapter.internal.MentionListAdapter
+import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListUi
+import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 
 public class SuggestionListView : FrameLayout, SuggestionListUi {
 
-    internal val binding: StreamUiSuggestionListViewBinding =
+    private val binding: StreamUiSuggestionListViewBinding =
         StreamUiSuggestionListViewBinding.inflate(streamThemeInflater, this)
-    private val mentionsAdapter: MentionsAdapter = MentionsAdapter { listener?.onMentionClick(it) }
-    private val commandsAdapter: CommandsAdapter = CommandsAdapter { listener?.onCommandClick(it) }
+    private var viewHolderFactory: SuggestionListItemViewHolderFactory = SuggestionListItemViewHolderFactory()
 
-    private var listener: OnSuggestionClickListener? = null
+    private val mentionListAdapter: MentionListAdapter = MentionListAdapter(::viewHolderFactory) {
+        suggestionClickListener?.onMentionClick(it)
+    }
+    private val commandListAdapter: CommandListAdapter = CommandListAdapter(::viewHolderFactory) {
+        suggestionClickListener?.onCommandClick(it)
+    }
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper())
+    private var style: SuggestionListViewStyle? = null
+    private var suggestionClickListener: OnSuggestionClickListener? = null
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    public constructor(context: Context) : this(context, null, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
@@ -40,8 +48,24 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
     init {
         binding.suggestionsRecyclerView.apply {
             itemAnimator = null
-            adapter = ConcatAdapter(mentionsAdapter, commandsAdapter)
+            adapter = ConcatAdapter(mentionListAdapter, commandListAdapter)
         }
+    }
+
+    public fun setSuggestionListViewHolderFactory(viewHolderFactory: SuggestionListItemViewHolderFactory) {
+        this.viewHolderFactory = viewHolderFactory.also { it.style = style }
+    }
+
+    internal fun setSuggestionListViewStyle(style: SuggestionListViewStyle) {
+        this.style = style
+
+        binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
+        style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
+        viewHolderFactory.style = style
+    }
+
+    public fun setOnSuggestionClickListener(suggestionClickListener: OnSuggestionClickListener) {
+        this.suggestionClickListener = suggestionClickListener
     }
 
     override fun renderSuggestions(suggestions: Suggestions) {
@@ -51,7 +75,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
                 if (suggestions.users.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    mentionsAdapter.setItems(suggestions.users)
+                    mentionListAdapter.setItems(suggestions.users.map(SuggestionListItem::MentionItem))
                     binding.commandsTitleTextView.isVisible = false
                 }
             }
@@ -59,7 +83,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
                 if (suggestions.commands.isEmpty()) {
                     hideSuggestionList()
                 } else {
-                    commandsAdapter.setItems(suggestions.commands)
+                    commandListAdapter.setItems(suggestions.commands.map(SuggestionListItem::CommandItem))
                     binding.commandsTitleTextView.isVisible = true
                 }
             }
@@ -71,34 +95,10 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         return binding.suggestionsCardView.isVisible
     }
 
-    internal fun styleCommandsName(style: TextStyle) {
-        commandsAdapter.commandsNameStyle = style
-    }
-
-    internal fun styleCommandsDescription(style: TextStyle) {
-        commandsAdapter.commandsDescriptionStyle = style
-    }
-
-    internal fun styleMentionsUsername(style: TextStyle) {
-        mentionsAdapter.usernameStyle = style
-    }
-
-    internal fun styleMentionsName(style: TextStyle) {
-        mentionsAdapter.mentionNameStyle = style
-    }
-
-    internal fun styleMentionsIcon(icon: Drawable) {
-        mentionsAdapter.mentionIcon = icon
-    }
-
-    public fun setOnSuggestionClickListener(listener: OnSuggestionClickListener) {
-        this.listener = listener
-    }
-
     private fun hideSuggestionList() {
         if (binding.suggestionsCardView.isVisible) {
-            commandsAdapter.clear()
-            mentionsAdapter.clear()
+            commandListAdapter.clear()
+            mentionListAdapter.clear()
             binding.suggestionsCardView.isVisible = false
         }
     }
