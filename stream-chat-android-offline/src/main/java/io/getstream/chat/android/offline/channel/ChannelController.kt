@@ -574,8 +574,10 @@ public class ChannelController internal constructor(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Message> {
-        val online = domainImpl.isOnline()
         val newMessage = message.copy()
+        newMessage.user = domainImpl.user.value ?: return Result(ChatError("Current user null"))
+
+        val online = domainImpl.isOnline()
         val hasAttachments = newMessage.attachments.isNotEmpty()
 
         // set defaults for id, cid and created at
@@ -585,8 +587,6 @@ public class ChannelController internal constructor(
         if (newMessage.cid.isEmpty()) {
             newMessage.enrichWithCid(cid)
         }
-
-        newMessage.user = domainImpl.user.value ?: return Result(ChatError("Current user null"))
 
         newMessage.attachments.forEach { attachment ->
             attachment.uploadId = generateUploadId()
