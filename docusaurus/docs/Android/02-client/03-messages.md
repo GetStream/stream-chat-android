@@ -260,7 +260,7 @@ channelClient.getReactions(
 ).enqueue { /* ... */ }
 ```
 
-You can also get reaction added after particular reaction:
+You can also get the reactions added after a particular reaction:
 
 ```kotlin
 // Get 10 reactions after particular reaction
