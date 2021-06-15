@@ -50,6 +50,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         consumeStyleArg()
 
+        binding.channelActionsContainer.background = style.background
         binding.recyclerView.adapter = membersAdapter
         configureViewInfoAction()
         configureLeaveGroupButton()
