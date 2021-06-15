@@ -107,4 +107,9 @@ public data class Message(
 
     @SerializedName("thread_participants")
     var threadParticipants: List<User> = emptyList(),
-) : CustomObject
+) : CustomObject {
+    public companion object {
+        public const val TYPE_REGULAR: String = "regular"
+        public const val TYPE_EPHEMERAL: String = "ephemeral"
+    }
+}

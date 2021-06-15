@@ -2390,6 +2390,9 @@ public final class io/getstream/chat/android/client/models/Member : io/getstream
 }
 
 public final class io/getstream/chat/android/client/models/Message : io/getstream/chat/android/client/models/CustomObject {
+	public static final field Companion Lio/getstream/chat/android/client/models/Message$Companion;
+	public static final field TYPE_EPHEMERAL Ljava/lang/String;
+	public static final field TYPE_REGULAR Ljava/lang/String;
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/client/models/ChannelInfo;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/client/models/ChannelInfo;Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/List;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2503,6 +2506,9 @@ public final class io/getstream/chat/android/client/models/Message : io/getstrea
 	public final fun setUpdatedLocallyAt (Ljava/util/Date;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/Message$Companion {
 }
 
 public final class io/getstream/chat/android/client/models/Mute {

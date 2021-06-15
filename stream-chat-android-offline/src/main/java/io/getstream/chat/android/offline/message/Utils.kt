@@ -14,8 +14,8 @@ internal fun getMessageType(message: Message): String {
     }
 
     return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
-        "ephemeral"
+        Message.TYPE_EPHEMERAL
     } else {
-        "regular"
+        Message.TYPE_REGULAR
     }
 }

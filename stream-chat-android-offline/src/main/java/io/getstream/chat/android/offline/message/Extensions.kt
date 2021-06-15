@@ -37,7 +37,7 @@ internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean 
     return user.id != currentUserId && !silent && !shadowed
 }
 
-internal fun Message.isEphemeral(): Boolean = type == "ephemeral"
+internal fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
 
 internal fun Message.hasAttachments(): Boolean = attachments.isNotEmpty()
 
