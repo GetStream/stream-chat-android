@@ -10,7 +10,7 @@ public enum class SyncStatus(public val status: Int) {
     /** when sync is in progress */
     IN_PROGRESS(3),
     /** when message waits its' attachments to be sent */
-    WAIT_ATTACHMENTS(4);
+    AWAITING_ATTACHMENTS(4);
 
     public companion object {
         private val map = values().associateBy(SyncStatus::status)
