@@ -22,7 +22,7 @@
             android:id="@+id/replyTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_reply"
-            tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left"
+            tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
             />
 
         <TextView

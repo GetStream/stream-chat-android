@@ -2,12 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/channelActionsContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/stream_ui_round_bottom_sheet"
     android:divider="@drawable/stream_ui_divider"
     android:orientation="vertical"
     android:showDividers="middle"
+    tools:background="@drawable/stream_ui_round_bottom_sheet"
     >
 
     <LinearLayout

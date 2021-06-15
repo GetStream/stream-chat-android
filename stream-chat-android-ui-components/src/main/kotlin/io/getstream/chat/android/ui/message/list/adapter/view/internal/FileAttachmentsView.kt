@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
+import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.extensions.uploadId
@@ -27,7 +27,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
+import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -39,20 +41,40 @@ internal class FileAttachmentsView : RecyclerView {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
 
-    private val fileAttachmentsAdapter = FileAttachmentsAdapter(
-        attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
-        attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
-        attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) }
-    )
+    private lateinit var style: FileAttachmentsViewStyle
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper())
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    private lateinit var fileAttachmentsAdapter: FileAttachmentsAdapter
+
+    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
+        init(null)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
+        init(attrs)
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    ) {
+        init(attrs)
+    }
 
     init {
         layoutManager = LinearLayoutManager(context)
-        adapter = fileAttachmentsAdapter
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
+    }
+
+    fun init(attrs: AttributeSet?) {
+        style = FileAttachmentsViewStyle(context, attrs)
+        fileAttachmentsAdapter = FileAttachmentsAdapter(
+            attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
+            attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
+            attachmentDownloadClickListener = { attachmentDownloadClickListener?.onAttachmentDownloadClick(it) },
+            style,
+        )
+        adapter = fileAttachmentsAdapter
     }
 
     fun setAttachments(attachments: List<Attachment>) {
@@ -74,6 +96,7 @@ private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val style: FileAttachmentsViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -84,7 +107,8 @@ private class FileAttachmentsAdapter(
                     it,
                     attachmentClickListener,
                     attachmentLongClickListener,
-                    attachmentDownloadClickListener
+                    attachmentDownloadClickListener,
+                    style,
                 )
             }
     }
@@ -95,6 +119,7 @@ private class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
+    private val style: FileAttachmentsViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
@@ -118,6 +143,20 @@ private class FileAttachmentViewHolder(
         }
     }
 
+    private fun setupBackground() {
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder()
+            .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
+            .build()
+        val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+        bgShapeDrawable.apply {
+            fillColor = ColorStateList.valueOf(style.backgroundColor)
+            strokeColor = ColorStateList.valueOf(style.strokeColor)
+            strokeWidth = style.strokeWidth.toFloat()
+        }
+
+        binding.root.background = bgShapeDrawable
+    }
+
     init {
         binding.root.background = ShapeAppearanceModel.builder()
             .setAllCornerSizes(CORNER_SIZE_PX)
@@ -136,6 +175,9 @@ private class FileAttachmentViewHolder(
         this.attachment = item
 
         binding.apply {
+            fileTitle.setTextStyle(style.titleTextStyle)
+            fileSize.setTextStyle(style.fileSizeTextStyle)
+
             fileTypeIcon.loadAttachmentThumb(attachment)
             fileTitle.text = attachment.getDisplayableName()
 
@@ -143,22 +185,20 @@ private class FileAttachmentViewHolder(
                 actionButton.setImageDrawable(null)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_warning)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_accent_red)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+                actionButton.setImageDrawable(style.failedAttachmentIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else {
-                actionButton.setImageResource(R.drawable.stream_ui_ic_icon_download)
-                val tintColor = ContextCompat.getColor(context, R.color.stream_ui_black)
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
+                actionButton.setImageDrawable(style.actionButtonIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
+            binding.progressBar.indeterminateDrawable = style.progressBarDrawable
             binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
 
             if (attachment.uploadState is Attachment.UploadState.InProgress) {
                 handleInProgressAttachment(fileSize)
             }
+            setupBackground()
         }
     }
 
@@ -194,7 +234,11 @@ private class FileAttachmentViewHolder(
             val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
 
             fileSizeView.text =
-                context.getString(R.string.stream_ui_message_list_attachment_upload_progress, nominalProgress, targetValue)
+                context.getString(
+                    R.string.stream_ui_message_list_attachment_upload_progress,
+                    nominalProgress,
+                    targetValue
+                )
         } else {
             binding.progressBar.isVisible = false
             fileSizeView.text = attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)

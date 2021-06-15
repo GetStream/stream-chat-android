@@ -4,6 +4,17 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
+| Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
+| `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
+| `ChannelListView.streamUiMutedChannelIconTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
+| Multiple `AttachmentOptionsView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
+| `MessageListViewStyle#warningActionsTintColor`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
+| `MessageListViewStyle#iconsTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
+| `AttachmentDialogStyle#pictureAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `AttachmentDialogStyle#pictureAttachmentIcon` instead |
+| `AttachmentDialogStyle#fileAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `AttachmentDialogStyle#fileAttachmentIcon` instead |
+| `AttachmentDialogStyle#cameraAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `AttachmentDialogStyle#cameraAttachmentIcon` instead |
+| `ChannelListViewStyle#mutedChannelIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `ChannelListViewStyle#mutedChannelIcon` instead |
 | `AvatarView.OnlineIndicatorPosition.TOP`<br/>*ui-components* | 2021.06.01 | 2021.07.01⌛ | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.TOP_RIGHT` constant instead |
 | `AvatarView.OnlineIndicatorPosition.BOTTOM`<br/>*ui-components* | 2021.06.01 | 2021.07.01⌛ | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.BOTTOM_RIGHT` constant instead |
 | `SocketListener::onDisconnected` <br/>*client* | 2021.05.17 | 2021.06.17⌛ | 2021.07.17⌛ | Use method with DisconnectCause instead of it |

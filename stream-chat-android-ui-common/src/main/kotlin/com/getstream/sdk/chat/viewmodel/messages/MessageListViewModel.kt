@@ -69,6 +69,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val currentUser: User
         get() = domain.currentUser
 
+    public val user: LiveData<User?> = domain.user
+
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
             if (previousMessage == null) {
@@ -101,7 +103,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
 
                 messageListData = MessageListItemLiveData(
-                    { currentUser.id },
+                    user,
                     channelController.messages,
                     channelController.reads,
                     typingIds,
@@ -148,7 +150,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-            { currentUser.id },
+            user,
             threadMessages,
             reads,
             null,
