@@ -329,7 +329,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
         replaceWith = ReplaceWith("sendMessage(message: Message)")
     )
     public fun sendMessage(
