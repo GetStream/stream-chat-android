@@ -280,8 +280,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         style.lastMessageDateText.apply(lastMessageTimeLabel)
         style.unreadMessageCounterText.apply(unreadCountBadge)
         unreadCountBadge.backgroundTintList = ColorStateList.valueOf(style.unreadMessageCounterBackgroundColor)
-        muteIcon.setImageDrawable(
-            style.mutedChannelIcon.apply { setTint(style.mutedChannelIconTint) }
-        )
+        muteIcon.setImageDrawable(style.mutedChannelIcon)
     }
 }

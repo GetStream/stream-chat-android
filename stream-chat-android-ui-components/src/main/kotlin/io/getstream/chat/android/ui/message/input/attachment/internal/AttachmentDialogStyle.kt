@@ -5,9 +5,12 @@ import android.graphics.drawable.Drawable
 
 public data class AttachmentDialogStyle(
     val pictureAttachmentIcon: Drawable,
-    val pictureAttachmentIconTint: ColorStateList,
+    @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    val pictureAttachmentIconTint: ColorStateList?,
     val fileAttachmentIcon: Drawable,
-    val fileAttachmentIconTint: ColorStateList,
+    @Deprecated(message = "Use fileAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    val fileAttachmentIconTint: ColorStateList?,
     val cameraAttachmentIcon: Drawable,
-    val cameraAttachmentIconTint: ColorStateList,
+    @Deprecated(message = "Use cameraAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    val cameraAttachmentIconTint: ColorStateList?,
 )

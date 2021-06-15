@@ -20,7 +20,6 @@
             android:layout_marginStart="@dimen/stream_ui_spacing_medium"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/stream_ui_ic_close"
-            app:tint="@color/stream_ui_black"
             tools:ignore="ContentDescription"
             />
 

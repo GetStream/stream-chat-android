@@ -29,7 +29,6 @@
         android:src="@drawable/stream_ui_ic_file_manager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/stream_ui_accent_blue"
         tools:ignore="ContentDescription"
         />
 

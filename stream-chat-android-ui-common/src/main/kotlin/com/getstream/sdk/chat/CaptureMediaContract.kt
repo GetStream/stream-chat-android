@@ -53,7 +53,7 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File>() {
         action: String,
         destinationFile: File
     ): List<Intent> {
-        val destinationUri = StreamFileProvider.getUriForFile(
+        val destinationUri = StreamFileUtil.getUriForFile(
             context,
             destinationFile
         )

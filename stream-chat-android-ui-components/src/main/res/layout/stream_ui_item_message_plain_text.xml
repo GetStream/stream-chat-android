@@ -117,7 +117,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:tint="@color/stream_ui_accent_red"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
         />

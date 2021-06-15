@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.annotation.UiThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Transformations
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -50,7 +51,7 @@ import java.util.Date
  *
  */
 internal class MessageListItemLiveData(
-    private val getCurrentUserId: () -> String,
+    private val currentUser: LiveData<User?>,
     messages: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
@@ -68,33 +69,65 @@ internal class MessageListItemLiveData(
     private var lastMessageID = ""
 
     init {
-        addSource(messages) { value ->
-            messagesChanged(value)
+        configMessagesChange(messages, currentUser)
+        configReadsChange(readsLd, currentUser)
+        typingLd?.let { typing -> configTypingChange(typing, currentUser) }
+    }
+
+    private fun configMessagesChange(messages: LiveData<List<Message>>, getCurrentUser: LiveData<User?>) {
+        val messagesChange = getCurrentUser.changeOnUserLoaded(messages) { changedMessages, currentUser ->
+            messagesChanged(changedMessages, currentUser!!.id)
         }
-        addSource(readsLd) { value ->
-            readsChanged(value)
+
+        addSource(messagesChange) { value ->
+            this.value = value
         }
-        if (typingLd != null) {
-            addSource(typingLd) { value ->
-                typingChanged(value)
-            }
+    }
+
+    private fun configReadsChange(readsLd: LiveData<List<ChannelUserRead>>, getCurrentUser: LiveData<User?>) {
+        val readChange = getCurrentUser.changeOnUserLoaded(readsLd) { changedReads, currentUser ->
+            readsChanged(changedReads, currentUser!!.id)
+        }
+
+        addSource(readChange) { value ->
+            this.value = value
+        }
+    }
+
+    private fun configTypingChange(typingLd: LiveData<List<User>>, getCurrentUser: LiveData<User?>) {
+        val typingChange: LiveData<MessageListItemWrapper?> =
+            getCurrentUser.changeOnUserLoaded(typingLd, ::handleTypingUsersChange)
+
+        addSource(typingChange) { value ->
+            value?.let { this.value = it }
+        }
+    }
+
+    internal fun handleTypingUsersChange(typingUsers: List<User>, currentUser: User?): MessageListItemWrapper? {
+        val newTypingUsers = typingUsers.filter { typingUser ->
+            typingUser.id != currentUser?.id
+        }
+
+        return if (newTypingUsers != typingUsers) {
+            typingChanged(newTypingUsers)
+        } else {
+            null
         }
     }
 
     @UiThread
-    internal fun messagesChanged(messages: List<Message>) {
-        messageItemsBase = groupMessages(messages)
-        messageItemsWithReads = addReads(messageItemsBase, readsLd.value)
+    internal fun messagesChanged(messages: List<Message>, currentUserId: String): MessageListItemWrapper {
+        messageItemsBase = groupMessages(messages, currentUserId)
+        messageItemsWithReads = addReads(messageItemsBase, readsLd.value, currentUserId)
         val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        val wrapped = wrapMessages(out, hasNewMessages)
-        value = wrapped
+        return wrapMessages(out, hasNewMessages)
     }
 
     @UiThread
-    internal fun readsChanged(reads: List<ChannelUserRead>) {
-        messageItemsWithReads = addReads(messageItemsBase, reads)
+    internal fun readsChanged(reads: List<ChannelUserRead>, currentUserId: String): MessageListItemWrapper {
+        messageItemsWithReads = addReads(messageItemsBase, reads, currentUserId)
         val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        value = wrapMessages(out)
+        return wrapMessages(out)
     }
 
     /**
@@ -102,14 +135,10 @@ internal class MessageListItemLiveData(
      * Note how they don't recompute the message list, but only add to the end
      */
     @UiThread
-    internal fun typingChanged(users: List<User>) {
-        val newTypingUsers = users.filter { it.id != getCurrentUserId() }
-
-        if (newTypingUsers != typingUsers) {
-            typingUsers = newTypingUsers
-            typingItems = usersAsTypingItems(newTypingUsers)
-            value = wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
-        }
+    internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
+        typingUsers = newTypingUsers
+        typingItems = usersAsTypingItems(newTypingUsers)
+        return wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
     }
 
     /**
@@ -136,7 +165,7 @@ internal class MessageListItemLiveData(
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
      * It's fast enough though
      */
-    private fun groupMessages(messages: List<Message>?): List<MessageListItem> {
+    private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
         hasNewMessages = false
         if (messages == null || messages.isEmpty()) return emptyList()
 
@@ -191,7 +220,7 @@ internal class MessageListItemLiveData(
                 MessageListItem.MessageItem(
                     message,
                     positions,
-                    isMine = message.user.id == getCurrentUserId(),
+                    isMine = message.user.id == currentUserId,
                     isThreadMode = isThread,
                 )
             )
@@ -205,10 +234,14 @@ internal class MessageListItemLiveData(
      * Since the most common scenario is that someone read to the end, we start by matching the end of the list
      * We also sort the read state for easier merging of the lists
      */
-    private fun addReads(messages: List<MessageListItem>, reads: List<ChannelUserRead>?): List<MessageListItem> {
+    private fun addReads(
+        messages: List<MessageListItem>,
+        reads: List<ChannelUserRead>?,
+        currentUserId: String,
+    ): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter { it.user.id != getCurrentUserId() }.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads.filter { it.user.id != currentUserId }.sortedBy { it.lastRead }.toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()
@@ -238,7 +271,7 @@ internal class MessageListItemLiveData(
             }
         }
 
-        return addMessageReadFlags(messagesCopy, reads)
+        return addMessageReadFlags(messagesCopy, reads, currentUserId)
     }
 
     /**
@@ -251,9 +284,10 @@ internal class MessageListItemLiveData(
     private fun addMessageReadFlags(
         messages: List<MessageListItem>,
         reads: List<ChannelUserRead>,
+        currentUserId: String,
     ): List<MessageListItem> {
         val lastRead = reads
-            .filter { it.user.id != getCurrentUserId() }
+            .filter { it.user.id != currentUserId }
             .mapNotNull { it.lastRead }
             .maxOrNull() ?: return messages
 
@@ -292,6 +326,14 @@ internal class MessageListItemLiveData(
             listOf(MessageListItem.TypingItem(users))
         } else {
             emptyList()
+        }
+    }
+
+    private fun <T, U> LiveData<User?>.changeOnUserLoaded(data: LiveData<T>, func: (T, User?) -> U): LiveData<U> {
+        return Transformations.switchMap(this) { user ->
+            Transformations.map(data) { type ->
+                func(type, user)
+            }
         }
     }
 }

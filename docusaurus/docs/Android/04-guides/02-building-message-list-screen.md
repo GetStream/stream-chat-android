@@ -98,6 +98,8 @@ messageListHeaderView.setBackButtonClickListener(backHandler)
 // You should also consider overriding default Activity's back button behaviour
 ```
 
-> `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::note
+`bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::
 
 From that point, you will be able to display and send messages, conduct different actions, as well as view different channel info.

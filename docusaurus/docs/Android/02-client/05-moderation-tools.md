@@ -49,20 +49,26 @@ client.unmuteUser("user-id").enqueue { result ->
 
 After muting a user messages will still be delivered via web-socket. Implementing business logic such as hiding messages from muted users or display them differently is left to the developer to implement.
 
-> Messages from muted users are not delivered via push (APN/Firebase)
+:::note
+Messages from muted users are not delivered via push (APN/Firebase)
+:::
 
 ## Banning Users
 
 Users can be banned from an app entirely or just from a single channel. When a user is banned, they will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
 
-> In most cases, only admins or moderators are allowed to ban other users from a channel.
+:::note
+In most cases, only admins or moderators are allowed to ban other users from a channel.
+:::
 
 | Name | Type | Description | Default | Optional |
 | :--- | :--- | :--- | :--- | :--- |
 | timeout | Int | The timeout in minutes until the ban is automatically expired. | 	no limit | &check; |
 | reason | String | The reason that the ban was created. | | &check; |
 
-> Banning a user from all channels can only be done using server-side auth.
+:::note
+Banning a user from all channels can only be done using server-side auth.
+:::
 
 ```kotlin
 // Ban user for 60 minutes from a channel 
@@ -87,7 +93,9 @@ channelClient.unBanUser(targetId = "user-id").enqueue { result ->
 
 Users can be shadow banned from an app entirely or just from a single channel. When a user is shadow banned, they will still be allowed to post messages, but any message sent during, will have `shadowed: true` field.
 
-> It's up to the client-side implementation to handle `shadowed` messages appropriately.
+:::note
+It's up to the client-side implementation to handle `shadowed` messages appropriately.
+:::
 
 ```kotlin
 // Shadow ban user for 60 minutes from a channel 
@@ -108,7 +116,9 @@ channelClient.removeShadowBan("user-id").enqueue { result ->
 }
 ```
 
-> Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
+:::note
+Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
+:::
 
 ### Retrieving Banned Users
 
