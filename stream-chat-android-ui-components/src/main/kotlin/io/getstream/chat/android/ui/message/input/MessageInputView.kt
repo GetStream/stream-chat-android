@@ -236,7 +236,7 @@ public class MessageInputView : ConstraintLayout {
                 commandsDescriptionStyle = style.commandsDescriptionTextStyle,
                 mentionsUsernameTextStyle = style.mentionsUsernameTextStyle,
                 mentionsNameTextStyle = style.mentionsNameTextStyle,
-                mentionIcon = style.mentionsIcon
+                mentionIcon = style.mentionsIcon,
             )
         )
     }
