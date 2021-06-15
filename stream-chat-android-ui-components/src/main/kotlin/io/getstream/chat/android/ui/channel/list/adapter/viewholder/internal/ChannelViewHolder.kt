@@ -254,7 +254,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemForegroundViewBinding.determineLastMessageSyncStatus(message: Message) {
         when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.WAIT_ATTACHMENTS -> {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> {
                 messageStatusImageView.setImageDrawable(style.indicatorPendingSyncIcon)
             }
 

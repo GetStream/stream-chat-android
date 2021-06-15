@@ -54,7 +54,7 @@ internal class IndicatorConfigurator(
         }
 
         when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.WAIT_ATTACHMENTS -> {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> {
                 binding.pbDeliver.isVisible = true
                 binding.ivDeliver.isVisible = false
             }

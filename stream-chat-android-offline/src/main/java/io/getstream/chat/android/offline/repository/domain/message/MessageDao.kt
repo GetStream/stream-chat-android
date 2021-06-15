@@ -116,8 +116,8 @@ internal abstract class MessageDao {
     }
 
     @Transaction
-    open suspend fun selectWaitForAttachments(syncStatus: SyncStatus = SyncStatus.WAIT_ATTACHMENTS): List<MessageEntity> {
-        return selectBySyncStatus(SyncStatus.WAIT_ATTACHMENTS)
+    open suspend fun selectWaitForAttachments(): List<MessageEntity> {
+        return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY createdAt ASC")

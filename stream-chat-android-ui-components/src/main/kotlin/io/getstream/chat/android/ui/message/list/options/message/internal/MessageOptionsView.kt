@@ -113,7 +113,7 @@ internal class MessageOptionsView : FrameLayout {
             SyncStatus.COMPLETED -> {
                 // Empty
             }
-            SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS, SyncStatus.WAIT_ATTACHMENTS -> {
+            SyncStatus.SYNC_NEEDED, SyncStatus.IN_PROGRESS, SyncStatus.AWAITING_ATTACHMENTS -> {
                 binding.threadReplyTV.isVisible = false
             }
         }.exhaustive

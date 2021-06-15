@@ -2862,12 +2862,12 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {
+	public static final field AWAITING_ATTACHMENTS Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static final field COMPLETED Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static final field Companion Lio/getstream/chat/android/client/utils/SyncStatus$Companion;
 	public static final field FAILED_PERMANENTLY Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static final field IN_PROGRESS Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static final field SYNC_NEEDED Lio/getstream/chat/android/client/utils/SyncStatus;
-	public static final field WAIT_ATTACHMENTS Lio/getstream/chat/android/client/utils/SyncStatus;
 	public final fun getStatus ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/utils/SyncStatus;
 	public static fun values ()[Lio/getstream/chat/android/client/utils/SyncStatus;

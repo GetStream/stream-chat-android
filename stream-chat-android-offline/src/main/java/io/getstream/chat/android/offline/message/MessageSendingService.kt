@@ -49,7 +49,7 @@ internal class MessageSendingService(
                 type = getMessageType(message)
                 createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
                 syncStatus =
-                    if (hasAttachments()) SyncStatus.WAIT_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+                    if (hasAttachments()) SyncStatus.AWAITING_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
             }
         ).onSuccess { newMessage ->
             // Update flow in channel controller
