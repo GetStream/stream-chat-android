@@ -13,10 +13,10 @@ public open class SuggestionListItemViewHolderFactory {
         parentView: ViewGroup,
     ): BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> {
         return MentionViewHolder(
-            parentView,
-            style?.mentionsUsernameTextStyle,
-            style?.mentionsNameTextStyle,
-            style?.mentionIcon
+            parent = parentView,
+            usernameStyle = style?.mentionsUsernameTextStyle,
+            mentionNameStyle = style?.mentionsNameTextStyle,
+            mentionIcon = style?.mentionIcon,
         )
     }
 
@@ -24,9 +24,9 @@ public open class SuggestionListItemViewHolderFactory {
         parentView: ViewGroup,
     ): BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
         return CommandViewHolder(
-            parentView,
-            style?.commandsNameTextStyle,
-            style?.commandsDescriptionStyle
+            parent = parentView,
+            commandsNameStyle = style?.commandsNameTextStyle,
+            commandsDescriptionStyle = style?.commandsDescriptionStyle,
         )
     }
 }
