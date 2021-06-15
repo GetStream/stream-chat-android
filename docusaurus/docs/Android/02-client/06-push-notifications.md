@@ -1,7 +1,7 @@
 # Push Notifications
 
 Besides [Events](./04-events.md), push notifications are another way to stay up to date with changes to the chat.
-The user will receive a push notification if he watches the channel and doesn't have an open socket connection.
+The user will receive a push notification if they're watching a channel but don't have an open socket connection.
 
 ## Configuring Push Notifications
 
