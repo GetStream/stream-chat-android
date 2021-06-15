@@ -4,9 +4,7 @@
     <declare-styleable name="FileAttachmentView">
         <attr name="streamUiFileAttachmentProgressBarDrawable" format="reference" />
         <attr name="streamUiFileAttachmentActionButton" format="reference" />
-        <attr name="streamUiFileAttachmentActionButtonTintColor" format="color|reference" />
         <attr name="streamUiFileAttachmentFailedAttachmentIcon" format="reference" />
-        <attr name="streamUiFileAttachmentFailedAttachmentIconTintColor" format="color|reference" />
         <attr name="streamUiFileAttachmentBackgroundColor" format="color|reference" />
         <attr name="streamUiFileAttachmentStrokeColor" format="color|reference" />
         <attr name="streamUiFileAttachmentStrokeWidth" format="dimension" />

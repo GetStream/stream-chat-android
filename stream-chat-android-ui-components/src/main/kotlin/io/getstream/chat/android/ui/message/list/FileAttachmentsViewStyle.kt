@@ -21,9 +21,7 @@ public data class FileAttachmentsViewStyle(
     @Px val cornerRadius: Int,
     val progressBarDrawable: Drawable,
     public val actionButtonIcon: Drawable,
-    @ColorInt val actionButtonTintColor: Int,
     public val failedAttachmentIcon: Drawable,
-    @ColorInt val failedAttachmentIconTintColor: Int,
     val titleTextStyle: TextStyle,
     val fileSizeTextStyle: TextStyle,
 ) {
@@ -69,19 +67,10 @@ public data class FileAttachmentsViewStyle(
                     .style(R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextStyle, Typeface.NORMAL)
                     .build()
 
-                val actionButtonTintColor = attrsArray.getColor(
-                    R.styleable.FileAttachmentView_streamUiFileAttachmentActionButtonTintColor,
-                    context.getColorCompat(R.color.stream_ui_black)
-                )
-
                 val failedAttachmentIcon =
                     attrsArray.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentFailedAttachmentIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_warning)!!
 
-                val failedAttachmentIconTinColor = attrsArray.getColor(
-                    R.styleable.FileAttachmentView_streamUiFileAttachmentFailedAttachmentIconTintColor,
-                    context.getColorCompat(R.color.stream_ui_accent_red)
-                )
                 val strokeColor = attrsArray.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeColor,
                     context.getColorCompat(R.color.stream_ui_grey_whisper)
@@ -105,9 +94,7 @@ public data class FileAttachmentsViewStyle(
                     actionButtonIcon = actionIcon,
                     titleTextStyle = titleTextStyle,
                     fileSizeTextStyle = fileSizeTextStyle,
-                    actionButtonTintColor = actionButtonTintColor,
                     failedAttachmentIcon = failedAttachmentIcon,
-                    failedAttachmentIconTintColor = failedAttachmentIconTinColor,
                     strokeColor = strokeColor,
                     strokeWidth = strokeWidth,
                     cornerRadius = cornerRadius,

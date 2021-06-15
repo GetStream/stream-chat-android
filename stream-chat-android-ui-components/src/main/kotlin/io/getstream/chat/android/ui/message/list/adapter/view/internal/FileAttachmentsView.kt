@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -187,13 +186,9 @@ private class FileAttachmentViewHolder(
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
-                val tintColor = style.failedAttachmentIconTintColor
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else {
                 actionButton.setImageDrawable(style.actionButtonIcon)
-                val tintColor = style.actionButtonTintColor
-                ImageViewCompat.setImageTintList(actionButton, ColorStateList.valueOf(tintColor))
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
