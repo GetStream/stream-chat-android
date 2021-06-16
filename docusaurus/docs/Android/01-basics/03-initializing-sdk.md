@@ -71,7 +71,11 @@ ChatClient.instance().connectUser(user = user, token = "userToken") // Replace w
 ```
 
 :::note
-To learn more about how to create a token and different user types, see [Connecting a User](../02-client/01-users.md#connecting-a-user).
+> To learn more about how to create a token and different user types, see [Connecting a User](../02-client/01-users.md#connecting-a-user).
 :::
 
 If the `connectUser` call was successful, you are now ready to use the SDK!
+
+## Adding UI Components
+
+<!-- TODO add basic guide or link to tutorial or to 04-guides? --> 

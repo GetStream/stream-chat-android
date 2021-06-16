@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline
 
 import android.os.Handler
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
@@ -27,7 +28,9 @@ internal class ChatDomainImplTest {
 
     @BeforeEach
     fun setUp() {
-        val client: ChatClient = mock()
+        val client: ChatClient = mock {
+            on { it.channel(any()) } doReturn mock()
+        }
         val currentUser = randomUser()
         val db: ChatDatabase = mock {
             on { userDao() } doReturn mock()
@@ -37,6 +40,7 @@ internal class ChatDomainImplTest {
             on { messageDao() } doReturn mock()
             on { reactionDao() } doReturn mock()
             on { syncStateDao() } doReturn mock()
+            on { attachmentDao() } doReturn mock()
         }
         val handler: Handler = mock()
         val offlineEnabled = true

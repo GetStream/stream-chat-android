@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.channel.attachment
+package io.getstream.chat.android.offline.message.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient

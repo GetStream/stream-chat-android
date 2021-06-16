@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
 internal class CustomObjectGsonAdapter(
     private val gson: Gson,
@@ -32,6 +33,7 @@ internal class CustomObjectGsonAdapter(
                 result += obj.extraData
 
                 for (field in clazz.declaredFields) {
+                    if (Modifier.isStatic(field.modifiers)) continue
                     if (field.isSynthetic) continue
                     if (field.getAnnotation(IgnoreSerialisation::class.java) != null) continue
 
@@ -70,7 +72,7 @@ internal class CustomObjectGsonAdapter(
 
             val map = read as HashMap<String, Any>
             for (field in clazz.declaredFields) {
-
+                if (Modifier.isStatic(field.modifiers)) continue
                 if (field.isSynthetic) continue
                 if (field.getAnnotation(IgnoreDeserialisation::class.java) != null) continue
 

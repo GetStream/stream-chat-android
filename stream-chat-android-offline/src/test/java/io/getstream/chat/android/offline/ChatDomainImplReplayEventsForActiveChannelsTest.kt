@@ -5,6 +5,7 @@ import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -44,7 +45,9 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
     fun `when replaying events for active channels should get sync history for active channels`() =
         testCoroutines.scope.runBlockingTest {
             val cid = "ChannelType:ChannelId"
-            val chatClient: ChatClient = mock()
+            val chatClient: ChatClient = mock {
+                on(it.channel(any())) doReturn mock()
+            }
             val sut = Fixture(testCoroutines.scope)
                 .givenChatClient(chatClient)
                 .givenSyncHistoryResult(Result(emptyList()))
@@ -79,11 +82,14 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
     private class Fixture(private val coroutineScope: CoroutineScope) {
         private val context: Context = mock()
-        private var chatClient: ChatClient = mock()
+        private var chatClient: ChatClient = mock {
+            on(it.channel(any())) doReturn mock()
+        }
         private var eventHandlerImpl: EventHandlerImpl = mock()
 
         fun givenChatClient(chatClient: ChatClient): Fixture {
             this.chatClient = chatClient
+
             return this
         }
 

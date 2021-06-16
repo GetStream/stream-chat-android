@@ -5,9 +5,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.incrementUnreadCount
-import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateLastMessage
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.users
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process

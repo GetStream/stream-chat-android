@@ -1,10 +1,10 @@
-package io.getstream.chat.android.offline.channel
+package io.getstream.chat.android.offline.message.attachment
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 
-internal class MessageHelper(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
+internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
 
     fun updateValidAttachmentsUrl(newMessages: List<Message>, oldMessages: Map<String, Message>): List<Message> {
         if (oldMessages.isEmpty()) {

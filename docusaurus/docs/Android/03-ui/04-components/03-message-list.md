@@ -39,9 +39,6 @@ messageListView.setMessageEditHandler { message ->
 messageListView.setMessageDeleteHandler { message ->
     // Handle edit message
 }
-messageInputView.setOnSendButtonClickListener {
-    // Handle send button click
-}
 ```
 
 The full lists of available listeners and handlers are available [here (MessageListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view/index.html).
@@ -62,21 +59,21 @@ Let's change the style of messages sent by the current user.
 
 In order to do that, we need to add additional attributes to `MessageListView`:
 ```xml
-    <io.getstream.chat.android.ui.message.list.MessageListView
-        android:id="@+id/messageListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="0dp"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/messageInputView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-        app:streamUiMessageBackgroundColorMine="#70AF74"
-        app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
-        app:streamUiMessageTextColorMine="#FFFFFF"
-        app:streamUiMessageTextColorTheirs="#000000"
-        />
+<io.getstream.chat.android.ui.message.list.MessageListView
+    android:id="@+id/messageListView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="0dp"
+    android:clipToPadding="false"
+    app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
+    app:streamUiMessageBackgroundColorMine="#70AF74"
+    app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
+    app:streamUiMessageTextColorMine="#FFFFFF"
+    app:streamUiMessageTextColorTheirs="#000000"
+    />
 ```
 
 ### Customization at Runtime

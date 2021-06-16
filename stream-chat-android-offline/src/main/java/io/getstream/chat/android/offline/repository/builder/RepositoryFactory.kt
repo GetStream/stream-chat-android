@@ -9,6 +9,8 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.Channel
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.MessageRepositoryImpl
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentRepository
+import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionRepository
@@ -43,4 +45,6 @@ internal class RepositoryFactory(
         ReactionRepositoryImpl(database.reactionDao(), getUser)
 
     fun createSyncStateRepository(): SyncStateRepository = SyncStateRepositoryImpl(database.syncStateDao())
+
+    fun createAttachmentRepository(): AttachmentRepository = AttachmentRepositoryImpl(database.attachmentDao())
 }

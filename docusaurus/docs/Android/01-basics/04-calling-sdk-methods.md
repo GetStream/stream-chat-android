@@ -1,6 +1,6 @@
 # Calling SDK Methods
 
-Many SDK methods return a `Call` object, which is a pending operation waiting to be executed.
+Many SDK methods in the client and offline libraries return a `Call` object, which is a pending operation waiting to be executed.
 
 ### Running calls synchronously
 
