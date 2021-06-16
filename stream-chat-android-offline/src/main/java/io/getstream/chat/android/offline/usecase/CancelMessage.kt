@@ -21,7 +21,7 @@ internal class CancelMessage(private val domainImpl: ChatDomainImpl) {
 
         val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            channelController.cancelMessage(message)
+            channelController.cancelEphemeralMessage(message)
         }
     }
 }

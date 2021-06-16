@@ -41,10 +41,6 @@ public data class Message(
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
-    /** if all the message's attachments has been uploaded to the servers */
-    @IgnoreSerialisation
-    var attachmentsSyncStatus: SyncStatus = SyncStatus.COMPLETED,
-
     @IgnoreSerialisation
     var type: String = "",
 
@@ -111,4 +107,9 @@ public data class Message(
 
     @SerializedName("thread_participants")
     var threadParticipants: List<User> = emptyList(),
-) : CustomObject
+) : CustomObject {
+    public companion object {
+        public const val TYPE_REGULAR: String = "regular"
+        public const val TYPE_EPHEMERAL: String = "ephemeral"
+    }
+}
