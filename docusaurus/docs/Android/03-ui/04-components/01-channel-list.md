@@ -4,20 +4,53 @@
 
 ## Overview
 
-<!-- TODO: Brief description and a couple screenshots with default styling. -->
+`ChannelListView` is a component responsible for displaying list of channels. It also supports loading and empty states displaying. 
+By default, a single list item shows the channel name, user's read state, last message, and the time of the last message. 
+It also implements swiping behaviour which allows handling different actions on the channel. This is what `ChannelListView` looks like: 
+
+![Light_mode](../../assets/channel_list_view_component_swipe_actions.png)
+
+## Usage
+
+To use `ChannelListView` in your layout include it in your XML layout as shown below:
+```XML
+<io.getstream.chat.android.ui.channel.list.ChannelListView 
+    android:id="@+id/channelsView" 
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent" />
+```
+
+In order to get the actual list of data from Stream API and render it to the screen using `ChannelListView` we recommend using `ChannelListViewModel` provided by the SDK.
+The basic setup of the view model and connecting it to the view is done the following way:
+```kotlin 
+// 1. Instantiate the view model 
+val viewModel: ChannelListViewModel by viewModels { 
+    ChannelListViewModelFactory( 
+        filter = Filters.and( 
+            Filters.eq("type", "messaging"), 
+            Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)), 
+        ), 
+        sort = ChannelListViewModel.DEFAULT_SORT, 
+        limit = 30, 
+    ) 
+} 
+// 2. Bind it with ChannelListView 
+viewModel.bindView(channelListView, viewLifecycleOwner) 
+```
+All the logic of subscribing to data emitted by view model is provided by the `ChannelListViewModel::bindView` function. Other than channel data loading, the view model is also handling actions like channel deleting, leaving a group conversation by default.
 
 ## Handling Actions
 
 `ChannelListView` comes with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
-* See channel members
 * Delete the channel if you have sufficient permissions
+* See channel members
 * Leave the channel if it's a group channel
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Light_mode](../../assets/channel_action_light.png)|![Dark_mode](../../assets/channel_action_dark.png)|
 
-There are some actions that require additional handling:
+The following actions that are not implemented out of the box:
 
 ```kotlin
 channelListView.setChannelItemClickListener { channel ->
@@ -29,15 +62,29 @@ channelListView.setChannelInfoClickListener { channel ->
 channelListView.setUserClickListener { user ->
     // Handle Member Click
 }
-```
+``` 
 
 The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/index.html).
 
 ## Customization
 
-### Customization with XML Attributes
+There are multiple ways of customizing appearance `ChannelListView`. It can be achieved using XML attributes, and in runtime calling `ChannelListView` setter functions directly or using the `TransformStyle` API. 
 
-<!-- TODO: Customization description -->
+### Customization with XML attributes
+There are multiple XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
+* `app:streamUiChannelDeleteEnabled` Specifying if the delete icon should be displayed.
+* `app:streamUiChannelDeleteIcon` A drawable reference for channel delete icon.
+* `app:streamUiChannelTitleTextColor` Color of channel title text.
+* `app:streamUiChannelTitleTextSize` Size of channel title text.
+* `app:streamUiChannelTitleFontAssets` Font assets reference for title font customization.
+* `app:streamUiChannelTitleTextFont` A font name for channel title.
+* `app:streamUiLastMessageTextSize` Size of last message text.
+* `app:streamUiLastMessageTextColor` Color of last message text.
+* `app:streamUiForegroundLayoutColor` A foreground color of channel list item.
+* `app:streamUiBackgroundLayoutColor` A background color of channel list item, visible when swiping the list item.
+
+
+The full list of available XML attributes is available under `ChannelListView` styleable [resource](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_view.xml).
 
 ### Customization at Runtime
 
