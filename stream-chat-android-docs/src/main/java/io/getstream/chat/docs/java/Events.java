@@ -135,8 +135,6 @@ public class Events {
          * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java#to-a-channel">Listening for Custom Events</a>
          */
         public void listeningForCustomEvents() {
-            ChannelClient channelClient = client.channel("messaging", "general");
-
             // Subscribe for custom events
             Disposable disposable = channelClient.subscribeFor(
                     new Class[]{UnknownEvent.class},
