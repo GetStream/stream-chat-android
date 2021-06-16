@@ -103,7 +103,7 @@ public class Push {
 
             @Override
             public boolean onFirebaseMessage(@NotNull RemoteMessage message) {
-                // Handle remote message and return true if message should be handled by SDK
+                // Handle remote message and return true if message should not be handled by SDK
                 return true;
             }
         }

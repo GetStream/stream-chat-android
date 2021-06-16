@@ -1,6 +1,10 @@
 # Channels
 
-<!-- TODO: Add brief intro about what channels are -->
+Channels are where conversations take place between two or more chat users. They contain a list of messages and have a list of the member users that are participating in the conversation.
+
+A channel is identified by its `type` and `id`. Some APIs use a `cid` to identify a channel with a single string - this is the combination of the two pieces of information, as `type:id`.
+Almost all API requests are specific to a channel (e.g. add a message to channel “livestream:rockets”) and as we saw already, channels are organized in groups called channel types. You can read more about channel types [here](https://getstream.io/chat/docs/android/channel_features/?language=kotlin).
+Channels are unique either by the specified channel id or by the list of members.
 
 ## Querying Channel List
 
@@ -752,4 +756,3 @@ channelClient.query(QueryChannelRequest()).enqueue { result ->
     }
 }
 ```
-
