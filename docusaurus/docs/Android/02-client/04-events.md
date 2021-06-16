@@ -85,3 +85,43 @@ It is a good practice to unregister event handlers once they are not in use anym
 val disposable: Disposable = client.subscribe { /* ... */ } 
 disposable.dispose()
 ```
+
+## Custom events
+
+Custom events allow you to build more complex interactions within a channel or with a user. Users connected to a channel, either as a watcher or member, can send custom events and have them delivered to all users watching the channel.
+
+You can send a custom event using the `ChannelClient::sendEvent` call:
+
+```kotlin
+val channelClient = client.channel("messaging", "general")
+
+// Send a custom event to all users watching the channel
+channelClient.sendEvent(
+    eventType = "friendship_request",
+    extraData = mapOf("text" to "Hey there, long time no see!")
+).enqueue { result ->
+    if (result.isSuccess) {
+        val chatEvent: ChatEvent = result.data()
+    } else {
+        // Handle result.error()
+    }
+}
+```
+
+:::note
+Custom events are enabled by default on all channel types, you can disable them using the Dashboard or the API the same way as you would manage other channel features (ie. replies, URL previews, ...)
+:::
+
+You can also listen to custom events by subscribing for `UnknownEvent`:
+
+```kotlin
+val channelClient = client.channel("messaging", "channelId") 
+ 
+// Subscribe for custom events 
+val disposable: Disposable = channelClient.subscribeFor<UnknownEvent> { customEvent ->
+    val text = customEvent.rawData["text"]
+} 
+ 
+// Dispose when you want to stop receiving events 
+disposable.dispose()
+```

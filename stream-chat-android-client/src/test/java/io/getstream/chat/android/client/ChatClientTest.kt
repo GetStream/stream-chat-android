@@ -39,9 +39,9 @@ internal class ChatClientTest {
         val eventB = NewMessageEvent(EventType.MESSAGE_NEW, Date(), User(), "type:id", "type", "id", Message(), 0, 0, 0)
         val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-        val eventD = UnknownEvent("d", Date(), emptyMap<Any, Any>())
-        val eventE = UnknownEvent("e", Date(), mapOf<Any, Any>("cid" to "myCid"))
-        val eventF = UnknownEvent("f", Date(), emptyMap<Any, Any>())
+        val eventD = UnknownEvent("d", Date(), null, emptyMap<Any, Any>())
+        val eventE = UnknownEvent("e", Date(), null, mapOf<Any, Any>("cid" to "myCid"))
+        val eventF = UnknownEvent("f", Date(), null, emptyMap<Any, Any>())
     }
 
     lateinit var socket: FakeChatSocket

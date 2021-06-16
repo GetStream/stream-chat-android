@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventD
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -181,6 +182,7 @@ internal class EventDtoAdapter(
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
                     created_at = moshi.adapter(Date::class.java).fromJsonValue(map["created_at"])!!,
+                    user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
                     rawData = map
                 )
         }
