@@ -1,10 +1,53 @@
 # Message Input
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_input_view/?language=kotlin -->
+`MessageInputView` is the view used to create a new chat message. It is where the user will type new messages and send then to the chat, normally placed at the bottom of the chat screen:
 
-## Overview
+|Light|Dark| 
+|---|---|
+|![First custom MessageInputView example](../../assets/message_input_light.png)|![First custom MessageInputView example](../../assets/message_input_dark.png)|
 
-<!-- TODO: Brief description and a couple screenshots with default styling. -->
+It supports the following features:
+
+* Emoticons
+* Attachments
+* Slash Commands
+* Typing events
+* Editing messages
+* Threads
+* Mentions
+* Replies
+
+## Handling actions 
+
+Many actions can be handle by setting listeners to this view, like a click in the send message button or a user start/stop typing:
+
+```kotlin
+messageInputView.setOnSendButtonClickListener {
+    // Handle send button click
+}
+
+messageInputView.setTypingListener(
+    object : MessageInputView.TypingListener {
+        override fun onKeystroke() {
+            // Handle keystroke case
+        }
+
+        override fun onStopTyping() {
+            // Handle stop typing case
+        }
+    }
+)
+```
+
+## ViewModel
+To simplify the customization of behaviour for this view, it is possible to bind a `MessageInputViewModel` to it which will set the listeners and make it fully usable:
+
+```kotlin
+val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+val viewModel: MessageInputViewModel by viewModels { factory }
+// Bind it with MessageInputView
+viewModel.bindView(messageInputView, viewLifecycleOwner)
+```
 
 ## Customizations
 
@@ -131,3 +174,15 @@ messageInputView.setSuggestionListViewHolderFactory(CustomSuggestionListViewHold
 This produces the following result:
 
 ![Custom suggestion item](../../assets/custom_suggestion_item.jpg)
+
+## Attributes
+Apart of the attibutes mentioned in the [Customizations](#customizations) section, you can check all the attibutes available for `MessageInputView` [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_message_input_view.xml). 
+
+## Attachments
+There a limit for the size of attachments in this view. The default value is 20Mb, a file bigger than the limit that won't be allowed to be send and the user will be notified:
+
+![Big file feedback](../../assets/big_attachment.png)
+
+The max value of attachment can be changed with `MessageInputViewStyle.attachmentMaxFileSize`, but there's a limit in the backend of Stream that won't allow an attachment bigger than 20Mb. In order to work with attachments bigger than the limit, it is possible for a developer to use its own API and handle the attachments by using `MessageInputView.setSendMessageHandler`.
+
+It is also possible to listen for big attachments added to the list of attachment to present a custom message to the user with `MessageInputView.listenForBigAttachments`. 
