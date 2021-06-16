@@ -4,11 +4,23 @@
 
 `MentionListView` is a view that is responsible for showing previews of messages which contains current user mention.
 
-<!-- TODO: Cut images to size, or add images with more mentions  -->
-
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Light mode](../../assets/mentions_list_view_light.png)|![Dark mode](../../assets/mentions_list_view_dark.png)|
+
+
+## Handling Mention List View Actions
+
+`MentionListView` allows to configure common actions (e.g. click on a single item):
+
+```kotlin
+mentionListView.setMentionSelectedListener { message ->
+    // Handle mention click
+}
+```
+
+The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.mention.list/-mention-list-view/index.html).
+
 
 ## Adding MentionListView
 
@@ -52,15 +64,3 @@ From that point, you should be able to see messages which contain current user m
 :::note
 `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 :::
-
-## Handling Mention List View Actions
-
-`MentionListView` allows to configure common actions (e.g. click on a single item):
-
-```kotlin
-mentionListView.setMentionSelectedListener { message ->
-    // Handle mention click
-}
-```
-
-The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.mention.list/-mention-list-view/index.html).
