@@ -31,7 +31,7 @@ dependencies {
 
 To use offline support in your application, add the following dependency:
 
-```kotlin
+```groovy
 dependencies {
     implementation "io.getstream:stream-chat-android-offline:$stream_version"
 }
@@ -43,7 +43,7 @@ This also adds the client library automatically.
 
 To use UI components in your application, add the following dependency:
 
-```kotlin
+```groovy
 dependencies {
     implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
 }

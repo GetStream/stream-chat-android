@@ -2,7 +2,7 @@
 slug: /
 ---
 
-# Introduction
+# Overview
 
 The [Stream Chat Android SDK](https://github.com/GetStream/stream-chat-android) enables you to build any type of chat or messaging experience for Android, either in Kotlin or Java. 
 
