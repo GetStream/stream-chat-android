@@ -4,7 +4,58 @@
 
 ## Overview
 
-<!-- TODO: Brief description and a couple screenshots with default styling. -->
+`MessageListView` is one of our core UI components. Generally speaking it's a list of messages for some particular channel. The `MessageListView` contains the following list of members:
+
+1. Plain text message
+2. Text and attachments (media or file) message
+3. Deleted message (only for current user)
+4. Error message (e.g. autoblocked message with innapropriate content)
+5. System message (e.g. some user joined to a channel)
+6. Giphy preview
+7. Date separator
+8. Loading more indicator
+9. Thread separator (for thread mode only)
+10. Typing indicator
+
+Using custom attributes and methods in runtime you're able to customize appearance of this component. Also `MessageListView` contains the set of overridable action/option handlers, and event listeners. By default this component has the following look:
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![Message list overview in light mode](../../assets/message_list_view_overview_light.png)|![Message list overview in dark mode](../../assets/message_list_view_overview_dark.png)|
+
+## Getting started
+If you want to use all default features and default design of this component then start is easy. It consists of two steps:
+1. Adding component to your xml layout hierarchy
+2. Bind out-of-box `MessageListViewModel` and `MessageLisView`.
+
+### Adding to xml layout
+Adding `MessageListView` to your layout is easy as inserting following lines to your layout hierarchy (example for `ConstraintLayout`):
+```xml
+<io.getstream.chat.android.ui.message.list.MessageListView
+        android:id="@+id/message_list_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+``` 
+
+### ViewModel and binding
+UI components provide out-of-box a view model for `MessageListView` and the `bindView` extensions function that makes default setup:
+```kotlin
+class MessageListFragment : Fragment() {
+
+    private lateinit var messageListView: MessageListView
+
+    fun bindView() {
+        val channelCID = "messaging:123"
+        val viewModel = MessageListViewModel(cid = channelCID)
+        viewModel.bindView(messageListView, this)
+    }
+}
+``` 
 
 ## Handling Actions
 
@@ -23,6 +74,53 @@
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
+
+If you're not going to use out of the box `MessageListViewModel` with it's handler or just want to override action handlers you should define these handlers:
+```kotlin
+fun setActionHandlers() {
+        messageListView.setLastMessageReadHandler {
+            // Handle when last message got read
+        }
+        messageListView.setEndRegionReachedHandler {
+            // Handle when end region reached
+        }
+        messageListView.setMessageDeleteHandler { message: Message ->
+            // Handle when message is going to be deleted
+        }
+        messageListView.setThreadStartHandler { message: Message ->
+            // Handle when new thread for message is started
+        }
+        messageListView.setMessageFlagHandler { message: Message ->
+           // Handle when message is going to be flagged
+        }
+        messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+            // Handle when some giphyAction is going to be performed
+        }
+        messageListView.setMessageRetryHandler { message: Message ->
+            // Handle when some failed message is going to be retried
+        }
+        messageListView.setMessageReactionHandler { message: Message, reactionType: String ->
+            // Handle when some reaction for message is going to be send
+        }
+        messageListView.setUserMuteHandler { user: User ->
+            // Handle when a user is going to be muted
+        }
+        messageListView.setUserUnmuteHandler { user: User ->
+            // Handle when a user is going to be unmuted
+        }
+        messageListView.setUserBlockHandler { user: User, cid: String ->
+            // Handle when a user is going to be blocked in the channel with cid
+        }
+        messageListView.setMessageReplyHandler { cid: String, message: Message ->
+            // Handle when message is going to be replied in the channel with cid
+        }
+        messageListView.setAttachmentDownloadHandler { attachment: Attachment ->
+            // Handle when attachment is going to be downloaded
+        }
+    }
+``` 
+
+_P.S. Handlers must be set before passing any data to `MessageListView`. So if you don't use default binding, please, make sure you defined them._
 
 Most of the actions work out of the box but you can change their behavior using different listeners and handlers:
 
