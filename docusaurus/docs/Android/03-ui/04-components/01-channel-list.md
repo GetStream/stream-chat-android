@@ -5,7 +5,7 @@
 ## Overview
 
 `ChannelListView` is a component that displays a list of channels available to a user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
-By default, a single list item shows the
+By default, a single list item shows the:
 
 * channel name
 * user's read state
