@@ -7,10 +7,10 @@
 `ChannelListView` is a component that displays a list of channels available to a user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
 By default, a single list item shows the:
 
-* channel name
-* user's read state
-* last message
-* timestamp of the last message. 
+* Channel name
+* User's read state
+* Last message
+* Timestamp of the last message 
 
 It also implements swiping behaviour which allows handling different actions on the channel. This is what `ChannelListView` looks like: 
 
@@ -103,10 +103,10 @@ The full list of available XML attributes is available under `ChannelListView` s
 
 The following example shows how to use `ChannelListView` setter functions to:
 
-* disable the default options
-* change the title text style 
-* make the default icons larger
-* change the background color for unread messages
+* Disable the default options
+* Change the title text style 
+* Make the default icons larger
+* Change the background color for unread messages
 
 To make these changes, we need to define a custom `TransformStyle.channelListStyleTransformer`:
 ```kotlin
