@@ -110,7 +110,17 @@ internal abstract class MessageDao {
     @Transaction
     abstract suspend fun select(id: String): MessageEntity?
 
+    @Transaction
+    open suspend fun selectSyncNeeded(): List<MessageEntity> {
+        return selectBySyncStatus(SyncStatus.SYNC_NEEDED)
+    }
+
+    @Transaction
+    open suspend fun selectWaitForAttachments(): List<MessageEntity> {
+        return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
+    }
+
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY createdAt ASC")
     @Transaction
-    abstract suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<MessageEntity>
+    protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
 }

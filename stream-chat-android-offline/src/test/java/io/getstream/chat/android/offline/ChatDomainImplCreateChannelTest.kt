@@ -236,7 +236,9 @@ internal class ChatDomainImplCreateChannelTest {
 
     private inner class Fixture {
         private val context: Context = mock()
-        private val chatClient: ChatClient = mock()
+        private val chatClient: ChatClient = mock {
+            on(it.channel(any())) doReturn mock()
+        }
         private var user: User = randomUser()
         private val testScope = TestCoroutineScope()
         private var isOnline: Boolean = true

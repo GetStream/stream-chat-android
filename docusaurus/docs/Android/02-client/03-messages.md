@@ -1,6 +1,8 @@
 # Messages
 
-<!-- TODO: Add brief intro about what messages are, what components they have (attachment, reactions, etc.) -->
+Message represents single communication inside a channel. Besides typical communication-related fields like text, created date, or message sender, it also contains other useful components like:
+- Attachments - list of files inside the message
+- Reactions - users' reactions for the message. Common examples are: "like", "love", etc.
 
 ## Sending Messages
 
@@ -96,9 +98,9 @@ The `channel.sendImage` and `channel.sendFile` methods make it easy to upload fi
 
 This functionality defaults to using the Stream CDN. If you would like, you can easily change the logic to upload to your own CDN of choice. The maximum file size is 20mb for the Stream Chat CDN.
 
-<!-- TODO: Add text to the below sections so that they're not just code snippets -->
-
 ### Uploading an Image
+
+You can upload an image by calling `sendImage` and including a `File`:
 
 ```kotlin
 val channelClient = client.channel("messaging", "general")
@@ -126,6 +128,8 @@ Attachments need to be linked to the message after the upload is completed.
 :::
 
 ### Uploading a File
+
+You can upload an image by calling `sendFile` and including a `File`:
 
 ```kotlin
 // Upload a file, monitoring for progress with a ProgressCallback
@@ -187,7 +191,7 @@ Similar to other objects in _Stream Chat_, reactions allow you to add custom dat
 
 ### Sending a Reaction
 
-<!-- TODO: Add written text to this section, remove unnecessary table copied from CMS -->
+You can send a reaction by calling `sendReaction`:
 
 ```kotlin
 val channelClient = client.channel("messaging", "general") 
@@ -207,20 +211,13 @@ channelClient.sendReaction(reaction).enqueue { result ->
 } 
 ```
 
-| Name | Type | Description | Default | Optional |
-| :--- | :--- | :--- | :--- | :--- |
-| reaction.messageId | String | ID of the message to react to | | |
-| reaction.type | String | Type of the reaction. The user can have only 1 reaction of each type per message | | |
-| reaction.score | Int | Score of the reaction for cumulative reactions (see example below) | 1 | &check; |
-| enforceUnique | Boolean | If set to true, new reaction will replace all reactions the user has (if any) on this message | false | &check; |
-
 :::note
 Custom data for reactions is limited to 1KB.
 :::
 
 ### Replacing a Reaction
 
-<!-- TODO: Add written text to this section -->
+You can enforce users to only have one reaction to the particular message. To do so, call `sendReaction` with `enforceUnique` parameter set to `true`:
 
 ```kotlin
 // Add reaction 'like' and replace all other reactions of this user by it
@@ -235,7 +232,7 @@ channelClient.sendReaction(reaction, enforceUnique = true).enqueue { result ->
 
 ### Deleting a Reaction
 
-<!-- TODO: Add written text to this section -->
+You can delete a reaction by calling `deleteReaction` with `messageId` and `reactionType`:
 
 ```kotlin
 channelClient.deleteReaction( 
@@ -254,34 +251,23 @@ channelClient.deleteReaction(
 
 Messages returned by the APIs automatically include 10 most recent reactions. You can also retrieve more reactions and paginate using the following logic:
 
-<!-- TODO: Break up code snippets into smaller ones, with proper text inbetween -->
-
 ```kotlin
-// Get the first 10 reactions 
-channelClient.getReactions( 
-    messageId = "message-id", 
-    offset = 0, 
-    limit = 10, 
-).enqueue { result -> 
-    if (result.isSuccess) { 
-        val reactions: List<Reaction> = result.data() 
-    } else { 
-        // Handle result.error() 
-    } 
-} 
- 
 // Get the second 10 reactions 
 channelClient.getReactions( 
     messageId = "message-id", 
     offset = 10, 
     limit = 10, 
-).enqueue { /* ... */ } 
- 
-// Get 10 reactions after particular reaction 
-channelClient.getReactions( 
-    messageId = "message-id", 
-    firstReactionId = "reaction-id", 
-    limit = 10, 
+).enqueue { /* ... */ }
+```
+
+You can also get the reactions added after a particular reaction:
+
+```kotlin
+// Get 10 reactions after particular reaction
+channelClient.getReactions(
+    messageId = "message-id",
+    firstReactionId = "reaction-id",
+    limit = 10,
 ).enqueue { /* ... */ }
 ```
 
@@ -321,10 +307,8 @@ channelClient.sendMessage(message).enqueue { result ->
 }
 ```
 
-<!-- TODO: show_in_channel is not Android API -->
-
 :::note
-If you specify `show_in_channel`, the message will be visible both in a thread of replies as well as the main channel.
+If you specify `showInChannel`, the message will be visible both in a thread of replies as well as the main channel.
 :::
 
 Messages inside a thread can also have reactions, attachments and mentions as any other message.
@@ -353,11 +337,9 @@ client.getRepliesMore(
 
 ### Quoting a Message
 
-<!-- TODO: Are we calling these Replies or Quotes? Use just one, be consistent with other platforms/docs. -->
-
 Instead of replying in a thread, it's also possible to quote a message. Quoting a message doesn't result in the creation of a thread; the message is quoted inline.
 
-To quote a message, simply provide the `quoted_message_id` field when sending a message:
+To quote a message, simply provide the `replyMessageId` when sending a message:
 
 ```kotlin
 val message = Message( 
@@ -367,22 +349,7 @@ val message = Message(
 channelClient.sendMessage(message).enqueue { /* ... */ }
 ```
 
-<!-- TODO: Backend fields and JSON again, get rid of these, only talk about Android API -->
-
-Based on the provided `quoted_message_id`, the `quoted_message` field is automatically enriched when querying channels with messages. Example response:
-
-```xml
-{ 
-    "id": "message_with_quoted_message", 
-    "text": "This is the first message that quotes another message", 
-    "quoted_message_id": "first_message_id", 
-    "quoted_message": {  
-        "id": "first_message_id",  
-        "text": "The initial message" 
-    } 
-}
-```
-
+Based on the provided `replyMessageId`, the `Message::replyTo` field is automatically enriched when querying channels with messages.
 
 ## Searching Messages
 
@@ -409,12 +376,8 @@ client.searchMessages(
 }
 ```
 
-<!-- TODO: Do these MongoDB mentions here make any sense at all? -->
-
-Pagination works via the standard `limit` and `offset` parameters. The first argument, `filter`, uses a MongoDB style query expression.
-
 :::note
-We do not run MongoDB on the backend, so only a subset of the standard MongoDB filters are supported.
+Pagination works via the standard `limit` and `offset` parameters.
 :::
 
 ### Searching for Messages with Attachments
@@ -458,10 +421,10 @@ channelClient.sendMessage(message).enqueue { /* ... */ }
 Existing messages cannot be turned into a silent message or vice versa.
 :::
 
-<!-- TODO: What's the Android API for skip_push? -->
-:::note
+<!-- TODO: What's the Android API for skip_push? - We need to further investigate that -->
+<!-- :::note
 Silent messages do send push notifications by default. To skip our push notification service, mark the message with `skip_push: true`
-:::
+::: -->
 
 ## Pinned Messages
 

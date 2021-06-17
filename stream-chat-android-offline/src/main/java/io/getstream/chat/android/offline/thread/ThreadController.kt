@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.extensions.wasCreatedAfterOrAt
+import io.getstream.chat.android.offline.message.wasCreatedAfterOrAt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

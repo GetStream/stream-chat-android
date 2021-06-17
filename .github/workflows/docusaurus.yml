@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # default branch name for each repo that docs should be push from
+  workflow_dispatch:
 jobs:
   push_docusaurus:
     name: Publish docusaurus docs
