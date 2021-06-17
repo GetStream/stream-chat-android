@@ -254,7 +254,7 @@ class Android {
                         alsoSendToChannel: Boolean,
                         attachmentsWithMimeTypes: List<Pair<File, String?>>,
                     ) {
-                       // Handle message to thread with attachments
+                        // Handle message to thread with attachments
                     }
 
                     override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
