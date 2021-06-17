@@ -237,13 +237,13 @@ channelListView.setViewHolderFactory(CustomChannelListItemViewHolderFactory())
 
 ## Creating a Custom Loading View
 
+Custom loading view can be set using `ChannelListView::setLoadingView` method.
+
 Let's see an example of `ChannelListView` that will have a custom loading view with a shimmer effect:
 
 <!-- TODO: Actually show shimmer effect here in the screenshots. -->
 
-| Light Mode | Dark Mode |
-| --- | --- |
-|![Light mode](../../assets/channel_action_light.png)|![Dark mode](../../assets/channel_action_dark.png)|
+![Light mode](../../assets/channel_list_shimmer.png)
 
 Assuming that we have the setup similar to previous steps, we have to do the following steps:
 1. Add Shimmer dependency
