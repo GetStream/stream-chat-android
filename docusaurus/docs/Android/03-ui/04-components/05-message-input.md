@@ -39,6 +39,47 @@ messageInputView.setTypingListener(
 )
 ```
 
+It is also possible to change the handler of messages so more customization is possible. 
+
+```kotlin
+messageInputView.setSendMessageHandler(
+    object : MessageInputView.MessageSendHandler {
+        override fun sendMessage(messageText: String, messageReplyTo: Message?) {
+            // Handle send message
+        }
+
+        override fun sendMessageWithAttachments(
+            message: String,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+            messageReplyTo: Message?,
+        ) {
+            // Handle message with attachments
+        }
+
+        override fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+        ) {
+           // Handle message to thread with attachments
+        }
+
+        override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+            // Handle message to thread
+        }
+
+        override fun editMessage(oldMessage: Message, newMessageText: String) {
+            // Handle edit message
+        }
+
+        override fun dismissReply() {
+            // Handle dismiss reply
+        }
+    }
+)
+```
+
 ## ViewModel
 To simplify the customization of behaviour for this view, it is possible to bind a `MessageInputViewModel` to it which will set the listeners and make it fully usable:
 

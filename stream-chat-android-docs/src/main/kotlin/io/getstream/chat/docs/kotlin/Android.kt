@@ -78,6 +78,7 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSugge
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.io.File
 import java.util.Date
 
 class Android {
@@ -230,6 +231,45 @@ class Android {
         fun customSuggestionListviewHolderFactory() {
             val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
+        }
+
+        fun customMessageHandler() {
+            messageInputView.setSendMessageHandler(
+                object : MessageInputView.MessageSendHandler {
+                    override fun sendMessage(messageText: String, messageReplyTo: Message?) {
+                        // Handle send message
+                    }
+
+                    override fun sendMessageWithAttachments(
+                        message: String,
+                        attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                        messageReplyTo: Message?,
+                    ) {
+                        // Handle message with attachments
+                    }
+
+                    override fun sendToThreadWithAttachments(
+                        parentMessage: Message,
+                        message: String,
+                        alsoSendToChannel: Boolean,
+                        attachmentsWithMimeTypes: List<Pair<File, String?>>,
+                    ) {
+                       // Handle message to thread with attachments
+                    }
+
+                    override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+                        // Handle message to thread
+                    }
+
+                    override fun editMessage(oldMessage: Message, newMessageText: String) {
+                        // Handle edit message
+                    }
+
+                    override fun dismissReply() {
+                        // Handle dismiss reply
+                    }
+                }
+            )
         }
 
         class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
