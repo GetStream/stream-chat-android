@@ -1,5 +1,8 @@
 # Events
 
+Events allow the client to stay up to date with changes to the chat. For example, you get events when a new message was sent, a user's image was updated, a reaction was added, or a member joined the channel.
+Events are only received when the client is connected to the socket and the application is in the foreground.
+
 ## Listening for Channel Events
 
 As soon as you call `ChannelClient::watch` or `ChatClient::queryChannels` you’ll start to listen to these events. You can hook into specific events:
