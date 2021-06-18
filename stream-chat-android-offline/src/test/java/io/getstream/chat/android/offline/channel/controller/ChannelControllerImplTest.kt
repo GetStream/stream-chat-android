@@ -33,8 +33,7 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     override fun setup() {
         super.setup()
-        channelController =
-            ChannelController(channelType, channelId, clientMock, chatDomainImpl)
+        channelController = ChannelController(channelType, channelId, clientMock, chatDomainImpl)
     }
 
     @Test

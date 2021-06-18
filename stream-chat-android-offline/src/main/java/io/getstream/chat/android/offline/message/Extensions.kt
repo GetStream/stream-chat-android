@@ -1,5 +1,6 @@
-package io.getstream.chat.android.offline.extensions
+package io.getstream.chat.android.offline.message
 
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -35,3 +36,10 @@ internal fun Message.users(): List<User> {
 internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {
     return user.id != currentUserId && !silent && !shadowed
 }
+
+internal fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
+
+internal fun Message.hasAttachments(): Boolean = attachments.isNotEmpty()
+
+internal fun Message.hasPendingAttachments(): Boolean =
+    attachments.any { it.uploadState == Attachment.UploadState.InProgress }

@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 
 internal fun Channel.users(): List<User> {

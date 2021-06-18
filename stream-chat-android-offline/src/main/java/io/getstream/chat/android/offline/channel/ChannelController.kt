@@ -48,22 +48,29 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.client.utils.mapSuspend
+import io.getstream.chat.android.client.utils.recover
+import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.attachment.AttachmentUploader
-import io.getstream.chat.android.offline.extensions.NEVER
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
-import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
-import io.getstream.chat.android.offline.extensions.wasCreatedAfter
-import io.getstream.chat.android.offline.extensions.wasCreatedBeforeOrAt
+import io.getstream.chat.android.offline.message.MessageSendingService
+import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
+import io.getstream.chat.android.offline.message.NEVER
+import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
+import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
+import io.getstream.chat.android.offline.message.attachment.generateUploadId
+import io.getstream.chat.android.offline.message.getMessageType
+import io.getstream.chat.android.offline.message.isEphemeral
+import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
+import io.getstream.chat.android.offline.message.wasCreatedAfter
+import io.getstream.chat.android.offline.message.wasCreatedBeforeOrAt
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -80,12 +87,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Exception
 import java.util.Calendar
 import java.util.Date
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.regex.Pattern
 import kotlin.math.max
 
 public class ChannelController internal constructor(
@@ -94,16 +98,9 @@ public class ChannelController internal constructor(
     private val client: ChatClient,
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
-    private val messageHelper: MessageHelper = MessageHelper(),
+    private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
-    internal constructor(
-        channelType: String,
-        channelId: String,
-        client: ChatClient,
-        domain: ChatDomain,
-        messageHelper: MessageHelper = MessageHelper(),
-    ) : this(channelType, channelId, client, domain as ChatDomainImpl, messageHelper)
-
     private val editJobs = mutableMapOf<String, Job>()
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
@@ -243,6 +240,9 @@ public class ChannelController internal constructor(
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
+
+    private val messageSendingService: MessageSendingService =
+        messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
     internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
         ThreadController(threadId, this, domainImpl)
@@ -569,10 +569,33 @@ public class ChannelController internal constructor(
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
-
+    @Deprecated(
+        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        replaceWith = ReplaceWith("sendMessage(message: Message)")
+    )
     internal suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
+    ): Result<Message> {
+        return if (attachmentTransformer != null) {
+            sendMessage(message, attachmentTransformer)
+        } else {
+            sendMessage(message)
+        }
+    }
+
+    internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
+
+    internal suspend fun retrySendMessage(message: Message): Result<Message> =
+        messageSendingService.sendMessage(message)
+
+    @Deprecated(
+        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
+        replaceWith = ReplaceWith("sendMessage(message: Message)")
+    )
+    private suspend fun sendMessage(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment),
     ): Result<Message> {
         val newMessage = message.copy()
         newMessage.user = domainImpl.user.value ?: return Result(ChatError("Current user null"))
@@ -622,27 +645,19 @@ public class ChannelController internal constructor(
 
                 newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
 
-                uploadStatusMessage?.let { cancelMessage(it) }
+                uploadStatusMessage?.let { cancelEphemeralMessage(it) }
             }
 
             newMessage.type = "regular"
-            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-
-            if (result.isSuccess) {
-                handleSendAttachmentSuccess(result.data())
-            } else {
-                handleSendAttachmentFail(newMessage, result.error())
-            }
+            domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
+                .mapSuspend(::handleSendMessageSuccess)
+                .recoverSuspend { handleSendMessageFail(newMessage, it) }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage)
         }
-    }
-
-    private fun generateUploadId(): String {
-        return "upload_id_${UUID.randomUUID()}"
     }
 
     internal suspend fun uploadAttachments(
@@ -650,16 +665,13 @@ public class ChannelController internal constructor(
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): List<Attachment> {
         return try {
-            message.attachments.map { attachment ->
-                val result = AttachmentUploader(client)
-                    .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
-
-                if (result.isSuccess) {
-                    result.data()
-                } else {
-                    attachment.apply { uploadState = Attachment.UploadState.Failed(result.error()) }
-                }
-            }.toMutableList()
+            message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
+                .map { attachment ->
+                    AttachmentUploader(client)
+                        .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
+                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+                        .data()
+                }.toMutableList()
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
@@ -676,24 +688,20 @@ public class ChannelController internal constructor(
         }
     }
 
-    private suspend fun handleSendAttachmentSuccess(processedMessage: Message): Result<Message> {
-        processedMessage.apply {
-            enrichWithCid(this.cid)
-            syncStatus = SyncStatus.COMPLETED
-            domainImpl.repos.insertMessage(this)
-        }
-
-        upsertMessage(processedMessage)
-        return Result(processedMessage)
+    internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
+        return processedMessage.apply { enrichWithCid(this.cid) }
+            .copy(syncStatus = SyncStatus.COMPLETED)
+            .also { domainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
     }
 
-    private suspend fun handleSendAttachmentFail(message: Message, error: ChatError): Result<Message> {
+    internal suspend fun handleSendMessageFail(message: Message, error: ChatError): Message {
         logger.logE(
             "Failed to send message with id ${message.id} and text ${message.text}: $error",
             error
         )
 
-        val failedMessage = message.copy(
+        return message.copy(
             syncStatus = if (error.isPermanent()) {
                 SyncStatus.FAILED_PERMANENTLY
             } else {
@@ -701,35 +709,16 @@ public class ChannelController internal constructor(
             },
             updatedLocallyAt = Date(),
         )
-
-        upsertMessage(failedMessage)
-        domainImpl.repos.insertMessage(failedMessage)
-        return Result(error)
-    }
-
-    // TODO: type should be a sealed/class or enum at the client level
-    private fun getMessageType(message: Message): String {
-        val hasAttachments = message.attachments.isNotEmpty()
-        val hasAttachmentsToUpload = message.attachments.any { attachment ->
-            attachment.uploadState is Attachment.UploadState.InProgress
-        }
-
-        return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
-            "ephemeral"
-        } else {
-            "regular"
-        }
+            .also { domainImpl.repos.insertMessage(it) }
+            .also { upsertMessage(it) }
     }
 
     /**
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
      */
-    internal suspend fun cancelMessage(message: Message): Result<Boolean> {
-        if ("ephemeral" != message.type) {
-            throw IllegalArgumentException("Only ephemeral message can be canceled")
-        }
-
+    internal suspend fun cancelEphemeralMessage(message: Message): Result<Boolean> {
+        require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
         domainImpl.repos.deleteChannelMessage(message)
         removeLocalMessage(message)
         return Result(true)
@@ -931,7 +920,7 @@ public class ChannelController internal constructor(
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val currentMessages = _messages.value
-        return currentMessages + messageHelper.updateValidAttachmentsUrl(messages, currentMessages)
+        return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)
     }
@@ -944,7 +933,7 @@ public class ChannelController internal constructor(
         }
     }
 
-    private fun upsertMessages(messages: List<Message>) {
+    internal fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
         updateLastMessageAtByNewMessages(newMessages.values)
         _messages.value = newMessages
@@ -1464,9 +1453,7 @@ public class ChannelController internal constructor(
         _repliedMessage.value = repliedMessage
     }
 
-    private fun String?.isSupportedImageMimetype() = StreamCdnImageMimeTypes.isImageMimeTypeSupported(this)
-
-    private fun String?.isVideoMimetype() = this?.contains("video") ?: false
+    internal fun cancelJobs() = messageSendingService.cancelJobs()
 
     private fun Message.lastUpdateTime(): Long = listOfNotNull(
         createdAt,
@@ -1510,14 +1497,13 @@ public class ChannelController internal constructor(
         public data class Result(val messages: List<Message>) : MessagesState()
     }
 
-    private companion object {
+    internal companion object {
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val TYPE_IMAGE = "image"
         private const val TYPE_VIDEO = "video"
         private const val TYPE_FILE = "file"
-        private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
         private const val OFFSET_EVENT_TIME = 5L
     }
 }

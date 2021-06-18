@@ -1,8 +1,11 @@
 # Push Notifications
 
+Besides [Events](./04-events.md), push notifications are another way to stay up to date with changes to the chat.
+The user will receive a push notification if they're watching a channel but don't have an open socket connection.
+
 ## Configuring Push Notifications
 
-The Android SDK handles push notifications by default, including:
+The Android SDK handles push notifications by default. That includes:
 
 1. Receiving push notification using _FirebaseMessagingService_
 2. Loading required data using a _Worker_
@@ -127,7 +130,7 @@ class CustomChatNotificationHandler(context: Context, notificationConfig: Notifi
     ChatNotificationHandler(context, notificationConfig) {
 
     override fun onFirebaseMessage(message: RemoteMessage): Boolean {
-        // Handle remote message and return true if message should be handled by SDK
+        // Handle remote message and return true if message should not be handled by SDK
         return true
     }
 }
