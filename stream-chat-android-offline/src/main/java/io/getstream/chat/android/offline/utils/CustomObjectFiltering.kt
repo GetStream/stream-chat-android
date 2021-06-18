@@ -55,12 +55,26 @@ internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
         is LessThanOrEqualsFilterObject ->
             compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable<Any>, value as? Comparable<Any>) { it <= 0 }
         is InFilterObject -> when (fieldName) {
-            MEMBERS_FIELD_NAME -> t.getMembersId().fold(false) { isIn, memberId -> isIn || values.contains(memberId) }
-            else -> values.contains(t.getMemberPropertyOrExtra(fieldName, Any::class))
+            MEMBERS_FIELD_NAME -> values.any(t.getMembersId()::contains)
+            else -> {
+                val fieldValue = t.getMemberPropertyOrExtra(fieldName, Any::class)
+                if (fieldValue is List<*>) {
+                    values.any(fieldValue::contains)
+                } else {
+                    values.contains(fieldValue)
+                }
+            }
         }
         is NotInFilterObject -> when (fieldName) {
-            MEMBERS_FIELD_NAME -> (values - t.getMembersId()).size == values.size
-            else -> !values.contains(t.getMemberPropertyOrExtra(fieldName, Any::class))
+            MEMBERS_FIELD_NAME -> values.none(t.getMembersId()::contains)
+            else -> {
+                val fieldValue = t.getMemberPropertyOrExtra(fieldName, Any::class)
+                if (fieldValue is List<*>) {
+                    values.none(fieldValue::contains)
+                } else {
+                    !values.contains(fieldValue)
+                }
+            }
         }
         is DistinctFilterObject -> (t as? Channel)?.let { channel ->
             channel.id.startsWith("!members") &&
