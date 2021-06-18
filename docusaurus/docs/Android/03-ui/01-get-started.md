@@ -8,6 +8,17 @@ The UI components library includes pre-built Android Views to easily load and di
 
 This library builds on top of the offline library, and provides [ViewModels](#viewmodels) for each View to easily populate them with data and handle input events. The [sample app](#sample-app) showcases the UI components in action.
 
+Those are the components. You can click in the components to learn more about them:
+
+- [Channel List](./04-components/01-channel-list.md)
+- [Channel List Header](./04-components/02-channel-list-header.md)
+- [Message List](./04-components/03-message-list.md)
+- [Message List Header](./04-components/04-message-list-header.md)
+- [Message Input](./04-components/05-message-input.md)
+- [Mention List View](./04-components/06-mention-list-view.md)
+- [Search View](./04-components/07-search-view.md)
+- [Attachment Gallery](./04-components/08-attachment-gallery.md)
+
 ### ViewModels
 
 Each UI component comes with its own ViewModel. These are used to easily connect them to `ChatDomain` to fetch data and perform actions.
@@ -46,15 +57,4 @@ Additionally, the SDK provides two entry points for global customization:
 - The [`ChatUI` object](./03-chatui.md) to override such things as fonts, URL signing logic, etc.
 - The [`TransformStyle` object](./02-global-styling.md) to override view attributes programmatically.
 
-### Available components
 
-See the individual pages of the components to learn more about them:
-
-- [Channel List](./04-components/01-channel-list.md)
-- [Channel List Header](./04-components/02-channel-list-header.md)
-- [Message List](./04-components/03-message-list.md)
-- [Message List Header](./04-components/04-message-list-header.md)
-- [Message Input](./04-components/05-message-input.md)
-- [Mention List View](./04-components/06-mention-list-view.md)
-- [Search View](./04-components/07-search-view.md)
-- [Attachment Gallery](./04-components/08-attachment-gallery.md)
