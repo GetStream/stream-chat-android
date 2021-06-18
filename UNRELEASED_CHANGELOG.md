@@ -37,6 +37,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed crash when adding a reaction to a thread message.
 
 ### ⬆️ Improved
 - Now attachments can be sent while being in offline
