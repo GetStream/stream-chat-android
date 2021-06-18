@@ -8,14 +8,14 @@ import io.getstream.chat.android.livedata.ChatDomain.Companion.instance
 import java.util.Date
 
 internal fun List<Member>.getLastActive(
-    currentUser: User = instance().currentUser
+    currentUser: User? = instance().user.value
 ): Date {
-    return filter { it.user.id != currentUser.id && it.user.lastActive != null }
+    return filter { it.user.id != currentUser?.id && it.user.lastActive != null }
         .maxOfOrNull { it.user.lastActive!! } ?: Date()
 }
 
 @JvmOverloads
-internal fun List<Member>.getOtherUsers(currentUser: User = instance().currentUser): List<User> {
-    return filterNot { it.getUserId() == currentUser.id }
+internal fun List<Member>.getOtherUsers(currentUser: User? = instance().user.value): List<User> {
+    return filterNot { it.getUserId() == currentUser?.id }
         .map { it.user }
 }
