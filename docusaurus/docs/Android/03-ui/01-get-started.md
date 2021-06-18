@@ -1,8 +1,10 @@
-# Getting Started
+# Get Started
 
 The UI components library includes pre-built Android Views to easily load and display data from the Stream Chat API.
 
-<!-- TODO add images of UI components -->
+|![Channel List](../assets/channel_list.png)|![Attachments](../assets/attachments.png)|  
+|---|---|
+|![messages](../assets/messages.png)|![Message Input](../assets/message_input.png)|  
 
 This library builds on top of the offline library, and provides [ViewModels](#viewmodels) for each View to easily populate them with data and handle input events. The [sample app](#sample-app) showcases the UI components in action.
 
@@ -34,7 +36,7 @@ You can learn more about setting up each UI component on its individual document
 
 The [UI components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) is an open source, fully functional messaging application. It features threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our UI components.
 
-<!-- TODO add images of the sample app -->
+![Sample App](../assets/sample_app.png)
 
 ### Customization
 
