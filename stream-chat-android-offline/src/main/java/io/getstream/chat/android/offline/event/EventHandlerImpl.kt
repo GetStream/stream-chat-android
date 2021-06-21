@@ -57,8 +57,8 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.setMember
-import io.getstream.chat.android.offline.extensions.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.extensions.updateReads
+import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import kotlinx.coroutines.launch
 
 internal class EventHandlerImpl(

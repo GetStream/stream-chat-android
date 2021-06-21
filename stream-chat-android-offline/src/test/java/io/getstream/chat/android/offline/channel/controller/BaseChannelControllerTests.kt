@@ -1,12 +1,14 @@
 package io.getstream.chat.android.offline.channel.controller
 
 import androidx.annotation.CallSuper
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -22,6 +24,7 @@ internal open class BaseChannelControllerTests {
     protected lateinit var chatDomainImpl: ChatDomainImpl
     protected lateinit var channelClient: ChannelClient
     protected lateinit var repos: RepositoryFacade
+    protected lateinit var messageSendingService: MessageSendingService
 
     @ExperimentalCoroutinesApi
     @BeforeEach
@@ -29,13 +32,21 @@ internal open class BaseChannelControllerTests {
     open fun before() {
         repos = mock()
         channelClient = mock()
+        messageSendingService = mock()
         chatClient = mock {
             on { channel(channelType, channelId) } doReturn channelClient
+            on { channel(any()) } doReturn channelClient
         }
         chatDomainImpl = mock {
+            on(it.appContext) doReturn mock()
             on { scope } doReturn TestCoroutineScope()
             on { repos } doReturn repos
         }
-        sut = ChannelController(channelType, channelId, chatClient, chatDomainImpl)
+        sut = ChannelController(
+            channelType,
+            channelId,
+            chatClient,
+            chatDomainImpl,
+        )
     }
 }

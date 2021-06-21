@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.utils
 
+import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.Channel
@@ -16,7 +17,6 @@ import io.getstream.chat.android.test.randomIntBetween
 import io.getstream.chat.android.test.randomLong
 import io.getstream.chat.android.test.randomLongBetween
 import io.getstream.chat.android.test.randomString
-import org.amshove.kluent.`should contain same`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -33,7 +33,7 @@ internal class CustomObjectFilteringTest {
     ) {
         val result = customObjectList.filter(filterObject)
 
-        result `should contain same` expectedListOfObject
+        Truth.assertThat(result).containsExactlyElementsIn(expectedListOfObject)
     }
 
     companion object {
@@ -68,6 +68,7 @@ internal class CustomObjectFilteringTest {
                 Arguments.of(expectedList, NeutralFilterObject, expectedList)
             }
         )
+
         @JvmStatic
         fun distinctFilterArguments() = List(positiveRandomInt(10)) { randomMember() }.let { memberList ->
             listOf(
@@ -704,6 +705,7 @@ internal class CustomObjectFilteringTest {
                 )
             },
         )
+
         @JvmStatic
         fun greaterThanOrEqualsFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
@@ -1284,18 +1286,52 @@ internal class CustomObjectFilteringTest {
                     },
                 )
             } +
-            memberIds.take(positiveRandomInt(memberIds.size)).map { randomMember(user = randomUser(id = it)) }.let { members ->
-                List(positiveRandomInt(10)) {
-                    randomChannel(
-                        members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()
-                    )
-                }.let { expectedList ->
-                    Arguments.of(
-                        (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
-                        Filters.`in`("members", memberIds),
-                        expectedList,
-                    )
-                }
+            memberIds.take(positiveRandomInt(memberIds.size)).map { randomMember(user = randomUser(id = it)) }
+                .let { members ->
+                    List(positiveRandomInt(10)) {
+                        randomChannel(
+                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()
+                        )
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
+                            Filters.`in`("members", memberIds),
+                            expectedList,
+                        )
+                    }
+                } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(stringList.random(), notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(notStringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.`in`("someField", stringList),
+                            expectedList
+                        )
+                    },
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(stringList.random(), notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
+                            Filters.`in`("someField", stringList),
+                            expectedList
+                        )
+                    },
+                )
             }
 
         @JvmStatic
@@ -1419,6 +1455,41 @@ internal class CustomObjectFilteringTest {
                         ).shuffled(),
                     Filters.nin("members", memberIds),
                     expectedList,
+                )
+            } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(stringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList
+                        )
+                    },
+                    List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(stringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList
+                        )
+                    },
                 )
             }
 

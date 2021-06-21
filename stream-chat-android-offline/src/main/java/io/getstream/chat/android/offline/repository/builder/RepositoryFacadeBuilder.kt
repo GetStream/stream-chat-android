@@ -31,11 +31,18 @@ internal class RepositoryFacadeBuilder {
     fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
 
-    private fun createDatabase(scope: CoroutineScope, context: Context, user: User?, offlineEnabled: Boolean) = if (offlineEnabled && user != null) {
-        ChatDatabase.getDatabase(context, user.id)
-    } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
-            scope.launch { inMemoryDatabase.clearAllTables() }
+    private fun createDatabase(
+        scope: CoroutineScope,
+        context: Context,
+        user: User?,
+        offlineEnabled: Boolean,
+    ): ChatDatabase {
+        return if (offlineEnabled && user != null) {
+            ChatDatabase.getDatabase(context, user.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build().also { inMemoryDatabase ->
+                scope.launch { inMemoryDatabase.clearAllTables() }
+            }
         }
     }
 
@@ -65,6 +72,7 @@ internal class RepositoryFacadeBuilder {
             messageRepository = messageRepository,
             reactionsRepository = factory.createReactionRepository(getUser),
             syncStateRepository = factory.createSyncStateRepository(),
+            attachmentRepository = factory.createAttachmentRepository(),
             scope = scope,
             defaultConfig = config,
         )

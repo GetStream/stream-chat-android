@@ -4,20 +4,60 @@
 
 ## Overview
 
-<!-- TODO: Brief description and a couple screenshots with default styling. -->
+`ChannelListView` is a component that displays a list of channels available to a user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
+By default, a single list item shows the:
+
+* Channel name
+* User's read state
+* Last message
+* Timestamp of the last message 
+
+It also implements swiping behaviour which allows handling different actions on the channel. This is what `ChannelListView` looks like: 
+
+![Light_mode](../../assets/channel_list_view_component_swipe_actions.png)
+
+## Usage
+
+To use `ChannelListView` in your layout, include it in your XML layout as shown below:
+```XML
+<io.getstream.chat.android.ui.channel.list.ChannelListView 
+    android:id="@+id/channelsView" 
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent" />
+```
+
+We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then rendering it using the `ChannelListView`
+The basic setup of the view model and connecting it to the view is done the following way:
+```kotlin 
+// Instantiate the view model 
+val viewModel: ChannelListViewModel by viewModels { 
+    ChannelListViewModelFactory( 
+        filter = Filters.and( 
+            Filters.eq("type", "messaging"), 
+            Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)), 
+        ), 
+        sort = ChannelListViewModel.DEFAULT_SORT, 
+        limit = 30, 
+    ) 
+} 
+// Bind the view model with ChannelListView 
+viewModel.bindView(channelListView, viewLifecycleOwner) 
+```
+All the logic of subscribing to data emitted by view model is provided by the `ChannelListViewModel::bindView` function. Other than channel data loading, the view model is also handling actions like channel deleting, leaving a group conversation by default.
 
 ## Handling Actions
 
-`ChannelListView` comes with a set of channel actions out of the box. Actions on `ChannelListView` items are available on swipe. You can:
-* See channel members
+`ChannelListView` includes a set of channel actions. Actions on `ChannelListView` items are available on swipe. You can:
+
 * Delete the channel if you have sufficient permissions
+* See channel members
 * Leave the channel if it's a group channel
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Light_mode](../../assets/channel_action_light.png)|![Dark_mode](../../assets/channel_action_dark.png)|
 
-There are some actions that require additional handling:
+The following actions that are not implemented out of the box:
 
 ```kotlin
 channelListView.setChannelItemClickListener { channel ->
@@ -29,27 +69,46 @@ channelListView.setChannelInfoClickListener { channel ->
 channelListView.setUserClickListener { user ->
     // Handle Member Click
 }
-```
+``` 
 
 The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/index.html).
 
 ## Customization
 
-### Customization with XML Attributes
+There are two ways to customize the appearance of `ChannelListView`: 
 
-<!-- TODO: Customization description -->
+* Using XML attributes
+* Using the `TransformStyle` API at runtime to call `ChannelListView` setter functions
+
+### Customization with XML attributes
+There are multiple XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
+
+* `app:streamUiChannelDeleteEnabled` Specifying if the delete icon should be displayed.
+* `app:streamUiChannelDeleteIcon` A drawable reference for channel delete icon.
+* `app:streamUiChannelTitleTextColor` Color of channel title text.
+* `app:streamUiChannelTitleTextSize` Size of channel title text.
+* `app:streamUiChannelTitleFontAssets` Font assets reference for title font customization.
+* `app:streamUiChannelTitleTextFont` A font name for channel title.
+* `app:streamUiLastMessageTextSize` Size of last message text.
+* `app:streamUiLastMessageTextColor` Color of last message text.
+* `app:streamUiForegroundLayoutColor` A foreground color of channel list item.
+* `app:streamUiBackgroundLayoutColor` A background color of channel list item, visible when swiping the list item.
+
+
+The full list of available XML attributes is available under `ChannelListView` styleable [resource](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_view.xml).
 
 ### Customization at Runtime
 
 <!-- TODO: Review this example, possibly remove it. -->
 
-Let's make an example and modify _ChannelListViewStyle_ programmatically. We want to change the title text appearance, some default icons, and colors, and disable some options:
+The following example shows how to use `ChannelListView` setter functions to:
 
-| Before | After |
-| --- | --- |
-|![before](../../assets/channel_list_view_style_before.png)|![after](../../assets/channel_list_view_style_after.png)|
+* Disable the default options
+* Change the title text style 
+* Make the default icons larger
+* Change the background color for unread messages
 
-In order to achieve such effect we need to provide custom _TransformStyle.channelListStyleTransformer_:
+To make these changes, we need to define a custom `TransformStyle.channelListStyleTransformer`:
 ```kotlin
 TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     defaultStyle.copy(
@@ -67,15 +126,21 @@ TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     )
 }
 ```
-> **NOTE**: The transformer should be set before the view is rendered to make sure that the new style was applied.
+
+These changes should have the following results:
+
+| Before | After |
+| --- | --- |
+|![before](../../assets/channel_list_view_style_before.png)|![after](../../assets/channel_list_view_style_after.png)|
+
+
+:::note
+The transformer should be set before the view is rendered to make sure that the new style was applied.
+:::
 
 ## Creating a Custom ViewHolder Factory
 
-`ChannelListView` provides a mechanism for completely changing the default view holders, as well as introducing different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
-
-![customer view holder](../../assets/custom_view_holder.png)
-
-In order to achieve such effect, we need to do the following steps. We are going to use _View Binding_ to simplify things:
+`ChannelListView` provides a way to completely change the default view holders and add different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
 
 1. Create `custom_channel_list_item.xml` layout:
 
@@ -139,7 +204,7 @@ In order to achieve such effect, we need to do the following steps. We are going
     </plurals>
 ```
 
-3. Create custom view holder and view holder factory
+3. Create a custom view holder and view holder factory
 
 ```kotlin
     class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
@@ -180,23 +245,22 @@ In order to achieve such effect, we need to do the following steps. We are going
     }
 ```
 
-4. Set custom view holder factory
+4. Set the custom view holder factory
 
 ```kotlin
 channelListView.setViewHolderFactory(CustomChannelListItemViewHolderFactory())
 ```
 
+These changes should have the following results:
+
+![customer view holder](../../assets/custom_view_holder.png)
+
+
 ## Creating a Custom Loading View
 
-Let's see an example of `ChannelListView` that will have a custom loading view with a shimmer effect:
+Custom loading view can be set using `ChannelListView::setLoadingView` method.
 
-<!-- TODO: Actually show shimmer effect here in the screenshots. -->
-
-| Light Mode | Dark Mode |
-| --- | --- |
-|![Light mode](../../assets/channel_action_light.png)|![Dark mode](../../assets/channel_action_dark.png)|
-
-Assuming that we have the setup similar to previous steps, we have to do the following steps:
+Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
 1. Add Shimmer dependency
 ```groovy
 implementation "com.facebook.shimmer:shimmer:0.5.0"
@@ -327,3 +391,7 @@ val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loa
 // Set loading view
 channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 ```
+
+These changes should have the following results:
+
+![Light mode](../../assets/channel_list_shimmer.png)

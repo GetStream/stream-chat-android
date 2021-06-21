@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.utils.RetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -51,6 +52,7 @@ internal class WhenSendMessage {
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any(), any())) doReturn channelClient
+        on(it.channel(any())) doReturn channelClient
     }
 
     private val channelType: String = randomString()
@@ -62,9 +64,10 @@ internal class WhenSendMessage {
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     private val domainImpl: ChatDomainImpl = mock {
+        on(it.appContext) doReturn mock()
         on(it.scope) doReturn testCoroutines.scope
         on(it.generateMessageId()) doReturn randomString()
-        on(it.currentUser) doReturn User()
+        on(it.user) doReturn MutableStateFlow(User())
         on(it.repos) doReturn repos
         on(it.isOnline()) doReturn true
         on(it.getActiveQueries()) doReturn emptyList()
@@ -89,34 +92,12 @@ internal class WhenSendMessage {
 
         mockFileUploadsFailure(files)
 
-        channelController.sendMessage(Message(attachments = attachments))
+        channelController.sendMessage(Message(attachments = attachments), mock())
 
         verify(channelClient).sendMessage(
             argThat { message ->
                 message.attachments.all { attach ->
                     attach.uploadState is Attachment.UploadState.Failed
-                }
-            }
-        )
-    }
-
-    @Test
-    fun `Attachments should be sent with success as uploadState when request success`() = scope.runBlockingTest {
-        whenever(domainImpl.runAndRetry<Message>(any())) doAnswer {
-            (it.arguments[0] as () -> Call<Message>).invoke().execute()
-        }
-
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-
-        mockFileUploadsSuccess(files)
-
-        channelController.sendMessage(Message(attachments = attachments))
-
-        verify(channelClient).sendMessage(
-            argThat { message ->
-                message.attachments.all { attach ->
-                    attach.uploadState is Attachment.UploadState.Success
                 }
             }
         )

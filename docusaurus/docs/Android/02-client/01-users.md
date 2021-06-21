@@ -1,6 +1,6 @@
 # Users
 
-<!-- TODO: Add brief intro about what users are -->
+User represents a person who uses a chat and can perform chat operations like viewing channels or sending messages.
 
 ## Connecting a User
 
@@ -94,7 +94,9 @@ Guest sessions can be created client-side and do not require any server-side aut
 
 Guest users are not available to application using multi-tenancy (teams).
 
-> Unlike anonymous users, guest users are counted towards your MAU usage.
+:::note
+Unlike anonymous users, guest users are counted towards your MAU usage.
+:::
 
 Guest users have a limited set of permissions. You can create a guest user session by using `connectGuestUser` instead of `connectUser`.
 
@@ -132,8 +134,9 @@ When you connect to chat using anonymously you receive a special user back with 
 	"language": ""
 }
 ```
-> Anonymous users are not counted toward your MAU number and only have an impact on the number of concurrent connected clients.
-
+:::note
+Anonymous users are not counted toward your MAU number and only have an impact on the number of concurrent connected clients.
+:::
 
 ## Querying Users
 
@@ -213,28 +216,13 @@ This would return an array of any matching users, such as:
 
 ## User presence
 
-User presence allows you to show when a user was last active and if they are online right now. Whenever you read a user the data will look like this:
-
-<!-- TODO: Replace this JSON with something more meaningful for Android devs -->
-
-```xml
-{
-    id: 'unique_user_id',
-    online: true,
-    status: 'Eating a veggie burger...',
-    last_active: '2019-01-07T13:17:42.375Z'
-}
-```
-
-<!-- TODO: Check if this status field is actuallz used anywhere -->
-
-> The online field indicates if the user is online. The status field stores text indicating the current user status.
+User presence allows you to show when a user was last active and if they are online right now. Check the following user's properties:
+- `online` - a boolean flag that indicates if the user is currently online
+- `lastActive` - user's last active date
 
 ### Marking a User Invisible
 
-To appear offline to other users, simply set the `invisible` property to `true` when connecting. You can also set a custom status message at the same time:
-
-<!-- TODO: Example doesn't show setting a status message -->
+To appear offline to other users, simply set the `invisible` property to `true` when connecting.
 
 ```kotlin
 val user = User(
@@ -250,7 +238,9 @@ client.connectUser(user, "user-token").enqueue { result ->
 }
 ```
 
-> **Note**: a User's invisible status can be only set while calling `connectUser` method.
+:::note
+User's invisible status can be only set while calling `connectUser` method.
+:::
 
 ### Listening to User Presence Changes
 

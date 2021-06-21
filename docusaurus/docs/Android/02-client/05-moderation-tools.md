@@ -1,5 +1,7 @@
 # Moderation Tools
 
+Moderation tools are features you can use to moderate a channel by detecting unwanted content and restricting the users that create the unwanted content.
+
 ## Flagging a Message or a User
 
 Any user is allowed to flag a message or a user. Flagging does not perform any particular action on the chat. The API will only trigger the related webhook event and make the message appear on your _Dashboard Chat Moderation_ view.
@@ -49,20 +51,26 @@ client.unmuteUser("user-id").enqueue { result ->
 
 After muting a user messages will still be delivered via web-socket. Implementing business logic such as hiding messages from muted users or display them differently is left to the developer to implement.
 
-> Messages from muted users are not delivered via push (APN/Firebase)
+:::note
+Messages from muted users are not delivered via push (APN/Firebase)
+:::
 
 ## Banning Users
 
 Users can be banned from an app entirely or just from a single channel. When a user is banned, they will not be allowed to post messages until the ban is removed or expired but they will be able to connect to Chat and to channels as before.
 
-> In most cases, only admins or moderators are allowed to ban other users from a channel.
+:::note
+In most cases, only admins or moderators are allowed to ban other users from a channel.
+:::
 
 | Name | Type | Description | Default | Optional |
 | :--- | :--- | :--- | :--- | :--- |
 | timeout | Int | The timeout in minutes until the ban is automatically expired. | 	no limit | &check; |
 | reason | String | The reason that the ban was created. | | &check; |
 
-> Banning a user from all channels can only be done using server-side auth.
+:::note
+Banning a user from all channels can only be done using server-side auth.
+:::
 
 ```kotlin
 // Ban user for 60 minutes from a channel 
@@ -87,7 +95,9 @@ channelClient.unBanUser(targetId = "user-id").enqueue { result ->
 
 Users can be shadow banned from an app entirely or just from a single channel. When a user is shadow banned, they will still be allowed to post messages, but any message sent during, will have `shadowed: true` field.
 
-> It's up to the client-side implementation to handle `shadowed` messages appropriately.
+:::note
+It's up to the client-side implementation to handle `shadowed` messages appropriately.
+:::
 
 ```kotlin
 // Shadow ban user for 60 minutes from a channel 
@@ -108,7 +118,9 @@ channelClient.removeShadowBan("user-id").enqueue { result ->
 }
 ```
 
-> Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
+:::note
+Administrators can view shadow banned user status in `queryChannels()`, `queryMembers()` and `queryUsers()`.
+:::
 
 ### Retrieving Banned Users
 

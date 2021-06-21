@@ -55,7 +55,7 @@ class Push(val context: Context, val client: ChatClient) {
             ChatNotificationHandler(context, notificationConfig) {
 
             override fun onFirebaseMessage(message: RemoteMessage): Boolean {
-                // Handle remote message and return true if message should be handled by SDK
+                // Handle remote message and return true if message should not be handled by SDK
                 return true
             }
         }

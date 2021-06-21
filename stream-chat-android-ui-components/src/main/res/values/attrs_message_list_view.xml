@@ -118,6 +118,43 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message Reply background color -->
+        <attr name="streamUiMessageReplyBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageReplyBackgroundColorTheirs" format="color" />
+        <!-- Message Reply text style mine -->
+        <attr name="streamUiMessageReplyTextSizeMine" format="dimension|reference" />
+        <attr name="streamUiMessageReplyTextColorMine" format="color" />
+        <attr name="streamUiMessageReplyTextFontMine" format="reference" />
+        <attr name="streamUiMessageReplyTextFontAssetsMine" format="string" />
+        <attr name="streamUiMessageReplyTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message Reply text style theirs -->
+        <attr name="streamUiMessageReplyTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageReplyTextColorTheirs" format="color" />
+        <attr name="streamUiMessageReplyTextFontTheirs" format="reference" />
+        <attr name="streamUiMessageReplyTextFontAssetsTheirs" format="string" />
+        <attr name="streamUiMessageReplyTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message Reply link -->
+        <attr name="streamUiMessageReplyLinkColorMine" format="color" />
+        <attr name="streamUiMessageReplyLinkColorTheirs" format="color" />
+        <attr name="streamUiMessageReplyLinkBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageReplyLinkBackgroundColorTheirs" format="color" />
+
+        <!-- Message Reply stroke -->
+        <attr name="streamUiMessageReplyStrokeColorMine" format="color" />
+        <attr name="streamUiMessageReplyStrokeWidthMine" format="dimension|reference" />
+        <attr name="streamUiMessageReplyStrokeColorTheirs" format="color" />
+        <attr name="streamUiMessageReplyStrokeWidthTheirs" format="dimension|reference" />
+
         <!-- Date separator -->
         <attr name="streamUiDateSeparatorBackgroundColor" format="color" />
 
@@ -205,7 +242,9 @@
         <attr name="streamUiDeleteMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
+        <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiMessageOptionIconColor" format="color" />
+        <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiWarningActionsTintColor" format="color" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
 
@@ -214,6 +253,16 @@
         <attr name="streamUiMessageOptionsTextFont" format="reference" />
         <attr name="streamUiMessageOptionsTextFontAssets" format="string" />
         <attr name="streamUiMessageOptionsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiWarningMessageOptionsTextSize" format="dimension|reference" />
+        <attr name="streamUiWarningMessageOptionsTextColor" format="color|reference" />
+        <attr name="streamUiWarningMessageOptionsTextFont" format="reference" />
+        <attr name="streamUiWarningMessageOptionsTextFontAssets" format="string" />
+        <attr name="streamUiWarningMessageOptionsTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

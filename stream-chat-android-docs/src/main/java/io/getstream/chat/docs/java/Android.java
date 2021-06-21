@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -86,6 +87,9 @@ import io.getstream.chat.android.ui.search.SearchInputView;
 import io.getstream.chat.android.ui.search.list.SearchResultListView;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem;
+import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory;
+import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder;
 import io.getstream.chat.docs.R;
 import kotlin.coroutines.Continuation;
 
@@ -118,7 +122,7 @@ public class Android {
             // Get ViewModel
             FilterObject filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.in("members", singletonList(ChatDomain.instance().getCurrentUser().getId()))
+                    Filters.in("members", singletonList(ChatDomain.instance().getUser().getValue().getId()))
             );
             int limit = 30;
 
@@ -251,6 +255,27 @@ public class Android {
                     // Handle stop typing case
                 }
             });
+        }
+
+        public void customSuggestionListviewHolderFactory() {
+            SuggestionListItemViewHolderFactory customViewHolderFactory = new CustomSuggestionListViewHolderFactory();
+            messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory);
+        }
+
+        class CustomSuggestionListViewHolderFactory extends SuggestionListItemViewHolderFactory {
+            @NonNull
+            @Override
+            public BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> createCommandViewHolder(@NonNull ViewGroup parentView) {
+                // Create custom command view holder here
+                return super.createCommandViewHolder(parentView);
+            }
+
+            @NonNull
+            @Override
+            public BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem> createMentionViewHolder(@NonNull ViewGroup parentView) {
+                // Create custom mention view holder here
+                return super.createMentionViewHolder(parentView);
+            }
         }
     }
 

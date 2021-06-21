@@ -5,7 +5,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.StreamFileProvider
+import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
@@ -38,7 +38,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment) {
                 // We don't have icons for image types, but we can load the actual image in this case
                 if (actualMimeType?.startsWith("image") == true && attachment.upload != null) {
                     load(
-                        data = StreamFileProvider.getUriForFile(context, attachment.upload!!),
+                        data = StreamFileUtil.getUriForFile(context, attachment.upload!!),
                         transformation = FILE_THUMB_TRANSFORMATION
                     )
                 } else {

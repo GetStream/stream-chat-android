@@ -1,8 +1,8 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.utils.DateFormatter
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.AvatarDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -16,22 +16,22 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
 
 internal class MessageListItemDecoratorProvider(
-    getCurrentUser: () -> User,
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
-    style: MessageListItemStyle,
+    messageStyle: MessageListItemStyle,
+    messageReplyStyle: MessageReplyStyle
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
-        BackgroundDecorator(style),
-        TextDecorator(style),
+        BackgroundDecorator(messageStyle),
+        TextDecorator(messageStyle),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         FailedIndicatorDecorator(),
-        ReactionsDecorator(style).takeIf { style.reactionsEnabled },
-        ReplyDecorator(getCurrentUser),
-        FootnoteDecorator(dateFormatter, isDirectMessage, style),
+        ReactionsDecorator(messageStyle).takeIf { messageStyle.reactionsEnabled },
+        ReplyDecorator(messageReplyStyle),
+        FootnoteDecorator(dateFormatter, isDirectMessage, messageStyle),
     )
 
     override val decorators: List<Decorator> = messageListDecorators

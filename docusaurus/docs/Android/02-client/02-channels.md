@@ -1,6 +1,10 @@
 # Channels
 
-<!-- TODO: Add brief intro about what channels are -->
+Channels are where conversations take place between two or more chat users. They contain a list of messages and have a list of the member users that are participating in the conversation.
+
+A channel is identified by its `type` and `id`. Some APIs use a `cid` to identify a channel with a single string - this is the combination of the two pieces of information, as `type:id`.
+Almost all API requests are specific to a channel (e.g. add a message to channel “livestream:rockets”) and as we saw already, channels are organized in groups called channel types. You can read more about channel types [here](https://getstream.io/chat/docs/android/channel_features/?language=kotlin).
+Channels are unique either by the specified channel id or by the list of members.
 
 ## Querying Channel List
 
@@ -33,7 +37,9 @@ client.queryChannels(request).enqueue { result ->
 }
 ```
 
-> At a minimum, the filter should include members: { $in: [userID] }.
+:::note
+At a minimum, the filter should include members: { $in: [userID] }.
+:::
 
 On messaging and team applications you normally have users added to channels as a member. A good starting point is to use this filter to show the channels the user is participating.
 
@@ -122,7 +128,9 @@ channelClient.query(request).enqueue { result ->
 
 For members and watchers, we use limit and offset parameters.
 
-> The maximum number of messages that can be retrieved at once from the API is 300.
+:::note
+The maximum number of messages that can be retrieved at once from the API is 300.
+:::
 
 ## Watching Channels
 
@@ -147,7 +155,9 @@ channelClient.watch().enqueue { result ->
     }
 }
 ```
-> **NOTE:** Watching a channel only works if you have connected as a user to the chat API
+:::note
+Watching a channel only works if you have connected as a user to the chat API
+:::
 
 The default `queryChannels` API returns channels and starts watching them. There is no need to also use `channel.watch` on the channels returned from `queryChannels`.
 
@@ -272,7 +282,9 @@ Channels can be used to conversations between users. In most cases, you want con
 
 You can achieve this by leaving the channel ID empty and provide channel type and members. When you do so, the API will ensure that only one channel for the members you specified exists (the order of the members does not matter).
 
-> You cannot add/remove members for channels created this way.
+:::note
+You cannot add/remove members for channels created this way.
+:::
 
 ```kotlin
 client.createChannel(
@@ -354,9 +366,13 @@ channelClient.update(
 
 Sometimes channels will have many hundreds (or thousands) of members and it is important to be able to access ID's and information on all of these members. The `queryMembers` endpoint queries the channel members and allows the user to paginate through a full list of users in channels with very large member counts. The endpoint supports filtering on numerous criteria to efficiently return member information.
 
-> The members are sorted by _created_at_ in ascending order.
+:::note
+The members are sorted by _created_at_ in ascending order.
+:::
 
-> _Stream Chat_ does not run MongoDB on the backend, only a subset of the query options are available.
+:::note
+_Stream Chat_ does not run MongoDB on the backend, only a subset of the query options are available.
+:::
 
 Here’s some example of how you can query the list of members:
 
@@ -580,7 +596,9 @@ client
     }
 ```
 
-> Messages added to muted channels do not increase the unread messages count.
+:::note
+Messages added to muted channels do not increase the unread messages count.
+:::
 
 Muted channels can be filtered or excluded by using the `muted` in your query channels filter.
 
@@ -738,4 +756,3 @@ channelClient.query(QueryChannelRequest()).enqueue { result ->
     }
 }
 ```
-

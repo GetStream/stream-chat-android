@@ -23,7 +23,7 @@ internal fun Channel.computeLastMessage(): Message? {
     return null
 }
 
-internal fun Channel.getReadDateOfChannelLastMessage(userId: String): Date? {
+internal fun Channel.getReadDateOfChannelLastMessage(userId: String?): Date? {
     val channelUserReadList = read
     if (!channelUserReadList.isNullOrEmpty()) {
         try {
@@ -41,9 +41,9 @@ internal fun Channel.getReadDateOfChannelLastMessage(userId: String): Date? {
 }
 
 @JvmOverloads
-internal fun Channel.getChannelNameOrMembers(currentUser: User = ChatDomain.instance().currentUser): String {
+internal fun Channel.getChannelNameOrMembers(currentUser: User? = ChatDomain.instance().user.value): String {
     val userName = name
-    return if (!userName.isNullOrEmpty()) {
+    return if (userName.isNotEmpty()) {
         userName
     } else {
         val users = members.getOtherUsers(currentUser)
@@ -59,8 +59,8 @@ internal fun Channel.getChannelNameOrMembers(currentUser: User = ChatDomain.inst
 }
 
 @JvmOverloads
-internal fun Channel.readLastMessage(currentUser: User = ChatDomain.instance().currentUser): Boolean {
-    val currentUserId = currentUser.id
+internal fun Channel.readLastMessage(currentUser: User? = ChatDomain.instance().user.value): Boolean {
+    val currentUserId = currentUser?.id
     val myReadDate: Date? = getReadDateOfChannelLastMessage(currentUserId)
     val lastMessage: Message? = computeLastMessage()
     return when {
@@ -76,7 +76,7 @@ internal fun Channel.readLastMessage(currentUser: User = ChatDomain.instance().c
 
 @JvmOverloads
 internal fun Channel.getLastMessageReads(
-    currentUser: User = ChatDomain.instance().currentUser
+    currentUser: User? = ChatDomain.instance().user.value
 ): List<ChannelUserRead> {
     val lastMessage: Message? = computeLastMessage()
     if (lastMessage?.createdAt == null) return emptyList()
@@ -84,7 +84,7 @@ internal fun Channel.getLastMessageReads(
     val readLastMessage: MutableList<ChannelUserRead> = mutableListOf()
 
     val channelUserReadList = read
-    val currentUserId = currentUser.id
+    val currentUserId = currentUser?.id
     for (channelUserRead in channelUserReadList) {
         if (channelUserRead.getUserId() == currentUserId || channelUserRead.lastRead == null) {
             continue

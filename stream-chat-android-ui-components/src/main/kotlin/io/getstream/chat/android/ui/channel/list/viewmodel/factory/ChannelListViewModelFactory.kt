@@ -6,8 +6,9 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
+import io.getstream.chat.android.ui.utils.FilterUtils
 
 /**
  * Creates a channels view model factory
@@ -23,7 +24,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+        FilterUtils.userFilter(ChatDomain.instance()),
         Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
     ),
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,

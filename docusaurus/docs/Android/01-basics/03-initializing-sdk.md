@@ -17,7 +17,9 @@ A best practice is to initialize `ChatClient` in the `Application` class:
 
 The _Builder_ for `ChatClient` exposes configuration options for features such as [Logging](./05-logging.md).
 
-> You can access your apiKey in the [Dashboard](https://getstream.io/dashboard).
+:::note
+You can access your apiKey in the [Dashboard](https://getstream.io/dashboard).
+:::
 
 If you create the `ChatClient` instance following the pattern in the previous example, you will be able to access that instance from any part of your application using the `instance()` method:
 
@@ -68,7 +70,12 @@ ChatClient.instance().connectUser(user = user, token = "userToken") // Replace w
     }
 ```
 
+:::note
 > To learn more about how to create a token and different user types, see [Connecting a User](../02-client/01-users.md#connecting-a-user).
-
+:::
 
 If the `connectUser` call was successful, you are now ready to use the SDK!
+
+## Adding UI Components
+
+<!-- TODO add basic guide or link to tutorial or to 04-guides? --> 

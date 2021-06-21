@@ -646,6 +646,7 @@ private fun UnknownEventDto.toDomain(): UnknownEvent {
     return UnknownEvent(
         type = type,
         createdAt = created_at,
+        user = user?.toDomain(),
         rawData = rawData,
     )
 }
