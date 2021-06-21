@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
@@ -91,10 +92,46 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
         }
 
         /**
-         * @see <a href="https://getstream.io/chat/docs/event_listening/?language=kotlin#stop-listening-for-events">Stop Listeing for Events</a>
+         * @see <a href="https://getstream.io/chat/docs/event_listening/?language=kotlin#stop-listening-for-events">Stop Listening for Events</a>
          */
         fun stopListeningEvents() {
             val disposable: Disposable = client.subscribe { /* ... */ }
+            disposable.dispose()
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=kotlin">Custom Events</a>
+     */
+    inner class CustomEvents {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=kotlin#to-a-channel">Sending Custom Events</a>
+         */
+        fun sendingCustomEvents() {
+            // Send a custom event to all users watching the channel
+            channelClient.sendEvent(
+                eventType = "friendship_request",
+                extraData = mapOf("text" to "Hey there, long time no see!")
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    val chatEvent: ChatEvent = result.data()
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=kotlin#to-a-channel">Listening for Custom Events</a>
+         */
+        fun listeningForCustomEvents() {
+            // Subscribe for custom events
+            val disposable: Disposable = channelClient.subscribeFor<UnknownEvent> { customEvent ->
+                val text = customEvent.rawData["text"]
+            }
+
+            // Dispose when you want to stop receiving events
             disposable.dispose()
         }
     }

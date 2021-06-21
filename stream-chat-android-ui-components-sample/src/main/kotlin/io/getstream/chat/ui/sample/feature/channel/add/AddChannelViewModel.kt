@@ -79,7 +79,9 @@ class AddChannelViewModel : ViewModel() {
             val result = chatDomain
                 .createDistinctChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
-                    members = members.map { it.id } + chatDomain.currentUser.id,
+                    members = members.map { it.id }.let { members ->
+                        chatDomain.user.value?.id?.let(members::plus) ?: members
+                    },
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).await()
             if (result.isSuccess) {

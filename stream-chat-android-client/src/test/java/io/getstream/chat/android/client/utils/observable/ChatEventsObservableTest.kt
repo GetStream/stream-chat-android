@@ -64,9 +64,9 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun filtering() {
-        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
-        val eventB = UnknownEvent("b", Date(), mapOf<Any, Any>("cid" to "myCid"))
-        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
+        val eventA = UnknownEvent("a", Date(), null, emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), null, mapOf<Any, Any>("cid" to "myCid"))
+        val eventC = UnknownEvent("c", Date(), null, emptyMap<Any, Any>())
 
         val filter: (ChatEvent) -> Boolean = {
             it.type == "b" && (it as? UnknownEvent)?.rawData?.get("cid") == "myCid"
@@ -84,9 +84,9 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun unsubscription() {
-        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
-        val eventB = UnknownEvent("b", Date(), emptyMap<Any, Any>())
-        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
+        val eventA = UnknownEvent("a", Date(), null, emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), null, emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", Date(), null, emptyMap<Any, Any>())
 
         val subscription = observable.subscribe { result.add(it) }
 

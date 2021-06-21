@@ -1128,6 +1128,16 @@ public class ChatClient internal constructor(
         return api.rejectInvite(channelType, channelId)
     }
 
+    /**
+     * Sends an event to all users watching the channel.
+     *
+     * @param eventType the event name
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param extraData the event payload
+     *
+     * @return executable async [Call] responsible for sending an event.
+     */
     @CheckResult
     public fun sendEvent(
         eventType: String,
