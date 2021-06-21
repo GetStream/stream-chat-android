@@ -1,5 +1,8 @@
 package io.getstream.chat.docs.java;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.ChatEvent;
@@ -7,6 +10,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.events.UnknownEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
@@ -101,6 +105,46 @@ public class Events {
             final Disposable disposable = client.subscribe(chatEvent -> {
                 /* ... */
             });
+            disposable.dispose();
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java">Custom Events</a>
+     */
+    class CustomEvents {
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java#to-a-channel">Sending Custom Events</a>
+         */
+        public void sendingCustomEvents() {
+            Map<Object, Object> extraData = new HashMap<>();
+            extraData.put("text", "Hey there, long time no see!");
+
+            // Send a custom event to all users watching the channel
+            channelClient.sendEvent("friendship_request", extraData).enqueue(result -> {
+                if (result.isSuccess()) {
+                    ChatEvent chatEvent = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        /**
+         * @see <a href="https://getstream.io/chat/docs/android/custom_events/?language=java#to-a-channel">Listening for Custom Events</a>
+         */
+        public void listeningForCustomEvents() {
+            // Subscribe for custom events
+            Disposable disposable = channelClient.subscribeFor(
+                    new Class[]{UnknownEvent.class},
+                    (ChatEvent event) -> {
+                        UnknownEvent customEvent = (UnknownEvent) event;
+                        String text = (String) customEvent.getRawData().get("text");
+                    }
+            );
+
+            // Dispose when you want to stop receiving events
             disposable.dispose();
         }
     }

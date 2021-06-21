@@ -611,5 +611,6 @@ public data class ErrorEvent(
 public data class UnknownEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
+    val user: User?,
     val rawData: Map<*, *>,
 ) : ChatEvent()

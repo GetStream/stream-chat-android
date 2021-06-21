@@ -15,7 +15,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 
-    private val currentUserId: String = ChatDomain.instance().currentUser.id
+    private val currentUserId: String? = ChatDomain.instance().user.value?.id
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     val state: LiveData<State> = _state
@@ -34,7 +34,9 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
                 .createChannel(
                     channelType = CHANNEL_TYPE_MESSAGING,
                     channelId = UUID.randomUUID().toString(),
-                    members = members.map { it.id } + currentUserId,
+                    members = members.map { it.id }.let { members ->
+                        currentUserId?.let(members::plus) ?: members
+                    },
                     extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name)
                 ).await()
             if (result.isSuccess) {

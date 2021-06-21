@@ -28,7 +28,12 @@ class ChatInfoSharedGroupsFragment : Fragment() {
         ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id, args.memberId)),
+                Filters.`in`(
+                    "members",
+                    listOf(args.memberId).let { members ->
+                        ChatDomain.instance().user.value?.id?.let(members::plus) ?: members
+                    }
+                ),
                 Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
                 Filters.greaterThan("member_count", 2),
             ),
@@ -41,7 +46,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChatInfoSharedGroupsBinding.inflate(inflater, container, false)
         return binding.root

@@ -235,7 +235,7 @@ internal class MessageInputFieldView : FrameLayout {
         switchToMessageMode()
         binding.messageReplyView.setMessage(
             currentMode.repliedMessage,
-            ChatDomain.instance().currentUser.id == currentMode.repliedMessage.user.id,
+            ChatDomain.instance().user.value?.id == currentMode.repliedMessage.user.id,
             null,
         )
         binding.messageReplyView.isVisible = true
