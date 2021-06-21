@@ -804,7 +804,6 @@ public class ChannelController internal constructor(
                 deletedAt = Date()
             )
         }
-        domainImpl.repos.insertReaction(reaction)
         // update flow
         val currentMessage = getMessage(reaction.messageId)?.copy()
         currentMessage?.let {
