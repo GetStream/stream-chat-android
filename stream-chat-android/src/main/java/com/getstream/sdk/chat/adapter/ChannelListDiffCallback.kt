@@ -12,7 +12,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 internal class ChannelListDiffCallback @JvmOverloads constructor(
     private val oldList: List<Channel>,
     private val newList: List<Channel>,
-    private val currentUser: User = ChatDomain.instance().currentUser,
+    private val currentUser: User? = ChatDomain.instance().user.value,
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -85,8 +85,8 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
     }
 
     private fun channelUserReadIsDifferent(oldChannel: Channel, newChannel: Channel): Boolean {
-        val oldRead = getUserRead(oldChannel, currentUser.id)
-        val newRead = getUserRead(newChannel, currentUser.id)
+        val oldRead = getUserRead(oldChannel, currentUser?.id)
+        val newRead = getUserRead(newChannel, currentUser?.id)
         return if (oldRead == null || newRead == null) {
             false
         } else {
@@ -94,7 +94,7 @@ internal class ChannelListDiffCallback @JvmOverloads constructor(
         }
     }
 
-    private fun getUserRead(channel: Channel, userId: String): ChannelUserRead? {
+    private fun getUserRead(channel: Channel, userId: String?): ChannelUserRead? {
         return channel.read.firstOrNull { it.getUserId() == userId }
     }
 }

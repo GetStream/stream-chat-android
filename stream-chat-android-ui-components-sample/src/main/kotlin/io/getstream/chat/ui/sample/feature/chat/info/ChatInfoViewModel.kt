@@ -57,9 +57,9 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = Filters.ne("id", chatDomain.currentUser.id)
-                    )
-                        .await()
+                        filter = chatDomain.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral()
+                    ).await()
+
                 if (result.isSuccess) {
                     val member = result.data().firstOrNull()
                     // Update member, member block status, and channel notifications
