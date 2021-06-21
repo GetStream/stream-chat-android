@@ -2,13 +2,13 @@
 
 The UI components library includes pre-built Android Views to easily load and display data from the Stream Chat API.
 
-|![Channel List](../assets/channel_list.png)|![Attachments](../assets/attachments.png)|  
-|---|---|
-|![messages](../assets/messages.png)|![Message Input](../assets/message_input.png)|  
+|||
+| --- | --- |
+| ![Channel List component](../assets/sample-channels-light.png) | ![Message List component](../assets/sample-messages-light.png) |
 
 This library builds on top of the offline library, and provides [ViewModels](#viewmodels) for each View to easily populate them with data and handle input events. The [sample app](#sample-app) showcases the UI components in action.
 
-Those are the components. You can click in the components to learn more about them:
+See the individual pages of the components to learn more about them:
 
 - [Channel List](./04-components/01-channel-list.md)
 - [Channel List Header](./04-components/02-channel-list-header.md)
@@ -47,7 +47,9 @@ You can learn more about setting up each UI component on its individual document
 
 The [UI components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) is an open source, fully functional messaging application. It features threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our UI components.
 
-![Sample App](../assets/sample_app.png)
+|||
+| --- | --- |
+| ![Sample app login screen](../assets/sample-login-dark.png) | ![Sample app messages screen](../assets/sample-messages-dark.png) |
 
 ### Customization
 
@@ -56,5 +58,3 @@ The UI components offer customization options via XML attributes as well as inst
 Additionally, the SDK provides two entry points for global customization:
 - The [`ChatUI` object](./03-chatui.md) to override such things as fonts, URL signing logic, etc.
 - The [`TransformStyle` object](./02-global-styling.md) to override view attributes programmatically.
-
-
