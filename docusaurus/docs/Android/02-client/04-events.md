@@ -109,7 +109,7 @@ channelClient.sendEvent(
 ```
 
 :::note
-Custom events are enabled by default on all channel types, you can disable them using the Dashboard or the API the same way as you would manage other channel features (ie. replies, URL previews, ...)
+Custom events are enabled by default on all channel types. You can disable them using the [Dashboard](https://dashboard.getstream.io/) or the API.
 :::
 
 You can listen to custom events by subscribing for `UnknownEvent`:
