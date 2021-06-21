@@ -112,7 +112,7 @@ channelClient.sendEvent(
 Custom events are enabled by default on all channel types, you can disable them using the Dashboard or the API the same way as you would manage other channel features (ie. replies, URL previews, ...)
 :::
 
-You can also listen to custom events by subscribing for `UnknownEvent`:
+You can listen to custom events by subscribing for `UnknownEvent`:
 
 ```kotlin
 val channelClient = client.channel("messaging", "channelId") 
