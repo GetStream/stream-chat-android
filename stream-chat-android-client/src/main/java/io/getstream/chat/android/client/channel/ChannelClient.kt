@@ -640,6 +640,7 @@ public class ChannelClient internal constructor(
         return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
     }
 
+    @CheckResult
     public fun stopTyping(parentId: String): Call<ChatEvent> {
         return client.sendEvent(
             eventType = EventType.TYPING_STOP,
@@ -647,6 +648,22 @@ public class ChannelClient internal constructor(
             channelId = channelId,
             extraData = mapOf(ARG_TYPING_PARENT_ID to parentId),
         )
+    }
+
+    /**
+     * Sends an event to all users watching the channel.
+     *
+     * @param eventType the event name
+     * @param extraData the event payload
+     *
+     * @return executable async [Call] responsible for sending an event.
+     */
+    @CheckResult
+    public fun sendEvent(
+        eventType: String,
+        extraData: Map<Any, Any> = emptyMap(),
+    ): Call<ChatEvent> {
+        return client.sendEvent(eventType, channelType, channelId, extraData)
     }
 
     @CheckResult

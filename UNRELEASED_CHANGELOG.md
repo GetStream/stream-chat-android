@@ -28,6 +28,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelClient::sendEvent` method which allows to send custom events.
+- Added nullable `User` field to `UnknownEvent`.
 
 ### ⚠️ Changed
 
