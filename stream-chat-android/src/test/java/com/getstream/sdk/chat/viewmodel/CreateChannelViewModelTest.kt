@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
 import com.nhaarman.mockitokotlin2.any
@@ -43,7 +44,7 @@ internal class CreateChannelViewModelTest {
 
     @BeforeEach
     fun setup() {
-        whenever(chatDomain.currentUser) doReturn CURRENT_USER
+        whenever(chatDomain.user) doReturn MutableLiveData(CURRENT_USER)
         whenever(chatDomain.createChannel(any())) doReturn createChannelCall
         whenever(createChannelResult.data()) doReturn CHANNEL
         whenever(createChannelResult.isError) doReturn false

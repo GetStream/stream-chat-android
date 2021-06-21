@@ -39,6 +39,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed `in` and `nin` filters when filtering by extra data field that is an array.
 
 ### ⬆️ Improved
 - Now attachments can be sent while being in offline
