@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.cookbook.ui
 
 import android.content.Context
+import android.graphics.Color
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.enums.GiphyAction
 import io.getstream.chat.android.client.models.Attachment
@@ -60,10 +61,34 @@ class MessageListViewExample {
         }
     }
 
+    fun setListeners() {
+        messageListView.setMessageClickListener { message: Message ->
+            // Listen to click on message events
+        }
+        messageListView.setEnterThreadListener { message: Message ->
+            // Listen to events when enter thread associated with a message
+        }
+        messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+            // Listen to events when download click for an attachment happens
+        }
+    }
+
     fun customiseMessageListViewProgrammatically(context: Context) {
-        TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
-            viewStyle.copy(
-                messageInputTextColor = ContextCompat.getColor(context, R.color.stream_ui_white)
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                messageBackgroundColorMine = Color.parseColor("#70AF74"),
+                messageBackgroundColorTheirs = Color.WHITE,
+                textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
+                textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
+            )
+        }
+        TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                scrollButtonViewStyle = defaultViewStyle.scrollButtonViewStyle.copy(
+                    scrollButtonColor = Color.RED,
+                    scrollButtonUnreadEnabled = false,
+                    scrollButtonIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_clock)!!,
+                ),
             )
         }
     }

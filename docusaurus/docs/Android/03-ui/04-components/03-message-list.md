@@ -4,12 +4,12 @@
 
 ## Overview
 
-`MessageListView` is one of our core UI components. Generally speaking it's a list of messages for some particular channel. The `MessageListView` contains the following list of members:
+`MessageListView` is one of our core UI components. Generally speaking it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
 
 1. Plain text message
 2. Text and attachments (media or file) message
 3. Deleted message (only for current user)
-4. Error message (e.g. autoblocked message with innapropriate content)
+4. Error message (e.g. autoblocked message with inappropriate content)
 5. System message (e.g. some user joined to a channel)
 6. Giphy preview
 7. Date separator
@@ -30,6 +30,7 @@ If you want to use all default features and default design of this component the
 
 ### Adding to xml layout
 Adding `MessageListView` to your layout is easy as inserting following lines to your layout hierarchy (example for `ConstraintLayout`):
+
 ```xml
 <io.getstream.chat.android.ui.message.list.MessageListView
         android:id="@+id/message_list_view"
@@ -43,7 +44,8 @@ Adding `MessageListView` to your layout is easy as inserting following lines to 
 ``` 
 
 ### ViewModel and binding
-UI components provide out-of-box a view model for `MessageListView` and the `bindView` extensions function that makes default setup:
+UI components provide out-of-box a view model for `MessageListView` and the `bindView` extension function that makes default setup:
+
 ```kotlin
 class MessageListFragment : Fragment() {
 
@@ -75,7 +77,7 @@ class MessageListFragment : Fragment() {
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
-If you're not going to use out of the box `MessageListViewModel` with it's handler or just want to override action handlers you should define these handlers:
+If you're not going to use out of the box `MessageListViewModel` with it's handlers or just want to override action handlers you should define these handlers:
 ```kotlin
 fun setActionHandlers() {
         messageListView.setLastMessageReadHandler {
@@ -120,36 +122,42 @@ fun setActionHandlers() {
     }
 ``` 
 
-_P.S. Handlers must be set before passing any data to `MessageListView`. So if you don't use default binding, please, make sure you defined them._
+---
+**NOTE**
 
-Most of the actions work out of the box but you can change their behavior using different listeners and handlers:
+Handlers must be set before passing any data to `MessageListView`. So if you don't use default binding, please, make sure you defined them.
+
+___
+
+### Listeners
+
+Except of required handlers you're able to set listeners to get events when something happens:
 
 ```kotlin
-messageListView.setMessageClickListener { message ->
-    // Handle message click
-}
-messageListView.setAttachmentClickListener { message, attachment ->
-    // Handle attachment click
-}
-messageListView.setMessageEditHandler { message ->
-    // Handle edit message
-}
-messageListView.setMessageDeleteHandler { message ->
-    // Handle edit message
-}
+fun setListeners() {
+        messageListView.setMessageClickListener { message: Message ->
+            // Listen to click on message events
+        }
+        messageListView.setEnterThreadListener { message: Message ->
+            // Listen to events when enter thread associated with a message
+        }
+        messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+            // Listen to events when download click for an attachment happens
+        }
+    }
 ```
+Other available listeners for `MessageListView` can be found [here](https://github.com/GetStream/stream-chat-android/blob/5084b1528f15530782648de559d58de6d55045d5/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer.kt)
 
 The full lists of available listeners and handlers are available [here (MessageListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view/index.html).
 
 ## Customizations
 
-It is possible to change the style in two ways: using XML and programmatically.
+If you want to setup appearance of this component by your design requirements you're free to do it.
+There are two ways to change the style: using XML attributes and runtime changes.
 
 ### Customization with XML Attributes
-
-<!-- TODO: Make this section better. -->
-
-Let's change the style of messages sent by the current user.
+`MessageListView` provides a quite big set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml)
+Let's consider an example when we want to change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -157,26 +165,24 @@ Let's change the style of messages sent by the current user.
 
 In order to do that, we need to add additional attributes to `MessageListView`:
 ```xml
-<io.getstream.chat.android.ui.message.list.MessageListView
-    android:id="@+id/messageListView"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginHorizontal="0dp"
-    android:clipToPadding="false"
-    app:layout_constraintBottom_toTopOf="@+id/messageInputView"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-    app:streamUiMessageBackgroundColorMine="#70AF74"
-    app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
-    app:streamUiMessageTextColorMine="#FFFFFF"
-    app:streamUiMessageTextColorTheirs="#000000"
-    />
+    <io.getstream.chat.android.ui.message.list.MessageListView
+        android:id="@+id/messageListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
+        app:streamUiMessageBackgroundColorMine="#70AF74"
+        app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
+        app:streamUiMessageTextColorMine="#FFFFFF"
+        app:streamUiMessageTextColorTheirs="#000000"
+        />
 ```
 
 ### Customization at Runtime
-
-<!-- TODO: Make this section better. -->
 
 Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/index.html) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/index.html)).
 
@@ -197,8 +203,11 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
     )
 }
 ```
+___
+**Note**
 
-Note: The transformers should be set before the views are rendered to make sure that the new style was applied.
+The transformers should be set before the views are rendered to make sure that the new style was applied.
+___
 
 As another example, let's modify the default view which allows scrolling to the bottom when the new message arrives:
 
@@ -218,7 +227,6 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
     )
 }
 ```
-
 
 ## Creating a Custom Empty State
 
