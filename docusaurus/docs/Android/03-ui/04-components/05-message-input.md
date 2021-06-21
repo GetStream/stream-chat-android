@@ -17,6 +17,32 @@ It supports the following features:
 * Mentions
 * Replies
 
+## Usage
+The `MessageInputView` can be included view XML in the layout. It normally goes bellow the `MessageListView`.
+
+```xml
+<io.getstream.chat.android.ui.message.input.MessageInputView
+        android:id="@+id/messageInputView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageListView"
+        />
+```
+Then is can be bind with the ViewModel, which is the recomemded way, to make it fully usable. It can also be customized is many ways, as described in the next sections.
+
+## ViewModel
+To simplify the customization of behaviour for this view, it is possible to bind a `MessageInputViewModel` to it which will set the listeners and make it fully usable:
+
+```kotlin
+val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+val viewModel: MessageInputViewModel by viewModels { factory }
+// Bind it with MessageInputView
+viewModel.bindView(messageInputView, viewLifecycleOwner)
+```
+
 ## Handling actions 
 
 Actions can be handled by setting listeners on this view, like a click in the send message button or a user start/stop typing:
@@ -78,16 +104,6 @@ messageInputView.setSendMessageHandler(
         }
     }
 )
-```
-
-## ViewModel
-To simplify the customization of behaviour for this view, it is possible to bind a `MessageInputViewModel` to it which will set the listeners and make it fully usable:
-
-```kotlin
-val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
-val viewModel: MessageInputViewModel by viewModels { factory }
-// Bind it with MessageInputView
-viewModel.bindView(messageInputView, viewLifecycleOwner)
 ```
 
 ## Customizations
@@ -220,7 +236,7 @@ This produces the following result:
 
 ## Attachments
 
-There a limit for the size of attachments in this view. The default value is 20MB, and selecting a file larger than that limit will notify the user:
+There is a limit for the size of attachments in this view. The default value is 20MB, and selecting a file larger than that limit will notify the user:
 
 ![Big file feedback](../../assets/big_attachment.png)
 
