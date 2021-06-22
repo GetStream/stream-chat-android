@@ -6,13 +6,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
+import android.view.View
+import android.view.WindowManager
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -33,10 +38,13 @@ import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListContr
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 import kotlinx.coroutines.flow.collect
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
+import java.lang.Exception
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
+    private val logger = ChatLogger.get("MessageInputView")
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -60,6 +68,7 @@ public class MessageInputView : ConstraintLayout {
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
     private var typingListener: TypingListener? = null
+    private var isKeyboardListenerRegistered: Boolean = false
 
     private val attachmentSelectionListener = object : AttachmentSelectionListener {
         override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
@@ -190,6 +199,13 @@ public class MessageInputView : ConstraintLayout {
         suggestionListView.setSuggestionListViewHolderFactory(viewHolderFactory)
     }
 
+    /**
+     * Hides the suggestion list popup.
+     */
+    public fun hideSuggestionList() {
+        suggestionListController?.hideSuggestionList()
+    }
+
     private fun setSuggestionListViewInternal(suggestionListView: SuggestionListView, popupWindow: Boolean = true) {
         this.suggestionListView = suggestionListView
         suggestionListView.configStyle(style)
@@ -253,7 +269,7 @@ public class MessageInputView : ConstraintLayout {
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
-        suggestionListController?.hideSuggestionList()
+        hideSuggestionList()
         super.onDetachedFromWindow()
     }
 
@@ -401,6 +417,21 @@ public class MessageInputView : ConstraintLayout {
             }
         )
 
+        binding.messageInputFieldView.binding.messageEditText.onFocusChangeListener =
+            OnFocusChangeListener { _: View?, hasFocus: Boolean ->
+                if (hasFocus) {
+                    Utils.showSoftKeyboard(this)
+                } else {
+                    Utils.hideSoftKeyboard(this)
+                    hideSuggestionList()
+                }
+
+                if (!isKeyboardListenerRegistered) {
+                    isKeyboardListenerRegistered = true
+                    registerKeyboardListener()
+                }
+            }
+
         binding.messageInputFieldView.run {
             setTextColor(style.messageInputTextColor)
             setHintTextColor(style.messageInputHintTextColor)
@@ -417,6 +448,25 @@ public class MessageInputView : ConstraintLayout {
         }
 
         binding.separator.background = style.dividerBackground
+    }
+
+    /**
+     * Registers keyboard visibility change listener. The listener is responsible for hiding the suggestion
+     * list popup and clearing the current focus when keyboard is hidden. The listener will not be registered
+     * if adjustment option for [WindowManager.LayoutParams.softInputMode] doesn't imply resizing a window,
+     * for example [WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING].
+     */
+    private fun registerKeyboardListener() {
+        try {
+            KeyboardVisibilityEvent.setEventListener(activity) { isOpen: Boolean ->
+                if (!isOpen) {
+                    binding.messageInputFieldView.clearMessageInputFocus()
+                    hideSuggestionList()
+                }
+            }
+        } catch (e: Exception) {
+            logger.logE("Failed to register keyboard listener", e)
+        }
     }
 
     private fun handleKeyStroke() {
