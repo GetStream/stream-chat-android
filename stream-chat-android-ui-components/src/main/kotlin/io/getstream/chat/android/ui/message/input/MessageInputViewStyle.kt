@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogStyle
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 

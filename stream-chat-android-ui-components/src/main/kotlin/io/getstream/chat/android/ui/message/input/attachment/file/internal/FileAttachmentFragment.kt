@@ -18,9 +18,9 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

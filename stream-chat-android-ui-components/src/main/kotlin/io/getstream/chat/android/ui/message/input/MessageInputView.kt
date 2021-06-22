@@ -23,9 +23,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.message.input.attachment.internal
+package io.getstream.chat.android.ui.message.input.attachment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,9 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
+import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
-internal class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
+public class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
     private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +32,7 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = StreamUiDialogAttachmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -98,7 +99,10 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
 
     override fun getTheme(): Int = R.style.StreamUiAttachmentBottomSheetDialog
 
-    fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
+    /**
+     * Sets the listener that will be notified when picking attachments has been completed.
+     */
+    public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
     }
 
@@ -144,16 +148,22 @@ internal class AttachmentDialogFragment : BottomSheetDialogFragment(), Attachmen
         }
     }
 
-    companion object {
-        const val TAG = "attachments"
+    public companion object {
+        public const val TAG: String = "attachment_dialog_fragment"
 
-        const val REQUEST_KEY_CAMERA = "key_camera"
-        const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
-        const val BUNDLE_KEY = "bundle_attachments"
+        internal const val REQUEST_KEY_CAMERA = "key_camera"
+        internal const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
+        internal const val BUNDLE_KEY = "bundle_attachments"
 
-        var staticStyle: AttachmentDialogStyle? = null
+        internal var staticStyle: AttachmentDialogStyle? = null
 
-        fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentDialogFragment {
+        /**
+         * Create a new instance of the Attachment picker dialog.
+         *
+         * See [AttachmentDialogStyle.createDefault] to load a default set of icons to be used for the
+         * attachment dialog's tabs.
+         */
+        public fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentDialogFragment {
             staticStyle = attachmentDialogStyle
             return AttachmentDialogFragment()
         }
