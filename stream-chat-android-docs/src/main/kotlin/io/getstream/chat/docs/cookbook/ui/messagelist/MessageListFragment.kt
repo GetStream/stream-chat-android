@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.cookbook.ui
+package io.getstream.chat.docs.cookbook.ui.messagelist
 
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel

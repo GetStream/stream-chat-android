@@ -252,6 +252,123 @@ fun disableChannelFeatures() {
 | --- | --- |
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
+## Message list item factory
+`MessageListItem` provides API for creating custom view holders. You can set custom view holder factory to `MessageListView`. Just extend `MessageListItemViewHolderFactory`, write your logic, make new instance and set to `MessageListView`.
+Let's consider an example when we want to create custom view holders for messages from other users that came less than 24 hours ago.
+Result should look like:
+
+![](../../assets/message_list_custom_vh_factory.png)
+
+1. Add new layout `today_message_list_item.xml` for our custom view holder
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="4dp"
+        app:cardBackgroundColor="@android:color/holo_green_dark"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/textLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/primary_text_light"
+            android:padding="16dp"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+2. Add new `TodayViewHolder` class to codebase
+```kotlin
+class TodayViewHolder(
+    parentView: ViewGroup,
+    private val binding: TodayMessageListItemBinding = TodayMessageListItemBinding.inflate(LayoutInflater.from(
+        parentView.context),
+        parentView,
+        false),
+) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        binding.textLabel.text = data.message.text
+    }
+}
+```
+
+3. Add new `CustomMessageViewHolderFactory` class to codebase
+```kotlin
+class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
+    override fun getItemViewType(item: MessageListItem): Int {
+        return if (item is MessageListItem.MessageItem &&
+            item.isTheirs &&
+            item.message.attachments.isEmpty() &&
+            item.message.createdAt.isLessThenDayAgo()
+        ) {
+            TODAY_VIEW_HOLDER_TYPE
+        } else {
+            super.getItemViewType(item)
+        }
+    }
+
+    private fun Date?.isLessThenDayAgo(): Boolean {
+        if (this == null) {
+            return false
+        }
+        val dayInMillis = TimeUnit.DAYS.toMillis(1)
+        return time >= System.currentTimeMillis() - dayInMillis
+    }
+
+    override fun createViewHolder(
+        parentView: ViewGroup,
+        viewType: Int,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return if (viewType == TODAY_VIEW_HOLDER_TYPE) {
+            TodayViewHolder(parentView)
+        } else {
+            super.createViewHolder(parentView, viewType)
+        }
+    }
+
+    companion object {
+        private const val TODAY_VIEW_HOLDER_TYPE = 1
+    }
+}
+```
+
+4. Finally, set instance of custom factory to `MessageListView`
+```kotlin
+fun setCustomViewHolderFactory() {
+        messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
+    }
+```
+
 ## Creating a Custom Empty State
 
 <!-- TODO: Review this example, possibly remove it. -->

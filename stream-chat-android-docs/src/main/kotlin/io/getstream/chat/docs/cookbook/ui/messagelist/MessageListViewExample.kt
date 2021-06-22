@@ -1,4 +1,4 @@
-package io.getstream.chat.docs.cookbook.ui
+package io.getstream.chat.docs.cookbook.ui.messagelist
 
 import android.content.Context
 import android.graphics.Color
@@ -97,5 +97,9 @@ class MessageListViewExample {
         messageListView.setRepliesEnabled(false)
         messageListView.setDeleteMessageEnabled(false)
         messageListView.setEditMessageEnabled(false)
+    }
+
+    fun setCustomViewHolderFactory() {
+        messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
     }
 }
