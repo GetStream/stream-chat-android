@@ -178,14 +178,6 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
-    @Deprecated(
-        message = "Setting external SuggestionListView is no longer necessary to display suggestions popup",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setSuggestionListView(suggestionListView: SuggestionListView) {
-        setSuggestionListViewInternal(suggestionListView, popupWindow = false)
-    }
-
     public fun setSuggestionListViewHolderFactory(viewHolderFactory: SuggestionListItemViewHolderFactory) {
         suggestionListView.setSuggestionListViewHolderFactory(viewHolderFactory)
     }
