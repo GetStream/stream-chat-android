@@ -321,7 +321,8 @@ public class ChatClient internal constructor(
      * Moreover, it warms up the connection, and sets up notifications.
      *
      */
-    private fun setUserWithoutConnectingIfNeeded() {
+    @InternalStreamChatApi
+    public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet()) {
             return
         }

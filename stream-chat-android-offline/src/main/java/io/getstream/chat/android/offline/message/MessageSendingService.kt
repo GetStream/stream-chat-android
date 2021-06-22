@@ -65,15 +65,20 @@ internal class MessageSendingService(
     }
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
-        return if (domainImpl.online.value) {
-            return if (message.hasPendingAttachments()) {
-                waitForAttachmentsToBeSent(message)
-            } else {
-                doSend(message)
+        return when {
+            domainImpl.online.value ->
+                if (message.hasPendingAttachments()) {
+                    waitForAttachmentsToBeSent(message)
+                } else {
+                    doSend(message)
+                }
+
+            message.hasPendingAttachments() -> waitForAttachmentsToBeSent(message)
+
+            else -> {
+                logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
+                Result(message)
             }
-        } else {
-            logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            Result(message)
         }
     }
 
