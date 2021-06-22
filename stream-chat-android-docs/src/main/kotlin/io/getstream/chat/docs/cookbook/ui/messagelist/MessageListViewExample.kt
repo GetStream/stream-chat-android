@@ -2,7 +2,11 @@ package io.getstream.chat.docs.cookbook.ui.messagelist
 
 import android.content.Context
 import android.graphics.Color
+import android.view.Gravity
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -101,5 +105,28 @@ class MessageListViewExample {
 
     fun setCustomViewHolderFactory() {
         messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
+    }
+
+    fun setItemPredicate() {
+        val forbiddenWord = "secret"
+        val predicate = MessageListView.MessageListItemPredicate { item ->
+            !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
+        }
+        messageListView.setMessageListItemPredicate(predicate)
+    }
+
+    fun setCustomEmptyView(context: Context) {
+        val textView = TextView(context).apply {
+            text = "There are no messages yet"
+            setTextColor(Color.GREEN)
+        }
+        messageListView.setEmptyStateView(
+            view = textView,
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+        )
     }
 }

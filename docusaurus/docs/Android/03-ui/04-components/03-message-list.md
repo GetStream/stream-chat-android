@@ -369,22 +369,40 @@ fun setCustomViewHolderFactory() {
     }
 ```
 
-## Creating a Custom Empty State
-
-<!-- TODO: Review this example, possibly remove it. -->
-
-2. Set new empty state view to _MessageListView_:
+## Message list item predicate
+If you want to filter some messages and don't show them in your `MessageListIem`.
+Imagine you want not to show all messages that contain the "secret" word. It can be done with following lines:
 ```kotlin
-val textView = TextView(context).apply {
-    text = "There are no messages yet"
-    setTextColor(Color.GREEN)
-}
-messageListView.setEmptyStateView(
-    view = textView,
-    layoutParams = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-        Gravity.CENTER
-     )
-)
+fun setItemPredicate() {
+        val forbiddenWord = "secret"
+        val predicate = MessageListView.MessageListItemPredicate { item ->
+            !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
+        }
+        messageListView.setMessageListItemPredicate(predicate)
+    }
 ```
+
+## Creating a Custom Empty State
+`MessageListView` handles loading and empty states out-of-box. If you want to customize them you can do it in runtime.
+Let's consider an example when you want to set a custom empty state.
+
+```kotlin
+fun setCustomEmptyView(context: Context) {
+        val textView = TextView(context).apply {
+            text = "There are no messages yet"
+            setTextColor(Color.RED)
+        }
+        messageListView.setEmptyStateView(
+            view = textView,
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+        )
+    }
+```
+
+And you'll see such empty state:
+
+![](../../assets/message_lis_custom_empty_state.png)
