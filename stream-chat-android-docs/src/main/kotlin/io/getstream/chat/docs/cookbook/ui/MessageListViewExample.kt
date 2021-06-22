@@ -92,4 +92,10 @@ class MessageListViewExample {
             )
         }
     }
+
+    fun disableChannelFeatures() {
+        messageListView.setRepliesEnabled(false)
+        messageListView.setDeleteMessageEnabled(false)
+        messageListView.setEditMessageEnabled(false)
+    }
 }

@@ -213,7 +213,7 @@ As another example, let's modify the default view which allows scrolling to the 
 
 | Before | After |
 | --- | --- |
-|![message style programatically before](../../assets/message_style_programatically_fab_before.png)|![message style programatically after](../../assets/message_style_programatically_fab_after.png)|
+|![message style programmatically before](../../assets/message_style_programatically_fab_before.png)|![message style programmatically after](../../assets/message_style_programatically_fab_after.png)|
 
 To achieve such effect we need to provide custom _TransformStyle.messageListStyleTransformer_:
 ```kotlin
@@ -227,6 +227,30 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
     )
 }
 ```
+
+## Channel features flags
+
+Some xml attributes provide possibility to enable/disable some features. For example:
+1. R.attrs.streamUiReplyEnabled - defines if users can reply to messages
+2. R.attrs.streamUiCopyMessageActionEnabled - defines if users can copy messages
+3. R.attrs.streamUiEditMessageEnabled - defines if users can edit their messages
+4. R.attrs.streamUiMuteUserEnabled - defines if users can mute others
+5. R.attrs.streamUiDeleteMessageEnabled - defines if users can delete their messages
+6. Others you can find the full list of attributes [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml)
+
+These attributes let you enable/disable configuration for channel features. E.g. if a channel supports message replies, but you disabled it via xml attributes then members of this channel won't see such option.
+`MessageListView` provides you possibility to enable/disable these channel features in runtime.
+
+```kotlin
+fun disableChannelFeatures() {
+        messageListView.setRepliesEnabled(false)
+        messageListView.setDeleteMessageEnabled(false)
+        messageListView.setEditMessageEnabled(false)
+}
+```
+| Before | After |
+| --- | --- |
+|![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
 ## Creating a Custom Empty State
 
