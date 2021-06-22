@@ -413,7 +413,7 @@ internal class ChatDomainImpl internal constructor(
 
             val currentUser = user.value
 
-            if (currentUser != null &&  c.createdBy != currentUser) {
+            if (currentUser != null && c.createdBy != currentUser) {
                 c.createdBy = currentUser
             }
 
