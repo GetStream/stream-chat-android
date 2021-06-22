@@ -34,7 +34,7 @@ internal class IdGenerationDomainTest {
 
     @Test
     fun `Given ChatDomainImpl with no currentUser When generateMessageId() called Should throw`() {
-        assertThrows<NullPointerException> { chatDomainImpl.currentUser }
+        assertThrows<NullPointerException> { chatDomainImpl.user.value!! }
         assertThrows<NullPointerException> { chatDomainImpl.generateMessageId() }
     }
 
