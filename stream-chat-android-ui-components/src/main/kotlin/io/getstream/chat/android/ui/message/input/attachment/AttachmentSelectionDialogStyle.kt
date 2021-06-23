@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 
-public data class AttachmentDialogStyle(
+public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
     @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.WARNING)
     val pictureAttachmentIconTint: ColorStateList?,
@@ -19,10 +19,10 @@ public data class AttachmentDialogStyle(
 ) {
     public companion object {
         /**
-         * Creates an [AttachmentDialogStyle] instance with the default Stream Chat icons.
+         * Creates an [AttachmentSelectionDialogStyle] instance with the default Stream Chat icons.
          */
-        public fun createDefault(context: Context): AttachmentDialogStyle {
-            return AttachmentDialogStyle(
+        public fun createDefault(context: Context): AttachmentSelectionDialogStyle {
+            return AttachmentSelectionDialogStyle(
                 pictureAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
                 pictureAttachmentIconTint = null,
                 fileAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!,

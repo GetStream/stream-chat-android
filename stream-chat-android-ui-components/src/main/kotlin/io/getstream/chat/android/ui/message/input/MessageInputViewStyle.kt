@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
@@ -93,7 +93,7 @@ public data class MessageInputViewStyle(
     public val customCursorDrawable: Drawable?,
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
-    public val attachmentDialogStyle: AttachmentDialogStyle,
+    public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle,
 ) {
 
     internal companion object {
@@ -396,7 +396,7 @@ public data class MessageInputViewStyle(
                 val cameraAttachmentIconTint =
                     a.getColorStateList(R.styleable.MessageInputView_streamUiCameraAttachmentIconTint)
 
-                val attachmentDialogStyle = AttachmentDialogStyle(
+                val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
                     fileAttachmentIcon = fileAttachmentIcon,
@@ -438,7 +438,7 @@ public data class MessageInputViewStyle(
                     customCursorDrawable = customCursorDrawable,
                     dividerBackground = dividerBackground,
                     attachmentMaxFileSize = attachmentMaxFileSize,
-                    attachmentDialogStyle = attachmentDialogStyle,
+                    attachmentSelectionDialogStyle = attachmentDialogStyle,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

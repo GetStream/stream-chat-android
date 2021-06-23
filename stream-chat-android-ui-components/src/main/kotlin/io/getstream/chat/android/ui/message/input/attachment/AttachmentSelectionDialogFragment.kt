@@ -155,16 +155,16 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         internal const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
         internal const val BUNDLE_KEY = "bundle_attachments"
 
-        internal var staticStyle: AttachmentDialogStyle? = null
+        internal var staticStyle: AttachmentSelectionDialogStyle? = null
 
         /**
          * Create a new instance of the Attachment picker dialog.
          *
-         * See [AttachmentDialogStyle.createDefault] to load a default set of icons to be used for the
+         * See [AttachmentSelectionDialogStyle.createDefault] to load a default set of icons to be used for the
          * attachment dialog's tabs.
          */
-        public fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentSelectionDialogFragment {
-            staticStyle = attachmentDialogStyle
+        public fun newInstance(attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle): AttachmentSelectionDialogFragment {
+            staticStyle = attachmentSelectionDialogStyle
             return AttachmentSelectionDialogFragment()
         }
     }

@@ -73,7 +73,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination;
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem;
 import io.getstream.chat.android.ui.message.input.MessageInputView;
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle;
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogStyle;
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle;
 import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
@@ -835,7 +835,7 @@ public class Android {
             Drawable genericDrawable =
                     ContextCompat.getDrawable(getContext(), R.drawable.stream_ui_ic_command);
 
-            AttachmentDialogStyle attachmentDialogStyle = new AttachmentDialogStyle(
+            AttachmentSelectionDialogStyle attachmentSelectionDialogStyle = new AttachmentSelectionDialogStyle(
                     genericDrawable,
                     ColorStateList.valueOf(colorBlack),
                     genericDrawable,
@@ -879,7 +879,7 @@ public class Android {
                                 genericDrawable,
                                 20,
                                 genericDrawable,
-                                attachmentDialogStyle
+                                attachmentSelectionDialogStyle
                         )
 
             );
