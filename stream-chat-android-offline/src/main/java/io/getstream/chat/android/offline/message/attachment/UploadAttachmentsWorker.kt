@@ -17,13 +17,21 @@ internal class UploadAttachmentsWorker(private val appContext: Context) {
                         setUserWithoutConnectingIfNeeded()
                     }
 
-                    chatClient.getCurrentUser()?.let(::setUser)
+                    chatClient.getCurrentUser()?.let(::initRepositoryFacade)
                 }
             }
 
             val message = domainImpl.repos.selectMessage(messageId)!!
-            val attachments = domainImpl.channel(channelType, channelId)
-                .uploadAttachments(message)
+
+            val hasPendingAttachment = message.attachments.any { attachment ->
+                attachment.uploadState == Attachment.UploadState.InProgress
+            }
+
+            if (!hasPendingAttachment) {
+                return Result.success(Unit)
+            }
+
+            val attachments = domainImpl.channel(channelType, channelId).uploadAttachments(message)
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                 Result.success(Unit)
