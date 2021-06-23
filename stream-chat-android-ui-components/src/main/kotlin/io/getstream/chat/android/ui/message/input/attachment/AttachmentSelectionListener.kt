@@ -11,9 +11,3 @@ public fun interface AttachmentSelectionListener {
      */
     public fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource)
 }
-
-public enum class AttachmentSource {
-    MEDIA,
-    FILE,
-    CAMERA,
-}
