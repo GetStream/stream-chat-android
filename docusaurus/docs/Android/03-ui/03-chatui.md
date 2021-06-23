@@ -1,54 +1,114 @@
 # ChatUI
 
-The `ChatUI` object supports the customization of UI components. It's initialized with default implementations - no initialization is required.
+SDK provides an API for general-level configuration of chat behavior and appearance. It is exposed via the `ChatUI` object.
 
-You can access `ChatUI` to customize the global behaviour of UI elements.
+## Overview
 
- * `ChatUI.fonts`: allows you to overwrite fonts
- * `ChatUI.markdown` interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
- * `ChatUI.urlSigner` url signing logic, enables you to add authorization tokens for images, video etc
- * `ChatUI.avatarBitmapFactory` allows to generate custom bitmap for avatarView
- * `ChatUI.mimeTypeIconProvider` allows to define own icons for different mime types
- * `ChatUI.supportedReactions` allows to define own set of supported message reaction
- * `ChatUI.style` allows to override global style of UI components, like the TextStyle.
+ChatUI allows to override default implementations of commonly used parts of SDK like:
+ * MIME type icons for attachments 
+ * Set of available reactions for messages
+ * Default font used across the UI components
+ * Avatar view bitmap transformation
+ * Attachments urls overriding
 
-## Navigator
+The full list of `ChatUI` properties you can override include:
+ * `ChatUI.supportedReactions` Allows overriding default set of supported Message reaction.
+ * `ChatUI.mimeTypeIconProvider` Allows defining own icons for different mime types.
+ * `ChatUI.fonts` Allows specifying default font for TextViews displayed by UI components. 
+ * `ChatUI.avatarBitmapFactory` Allows intercepting the avatar Bitmap and modifying it before it's displayed by the `AvatarView`.
+ * `ChatUI.urlSigner` Allows adding authorization tokens for images, video, etc.
+ * `ChatUI.markdown` Interface to to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic, use more markdown modules, etc.
+ * `ChatUI.style` Allows overriding global, default style of UI components, like the TextStyle.
+ * `ChatUI.navigator` Allows intercepting and modifying default navigation between SDKs components (e.g. Redirection from `MessageListView` to `AttachmentGalleryActivity`).
+ 
+ :::note
+ `ChatUI` is initialized out-of-the-box with default implementations - no initialization is required.
+ :::
+ 
+ You will find information on how to use the above features in action in the next section.
 
-To display some screens available in the SDK, it is necessary to navigate to them.
-The SDK does that using the ChatNavigator and it navigates to:
-- `AttachmentGaleryActivity`: To display the gallery of pictures
-- After a click in a link, to the destination of the link (the user leaves the chat).
+## Usage
 
-It is possible to add a custom navigator to `ChatUI` by adding a new `ChatNavigator`.
+### Custom Reactions
+As shown below, by default the SDK provides 5 built-in reactions. 
 
-A user can instantiate a `ChatNavigator` and provide its custom implementation of `ChatNavigationHandler`:
+![Default reactions](../assets/chatui_default_reactions.png)
+
+It is possible to override the default set of reactions. 
+In order to define custom set of reactions for your chat app, you need to pass the the following data to the `ChatUI.supportedReactions` property:
+```kotlin 
+val loveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_reaction_love)!!
+val loveDrawableSelected = ContextCompat.getDrawable(this, R.drawable.ic_reaction_love)!!.apply { setTint(Color.RED) }
+val supportedReactionsData = mapOf(
+    "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
+)
+ChatUI.supportedReactions = SupportedReactions(this, supportedReactionsData)
+```
+As a result, there will only be a _love_ reaction available in the chat, and when selected the reaction icon will have a red tint.
+
+| Normal state - available reactions | Active state - reaction selected |
+| --- | --- |
+|![Light_mode](../assets/chat_ui_custom_reaction.png)|![Dark_mode](../assets/chat_ui_custom_reaction_active.png)|
+
+### Custom MIME type icons
+
+When possible SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
+By default SDK provides built-in MIME type icons for the most popular file types, and displays a generic file icon for others.
+
+In order to customize them all you need to to is override `ChatUI.mimeTypeIconProvider` in the following way:
 
 ```kotlin
-public interface ChatNavigationHandler {
-    /**
-     * Attempt to navigate to the given [destination].
-     *
-     * @return true if navigation was successfully handled.
-     */
-    public fun navigate(destination: ChatDestination): Boolean
+ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
+    if (mimeType == null) {
+        R.drawable.stream_ui_ic_file
+    }
+
+    when {
+        mimeType == "application/vnd.ms-excel" -> R.drawable.ic_file_xls
+        mimeType.contains("audio") -> R.drawable.ic_file_mp3
+        mimeType.contains("video") -> R.drawable.ic_file_mov
+        else -> R.drawable.stream_ui_ic_file
+    }
 }
 ```
 
-Following there's a simple example of a customization of destination:
+### Transforming avatar bitmap with AvatarBitmapFactory
+
+It is possible to customize `AvatarBitmapFactory` so the avatars will
+be generated accordingly to the new configuration. It is possible to configure
+the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
+between blocking and non blocking options and configure the keys for easy bitmap to be used
+in the cache system.
+
+To change the default behaviour of this factory, a user needs to extend `AvatarBitmapFactory`,
+which is an open class, and set the desired behaviour. This example makes the avatar for offline users blurred:
 
 ```kotlin
-val navigationHandler : ChatNavigationHandler = ChatNavigationHandler { destination ->
-    //Some custom action here!
-    true
+ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
+    override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
+        val imageResult = context.imageLoader.execute(
+            ImageRequest.Builder(context)
+                .data(user.image)
+                .apply {
+                    if (!user.online) {
+                        transformations(BlurTransformation(context))
+                    }
+                }
+                .build()
+        )
+
+        return (imageResult.drawable as?    BitmapDrawable)?.bitmap
+    }
 }
-
-ChatUI.navigator = ChatNavigator(navigationHandler)
 ```
+Result:
 
+![Blurred images for offline users](../assets/blurred_images.png)
 
-## URLSigner
+### Intercepting attachments URLs with UrlSigner 
 
-`ChatUi` allows to use of a custom url signer by implementing the following interface:
+`ChatUi.urlSigner` is used internally to transform urls of file and image attachments before displaying them. 
+Providing custom implementation of `UrlSigner` allows intercepting url, e.g. to add authorization tokens to the urls. 
 
 ```kotlin
 interface UrlSigner {
@@ -75,9 +135,9 @@ val urlSigner: UrlSigner = object : UrlSigner {
 ChatUI.urlSigner = urlSigner
 ```
 
-## Fonts
+### Setting default Font
 
-It is possible to customize the fonts of the SDK. To change the fonts, just implement
+It is possible to customize the default fonts used by all of the UI components. To change the fonts, just implement
 the `ChatFont` interface:
 
 ```kotlin
@@ -106,10 +166,9 @@ val fonts: ChatFonts = object : ChatFonts {
 ChatUI.fonts = fonts
 ```
 
+### Markdown
 
-## Markdown
-
-The Android SDK already has Markdown support by default. You can modify it by implementing a custom `ChatMarkdown` interface:
+SDK provides a default Markdown support out-of-the-box. You can modify it by implementing a custom `ChatMarkdown` interface:
 
 ```Java
 public interface ChatMarkdown {
@@ -117,7 +176,7 @@ public interface ChatMarkdown {
 }
 ```
 
-And add it to `ChatUI`:
+And adding it to `ChatUI`:
 
 ```
 val markdown = ChatMarkdown { textView, text ->
@@ -132,37 +191,35 @@ Then the SDK will parse markdown automatically:
 
 ![Markdown messages](../assets/markdown_support.png)
 
+### Navigator
 
-## Avatar Factory
+To display some screens available in the SDK, it is necessary to navigate to them.
+The SDK does that using the ChatNavigator and it navigates to:
+- `AttachmentGaleryActivity`: To display the gallery of pictures
+- After clicking a link, to the destination of the link (the user leaves the chat).
 
-It is possible to customize `AvatarBitmapFactory` so the avatars will
-be generated accordingly to the new configuration. It is possible to configure
-the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
-between blocking and non blocking options and configure the keys for easy bitmap to be used
-in the cache system.
+It is possible to add a custom navigator to `ChatUI` by adding a new `ChatNavigator`.
 
-To change the default behaviour of this factory, a user needs to extend `AvatarBitmapFactory`,
-which is an open class, and set the desired behaviour. This example makes the avatar for offline users blurred:
+You can instantiate the `ChatNavigator` by providing its custom implementation of `ChatNavigationHandler`:
 
 ```kotlin
-ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
-    override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
-        val imageResult = context.imageLoader.execute(
-            ImageRequest.Builder(context)
-                .data(user.image)
-                .apply {
-                    if (!user.online) {
-                        transformations(BlurTransformation(context))
-                    }
-                }
-                .build()
-        )
-
-        return (imageResult.drawable as? BitmapDrawable)?.bitmap
-    }
+public interface ChatNavigationHandler {
+    /**
+     * Attempt to navigate to the given [destination].
+     *
+     * @return true if navigation was successfully handled.
+     */
+    public fun navigate(destination: ChatDestination): Boolean
 }
 ```
-Result:
 
-![Blurred images for offline users](../assets/blurred_images.png)
+Following there's a simple example of a customization of destination:
 
+```kotlin
+val navigationHandler : ChatNavigationHandler = ChatNavigationHandler { destination ->
+    //Some custom action here!
+    true
+}
+
+ChatUI.navigator = ChatNavigator(navigationHandler)
+```
