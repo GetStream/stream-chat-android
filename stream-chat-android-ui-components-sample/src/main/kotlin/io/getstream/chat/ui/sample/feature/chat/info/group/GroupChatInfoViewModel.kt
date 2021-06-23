@@ -47,7 +47,7 @@ class GroupChatInfoViewModel(
                     )
                 }
 
-                _state.addSource(controller.channelData) { channelData ->
+                _state.addSource(controller.offlineChannelData) { channelData ->
                     _state.value = _state.value?.copy(channelName = channelData.name)
                 }
             }

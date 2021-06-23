@@ -23,7 +23,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
@@ -70,9 +69,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         }
 
     override val user: LiveData<User?> = chatDomainStateFlow.user.asLiveData()
-
-    /** a helper object which lists all the initialized use cases for the chat domain */
-    override val useCases: UseCaseHelper = UseCaseHelper(this)
 
     /** if the client connection has been initialized */
     override val initialized: LiveData<Boolean> = chatDomainStateFlow.initialized.asLiveData()
