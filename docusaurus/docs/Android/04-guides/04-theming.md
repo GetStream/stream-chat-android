@@ -1,91 +1,64 @@
 # Theming
 
-Many parts of the UI components can be changed and customized. It is possible to change colors, fonts, sizes and many other aspects of the `Views` to match a desired look. 
+Many parts of the UI components can be changed and customized. It is possible to change colors, fonts, sizes and many other aspects of the `Views` to match a desired look. It is possible to change:
+
+- Font fammily
+- Text color
+- Background of view and internal views. (ex: Message inside MessageListView) 
+- Enable and disable features.
+- Text style (italic, bold, normal)
+- Drawable of icons
+- Stroke width some views.
+- Divider color of views.
+- Text of views.
+
+It is not possible to change the tint of icons, it is necessary to change the Drawable if a different color is desired.
+
+Views can be customized by two ways: `TransformStyle` object or by the attributes of the View in the XML.
 
 ## Global Styling
 
-If you want to customize view styles programmatically you can override the corresponding `StyleTransformer` in the `TransformStyle` class.
+Styles can be configured programmatically by overriding the corresponding `StyleTransformer` from the `TransformStyle` object.
 
 :::caution
 This doesn't apply the changes instantly, the view must be recreated for the changes to take effect.
 :::
 
-Here are some examples of styling you can perform here:
+:::caution
+Please keep in mind that using will `TransformStyle` overrides the configurations made using the attributes of the class. Don't use both ways are the same time as only `TransformStyle` will be applied.
+:::
 
-**Change avatar image style:**
+You can use `TransformStyle` to change many aspects of MessageListView
+
+**TransformStyle**
 
 ```kotlin
-TransformStyle.avatarStyleTransformer = StyleTransformer { avatarStyle ->
-    avatarStyle.copy(
-        onlineIndicatorColor = Color.BLUE,
-        // more overrides here
-    )
-}
-```
-**Change channel list style.** It is possible change many aspects of the list item of the channels.
- 
-```kotlin
-TransformStyle.channelListStyleTransformer = StyleTransformer { channelListViewStyle ->
-    channelListViewStyle.copy(
-        optionsEnabled = false,
-        // more overrides here
+TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+    defaultViewStyle.copy(
+        messageBackgroundColorMine = Color.parseColor("#70AF74"),
+        messageBackgroundColorTheirs = Color.WHITE,
+        textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
+        textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
     )
 }
 ```
 
-**Message list style.** You can change the list itself, the message, enable/disable functionalities and customize many parts of it.
+**XML**
 
-```kotlin
-TransformStyle.messageListStyleTransformer = StyleTransformer { messageListViewStyle ->
-    messageListViewStyle.copy(
-        backgroundColor = Color.BLUE,
-        // more overrides here
-    )
-}
+```xml
+<io.getstream.chat.android.ui.message.list.MessageListView
+    android:id="@+id/messageListView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:streamUiMessageBackgroundColorMine="#70AF74"
+    app:streamUiMessageBackgroundColorTheirs="@android:color/white"
+    app:streamUiMessageTextColorMine="@android:color/white"
+    app:streamUiMessageTextColorTheirs="@android:color/black"
+    />
 ```
 
-**Message input style:**
+Both will have the following result:
 
-```kotlin
-TransformStyle.messageInputStyleTransformer = StyleTransformer { messageInputViewStyle ->
-    messageInputViewStyle.copy(
-        backgroundColor = Color.BLUE,
-        // more overrides here
-    )
-}
-```
-
-**Scroll button style:**
-
-```kotlin
-TransformStyle.scrollButtonStyleTransformer = StyleTransformer { scrollButtonViewStyle ->
-    scrollButtonViewStyle.copy(
-        scrollButtonColor = Color.BLUE,
-        // more overrides here
-    )
-}
-```
-
-**Reaction view style**.  Customize the reactions of messages.
+![Custom messages](../assets/custom_messages.png)
 
 
-```kotlin
-TransformStyle.viewReactionsStyleTransformer = StyleTransformer { viewReactionsViewStyle ->
-    viewReactionsViewStyle.copy(
-        bubbleColorMine = Color.BLUE,
-        // more overrides here
-    )
-}
-```
-
-**Edit reaction view style**.  Customize the popup menu for reactions.
-
-
-```kotlin
-TransformStyle.editReactionsStyleTransformer = StyleTransformer { editReactionsViewStyle ->
-    editReactionsViewStyle.copy(
-        bubbleColorMine = Color.BLUE,
-        // more overrides here
-    )
-}
-```
