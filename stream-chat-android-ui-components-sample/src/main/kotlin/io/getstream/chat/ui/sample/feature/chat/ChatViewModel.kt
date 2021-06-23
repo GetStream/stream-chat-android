@@ -34,7 +34,7 @@ class ChatViewModel(private val cid: String, private val chatDomain: ChatDomain 
                 val controller = requireNotNull(channelController)
                 _navigationEvent.value = Event(
                     if (action.members.size > 2 ||
-                        controller.channelData.value?.isAnonymousChannel() == false
+                        controller.offlineChannelData.value?.isAnonymousChannel() == false
                     ) {
                         NavigationEvent.NavigateToGroupChatInfo(cid)
                     } else {

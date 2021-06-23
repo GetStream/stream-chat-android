@@ -145,6 +145,42 @@ public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
 	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
+public final class com/getstream/sdk/chat/model/AttachmentMetaData {
+	public fun <init> ()V
+	public fun <init> (Landroid/content/Context;Ljava/io/File;)V
+	public fun <init> (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)V
+	public synthetic fun <init> (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun component1 ()Landroid/net/Uri;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/io/File;
+	public final fun copy (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lcom/getstream/sdk/chat/model/AttachmentMetaData;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/model/AttachmentMetaData;Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;ILjava/lang/Object;)Lcom/getstream/sdk/chat/model/AttachmentMetaData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFile ()Ljava/io/File;
+	public final fun getMimeType ()Ljava/lang/String;
+	public final fun getSelectedPosition ()I
+	public final fun getSize ()J
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/String;
+	public final fun getUri ()Landroid/net/Uri;
+	public final fun getVideoLength ()J
+	public fun hashCode ()I
+	public final fun isSelected ()Z
+	public final fun setFile (Ljava/io/File;)V
+	public final fun setMimeType (Ljava/lang/String;)V
+	public final fun setSelected (Z)V
+	public final fun setSelectedPosition (I)V
+	public final fun setSize (J)V
+	public final fun setTitle (Ljava/lang/String;)V
+	public final fun setType (Ljava/lang/String;)V
+	public final fun setUri (Landroid/net/Uri;)V
+	public final fun setVideoLength (J)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class com/getstream/sdk/chat/navigation/ChatNavigationHandler {
 	public abstract fun navigate (Lcom/getstream/sdk/chat/navigation/destinations/ChatDestination;)Z
 }

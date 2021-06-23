@@ -116,6 +116,10 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageEditText.textCursorDrawable = cursor
     }
 
+    fun clearMessageInputFocus() {
+        binding.messageEditText.clearFocus()
+    }
+
     fun setContentChangeListener(contentChangeListener: ContentChangeListener) {
         this.contentChangeListener = contentChangeListener
     }

@@ -95,10 +95,10 @@ public class MessageListViewModel @JvmOverloads constructor(
         domain.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
-                _channel.addSource(channelController.channelData) {
+                _channel.addSource(channelController.offlineChannelData) {
                     _channel.value = channelController.toChannel()
                     // Channel should be propagated only once because it's used to initialize MessageListView
-                    _channel.removeSource(channelController.channelData)
+                    _channel.removeSource(channelController.offlineChannelData)
                 }
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
 

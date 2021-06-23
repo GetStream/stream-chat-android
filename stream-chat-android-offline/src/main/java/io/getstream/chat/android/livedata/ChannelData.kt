@@ -13,8 +13,9 @@ import io.getstream.chat.android.offline.channel.ChannelData as ChannelDataOffli
  * Using this prevents code bugs and issues caused by confusing the channel data vs the full channel object
  */
 @Deprecated(
-    "Use ChannelData from the offline package",
-    replaceWith = ReplaceWith("io.getstream.chat.android.offline.channel.ChannelData")
+    level = DeprecationLevel.ERROR,
+    message = "Use ChannelData from the offline package",
+    replaceWith = ReplaceWith("io.getstream.chat.android.offline.channel.ChannelData"),
 )
 public data class ChannelData internal constructor(private val channelDataOffline: ChannelDataOffline) {
 
