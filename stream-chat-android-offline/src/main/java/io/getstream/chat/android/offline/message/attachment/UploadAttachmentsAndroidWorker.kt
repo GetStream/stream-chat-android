@@ -8,6 +8,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
 
 internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
@@ -20,7 +23,13 @@ internal class UploadAttachmentsAndroidWorker(
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
         return UploadAttachmentsWorker(applicationContext)
-            .uploadAttachmentsForMessage(channelType, channelId, messageId)
+            .uploadAttachmentsForMessage(
+                channelType,
+                channelId,
+                messageId,
+                ChatDomain.instance() as ChatDomainImpl,
+                ChatClient.instance()
+            )
             .run { if (isSuccess) Result.success() else Result.failure() }
     }
 

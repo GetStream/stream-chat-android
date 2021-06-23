@@ -5,17 +5,20 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 
 internal class UploadAttachmentsWorker(private val appContext: Context) {
-    suspend fun uploadAttachmentsForMessage(channelType: String, channelId: String, messageId: String): Result<Unit> {
+    suspend fun uploadAttachmentsForMessage(
+        channelType: String,
+        channelId: String,
+        messageId: String,
+        chatDomain: ChatDomainImpl,
+        chatClient: ChatClient
+    ): Result<Unit> {
         return try {
-            val domainImpl = (ChatDomain.instance() as ChatDomainImpl).apply {
+            val domainImpl = chatDomain.apply {
                 if (!isRepositoryInitialized) {
-                    val chatClient: ChatClient = ChatClient.instance().apply {
-                        setUserWithoutConnectingIfNeeded()
-                    }
+                    chatClient.setUserWithoutConnectingIfNeeded()
 
                     chatClient.getCurrentUser()?.let(::initRepositoryFacade)
                 }
