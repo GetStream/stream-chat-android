@@ -150,7 +150,7 @@ If you want to setup appearance of this component by your design requirements yo
 There are two ways to change the style: using XML attributes and runtime changes.
 
 ### Customization with XML Attributes
-`MessageListView` provides a quite big set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml)
+`MessageListView` provides a quite big set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
 Let's consider an example when we want to change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
