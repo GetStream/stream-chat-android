@@ -110,7 +110,6 @@ internal class ChannelControllerTypingTests {
         init {
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             whenever(chatClient.channel(any())) doReturn channelClient
-            whenever(chatDomainImpl.currentUser) doReturn user
             whenever(chatDomainImpl.user) doReturn MutableStateFlow(user)
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope

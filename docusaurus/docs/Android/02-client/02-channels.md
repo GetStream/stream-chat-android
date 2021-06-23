@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Channels
 
 Channels are where conversations take place between two or more chat users. They contain a list of messages and have a list of the member users that are participating in the conversation.

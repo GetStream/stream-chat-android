@@ -466,5 +466,6 @@ internal data class ErrorEventDto(
 internal data class UnknownEventDto(
     val type: String,
     val created_at: Date,
+    val user: DownstreamUserDto?,
     val rawData: Map<*, *>,
 ) : ChatEventDto()

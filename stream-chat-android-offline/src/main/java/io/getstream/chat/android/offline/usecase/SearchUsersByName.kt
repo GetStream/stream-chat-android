@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.call.Call
@@ -22,7 +23,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
     internal val defaultUsersQueryFilter by lazy {
         Filters.and(
             Filters.ne(FIELD_NAME, ""),
-            Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
+            Filters.ne(FIELD_ID, chatDomainImpl.user.value?.id?.let(::listOf) ?: emptyList<String>())
         )
     }
 
@@ -39,7 +40,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         querySearch: String,
         offset: Int,
         userLimit: Int,
-        userPresence: Boolean
+        userPresence: Boolean,
     ): Call<List<User>> {
         return CoroutineCall(chatDomainImpl.scope) {
             if (chatDomainImpl.isOnline()) {
@@ -67,10 +68,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         val filter = if (querySearch.isEmpty()) {
             defaultUsersQueryFilter
         } else {
-            Filters.and(
-                Filters.autocomplete(FIELD_NAME, querySearch),
-                Filters.ne(FIELD_ID, chatDomainImpl.currentUser.id)
-            )
+            createFilter(querySearch, chatDomainImpl.user.value?.id)
         }
 
         return chatDomainImpl.client.queryUsers(
@@ -93,5 +91,18 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
 
         private const val FIELD_NAME = "name"
         private const val FIELD_ID = "id"
+    }
+
+    private fun createFilter(querySearch: String, currentUserId: String?): FilterObject {
+        val autoComplete = Filters.autocomplete(FIELD_NAME, querySearch)
+
+        return if (currentUserId != null) {
+            Filters.and(
+                autoComplete,
+                Filters.ne(FIELD_ID, currentUserId)
+            )
+        } else {
+            autoComplete
+        }
     }
 }

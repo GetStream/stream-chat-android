@@ -2,34 +2,36 @@
 
 <!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/channel_list_view/?language=kotlin -->
 
-## Overview
-
 `ChannelListView` is a component that displays a list of channels available to a user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
-By default, a single list item shows the:
+
+![The Channel List component](../../assets/channel_list_view_component_swipe_actions.png)
+
+By default, a single list item shows the following:
 
 * Channel name
 * User's read state
 * Last message
 * Timestamp of the last message 
 
-It also implements swiping behaviour which allows handling different actions on the channel. This is what `ChannelListView` looks like: 
-
-![Light_mode](../../assets/channel_list_view_component_swipe_actions.png)
+It also implements swiping behaviour which allows handling different actions on the channel. 
 
 ## Usage
 
 To use `ChannelListView` in your layout, include it in your XML layout as shown below:
-```XML
+
+```xml
 <io.getstream.chat.android.ui.channel.list.ChannelListView 
     android:id="@+id/channelsView" 
     android:layout_width="match_parent" 
     android:layout_height="match_parent" />
 ```
 
-We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then rendering it using the `ChannelListView`
-The basic setup of the view model and connecting it to the view is done the following way:
+We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then rendering it using the `ChannelListView`.
+
+The basic setup of the ViewModel and connecting it to the view is done the following way:
+
 ```kotlin 
-// Instantiate the view model 
+// Instantiate the ViewModel 
 val viewModel: ChannelListViewModel by viewModels { 
     ChannelListViewModelFactory( 
         filter = Filters.and( 
@@ -40,10 +42,11 @@ val viewModel: ChannelListViewModel by viewModels {
         limit = 30, 
     ) 
 } 
-// Bind the view model with ChannelListView 
+// Bind the ViewModel with ChannelListView 
 viewModel.bindView(channelListView, viewLifecycleOwner) 
 ```
-All the logic of subscribing to data emitted by view model is provided by the `ChannelListViewModel::bindView` function. Other than channel data loading, the view model is also handling actions like channel deleting, leaving a group conversation by default.
+
+All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
 
 ## Handling Actions
 
@@ -78,7 +81,7 @@ The full list of available listeners is available [here](https://getstream.githu
 There are two ways to customize the appearance of `ChannelListView`: 
 
 * Using XML attributes
-* Using the `TransformStyle` API at runtime to call `ChannelListView` setter functions
+* Using the `TransformStyle` API at runtime to customize the style of all `ChannelListView` instances
 
 ### Customization with XML attributes
 There are multiple XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
@@ -99,9 +102,7 @@ The full list of available XML attributes is available under `ChannelListView` s
 
 ### Customization at Runtime
 
-<!-- TODO: Review this example, possibly remove it. -->
-
-The following example shows how to use `ChannelListView` setter functions to:
+The following example shows how to modify the style of all `ChannelListView` instances globally to:
 
 * Disable the default options
 * Change the title text style 
@@ -109,6 +110,7 @@ The following example shows how to use `ChannelListView` setter functions to:
 * Change the background color for unread messages
 
 To make these changes, we need to define a custom `TransformStyle.channelListStyleTransformer`:
+
 ```kotlin
 TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     defaultStyle.copy(
@@ -140,9 +142,9 @@ The transformer should be set before the view is rendered to make sure that the 
 
 ## Creating a Custom ViewHolder Factory
 
-`ChannelListView` provides a way to completely change the default view holders and add different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
+`ChannelListView` provides a way to completely change the default ViewHolders and add different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
 
-1. Create `custom_channel_list_item.xml` layout:
+1. Create the `custom_channel_list_item.xml` layout:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -195,57 +197,57 @@ The transformer should be set before the view is rendered to make sure that the 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-2. Add _plurals_ entry to `strings.xml`
+2. Add this _plurals_ entry to `strings.xml`:
 
 ```xml
-    <plurals name="members_count">
-        <item quantity="one">%1d Member</item>
-        <item quantity="other">%1d Members</item>
-    </plurals>
+<plurals name="members_count">
+    <item quantity="one">%1d Member</item>
+    <item quantity="other">%1d Members</item>
+</plurals>
 ```
 
-3. Create a custom view holder and view holder factory
+3. Create a custom ViewHolder and ViewHolder factory:
 
 ```kotlin
-    class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
-        override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-            return CustomChannelViewHolder(parentView, listenerContainer.channelClickListener)
-        }
+class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
+    override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
+        return CustomChannelViewHolder(parentView, listenerContainer.channelClickListener)
+    }
+}
+
+class CustomChannelViewHolder(
+    parent: ViewGroup,
+    private val channelClickListener: ChannelListView.ChannelClickListener,
+    private val binding: CustomChannelListItemBinding = CustomChannelListItemBinding.inflate(
+        LayoutInflater.from(parent.context),
+        parent,
+        false
+    ),
+) : BaseChannelListItemViewHolder(binding.root) {
+
+    private lateinit var channel: Channel
+
+    init {
+        binding.root.setOnClickListener { channelClickListener.onClick(channel) }
     }
 
-    class CustomChannelViewHolder(
-        parent: ViewGroup,
-        private val channelClickListener: ChannelListView.ChannelClickListener,
-        private val binding: CustomChannelListItemBinding = CustomChannelListItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        ),
-    ) : BaseChannelListItemViewHolder(binding.root) {
+    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
+        this.channel = channel
 
-        private lateinit var channel: Channel
-
-        init {
-            binding.root.setOnClickListener { channelClickListener.onClick(channel) }
-        }
-
-        override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
-            this.channel = channel
-
-            binding.apply {
-                avatarView.setChannelData(channel)
-                nameTextView.text = channel.getDisplayName(itemView.context)
-                membersCountTextView.text = itemView.context.resources.getQuantityString(
-                    R.plurals.members_count,
-                    channel.members.size,
-                    channel.members.size
-                )
-            }
+        binding.apply {
+            avatarView.setChannelData(channel)
+            nameTextView.text = channel.getDisplayName(itemView.context)
+            membersCountTextView.text = itemView.context.resources.getQuantityString(
+                R.plurals.members_count,
+                channel.members.size,
+                channel.members.size
+            )
         }
     }
+}
 ```
 
-4. Set the custom view holder factory
+4. Set the custom ViewHolder factory on the `ChannelListView`:
 
 ```kotlin
 channelListView.setViewHolderFactory(CustomChannelListItemViewHolderFactory())
@@ -253,19 +255,23 @@ channelListView.setViewHolderFactory(CustomChannelListItemViewHolderFactory())
 
 These changes should have the following results:
 
-![customer view holder](../../assets/custom_view_holder.png)
+![Custom ViewHolder](../../assets/custom_view_holder.png)
 
 
 ## Creating a Custom Loading View
 
-Custom loading view can be set using `ChannelListView::setLoadingView` method.
+A custom loading view can be set using the `setLoadingView` method.
 
 Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
-1. Add Shimmer dependency
+
+1. Add the Shimmer dependency in your `build.gradle` file's dependencies block:
+
 ```groovy
 implementation "com.facebook.shimmer:shimmer:0.5.0"
 ```
+
 2. Add `shape_shimmer.xml` into _drawable_ folder:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
@@ -275,7 +281,9 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
     <corners android:radius="20dp" />
 </shape>
 ```
+
 3. Add a single row layout - `item_loading_view.xml` into _layout_ folder:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -346,7 +354,9 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-4. Create final loading view with shimmer effect. Let's call it `channel_list_loading_view`:
+
+4. Create the final loading view with shimmer effect. Let's call it `channel_list_loading_view`:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -385,6 +395,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 ```
 
 5. Change `ChannelListView`'s loading view:
+
 ```kotlin
 // Inflate loading view
 val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)

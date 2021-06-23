@@ -1,3 +1,35 @@
+# June 23th, 2021 - 4.12.1
+## stream-chat-android-client
+### ✅ Added
+- Added `ChannelClient::sendEvent` method which allows to send custom events.
+- Added nullable `User` field to `UnknownEvent`.
+
+### ❌ Removed
+- Removed the `Message::attachmentsSyncStatus` field
+
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed `in` and `nin` filters when filtering by extra data field that is an array.
+- Fixed crash when adding a reaction to a thread message.
+
+### ⬆️ Improved
+- Now attachments can be sent while being in offline
+
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Made `AttachmentSelectionDialogFragment` public. Use `newInstance` to create instances of this Fragment.
+
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Hide suggestion list popup when keyboard is hidden.
+
+### ✅ Added
+- Added the `MessageInputView::hideSuggestionList` method to hide the suggestion list popup.
+
+
 # June 15th, 2021 - 4.12.0
 ## stream-chat-android-client
 ### 🐞 Fixed

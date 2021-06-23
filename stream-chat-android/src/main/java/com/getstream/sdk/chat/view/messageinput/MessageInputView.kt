@@ -339,7 +339,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
                 return false
             }
         }
-        val title = inputContentInfo.contentUri.pathSegments.lastOrNull() ?: AttachmentMetaData.DEFAULT_ATTACHMENT_TITLE
+        val title = inputContentInfo.contentUri.pathSegments.lastOrNull() ?: DEFAULT_ATTACHMENT_TITLE
         messageInputController.setSelectedAttachments(
             setOf(
                 AttachmentMetaData(
@@ -464,5 +464,9 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
+    }
+
+    private companion object {
+        private const val DEFAULT_ATTACHMENT_TITLE: String = "attachment"
     }
 }
