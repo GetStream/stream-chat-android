@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.message.attachment
 
 import android.content.Context
-import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
