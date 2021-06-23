@@ -1,7 +1,5 @@
 # Mention List View
 
-## Overview
-
 `MentionListView` is a view that is responsible for showing previews of messages which contains current user mention.
 
 | Light Mode | Dark Mode |
@@ -9,22 +7,8 @@
 |![Light mode](../../assets/mentions_list_view_light.png)|![Dark mode](../../assets/mentions_list_view_dark.png)|
 
 
-## Handling Mention List View Actions
-
-`MentionListView` allows to configure common actions (e.g. click on a single item):
-
-```kotlin
-mentionListView.setMentionSelectedListener { message ->
-    // Handle mention click
-}
-```
-
-The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.mention.list/-mention-list-view/index.html).
-
-
-## Adding MentionListView
-
-Here's an example layout containing `MentionListView`:
+## Usage
+You can add this view via XML:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -46,10 +30,9 @@ Here's an example layout containing `MentionListView`:
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+We recomend using this view with its ViewModel, which configures the view and makes it fully usable. 
 
-## Binding With ViewModel
-
-You can use this view with a ViewModel that already configures the default behaviour for it. The Android SDK comes with `MentionListViewModel`,  which can be easily bound to it using `bindView`:
+The basic setup of the ViewModel and connecting it to the view is done the following way:
 
 ```kotlin
 private val viewModel: MentionListViewModel by viewModels()
@@ -64,3 +47,15 @@ From that point, you should be able to see messages which contain current user m
 :::note
 `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 :::
+
+## Handling Actions
+
+`MentionListView` allows to configure common actions (e.g. click on a single item):
+
+```kotlin
+mentionListView.setMentionSelectedListener { message ->
+    // Handle mention click
+}
+```
+
+The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.mention.list/-mention-list-view/index.html).
