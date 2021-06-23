@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import java.io.File
 
 internal class CameraAttachmentFragment : Fragment() {
@@ -60,8 +60,8 @@ internal class CameraAttachmentFragment : Fragment() {
                     setOf(AttachmentMetaData(requireContext(), file))
                 }
                 setFragmentResult(
-                    AttachmentDialogFragment.REQUEST_KEY_CAMERA,
-                    bundleOf(AttachmentDialogFragment.BUNDLE_KEY to result)
+                    AttachmentSelectionDialogFragment.REQUEST_KEY_CAMERA,
+                    bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to result)
                 )
             }
     }

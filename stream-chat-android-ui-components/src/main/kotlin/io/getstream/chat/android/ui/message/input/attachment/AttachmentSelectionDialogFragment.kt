@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
-public class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
+public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
     private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
@@ -81,7 +81,7 @@ public class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentS
                 }
             }
 
-            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentDialogFragment)
+            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment)
             attachmentPager.isUserInputEnabled = false
         }
     }
@@ -163,9 +163,9 @@ public class AttachmentDialogFragment : BottomSheetDialogFragment(), AttachmentS
          * See [AttachmentDialogStyle.createDefault] to load a default set of icons to be used for the
          * attachment dialog's tabs.
          */
-        public fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentDialogFragment {
+        public fun newInstance(attachmentDialogStyle: AttachmentDialogStyle): AttachmentSelectionDialogFragment {
             staticStyle = attachmentDialogStyle
-            return AttachmentDialogFragment()
+            return AttachmentSelectionDialogFragment()
         }
     }
 }

@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
@@ -351,9 +351,9 @@ public class MessageInputView : ConstraintLayout {
             style.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
-                    AttachmentDialogFragment.newInstance(style.attachmentDialogStyle)
+                    AttachmentSelectionDialogFragment.newInstance(style.attachmentDialogStyle)
                         .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
-                        .show(it, AttachmentDialogFragment.TAG)
+                        .show(it, AttachmentSelectionDialogFragment.TAG)
                 }
             }
         }
