@@ -5,10 +5,10 @@ import android.net.Uri
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import java.io.File
 
-@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public data class AttachmentMetaData(
     var uri: Uri? = null,
     var type: String? = null,
@@ -49,9 +49,4 @@ public data class AttachmentMetaData(
             }
         }
     } ?: ModelType.attach_file
-
-    @InternalStreamChatApi
-    public companion object {
-        public const val DEFAULT_ATTACHMENT_TITLE: String = "attachment"
-    }
 }

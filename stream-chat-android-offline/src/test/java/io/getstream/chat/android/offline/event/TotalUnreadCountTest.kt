@@ -13,6 +13,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
@@ -91,7 +92,7 @@ internal class TotalUnreadCountTest {
         private val eventHandlerImpl = EventHandlerImpl(chatDomainImpl)
 
         init {
-            whenever(chatDomainImpl.currentUser) doReturn currentUser
+            whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos

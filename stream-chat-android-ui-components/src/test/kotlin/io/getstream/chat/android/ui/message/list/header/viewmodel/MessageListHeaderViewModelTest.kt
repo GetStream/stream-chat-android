@@ -47,7 +47,7 @@ internal class MessageListHeaderViewModelTest {
     @Test
     fun `Should notify about a new channel`() {
         val channel: Channel = mock()
-        whenever(channelController.channelData) doReturn MutableLiveData(mock())
+        whenever(channelController.offlineChannelData) doReturn MutableLiveData(mock())
         whenever(channelController.toChannel()) doReturn channel
         val channelHeaderViewModel = MessageListHeaderViewModel(CID, chatDomain = chatDomain)
         val mockObserver: Observer<Channel> = spy()

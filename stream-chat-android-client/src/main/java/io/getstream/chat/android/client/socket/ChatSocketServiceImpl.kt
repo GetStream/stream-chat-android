@@ -77,6 +77,7 @@ internal class ChatSocketServiceImpl constructor(
                     is State.NetworkDisconnected -> {
                         shutdownSocketConnection()
                         healthMonitor.stop()
+                        @Suppress("DEPRECATION_ERROR")
                         callListeners { it.onDisconnected() }
                         callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                     }
@@ -88,6 +89,7 @@ internal class ChatSocketServiceImpl constructor(
                     is State.DisconnectedTemporarily -> {
                         shutdownSocketConnection()
                         healthMonitor.onDisconnected()
+                        @Suppress("DEPRECATION_ERROR")
                         callListeners { it.onDisconnected() }
                         callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                     }
@@ -96,6 +98,7 @@ internal class ChatSocketServiceImpl constructor(
                         connectionConf = ConnectionConf.None
                         networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
+                        @Suppress("DEPRECATION_ERROR")
                         callListeners { it.onDisconnected() }
                         callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
                     }

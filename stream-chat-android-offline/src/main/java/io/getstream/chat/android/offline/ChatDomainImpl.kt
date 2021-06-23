@@ -274,12 +274,12 @@ internal class ChatDomainImpl internal constructor(
     internal fun setUser(user: User) {
         clearState()
 
-        currentUser = user
+        _user.value = user
 
         repos = RepositoryFacadeBuilder {
             context(appContext)
             database(db)
-            currentUser(currentUser)
+            currentUser(user)
             scope(scope)
             defaultConfig(defaultConfig)
             setOfflineEnabled(offlineEnabled)
@@ -292,7 +292,7 @@ internal class ChatDomainImpl internal constructor(
             repos.cacheChannelConfigs()
 
             // load the current user from the db
-            val syncState = repos.selectSyncState(currentUser.id) ?: SyncState(currentUser.id)
+            val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
             // set active channels and recover
             // restore channels
             syncState.activeChannelIds.forEach(::channel)
@@ -302,7 +302,7 @@ internal class ChatDomainImpl internal constructor(
 
             // retrieve the last time the user marked all as read and handle it as an event
             syncState.markedAllReadAt
-                ?.let { MarkAllReadEvent(user = currentUser, createdAt = it) }
+                ?.let { MarkAllReadEvent(user = user, createdAt = it) }
                 ?.let { eventHandler.handleEvent(it) }
 
             syncState.also { syncStateFlow.value = it }
@@ -346,10 +346,10 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal suspend fun updateCurrentUser(me: User) {
-        if (me.id != currentUser.id) {
-            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser.id}. create a new chatdomain when connecting a different user.")
+        if (me.id != user.value?.id) {
+            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${user.value?.id}. create a new chatdomain when connecting a different user.")
         }
-        currentUser = me
+        _user.value = me
         repos.insertCurrentUser(me)
         _mutedUsers.value = me.mutes
         setTotalUnreadCount(me.totalUnreadCount)
@@ -410,7 +410,10 @@ internal class ChatDomainImpl internal constructor(
             } else {
                 SyncStatus.SYNC_NEEDED
             }
-            if (c.createdBy != currentUser) {
+
+            val currentUser = user.value
+
+            if (currentUser != null && c.createdBy != currentUser) {
                 c.createdBy = currentUser
             }
 
@@ -532,7 +535,7 @@ internal class ChatDomainImpl internal constructor(
         activeChannelMapImpl.values.toList()
 
     fun generateMessageId(): String {
-        return currentUser.id + "-" + UUID.randomUUID().toString()
+        return user.value!!.id + "-" + UUID.randomUUID().toString()
     }
 
     private fun addTypingChannel(channelController: ChannelController) {

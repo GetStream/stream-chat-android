@@ -18,9 +18,9 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSelectionListener
-import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -119,8 +119,8 @@ internal class FileAttachmentFragment : Fragment() {
                         storageHelper.getAttachmentsFromUriList(requireContext(), it)
                     }
                     setFragmentResult(
-                        AttachmentDialogFragment.REQUEST_KEY_FILE_MANAGER,
-                        bundleOf(AttachmentDialogFragment.BUNDLE_KEY to attachments.toSet())
+                        AttachmentSelectionDialogFragment.REQUEST_KEY_FILE_MANAGER,
+                        bundleOf(AttachmentSelectionDialogFragment.BUNDLE_KEY to attachments.toSet())
                     )
                 }
             }

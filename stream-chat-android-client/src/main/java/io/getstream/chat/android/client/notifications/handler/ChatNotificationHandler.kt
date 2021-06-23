@@ -96,28 +96,28 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     @Deprecated(
         message = "Use NotificationConfig.smallIcon instead",
         replaceWith = ReplaceWith("NotificationConfig.smallIcon"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public open fun getSmallIcon(): Int = config.smallIcon
 
     @Deprecated(
         message = "Use NotificationConfig.firebaseMessageIdKey instead",
         replaceWith = ReplaceWith("NotificationConfig.firebaseMessageIdKey"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
 
     @Deprecated(
         message = "Use NotificationConfig.firebaseChannelIdKey instead",
         replaceWith = ReplaceWith("NotificationConfig.firebaseChannelIdKey"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
 
     @Deprecated(
         message = "Use NotificationConfig.firebaseChannelTypeKey instead",
         replaceWith = ReplaceWith("NotificationConfig.firebaseChannelTypeKey"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 

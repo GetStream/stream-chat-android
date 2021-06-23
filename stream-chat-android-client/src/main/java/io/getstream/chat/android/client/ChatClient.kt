@@ -557,41 +557,10 @@ public class ChatClient internal constructor(
         socket.removeListener(listener)
     }
 
-    @Deprecated(
-        message = "Use subscribe with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribe(
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return eventsObservable.subscribe(listener = listener)
-    }
-
     public fun subscribe(
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return eventsObservable.subscribe(listener = listener)
-    }
-
-    /**
-     * Subscribes to the specific [eventTypes] of the client.
-     *
-     * @see [io.getstream.chat.android.client.models.EventType] for type constants
-     */
-    @Deprecated(
-        message = "Use subscribeFor with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        val filter = { event: ChatEvent ->
-            event.type in eventTypes
-        }
-        return eventsObservable.subscribe(filter, listener)
     }
 
     /**
@@ -607,42 +576,6 @@ public class ChatClient internal constructor(
             event.type in eventTypes
         }
         return eventsObservable.subscribe(filter, listener)
-    }
-
-    /**
-     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
-     *
-     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
-     */
-    @Deprecated(
-        message = "Use subscribeFor with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        val disposable = subscribeFor(
-            *eventTypes,
-            listener = { event ->
-                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener(event)
-                }
-            }
-        )
-
-        lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    disposable.dispose()
-                }
-            }
-        )
-
-        return disposable
     }
 
     /**
@@ -679,24 +612,6 @@ public class ChatClient internal constructor(
     /**
      * Subscribes to the specific [eventTypes] of the client.
      */
-    @Deprecated(
-        message = "Use subscribeFor with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        val filter = { event: ChatEvent ->
-            eventTypes.any { type -> type.isInstance(event) }
-        }
-        return eventsObservable.subscribe(filter, listener)
-    }
-
-    /**
-     * Subscribes to the specific [eventTypes] of the client.
-     */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: ChatEventListener<ChatEvent>,
@@ -705,42 +620,6 @@ public class ChatClient internal constructor(
             eventTypes.any { type -> type.isInstance(event) }
         }
         return eventsObservable.subscribe(filter, listener)
-    }
-
-    /**
-     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
-     *
-     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
-     */
-    @Deprecated(
-        message = "Use subscribeFor with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        val disposable = subscribeFor(
-            *eventTypes,
-            listener = { event ->
-                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    listener(event)
-                }
-            }
-        )
-
-        lifecycleOwner.lifecycle.addObserver(
-            object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    disposable.dispose()
-                }
-            }
-        )
-
-        return disposable
     }
 
     /**
@@ -777,24 +656,6 @@ public class ChatClient internal constructor(
     /**
      * Subscribes for the next event with the given [eventType].
      */
-    @Deprecated(
-        message = "Use subscribeForSingle with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun subscribeForSingle(
-        eventType: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        val filter = { event: ChatEvent ->
-            event.type == eventType
-        }
-        return eventsObservable.subscribeSingle(filter, listener)
-    }
-
-    /**
-     * Subscribes for the next event with the given [eventType].
-     */
     public fun subscribeForSingle(
         eventType: String,
         listener: ChatEventListener<ChatEvent>,
@@ -803,27 +664,6 @@ public class ChatClient internal constructor(
             event.type == eventType
         }
         return eventsObservable.subscribeSingle(filter, listener)
-    }
-
-    /**
-     * Subscribes for the next event with the given [eventType].
-     */
-    @Deprecated(
-        message = "Use subscribeForSingle with ChatEventListener parameter",
-        level = DeprecationLevel.ERROR,
-    )
-    @SinceKotlin("99999.9")
-    public fun <T : ChatEvent> subscribeForSingle(
-        eventType: Class<T>,
-        listener: (event: T) -> Unit,
-    ): Disposable {
-        val filter = { event: ChatEvent ->
-            eventType.isInstance(event)
-        }
-        return eventsObservable.subscribeSingle(filter) { event ->
-            @Suppress("UNCHECKED_CAST")
-            listener(event as T)
-        }
     }
 
     /**
@@ -1217,16 +1057,6 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    @Deprecated(
-        message = "Use the unmuteChannel(channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unmuteChannel(channelType, channelId)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
-        return api.unmuteChannel(channelType, channelId)
-    }
-
-    @CheckResult
     public fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unmuteChannel(channelType, channelId)
     }
@@ -1269,23 +1099,6 @@ public class ChatClient internal constructor(
         channelId = channelId,
         reason = reason,
         timeout = timeout,
-        shadow = false
-    ).toUnitCall()
-
-    @CheckResult
-    @Deprecated(
-        message = "Use the unbanUser(targetId, channelType, channelId) method instead",
-        replaceWith = ReplaceWith("this.unbanUser(targetId, channelType, channelId)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun unBanUser(
-        targetId: String,
-        channelType: String,
-        channelId: String,
-    ): Call<Unit> = api.unbanUser(
-        targetId = targetId,
-        channelType = channelType,
-        channelId = channelId,
         shadow = false
     ).toUnitCall()
 
@@ -1358,7 +1171,7 @@ public class ChatClient internal constructor(
     @Deprecated(
         message = "Use ChatClient.handleRemoteMessage instead",
         replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun onMessageReceived(remoteMessage: RemoteMessage) {
         setUserWithoutConnectingIfNeeded()
@@ -1368,7 +1181,7 @@ public class ChatClient internal constructor(
     @Deprecated(
         message = "Use ChatClient.setFirebaseToken instead",
         replaceWith = ReplaceWith("setFirebaseToken(token)"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun onNewTokenReceived(token: String) {
         notifications.setFirebaseToken(token)
