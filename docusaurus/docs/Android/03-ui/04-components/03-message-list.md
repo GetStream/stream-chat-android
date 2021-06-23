@@ -73,7 +73,7 @@ class MessageListFragment : Fragment() {
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
-If you're not going to use out of the box `MessageListViewModel` with it's handlers or just want to override action handlers you should define these handlers:
+Default action handlers are set after binding ViewModel with the View. You can customize default behavior by overriding each of the following handlers:
 ```kotlin
 fun setActionHandlers() {
         messageListView.setLastMessageReadHandler {
