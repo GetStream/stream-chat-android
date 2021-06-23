@@ -929,6 +929,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun enableSendButton ()V
 	public final fun getChatMode ()Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 	public final fun getInputMode ()Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;
+	public final fun hideSuggestionList ()V
 	public final fun listenForBigAttachments (Lio/getstream/chat/android/ui/message/input/MessageInputView$BigFileSelectionListener;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun setChatMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;)V
 	public final fun setCommands (Ljava/util/List;)V
