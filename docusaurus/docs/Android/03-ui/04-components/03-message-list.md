@@ -2,7 +2,6 @@
 
 <!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_list_view/?language=kotlin -->
 
-## Overview
 
 `MessageListView` is one of our core UI components. Generally speaking, it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
 
