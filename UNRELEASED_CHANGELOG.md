@@ -58,6 +58,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Made `AttachmentSelectionDialogFragment` public. Use `newInstance` to create instances of this Fragment.
 
 ### ⚠️ Changed
 
