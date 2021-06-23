@@ -118,7 +118,6 @@ fun setActionHandlers() {
     }
 ``` 
 
----
 **NOTE**
 
 Handlers must be set before passing any data to `MessageListView`. So if you don't use default binding, please, make sure you defined them.
