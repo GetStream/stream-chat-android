@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Users
 
 User represents a person who uses a chat and can perform chat operations like viewing channels or sending messages.

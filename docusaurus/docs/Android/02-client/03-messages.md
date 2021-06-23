@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Messages
 
 Message represents single communication inside a channel. Besides typical communication-related fields like text, created date, or message sender, it also contains other useful components like:
