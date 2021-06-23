@@ -252,7 +252,10 @@ fun disableChannelFeatures() {
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
 ## Message list item factory
-`MessageListItem` provides API for creating custom view holders. You can set custom view holder factory to `MessageListView`. Just extend `MessageListItemViewHolderFactory`, write your logic, make new instance and set to `MessageListView`.
+`MessageListItem` provides API for creating custom view holders. All you need to do is:
+1. Extend  `MessageListItemViewHolderFactory`
+2. Write your own logic for creating ViewHolders 
+3. Make a new factory instance and set it to `MessageListView`.
 Let's consider an example when we want to create custom view holders for messages from other users that came less than 24 hours ago.
 Result should look like:
 
