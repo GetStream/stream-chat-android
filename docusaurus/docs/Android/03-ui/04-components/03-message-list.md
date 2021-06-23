@@ -16,7 +16,7 @@
 9. Thread separator (for thread mode only)
 10. Typing indicator
 
-Using custom attributes and methods in runtime you're able to customize appearance of this component. Also `MessageListView` contains the set of overridable action/option handlers, and event listeners. By default this component has the following look:
+Using custom attributes and methods in runtime you're able to customize the appearance of this component. Also `MessageListView` contains the set of overridable action/option handlers and event listeners. By default this component has the following look:
 
 | Light Mode | Dark Mode |
 | --- | --- |
