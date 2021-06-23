@@ -14,7 +14,7 @@ Many parts of the UI components can be changed and customized. It is possible to
 
 It is not possible to change the tint of icons, it is necessary to change the Drawable if a different color is desired.
 
-Views can be customized by two ways: `TransformStyle` object or by the attributes of the View in the XML.
+Views can be customized by two ways: `TransformStyle` object or by the attributes of the View in the XML, as described in the next section.
 
 ## Global Styling
 
