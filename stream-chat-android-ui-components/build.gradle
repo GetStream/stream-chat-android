@@ -80,6 +80,7 @@ dependencies {
     implementation Dependencies.androidxStartup
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
+    implementation Dependencies.keyboardVisibilityEvent
 
     // Markdown
     implementation Dependencies.markwonCore

@@ -69,8 +69,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Hide suggestion list popup when keyboard is hidden.
 
 ### ✅ Added
+- Added the `MessageInputView::hideSuggestionList` method to hide the suggestion list popup.
 
 ### ⚠️ Changed
 
