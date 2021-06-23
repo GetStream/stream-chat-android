@@ -1,20 +1,17 @@
 # Message List
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_list_view/?language=kotlin -->
-
-
 `MessageListView` is one of our core UI components. Generally speaking, it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
 
-1. Plain text message
-2. Text and attachments (media or file) message
-3. Deleted message (only for current user)
-4. Error message (e.g. autoblocked message with inappropriate content)
-5. System message (e.g. some user joined to a channel)
-6. Giphy preview
-7. Date separator
-8. Loading more indicator
-9. Thread separator (for thread mode only)
-10. Typing indicator
+- Plain text message
+- Text and attachments (media or file) message
+- Deleted message (only for current user)
+- Error message (e.g. autoblocked message with inappropriate content)
+- System message (e.g. some user joined to a channel)
+- Giphy preview
+- Date separator
+- Loading more indicator
+- Thread separator (for thread mode only)
+- Typing indicator
 
 Using custom attributes and methods in runtime you're able to customize the appearance of this component. Also `MessageListView` contains the set of overridable action/option handlers and event listeners. By default this component has the following look:
 
@@ -60,7 +57,7 @@ class MessageListFragment : Fragment() {
 
 ## Handling Actions
 
-`MessageListView` comes with a set of actions out of the box that are available by long-pressing a message. There are multiple available actions:
+`MessageListView` comes with a set of actions available out of the box by long-pressing a message:
 
 * Adding reaction
 * Replies
@@ -130,7 +127,8 @@ ___
 
 ### Listeners
 
-Except of required handlers you're able to set listeners to get events when something happens:
+Except of required handlers there are some listeners. They are set by default if you use `MessageListViewModel`.  
+You can always override them to get events when something happens:
 
 ```kotlin
 fun setListeners() {
@@ -145,9 +143,7 @@ fun setListeners() {
         }
     }
 ```
-Other available listeners for `MessageListView` can be found [here](https://github.com/GetStream/stream-chat-android/blob/5084b1528f15530782648de559d58de6d55045d5/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer.kt)
-
-The full lists of available listeners and handlers are available [here (MessageListView)](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view/index.html).
+Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/index.html)
 
 ## Customizations
 
@@ -229,16 +225,23 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
 
 ## Channel features flags
 
-Some xml attributes provide possibility to enable/disable some features. For example:
-1. R.attrs.streamUiReplyEnabled - defines if users can reply to messages
-2. R.attrs.streamUiCopyMessageActionEnabled - defines if users can copy messages
-3. R.attrs.streamUiEditMessageEnabled - defines if users can edit their messages
-4. R.attrs.streamUiMuteUserEnabled - defines if users can mute others
-5. R.attrs.streamUiDeleteMessageEnabled - defines if users can delete their messages
-6. Others you can find the full list of attributes [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml)
+Some xml attributes provide possibility to enable/disable some features. They are:
+- R.attrs.streamUiScrollButtonEnabled - defines show/hide the scroll to bottom button
+- R.attrs.streamUiScrollButtonUnreadEnabled - defines show/hide unread count badge on the scroll to bottom button
+- R.attrs.streamUiReactionsEnabled - defines if users can react to messages
+- R.attrs.streamUiReplyEnabled - defines if users can reply to messages
+- R.attrs.streamUiCopyMessageActionEnabled - defines if users can copy messages
+- R.attrs.streamUiEditMessageEnabled - defines if users can edit their messages
+- R.attrs.streamUiFlagMessageEnabled - defines if users can flag messages
+- R.attrs.streamUiFlagMessageConfirmationEnabled - defines if users will see the confirmation dialog when flag messages
+- R.attrs.streamUiMuteUserEnabled - defines if users can mute others
+- R.attrs.streamUiBlockUserEnabled - defines if users can block members of chat
+- R.attrs.streamUiDeleteMessageEnabled - defines if users can delete their messages
+- R.attrs.streamUiDeleteConfirmationEnabled - defines if users will see the confirmation dialog when delete messages
+- R.attrs.streamUiThreadsEnabled - defines if users can make thread reply
 
-These attributes let you enable/disable configuration for channel features. E.g. if a channel supports message replies, but you disabled it via xml attributes then members of this channel won't see such option.
-`MessageListView` provides you possibility to enable/disable these channel features in runtime.
+These attributes let you enable/disable configuration for channel features. E.g. if a channel supports message replies, but you disabled it via xml attributes then members of this channel won't see such an option.
+`MessageListView` provides you the possibility to enable/disable these channel features in runtime.
 
 ```kotlin
 fun disableChannelFeatures() {
