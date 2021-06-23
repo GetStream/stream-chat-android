@@ -22,7 +22,7 @@ Using custom attributes and methods in runtime you're able to customize the appe
 | --- | --- |
 |![Message list overview in light mode](../../assets/message_list_view_overview_light.png)|![Message list overview in dark mode](../../assets/message_list_view_overview_dark.png)|
 
-## Getting started
+## Usage
 If you want to use all default features and default design of this component then start is easy. It consists of two steps:
 1. Adding component to your xml layout hierarchy
 2. Bind out-of-box `MessageListViewModel` and `MessageLisView`.
