@@ -36,7 +36,7 @@ public abstract class BaseMessageListHeaderViewModel constructor(
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
                 _members.addSource(channelController.members) { _members.value = it }
-                _channelState.addSource(map(channelController.channelData) { channelController.toChannel() }) {
+                _channelState.addSource(map(channelController.offlineChannelData) { channelController.toChannel() }) {
                     _channelState.value = it
                 }
                 _anyOtherUsersOnline.addSource(

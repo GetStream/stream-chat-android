@@ -94,47 +94,15 @@ public class ChannelClient internal constructor(
         return client.createChannel(channelType, channelId, extraData)
     }
 
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribe with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
-        return client.subscribe(filterRelevantEvents(listener))
-    }
-
     public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
 
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeFor with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
-
     public fun subscribeFor(
         vararg eventTypes: String,
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
-
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeFor with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return client.subscribeFor(
-            lifecycleOwner,
-            *eventTypes,
-            listener = filterRelevantEvents(listener)
-        )
     }
 
     public fun subscribeFor(
@@ -149,36 +117,11 @@ public class ChannelClient internal constructor(
         )
     }
 
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeFor with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
-
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
-
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeFor with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribeFor(
-        lifecycleOwner: LifecycleOwner,
-        vararg eventTypes: Class<out ChatEvent>,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return client.subscribeFor(
-            lifecycleOwner,
-            *eventTypes,
-            listener = filterRelevantEvents(listener)
-        )
     }
 
     public fun subscribeFor(
@@ -191,31 +134,11 @@ public class ChannelClient internal constructor(
             *eventTypes,
             listener = filterRelevantEvents(listener)
         )
-    }
-
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeForSingle with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun subscribeForSingle(
-        eventType: String,
-        listener: (event: ChatEvent) -> Unit,
-    ): Disposable {
-        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     public fun subscribeForSingle(
         eventType: String,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
-    }
-
-    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    @Deprecated("Use subscribeForSingle with ChatEventListener")
-    @SinceKotlin("99999.9")
-    public fun <T : ChatEvent> subscribeForSingle(
-        eventType: Class<T>,
-        listener: (event: T) -> Unit,
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
@@ -343,20 +266,6 @@ public class ChannelClient internal constructor(
             channelId = channelId,
             reason = reason,
             timeout = timeout,
-        )
-    }
-
-    @CheckResult
-    @Deprecated(
-        message = "Use the unbanUser(targetId) method instead",
-        replaceWith = ReplaceWith("this.unbanUser(targetId)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun unBanUser(targetId: String): Call<Unit> {
-        return client.unbanUser(
-            targetId = targetId,
-            channelType = channelType,
-            channelId = channelId,
         )
     }
 

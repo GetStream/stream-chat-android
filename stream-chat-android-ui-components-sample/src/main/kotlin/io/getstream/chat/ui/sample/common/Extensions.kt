@@ -19,7 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.ChannelData
+import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {

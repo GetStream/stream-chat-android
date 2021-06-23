@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -104,15 +103,10 @@ public sealed interface ChatDomain {
      */
     public val typingUpdates: LiveData<TypingEvent>
 
-    /** a helper object which lists all the initialized use cases for the chat domain */
     @Deprecated(
         level = DeprecationLevel.ERROR,
-        message = "This property is deprecated now. Use cases are now exposed by ChatDomain directly as functions.",
-        replaceWith = ReplaceWith("Replace this property call by obtaining a specific use case directly from ChatDomain."),
+        message = "Disconnecting from ChatClient will automatically disconnect from ChatDomain",
     )
-    public val useCases: UseCaseHelper
-
-    @Deprecated("Disconnecting from ChatClient will automatically disconnect from ChatDomain")
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
@@ -585,6 +579,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         @Deprecated(
+            level = DeprecationLevel.ERROR,
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
@@ -593,6 +588,7 @@ public sealed interface ChatDomain {
         }
 
         @Deprecated(
+            level = DeprecationLevel.ERROR,
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
@@ -600,8 +596,8 @@ public sealed interface ChatDomain {
             this.user = user
         }
 
-        private val offlineChatDomainBuilder: OfflineChatDomainBuilder =
-            OfflineChatDomainBuilder(appContext, client, user)
+        @Suppress("DEPRECATION_ERROR")
+        private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client, user)
 
         internal fun database(db: ChatDatabase) = apply {
             offlineChatDomainBuilder.database(db)
