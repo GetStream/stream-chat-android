@@ -29,13 +29,17 @@ internal class UploadAttachmentsWorkerTest {
     private lateinit var chatDomainImpl: ChatDomainImpl
     private lateinit var chatClient: ChatClient
 
-    private val attachmentsSent = mutableListOf(randomAttachment {
-        this.uploadState = Attachment.UploadState.Success
-    })
+    private val attachmentsSent = mutableListOf(
+        randomAttachment {
+            this.uploadState = Attachment.UploadState.Success
+        }
+    )
 
-    private val attachmentsPending = mutableListOf(randomAttachment {
-        this.uploadState = Attachment.UploadState.InProgress
-    })
+    private val attachmentsPending = mutableListOf(
+        randomAttachment {
+            this.uploadState = Attachment.UploadState.InProgress
+        }
+    )
 
     private val defaultMessageSentAttachments = randomMessage(
         attachments = attachmentsSent
