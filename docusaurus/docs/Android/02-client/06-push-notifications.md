@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Push Notifications
 
 Besides [Events](./04-events.md), push notifications are another way to stay up to date with changes to the chat.
