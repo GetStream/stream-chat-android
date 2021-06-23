@@ -73,7 +73,10 @@ internal class MessageSendingService(
                     doSend(message)
                 }
 
-            message.hasPendingAttachments() -> waitForAttachmentsToBeSent(message)
+            message.hasPendingAttachments() -> {
+                enqueueMessage(message)
+                Result.success(message)
+            }
 
             else -> {
                 logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
@@ -107,12 +110,16 @@ internal class MessageSendingService(
                     }
             }
             )
+        enqueueMessage(newMessage)
+        return Result.success(newMessage)
+    }
+
+    private fun enqueueMessage(message: Message) {
         uploadAttachmentsWorker.enqueueJob(
             channelController.channelType,
             channelController.channelId,
-            newMessage.id
+            message.id
         )
-        return Result.success(newMessage)
     }
 
     private suspend fun doSend(message: Message): Result<Message> {
