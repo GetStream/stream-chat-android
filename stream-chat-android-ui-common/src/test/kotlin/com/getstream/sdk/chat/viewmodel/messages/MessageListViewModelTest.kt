@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.controller.ThreadController
-import io.getstream.chat.android.livedata.usecase.DeleteMessage
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.observeAll
@@ -70,7 +69,6 @@ internal class MessageListViewModelTest {
     private val threadLoadMoreCall = TestCall(threadLoadMoreResult)
     private val loadOlderMessagesResult: Result<Channel> = mock()
     private val loadOlderMessagesCall = TestCall(loadOlderMessagesResult)
-    private val deleteMessage: DeleteMessage = mock()
     private val deleteMessageResult: Result<Message> = mock()
     private val deletedMessage = createMessage()
     private val deleteMessageCall = TestCall(deleteMessageResult)

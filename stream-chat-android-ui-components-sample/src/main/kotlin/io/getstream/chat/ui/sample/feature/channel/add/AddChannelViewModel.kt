@@ -76,12 +76,11 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
+            val currentUserId = chatDomain.user.value?.id ?: error("User must be set before create new channel!")
             val result = chatDomain
                 .createDistinctChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
-                    members = members.map { it.id }.let { members ->
-                        chatDomain.user.value?.id?.let(members::plus) ?: members
-                    },
+                    members = members.map(User::id) + currentUserId,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
                 ).await()
             if (result.isSuccess) {

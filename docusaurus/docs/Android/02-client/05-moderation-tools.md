@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Moderation Tools
 
 Moderation tools are features you can use to moderate a channel by detecting unwanted content and restricting the users that create the unwanted content.

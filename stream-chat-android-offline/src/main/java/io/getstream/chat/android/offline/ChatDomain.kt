@@ -566,6 +566,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         @Deprecated(
+            level = DeprecationLevel.ERROR,
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
@@ -574,6 +575,7 @@ public sealed interface ChatDomain {
         }
 
         @Deprecated(
+            level = DeprecationLevel.ERROR,
             message = "Use constructor without user",
             replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
         )
