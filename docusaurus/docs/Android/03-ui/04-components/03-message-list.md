@@ -4,7 +4,7 @@
 
 ## Overview
 
-`MessageListView` is one of our core UI components. Generally speaking it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
+`MessageListView` is one of our core UI components. Generally speaking, it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
 
 1. Plain text message
 2. Text and attachments (media or file) message
