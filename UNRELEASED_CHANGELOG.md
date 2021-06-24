@@ -2,6 +2,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated to Kotlin 1.5.20
 
 ### ✅ Added
 
