@@ -87,7 +87,7 @@ searchResultView.setSearchResultSelectedListener { message ->
 }
 ```
 
-The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/index.html).
+The full list of listeners available for `SearchResultListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/index.html).
 
 ## Updating Search Query Programmatically
 
