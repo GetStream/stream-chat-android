@@ -1,17 +1,12 @@
 # Search View
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/search_input_view/?language=kotlin -->
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/search_result_list_view/?language=kotlin -->
-
-## Overview
-
-The SDK provides two views: `SearchInputView` and `SearchResultListView` which can be used to search and display messages that contain specific text in all channels in which the current user is a member.
+`SearchInputView` and `SearchResultListView` components can be used to search and display messages that contain specific text. The search is performed across all channels a user is a member of.
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![search view light](../../assets/search_view_hey_light.png)|![search view dark](../../assets/search_view_hey_dark.png)|
 
-## Creating Search View Layout
+## Usage
 
 Here's an example layout using these two Views:
 
@@ -20,8 +15,7 @@ Here's an example layout using these two Views:
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FCFCFC">
+    android:layout_height="match_parent">
 
     <io.getstream.chat.android.ui.search.SearchInputView
         android:id="@+id/searchInputView"
@@ -30,7 +24,7 @@ Here's an example layout using these two Views:
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.getstream.chat.android.ui.search.list.SearchResultListView
         android:id="@+id/searchResultListView"
@@ -39,42 +33,73 @@ Here's an example layout using these two Views:
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchInputView"/>
+        app:layout_constraintTop_toBottomOf="@id/searchInputView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-## Binding Search View Components
+We recommend using the `SearchViewModel` to get search results from the Stream API and then rendering them using the `SearchResultListView`.
 
-To display search results, you need to bind `SearchResultListView` with the ViewModel and pass the search query from `SearchInputView` to the same ViewModel:
+The basic setup of the ViewModel and connecting it to the view is done the following way:
 
-```kotlin
-// Get view model
+```kotlin 
+// Instantiate the ViewModel 
 val searchViewModel: SearchViewModel by viewModels()
 
-// Pass query to view model
-searchInputView.apply {
-    setSearchStartedListener { query ->
-        // Pass query when search query was submitted
-        searchViewModel.setQuery(query)
-    }
-    setDebouncedInputChangedListener { query ->
-        // You can also track debounced search input changes
-    }
-    setContinuousInputChangedListener { query ->
-        // You can also track continuous search input changes
-    }
-}
+// Bind the ViewModel with SearchResultListView
+searchViewModel.bindView(searchResultListView, viewLifecycleOwner)
+```
 
-// Bind search result list view with view model
-searchViewModel.bindView(searchResultView, viewLifecycleOwner)
+Finally, start the search by passing the search query to the ViewModel:
 
-// You can also handle search result clicks
-searchResultView.setSearchResultSelectedListener { message ->
-    // Handle search result click
+```kotlin 
+searchInputView.setSearchStartedListener { query ->
+    // Search is triggered
+    searchViewModel.setQuery(query)
 }
 ```
 
 :::note
 `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+:::
+
+## Handling Actions
+
+It is possible to listen for query text changes within the `SearchInputView` by using listeners:
+
+```kotlin
+searchInputView.setContinuousInputChangedListener { query ->
+    // Search query changed 
+}
+searchInputView.setDebouncedInputChangedListener { query ->
+    // Search query changed and has been stable for a short while 
+}
+```
+
+The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search/-search-input-view/index.html).
+
+
+`SearchResultListView` exposes a listener for handling item clicks:
+
+```kotlin
+searchResultView.setSearchResultSelectedListener { message ->
+    // Handle search result click
+}
+```
+
+The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/index.html).
+
+## Updating Search Query Programmatically
+
+`SearchInputView` provides a way to change search query programmatically:
+
+```kotlin
+// Update the current input to the specified string
+searchInputView.setQuery("query")
+// Clear the current input
+searchInputView.clear()
+```
+
+:::note
+Updating search query programmatically automatically notifies corresponding listeners
 :::
