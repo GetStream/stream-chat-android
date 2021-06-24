@@ -1,7 +1,9 @@
 # Channel List Header
 
 
-`ChannelListHeaderView` is a component designed to be displayed on the channels screen of your app. 
+`ChannelListHeaderView` is a component that shows the title of the channels list, current connection status, avatar of the current user, 
+and provides an action button which can be used to create a new conversation. 
+It is designed to be displayed at the top of the channels screen of your app. 
 It consists of the following elements: _User avatar_, _Title view_, _Action button_.
  
  | Light Mode | Dark Mode |
