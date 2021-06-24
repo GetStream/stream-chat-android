@@ -101,7 +101,7 @@ public class ChatClient internal constructor(
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
-    private val tokenUtils: TokenUtils = TokenUtils
+    private val tokenUtils: TokenUtils = TokenUtils,
 ) {
 
     @InternalStreamChatApi
@@ -322,7 +322,7 @@ public class ChatClient internal constructor(
      *
      */
     @InternalStreamChatApi
-    public fun setUserWithoutConnectingIfNeeded() : Boolean {
+    public fun setUserWithoutConnectingIfNeeded(): Boolean {
         if (isUserSet()) {
             return true
         }
