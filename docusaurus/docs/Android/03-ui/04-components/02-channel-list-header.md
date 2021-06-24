@@ -1,7 +1,7 @@
 # Channel List Header
 
 
-`ChannelListHeaderView` is a component designed to be displayed at the channels screen of your app. 
+`ChannelListHeaderView` is a component designed to be displayed on the channels screen of your app. 
 It consists of the following elements: _User avatar_, _Title view_, _Action button_.
  
  | Light Mode | Dark Mode |
