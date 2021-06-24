@@ -170,8 +170,6 @@ internal class ChatDomainImpl internal constructor(
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
-    internal var isRepositoryInitialized = false
-
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
@@ -287,8 +285,6 @@ internal class ChatDomainImpl internal constructor(
             setOfflineEnabled(offlineEnabled)
         }.build()
 
-        isRepositoryInitialized = true
-
         // load channel configs from Room into memory
         initJob = scope.async {
             // fetch the configs for channels
@@ -316,23 +312,6 @@ internal class ChatDomainImpl internal constructor(
         }
         startListening()
         initClean()
-    }
-
-    internal fun initRepositoryFacade(user: User) {
-        clearState()
-
-        _user.value = user
-
-        repos = RepositoryFacadeBuilder {
-            context(appContext)
-            database(db)
-            currentUser(currentUser)
-            scope(scope)
-            defaultConfig(defaultConfig)
-            setOfflineEnabled(offlineEnabled)
-        }.build()
-
-        isRepositoryInitialized = true
     }
 
     init {
