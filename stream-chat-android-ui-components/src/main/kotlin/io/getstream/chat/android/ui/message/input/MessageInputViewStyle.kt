@@ -59,6 +59,10 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * the max size, use this only if you use your own backend.
 * @property dividerBackground the background of the divider in the top of MessageInputView.
 * @property attachmentDialogStyle style for attachment selection dialog
+* @property commandInputCancelIcon - icon for cancel button. Default - [R.drawable.stream_ui_ic_clear]
+* @property commandInputBadgeIcon - icon inside command badge. Default - [R.drawable.stream_ui_ic_command_white]
+* @property commandInputBadgeBackgroundDrawable - background shape of command badge. Default - [R.drawable.stream_ui_shape_command_background]
+* @property commandInputBadgeTextStyle - text appearance of command name inside command badge
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -94,6 +98,10 @@ public data class MessageInputViewStyle(
     public val attachmentMaxFileSize: Int,
     public val dividerBackground: Drawable,
     public val attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle,
+    public val commandInputCancelIcon: Drawable,
+    public val commandInputBadgeIcon: Drawable,
+    public val commandInputBadgeBackgroundDrawable: Drawable,
+    public val commandInputBadgeTextStyle: TextStyle
 ) {
 
     internal companion object {
@@ -405,6 +413,37 @@ public data class MessageInputViewStyle(
                     cameraAttachmentIconTint = cameraAttachmentIconTint,
                 )
 
+                val commandInputCancelIcon = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCommandInputCancelIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
+
+                val commandInputBadgeBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCommandInputBadgeBackgroundDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_shape_command_background)!!
+
+                val commandInputBadgeIcon = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCommandInputBadgeIcon
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_white)!!
+
+                val commandInputBadgeTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCommandInputBadgeTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCommandInputBadgeTextColor,
+                        context.getColorCompat(R.color.stream_ui_literal_white)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCommandInputBadgeFontAssets,
+                        R.styleable.MessageInputView_streamUiCommandInputBadgeFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCommandInputBadgeStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -439,6 +478,10 @@ public data class MessageInputViewStyle(
                     dividerBackground = dividerBackground,
                     attachmentMaxFileSize = attachmentMaxFileSize,
                     attachmentSelectionDialogStyle = attachmentDialogStyle,
+                    commandInputCancelIcon = commandInputCancelIcon,
+                    commandInputBadgeIcon = commandInputBadgeIcon,
+                    commandInputBadgeBackgroundDrawable = commandInputBadgeBackgroundDrawable,
+                    commandInputBadgeTextStyle = commandInputBadgeTextStyle
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

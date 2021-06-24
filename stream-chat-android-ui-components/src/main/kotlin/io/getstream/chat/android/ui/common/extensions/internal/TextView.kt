@@ -26,7 +26,10 @@ internal fun TextView.setLeftDrawableWithTint(drawable: Drawable?, @ColorInt tin
 }
 
 internal fun TextView.setLeftDrawableWithSize(@DrawableRes id: Int, @DimenRes sizeRes: Int) {
-    val drawable = ContextCompat.getDrawable(context, id)
+    setLeftDrawableWithSize(ContextCompat.getDrawable(context, id), sizeRes)
+}
+
+internal fun TextView.setLeftDrawableWithSize(drawable: Drawable?, @DimenRes sizeRes: Int) {
     val size = resources.getDimensionPixelSize(sizeRes)
     drawable?.setBounds(0, 0, size, size)
     setLeftDrawable(drawable)
