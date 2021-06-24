@@ -17,10 +17,8 @@ internal class UploadAttachmentsWorker(private val appContext: Context) {
     ): Result<Unit> {
         return try {
             val domainImpl = chatDomain.apply {
-                if (!isRepositoryInitialized) {
+                if (user.value == null) {
                     chatClient.setUserWithoutConnectingIfNeeded()
-
-                    chatClient.getCurrentUser()?.let(::initRepositoryFacade)
                 }
             }
 
