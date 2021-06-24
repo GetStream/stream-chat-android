@@ -29,7 +29,9 @@ class ChatPreviewViewModel(
         viewModelScope.launch {
             val result = chatClient.createChannel(
                 channelType = "messaging",
-                members = listOf(chatDomain.currentUser.id, memberId),
+                members = mutableListOf(memberId).apply {
+                    chatDomain.user.value?.id?.let(::add)
+                },
                 extraData = mapOf(CHANNEL_ARG_DRAFT to true)
             ).await()
             if (result.isSuccess) {
