@@ -64,7 +64,7 @@ internal class UploadAttachmentsWorkerTest {
 
             channelController = mock()
             chatClient = mock {
-                on(it.setUserWithoutConnectingIfNeeded()) doReturn true
+                on(it.containsStoredCredentials()) doReturn true
             }
 
             chatDomainImpl = mock {
@@ -123,7 +123,7 @@ internal class UploadAttachmentsWorkerTest {
 
     @Test
     fun `when user can not be set, it should return an error`() = runBlockingTest {
-        whenever(chatClient.setUserWithoutConnectingIfNeeded()) doReturn false
+        whenever(chatClient.containsStoredCredentials()) doReturn false
 
         val result = UploadAttachmentsWorker(mock())
             .uploadAttachmentsForMessage(

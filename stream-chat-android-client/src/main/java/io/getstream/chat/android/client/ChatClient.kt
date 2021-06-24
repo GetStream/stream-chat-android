@@ -322,19 +322,22 @@ public class ChatClient internal constructor(
      *
      */
     @InternalStreamChatApi
-    public fun setUserWithoutConnectingIfNeeded(): Boolean {
+    public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet()) {
-            return true
+            return
         }
 
-        return encryptedPushNotificationsConfigStore.get()?.let { config ->
+        encryptedPushNotificationsConfigStore.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId),
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
+        }
+    }
 
-            true
-        } ?: false
+    @InternalStreamChatApi
+    public fun containsStoredCredentials(): Boolean {
+        return encryptedPushNotificationsConfigStore.get() != null
     }
 
     private fun notifySetUser(user: User) {
@@ -520,7 +523,11 @@ public class ChatClient internal constructor(
 
     @CheckResult
     @JvmOverloads
-    public fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean = false): Call<Reaction> {
+    public fun sendReaction(
+        messageId: String,
+        reactionType: String,
+        enforceUnique: Boolean = false,
+    ): Call<Reaction> {
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
@@ -1517,7 +1524,11 @@ public class ChatClient internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+        internal suspend fun displayNotificationWithData(
+            channelType: String,
+            channelId: String,
+            messageId: String,
+        ) {
             ensureClientInitialized().notifications.displayNotificationWithData(
                 channelId = channelId,
                 channelType = channelType,
