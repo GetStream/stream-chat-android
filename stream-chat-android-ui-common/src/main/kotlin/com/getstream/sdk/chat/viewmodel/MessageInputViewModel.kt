@@ -37,7 +37,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     @Deprecated(
         message = "Do not use this LiveData directly",
         replaceWith = ReplaceWith("messageToEdit: LiveData<Message?> and postMessageToEdit(message: Message?)"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
     private val _repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
@@ -52,7 +52,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
-                _channel.addSource(channelController.channelData) { _channel.value = channelController.toChannel() }
+                _channel.addSource(channelController.offlineChannelData) { _channel.value = channelController.toChannel() }
                 _maxMessageLength.addSource(_channel) { _maxMessageLength.value = it.config.maxMessageLength }
                 _commands.addSource(_channel) { _commands.value = it.config.commands }
                 _isDirectMessage.addSource(

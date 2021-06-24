@@ -120,23 +120,14 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun stopWatching (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun subscribe (Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor ([Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor ([Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor ([Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor ([Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeForSingle (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun unBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun unMuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unbanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unflagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unflagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -654,6 +645,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun removeMembers ([Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendAction (Lio/getstream/chat/android/client/api/models/SendActionRequest;)Lio/getstream/chat/android/client/call/Call;
+	public final fun sendEvent (Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun sendEvent$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendFile (Ljava/io/File;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendFile (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendFile$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -669,21 +662,13 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun stopTyping (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun stopWatching ()Lio/getstream/chat/android/client/call/Call;
 	public final fun subscribe (Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor (Landroidx/lifecycle/LifecycleOwner;[Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor ([Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor ([Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeFor ([Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeFor ([Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/Class;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeForSingle (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun subscribeForSingle (Ljava/lang/String;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
-	public final fun subscribeForSingle (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public final fun truncate ()Lio/getstream/chat/android/client/call/Call;
-	public final fun unBanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unbanUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun unmute ()Lio/getstream/chat/android/client/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
@@ -1662,16 +1647,18 @@ public final class io/getstream/chat/android/client/events/TypingStopEvent : io/
 }
 
 public final class io/getstream/chat/android/client/events/UnknownEvent : io/getstream/chat/android/client/events/ChatEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/util/Map;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
-	public final fun component3 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/util/Map;)Lio/getstream/chat/android/client/events/UnknownEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/UnknownEvent;Ljava/lang/String;Ljava/util/Date;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/UnknownEvent;
+	public final fun component3 ()Lio/getstream/chat/android/client/models/User;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;)Lio/getstream/chat/android/client/events/UnknownEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/UnknownEvent;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/UnknownEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getRawData ()Ljava/util/Map;
 	public fun getType ()Ljava/lang/String;
+	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

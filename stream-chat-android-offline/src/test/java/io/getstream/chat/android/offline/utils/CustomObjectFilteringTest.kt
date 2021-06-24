@@ -1299,7 +1299,40 @@ internal class CustomObjectFilteringTest {
                             expectedList,
                         )
                     }
-                }
+                } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(stringList.random(), notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(notStringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.`in`("someField", stringList),
+                            expectedList
+                        )
+                    },
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(stringList.random(), notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
+                            Filters.`in`("someField", stringList),
+                            expectedList
+                        )
+                    },
+                )
+            }
 
         @JvmStatic
         fun notInFilterArguments() = List(positiveRandomInt(10)) { randomInt() }.let { intList ->
@@ -1422,6 +1455,41 @@ internal class CustomObjectFilteringTest {
                         ).shuffled(),
                     Filters.nin("members", memberIds),
                     expectedList,
+                )
+            } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel().apply {
+                            extraData["someField"] = listOf(notStringList.random())
+                        }
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(stringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList
+                        )
+                    },
+                    List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel().apply {
+                                        extraData["someField"] = listOf(stringList.random())
+                                    }
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList
+                        )
+                    },
                 )
             }
 

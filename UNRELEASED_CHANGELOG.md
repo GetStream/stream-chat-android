@@ -32,14 +32,12 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Removed the `Message::attachmentsSyncStatus` field
 
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Now attachments can be sent while being in offline
 
 ### ✅ Added
 

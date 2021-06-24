@@ -54,7 +54,7 @@ internal class MessageInputViewModelTest {
         whenever(chatDomain.keystroke(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.stopTyping(eq(CID), anyOrNull())) doReturn mock()
         whenever(chatDomain.user) doReturn MutableLiveData(randomUser())
-        whenever(channelController.channelData) doReturn MutableLiveData(mock())
+        whenever(channelController.offlineChannelData) doReturn MutableLiveData(mock())
     }
 
     @Test
