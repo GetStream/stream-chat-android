@@ -63,7 +63,9 @@ internal class UploadAttachmentsWorkerTest {
             }
 
             channelController = mock()
-            chatClient = mock()
+            chatClient = mock {
+                on(it.setUserWithoutConnectingIfNeeded()) doReturn true
+            }
 
             chatDomainImpl = mock {
                 on(it.channel(defaultChannelType, defaultChannelId)) doReturn channelController
@@ -106,6 +108,22 @@ internal class UploadAttachmentsWorkerTest {
     fun `when not all attachments have state as success, it should return error`() = runBlockingTest {
         whenever(channelController.uploadAttachments(eq(defaultMessagePendingAttachments), anyOrNull()))
             .doReturn(attachmentsPending)
+
+        val result = UploadAttachmentsWorker(mock())
+            .uploadAttachmentsForMessage(
+                defaultChannelType,
+                defaultChannelId,
+                defaultMessagePendingAttachments.id,
+                chatDomainImpl,
+                chatClient
+            )
+
+        Assertions.assertTrue(result.isError)
+    }
+
+    @Test
+    fun `when user can not be set, it should return an error`() = runBlockingTest {
+        whenever(chatClient.setUserWithoutConnectingIfNeeded()) doReturn false
 
         val result = UploadAttachmentsWorker(mock())
             .uploadAttachmentsForMessage(

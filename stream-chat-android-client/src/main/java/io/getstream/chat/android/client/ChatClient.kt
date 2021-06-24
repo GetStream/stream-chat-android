@@ -322,17 +322,19 @@ public class ChatClient internal constructor(
      *
      */
     @InternalStreamChatApi
-    public fun setUserWithoutConnectingIfNeeded() {
+    public fun setUserWithoutConnectingIfNeeded() : Boolean {
         if (isUserSet()) {
-            return
+            return true
         }
 
-        encryptedPushNotificationsConfigStore.get()?.let { config ->
+        return encryptedPushNotificationsConfigStore.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId),
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
-        }
+
+            true
+        } ?: false
     }
 
     private fun notifySetUser(user: User) {

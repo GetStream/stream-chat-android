@@ -18,7 +18,11 @@ internal class UploadAttachmentsWorker(private val appContext: Context) {
         return try {
             val domainImpl = chatDomain.apply {
                 if (user.value == null) {
-                    chatClient.setUserWithoutConnectingIfNeeded()
+                    val isSuccess = chatClient.setUserWithoutConnectingIfNeeded()
+
+                    if (!isSuccess) {
+                        return Result.error(ChatError("Could not set user"))
+                    }
                 }
             }
 
