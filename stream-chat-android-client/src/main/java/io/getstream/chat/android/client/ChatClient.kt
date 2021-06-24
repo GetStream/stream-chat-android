@@ -326,6 +326,7 @@ public class ChatClient internal constructor(
         if (isUserSet()) {
             return
         }
+
         encryptedPushNotificationsConfigStore.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId),
