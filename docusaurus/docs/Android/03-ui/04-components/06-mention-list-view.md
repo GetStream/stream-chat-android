@@ -30,7 +30,7 @@ You can add this view via XML:
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-We recomend using this view with its ViewModel, which configures the view and makes it fully usable. 
+We recommend using this view with its ViewModel, which configures the view and makes it fully usable. 
 
 The basic setup of the ViewModel and connecting it to the view is done the following way:
 
