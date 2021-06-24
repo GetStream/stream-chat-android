@@ -14,7 +14,7 @@ Many parts of the UI components can be changed and customized. It is possible to
 
 It is not possible to change the tint of icons, it is necessary to change the Drawable if a different color is desired.
 
-Views can be customized by two ways: `TransformStyle` object or by the attributes of the View in the XML, as described in the next section.
+Views can be customized in two ways: `TransformStyle` object or by the attributes of the View in the XML, as described in the next section.
 
 ## Global Styling
 
@@ -60,4 +60,3 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
 Both will have the following result:
 
 ![Custom messages](../assets/custom_messages.png)
-
