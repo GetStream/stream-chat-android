@@ -35,7 +35,7 @@ chanelHeaderView.setOnUserAvatarClickListener {
 }
 ```
 All the logic of subscribing to data emitted by view model is provided by the `ChannelListHeaderViewModel::bindView` function. 
-By default, view model will make view display avatar of the currently logged-in user and call the view to display "Searching for network" state when needed.
+By default, the ViewModel will make the view display avatar of the currently logged-in user and call the view to display "Searching for network" state when needed.
   
  | Light Mode | Dark Mode |
  | --- | --- |
