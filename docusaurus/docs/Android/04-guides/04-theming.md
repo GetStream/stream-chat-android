@@ -2,7 +2,7 @@
 
 Many parts of the UI components can be changed and customized. It is possible to change colors, fonts, sizes and many other aspects of the `Views` to match a desired look. It is possible to change:
 
-- Font fammily
+- Font family
 - Text color
 - Background of view and internal views. (ex: Message inside MessageListView) 
 - Enable and disable features.
@@ -60,5 +60,4 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
 Both will have the following result:
 
 ![Custom messages](../assets/custom_messages.png)
-
 
