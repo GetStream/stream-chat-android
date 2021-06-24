@@ -21,9 +21,9 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
 
     @VisibleForTesting
     internal val defaultUsersQueryFilter by lazy {
-        Filters.and(
+        createFilter(
             Filters.ne(FIELD_NAME, ""),
-            Filters.ne(FIELD_ID, chatDomainImpl.user.value?.id?.let(::listOf) ?: emptyList<String>())
+            chatDomainImpl.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
         )
     }
 
@@ -68,7 +68,10 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         val filter = if (querySearch.isEmpty()) {
             defaultUsersQueryFilter
         } else {
-            createFilter(querySearch, chatDomainImpl.user.value?.id)
+            createFilter(
+                Filters.autocomplete(FIELD_NAME, querySearch),
+                chatDomainImpl.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+            )
         }
 
         return chatDomainImpl.client.queryUsers(
@@ -93,16 +96,11 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
         private const val FIELD_ID = "id"
     }
 
-    private fun createFilter(querySearch: String, currentUserId: String?): FilterObject {
-        val autoComplete = Filters.autocomplete(FIELD_NAME, querySearch)
-
-        return if (currentUserId != null) {
-            Filters.and(
-                autoComplete,
-                Filters.ne(FIELD_ID, currentUserId)
-            )
+    private fun createFilter(defaultFilter: FilterObject, optionalFilter: FilterObject?): FilterObject {
+        return if (optionalFilter != null) {
+            Filters.and(defaultFilter, optionalFilter)
         } else {
-            autoComplete
+            defaultFilter
         }
     }
 }
