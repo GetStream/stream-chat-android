@@ -16,12 +16,15 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@ExperimentalCoroutinesApi
 internal class UploadAttachmentsWorkerTest {
 
     private lateinit var repositoryFacade: RepositoryFacade
@@ -65,6 +68,7 @@ internal class UploadAttachmentsWorkerTest {
             chatDomainImpl = mock {
                 on(it.channel(defaultChannelType, defaultChannelId)) doReturn channelController
                 on(it.repos) doReturn repositoryFacade
+                on(it.user) doReturn MutableStateFlow(null)
             }
         }
     }
