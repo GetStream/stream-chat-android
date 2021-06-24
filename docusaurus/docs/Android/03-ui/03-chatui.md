@@ -5,8 +5,8 @@ SDK provides an API for general-level configuration of chat behavior and appeara
 ## Overview
 
 ChatUI allows to override default implementations of commonly used parts of SDK like:
+ * Set of available message reactions
  * MIME type icons for attachments 
- * Set of available reactions for messages
  * Default font used across the UI components
  * Avatar view bitmap transformation
  * Attachments urls overriding
@@ -55,7 +55,7 @@ As a result, there will only be a _love_ reaction available in the chat, and whe
 When possible SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
 By default SDK provides built-in MIME type icons for the most popular file types, and displays a generic file icon for others.
 
-In order to customize them all you need to to is override `ChatUI.mimeTypeIconProvider` in the following way:
+In order to customize MIME icons, you need to override `ChatUI.mimeTypeIconProvider` in the following way:
 
 ```kotlin
 ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
@@ -64,9 +64,13 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
     }
 
     when {
+        // special icon for XLS files
         mimeType == "application/vnd.ms-excel" -> R.drawable.ic_file_xls
+        // generic icon for audio files
         mimeType.contains("audio") -> R.drawable.ic_file_mp3
+        // generic icon for video files
         mimeType.contains("video") -> R.drawable.ic_file_mov
+        // generic icon for other files
         else -> R.drawable.stream_ui_ic_file
     }
 }
@@ -74,7 +78,7 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
 
 ### Transforming avatar bitmap with AvatarBitmapFactory
 
-It is possible to customize `AvatarBitmapFactory` so the avatars will
+It is possible to override `AvatarBitmapFactory` so the avatars will
 be generated accordingly to the new configuration. It is possible to configure
 the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
 between blocking and non blocking options and configure the keys for easy bitmap to be used
