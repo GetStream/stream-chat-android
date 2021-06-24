@@ -25,7 +25,7 @@ This doesn't apply the changes instantly, the view must be recreated for the cha
 :::
 
 :::caution
-Please keep in mind that using will `TransformStyle` overrides the configurations made using the attributes of the class. Don't use both ways are the same time as only `TransformStyle` will be applied.
+Please keep in mind that `TransformStyle` overrides the configurations made using the attributes of the class. Don't use both ways are the same time as only `TransformStyle` will be applied.
 :::
 
 You can use `TransformStyle` to change multiple appearance characteristics of the `MessageListView`.
