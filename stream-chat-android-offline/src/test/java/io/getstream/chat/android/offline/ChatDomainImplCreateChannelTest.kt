@@ -269,7 +269,8 @@ internal class ChatDomainImplCreateChannelTest {
         fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).buildImpl().apply {
                 repos = repositoryFacade
-                currentUser = this@Fixture.user
+                offlineEnabled = false
+                setUser(this@Fixture.user)
                 scope = testScope
                 if (isOnline) setOnline() else setOffline()
             }
