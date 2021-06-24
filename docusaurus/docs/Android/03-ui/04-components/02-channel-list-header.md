@@ -71,7 +71,7 @@ The appearance of `ChannelListHeaderView` can be conveniently modified using its
         />
 ```
 
-The example above, hides the avatar view, makes the title text bold and sets the drawable of the action button to a drawable specified.
+The example above hides the avatar view, makes the title text bold and sets the drawable of the action button to a drawable specified.
     
 | Before | After |
 | --- | --- |
