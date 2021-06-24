@@ -18,7 +18,8 @@ It supports the following features:
 * Replies
 
 ## Usage
-The `MessageInputView` can be included view XML in the layout. It normally goes bellow the `MessageListView`.
+
+To use `MessageInputView`, include it in your XML layout. It usually goes below a `MessageListView`.
 
 ```xml
 <io.getstream.chat.android.ui.message.input.MessageInputView
@@ -31,12 +32,11 @@ The `MessageInputView` can be included view XML in the layout. It normally goes 
         app:layout_constraintTop_toBottomOf="@+id/messageListView"
         />
 ```
-Then is can be bind with the ViewModel, which is the recomemded way, to make it fully usable. It can also be customized is many ways, as described in the next sections.
 
-## ViewModel
-To simplify the customization of behaviour for this view, it is possible to bind a `MessageInputViewModel` to it which will set the listeners and make it fully usable:
+The recommended way of setting up the input view is by binding it to a `MessageInputViewModel`. This will make it fully functional by setting up any necessary listeners and data handling.
 
 ```kotlin
+// Instantiate the ViewModel for a given channel
 val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
 val viewModel: MessageInputViewModel by viewModels { factory }
 // Bind it with MessageInputView
