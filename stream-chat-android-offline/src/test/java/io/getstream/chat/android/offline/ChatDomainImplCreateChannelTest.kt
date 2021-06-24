@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
@@ -208,9 +209,11 @@ internal class ChatDomainImplCreateChannelTest {
     fun `Given failed network response When create distinct channel Should return failed response And do not insert any channel to DB`() {
         val repositoryFacade: RepositoryFacade = mock()
         val sut = Fixture()
-            .givenChatClientResult(Result(mock<ChatError>()))
+            .givenChatClientResult(Result(mock()))
             .givenRepositoryFacade(repositoryFacade)
             .get()
+
+        reset(repositoryFacade)
 
         val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
 
@@ -268,9 +271,9 @@ internal class ChatDomainImplCreateChannelTest {
 
         fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).buildImpl().apply {
-                repos = repositoryFacade
                 offlineEnabled = false
                 setUser(this@Fixture.user)
+                repos = repositoryFacade
                 scope = testScope
                 if (isOnline) setOnline() else setOffline()
             }
