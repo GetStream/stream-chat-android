@@ -26,7 +26,7 @@ The basic setup of the ViewModel and connecting it with the view can be done in 
  ```kotlin
 // Instantiate the view model 
 val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
-// Bind the view model with ChannelListView 
+// Bind the ViewModel with ChannelListView 
 channelListHeaderViewModel.bindView(chanelHeaderView, viewLifecycleOwner)
 // Optional: setup listeners for user avatar and action button 
 chanelHeaderView.setOnActionButtonClickListener {
