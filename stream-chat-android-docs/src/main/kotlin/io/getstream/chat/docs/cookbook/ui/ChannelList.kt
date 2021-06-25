@@ -43,7 +43,7 @@ class ChannelList : Fragment() {
         val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", ChatDomain.instance().user.value?.let(::listOf) ?: emptyList()),
+                Filters.`in`("members", ChatDomain.instance().user.value!!.id),
             ),
             sort = QuerySort.desc(Channel::lastUpdated),
             limit = 30
