@@ -17,7 +17,7 @@ The full list of `ChatUI` properties you can override include:
  * `ChatUI.fonts` Allows specifying default font for TextViews displayed by UI components. 
  * `ChatUI.avatarBitmapFactory` Allows intercepting the avatar Bitmap and modifying it before it's displayed by the `AvatarView`.
  * `ChatUI.urlSigner` Allows adding authorization tokens for images, video, etc.
- * `ChatUI.markdown` Interface to to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic, use more markdown modules, etc.
+ * `ChatUI.markdown` Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic, use more markdown modules, etc.
  * `ChatUI.style` Allows overriding global, default style of UI components, like the TextStyle.
  * `ChatUI.navigator` Allows intercepting and modifying default navigation between SDKs components (e.g. Redirection from `MessageListView` to `AttachmentGalleryActivity`).
  
@@ -52,8 +52,8 @@ As a result, there will only be a _love_ reaction available in the chat, and whe
 
 ### Custom MIME type icons
 
-When possible SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
-By default SDK provides built-in MIME type icons for the most popular file types, and displays a generic file icon for others.
+When possible, SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
+By default SDK provides built-in MIME type icons for the most popular file types and displays a generic file icon for others.
 
 In order to customize MIME icons, you need to override `ChatUI.mimeTypeIconProvider` in the following way:
 

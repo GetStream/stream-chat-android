@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Events
 
 Events allow the client to stay up to date with changes to the chat. For example, you get events when a new message was sent, a user's image was updated, a reaction was added, or a member joined the channel.

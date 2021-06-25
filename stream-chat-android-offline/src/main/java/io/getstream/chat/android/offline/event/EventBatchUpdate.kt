@@ -41,8 +41,8 @@ internal class EventBatchUpdate private constructor(
         getCurrentChannel(cid)?.also { channel ->
             channel.updateLastMessage(message)
 
-            val currentUserId = domainImpl.currentUser.id
-            if (isNewMessage && message.shouldIncrementUnreadCount(currentUserId)) {
+            val currentUserId = domainImpl.user.value?.id
+            if (isNewMessage && currentUserId != null && message.shouldIncrementUnreadCount(currentUserId)) {
                 channel.incrementUnreadCount(currentUserId)
             }
         }
@@ -74,7 +74,7 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        userMap -= domainImpl.currentUser.id
+        domainImpl.user.value?.id?.let { userMap -= it }
 
         domainImpl.repos.storeStateForChannels(
             users = userMap.values.toList(),

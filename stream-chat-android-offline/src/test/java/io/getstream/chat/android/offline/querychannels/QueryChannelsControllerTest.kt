@@ -29,6 +29,7 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -275,7 +276,7 @@ private class Fixture {
 
     fun givenCurrentUser(user: User) = apply {
         currentUser = user
-        whenever(chatDomainImpl.currentUser) doReturn currentUser!!
+        whenever(chatDomainImpl.user) doReturn MutableStateFlow(currentUser)
     }
 
     fun givenNewChannelControllerForChannel(channelController: ChannelController = mock()): Fixture = apply {

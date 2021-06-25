@@ -55,10 +55,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.extensions.incrementUnreadCount
 import io.getstream.chat.android.offline.extensions.setMember
 import io.getstream.chat.android.offline.extensions.updateReads
-import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import kotlinx.coroutines.launch
 
 internal class EventHandlerImpl(
@@ -391,15 +389,6 @@ internal class EventHandlerImpl(
         }
     }
 
-    private fun EventBatchUpdate.incrementUnreadCountIfNecessary(cid: String, message: Message) {
-        val currentUserId = domainImpl.currentUser.id
-        getCurrentChannel(cid)?.let {
-            if (message.shouldIncrementUnreadCount(currentUserId)) {
-                addChannel(it.apply { incrementUnreadCount(currentUserId) })
-            }
-        }
-    }
-
     private suspend fun handleEventsInternal(events: List<ChatEvent>) {
         val sortedEvents = events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(sortedEvents)
@@ -445,7 +434,7 @@ internal class EventHandlerImpl(
     }
 
     private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, user: User?) {
-        if (user != null && domainImpl.currentUser.id != user.id) {
+        if (user != null && domainImpl.user.value?.id != user.id) {
             ownReactions = batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
             // for events of current user we keep "ownReactions" from the event
