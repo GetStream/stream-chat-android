@@ -78,9 +78,8 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
 
 ### Transforming avatar bitmap with AvatarBitmapFactory
 
-It is possible to override `AvatarBitmapFactory` so the avatars will
-be generated accordingly to the new configuration. It is possible to configure
-the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
+Overriding the `AvatarBitmapFactory` allows the avatars to be generated accordingly to a new configuration. 
+It is possible to configure the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
 between blocking and non blocking options and configure the keys for easy bitmap to be used
 in the cache system.
 
