@@ -53,7 +53,7 @@ public class ReadUsersDialog extends Dialog {
         if (reads == null || style == null)
             return;
         setContentView(R.layout.stream_dialog_read_users);
-        ListView lv_read_user = findViewById(R.id.lv_read_user);
+        ListView lv_read_user = findViewById(R.id.lvReadUser);
         List<User> users = new ArrayList<>();
         for (ChannelUserRead read : reads){
             users.add(read.getUser());

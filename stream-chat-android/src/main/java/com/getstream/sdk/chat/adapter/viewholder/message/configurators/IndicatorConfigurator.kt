@@ -112,9 +112,9 @@ internal class IndicatorConfigurator(
         }
 
         binding.root.updateConstraints {
-            clear(R.id.read_state, ConstraintSet.START)
-            clear(R.id.read_state, ConstraintSet.END)
-            clear(R.id.read_state, ConstraintSet.BOTTOM)
+            clear(R.id.readState, ConstraintSet.START)
+            clear(R.id.readState, ConstraintSet.END)
+            clear(R.id.readState, ConstraintSet.BOTTOM)
         }
 
         binding.readState.updateLayoutParams<ConstraintLayout.LayoutParams> {
