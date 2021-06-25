@@ -101,7 +101,7 @@ public data class MessageInputViewStyle(
     public val commandInputCancelIcon: Drawable,
     public val commandInputBadgeIcon: Drawable,
     public val commandInputBadgeBackgroundDrawable: Drawable,
-    public val commandInputBadgeTextStyle: TextStyle
+    public val commandInputBadgeTextStyle: TextStyle,
 ) {
 
     internal companion object {
