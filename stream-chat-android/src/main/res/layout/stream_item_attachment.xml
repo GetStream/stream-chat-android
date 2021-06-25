@@ -7,7 +7,7 @@
     >
 
     <include
-        android:id="@+id/cl_attachment_media"
+        android:id="@+id/clAttachmentMedia"
         layout="@layout/stream_item_attach_media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,16 +17,16 @@
         />
 
     <Space
-        android:id="@+id/space_media_file"
+        android:id="@+id/spaceMediaFile"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_same_user_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media"
+        app:layout_constraintTop_toBottomOf="@+id/clAttachmentMedia"
         />
 
     <ListView
-        android:id="@+id/lv_attachment_file"
+        android:id="@+id/lvAttachmentFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"
@@ -36,7 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space_media_file"
+        app:layout_constraintTop_toBottomOf="@+id/spaceMediaFile"
         tools:listitem="@layout/stream_item_attach_file"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

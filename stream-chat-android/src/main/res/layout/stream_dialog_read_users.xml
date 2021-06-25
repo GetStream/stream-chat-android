@@ -7,7 +7,7 @@
     >
 
     <ListView
-        android:id="@+id/lv_read_user"
+        android:id="@+id/lvReadUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/stream_white"

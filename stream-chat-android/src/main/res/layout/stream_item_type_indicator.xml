@@ -6,7 +6,7 @@
     >
 
     <LinearLayout
-        android:id="@+id/ll_typing_indicator"
+        android:id="@+id/llTypingIndicator"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginStart="10dp"
@@ -19,13 +19,13 @@
         />
 
     <ImageView
-        android:id="@+id/iv_typing_indicator"
+        android:id="@+id/ivTypingIndicator"
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_marginStart="10dp"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/ll_typing_indicator"
-        app:layout_constraintStart_toEndOf="@+id/ll_typing_indicator"
-        app:layout_constraintTop_toTopOf="@+id/ll_typing_indicator"
+        app:layout_constraintBottom_toBottomOf="@+id/llTypingIndicator"
+        app:layout_constraintStart_toEndOf="@+id/llTypingIndicator"
+        app:layout_constraintTop_toTopOf="@+id/llTypingIndicator"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

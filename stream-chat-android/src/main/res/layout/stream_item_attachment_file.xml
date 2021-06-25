@@ -11,7 +11,7 @@
 
 
     <ImageView
-        android:id="@+id/iv_file_thumb"
+        android:id="@+id/ivFileThumb"
         android:layout_width="25dp"
         android:layout_height="32dp"
         android:layout_marginStart="15dp"
@@ -26,7 +26,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_file_title"
+        android:id="@+id/tvFileTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -39,24 +39,24 @@
         android:textSize="14sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"
-        app:layout_constraintTop_toTopOf="@+id/iv_file_thumb"
+        app:layout_constraintStart_toEndOf="@+id/ivFileThumb"
+        app:layout_constraintTop_toTopOf="@+id/ivFileThumb"
         />
 
     <TextView
-        android:id="@+id/tv_file_size"
+        android:id="@+id/tvFileSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="412 KB"
         android:textColor="@color/stream_gray_dark"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/tv_file_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_file_title"
+        app:layout_constraintStart_toStartOf="@+id/tvFileTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvFileTitle"
         />
 
     <TextView
-        android:id="@+id/tv_close"
+        android:id="@+id/tvClose"
         style="@style/text"
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -69,7 +69,7 @@
         />
 
     <ImageView
-        android:id="@+id/iv_select_mark"
+        android:id="@+id/ivSelectMark"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/stream_rectangle_attach_media"

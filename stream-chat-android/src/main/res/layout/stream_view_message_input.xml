@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintBottom_toTopOf="@+id/llComposer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:listitem="@layout/stream_item_mention"
         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_title"
+        android:id="@+id/clTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
@@ -31,7 +31,7 @@
         >
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/tvTitle"
             style="@style/text_b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,44 +41,44 @@
             />
 
         <TextView
-            android:id="@+id/tv_command"
+            android:id="@+id/tvCommand"
             style="@style/text_b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-            app:layout_constraintStart_toEndOf="@+id/tv_title"
-            app:layout_constraintTop_toTopOf="@+id/tv_title"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintStart_toEndOf="@+id/tvTitle"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle"
             />
 
         <Button
-            android:id="@+id/btn_close"
+            android:id="@+id/btnClose"
             style="@style/text"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="20dp"
             android:gravity="center"
             app:backgroundTint="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_title"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_add_file"
+        android:id="@+id/clAddFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintBottom_toTopOf="@+id/llComposer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_title"
+        app:layout_constraintTop_toBottomOf="@+id/clTitle"
         >
 
         <LinearLayout
-            android:id="@+id/select_media"
+            android:id="@+id/selectMedia"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackground"
@@ -110,7 +110,7 @@
                     />
 
                 <ImageView
-                    android:id="@+id/iv_media_permission"
+                    android:id="@+id/ivMediaPermission"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_gravity="end"
@@ -121,7 +121,7 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tv_upload_photo_video"
+                android:id="@+id/tvUploadPhotoVideo"
                 style="@style/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/select_camera"
+            android:id="@+id/selectCamera"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -140,7 +140,7 @@
             android:orientation="horizontal"
             android:paddingStart="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/select_media"
+            app:layout_constraintTop_toBottomOf="@+id/selectMedia"
             >
 
             <FrameLayout
@@ -164,7 +164,7 @@
                     />
 
                 <ImageView
-                    android:id="@+id/iv_camera_permission"
+                    android:id="@+id/ivCameraPermission"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_gravity="end"
@@ -175,7 +175,7 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tv_upload_camera"
+                android:id="@+id/tvUploadCamera"
                 style="@style/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -185,7 +185,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/select_file"
+            android:id="@+id/selectFile"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -195,7 +195,7 @@
             android:paddingStart="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/select_camera"
+            app:layout_constraintTop_toBottomOf="@+id/selectCamera"
             >
 
             <FrameLayout
@@ -220,7 +220,7 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tv_upload_file"
+                android:id="@+id/tvUploadFile"
                 style="@style/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -231,21 +231,21 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_select_photo"
+        android:id="@+id/clSelectPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:paddingBottom="10dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintBottom_toTopOf="@+id/llComposer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_title"
+        app:layout_constraintTop_toBottomOf="@+id/clTitle"
         >
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_media"
+            android:id="@+id/rvMedia"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -256,7 +256,7 @@
             />
 
         <ProgressBar
-            android:id="@+id/progressBar_file_loader"
+            android:id="@+id/progressBarFileLoader"
             android:layout_width="25dp"
             android:layout_height="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -267,7 +267,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:id="@+id/ll_composer"
+        android:id="@+id/llComposer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -287,7 +287,7 @@
             >
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/media_composer"
+                android:id="@+id/mediaComposer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -297,7 +297,7 @@
                 />
 
             <ListView
-                android:id="@+id/file_composer"
+                android:id="@+id/fileComposer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -329,7 +329,7 @@
                 />
 
             <ImageView
-                android:id="@+id/iv_openAttach"
+                android:id="@+id/ivOpenAttach"
                 android:layout_width="@dimen/stream_attachment_button_width"
                 android:layout_height="@dimen/stream_attachment_button_height"
                 android:layout_marginStart="10dp"
@@ -340,7 +340,7 @@
                 />
 
             <com.getstream.sdk.chat.utils.GifEditText
-                android:id="@+id/message_text_input"
+                android:id="@+id/messageTextInput"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -353,7 +353,7 @@
                 android:textSize="15sp"
                 app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                 app:layout_constraintEnd_toStartOf="@+id/sendButton"
-                app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
+                app:layout_constraintStart_toEndOf="@+id/ivOpenAttach"
                 app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage"
                 />
 
