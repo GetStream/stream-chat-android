@@ -67,14 +67,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void findReferences() {
-        tv_name = itemView.findViewById(R.id.tv_name);
-        tv_last_message = itemView.findViewById(R.id.tv_last_message);
-        iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
-        tv_date = itemView.findViewById(R.id.tv_date);
+        tv_name = itemView.findViewById(R.id.tvName);
+        tv_last_message = itemView.findViewById(R.id.tvLastMessage);
+        iv_attachment_type = itemView.findViewById(R.id.ivAttachmentType);
+        tv_date = itemView.findViewById(R.id.tvDate);
 
-        click_area = itemView.findViewById(R.id.click_area);
-        avatarView = itemView.findViewById(R.id.avatar_group);
-        read_state = itemView.findViewById(R.id.read_state);
+        click_area = itemView.findViewById(R.id.clickArea);
+        avatarView = itemView.findViewById(R.id.avatarGroup);
+        read_state = itemView.findViewById(R.id.readState);
     }
 
     public void setStyle(ChannelListViewStyle style) {

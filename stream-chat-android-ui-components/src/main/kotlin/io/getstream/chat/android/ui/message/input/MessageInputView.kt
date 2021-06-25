@@ -437,6 +437,11 @@ public class MessageInputView : ConstraintLayout {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 style.customCursorDrawable?.let(::setCustomCursor)
             }
+
+            setCommandInputCancelIcon(style.commandInputCancelIcon)
+            setCommandInputBadgeIcon(style.commandInputBadgeIcon)
+            setCommandInputBadgeBackgroundDrawable(style.commandInputBadgeBackgroundDrawable)
+            setCommandInputBadgeTextStyle(style.commandInputBadgeTextStyle)
         }
 
         binding.separator.background = style.dividerBackground

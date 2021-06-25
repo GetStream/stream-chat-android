@@ -35,7 +35,7 @@ public class ChannelViewHolderFactory {
         // inflate the layout specified in the style
         View v = LayoutInflater.from(parent.getContext()).inflate(style.getChannelPreviewLayout(), parent, false);
 
-        ImageView separator = v.findViewById(R.id.iv_separator);
+        ImageView separator = v.findViewById(R.id.ivSeparator);
         if (separator != null) {
             final Drawable itemSeparatorDrawable = style.getItemSeparatorDrawable();
             if (itemSeparatorDrawable != null) {

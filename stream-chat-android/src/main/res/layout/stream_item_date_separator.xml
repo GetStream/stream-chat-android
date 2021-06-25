@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_header"
+    android:id="@+id/clHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/stream_date_separator_margin_top"
@@ -12,38 +12,38 @@
     >
 
     <ImageView
-        android:id="@+id/iv_line_left"
+        android:id="@+id/ivLineLeft"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_date_separator_line_width"
         android:layout_marginStart="@dimen/stream_date_separator_line_margin_start"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_date"
-        app:layout_constraintEnd_toStartOf="@+id/tv_date"
+        app:layout_constraintBottom_toBottomOf="@+id/tvDate"
+        app:layout_constraintEnd_toStartOf="@+id/tvDate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_date"
+        app:layout_constraintTop_toTopOf="@+id/tvDate"
         tools:ignore="ContentDescription"
         />
 
     <ImageView
-        android:id="@+id/iv_line_right"
+        android:id="@+id/ivLineRight"
         android:layout_width="0dp"
         android:layout_height="@dimen/stream_date_separator_line_width"
         android:layout_marginEnd="@dimen/stream_date_separator_line_margin_end"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+        app:layout_constraintBottom_toBottomOf="@+id/tvDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_date"
-        app:layout_constraintTop_toTopOf="@+id/tv_date"
+        app:layout_constraintStart_toEndOf="@+id/tvDate"
+        app:layout_constraintTop_toTopOf="@+id/tvDate"
         tools:ignore="ContentDescription"
         />
 
     <TextView
-        android:id="@+id/tv_date"
+        android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_date_separator_line_margin_start"
         android:layout_marginEnd="@dimen/stream_date_separator_line_margin_end"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iv_line_right"
-        app:layout_constraintStart_toEndOf="@+id/iv_line_left"
+        app:layout_constraintEnd_toStartOf="@+id/ivLineRight"
+        app:layout_constraintStart_toEndOf="@+id/ivLineLeft"
         app:layout_constraintTop_toTopOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
