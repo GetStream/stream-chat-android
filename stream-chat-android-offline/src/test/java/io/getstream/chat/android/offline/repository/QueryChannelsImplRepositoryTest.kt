@@ -7,19 +7,12 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

@@ -63,7 +63,7 @@ public class QueryChannelsController internal constructor(
         client.queryChannels(
             QueryChannelsRequest(
                 filter = Filters.and(
-                    filter,
+                    filterObject,
                     Filters.eq("cid", channel.cid)
                 ),
                 offset = 0,
@@ -72,7 +72,7 @@ public class QueryChannelsController internal constructor(
                 memberLimit = 0,
             )
         ).await()
-            .map { it.any { it.cid == channel.cid } }
+            .map { channels -> channels.any { it.cid == channel.cid } }
             .let { it.isSuccess && it.data() }
     }
 
@@ -239,8 +239,11 @@ public class QueryChannelsController internal constructor(
         return runQuery(pagination).map { it - oldChannels }
     }
 
-    private suspend fun addChannelToQueryChannelsSpec(channel: Channel) = addChannelsToQueryChannelsSpec(listOf(channel))
-    internal suspend fun removeChannelFromQueryChannelsSpec(cid: String) = removeChannelsFromQueryChannelsSpec(listOf(cid))
+    private suspend fun addChannelToQueryChannelsSpec(channel: Channel) =
+        addChannelsToQueryChannelsSpec(listOf(channel))
+
+    internal suspend fun removeChannelFromQueryChannelsSpec(cid: String) =
+        removeChannelsFromQueryChannelsSpec(listOf(cid))
 
     private suspend fun addChannelsToQueryChannelsSpec(channels: List<Channel>) {
         queryChannelsSpec.cids += channels.map { it.cid }
@@ -310,6 +313,8 @@ public class QueryChannelsController internal constructor(
         )
     }
 
+    internal suspend fun updateOnlineChannel(channel: Channel) = updateOnlineChannels(listOf(channel), false)
+
     /**
      * Updates the state on the channelController based on the channel object we received from the API
      *
@@ -374,6 +379,7 @@ public class QueryChannelsController internal constructor(
          * If you know that a query will be started you typically want to display a loading icon.
          * */
         public object NoQueryActive : ChannelsState()
+
         /** Indicates we are loading the first page of results.
          * We are in this state if QueryChannelsController.loading is true
          * For seeing if we're loading more results have a look at QueryChannelsController.loadingMore
@@ -382,8 +388,10 @@ public class QueryChannelsController internal constructor(
          * @see QueryChannelsController.loading
          * */
         public object Loading : ChannelsState()
+
         /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
         public object OfflineNoResults : ChannelsState()
+
         /** The list of channels, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
          * @see ChatDomainImpl.online

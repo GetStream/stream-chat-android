@@ -57,7 +57,7 @@ internal fun Channel.incrementUnreadCount(currentUserId: String) {
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
     return asSequence().sortedWith(pagination.sort.comparator)
-        // .drop(pagination.channelOffset)
-        // .take(pagination.channelLimit)
+        .drop(pagination.channelOffset)
+        .take(pagination.channelLimit)
         .toList()
 }

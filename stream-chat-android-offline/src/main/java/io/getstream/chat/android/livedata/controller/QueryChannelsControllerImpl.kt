@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -42,8 +41,6 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         queryChannels.newChannelEventFilter =
             { string: Channel, int: FilterObject -> withContext(DispatcherProvider.IO) { filter(string, int) } }
     }
-
-    var a: suspend (Boolean, Boolean) -> Boolean = { b: Boolean, b1: Boolean -> true }
 
     override var recoveryNeeded: Boolean
         get() = queryChannels.recoveryNeeded

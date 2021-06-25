@@ -58,7 +58,7 @@ internal class QueryChannelsControllerTest {
                 )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateOnlineChannel(newChannel)
 
             verify(channelController).updateDataFromChannel(eq(newChannel))
         }
@@ -87,7 +87,7 @@ internal class QueryChannelsControllerTest {
                 )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateOnlineChannel(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -119,8 +119,8 @@ internal class QueryChannelsControllerTest {
                 )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateOnlineChannel(newChannel)
+            sut.updateOnlineChannel(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -146,7 +146,7 @@ internal class QueryChannelsControllerTest {
                 )
                 .get()
             val channel = randomChannel(type = channelType)
-            sut.addChannelIfFilterMatches(channel)
+            sut.updateOnlineChannel(channel)
 
             sut.refreshChannel(channel.cid)
 
@@ -165,7 +165,7 @@ internal class QueryChannelsControllerTest {
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
+            sut.updateOnlineChannel(channel)
 
             sut.refreshChannel(channel.cid)
 
@@ -185,7 +185,7 @@ internal class QueryChannelsControllerTest {
                 .get()
             val cid = "ChannelType:ChannelID"
             val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
+            sut.updateOnlineChannel(channel)
 
             sut.refreshChannel(channel.cid)
 

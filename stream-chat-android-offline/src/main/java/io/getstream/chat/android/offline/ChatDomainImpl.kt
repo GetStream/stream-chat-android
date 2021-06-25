@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
@@ -265,10 +264,6 @@ internal class ChatDomainImpl internal constructor(
         _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
-    }
-
-    private fun isTestRunner(): Boolean {
-        return Build.FINGERPRINT.lowercase().contains("robolectric")
     }
 
     internal fun setUser(user: User) {
