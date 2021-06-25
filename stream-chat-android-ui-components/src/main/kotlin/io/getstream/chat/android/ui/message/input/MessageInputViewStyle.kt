@@ -481,7 +481,7 @@ public data class MessageInputViewStyle(
                     commandInputCancelIcon = commandInputCancelIcon,
                     commandInputBadgeIcon = commandInputBadgeIcon,
                     commandInputBadgeBackgroundDrawable = commandInputBadgeBackgroundDrawable,
-                    commandInputBadgeTextStyle = commandInputBadgeTextStyle
+                    commandInputBadgeTextStyle = commandInputBadgeTextStyle,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
