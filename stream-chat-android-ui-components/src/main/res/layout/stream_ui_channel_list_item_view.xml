@@ -5,12 +5,12 @@
     >
 
     <include
-        android:id="@+id/item_background_view"
+        android:id="@+id/itemBackgroundView"
         layout="@layout/stream_ui_channel_list_item_background_view"
         />
 
     <include
-        android:id="@+id/item_foreground_view"
+        android:id="@+id/itemForegroundView"
         layout="@layout/stream_ui_channel_list_item_foreground_view"
         />
 

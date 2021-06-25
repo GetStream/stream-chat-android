@@ -7,7 +7,7 @@
     android:minHeight="@dimen/stream_attach_image_height">
 
     <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
-        android:id="@+id/iv_media_thumb"
+        android:id="@+id/ivMediaThumb"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/stream_attach_image_height"
         android:minWidth="@dimen/stream_attach_min_width"
@@ -19,26 +19,26 @@
         />
 
     <ImageView
-        android:id="@+id/iv_command_logo"
+        android:id="@+id/ivCommandLogo"
         android:layout_width="50dp"
         android:layout_height="18dp"
         android:layout_margin="10dp"
         android:background="@drawable/stream_ic_giphy"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/ivMediaThumb"
         app:layout_constraintEnd_toEndOf="parent"
         />
 
     <ImageView
-        android:id="@+id/tv_media_play"
+        android:id="@+id/tvMediaPlay"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/stream_ic_videoplay"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
-        app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
-        app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
-        app:layout_constraintTop_toTopOf="@+id/iv_media_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/ivMediaThumb"
+        app:layout_constraintEnd_toEndOf="@+id/ivMediaThumb"
+        app:layout_constraintStart_toStartOf="@+id/ivMediaThumb"
+        app:layout_constraintTop_toTopOf="@+id/ivMediaThumb"
         />
 
     <ProgressBar
@@ -46,31 +46,32 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/ivMediaThumb"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_media_thumb"
+        app:layout_constraintTop_toTopOf="@+id/ivMediaThumb"
         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_des"
+        android:id="@+id/clDes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
-        app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
-        app:layout_constraintTop_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintEnd_toEndOf="@+id/ivMediaThumb"
+        app:layout_constraintStart_toStartOf="@+id/ivMediaThumb"
+        app:layout_constraintTop_toBottomOf="@+id/ivMediaThumb"
         >
 
         <TextView
-            android:id="@+id/tv_media_title"
+            android:id="@+id/tvMediaTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="9dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
-            android:id="@+id/tv_media_des"
+            android:id="@+id/tvMediaDes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -79,23 +80,24 @@
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_media_title" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMediaTitle"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_action"
+        android:id="@+id/clAction"
         android:layout_width="0dp"
         android:layout_height="32dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintTop_toBottomOf="@+id/ivMediaThumb"
         >
 
         <TextView
-            android:id="@+id/tv_action_send"
+            android:id="@+id/tvActionSend"
             style="@style/text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -104,23 +106,23 @@
             android:gravity="center"
             android:text="@string/stream_giphy_send"
             android:textColor="@color/stream_white"
-            app:layout_constraintEnd_toStartOf="@+id/tv_action_shuffle"
+            app:layout_constraintEnd_toStartOf="@+id/tvActionShuffle"
             app:layout_constraintStart_toStartOf="parent"
             />
 
         <TextView
-            android:id="@+id/tv_action_shuffle"
+            android:id="@+id/tvActionShuffle"
             style="@style/text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/stream_giphy_shuffle"
-            app:layout_constraintEnd_toStartOf="@+id/tv_action_cancel"
-            app:layout_constraintStart_toEndOf="@+id/tv_action_send"
+            app:layout_constraintEnd_toStartOf="@+id/tvActionCancel"
+            app:layout_constraintStart_toEndOf="@+id/tvActionSend"
             />
 
         <TextView
-            android:id="@+id/tv_action_cancel"
+            android:id="@+id/tvActionCancel"
             style="@style/text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -129,7 +131,7 @@
             android:gravity="center"
             android:text="@string/stream_giphy_cancel"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_action_shuffle"
+            app:layout_constraintStart_toEndOf="@+id/tvActionShuffle"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

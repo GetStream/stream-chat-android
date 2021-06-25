@@ -8,7 +8,7 @@
     >
 
     <Space
-        android:id="@+id/space_header"
+        android:id="@+id/spaceHeader"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_header_space_height"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,25 +17,25 @@
         />
 
     <Space
-        android:id="@+id/space_same_user"
+        android:id="@+id/spaceSameUser"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_same_user_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space_header"
+        app:layout_constraintTop_toBottomOf="@+id/spaceHeader"
         />
 
     <Space
-        android:id="@+id/space_reaction_tail"
+        android:id="@+id/spaceReactionTail"
         android:layout_width="@dimen/stream_message_reaction_tail_space_width"
         android:layout_height="@dimen/stream_message_reaction_tail_space_height"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/tv_text"
-        app:layout_constraintTop_toTopOf="@+id/tv_text"
+        app:layout_constraintStart_toEndOf="@+id/tvText"
+        app:layout_constraintTop_toTopOf="@+id/tvText"
         />
 
     <ImageView
-        android:id="@+id/iv_tail"
+        android:id="@+id/ivTail"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
@@ -54,12 +54,12 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space_same_user"
+        app:layout_constraintTop_toBottomOf="@+id/spaceSameUser"
         tools:listitem="@layout/stream_item_reaction"
         />
 
     <Space
-        android:id="@+id/space_reaction"
+        android:id="@+id/spaceReaction"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_reaction_space"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,11 +74,11 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space_reaction"
+        app:layout_constraintTop_toBottomOf="@+id/spaceReaction"
         />
 
     <Space
-        android:id="@+id/space_attachment"
+        android:id="@+id/spaceAttachment"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_attachment_space"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,7 +87,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_text"
+        android:id="@+id/tvText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
@@ -98,64 +98,64 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space_attachment"
+        app:layout_constraintTop_toBottomOf="@+id/spaceAttachment"
         />
 
     <ImageView
-        android:id="@+id/iv_reply"
+        android:id="@+id/ivReply"
         android:layout_width="@dimen/stream_message_reply_width"
         android:layout_height="@dimen/stream_message_reply_height"
         android:layout_marginTop="@dimen/stream_message_reply_margin_top"
         android:layout_marginBottom="@dimen/stream_message_reply_margin_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text"
+        app:layout_constraintTop_toBottomOf="@+id/tvText"
         tools:ignore="ContentDescription"
         />
 
     <TextView
-        android:id="@+id/tv_reply"
+        android:id="@+id/tvReply"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/stream_message_reply_padding"
         android:paddingEnd="@dimen/stream_message_reply_padding"
         android:textColor="@color/stream_message_reply_text"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_reply"
-        app:layout_constraintStart_toEndOf="@+id/iv_reply"
-        app:layout_constraintTop_toTopOf="@+id/iv_reply"
+        app:layout_constraintBottom_toBottomOf="@+id/ivReply"
+        app:layout_constraintStart_toEndOf="@+id/ivReply"
+        app:layout_constraintTop_toTopOf="@+id/ivReply"
         />
 
     <TextView
-        android:id="@+id/tv_username"
+        android:id="@+id/tvUsername"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_reply"
+        app:layout_constraintTop_toBottomOf="@+id/ivReply"
         />
 
     <TextView
-        android:id="@+id/tv_messagedate"
+        android:id="@+id/tvMessagedate"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_message_date_margin_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_username"
-        app:layout_constraintTop_toBottomOf="@+id/iv_reply"
+        app:layout_constraintStart_toEndOf="@+id/tvUsername"
+        app:layout_constraintTop_toBottomOf="@+id/ivReply"
         />
 
     <com.getstream.sdk.chat.view.ReadStateView
-        android:id="@+id/read_state"
+        android:id="@+id/readState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/tv_text"
-        app:layout_constraintEnd_toStartOf="@id/tv_text"
+        app:layout_constraintBottom_toBottomOf="@id/tvText"
+        app:layout_constraintEnd_toStartOf="@id/tvText"
         />
 
     <com.getstream.sdk.chat.view.AvatarView
@@ -169,23 +169,23 @@
         />
 
     <ImageView
-        android:id="@+id/iv_deliver"
+        android:id="@+id/ivDeliver"
         android:layout_width="@dimen/stream_message_deliver_width"
         android:layout_height="@dimen/stream_message_deliver_heigth"
         android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:src="@drawable/stream_ic_delivered_unseen"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/tv_text"
-        app:layout_constraintEnd_toStartOf="@id/tv_text"
+        app:layout_constraintBottom_toBottomOf="@id/tvText"
+        app:layout_constraintEnd_toStartOf="@id/tvText"
         />
 
     <ProgressBar
-        android:id="@+id/pb_deliver"
+        android:id="@+id/pbDeliver"
         android:layout_width="@dimen/stream_message_deliver_width"
         android:layout_height="@dimen/stream_message_deliver_heigth"
         android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/tv_text"
-        app:layout_constraintEnd_toStartOf="@id/tv_text"
+        app:layout_constraintBottom_toBottomOf="@id/tvText"
+        app:layout_constraintEnd_toStartOf="@id/tvText"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

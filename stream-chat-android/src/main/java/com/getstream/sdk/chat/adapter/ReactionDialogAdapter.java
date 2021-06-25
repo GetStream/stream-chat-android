@@ -82,8 +82,8 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private ReactionViewHolder(View view) {
             super(view);
-            tv_emoji = view.findViewById(R.id.tv_emoji);
-            tv_count = view.findViewById(R.id.tv_count);
+            tv_emoji = view.findViewById(R.id.tvEmoji);
+            tv_count = view.findViewById(R.id.tvCount);
             view.setOnClickListener(this);
         }
 

@@ -517,6 +517,29 @@ class Android {
             val messageItemListWrapper = MessageListItemWrapper(listOf(messageItem))
             messageListView.displayNewMessages(messageItemListWrapper)
         }
+
+        fun attachmentReply() {
+            messageListView.setAttachmentReplyOptionClickHandler { resultItem ->
+                resultItem.messageId
+                // Handle reply to attachment
+            }
+
+            messageListView.setAttachmentShowInChatOptionClickHandler { resultItem ->
+                resultItem.messageId
+                // Handle show in chat
+            }
+
+            messageListView.setDownloadOptionHandler { resultItem ->
+                resultItem.assetUrl
+                // Handle download the attachment
+            }
+
+            messageListView.setAttachmentDeleteOptionClickHandler { resultItem ->
+                resultItem.assetUrl
+                resultItem.imageUrl
+                // Handle delete
+            }
+        }
     }
 
     class MessageListItemViewHolderFactoryExtended : MessageListItemViewHolderFactory() {
