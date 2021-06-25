@@ -65,15 +65,23 @@ internal class MessageSendingService(
     }
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
-        return if (domainImpl.online.value) {
-            return if (message.hasPendingAttachments()) {
-                waitForAttachmentsToBeSent(message)
-            } else {
-                doSend(message)
+        return when {
+            domainImpl.online.value ->
+                if (message.hasPendingAttachments()) {
+                    waitForAttachmentsToBeSent(message)
+                } else {
+                    doSend(message)
+                }
+
+            message.hasPendingAttachments() -> {
+                enqueueAttachmentUpload(message)
+                Result.success(message)
             }
-        } else {
-            logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            Result(message)
+
+            else -> {
+                logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
+                Result(message)
+            }
         }
     }
 
@@ -102,12 +110,16 @@ internal class MessageSendingService(
                     }
             }
             )
+        enqueueAttachmentUpload(newMessage)
+        return Result.success(newMessage)
+    }
+
+    private fun enqueueAttachmentUpload(message: Message) {
         uploadAttachmentsWorker.enqueueJob(
             channelController.channelType,
             channelController.channelId,
-            newMessage.id
+            message.id
         )
-        return Result.success(newMessage)
     }
 
     private suspend fun doSend(message: Message): Result<Message> {
