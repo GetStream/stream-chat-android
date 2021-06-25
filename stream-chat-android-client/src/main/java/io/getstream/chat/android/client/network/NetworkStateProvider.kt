@@ -2,23 +2,25 @@ package io.getstream.chat.android.client.network
 
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
     private val callback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network?) {
-            if (!isConnected) {
-                isConnected = true
-                listeners.forEach { it.onConnected() }
-            }
+        override fun onAvailable(network: Network) {
+            notifyListenersIfActiveNetworkAvailable()
         }
 
-        override fun onLost(network: Network?) {
+        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+            notifyListenersIfActiveNetworkAvailable()
+        }
+
+        override fun onLost(network: Network) {
             // Checks whether the network was switched or connection was lost
-            val isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
-            if (!isConnected && this@NetworkStateProvider.isConnected) {
+            if (!isConnected() && this@NetworkStateProvider.isConnected) {
                 this@NetworkStateProvider.isConnected = false
                 listeners.forEach { it.onDisconnected() }
             }
@@ -26,16 +28,30 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     }
 
     @Volatile
-    private var isConnected: Boolean = false
+    private var isConnected: Boolean = isConnected()
 
     @Volatile
     private var listeners: List<NetworkStateListener> = listOf()
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
+    private fun notifyListenersIfActiveNetworkAvailable() {
+        if (!isConnected && isConnected()) {
+            isConnected = true
+            listeners.forEach { it.onConnected() }
+        }
+    }
+
     fun isConnected(): Boolean {
-        isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
-        return isConnected
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            connectivityManager.run {
+                getNetworkCapabilities(activeNetwork)?.run {
+                    hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                } ?: false
+            }
+        } else {
+            connectivityManager.activeNetworkInfo?.isConnected ?: false
+        }
     }
 
     fun subscribe(listener: NetworkStateListener) {
