@@ -53,7 +53,7 @@ As a result, there will only be a _love_ reaction available in the chat, and whe
 ### Custom MIME type icons
 
 When possible, SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
-By default SDK provides built-in MIME type icons for the most popular file types, and displays a generic file icon for others.
+By default SDK provides built-in MIME type icons for the most popular file types and displays a generic file icon for others.
 
 In order to customize MIME icons, you need to override `ChatUI.mimeTypeIconProvider` in the following way:
 
