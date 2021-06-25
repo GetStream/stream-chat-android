@@ -76,6 +76,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageReplyStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getSearchInputViewStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -89,6 +90,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageReplyStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setSearchInputViewStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
 
@@ -1890,6 +1892,28 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchInputV
 
 public abstract interface class io/getstream/chat/android/ui/search/SearchInputView$SearchStartedListener {
 	public abstract fun onSearchStarted (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/search/SearchInputViewStyle$Companion;
+	public fun <init> (IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Landroid/graphics/drawable/Drawable;
+	public final fun component5 ()Landroid/graphics/drawable/Drawable;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public final fun getClearInputDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getHintColor ()I
+	public final fun getHintText ()Ljava/lang/String;
+	public final fun getSearchIconDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getTextColor ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/search/list/SearchResultListView : android/widget/ViewFlipper {
