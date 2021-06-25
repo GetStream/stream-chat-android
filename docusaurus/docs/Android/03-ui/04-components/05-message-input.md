@@ -1,14 +1,114 @@
 # Message Input
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/message_input_view/?language=kotlin -->
+`MessageInputView` is the view used to create a new chat message and send it to a channel.
 
-## Overview
+|Light|Dark| 
+|---|---|
+|![First custom MessageInputView example](../../assets/message_input_light.png)|![First custom MessageInputView example](../../assets/message_input_dark.png)|
 
-<!-- TODO: Brief description and a couple screenshots with default styling. -->
+It supports the following features:
+
+* Emoticons
+* Attachments
+* Slash Commands
+* Typing events
+* Editing messages
+* Threads
+* Mentions
+* Replies
+
+## Usage
+
+To use `MessageInputView`, include it in your XML layout. It usually goes below a `MessageListView`.
+
+```xml
+<io.getstream.chat.android.ui.message.input.MessageInputView
+        android:id="@+id/messageInputView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageListView"
+        />
+```
+
+The recommended way of setting up the input view is by binding it to a `MessageInputViewModel`. This will make it fully functional by setting up any necessary listeners and data handling.
+
+```kotlin
+// Instantiate the ViewModel for a given channel
+val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+val viewModel: MessageInputViewModel by viewModels { factory }
+// Bind it with MessageInputView
+viewModel.bindView(messageInputView, viewLifecycleOwner)
+```
+
+## Handling actions 
+
+Actions can be handled by setting listeners on this view, like a click in the send message button or a user start/stop typing:
+
+```kotlin
+messageInputView.setOnSendButtonClickListener {
+    // Handle send button click
+}
+
+messageInputView.setTypingListener(
+    object : MessageInputView.TypingListener {
+        override fun onKeystroke() {
+            // Handle keystroke case
+        }
+
+        override fun onStopTyping() {
+            // Handle stop typing case
+        }
+    }
+)
+```
+
+It is also possible to change the handler of messages so more customization is possible. 
+
+```kotlin
+messageInputView.setSendMessageHandler(
+    object : MessageInputView.MessageSendHandler {
+        override fun sendMessage(messageText: String, messageReplyTo: Message?) {
+            // Handle send message
+        }
+
+        override fun sendMessageWithAttachments(
+            message: String,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+            messageReplyTo: Message?,
+        ) {
+            // Handle message with attachments
+        }
+
+        override fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsWithMimeTypes: List<Pair<File, String?>>,
+        ) {
+           // Handle message to thread with attachments
+        }
+
+        override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+            // Handle message to thread
+        }
+
+        override fun editMessage(oldMessage: Message, newMessageText: String) {
+            // Handle edit message
+        }
+
+        override fun dismissReply() {
+            // Handle dismiss reply
+        }
+    }
+)
+```
 
 ## Customizations
 
-`MessageInputView` can be customized in two ways: Using XML and programmatically.
+`MessageInputView` can be customized in two ways: using XML attributes and programmatically using style transformations.
 
 ### Customization with XML Attributes
 
@@ -60,9 +160,9 @@ Different configurations can be used to achieve the desired appearance of `Messa
 
 ### Customization at Runtime
 
-Many views in this SDK can be configured by changing the configuration class inside [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt).
+Many views in this SDK can be configured by changing the configuration class inside [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt). These transformations will be applied globally, to all `MessageInputView` instances.
 
-Just change the instance of `messageInputStyleTransformer`. Example:
+For example, you can create set up a `messageInputStyleTransformer` like this one to change the input text color:
 
 ```kotlin
 TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
@@ -99,7 +199,7 @@ The suggestion list popup is used to provide autocomplete suggestions for comman
 </FrameLayout>
 ```
 
-2. Create custom view holder and view holder factory
+2. Create custom ViewHolder and ViewHolder factory:
 
 ```kotlin
 class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactory() {
@@ -123,7 +223,8 @@ class CustomCommandViewHolder(
 }
 ```
 
-4. Set custom view holder factory
+4. Set custom ViewHolder factory:
+
 ```kotlin
 messageInputView.setSuggestionListViewHolderFactory(CustomSuggestionListViewHolderFactory())
 ```
@@ -131,3 +232,14 @@ messageInputView.setSuggestionListViewHolderFactory(CustomSuggestionListViewHold
 This produces the following result:
 
 ![Custom suggestion item](../../assets/custom_suggestion_item.jpg)
+
+
+## Attachments
+
+There is a limit for the size of attachments in this view. The default value is 20MB, and selecting a file larger than that limit will notify the user:
+
+![Big file feedback](../../assets/big_attachment.png)
+
+The maximum allowed size of attachments in the view can be changed using `MessageInputViewStyle.attachmentMaxFileSize`. However, there's a 20MB limit in Stream Chat's CDN as well. To send larger attachments, you can [use your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
+
+You can listen for large attachments being added to the list of attachments (for example, to present a custom message to the user in this case) with `MessageInputView.listenForBigAttachments`. 

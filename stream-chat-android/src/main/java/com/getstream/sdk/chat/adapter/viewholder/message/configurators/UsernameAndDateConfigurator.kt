@@ -66,7 +66,7 @@ internal class UsernameAndDateConfigurator(
         binding.tvMessagedate.updateLayoutParams<ConstraintLayout.LayoutParams> {
             if (!style.isUserNameShow && style.isMessageDateShow) {
                 binding.root.updateConstraints {
-                    clear(R.id.tv_messagedate, ConstraintSet.START)
+                    clear(R.id.tvMessagedate, ConstraintSet.START)
                 }
                 startToStart = getActiveContentViewResId(messageItem.message, binding)
             }

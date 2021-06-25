@@ -135,6 +135,21 @@
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
         <!-- {@deprecated Use streamUiCameraAttachmentIcon instead.} -->
         <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
+
+        <!--Command Input-->
+        <attr name="streamUiCommandInputCancelIcon" format="reference" />
+        <attr name="streamUiCommandInputBadgeIcon" format="reference" />
+        <attr name="streamUiCommandInputBadgeBackgroundDrawable" format="reference" />
+
+        <attr name="streamUiCommandInputBadgeTextSize" format="dimension" />
+        <attr name="streamUiCommandInputBadgeTextColor" format="reference|color" />
+        <attr name="streamUiCommandInputBadgeFontAssets" format="string" />
+        <attr name="streamUiCommandInputBadgeFont" format="string" />
+        <attr name="streamUiCommandInputBadgeStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
     </declare-styleable>
 
 </resources>
