@@ -74,7 +74,7 @@ internal class MessageSendingService(
                 }
 
             message.hasPendingAttachments() -> {
-                enqueueMessage(message)
+                enqueueAttachmentUpload(message)
                 Result.success(message)
             }
 
@@ -110,11 +110,11 @@ internal class MessageSendingService(
                     }
             }
             )
-        enqueueMessage(newMessage)
+        enqueueAttachmentUpload(newMessage)
         return Result.success(newMessage)
     }
 
-    private fun enqueueMessage(message: Message) {
+    private fun enqueueAttachmentUpload(message: Message) {
         uploadAttachmentsWorker.enqueueJob(
             channelController.channelType,
             channelController.channelId,
