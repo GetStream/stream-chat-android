@@ -30,10 +30,10 @@ val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 channelListHeaderViewModel.bindView(chanelHeaderView, viewLifecycleOwner)
 // Optional: setup listeners for user avatar and action button 
 chanelHeaderView.setOnActionButtonClickListener {
-    navigateSafely(R.id.action_homeFragment_to_addChannelFragment)
+    // e.g. Navigate to "Add new channel screen"
 }
 chanelHeaderView.setOnUserAvatarClickListener {
-    binding.drawerLayout.openDrawer(GravityCompat.START)
+    // handle avatar click here
 }
 ```
 All the logic of subscribing to data emitted by the ViewModel is provided by the `ChannelListHeaderViewModel::bindView` function. 
