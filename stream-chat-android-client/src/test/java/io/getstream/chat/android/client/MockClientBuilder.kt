@@ -94,7 +94,7 @@ internal class MockClientBuilder(
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
-            encryptedPushNotificationsConfigStore = mock(),
+            encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtil,
         )
 

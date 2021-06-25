@@ -20,7 +20,7 @@ internal class ConnectUserTest {
         tokenManager = mock(),
         socketStateService = mock(),
         queryChannelsPostponeHelper = mock(),
-        encryptedPushNotificationsConfigStore = mock(),
+        encryptedUserConfigStorage = mock(),
     )
 
     @Test
