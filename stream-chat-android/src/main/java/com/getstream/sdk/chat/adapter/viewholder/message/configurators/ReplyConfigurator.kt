@@ -69,10 +69,10 @@ internal class ReplyConfigurator(
 
         // Clear Constraint
         binding.root.updateConstraints {
-            clear(R.id.tv_reply, ConstraintSet.START)
-            clear(R.id.tv_reply, ConstraintSet.END)
-            clear(R.id.iv_reply, ConstraintSet.START)
-            clear(R.id.iv_reply, ConstraintSet.END)
+            clear(R.id.tvReply, ConstraintSet.START)
+            clear(R.id.tvReply, ConstraintSet.END)
+            clear(R.id.ivReply, ConstraintSet.START)
+            clear(R.id.ivReply, ConstraintSet.END)
         }
 
         val paramsArrow = binding.ivReply.layoutParams as ConstraintLayout.LayoutParams

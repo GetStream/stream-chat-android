@@ -9,18 +9,18 @@
     >
 
     <Button
-        android:id="@+id/btn_back"
+        android:id="@+id/btnBack"
         android:layout_width="@dimen/stream_channel_header_back_width"
         android:layout_height="@dimen/stream_channel_header_back_height"
         android:layout_marginStart="@dimen/stream_channel_header_back_margin_start"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+        app:layout_constraintBottom_toTopOf="@+id/ivSeparator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <TextView
-        android:id="@+id/tv_channel_name"
+        android:id="@+id/tvChannelName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_channel_header_name_margin_start"
@@ -30,47 +30,47 @@
         android:gravity="center_horizontal"
         android:maxLines="1"
         android:singleLine="true"
-        app:layout_constraintBottom_toTopOf="@+id/tv_active"
-        app:layout_constraintEnd_toStartOf="@+id/avatar_group"
-        app:layout_constraintStart_toEndOf="@+id/btn_back"
+        app:layout_constraintBottom_toTopOf="@+id/tvActive"
+        app:layout_constraintEnd_toStartOf="@+id/avatarGroup"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         />
 
     <TextView
-        android:id="@+id/tv_active"
+        android:id="@+id/tvActive"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/iv_separator"
-        app:layout_constraintEnd_toEndOf="@+id/tv_channel_name"
-        app:layout_constraintStart_toStartOf="@+id/tv_channel_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_channel_name"
+        app:layout_constraintBottom_toTopOf="@+id/ivSeparator"
+        app:layout_constraintEnd_toEndOf="@+id/tvChannelName"
+        app:layout_constraintStart_toStartOf="@+id/tvChannelName"
+        app:layout_constraintTop_toBottomOf="@+id/tvChannelName"
         app:layout_constraintVertical_chainStyle="packed"
         />
 
     <com.getstream.sdk.chat.view.AvatarView
-        android:id="@+id/avatar_group"
+        android:id="@+id/avatarGroup"
         android:layout_width="@dimen/stream_channel_avatar_width"
         android:layout_height="@dimen/stream_channel_avatar_height"
         android:layout_marginEnd="@dimen/stream_channel_header_avatar_margin_end"
-        app:layout_constraintBottom_toTopOf="@+id/iv_separator"
-        app:layout_constraintEnd_toStartOf="@+id/btn_option"
+        app:layout_constraintBottom_toTopOf="@+id/ivSeparator"
+        app:layout_constraintEnd_toStartOf="@+id/btnOption"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <ImageView
-        android:id="@+id/iv_active_badge"
+        android:id="@+id/ivActiveBadge"
         android:layout_width="@dimen/stream_channel_header_avatar_active"
         android:layout_height="@dimen/stream_channel_header_avatar_active"
-        app:layout_constraintEnd_toEndOf="@+id/avatar_group"
-        app:layout_constraintStart_toEndOf="@+id/avatar_group"
-        app:layout_constraintTop_toTopOf="@+id/avatar_group"
+        app:layout_constraintEnd_toEndOf="@+id/avatarGroup"
+        app:layout_constraintStart_toEndOf="@+id/avatarGroup"
+        app:layout_constraintTop_toTopOf="@+id/avatarGroup"
         />
 
     <ImageView
-        android:id="@+id/iv_separator"
+        android:id="@+id/ivSeparator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
         android:background="@color/stream_gray"
@@ -78,12 +78,12 @@
         />
 
     <Button
-        android:id="@+id/btn_option"
+        android:id="@+id/btnOption"
         android:layout_width="@dimen/stream_channel_header_option_width"
         android:layout_height="@dimen/stream_channel_header_option_height"
         android:layout_marginEnd="@dimen/stream_channel_header_option_margin_end"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+        app:layout_constraintBottom_toTopOf="@+id/ivSeparator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

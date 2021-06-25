@@ -6,7 +6,7 @@
     >
 
     <TextView
-        android:id="@+id/tv_emoji"
+        android:id="@+id/tvEmoji"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -19,7 +19,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_count"
+        android:id="@+id/tvCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
@@ -27,8 +27,8 @@
         android:textColor="@color/stream_white"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_emoji"
-        app:layout_constraintStart_toStartOf="@+id/tv_emoji"
-        app:layout_constraintTop_toBottomOf="@+id/tv_emoji"
+        app:layout_constraintEnd_toEndOf="@+id/tvEmoji"
+        app:layout_constraintStart_toStartOf="@+id/tvEmoji"
+        app:layout_constraintTop_toBottomOf="@+id/tvEmoji"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
