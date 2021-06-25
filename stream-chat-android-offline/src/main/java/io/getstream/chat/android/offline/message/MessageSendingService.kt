@@ -57,11 +57,11 @@ internal class MessageSendingService(
             // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
             // Update flow for currently running queries
             domainImpl.getActiveQueries().forEach { query -> query.refreshChannel(channelController.cid) }
-}.onSuccessSuspend { newMessage ->
-    // we insert early to ensure we don't lose messages
-    domainImpl.repos.insertMessage(newMessage)
-    domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-}.flatMapSuspend(::sendMessage)
+        }.onSuccessSuspend { newMessage ->
+            // we insert early to ensure we don't lose messages
+            domainImpl.repos.insertMessage(newMessage)
+            domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
+        }.flatMapSuspend(::sendMessage)
     }
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
