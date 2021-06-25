@@ -24,7 +24,7 @@ To use `ChannelListHeaderView` in your layout, include it in your XML layout as 
 `ChannelListHeaderView` is supposed to work with `ChannelListHeaderViewModel`. 
 The basic setup of the ViewModel and connecting it with the view can be done in the following way:
  ```kotlin
-// Instantiate the view model 
+// Instantiate the ViewModel
 val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 // Bind the ViewModel with ChannelListView 
 channelListHeaderViewModel.bindView(chanelHeaderView, viewLifecycleOwner)
