@@ -17,7 +17,7 @@ The full list of `ChatUI` properties you can override include:
  * `ChatUI.fonts` Allows specifying default font for TextViews displayed by UI components. 
  * `ChatUI.avatarBitmapFactory` Allows intercepting the avatar Bitmap and modifying it before it's displayed by the `AvatarView`.
  * `ChatUI.urlSigner` Allows adding authorization tokens for images, video, etc.
- * `ChatUI.markdown` Interface to to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic, use more markdown modules, etc.
+ * `ChatUI.markdown` Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic, use more markdown modules, etc.
  * `ChatUI.style` Allows overriding global, default style of UI components, like the TextStyle.
  * `ChatUI.navigator` Allows intercepting and modifying default navigation between SDKs components (e.g. Redirection from `MessageListView` to `AttachmentGalleryActivity`).
  
