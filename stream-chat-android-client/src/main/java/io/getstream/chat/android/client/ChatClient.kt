@@ -99,7 +99,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
-    private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
+    private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
 ) {
@@ -327,7 +327,7 @@ public class ChatClient internal constructor(
             return
         }
 
-        encryptedPushNotificationsConfigStore.get()?.let { config ->
+        encryptedUserConfigStorage.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId),
                 tokenProvider = ConstantTokenProvider(config.userToken),
@@ -337,7 +337,7 @@ public class ChatClient internal constructor(
 
     @InternalStreamChatApi
     public fun containsStoredCredentials(): Boolean {
-        return encryptedPushNotificationsConfigStore.get() != null
+        return encryptedUserConfigStorage.get() != null
     }
 
     private fun notifySetUser(user: User) {
@@ -345,7 +345,7 @@ public class ChatClient internal constructor(
     }
 
     private fun storePushNotificationsConfig(userId: String) {
-        encryptedPushNotificationsConfigStore.put(
+        encryptedUserConfigStorage.put(
             PushNotificationsConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
@@ -705,7 +705,7 @@ public class ChatClient internal constructor(
         userStateService.onLogout()
         socket.disconnect()
         notifications.cancelLoadDataWork()
-        encryptedPushNotificationsConfigStore.clear()
+        encryptedUserConfigStorage.clear()
         lifecycleObserver.dispose()
     }
 
