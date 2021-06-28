@@ -36,7 +36,7 @@ public class AttachmentActivity : AppCompatActivity() {
         setContentView(R.layout.stream_ui_activity_attachment)
 
         webView = findViewById(R.id.webView)
-        iv_image = findViewById(R.id.iv_image)
+        iv_image = findViewById(R.id.ivImage)
         progressBar = findViewById(R.id.progressBar)
 
         configUIs()

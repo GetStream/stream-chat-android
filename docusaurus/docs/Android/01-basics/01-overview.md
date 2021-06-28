@@ -4,11 +4,17 @@ slug: /
 
 # Overview
 
-The [Stream Chat Android SDK](https://github.com/GetStream/stream-chat-android) enables you to build any type of chat or messaging experience for Android, either in Kotlin or Java. 
+The [Stream Chat Android SDK](https://github.com/GetStream/stream-chat-android) enables you to easily build any type of chat or messaging experience for Android, either in Kotlin or Java.
 
-This section provides an overview of the SDK, its libraries, and how they fit together.
+:::note 
+The fastest way to get started with the SDK is by trying the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/).
+:::
 
-There are three major components in the SDK:
+This section provides an overview of the SDK, explains the basic concepts, and shows you how to get started with building chat features.
+
+The **UI Components** section describes the ready-to-use Android Views provided by the SDK, and the **Guides** section contains instructions for performing common tasks with the SDK.
+
+There are three major components in the SDK that you can include in your app:
 
 * [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client)
 * [Offline support](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline)

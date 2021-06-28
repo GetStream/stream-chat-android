@@ -30,7 +30,7 @@ internal class DevTokenTest(private val userId: String, private val expectedToke
         socketStateService = socketStateService,
         queryChannelsPostponeHelper = queryChannelsPostponeHelper,
         userStateService = userStateService,
-        encryptedPushNotificationsConfigStore = mock(),
+        encryptedUserConfigStorage = mock(),
     )
 
     @Test

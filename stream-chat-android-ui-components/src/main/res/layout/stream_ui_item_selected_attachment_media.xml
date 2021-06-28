@@ -9,7 +9,7 @@
     >
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/iv_media"
+        android:id="@+id/ivMedia"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
@@ -18,7 +18,7 @@
         />
 
     <ImageButton
-        android:id="@+id/btn_close"
+        android:id="@+id/btnClose"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="8dp"
@@ -32,7 +32,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_error"
+        android:id="@+id/tvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"

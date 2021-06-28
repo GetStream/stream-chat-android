@@ -11,11 +11,48 @@ _AttachmentGalleryActivity_ is an _Activity_ used to display attachments that th
 |![attachment_gallery_example1_light](../../assets/attachment_gallery_example1_light.png)|![attachment_gallery_example1_dark](../../assets/attachment_gallery_example1_dark.png)|
 |![attachment_gallery_example2_light](../../assets/attachment_gallery_example2_light.png)|![attachment_gallery_example2_dark](../../assets/attachment_gallery_example2_dark.png)|
 
+## Handling user input
+There are 4 behaviours that can be customized by the following handlers:
+
+* AttachmentGalleryActivity.AttachmentReplyOptionHandler
+* AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+* AttachmentGalleryActivity.AttachmentDownloadOptionHandler
+* AttachmentGalleryActivity.AttachmentDeleteOptionHandler
+
+The next section shows how to implement the listeners and inject the desired behaviour.
+
+It is also possible to set listener for options in the overflow menu (three dots)
+
+|Light|Dark| 
+|---|---|
+|![attachment_gallery_example2_light](../../assets/attachment_activitity_menu_dark.png)|![attachment_gallery_example2_light](../../assets/attachment_activitity_menu_light.png)|  
+
+```kotlin
+messageListView.setAttachmentReplyOptionClickHandler { resultItem ->
+    resultItem.messageId
+    // Handle reply to attachment
+}
+
+messageListView.setAttachmentShowInChatOptionClickHandler { resultItem ->
+    resultItem.messageId
+    // Handle show in chat
+}
+
+messageListView.setDownloadOptionHandler { resultItem ->
+    resultItem.assetUrl
+    // Handle download the attachment
+}
+
+messageListView.setAttachmentDeleteOptionClickHandler { resultItem ->
+    resultItem.assetUrl
+    resultItem.imageUrl
+    // Handle delete
+}
+```
+
 ## Navigating To Attachment Gallery
 
 By default, the Attachment Gallery is opened when a user clicks on an attachment in _MessageListView_. In that case, all actions mentioned above have a default implementation, which can be changed by overriding _MessageListView_'s handlers.
-
-<!-- TODO: Consider adding examples of how to handle attachment actions via MessageListView here -->
 
 You can also navigate to _AttachmentGalleryActivity_ but in that case, you will need to implement all available actions:
 

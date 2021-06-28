@@ -283,8 +283,7 @@ internal class ChatDomainImpl internal constructor(
             scope(scope)
             defaultConfig(defaultConfig)
             setOfflineEnabled(offlineEnabled)
-        }
-            .build()
+        }.build()
 
         // load channel configs from Room into memory
         initJob = scope.async {

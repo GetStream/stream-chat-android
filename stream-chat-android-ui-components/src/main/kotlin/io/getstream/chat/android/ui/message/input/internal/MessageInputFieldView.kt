@@ -24,6 +24,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
@@ -104,10 +106,6 @@ internal class MessageInputFieldView : FrameLayout {
             clearCommandButton.setOnClickListener {
                 resetMode()
             }
-            commandBadge.setLeftDrawableWithSize(
-                R.drawable.stream_ui_ic_command,
-                R.dimen.stream_ui_message_input_command_icon_size
-            )
         }
     }
 
@@ -159,6 +157,22 @@ internal class MessageInputFieldView : FrameLayout {
         val originalTypeface = binding.messageEditText.typeface
 
         binding.messageEditText.setTypeface(originalTypeface, typeface)
+    }
+
+    fun setCommandInputCancelIcon(drawable: Drawable) {
+        binding.clearCommandButton.setImageDrawable(drawable)
+    }
+
+    fun setCommandInputBadgeIcon(drawable: Drawable) {
+        binding.commandBadge.setLeftDrawableWithSize(drawable, R.dimen.stream_ui_message_input_command_icon_size)
+    }
+
+    fun setCommandInputBadgeBackgroundDrawable(drawable: Drawable) {
+        binding.commandBadge.background = drawable
+    }
+
+    fun setCommandInputBadgeTextStyle(testStyle: TextStyle) {
+        binding.commandBadge.setTextStyle(testStyle)
     }
 
     fun autoCompleteCommand(command: Command) {
