@@ -84,14 +84,21 @@ public data class MessageInputViewStyle(
     public val sendAlsoToChannelCheckboxDirectChatText: CharSequence?,
     public val sendAlsoToChannelCheckboxTextStyle: TextStyle,
     public val commandsEnabled: Boolean,
+    @Deprecated(message = "Use SuggestionListViewStyle.commandsTitleTextStyle instead")
     public val commandsTitleTextStyle: TextStyle,
+    @Deprecated(message = "Use SuggestionListViewStyle.commandsNameTextStyle instead")
     public val commandsNameTextStyle: TextStyle,
+    @Deprecated(message = "Use SuggestionListViewStyle.commandsDescriptionTextStyle instead")
     public val commandsDescriptionTextStyle: TextStyle,
     public val mentionsEnabled: Boolean,
+    @Deprecated(message = "Use SuggestionListViewStyle.mentionsUsernameTextStyle instead")
     public val mentionsUsernameTextStyle: TextStyle,
+    @Deprecated(message = "Use SuggestionListViewStyle.mentionsNameTextStyle instead")
     public val mentionsNameTextStyle: TextStyle,
+    @Deprecated(message = "Use SuggestionListViewStyle.mentionsIcon instead")
     public val mentionsIcon: Drawable,
     @ColorInt public val backgroundColor: Int,
+    @Deprecated(message = "Use SuggestionListViewStyle.suggestionsBackground instead")
     @ColorInt public val suggestionsBackground: Int,
     public val editTextBackgroundDrawable: Drawable,
     public val customCursorDrawable: Drawable?,

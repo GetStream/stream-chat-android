@@ -33,10 +33,10 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
-import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 import kotlinx.coroutines.flow.collect
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
@@ -241,10 +241,10 @@ public class MessageInputView : ConstraintLayout {
                 suggestionsBackground = style.suggestionsBackground,
                 commandsTitleTextStyle = style.commandsTitleTextStyle,
                 commandsNameTextStyle = style.commandsNameTextStyle,
-                commandsDescriptionStyle = style.commandsDescriptionTextStyle,
+                commandsDescriptionTextStyle = style.commandsDescriptionTextStyle,
                 mentionsUsernameTextStyle = style.mentionsUsernameTextStyle,
                 mentionsNameTextStyle = style.mentionsNameTextStyle,
-                mentionIcon = style.mentionsIcon,
+                mentionsIcon = style.mentionsIcon,
             )
         )
     }

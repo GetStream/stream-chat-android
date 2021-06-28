@@ -17,7 +17,6 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemVi
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.CommandListAdapter
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.MentionListAdapter
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListUi
-import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 
 public class SuggestionListView : FrameLayout, SuggestionListUi {
 
