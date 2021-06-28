@@ -75,7 +75,7 @@
         android:paddingEnd="@dimen/stream_ui_spacing_small"
         android:textAllCaps="true"
         android:textAppearance="@style/StreamUiTextAppearance.FootnoteBold"
-        android:textColor="@color/stream_ui_white"
+        android:textColor="@color/stream_ui_literal_white"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/stream_ui_ic_command_white"
         app:layout_constraintBottom_toBottomOf="parent"

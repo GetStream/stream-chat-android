@@ -6,7 +6,7 @@
     >
 
     <ImageView
-        android:id="@+id/iv_media"
+        android:id="@+id/ivMedia"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
@@ -15,28 +15,28 @@
         />
 
     <ImageView
-        android:id="@+id/iv_select_mark"
+        android:id="@+id/ivSelectMark"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/stream_rectangle_attach_media"
-        app:layout_constraintBottom_toBottomOf="@id/iv_media"
-        app:layout_constraintEnd_toEndOf="@+id/iv_media"
-        app:layout_constraintStart_toStartOf="@+id/iv_media"
-        app:layout_constraintTop_toTopOf="@+id/iv_media"
+        app:layout_constraintBottom_toBottomOf="@id/ivMedia"
+        app:layout_constraintEnd_toEndOf="@+id/ivMedia"
+        app:layout_constraintStart_toStartOf="@+id/ivMedia"
+        app:layout_constraintTop_toTopOf="@+id/ivMedia"
         />
 
     <ImageView
-        android:id="@+id/iv_large_file_mark"
+        android:id="@+id/ivLargeFileMark"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_margin="5dp"
         android:src="@drawable/stream_ic_file_size_error"
-        app:layout_constraintEnd_toEndOf="@+id/iv_media"
-        app:layout_constraintTop_toTopOf="@+id/iv_media"
+        app:layout_constraintEnd_toEndOf="@+id/ivMedia"
+        app:layout_constraintTop_toTopOf="@+id/ivMedia"
         />
 
     <TextView
-        android:id="@+id/tv_length"
+        android:id="@+id/tvLength"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

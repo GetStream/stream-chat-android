@@ -78,7 +78,7 @@ internal class ChatClientTest {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
-            encryptedPushNotificationsConfigStore = mock(),
+            encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtils,
         ).apply {
             connectUser(user, token).enqueue()

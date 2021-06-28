@@ -12,7 +12,7 @@
     >
 
     <ImageView
-        android:id="@+id/iv_file_thumb"
+        android:id="@+id/ivFileThumb"
         android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
         android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
         android:layout_marginStart="8dp"
@@ -25,7 +25,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_file_title"
+        android:id="@+id/tvFileTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
@@ -33,16 +33,16 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
-        app:layout_constraintBottom_toTopOf="@id/tv_file_size"
-        app:layout_constraintEnd_toStartOf="@id/tv_close"
-        app:layout_constraintStart_toEndOf="@id/iv_file_thumb"
+        app:layout_constraintBottom_toTopOf="@id/tvFileSize"
+        app:layout_constraintEnd_toStartOf="@id/tvClose"
+        app:layout_constraintStart_toEndOf="@id/ivFileThumb"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="SlimAaron.pdf"
         />
 
     <TextView
-        android:id="@+id/tv_file_size"
+        android:id="@+id/tvFileSize"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
@@ -50,13 +50,13 @@
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_file_thumb"
-        app:layout_constraintTop_toBottomOf="@id/tv_file_title"
+        app:layout_constraintStart_toEndOf="@id/ivFileThumb"
+        app:layout_constraintTop_toBottomOf="@id/tvFileTitle"
         tools:text="123 KB"
         />
 
     <ImageButton
-        android:id="@+id/tv_close"
+        android:id="@+id/tvClose"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="8dp"
