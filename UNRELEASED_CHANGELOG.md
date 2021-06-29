@@ -70,6 +70,16 @@
     - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
     - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
     - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
+- Added support for customizing `SearchInputView`  
+    - Added `SearchInputViewStyle` class allowing customization using `TransformStyle` API
+    - Added XML attrs for `SearchInputView`:
+         - `streamUiSearchInputViewHintText`
+         - `streamUiSearchInputViewSearchIcon`
+         - `streamUiSearchInputViewClearInputIcon`
+         - `streamUiSearchInputViewBackground`
+         - `streamUiSearchInputViewTextColor`
+         - `streamUiSearchInputViewHintColor`
+         - `streamUiSearchInputViewTextSize`
   
 ### ⚠️ Changed
 
