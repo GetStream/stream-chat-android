@@ -13,10 +13,13 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
 /**
  * ChatUI handles any configuration for the Chat UI elements.
  *
- * @param fonts allows you to overwrite fonts
- * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
- * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
- * @param avatarBitmapFactory allows you to generate custom bitmap for avatarView
+ * @param fonts Allows setting default fonts used by UI components.
+ * @param markdown Allows customizing the markdown parsing behaviour, e.g. useful if you want to use more markdown modules.
+ * @param urlSigner URL signing mechanism. Allows intercepting and transforming attachment url, e.g. to add authorization tokens for images, video, etc.
+ * @param avatarBitmapFactory Allows intercepting and providing custom bitmap displayed with AvatarView.
+ * @param navigator A class responsible for handling navigation to chat destinations. Allows overriding a default navigation between chat components.
+ * @param supportedReactions Allows overriding default set of message reactions available.
+ * @param mimeTypeIconProvider Allows overriding default icons for attachments MIME types.
  *
  * @see ChatMarkdown
  * @see UrlSigner
