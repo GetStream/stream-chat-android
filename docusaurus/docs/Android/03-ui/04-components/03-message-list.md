@@ -1,30 +1,31 @@
 # Message List
 
-`MessageListView` is one of our core UI components. Generally speaking, it's a list of messages for some particular channel. The `MessageListView` contains the following list of possible child items:
+`MessageListView` is one of our core UI components, which displays a list of messages for a channel. It contains the following list of possible items:
 
 - Plain text message
 - Text and attachments (media or file) message
 - Deleted message (only for current user)
 - Error message (e.g. autoblocked message with inappropriate content)
-- System message (e.g. some user joined to a channel)
+- System message (e.g. some user joined a channel)
 - Giphy preview
 - Date separator
 - Loading more indicator
 - Thread separator (for thread mode only)
 - Typing indicator
 
-Using custom attributes and methods in runtime you're able to customize the appearance of this component. Also `MessageListView` contains the set of overridable action/option handlers and event listeners. By default this component has the following look:
+You're able to customize the appearance of this component using custom attributes as well as method calls at runtime. `MessageListView` also contains the set of overridable action/option handlers and event listeners. By default, this component has the following look:
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Message list overview in light mode](../../assets/message_list_view_overview_light.png)|![Message list overview in dark mode](../../assets/message_list_view_overview_dark.png)|
 
 ## Usage
-If you want to use all default features and default design of this component then start is easy. It consists of two steps:
-1. Adding component to your xml layout hierarchy
-2. Bind out-of-box `MessageListViewModel` and `MessageLisView`.
 
-### Adding to xml layout
+If you want to use all default features and default design of this component then getting started with it is easy:
+
+1. Add the component to your xml layout hierarchy.
+2. Bind it with a `MessageListViewModel`.
+
 Adding `MessageListView` to your layout is easy as inserting following lines to your layout hierarchy (example for `ConstraintLayout`):
 
 ```xml
@@ -39,8 +40,7 @@ Adding `MessageListView` to your layout is easy as inserting following lines to 
         />
 ``` 
 
-### ViewModel and binding
-UI components provide out-of-box a view model for `MessageListView` and the `bindView` extension function that makes default setup:
+The UI components library includes a ViewModel for `MessageListView` and the `bindView` extension function makes it easy to use a default setup:
 
 ```kotlin
 class MessageListFragment : Fragment() {
@@ -57,100 +57,100 @@ class MessageListFragment : Fragment() {
 
 ## Handling Actions
 
-`MessageListView` comes with a set of actions available out of the box by long-pressing a message:
+`MessageListView` comes with a set of actions available out-of-the-box by long pressing a message:
 
-* Adding reaction
+* Adding reactions
 * Replies
 * Thread replies
-* Copy message
-* Edit message (if you are an owner)
-* Delete message (if you are an owner)
-* Flag message (if it doesn't belong to you)
-* Mute user who sends a message (if it doesn't belong to you)
-* Block user who sends a message (if it doesn't belong to you)
+* Copying the message
+* Editing the message (if you are an owner)
+* Deleting the message (if you are an owner)
+* Flagging the message (if it doesn't belong to you)
+* Muting the user who sent the message (if it doesn't belong to you)
+* Blocking the user who sent the message (if it doesn't belong to you)
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
-Default action handlers are set after binding ViewModel with the View. You can customize default behavior by overriding each of the following handlers:
+Default action handlers are set up when binding the ViewModel with the View. You can customize the default behavior by overriding each of the following handlers:
+
 ```kotlin
-fun setActionHandlers() {
-        messageListView.setLastMessageReadHandler {
-            // Handle when last message got read
-        }
-        messageListView.setEndRegionReachedHandler {
-            // Handle when end region reached
-        }
-        messageListView.setMessageDeleteHandler { message: Message ->
-            // Handle when message is going to be deleted
-        }
-        messageListView.setThreadStartHandler { message: Message ->
-            // Handle when new thread for message is started
-        }
-        messageListView.setMessageFlagHandler { message: Message ->
-           // Handle when message is going to be flagged
-        }
-        messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
-            // Handle when some giphyAction is going to be performed
-        }
-        messageListView.setMessageRetryHandler { message: Message ->
-            // Handle when some failed message is going to be retried
-        }
-        messageListView.setMessageReactionHandler { message: Message, reactionType: String ->
-            // Handle when some reaction for message is going to be send
-        }
-        messageListView.setUserMuteHandler { user: User ->
-            // Handle when a user is going to be muted
-        }
-        messageListView.setUserUnmuteHandler { user: User ->
-            // Handle when a user is going to be unmuted
-        }
-        messageListView.setUserBlockHandler { user: User, cid: String ->
-            // Handle when a user is going to be blocked in the channel with cid
-        }
-        messageListView.setMessageReplyHandler { cid: String, message: Message ->
-            // Handle when message is going to be replied in the channel with cid
-        }
-        messageListView.setAttachmentDownloadHandler { attachment: Attachment ->
-            // Handle when attachment is going to be downloaded
-        }
-    }
+messageListView.setLastMessageReadHandler {
+    // Handle when last message got read
+}
+messageListView.setEndRegionReachedHandler {
+    // Handle when end region reached
+}
+messageListView.setMessageDeleteHandler { message: Message ->
+    // Handle when message is going to be deleted
+}
+messageListView.setThreadStartHandler { message: Message ->
+    // Handle when new thread for message is started
+}
+messageListView.setMessageFlagHandler { message: Message ->
+   // Handle when message is going to be flagged
+}
+messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+    // Handle when some giphyAction is going to be performed
+}
+messageListView.setMessageRetryHandler { message: Message ->
+    // Handle when some failed message is going to be retried
+}
+messageListView.setMessageReactionHandler { message: Message, reactionType: String ->
+    // Handle when some reaction for message is going to be send
+}
+messageListView.setUserMuteHandler { user: User ->
+    // Handle when a user is going to be muted
+}
+messageListView.setUserUnmuteHandler { user: User ->
+    // Handle when a user is going to be unmuted
+}
+messageListView.setUserBlockHandler { user: User, cid: String ->
+    // Handle when a user is going to be blocked in the channel with cid
+}
+messageListView.setMessageReplyHandler { cid: String, message: Message ->
+    // Handle when message is going to be replied in the channel with cid
+}
+messageListView.setAttachmentDownloadHandler { attachment: Attachment ->
+    // Handle when attachment is going to be downloaded
+}
 ``` 
 
-**NOTE**
-
-Handlers must be set before passing any data to `MessageListView`. So if you don't use default binding, please, make sure you defined them.
+:::note
+Handlers must be set before passing any data to `MessageListView`. If you don't use the default binding that `bindView` provides, please make sure you're setting up all handlers.
+:::
 
 ___
 
 ### Listeners
 
-Except of required handlers there are some listeners. They are set by default if you use `MessageListViewModel`.  
+In addition to the required handlers, `MessageListView` also provides some optional listeners. They are also set by default if you use `bindView`.
+
 You can always override them to get events when something happens:
 
 ```kotlin
-fun setListeners() {
-        messageListView.setMessageClickListener { message: Message ->
-            // Listen to click on message events
-        }
-        messageListView.setEnterThreadListener { message: Message ->
-            // Listen to events when enter thread associated with a message
-        }
-        messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
-            // Listen to events when download click for an attachment happens
-        }
-    }
+messageListView.setMessageClickListener { message: Message ->
+    // Listen to click on message events
+}
+messageListView.setEnterThreadListener { message: Message ->
+    // Listen to events when enter thread associated with a message
+}
+messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+    // Listen to events when download click for an attachment happens
+}
 ```
-Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/index.html)
+
+Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/index.html).
 
 ## Customizations
 
-If you want to setup appearance of this component by your design requirements you're free to do it.
-There are two ways to change the style: using XML attributes and runtime changes.
+You can change the appearance of this component to fit your app's design requirements. There are two ways to change the style: using XML attributes and runtime changes.
 
 ### Customization with XML Attributes
-`MessageListView` provides a quite big set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
+
+`MessageListView` provides a large set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
+
 Let's consider an example when we want to change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
@@ -158,22 +158,23 @@ Let's consider an example when we want to change the style of messages sent by t
 |![light](../../assets/message_style_xml_light.png)|![dark](../../assets/message_style_xml_dark.png)|
 
 In order to do that, we need to add additional attributes to `MessageListView`:
-```xml
-    <io.getstream.chat.android.ui.message.list.MessageListView
-        android:id="@+id/messageListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="0dp"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/messageInputView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-        app:streamUiMessageBackgroundColorMine="#70AF74"
-        app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
-        app:streamUiMessageTextColorMine="#FFFFFF"
-        app:streamUiMessageTextColorTheirs="#000000"
-        />
+
+```xml {11-14}
+<io.getstream.chat.android.ui.message.list.MessageListView
+    android:id="@+id/messageListView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="0dp"
+    android:clipToPadding="false"
+    app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
+    app:streamUiMessageBackgroundColorMine="#70AF74"
+    app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
+    app:streamUiMessageTextColorMine="#FFFFFF"
+    app:streamUiMessageTextColorTheirs="#000000"
+    />
 ```
 
 ### Customization at Runtime
@@ -186,7 +187,8 @@ As an example, let's apply the green style from the previous section, but this t
 | --- | --- |
 |![message style before](../../assets/message_style_programatically_message_before.png)|![message style after](../../assets/message_style_programatically_message_after.png)|
 
-We are going to use custom _TransformStyle.messageListItemStyleTransformer_:
+We are going to use a custom `TransformStyle.messageListItemStyleTransformer`:
+
 ```kotlin
 TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
     defaultViewStyle.copy(
@@ -197,11 +199,10 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
     )
 }
 ```
-___
-**Note**
 
+:::note
 The transformers should be set before the views are rendered to make sure that the new style was applied.
-___
+:::
 
 As another example, let's modify the default view which allows scrolling to the bottom when the new message arrives:
 
@@ -209,7 +210,8 @@ As another example, let's modify the default view which allows scrolling to the 
 | --- | --- |
 |![message style programmatically before](../../assets/message_style_programatically_fab_before.png)|![message style programmatically after](../../assets/message_style_programatically_fab_after.png)|
 
-To achieve such effect we need to provide custom _TransformStyle.messageListStyleTransformer_:
+To achieve this effect we need to provide this custom `TransformStyle.messageListStyleTransformer`:
+
 ```kotlin
 TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle ->
     defaultViewStyle.copy(
@@ -222,49 +224,50 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
 }
 ```
 
-## Channel features flags
+## Channel feature flags
 
-Some xml attributes provide possibility to enable/disable some features. They are:
-- R.attrs.streamUiScrollButtonEnabled - defines show/hide the scroll to bottom button
-- R.attrs.streamUiScrollButtonUnreadEnabled - defines show/hide unread count badge on the scroll to bottom button
-- R.attrs.streamUiReactionsEnabled - defines if users can react to messages
-- R.attrs.streamUiReplyEnabled - defines if users can reply to messages
-- R.attrs.streamUiCopyMessageActionEnabled - defines if users can copy messages
-- R.attrs.streamUiEditMessageEnabled - defines if users can edit their messages
-- R.attrs.streamUiFlagMessageEnabled - defines if users can flag messages
-- R.attrs.streamUiFlagMessageConfirmationEnabled - defines if users will see the confirmation dialog when flag messages
-- R.attrs.streamUiMuteUserEnabled - defines if users can mute others
-- R.attrs.streamUiBlockUserEnabled - defines if users can block members of chat
-- R.attrs.streamUiDeleteMessageEnabled - defines if users can delete their messages
-- R.attrs.streamUiDeleteConfirmationEnabled - defines if users will see the confirmation dialog when delete messages
-- R.attrs.streamUiThreadsEnabled - defines if users can make thread reply
+Some xml attributes let you to enable/disable features in `MessageListView`.
+- `streamUiScrollButtonEnabled` - show/hide the scroll-to-bottom button
+- `streamUiScrollButtonUnreadEnabled` - show/hide the unread count badge on the scroll-to-bottom button
+- `streamUiReactionsEnabled` - whether users can react to messages
+- `streamUiReplyEnabled` - whether users can reply to messages
+- `streamUiCopyMessageActionEnabled` - whether users can copy messages
+- `streamUiEditMessageEnabled` - whether users can edit their messages
+- `streamUiFlagMessageEnabled` - whether users can flag messages
+- `streamUiFlagMessageConfirmationEnabled` - whether users will see the confirmation dialog when flag messages
+- `streamUiMuteUserEnabled` - whether users can mute others
+- `streamUiBlockUserEnabled` - whether users can block members of chat
+- `streamUiDeleteMessageEnabled` - whether users can delete their messages
+- `streamUiDeleteConfirmationEnabled` - whether users will see the confirmation dialog when deleting messages
+- `streamUiThreadsEnabled` - whether users can create thread replies
 
-These attributes let you enable/disable configuration for channel features. E.g. if a channel supports message replies, but you disabled it via xml attributes then members of this channel won't see such an option.
-`MessageListView` provides you the possibility to enable/disable these channel features in runtime.
+These attributes let you enable/disable configuration for channel features. E.g. if a channel's configuration supports message replies, but you disabled it via xml attributes, then members of this channel won't see such an option.
+
+`MessageListView` provides you the possibility to enable/disable these channel features at runtime as well:
 
 ```kotlin
-fun disableChannelFeatures() {
-        messageListView.setRepliesEnabled(false)
-        messageListView.setDeleteMessageEnabled(false)
-        messageListView.setEditMessageEnabled(false)
-}
+messageListView.setRepliesEnabled(false)
+messageListView.setDeleteMessageEnabled(false)
+messageListView.setEditMessageEnabled(false)
 ```
+
 | Before | After |
 | --- | --- |
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
-## Message list item factory
-`MessageListItem` provides API for creating custom view holders. All you need to do is:
-1. Extend  `MessageListItemViewHolderFactory`
-2. Write your own logic for creating ViewHolders 
-3. Make a new factory instance and set it to `MessageListView`.
-Let's consider an example when we want to create custom view holders for messages that came from other users less than 24 hours ago.
+## Custom message views
 
-Result should look like:
+`MessageListView` provides an API for creating custom ViewHolders. To use your own ViewHolder: 
+1. Extend `MessageListItemViewHolderFactory`.
+2. Write your own logic for creating ViewHolders. 
+3. Create a new factory instance and set it on `MessageListView`.
+
+Let's consider an example when we want to create custom ViewHolders for messages that came from other users less than 24 hours ago. The result should look like this:
 
 ![](../../assets/message_list_custom_vh_factory.png)
 
-1. Add new layout `today_message_list_item.xml` for our custom view holder
+1. Add a new layout called `today_message_list_item.xml`:
+
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -311,7 +314,8 @@ Result should look like:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-2. Add new `TodayViewHolder` class to codebase
+2. Add a new `TodayViewHolder` class that inflates this layout and populates it with data:
+
 ```kotlin
 class TodayViewHolder(
     parentView: ViewGroup,
@@ -327,7 +331,8 @@ class TodayViewHolder(
 }
 ```
 
-3. Add new `CustomMessageViewHolderFactory` class to codebase
+3. Add a new `CustomMessageViewHolderFactory` class that checks each message, and uses the custom ViewHolder when necessary:
+
 ```kotlin
 class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
     override fun getItemViewType(item: MessageListItem): Int {
@@ -367,47 +372,50 @@ class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
 }
 ```
 
-4. Finally, set instance of custom factory to `MessageListView`
-```kotlin
-fun setCustomViewHolderFactory() {
-        messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
-    }
-```
-
-## Message list item predicate
-If you want to filter some messages and don't show them in your `MessageListIem`.
-Imagine you want not to show all messages that contain the "secret" word. It can be done with following lines:
-```kotlin
-fun setItemPredicate() {
-        val forbiddenWord = "secret"
-        val predicate = MessageListView.MessageListItemPredicate { item ->
-            !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
-        }
-        messageListView.setMessageListItemPredicate(predicate)
-    }
-```
-
-## Creating a Custom Empty State
-`MessageListView` handles loading and empty states out-of-box. If you want to customize them you can do it in runtime.
-Let's consider an example when you want to set a custom empty state.
+4. Finally, set an instance of the custom factory on `MessageListView`
 
 ```kotlin
-fun setCustomEmptyView(context: Context) {
-        val textView = TextView(context).apply {
-            text = "There are no messages yet"
-            setTextColor(Color.RED)
-        }
-        messageListView.setEmptyStateView(
-            view = textView,
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER
-            )
-        )
-    }
+messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
 ```
 
-And you'll see such empty state:
+## Filtering messages
 
-![](../../assets/message_lis_custom_empty_state.png)
+You can filter some messages if you don't want to show them in your `MessageListView`.
+Imagine you want to hide all messages that contain the word "secret". This can be done with following lines:
+
+```kotlin
+val forbiddenWord = "secret"
+val predicate = MessageListView.MessageListItemPredicate { item ->
+    !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
+}
+messageListView.setMessageListItemPredicate(predicate)
+```
+
+:::note
+The predicate has to return `true` for the items that you _do_ want to display in the list.
+:::
+
+## Custom Empty State
+
+`MessageListView` handles loading and empty states out-of-box. If you want to customize these, you can do it at runtime.
+
+Let's consider an example when you want to set a custom empty state:
+
+```kotlin
+val textView = TextView(context).apply {
+    text = "There are no messages yet"
+    setTextColor(Color.RED)
+}
+messageListView.setEmptyStateView(
+    view = textView,
+    layoutParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.CENTER
+    )
+)
+```
+
+This code will display the following empty state:
+
+![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
