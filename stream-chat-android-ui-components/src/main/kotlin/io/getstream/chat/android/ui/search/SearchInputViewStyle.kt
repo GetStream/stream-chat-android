@@ -11,11 +11,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
 public data class SearchInputViewStyle(
-    @ColorInt val backgroundColor: Int,
     @ColorInt val textColor: Int,
     @ColorInt val hintColor: Int,
     val searchIconDrawable: Drawable,
     val clearInputDrawable: Drawable,
+    val backgroundDrawable: Drawable,
     val hintText: String,
 ) {
     internal companion object {
@@ -32,10 +32,8 @@ public data class SearchInputViewStyle(
                 val clearIcon = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewClearInputIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
 
-                val backgroundColor = a.getColor(
-                    R.styleable.SearchInputView_streamUiSearchInputViewBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_literal_transparent)
-                )
+                val backgroundDrawable = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewBackground)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_shape_search_view_background)!!
 
                 val textColor = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewTextColor,
@@ -52,7 +50,7 @@ public data class SearchInputViewStyle(
                 return SearchInputViewStyle(
                     searchIconDrawable = searchIcon,
                     clearInputDrawable = clearIcon,
-                    backgroundColor = backgroundColor,
+                    backgroundDrawable = backgroundDrawable,
                     textColor = textColor,
                     hintColor = hintColor,
                     hintText = hintText,
