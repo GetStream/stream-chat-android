@@ -109,7 +109,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
     }
 
     internal suspend fun removeChannel(cid: String) {
-        queryChannels.removeChannelFromQueryChannelsSpec(cid)
+        queryChannels.removeChannel(cid)
     }
 
     /**

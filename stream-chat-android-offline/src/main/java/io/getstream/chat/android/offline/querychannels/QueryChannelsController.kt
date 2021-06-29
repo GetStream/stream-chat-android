@@ -120,10 +120,10 @@ public class QueryChannelsController internal constructor(
 
     internal suspend fun updateQueryChannelSpec(channel: Channel) {
         if (newChannelEventFilter(channel, filter)) {
-            addChannelToQueryChannelsSpec(channel)
+            addChannel(channel)
             domainImpl.channel(channel).updateDataFromChannel(channel)
         } else {
-            removeChannelFromQueryChannelsSpec(channel.cid)
+            removeChannel(channel.cid)
         }
     }
 
@@ -227,19 +227,17 @@ public class QueryChannelsController internal constructor(
         return runQuery(pagination).map { it - oldChannels }
     }
 
-    private suspend fun addChannelToQueryChannelsSpec(channel: Channel) =
-        addChannelsToQueryChannelsSpec(listOf(channel))
+    private suspend fun addChannel(channel: Channel) = addChannels(listOf(channel))
 
-    internal suspend fun removeChannelFromQueryChannelsSpec(cid: String) =
-        removeChannelsFromQueryChannelsSpec(listOf(cid))
+    internal suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
 
-    private suspend fun addChannelsToQueryChannelsSpec(channels: List<Channel>) {
+    private suspend fun addChannels(channels: List<Channel>) {
         queryChannelsSpec.cids += channels.map { it.cid }
         domainImpl.repos.insertQueryChannels(queryChannelsSpec)
         _channels.value = _channels.value + channels.map { it.cid to it }
     }
 
-    private suspend fun removeChannelsFromQueryChannelsSpec(cids: List<String>) {
+    private suspend fun removeChannels(cids: List<String>) {
         queryChannelsSpec.cids = queryChannelsSpec.cids - cids
         domainImpl.repos.insertQueryChannels(queryChannelsSpec)
         _channels.value = _channels.value - cids
@@ -268,7 +266,7 @@ public class QueryChannelsController internal constructor(
         val queryOnlineJob = domainImpl.scope.async { runQueryOnline(pagination) }
 
         val channels = queryOfflineJob.await()?.also { offlineChannels ->
-            addChannelsToQueryChannelsSpec(offlineChannels)
+            addChannels(offlineChannels)
             loading.value = offlineChannels.isEmpty()
         }
 
@@ -318,11 +316,11 @@ public class QueryChannelsController internal constructor(
             (_channels.value - channels.map { it.cid }).values
                 .filterNot { newChannelEventFilter(it, filter) }
                 .map { it.cid }
-                .let { removeChannelsFromQueryChannelsSpec(it) }
+                .let { removeChannels(it) }
         }
         channelOffset += channels.size
         channels.forEach { domainImpl.channel(it).updateDataFromChannel(it) }
-        addChannelsToQueryChannelsSpec(channels)
+        addChannels(channels)
     }
 
     internal suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {

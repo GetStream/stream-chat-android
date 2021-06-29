@@ -378,7 +378,7 @@ public class ChannelController internal constructor(
         return if (result?.isSuccess == true) {
             // Remove from query controllers
             for (activeQuery in domainImpl.getActiveQueries()) {
-                activeQuery.removeChannelFromQueryChannelsSpec(cid)
+                activeQuery.removeChannel(cid)
             }
             Result(Unit)
         } else {
@@ -392,7 +392,7 @@ public class ChannelController internal constructor(
         return if (result.isSuccess) {
             // Remove from query controllers
             for (activeQuery in domainImpl.getActiveQueries()) {
-                activeQuery.removeChannelFromQueryChannelsSpec(cid)
+                activeQuery.removeChannel(cid)
             }
             // Remove messages from repository
             val now = Date()
