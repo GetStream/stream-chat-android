@@ -31,6 +31,8 @@ public class SearchInputView : FrameLayout {
 
     private val inputDebouncer = Debouncer(debounceMs = TYPING_DEBOUNCE_MS)
 
+    private lateinit var style: SearchInputViewStyle
+
     private val query: String
         get() = binding.inputField.text.trim().toString()
 
@@ -53,9 +55,16 @@ public class SearchInputView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        parseAttrs(attrs)
+        style = SearchInputViewStyle(context, attrs)
 
         binding.root.setOnClickListener { binding.inputField.focusAndShowKeyboard() }
+
+        binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
+        binding.searchIcon.setImageDrawable(style.searchIconDrawable)
+        binding.inputField.hint = style.hintText
+        binding.inputField.setHintTextColor(style.hintColor)
+        binding.root.background = style.backgroundDrawable
+
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)
 
@@ -91,10 +100,6 @@ public class SearchInputView : FrameLayout {
             TransitionManager.beginDelayedTransition(binding.root, Fade().setDuration(FADE_DURATION))
         }
         binding.clearInputButton.isVisible = isClearButtonVisible
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        attrs ?: return
     }
 
     override fun onDetachedFromWindow() {
