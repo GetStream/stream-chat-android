@@ -9,6 +9,7 @@
         <attr name="streamUiTheme" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
+        <attr name="streamUiChannelListHeaderAvatarStyle" format="reference" />
         <attr name="streamUiGlobalAvatarBorderColor" format="reference|color" />
         <attr name="streamUiGlobalAvatarTextColor" format="reference|color" />
         <attr name="streamUiGlobalAvatarOnlineIndicatorColor" format="reference|color" />
