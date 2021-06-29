@@ -35,7 +35,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stream_activity_attachment_media);
         videoView = findViewById(R.id.videoView);
-        iv_audio = findViewById(R.id.iv_audio);
+        iv_audio = findViewById(R.id.ivAudio);
         init();
     }
 

@@ -655,7 +655,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Enables or disables the message delete confiramation showing
+     * Enables or disables the message delete confirmation showing
      *
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
@@ -718,6 +718,15 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setThreadsEnabled(enabled: Boolean) {
         messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
+    }
+
+    /**
+     * Enables or disables the message threading feature.
+     *
+     * @param enabled True if user muting is enabled, false otherwise.
+     */
+    public fun setRepliesEnabled(enabled: Boolean) {
+        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
@@ -873,16 +882,6 @@ public class MessageListView : ConstraintLayout {
     public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
         this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
     }
-
-    /**
-     * Enables or disables the message threading feature.
-     *
-     * @param enabled True if user muting is enabled, false otherwise.
-     */
-    public fun setRepliesEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
-    }
-
     //endregion
 
     //region Handler setters

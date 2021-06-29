@@ -10,7 +10,7 @@
     >
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lv_animating_dots"
+        android:id="@+id/lvAnimatingDots"
         android:layout_width="20dp"
         android:layout_height="17dp"
         app:lottie_autoPlay="true"
@@ -20,7 +20,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_user_typing"
+        android:id="@+id/tvUserTyping"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

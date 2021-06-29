@@ -8,7 +8,7 @@
     >
 
     <ImageView
-        android:id="@+id/delete_image_view"
+        android:id="@+id/deleteImageView"
         android:layout_width="@dimen/stream_ui_channel_list_item_option_icon_width"
         android:layout_height="0dp"
         android:scaleType="center"
@@ -19,12 +19,12 @@
         />
 
     <ImageView
-        android:id="@+id/more_options_image_view"
+        android:id="@+id/moreOptionsImageView"
         android:layout_width="@dimen/stream_ui_channel_list_item_option_icon_width"
         android:layout_height="0dp"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/delete_image_view"
+        app:layout_constraintEnd_toStartOf="@+id/deleteImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/stream_ui_ic_more"
         tools:ignore="ContentDescription"
