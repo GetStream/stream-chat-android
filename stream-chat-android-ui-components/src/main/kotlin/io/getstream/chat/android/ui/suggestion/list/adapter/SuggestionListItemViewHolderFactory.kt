@@ -16,7 +16,7 @@ public open class SuggestionListItemViewHolderFactory {
             parent = parentView,
             usernameStyle = style?.mentionsUsernameTextStyle,
             mentionNameStyle = style?.mentionsNameTextStyle,
-            mentionIcon = style?.mentionsIcon,
+            mentionIcon = style?.mentionIcon,
         )
     }
 
@@ -27,6 +27,7 @@ public open class SuggestionListItemViewHolderFactory {
             parent = parentView,
             commandsNameStyle = style?.commandsNameTextStyle,
             commandsDescriptionStyle = style?.commandsDescriptionTextStyle,
+            commandIcon = style?.commandIcon
         )
     }
 }

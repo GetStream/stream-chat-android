@@ -27,7 +27,9 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property commandsDescriptionTextStyle Sets the styles for the description of the command in the command list. Use to customise size, colour, font and style (ex: bold)
  * @property mentionsUsernameTextStyle Configure the appearance for username in the mention list
  * @property mentionsNameTextStyle Configure the appearance for username in the mention list
- * @property mentionsIcon Icon for mentions. It is normally "@"
+ * @property mentionIcon Icon for mentions. It is normally "@"
+ * @property commandIcon Icon for each command item. Default - [R.drawable.stream_ui_ic_command_circle]
+ * @property lightningIcon Icon to the left of command list title. Default - [R.drawable.stream_ui_ic_command_blue]
  */
 public data class SuggestionListViewStyle(
     @ColorInt val suggestionsBackground: Int,
@@ -36,7 +38,9 @@ public data class SuggestionListViewStyle(
     val commandsDescriptionTextStyle: TextStyle,
     val mentionsUsernameTextStyle: TextStyle,
     val mentionsNameTextStyle: TextStyle,
-    val mentionsIcon: Drawable,
+    val mentionIcon: Drawable,
+    val commandIcon: Drawable,
+    val lightningIcon: Drawable,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle {
@@ -147,9 +151,14 @@ public data class SuggestionListViewStyle(
                     )
                     .build()
 
-                val mentionsIcon: Drawable = a.getDrawable(
-                    R.styleable.MessageInputView_streamUiMentionsIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+                val mentionIcon: Drawable = a.getDrawable(R.styleable.MessageInputView_streamUiMentionsIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+
+                val commandIcon: Drawable = a.getDrawable(R.styleable.MessageInputView_streamUiCommandIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_circle)!!
+
+                val lightningIcon: Drawable = a.getDrawable(R.styleable.MessageInputView_streamUiLightningIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_blue)!!
 
                 return SuggestionListViewStyle(
                     suggestionsBackground = suggestionsBackground,
@@ -158,7 +167,9 @@ public data class SuggestionListViewStyle(
                     commandsDescriptionTextStyle = commandsDescriptionTextStyle,
                     mentionsUsernameTextStyle = mentionsUsernameTextStyle,
                     mentionsNameTextStyle = mentionsNameTextStyle,
-                    mentionsIcon = mentionsIcon,
+                    mentionIcon = mentionIcon,
+                    commandIcon = commandIcon,
+                    lightningIcon = lightningIcon,
                 ).let(TransformStyle.suggestionListStyleTransformer::transform)
             }
         }
