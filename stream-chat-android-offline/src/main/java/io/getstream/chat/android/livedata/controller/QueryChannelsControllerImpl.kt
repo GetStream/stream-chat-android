@@ -2,17 +2,16 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController as QueryChannelsControllerStateFlow
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController.ChannelsState as OfflineChannelState
@@ -24,23 +23,19 @@ private const val CHANNEL_LIMIT = 30
 internal class QueryChannelsControllerImpl(private val queryChannels: QueryChannelsControllerStateFlow) :
     QueryChannelsController {
 
-    internal constructor(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        client: ChatClient,
-        domainImpl: ChatDomainImpl,
-    ) : this(QueryChannelsControllerStateFlow(filter, sort, client, domainImpl.chatDomainStateFlow))
-
     override val filter: FilterObject
         get() = queryChannels.filter
 
     override val sort: QuerySort<Channel>
         get() = queryChannels.sort
 
-    override fun setNewChannelEventFilter(filter: (Channel, FilterObject) -> Boolean) {
-        queryChannels.newChannelEventFilter =
-            { string: Channel, int: FilterObject -> withContext(DispatcherProvider.IO) { filter(string, int) } }
-    }
+    override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
+        get() = { channel, filter -> runBlocking { queryChannels.newChannelEventFilter(channel, filter) } }
+        set(filter) {
+            queryChannels.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
+                withContext(DispatcherProvider.IO) { filter(channel, filterObject) }
+            }
+        }
 
     override var recoveryNeeded: Boolean
         get() = queryChannels.recoveryNeeded
