@@ -78,7 +78,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         return queryChannels.loadMoreRequest(channelLimit, messageLimit, memberLimit)
     }
 
-    internal fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         queryChannels.handleEvents(events)
     }
 

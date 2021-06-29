@@ -37,24 +37,26 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         sut.query()
         Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 2, changed = 0, inserted = 1))
 
-        // adding a new channel, should trigger 1 "insert" operation
+        // adding a new channel, should trigger 1 "insert" operation, 1 "update" caused by refresh flow values
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 3, changed = 0, inserted = 2))
+        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
 
         // adding a new message, should trigger 1 "changed" operation
         chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
+        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 5, changed = 2, inserted = 2))
 
         // updating the last message, should should trigger 1 "changed" operation
         chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 5, changed = 2, inserted = 2))
+        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 6, changed = 3, inserted = 2))
     }
 
     private class Fixture(
         private val chatDomainImpl: ChatDomainImpl,
         private val filter: FilterObject,
     ) {
-        private val queryChannelsControllerImpl = chatDomainImpl.queryChannels(filter, QuerySort())
+        private val queryChannelsControllerImpl = chatDomainImpl.queryChannels(filter, QuerySort()).apply {
+            newChannelEventFilter = { _, _ -> true }
+        }
 
         fun givenChannelInOfflineStorage(channel: Channel): Fixture {
             runBlocking {

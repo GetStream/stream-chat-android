@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
@@ -122,14 +121,15 @@ public class QueryChannelsController internal constructor(
     internal suspend fun updateQueryChannelSpec(channel: Channel) {
         if (newChannelEventFilter(channel, filter)) {
             addChannelToQueryChannelsSpec(channel)
+            domainImpl.channel(channel).updateDataFromChannel(channel)
         } else {
             removeChannelFromQueryChannelsSpec(channel.cid)
         }
     }
 
-    internal fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
-            domainImpl.scope.launch { handleEvent(event) }
+            handleEvent(event)
         }
     }
 
@@ -157,19 +157,7 @@ public class QueryChannelsController internal constructor(
             }
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
-
-            // refresh the channels
-            // Careful, it's easy to have a race condition here.
-            //
-            // The reason is that we are on the IO thread and update ChannelController using postValue()
-            //  ChannelController.toChannel() can read the old version of the data using value
-            // Solutions:
-            // - suspend/wait for a few seconds (yuck, lets not do that)
-            // - post the refresh on a flow object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
-            // - run the refresh channel call below on the UI thread instead of IO thread
-            domainImpl.scope.launch {
-                refreshChannel(event.cid)
-            }
+            refreshChannel(event.cid)
         }
 
         if (event is UserPresenceChangedEvent) {
