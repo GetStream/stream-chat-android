@@ -43,16 +43,13 @@ Adding `MessageListView` to your layout is easy as inserting following lines to 
 The UI components library includes a ViewModel for `MessageListView` and the `bindView` extension function makes it easy to use a default setup:
 
 ```kotlin
-class MessageListFragment : Fragment() {
-
-    private lateinit var messageListView: MessageListView
-
-    fun bindView() {
-        val channelCID = "messaging:123"
-        val viewModel = MessageListViewModel(cid = channelCID)
-        viewModel.bindView(messageListView, this)
-    }
+// 1. Init view model
+val viewModel: MessageListViewModel by viewModels {
+    MessageListViewModelFactory(cid = "messaging:123")
 }
+    
+// 2. Bind view and viewModel
+viewModel.bindView(messageListView, lifecycleOwner)
 ``` 
 
 ## Handling Actions
