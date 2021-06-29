@@ -315,6 +315,13 @@
         <item name="android:layout_marginBottom">12dp</item>
     </style>
 
+    <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
     <style name="StreamUi.ChannelList.Header.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
@@ -339,7 +346,7 @@
         <item name="streamUiAvatarBorderWidth">1dp</item>
     </style>
 
-    <style name="StreamUi.Mentions.Avatar" parent="StreamUi.BaseAvatar">
+    <style name="StreamUi.MentionSuggestion.Avatar" parent="StreamUi.BaseAvatar">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
