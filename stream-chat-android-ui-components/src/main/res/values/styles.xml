@@ -324,7 +324,7 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
-    <style name="StreamUi.Gallery.Avatar" parent="StreamUi.BaseAvatar">
+    <style name="StreamUi.AttachmentGallery.Avatar" parent="StreamUi.BaseAvatar">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
