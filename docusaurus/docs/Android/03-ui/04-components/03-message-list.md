@@ -224,7 +224,7 @@ TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle
 }
 ```
 
-## Channel feature flags
+## Channel Feature Flags
 
 Some xml attributes let you to enable/disable features in `MessageListView`.
 - `streamUiScrollButtonEnabled` - show/hide the scroll-to-bottom button
@@ -255,7 +255,7 @@ messageListView.setEditMessageEnabled(false)
 | --- | --- |
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
-## Custom message views
+## Custom Message Views
 
 `MessageListView` provides an API for creating custom ViewHolders. To use your own ViewHolder: 
 1. Extend `MessageListItemViewHolderFactory`.
@@ -378,7 +378,7 @@ class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
 messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
 ```
 
-## Filtering messages
+## Filtering Messages
 
 You can filter some messages if you don't want to show them in your `MessageListView`.
 Imagine you want to hide all messages that contain the word "secret". This can be done with following lines:
