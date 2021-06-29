@@ -11,7 +11,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -46,7 +45,6 @@ internal class QueryChannelsControllerTest {
             val sut = Fixture()
                 .givenCurrentUser(currentUser)
                 .givenNewChannelControllerForChannel(channelController)
-                .givenChannelControllerForCidWithCurrentUser()
                 .get()
 
             sut.updateQueryChannelSpec(newChannel)
@@ -69,7 +67,6 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
                 .get()
 
             sut.updateQueryChannelSpec(newChannel)
@@ -94,7 +91,6 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
                 .get()
 
             sut.updateQueryChannelSpec(newChannel)
@@ -114,7 +110,6 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenNewChannelControllerForChannel()
                 .givenChannelType(channelType)
-                .givenChannelControllerForCidWithoutCurrentUser()
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(type = channelType, members = emptyList())
@@ -133,7 +128,6 @@ internal class QueryChannelsControllerTest {
             val sut = Fixture()
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithoutCurrentUser()
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(cid = cid, members = emptyList())
@@ -146,13 +140,11 @@ internal class QueryChannelsControllerTest {
         }
 
     @Test
-    fun `when refreshing channel which contain current user as member should post value to liveData with channel`() =
+    fun `when refreshing channel which contain current user as member should set value to flow`() =
         runBlockingTest {
             val user = randomUser()
             val sut = Fixture()
                 .givenCurrentUser(user)
-                .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(cid = "ChannelType:ChannelID", members = listOf(randomMember(user = user)))
@@ -243,6 +235,15 @@ private class Fixture {
         whenever(chatDomainImpl.job) doReturn Job()
         whenever(chatDomainImpl.scope) doReturn testCoroutineScope
         whenever(chatDomainImpl.repos) doReturn mock()
+        whenever(chatDomainImpl.channel(any<Channel>())) doReturn mock()
+        whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
+            mock<ChannelController> {
+                on { toChannel() } doReturn randomChannel(
+                    cid = invocation.arguments[0] as String,
+                    type = channelType,
+                )
+            }
+        }
     }
 
     fun givenCurrentUser(user: User) = apply {
@@ -257,25 +258,6 @@ private class Fixture {
 
     fun givenChannelType(channelType: String) = apply {
         this.channelType = channelType
-    }
-
-    fun givenChannelControllerForCidWithCurrentUser() = setupChatControllersInstantiation(true)
-
-    fun givenChannelControllerForCidWithoutCurrentUser() = setupChatControllersInstantiation(false)
-
-    private fun setupChatControllersInstantiation(
-        withCurrentUserAsChannelMember: Boolean = false,
-    ): Fixture = apply {
-        whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelController> {
-                on { toChannel() } doReturn randomChannel(
-                    cid = invocation.arguments[0] as String,
-                    type = channelType,
-                    members = if (withCurrentUserAsChannelMember) listOf(Member(currentUser!!)) else emptyList()
-                )
-            }
-        }
-        whenever(chatDomainImpl.getChannelConfig(any())) doReturn mock()
     }
 
     fun setupChatRepositories(): Fixture = apply {
