@@ -104,8 +104,8 @@ internal class ReactionConfigurator(
         }
 
         binding.root.updateConstraints {
-            clear(R.id.space_reaction_tail, ConstraintSet.START)
-            clear(R.id.space_reaction_tail, ConstraintSet.END)
+            clear(R.id.spaceReactionTail, ConstraintSet.START)
+            clear(R.id.spaceReactionTail, ConstraintSet.END)
         }
 
         val params = binding.spaceReactionTail.layoutParams as ConstraintLayout.LayoutParams
@@ -129,8 +129,8 @@ internal class ReactionConfigurator(
         }
 
         binding.root.updateConstraints {
-            clear(R.id.iv_tail, ConstraintSet.START)
-            clear(R.id.iv_tail, ConstraintSet.END)
+            clear(R.id.ivTail, ConstraintSet.START)
+            clear(R.id.ivTail, ConstraintSet.END)
         }
 
         val params = binding.ivTail.layoutParams as ConstraintLayout.LayoutParams
@@ -167,24 +167,24 @@ internal class ReactionConfigurator(
             binding.reactionsRecyclerView.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 if (messageItem.message.attachments.isNotEmpty()) {
                     if (messageItem.isMine) {
-                        startToStart = R.id.space_reaction_tail
+                        startToStart = R.id.spaceReactionTail
                     } else {
-                        endToEnd = R.id.space_reaction_tail
+                        endToEnd = R.id.spaceReactionTail
                     }
                 } else {
                     val reactionMargin =
                         context.resources.getDimensionPixelSize(R.dimen.stream_reaction_margin)
                     if (binding.tvText.width + reactionMargin < binding.reactionsRecyclerView.width) {
                         if (messageItem.isMine) {
-                            endToEnd = R.id.tv_text
+                            endToEnd = R.id.tvText
                         } else {
-                            startToStart = R.id.tv_text
+                            startToStart = R.id.tvText
                         }
                     } else {
                         if (messageItem.isMine) {
-                            startToStart = R.id.space_reaction_tail
+                            startToStart = R.id.spaceReactionTail
                         } else {
-                            endToEnd = R.id.space_reaction_tail
+                            endToEnd = R.id.spaceReactionTail
                         }
                     }
                 }

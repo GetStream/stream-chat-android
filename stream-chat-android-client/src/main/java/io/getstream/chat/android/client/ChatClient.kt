@@ -99,9 +99,9 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
-    private val encryptedPushNotificationsConfigStore: EncryptedPushNotificationsConfigStore,
+    private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
-    private val tokenUtils: TokenUtils = TokenUtils
+    private val tokenUtils: TokenUtils = TokenUtils,
 ) {
 
     @InternalStreamChatApi
@@ -321,11 +321,13 @@ public class ChatClient internal constructor(
      * Moreover, it warms up the connection, and sets up notifications.
      *
      */
-    private fun setUserWithoutConnectingIfNeeded() {
+    @InternalStreamChatApi
+    public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet()) {
             return
         }
-        encryptedPushNotificationsConfigStore.get()?.let { config ->
+
+        encryptedUserConfigStorage.get()?.let { config ->
             initializeClientWithUser(
                 user = User(id = config.userId),
                 tokenProvider = ConstantTokenProvider(config.userToken),
@@ -333,12 +335,17 @@ public class ChatClient internal constructor(
         }
     }
 
+    @InternalStreamChatApi
+    public fun containsStoredCredentials(): Boolean {
+        return encryptedUserConfigStorage.get() != null
+    }
+
     private fun notifySetUser(user: User) {
         preSetUserListeners.forEach { it(user) }
     }
 
     private fun storePushNotificationsConfig(userId: String) {
-        encryptedPushNotificationsConfigStore.put(
+        encryptedUserConfigStorage.put(
             PushNotificationsConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
@@ -516,7 +523,11 @@ public class ChatClient internal constructor(
 
     @CheckResult
     @JvmOverloads
-    public fun sendReaction(messageId: String, reactionType: String, enforceUnique: Boolean = false): Call<Reaction> {
+    public fun sendReaction(
+        messageId: String,
+        reactionType: String,
+        enforceUnique: Boolean = false,
+    ): Call<Reaction> {
         return api.sendReaction(messageId, reactionType, enforceUnique)
     }
 
@@ -694,7 +705,7 @@ public class ChatClient internal constructor(
         userStateService.onLogout()
         socket.disconnect()
         notifications.cancelLoadDataWork()
-        encryptedPushNotificationsConfigStore.clear()
+        encryptedUserConfigStorage.clear()
         lifecycleObserver.dispose()
     }
 
@@ -1513,7 +1524,11 @@ public class ChatClient internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+        internal suspend fun displayNotificationWithData(
+            channelType: String,
+            channelId: String,
+            messageId: String,
+        ) {
             ensureClientInitialized().notifications.displayNotificationWithData(
                 channelId = channelId,
                 channelType = channelType,

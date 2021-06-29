@@ -879,7 +879,11 @@ public class Android {
                                 genericDrawable,
                                 20,
                                 genericDrawable,
-                                attachmentSelectionDialogStyle
+                                attachmentSelectionDialogStyle,
+                                genericDrawable,
+                                genericDrawable,
+                                genericDrawable,
+                                textStyleGeneric
                         )
 
             );
