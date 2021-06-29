@@ -18,6 +18,7 @@
         <item name="streamUiMentionSuggestionAvatarStyle">@style/MentionSuggestionAvatarStyle</item>
         <item name="streamUiSearchResultAvatarStyle">@style/SearchResultAvatarStyle</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/MessageOptionsAvatarStyle</item>
+        <item name="streamUiReplyAvatarStyle">@style/ReplyAvatarStyle</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
@@ -38,6 +39,8 @@
     <style name="SearchResultAvatarStyle" parent="StreamUi.SearchResult.Avatar"/>
 
     <style name="MessageOptionsAvatarStyle" parent="StreamUi.MessageOptions.Avatar"/>
+
+    <style name="ReplyAvatarStyle" parent="StreamUi.Reply.Avatar"/>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
