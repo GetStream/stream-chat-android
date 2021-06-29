@@ -1896,17 +1896,17 @@ public abstract interface class io/getstream/chat/android/ui/search/SearchInputV
 
 public final class io/getstream/chat/android/ui/search/SearchInputViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/search/SearchInputViewStyle$Companion;
-	public fun <init> (IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)V
+	public fun <init> (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)V
 	public final fun component1 ()I
 	public final fun component2 ()I
-	public final fun component3 ()I
+	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()Landroid/graphics/drawable/Drawable;
 	public final fun component5 ()Landroid/graphics/drawable/Drawable;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun copy (IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public final fun copy (IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/SearchInputViewStyle;IILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/search/SearchInputViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackgroundColor ()I
+	public final fun getBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getClearInputDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getHintColor ()I
 	public final fun getHintText ()Ljava/lang/String;
