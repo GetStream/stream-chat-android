@@ -18,5 +18,6 @@
         <attr name="streamUiAttachmentGalleryAvatarStyle" format="reference" />
         <attr name="streamUiMentionsAvatarStyle" format="reference" />
         <attr name="streamUiSearchResultAvatarStyle" format="reference" />
+        <attr name="streamUiMessageOptionsAvatarStyle" format="reference" />
     </declare-styleable>
 </resources>
