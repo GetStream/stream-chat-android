@@ -7,7 +7,7 @@
     >
 
     <TextView
-        android:id="@+id/tv_command"
+        android:id="@+id/tvCommand"
         style="@style/text_b"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,18 +17,18 @@
         />
 
     <TextView
-        android:id="@+id/tv_arg"
+        android:id="@+id/tvArg"
         style="@style/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_command"
-        app:layout_constraintStart_toEndOf="@+id/tv_command"
-        app:layout_constraintTop_toTopOf="@+id/tv_command"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCommand"
+        app:layout_constraintStart_toEndOf="@+id/tvCommand"
+        app:layout_constraintTop_toTopOf="@+id/tvCommand"
         />
 
     <TextView
-        android:id="@+id/tv_des"
+        android:id="@+id/tvDes"
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,6 +37,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command"
+        app:layout_constraintTop_toBottomOf="@+id/tvCommand"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

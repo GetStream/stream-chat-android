@@ -1,4 +1,6 @@
-# Calling SDK Methods
+# Architecture Overview
+
+## Calls
 
 Many SDK methods in the client and offline libraries return a `Call` object, which is a pending operation waiting to be executed.
 
