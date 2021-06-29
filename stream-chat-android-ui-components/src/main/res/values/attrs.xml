@@ -22,5 +22,6 @@
         <attr name="streamUiSearchResultAvatarStyle" format="reference" />
         <attr name="streamUiMessageOptionsAvatarStyle" format="reference" />
         <attr name="streamUiReplyAvatarStyle" format="reference" />
+        <attr name="streamUiThreadAvatarStyle" format="reference" />
     </declare-styleable>
 </resources>

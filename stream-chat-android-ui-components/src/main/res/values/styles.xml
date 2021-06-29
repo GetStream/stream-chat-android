@@ -374,6 +374,13 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
+    <style name="StreamUi.Thread.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
         <!-- Channel actions dialog title with member names -->
         <item name="streamUiChannelActionsMemberNamesTextSize">@dimen/stream_ui_text_large</item>
