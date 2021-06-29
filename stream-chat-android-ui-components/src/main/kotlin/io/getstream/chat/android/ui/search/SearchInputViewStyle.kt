@@ -10,6 +10,14 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
+/**
+ * @property textColor color value of the search input text
+ * @property hintColor color value of the search input hint
+ * @property searchIconDrawable drawable of search icon visible on the right side of the SearchInputView
+ * @property clearInputDrawable drawable of clear input icon visible on the left side of the SearchInputView
+ * @property backgroundDrawable drawable used as the view's background
+ * @property hintText hint text
+ */
 public data class SearchInputViewStyle(
     @ColorInt val textColor: Int,
     @ColorInt val hintColor: Int,
