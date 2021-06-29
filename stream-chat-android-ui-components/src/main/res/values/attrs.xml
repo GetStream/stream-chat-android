@@ -16,5 +16,6 @@
         <attr name="streamUiGlobalAvatarOnlineIndicatorColor" format="reference|color" />
         <attr name="streamUiChannelActionsDialogStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryAvatarStyle" format="reference" />
+        <attr name="streamUiMentionsAvatarStyle" format="reference" />
     </declare-styleable>
 </resources>

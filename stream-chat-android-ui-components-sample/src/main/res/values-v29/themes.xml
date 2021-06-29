@@ -8,6 +8,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="streamUiTheme">@style/StreamTheme</item>
+        <item name="streamUiMentionsAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
@@ -28,6 +29,8 @@
     <style name="ChannelActionsDialogAvatarStyle" parent="StreamUi.ChannelActions.Dialog.Avatar"/>
 
     <style name="AttachmentGalleryAvatarStyle" parent="StreamUi.AttachmentGallery.Avatar"/>
+
+    <style name="MentionsAvatarStyle" parent="StreamUi.Mentions.Avatar"/>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
