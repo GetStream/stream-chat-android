@@ -17,6 +17,7 @@
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
         <item name="streamUiMentionsAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
+        <item name="streamUiSearchResultAvatarStyle">@style/SearchResultAvatarStyle</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
@@ -30,6 +31,8 @@
     <style name="AttachmentGalleryAvatarStyle" parent="StreamUi.AttachmentGallery.Avatar"/>
 
     <style name="MentionsAvatarStyle" parent="StreamUi.Mentions.Avatar"/>
+
+    <style name="SearchResultAvatarStyle" parent="StreamUi.SearchResult.Avatar"/>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
