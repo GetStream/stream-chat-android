@@ -316,6 +316,14 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
+    <style name="StreamUi.ChannelActions.Dialog.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of GroupActions Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
         <!-- Channel actions dialog title with member names -->
         <item name="streamUiChannelActionsMemberNamesTextSize">@dimen/stream_ui_text_large</item>
