@@ -47,7 +47,7 @@ public data class SearchInputViewStyle(
                     context.getColorCompat(R.color.stream_ui_text_color_primary)
                 )
 
-                val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText).toString()
+                val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText)?.toString() ?: context.getString(R.string.stream_ui_search_input_hint)
 
                 return SearchInputViewStyle(
                     searchIconDrawable = searchIcon,
