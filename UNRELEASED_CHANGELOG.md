@@ -31,6 +31,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Using the `useNewSerialization` option on the `ChatClient.Builder` to opt out from using the new serialization implementation is now an error. Please start using the new serialization implementation, or report any issues keeping you from doing so. The old implementation will be removed soon.
 
 ### ❌ Removed
 
