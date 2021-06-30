@@ -54,7 +54,7 @@ internal class SearchResultListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message, chatDomain.currentUser.asMention(context))
+            binding.root.setMessage(message, chatDomain.user.value?.asMention(context))
         }
     }
 
