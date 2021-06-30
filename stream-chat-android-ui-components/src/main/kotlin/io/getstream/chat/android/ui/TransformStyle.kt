@@ -33,7 +33,7 @@ public object TransformStyle {
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentsViewStyle> = noopTransformer()
     public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
-    public var searchInputViewStyle: StyleTransformer<SearchInputViewStyle> = noopTransformer()
+    public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

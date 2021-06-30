@@ -70,7 +70,7 @@ public data class SearchInputViewStyle(
                     hintColor = hintColor,
                     hintText = hintText,
                     textSize = textSize,
-                ).let(TransformStyle.searchInputViewStyle::transform)
+                ).let(TransformStyle.searchInputViewStyleTransformer::transform)
             }
         }
     }
