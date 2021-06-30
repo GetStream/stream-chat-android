@@ -82,6 +82,9 @@ dependencies {
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
+    implementation Dependencies.roomRuntime
+    implementation Dependencies.roomKtx
+    kapt Dependencies.roomCompiler
 
     // Tests
     testImplementation project(':stream-chat-android-test')
