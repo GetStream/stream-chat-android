@@ -73,5 +73,6 @@
 - Added possibility to customize `MessageListHeaderView` style via `streamUiMessageListHeaderStyle` theme attribute and via `TransformStyle.messageListHeaderStyleTransformer`.
 
 ### ⚠️ Changed
+- Made `SuggestionListController` and `SuggestionListUi` public.
 
 ### ❌ Removed
