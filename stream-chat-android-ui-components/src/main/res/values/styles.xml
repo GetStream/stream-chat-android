@@ -270,6 +270,7 @@
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
         <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
+        <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
     </style>
 
     <style name="StreamUi">
@@ -362,5 +363,15 @@
         <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">@color/stream_ui_accent_red</item>
         <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
         <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">@color/stream_ui_accent_blue</item>
+    </style>
+
+    <style name="StreamUi.SearchInputView" parent="StreamUi">
+        <item name="streamUiSearchInputViewHintText">@string/stream_ui_search_input_hint</item>
+        <item name="streamUiSearchInputViewSearchIcon">@drawable/stream_ui_ic_search</item>
+        <item name="streamUiSearchInputViewClearInputIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiSearchInputViewBackground">@drawable/stream_ui_shape_search_view_background</item>
+        <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 </resources>
