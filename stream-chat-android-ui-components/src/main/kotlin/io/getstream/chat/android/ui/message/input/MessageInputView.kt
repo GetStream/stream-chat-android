@@ -32,10 +32,10 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
-import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import kotlinx.coroutines.flow.collect
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
