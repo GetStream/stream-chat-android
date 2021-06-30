@@ -12,6 +12,7 @@ import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 
@@ -64,6 +65,7 @@ public class SearchInputView : FrameLayout {
         binding.inputField.hint = style.hintText
         binding.inputField.setHintTextColor(style.hintColor)
         binding.root.background = style.backgroundDrawable
+        binding.inputField.setTextSizePx(style.textSize.toFloat())
 
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)

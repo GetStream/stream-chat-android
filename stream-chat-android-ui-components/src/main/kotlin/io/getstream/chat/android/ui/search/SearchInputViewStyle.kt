@@ -7,6 +7,7 @@ import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
@@ -25,14 +26,15 @@ public data class SearchInputViewStyle(
     val clearInputDrawable: Drawable,
     val backgroundDrawable: Drawable,
     val hintText: String,
+    val textSize: Int,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SearchInputViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.SearchInputView,
-                0,
-                0
+                R.attr.streamUiSearchInputViewStyle,
+                R.style.StreamUi_SearchInputView
             ).use { a ->
                 val searchIcon = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewSearchIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_search)!!
@@ -55,6 +57,11 @@ public data class SearchInputViewStyle(
 
                 val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText)?.toString() ?: context.getString(R.string.stream_ui_search_input_hint)
 
+                val textSize = a.getDimensionPixelSize(
+                    R.styleable.SearchInputView_streamUiSearchInputViewTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+
                 return SearchInputViewStyle(
                     searchIconDrawable = searchIcon,
                     clearInputDrawable = clearIcon,
@@ -62,6 +69,7 @@ public data class SearchInputViewStyle(
                     textColor = textColor,
                     hintColor = hintColor,
                     hintText = hintText,
+                    textSize = textSize,
                 ).let(TransformStyle.searchInputViewStyle::transform)
             }
         }
