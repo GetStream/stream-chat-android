@@ -75,7 +75,17 @@
 - Added new attributes to `MessageInputView`:
     - `streamUiCommandIcon` attribute to customize the command icon displayed for each command item in the suggestion list popup
     - `streamUiLightningIcon` attribute to customize the lightning icon displayed in the top left corner of the suggestion list popup
-
+- Added support for customizing `SearchInputView`  
+    - Added `SearchInputViewStyle` class allowing customization using `TransformStyle` API
+    - Added XML attrs for `SearchInputView`:
+         - `streamUiSearchInputViewHintText`
+         - `streamUiSearchInputViewSearchIcon`
+         - `streamUiSearchInputViewClearInputIcon`
+         - `streamUiSearchInputViewBackground`
+         - `streamUiSearchInputViewTextColor`
+         - `streamUiSearchInputViewHintColor`
+         - `streamUiSearchInputViewTextSize`
+  
 ### ⚠️ Changed
 - 🚨 Breaking change: moved `commandsTitleTextStyle`, `commandsNameTextStyle`, `commandsDescriptionTextStyle`, `mentionsUsernameTextStyle`, `mentionsNameTextStyle`, `mentionsIcon`, `suggestionsBackground` fields from `MessageInputViewStyle` to `SuggestionListViewStyle`. Their values can be customized via `TransformStyle.suggestionListStyleTransformer`.
 - Made `SuggestionListController` and `SuggestionListUi` public. Note that both of these are _experimental_, which means that the API might change at any time in the future (even without a deprecation cycle).
