@@ -64,6 +64,7 @@ public class SearchInputView : FrameLayout {
         binding.searchIcon.setImageDrawable(style.searchIconDrawable)
         binding.inputField.hint = style.hintText
         binding.inputField.setHintTextColor(style.hintColor)
+        binding.inputField.setTextColor(style.textColor)
         binding.root.background = style.backgroundDrawable
         binding.inputField.setTextSizePx(style.textSize.toFloat())
 
