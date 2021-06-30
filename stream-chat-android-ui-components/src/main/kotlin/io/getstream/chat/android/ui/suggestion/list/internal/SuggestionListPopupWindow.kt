@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import io.getstream.chat.android.ui.suggestion.Suggestions
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListUi
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 
 internal class SuggestionListPopupWindow(

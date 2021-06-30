@@ -2018,7 +2018,28 @@ public final class io/getstream/chat/android/ui/suggestion/Suggestions$MentionSu
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView : android/widget/FrameLayout, io/getstream/chat/android/ui/suggestion/list/internal/SuggestionListUi {
+public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListController {
+	public fun <init> (Lio/getstream/chat/android/ui/suggestion/list/SuggestionListUi;)V
+	public final fun getCommands ()Ljava/util/List;
+	public final fun getCommandsEnabled ()Z
+	public final fun getMentionsEnabled ()Z
+	public final fun getUserLookupHandler ()Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;
+	public final fun hideSuggestionList ()V
+	public final fun isSuggestionListVisible ()Z
+	public final fun onNewMessageText (Ljava/lang/String;)V
+	public final fun setCommands (Ljava/util/List;)V
+	public final fun setCommandsEnabled (Z)V
+	public final fun setMentionsEnabled (Z)V
+	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
+	public final fun showAvailableCommands ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/suggestion/list/SuggestionListUi {
+	public abstract fun isSuggestionListVisible ()Z
+	public abstract fun renderSuggestions (Lio/getstream/chat/android/ui/suggestion/Suggestions;)V
+}
+
+public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListView : android/widget/FrameLayout, io/getstream/chat/android/ui/suggestion/list/SuggestionListUi {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
