@@ -41,8 +41,6 @@ class ChatPreviewViewModel(
                     _state.value = State(cid!!)
                 }
             }
-
-
         }
     }
 
