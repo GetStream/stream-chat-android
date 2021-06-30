@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentVie
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 
 public object TransformStyle {
     public var avatarStyleTransformer: StyleTransformer<AvatarStyle> = noopTransformer()
@@ -29,6 +30,7 @@ public object TransformStyle {
     public var mediaAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentsViewStyle> = noopTransformer()
+    public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
