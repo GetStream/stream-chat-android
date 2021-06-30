@@ -70,6 +70,7 @@
     - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
     - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
     - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
+- Added possibility to customize `MessageListHeaderView` style via `streamUiMessageListHeaderStyle` theme attribute and via `TransformStyle.messageListHeaderStyleTransformer`.
 - Added new attributes to `MessageInputView`:
     - `streamUiCommandIcon` attribute to customize the command icon displayed for each command item in the suggestion list popup
     - `streamUiLightningIcon` attribute to customize the lightning icon displayed in the top left corner of the suggestion list popup

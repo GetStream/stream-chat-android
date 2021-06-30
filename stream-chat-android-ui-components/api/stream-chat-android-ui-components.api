@@ -72,6 +72,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMediaAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMessageListHeaderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListItemStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageReplyStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -86,6 +87,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMediaAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMessageListHeaderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListItemStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageReplyStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -1758,6 +1760,38 @@ public final class io/getstream/chat/android/ui/message/list/header/MessageListH
 
 public abstract interface class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView$OnClickListener {
 	public abstract fun onClick ()V
+}
+
+public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle$Companion;
+	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component10 ()Z
+	public final fun component11 ()Landroid/content/res/ColorStateList;
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component5 ()Z
+	public final fun component6 ()Landroid/graphics/drawable/Drawable;
+	public final fun component7 ()Z
+	public final fun component8 ()Z
+	public final fun component9 ()I
+	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackButtonBadgeBackgroundColor ()I
+	public final fun getBackButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getOfflineTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getOnlineTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getSearchingForNetworkProgressBarTint ()Landroid/content/res/ColorStateList;
+	public final fun getSearchingForNetworkTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getShowBackButton ()Z
+	public final fun getShowBackButtonBadge ()Z
+	public final fun getShowSearchingForNetworkProgressBar ()Z
+	public final fun getShowUserAvatar ()Z
+	public final fun getTitleTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel : com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderViewModel {
