@@ -1,10 +1,6 @@
----
-hide_from_search: true
----
-
 # Push Notifications
 
-Besides [Events](./04-events.md), push notifications are another way to stay up to date with changes to the chat.
+Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes to the chat.
 The user will receive a push notification if they're watching a channel but don't have an open socket connection.
 
 ## Configuring Push Notifications

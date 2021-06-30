@@ -1,10 +1,10 @@
 package io.getstream.chat.android.ui.suggestion.list.adapter
 
 import android.view.ViewGroup
+import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal.CommandViewHolder
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal.MentionViewHolder
-import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 
 public open class SuggestionListItemViewHolderFactory {
     internal var style: SuggestionListViewStyle? = null
@@ -26,7 +26,8 @@ public open class SuggestionListItemViewHolderFactory {
         return CommandViewHolder(
             parent = parentView,
             commandsNameStyle = style?.commandsNameTextStyle,
-            commandsDescriptionStyle = style?.commandsDescriptionStyle,
+            commandsDescriptionStyle = style?.commandsDescriptionTextStyle,
+            commandIcon = style?.commandIcon
         )
     }
 }
