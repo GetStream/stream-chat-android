@@ -51,7 +51,7 @@ public data class SearchInputViewStyle(
                 )
 
                 val hintColor = a.getColor(
-                    R.styleable.SearchInputView_streamUiSearchInputViewTextColor,
+                    R.styleable.SearchInputView_streamUiSearchInputViewHintColor,
                     context.getColorCompat(R.color.stream_ui_text_color_primary)
                 )
 
