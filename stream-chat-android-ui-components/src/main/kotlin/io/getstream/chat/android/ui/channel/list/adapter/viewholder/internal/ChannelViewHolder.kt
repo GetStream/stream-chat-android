@@ -49,7 +49,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     ),
 ) : SwipeViewHolder(binding.root) {
     private val dateFormatter = DateFormatter.from(context)
-    private val currentUser = ChatDomain.instance().currentUser
+    private val currentUser = ChatDomain.instance().user
 
     private var optionsCount = 1
 
@@ -76,7 +76,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             itemForegroundView.apply {
                 avatarView.setOnClickListener {
                     when {
-                        channel.isDirectMessaging() -> userClickListener.onClick(currentUser)
+                        channel.isDirectMessaging() -> currentUser.value?.let(userClickListener::onClick)
                         else -> channelClickListener.onClick(channel)
                     }
                 }
@@ -237,7 +237,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().currentUser.id
+        val currentUserSentLastMessage = lastMessage.user.id == ChatDomain.instance().user.value?.id
         val lastMessageByCurrentUserWasRead = channel.isMessageRead(lastMessage)
         when {
             !currentUserSentLastMessage || lastMessageByCurrentUserWasRead -> {

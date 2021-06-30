@@ -67,7 +67,7 @@ public class MessageListViewModel @JvmOverloads constructor(
      */
     public val state: LiveData<State> = stateMerger
     public val currentUser: User
-        get() = domain.currentUser
+        get() = domain.user.value!!
 
     public val user: LiveData<User?> = domain.user
 
