@@ -9,7 +9,9 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.suggestion.Suggestions
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
@@ -17,7 +19,6 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemVi
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.CommandListAdapter
 import io.getstream.chat.android.ui.suggestion.list.adapter.internal.MentionListAdapter
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListUi
-import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListViewStyle
 
 public class SuggestionListView : FrameLayout, SuggestionListUi {
 
@@ -60,7 +61,8 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         this.style = style
 
         binding.suggestionsCardView.setCardBackgroundColor(style.suggestionsBackground)
-        style.commandsTitleTextStyle.apply(binding.commandsTitleTextView)
+        binding.commandsTitleTextView.setTextStyle(style.commandsTitleTextStyle)
+        binding.commandsTitleTextView.setLeftDrawable(style.lightningIcon)
         viewHolderFactory.style = style
     }
 

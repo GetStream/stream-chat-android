@@ -14,6 +14,7 @@
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+        <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderTheme</item>
         <item name="streamUiSearchInputViewStyle">@style/SearchInputViewTheme</item>
     </style>
 
@@ -21,9 +22,11 @@
 
     <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar" />
 
-    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
+    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
     </style>
+
+    <style name="MessageListHeaderTheme" parent="StreamUi.MessageListHeader" />
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
 </resources>

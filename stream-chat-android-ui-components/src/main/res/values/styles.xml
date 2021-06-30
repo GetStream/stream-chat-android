@@ -269,6 +269,7 @@
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
+        <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
         <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
     </style>
 
@@ -332,6 +333,36 @@
         <item name="streamUiChannelActionsDeleteConversationEnabled">true</item>
         <item name="streamUiChannelActionsCancelIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiChannelActionsCancelEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.MessageListHeader" parent="StreamUi">
+        <!-- Title text style -->
+        <item name="streamUiMessageListHeaderTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageListHeaderTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageListHeaderTitleTextStyle">bold</item>
+
+        <!-- Offline text style -->
+        <item name="streamUiMessageListHeaderOfflineLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderOfflineLabelTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderOfflineLabelTextStyle">normal</item>
+
+        <!-- Searching for network text style -->
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextStyle">normal</item>
+
+        <!-- Online text style -->
+        <item name="streamUiMessageListHeaderDefaultLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderDefaultLabelTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderDefaultLabelTextStyle">normal</item>
+
+        <item name="streamUiMessageListHeaderShowUserAvatar">true</item>
+        <item name="streamUiMessageListHeaderBackButtonIcon">@drawable/stream_ui_arrow_left</item>
+        <item name="streamUiMessageListHeaderShowBackButton">true</item>
+        <item name="streamUiMessageListHeaderShowBackButtonBadge">false</item>
+        <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">@color/stream_ui_accent_red</item>
+        <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">@color/stream_ui_accent_blue</item>
     </style>
 
     <style name="StreamUi.SearchInputView" parent="StreamUi">
