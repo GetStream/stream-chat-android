@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
@@ -730,7 +731,7 @@ internal class ChatDomainImpl internal constructor(
 
     private suspend fun retryMessagesWithAttachments(): List<Message> {
         val retriedMessages = repos.selectMessagesWaitForAttachments()
-            .filter { message -> message.attachments.any { it.uploadState == Attachment.UploadState.InProgress } }
+
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
             message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
         }
