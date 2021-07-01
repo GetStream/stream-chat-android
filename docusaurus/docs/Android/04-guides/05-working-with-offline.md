@@ -45,8 +45,6 @@ chatDomain.retryPolicy = object : RetryPolicy {
 
 ## Operations
 
-### Overview
-
 You can use `ChatDomain` to perform many of the same operations as `ChatClient`. If you use `ChatDomain`, these calls will have offline support, including optimistic UI updates and auto-retries.
 
 For example, you can send a message using `ChatDomain`:
