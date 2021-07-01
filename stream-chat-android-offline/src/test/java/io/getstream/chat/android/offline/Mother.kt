@@ -6,7 +6,6 @@ import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -39,6 +38,7 @@ import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.user.UserEntity
 import io.getstream.chat.android.test.positiveRandomInt
@@ -624,9 +624,15 @@ internal fun randomChannelConfig(type: String = randomString(), config: Config =
 
 internal fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
-    sort: QuerySort<Channel> = QuerySort.Companion.asc(Channel::lastMessageAt),
     cids: List<String> = emptyList(),
-): QueryChannelsSpec = QueryChannelsSpec(filter, sort, cids)
+): QueryChannelsSpec = QueryChannelsSpec(filter, cids)
+
+internal fun randomQueryChannelsEntity(
+    id: String = randomString(),
+    filter: FilterObject = NeutralFilterObject,
+    cids: List<String> = emptyList(),
+
+): QueryChannelsEntity = QueryChannelsEntity(id, filter, cids)
 
 internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
     Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)

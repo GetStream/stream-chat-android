@@ -265,7 +265,6 @@ public class ChannelController internal constructor(
             } else {
                 channelClient.keystroke()
             }.await()
-
             return result.map { true.also { keystrokeParentMessageId = parentId } }
         }
         return Result(false)

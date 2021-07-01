@@ -39,6 +39,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- By default we use backend request to define is new message event related to our query channels specs or not. Now filtering by BE only fields works for channels
 
 ### ⬆️ Improved
 
