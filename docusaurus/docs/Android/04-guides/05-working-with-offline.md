@@ -174,7 +174,7 @@ chatDomain.threadLoadMore(cid, parentId, messageLimit)
 
 ### Unread Counts
 
-ChatDomain provides two different counts for a user. Here's how to retrieve them:
+`ChatDomain` provides two different counts for a user. Here's how to retrieve them:
 
 ```kotlin
 // StateFlow / LiveData objects to observe 
