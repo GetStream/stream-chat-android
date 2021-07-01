@@ -13,8 +13,11 @@ import coil.transform.RoundedCornersTransformation
 import com.getstream.sdk.chat.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.withContext
+import okhttp3.Headers.Companion.toHeaders
 
 internal object CoilStreamImageLoader : StreamImageLoader {
+
+    override var imageRequestHeaders: Map<String, String> = emptyMap()
 
     override suspend fun loadAsBitmap(
         context: Context,
@@ -25,6 +28,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             ?.let { url ->
                 val imageResult = context.streamImageLoader.execute(
                     ImageRequest.Builder(context)
+                        .headers(imageRequestHeaders.toHeaders())
                         .data(url)
                         .applyTransformation(transformation)
                         .build()
@@ -43,6 +47,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     ) {
         val context = target.context
         target.loadAny(data, context.streamImageLoader) {
+            headers(imageRequestHeaders.toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
                 onStart = { onStart() },
@@ -64,6 +69,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     ) {
         val context = target.context
         target.loadAny(uri, context.streamImageLoader) {
+            headers(imageRequestHeaders.toHeaders())
             placeholderResId?.let(::placeholder)
             listener(
                 onStart = { onStart() },

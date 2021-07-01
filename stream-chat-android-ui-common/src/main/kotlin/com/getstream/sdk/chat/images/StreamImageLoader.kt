@@ -14,6 +14,8 @@ public sealed interface StreamImageLoader {
         public fun instance(): StreamImageLoader = CoilStreamImageLoader
     }
 
+    public var imageRequestHeaders: Map<String, String>
+
     public fun load(
         target: ImageView,
         data: Any?,

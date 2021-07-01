@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -9,6 +10,7 @@ import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import kotlin.properties.Delegates
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
@@ -31,6 +33,9 @@ public object ChatUI {
     public var style: ChatStyle = ChatStyle()
     public var navigator: ChatNavigator = ChatNavigator()
     public var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
+    public var imageRequestHeaders: Map<String, String> by Delegates.observable(emptyMap()) { _, _, newState ->
+        StreamImageLoader.instance().imageRequestHeaders = newState
+    }
 
     private var fontsOverride: ChatFonts? = null
     private val defaultFonts: ChatFonts by lazy { ChatFontsImpl(style, appContext) }
