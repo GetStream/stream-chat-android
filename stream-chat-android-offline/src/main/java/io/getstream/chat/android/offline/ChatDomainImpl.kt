@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
