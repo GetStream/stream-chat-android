@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  * @see ChatMarkdown
  * @see UrlSigner
  * @see ChatFonts
+ * @see ImageHeadersProvider
  */
 public object ChatUI {
     internal lateinit var appContext: Context
