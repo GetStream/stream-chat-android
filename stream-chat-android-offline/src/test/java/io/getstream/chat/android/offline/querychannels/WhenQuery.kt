@@ -58,7 +58,6 @@ internal class WhenQuery {
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    QuerySort.desc(Channel::lastMessageAt),
                     cids = listOf("cid1", "cid2")
                 )
             )
@@ -90,7 +89,6 @@ internal class WhenQuery {
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    QuerySort.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
                 )
             )
             .givenDBChannels(dbChannels)
@@ -111,7 +109,6 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        QuerySort.desc(Channel::lastMessageAt), cids = listOf("cid1", "cid2")
                     )
                 )
                 .givenDBChannels(listOf(dbChannel))
@@ -136,7 +133,6 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        querySort,
                         cids = listOf("cid1", "cid2")
                     )
                 )
@@ -160,7 +156,6 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        querySort,
                         cids = listOf("cid1", "cid2")
                     )
                 )

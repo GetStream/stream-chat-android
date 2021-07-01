@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 class ChatPreviewViewModel(
@@ -27,14 +29,17 @@ class ChatPreviewViewModel(
     init {
         _state.value = State(cid = null)
         viewModelScope.launch {
-            val result = chatClient.createChannel(
-                channelType = "messaging",
-                members = listOf(chatDomain.currentUser.id, memberId),
-                extraData = mapOf(CHANNEL_ARG_DRAFT to true)
-            ).await()
-            if (result.isSuccess) {
-                cid = result.data().cid
-                _state.value = State(cid!!)
+            chatDomain.user.filterNotNull().collect { user ->
+                val result = chatClient.createChannel(
+                    channelType = "messaging",
+                    members = listOf(memberId, user.id),
+                    extraData = mapOf(CHANNEL_ARG_DRAFT to true)
+                ).await()
+
+                if (result.isSuccess) {
+                    cid = result.data().cid
+                    _state.value = State(cid!!)
+                }
             }
         }
     }

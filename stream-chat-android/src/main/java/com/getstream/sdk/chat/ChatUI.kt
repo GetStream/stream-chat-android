@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat
 
 import android.content.Context
+import com.getstream.sdk.chat.images.ImageHeadersProvider
+import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
@@ -82,6 +84,10 @@ public class ChatUI internal constructor(
 
         public fun withStrings(strings: ChatStrings): Builder = apply {
             this.strings = strings
+        }
+
+        public fun withImageHeadersProvider(imageHeadersProvider: ImageHeadersProvider): Builder = apply {
+            StreamImageLoader.instance().imageHeadersProvider = imageHeadersProvider
         }
 
         public fun build(): ChatUI {

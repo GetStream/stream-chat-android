@@ -29,9 +29,6 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
         }
     }
 
-    channel.observe(lifecycleOwner) {
-        view.init(it, currentUser)
-    }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setOnMessageDeleteHandler { onEvent(DeleteMessage(it)) }

@@ -106,7 +106,7 @@ class Android {
                 ChannelListViewModelFactory(
                     filter = Filters.and(
                         Filters.eq("type", "messaging"),
-                        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+                        Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
                     ),
                     sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,

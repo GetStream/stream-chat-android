@@ -416,10 +416,9 @@ internal class EventHandlerImpl(
 
             domainImpl.allActiveChannels()
                 .filter { channelControllerImpl ->
-                    channelControllerImpl.members
-                        .value
-                        ?.map { member -> member.user.id }
-                        ?.contains(event.user.id) == true
+                    channelControllerImpl.members.value
+                        .map { member -> member.user.id }
+                        .contains(event.user.id)
                 }
                 .forEach { channelController ->
                     channelController.handleEvent(userPresenceChanged)
@@ -428,8 +427,8 @@ internal class EventHandlerImpl(
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
-        for (queryRepo in domainImpl.getActiveQueries()) {
-            queryRepo.handleEvents(sortedEvents)
+        for (queryChannelsController in domainImpl.getActiveQueries()) {
+            queryChannelsController.handleEvents(sortedEvents)
         }
     }
 

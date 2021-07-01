@@ -55,7 +55,7 @@ internal class MentionListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            view.setMessage(message, chatDomain.currentUser.asMention(context))
+            view.setMessage(message, chatDomain.user.value?.asMention(context))
         }
     }
 

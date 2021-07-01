@@ -208,7 +208,7 @@ internal open class BaseDomainTest2 {
 
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
-        query = QueryChannelsSpec(data.filter1, QuerySort())
+        query = QueryChannelsSpec(data.filter1)
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal
 
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -12,6 +13,7 @@ internal class CommandViewHolder(
     parent: ViewGroup,
     commandsNameStyle: TextStyle? = null,
     commandsDescriptionStyle: TextStyle? = null,
+    commandIcon: Drawable? = null,
     private val binding: StreamUiItemCommandBinding = StreamUiItemCommandBinding
         .inflate(parent.streamThemeInflater, parent, false),
 ) : BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem>(binding.root) {
@@ -19,6 +21,7 @@ internal class CommandViewHolder(
     init {
         commandsNameStyle?.apply(binding.commandNameTextView)
         commandsDescriptionStyle?.apply(binding.commandQueryTextView)
+        commandIcon?.let(binding.instantCommandImageView::setImageDrawable)
     }
 
     override fun bindItem(item: SuggestionListItem.CommandItem) {

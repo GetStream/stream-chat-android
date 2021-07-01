@@ -2,7 +2,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Updated to Kotlin 1.5.20
 
 ### ✅ Added
 
@@ -65,12 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new attributes to `MessageInputView` allowing to customize the style of input field during command input:
-    - `streamUiCommandInputBadgeTextSize`, `streamUiCommandInputBadgeTextColor`, `streamUiCommandInputBadgeFontAssets`, `streamUiCommandInputBadgeFont`, `streamUiCommandInputBadgeStyle` attributes to customize the text appearance of command name inside command badge
-    - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
-    - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
-    - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
-  
+
 ### ⚠️ Changed
 
 ### ❌ Removed

@@ -11,18 +11,18 @@ By default, a single list item shows the following:
 * Channel name
 * User's read state
 * Last message
-* Timestamp of the last message 
+* Timestamp of the last message
 
-It also implements swiping behaviour which allows handling different actions on the channel. 
+It also implements swiping behaviour which allows handling different actions on the channel.
 
 ## Usage
 
 To use `ChannelListView` in your layout, include it in your XML layout as shown below:
 
 ```xml
-<io.getstream.chat.android.ui.channel.list.ChannelListView 
-    android:id="@+id/channelsView" 
-    android:layout_width="match_parent" 
+<io.getstream.chat.android.ui.channel.list.ChannelListView
+    android:id="@+id/channelsView"
+    android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
 
@@ -30,20 +30,20 @@ We recommend using the `ChannelListViewModel` to get the full list of data from 
 
 The basic setup of the ViewModel and connecting it to the view is done the following way:
 
-```kotlin 
-// Instantiate the ViewModel 
-val viewModel: ChannelListViewModel by viewModels { 
-    ChannelListViewModelFactory( 
-        filter = Filters.and( 
-            Filters.eq("type", "messaging"), 
-            Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)), 
-        ), 
-        sort = ChannelListViewModel.DEFAULT_SORT, 
-        limit = 30, 
-    ) 
-} 
-// Bind the ViewModel with ChannelListView 
-viewModel.bindView(channelListView, viewLifecycleOwner) 
+```kotlin
+// Instantiate the ViewModel
+val viewModel: ChannelListViewModel by viewModels {
+    ChannelListViewModelFactory(
+        filter = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)), 
+        ),
+        sort = ChannelListViewModel.DEFAULT_SORT,
+        limit = 30,
+    )
+}
+// Bind the ViewModel with ChannelListView
+viewModel.bindView(channelListView, viewLifecycleOwner)
 ```
 
 All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
@@ -72,13 +72,13 @@ channelListView.setChannelInfoClickListener { channel ->
 channelListView.setUserClickListener { user ->
     // Handle Member Click
 }
-``` 
+```
 
 The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/index.html).
 
 ## Customization
 
-There are two ways to customize the appearance of `ChannelListView`: 
+There are two ways to customize the appearance of `ChannelListView`:
 
 * Using XML attributes
 * Using the `TransformStyle` API at runtime to customize the style of all `ChannelListView` instances
@@ -105,7 +105,7 @@ The full list of available XML attributes is available under `ChannelListView` s
 The following example shows how to modify the style of all `ChannelListView` instances globally to:
 
 * Disable the default options
-* Change the title text style 
+* Change the title text style
 * Make the default icons larger
 * Change the background color for unread messages
 

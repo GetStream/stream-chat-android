@@ -82,7 +82,7 @@ private class Fixture {
     private val channelsState = MutableLiveData<QueryChannelsController.ChannelsState>()
 
     init {
-        whenever(chatDomain.currentUser) doReturn user
+        whenever(chatDomain.user) doReturn MutableLiveData(user)
         whenever(chatDomain.queryChannels(any(), any(), any(), any())) doReturn queryChannelsCall
         whenever(queryChannelsControllerResult.isSuccess) doReturn true
         whenever(queryChannelsControllerResult.data()) doReturn queryChannelsController

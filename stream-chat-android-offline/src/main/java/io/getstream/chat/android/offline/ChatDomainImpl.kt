@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
@@ -267,10 +266,6 @@ internal class ChatDomainImpl internal constructor(
         activeQueryMapImpl.clear()
     }
 
-    private fun isTestRunner(): Boolean {
-        return Build.FINGERPRINT.lowercase().contains("robolectric")
-    }
-
     internal fun setUser(user: User) {
         clearState()
 
@@ -292,12 +287,6 @@ internal class ChatDomainImpl internal constructor(
 
             // load the current user from the db
             val syncState = repos.selectSyncState(user.id) ?: SyncState(user.id)
-            // set active channels and recover
-            // restore channels
-            syncState.activeChannelIds.forEach(::channel)
-            // restore queries
-            repos.selectQueriesChannelsByIds(syncState.activeQueryIds)
-                .forEach { spec -> queryChannels(spec.filter, spec.sort) }
 
             // retrieve the last time the user marked all as read and handle it as an event
             syncState.markedAllReadAt
@@ -424,7 +413,7 @@ internal class ChatDomainImpl internal constructor(
 
             // Add to query controllers
             for (query in activeQueryMapImpl.values) {
-                query.addChannelIfFilterMatches(c)
+                query.updateQueryChannelSpec(c)
             }
 
             // make the API call and follow retry policy
@@ -654,7 +643,7 @@ internal class ChatDomainImpl internal constructor(
             )
             val response = queryChannelController.runQueryOnline(pagination)
             if (response.isSuccess) {
-                queryChannelController.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
+                queryChannelController.updateOnlineChannels(response.data(), pagination.isFirstPage)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }

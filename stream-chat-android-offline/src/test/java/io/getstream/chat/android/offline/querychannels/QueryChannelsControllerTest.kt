@@ -6,15 +6,11 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -47,18 +43,11 @@ internal class QueryChannelsControllerTest {
             )
             val channelController = mock<ChannelController>()
             val sut = Fixture()
-                .givenCurrentUser(randomUser())
+                .givenCurrentUser(currentUser)
                 .givenNewChannelControllerForChannel(channelController)
-                .givenChannelControllerForCidWithCurrentUser()
-                .givenFilterObject(
-                    Filters.and(
-                        Filters.`in`("members", listOf(currentUser.id)),
-                        Filters.eq("type", newChannel.type)
-                    )
-                )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateQueryChannelSpec(newChannel)
 
             verify(channelController).updateDataFromChannel(eq(newChannel))
         }
@@ -78,16 +67,9 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
-                .givenFilterObject(
-                    Filters.and(
-                        Filters.`in`("members", listOf(currentUser.id)),
-                        Filters.eq("type", newChannel.type)
-                    )
-                )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateQueryChannelSpec(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -109,18 +91,10 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenChannelType(newChannel.type)
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
-                .givenFilterObject(
-                    Filters.and(
-                        Filters.`in`("members", listOf(currentUser.id)),
-                        Filters.eq("type", newChannel.type),
-                        Filters.eq("cid", newChannel.cid)
-                    )
-                )
                 .get()
 
-            sut.addChannelIfFilterMatches(newChannel)
-            sut.addChannelIfFilterMatches(newChannel)
+            sut.updateQueryChannelSpec(newChannel)
+            sut.updateQueryChannelSpec(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -136,17 +110,10 @@ internal class QueryChannelsControllerTest {
                 .givenCurrentUser(currentUser)
                 .givenNewChannelControllerForChannel()
                 .givenChannelType(channelType)
-                .givenChannelControllerForCidWithoutCurrentUser()
                 .setupChatRepositories()
-                .givenFilterObject(
-                    Filters.and(
-                        Filters.`in`("members", listOf(currentUser.id)),
-                        Filters.eq("type", channelType)
-                    )
-                )
                 .get()
-            val channel = randomChannel(type = channelType)
-            sut.addChannelIfFilterMatches(channel)
+            val channel = randomChannel(type = channelType, members = emptyList())
+            sut.updateQueryChannelSpec(channel)
 
             sut.refreshChannel(channel.cid)
 
@@ -155,43 +122,39 @@ internal class QueryChannelsControllerTest {
         }
 
     @Test
-    fun `Given not messaging channel When refreshing channel which doesn't contain current user as member Should post value to liveData with this channel`() =
+    fun `Given channel without current user as member When refresh channel Should not change flow value`() =
         runBlockingTest {
             val cid = "channelType:channelId"
             val sut = Fixture()
                 .givenCurrentUser(randomUser())
                 .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithoutCurrentUser()
                 .setupChatRepositories()
                 .get()
-            val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
+            val channel = randomChannel(cid = cid, members = emptyList())
+            sut.updateQueryChannelSpec(channel)
 
             sut.refreshChannel(channel.cid)
 
             val result = sut.channels.value
-            result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo cid
+            result.size shouldBeEqualTo 0
         }
 
     @Test
-    fun `when refreshing channel which contain current user as member should post value to liveData with channel`() =
+    fun `when refreshing channel which contain current user as member should set value to flow`() =
         runBlockingTest {
+            val user = randomUser()
             val sut = Fixture()
-                .givenCurrentUser(randomUser())
-                .givenNewChannelControllerForChannel()
-                .givenChannelControllerForCidWithCurrentUser()
+                .givenCurrentUser(user)
                 .setupChatRepositories()
                 .get()
-            val cid = "ChannelType:ChannelID"
-            val channel = randomChannel(cid = cid)
-            sut.addChannelIfFilterMatches(channel)
+            val channel = randomChannel(cid = "ChannelType:ChannelID", members = listOf(randomMember(user = user)))
+            sut.updateQueryChannelSpec(channel)
 
-            sut.refreshChannel(channel.cid)
+            sut.refreshChannel("ChannelType:ChannelID")
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
-            result.first().cid shouldBeEqualTo cid
+            result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
         }
 
     @Test
@@ -212,7 +175,7 @@ internal class QueryChannelsControllerTest {
         }
 
     @Test
-    fun `When a new message arrives in a new channel Should not update the channels when it is already there`() =
+    fun `When a new message arrives in a new channel Should update the channel when it is already there`() =
         runBlockingTest {
             val cid = randomString()
             val channelController: ChannelController = mock()
@@ -223,7 +186,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
-            verify(channelController, never()).updateDataFromChannel(any())
+            verify(channelController).updateDataFromChannel(any())
         }
 
     @Test
@@ -262,7 +225,6 @@ internal class QueryChannelsControllerTest {
 private class Fixture {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
-    private var filterObject: FilterObject = Filters.neutral()
     private var querySort: QuerySort<Channel> = QuerySort()
     private val testCoroutineScope = TestCoroutineScope()
 
@@ -272,6 +234,16 @@ private class Fixture {
     init {
         whenever(chatDomainImpl.job) doReturn Job()
         whenever(chatDomainImpl.scope) doReturn testCoroutineScope
+        whenever(chatDomainImpl.repos) doReturn mock()
+        whenever(chatDomainImpl.channel(any<Channel>())) doReturn mock()
+        whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
+            mock<ChannelController> {
+                on { toChannel() } doReturn randomChannel(
+                    cid = invocation.arguments[0] as String,
+                    type = channelType,
+                )
+            }
+        }
     }
 
     fun givenCurrentUser(user: User) = apply {
@@ -284,36 +256,22 @@ private class Fixture {
         whenever(chatDomainImpl.channel(any<String>())) doReturn channelController
     }
 
-    fun givenFilterObject(filterObject: FilterObject): Fixture = apply {
-        this.filterObject = filterObject
-    }
-
     fun givenChannelType(channelType: String) = apply {
         this.channelType = channelType
-    }
-
-    fun givenChannelControllerForCidWithCurrentUser() = setupChatControllersInstantiation(true)
-
-    fun givenChannelControllerForCidWithoutCurrentUser() = setupChatControllersInstantiation(false)
-
-    private fun setupChatControllersInstantiation(
-        withCurrentUserAsChannelMember: Boolean = false,
-    ): Fixture = apply {
-        whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocation ->
-            mock<ChannelController> {
-                on { toChannel() } doReturn randomChannel(
-                    cid = invocation.arguments[0] as String,
-                    type = channelType,
-                    members = if (withCurrentUserAsChannelMember) listOf(Member(currentUser!!)) else emptyList()
-                )
-            }
-        }
-        whenever(chatDomainImpl.getChannelConfig(any())) doReturn mock()
     }
 
     fun setupChatRepositories(): Fixture = apply {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
-    fun get(): QueryChannelsController = QueryChannelsController(filterObject, querySort, chatClient, chatDomainImpl)
+    fun get(): QueryChannelsController =
+        QueryChannelsController(mock(), querySort, chatClient, chatDomainImpl).apply {
+            newChannelEventFilter = { channel, _ ->
+                if (currentUser == null) {
+                    true
+                } else {
+                    channel.members.any { member -> member.user.id == currentUser!!.id }
+                }
+            }
+        }
 }

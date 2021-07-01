@@ -121,6 +121,8 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+        <attr name="streamUiCommandIcon" format="reference" />
+        <attr name="streamUiLightningIcon" format="reference" />
 
         <!--Suggestions-->
         <attr name="streamUiSuggestionBackgroundColor" format="reference|color" />

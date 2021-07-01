@@ -1,6 +1,8 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import com.getstream.sdk.chat.images.ImageHeadersProvider
+import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -24,6 +26,7 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  * @see ChatMarkdown
  * @see UrlSigner
  * @see ChatFonts
+ * @see ImageHeadersProvider
  */
 public object ChatUI {
     internal lateinit var appContext: Context
@@ -31,6 +34,11 @@ public object ChatUI {
     public var style: ChatStyle = ChatStyle()
     public var navigator: ChatNavigator = ChatNavigator()
     public var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
+    public var imageHeadersProvider: ImageHeadersProvider
+        get() = StreamImageLoader.instance().imageHeadersProvider
+        set(value) {
+            StreamImageLoader.instance().imageHeadersProvider = value
+        }
 
     private var fontsOverride: ChatFonts? = null
     private val defaultFonts: ChatFonts by lazy { ChatFontsImpl(style, appContext) }

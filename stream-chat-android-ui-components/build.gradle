@@ -54,7 +54,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-progressive',
                 '-Xexplicit-api=strict',
                 '-Xopt-in=kotlin.contracts.ExperimentalContracts',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
         ]
     }
 }
