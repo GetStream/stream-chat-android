@@ -31,6 +31,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Using the `useNewSerialization` option on the `ChatClient.Builder` to opt out from using the new serialization implementation is now an error. Please start using the new serialization implementation, or report any issues keeping you from doing so. The old implementation will be removed soon.
 
 ### ❌ Removed
 
@@ -70,7 +71,24 @@
     - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
     - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
     - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
+- Added possibility to customize `MessageListHeaderView` style via `streamUiMessageListHeaderStyle` theme attribute and via `TransformStyle.messageListHeaderStyleTransformer`.
+- Added new attributes to `MessageInputView`:
+    - `streamUiCommandIcon` attribute to customize the command icon displayed for each command item in the suggestion list popup
+    - `streamUiLightningIcon` attribute to customize the lightning icon displayed in the top left corner of the suggestion list popup
+- Added support for customizing `SearchInputView`  
+    - Added `SearchInputViewStyle` class allowing customization using `TransformStyle` API
+    - Added XML attrs for `SearchInputView`:
+         - `streamUiSearchInputViewHintText`
+         - `streamUiSearchInputViewSearchIcon`
+         - `streamUiSearchInputViewClearInputIcon`
+         - `streamUiSearchInputViewBackground`
+         - `streamUiSearchInputViewTextColor`
+         - `streamUiSearchInputViewHintColor`
+         - `streamUiSearchInputViewTextSize`
   
 ### ⚠️ Changed
+- 🚨 Breaking change: moved `commandsTitleTextStyle`, `commandsNameTextStyle`, `commandsDescriptionTextStyle`, `mentionsUsernameTextStyle`, `mentionsNameTextStyle`, `mentionsIcon`, `suggestionsBackground` fields from `MessageInputViewStyle` to `SuggestionListViewStyle`. Their values can be customized via `TransformStyle.suggestionListStyleTransformer`.
+- Made `SuggestionListController` and `SuggestionListUi` public. Note that both of these are _experimental_, which means that the API might change at any time in the future (even without a deprecation cycle).
+- Made `AttachmentSelectionDialogFragment` _experimental_ which means that the API might change at any time in the future (even without a deprecation cycle).
 
 ### ❌ Removed

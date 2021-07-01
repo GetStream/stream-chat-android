@@ -50,7 +50,7 @@ val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
     filter = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+        Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
     ),
     sort = QuerySort.desc(Channel::lastUpdated),
     limit = 30,

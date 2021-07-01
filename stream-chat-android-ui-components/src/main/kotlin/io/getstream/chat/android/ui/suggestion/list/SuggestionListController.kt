@@ -1,6 +1,7 @@
-package io.getstream.chat.android.ui.suggestion.list.internal
+package io.getstream.chat.android.ui.suggestion.list
 
 import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -11,21 +12,22 @@ import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
 
-internal class SuggestionListController(
+@ExperimentalStreamChatApi
+public class SuggestionListController(
     private val suggestionListUi: SuggestionListUi,
 ) {
     private val scope = CoroutineScope(DispatcherProvider.Main)
     private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
         scope.launch { renderSuggestions(newSuggestions) }
     }
-    var userLookupHandler: MessageInputView.UserLookupHandler
+    public var userLookupHandler: MessageInputView.UserLookupHandler
         by Delegates.observable(MessageInputView.DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }
-    var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }
-    var mentionsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
-    var commandsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+    public var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }
+    public var mentionsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
+    public var commandsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
     private var messageText: String by Delegates.observable(String.EMPTY) { _, _, _ -> computeSuggestions() }
 
-    fun onNewMessageText(newMessageText: String) {
+    public fun onNewMessageText(newMessageText: String) {
         messageText = newMessageText
     }
 
@@ -52,15 +54,15 @@ internal class SuggestionListController(
         }
     }
 
-    fun showAvailableCommands() {
+    public fun showAvailableCommands() {
         currentSuggestions = Suggestions.CommandSuggestions(commands).takeIf { commandsEnabled } ?: Suggestions.EmptySuggestions
     }
 
-    fun hideSuggestionList() {
+    public fun hideSuggestionList() {
         currentSuggestions = Suggestions.EmptySuggestions
     }
 
-    fun isSuggestionListVisible(): Boolean {
+    public fun isSuggestionListVisible(): Boolean {
         return suggestionListUi.isSuggestionListVisible()
     }
 
@@ -79,7 +81,7 @@ internal class SuggestionListController(
             .let { Suggestions.CommandSuggestions(it) }
     }
 
-    companion object {
+    private companion object {
         private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
         private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
     }

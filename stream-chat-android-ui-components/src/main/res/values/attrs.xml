@@ -13,5 +13,7 @@
         <attr name="streamUiGlobalAvatarTextColor" format="reference|color" />
         <attr name="streamUiGlobalAvatarOnlineIndicatorColor" format="reference|color" />
         <attr name="streamUiChannelActionsDialogStyle" format="reference" />
+        <attr name="streamUiMessageListHeaderStyle" format="reference" />
+        <attr name="streamUiSearchInputViewStyle" format="reference" />
     </declare-styleable>
 </resources>
