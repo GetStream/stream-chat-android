@@ -33,9 +33,11 @@ public object ChatUI {
     public var style: ChatStyle = ChatStyle()
     public var navigator: ChatNavigator = ChatNavigator()
     public var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
-    public var imageRequestHeaders: Map<String, String> by Delegates.observable(emptyMap()) { _, _, newState ->
-        StreamImageLoader.instance().imageRequestHeaders = newState
-    }
+    public var imageRequestHeaders: Map<String, String>
+        get() = StreamImageLoader.instance().imageRequestHeaders
+        set(value) {
+            StreamImageLoader.instance().imageRequestHeaders = value
+        }
 
     private var fontsOverride: ChatFonts? = null
     private val defaultFonts: ChatFonts by lazy { ChatFontsImpl(style, appContext) }
