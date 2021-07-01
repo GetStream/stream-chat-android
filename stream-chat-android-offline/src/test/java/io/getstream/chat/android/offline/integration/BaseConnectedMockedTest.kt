@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.integration
 
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -19,6 +20,7 @@ internal open class BaseConnectedMockedTest : BaseDomainTest() {
     override fun tearDown() {
         runBlocking {
             chatDomainImpl.disconnect()
+            chatDomainImpl.scope.coroutineContext.cancelChildren()
             db.close()
         }
     }

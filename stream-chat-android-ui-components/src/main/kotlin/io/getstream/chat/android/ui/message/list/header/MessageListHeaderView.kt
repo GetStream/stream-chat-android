@@ -2,13 +2,9 @@ package io.getstream.chat.android.ui.message.list.header
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
-import android.content.res.TypedArray
-import android.graphics.Typeface
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.use
 import androidx.core.view.forEach
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -17,12 +13,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListHeaderViewBinding
 
 public class MessageListHeaderView : FrameLayout {
@@ -31,13 +24,11 @@ public class MessageListHeaderView : FrameLayout {
 
     private var headerState: HeaderState = createInitialHeaderState(context)
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(null)
-    }
+    private lateinit var style: MessageListHeaderViewStyle
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(attrs)
-    }
+    public constructor(context: Context) : this(context, null, 0)
+
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
@@ -138,78 +129,47 @@ public class MessageListHeaderView : FrameLayout {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.MessageListHeaderView).use {
-            configUserAvatar(it)
-            configTitle(it)
-            configBackButton(it)
-            configOfflineLabel(it)
-            configSearchingForNetworkLabel(it)
-            configOnlineLabel(it)
-        }
+        style = MessageListHeaderViewStyle(context, attrs)
+
+        configUserAvatar()
+        configTitle()
+        configBackButton()
+        configOfflineLabel()
+        configSearchingForNetworkLabel()
+        configOnlineLabel()
     }
 
-    private fun configUserAvatar(attrs: TypedArray) {
-        val showAvatar =
-            attrs.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowUserAvatar, true)
+    private fun configUserAvatar() {
         binding.avatarView.apply {
-            isInvisible = !showAvatar
-            isClickable = showAvatar
+            isInvisible = !style.showUserAvatar
+            isClickable = style.showUserAvatar
         }
     }
 
-    private fun configTitle(attrs: TypedArray) {
-        getTitleTextStyle(attrs).apply(binding.titleTextView)
+    private fun configTitle() {
+        binding.titleTextView.setTextStyle(style.titleTextStyle)
     }
 
-    private fun getTitleTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray)
-            .size(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextSize,
-                context.getDimension(R.dimen.stream_ui_text_large)
-            )
-            .color(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_primary)
-            )
-            .font(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleFontAssets,
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextFont
-            )
-            .style(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextStyle,
-                Typeface.BOLD
-            ).build()
-    }
-
-    private fun configBackButton(attrs: TypedArray) {
+    private fun configBackButton() {
         binding.backButtonContainer.apply {
-            val showBackButton =
-                attrs.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowBackButton, true)
-            isInvisible = !showBackButton
-            isClickable = showBackButton
+            isInvisible = !style.showBackButton
+            isClickable = style.showBackButton
         }
 
-        val backIcon = attrs.getDrawable(R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackButtonIcon)
-            ?: context.getDrawableCompat(R.drawable.stream_ui_arrow_left)
-
-        binding.backButton.setImageDrawable(backIcon)
+        binding.backButton.setImageDrawable(style.backButtonIcon)
 
         binding.backButtonBadge.apply {
-            isVisible =
-                attrs.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowBackButtonBadge, false)
-            val color = attrs.getColor(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackButtonBadgeBackgroundColor,
-                context.getColorCompat(R.color.stream_ui_accent_red)
-            )
+            isVisible = style.showBackButtonBadge
+
             ContextCompat.getDrawable(context, R.drawable.stream_ui_badge_bg)?.let {
-                it.setTint(color)
+                it.setTint(style.backButtonBadgeBackgroundColor)
                 background = it
             }
         }
     }
 
-    private fun configOfflineLabel(attrs: TypedArray) {
-        val textStyle = getOfflineTextStyle(attrs)
+    private fun configOfflineLabel() {
+        val textStyle = style.offlineTextStyle
         binding.offlineTextView.apply {
             setTextSizePx(textStyle.size.toFloat())
             setTextColor(textStyle.color)
@@ -221,89 +181,17 @@ public class MessageListHeaderView : FrameLayout {
         }
     }
 
-    private fun getOfflineTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray)
-            .size(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextSize,
-                context.getDimension(R.dimen.stream_ui_text_small)
-            )
-            .color(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_secondary)
-            )
-            .font(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelFontAssets,
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextFont
-            )
-            .style(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextStyle,
-                Typeface.NORMAL
-            )
-            .build()
-    }
-
-    private fun configSearchingForNetworkLabel(attrs: TypedArray) {
-        getSearchingForNetworkTextStyle(attrs).apply(binding.connectingTextView)
+    private fun configSearchingForNetworkLabel() {
+        binding.connectingTextView.setTextStyle(style.searchingForNetworkTextStyle)
 
         binding.connectingProgressBar.apply {
-            isVisible = attrs.getBoolean(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowSearchingForNetworkProgressBar,
-                true
-            )
-            indeterminateTintList = getProgressbarTintList(attrs)
+            isVisible = style.showSearchingForNetworkProgressBar
+            indeterminateTintList = style.searchingForNetworkProgressBarTint
         }
     }
 
-    private fun getSearchingForNetworkTextStyle(attrs: TypedArray): TextStyle {
-        return TextStyle.Builder(attrs)
-            .size(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextSize,
-                context.getDimension(R.dimen.stream_ui_text_small)
-            )
-            .color(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelColor,
-                context.getColorCompat(R.color.stream_ui_text_color_secondary)
-            )
-            .font(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelFontAssets,
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextFont
-            )
-            .style(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextStyle,
-                Typeface.NORMAL
-            )
-            .build()
-    }
-
-    private fun getProgressbarTintList(attrs: TypedArray): ColorStateList? {
-        return attrs.getColorStateList(
-            R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkProgressBarTint
-        ) ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
-    }
-
-    private fun configOnlineLabel(attrs: TypedArray) {
-        getOnlineTextStyle(attrs).apply(binding.onlineTextView)
-    }
-
-    private fun getOnlineTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray)
-            .size(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextSize,
-                context.getDimension(R.dimen.stream_ui_text_small)
-            )
-            .color(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_secondary)
-            )
-            .font(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelFontAssets,
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextFont
-            )
-            .style(
-                R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextStyle,
-                Typeface.NORMAL
-            )
-            .build()
+    private fun configOnlineLabel() {
+        binding.onlineTextView.setTextStyle(style.onlineTextStyle)
     }
 
     private fun reduceHeaderState(

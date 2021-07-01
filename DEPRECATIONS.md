@@ -4,7 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.14 | 2021.08.14 | Use `ChatDomain#sendMessage(message: Message)` instead |
+| `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.15 ⌛ | 2021.07.29 ⌛ | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
+| `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.14 ⌛ | 2021.08.14 ⌛ | Use `ChatDomain#sendMessage(message: Message)` instead |
 | Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
 | Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
 | `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
@@ -25,7 +26,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatNotificationHandler#getFirebaseMessageIdKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseMessageIdKey` instead |
 | `ChatNotificationHandler#getFirebaseChannelIdKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelIdKey` instead |
 | `ChatNotificationHandler#getFirebaseChannelTypeKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelTypeKey` instead |
-| Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.07.10 ⌛ | 2021.09.10 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
+| Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.06.30<br/>4.13.0 | 2021.08.30 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.05 ⌛ | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
