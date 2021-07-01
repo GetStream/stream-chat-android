@@ -22,12 +22,12 @@ There are two different `ChatDomain` interfaces available in the offline SDK, in
 - `*.livedata.ChatDomain`: Exposes state as `LiveData` objects. Use this if you're writing Java code or prefer LiveData to Flows.
 
 :::note
-Make sure you build the same version of `ChatDomain` that you're using in your code elsewhere.
+Make sure you build the same version of `ChatDomain` that you're using in your code elsewhere, otherwise it might not be initialized.
 :::
 
-If you want to use both Flows and LiveData, initialize the LiveData-based `ChatDomain`, as that will also initialize the Flow-based one internally.
+If you want to use both Flows and LiveData, only initialize the LiveData-based `ChatDomain`, as that will also initialize the Flow-based one internally.
 
-### Retry policy
+### Retry Policy
 
 By default, the retry policy for the ChatDomain is set to retry three times and wait `attempt * 1000` milliseconds between attempts. It will also retry when the connection recovers. You can set your own `RetryPolicy` like this:
 
@@ -43,7 +43,9 @@ chatDomain.retryPolicy = object : RetryPolicy {
 }
 ```
 
-### Basic Operations
+## Operations
+
+### Overview
 
 You can use `ChatDomain` to perform many of the same operations as `ChatClient`. If you use `ChatDomain`, these calls will have offline support, including optimistic UI updates and auto-retries.
 
@@ -73,7 +75,11 @@ Some other basic functions available on `ChatDomain`:
 - stopTyping()
 - markRead()
 
+:::note
 See the [API documentation for `ChatDomain`](https://getstream.github.io/stream-chat-android/stream-chat-android-offline/stream-chat-android-offline/io.getstream.chat.android.offline/-chat-domain/index.html) for the full list of available features and more info about them.
+:::
+
+Let's see how some of the most common operations work.
 
 ### Watching a Channel
 
@@ -132,13 +138,10 @@ chatDomain.queryChannels(filter, sort)
 Then you can load more channels for a particular query:
 
 ```kotlin
-chatDomain.queryChannelsLoadMore(filter, sort)
-    .enqueue { result ->
-        if (result.isSuccess) {
-            val channels: List<Channel> = result.data()
-        }
-    }
+chatDomain.queryChannelsLoadMore(filter, sort).enqueue { /* ... */ }
 ```
+
+If successful, this call will update the list of channels that you're observing using the controller from the original query call.
 
 ### Querying Threads
 
