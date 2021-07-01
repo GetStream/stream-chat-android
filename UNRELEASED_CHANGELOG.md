@@ -17,7 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ChatUi.Builder#withImageRequestHeaders` to allow adding custom headers to image requests
+- Added `ChatUi.Builder#withImageHeadersProvider` to allow adding custom headers to image requests
 
 ### ⚠️ Changed
 
@@ -87,7 +87,7 @@
          - `streamUiSearchInputViewTextColor`
          - `streamUiSearchInputViewHintColor`
          - `streamUiSearchInputViewTextSize`
-- Added `ChatUi#imageRequestHeaders` to allow adding custom headers to image requests
+- Added `ChatUi#imageHeadersProvider` to allow adding custom headers to image requests
   
 ### ⚠️ Changed
 - 🚨 Breaking change: moved `commandsTitleTextStyle`, `commandsNameTextStyle`, `commandsDescriptionTextStyle`, `mentionsUsernameTextStyle`, `mentionsNameTextStyle`, `mentionsIcon`, `suggestionsBackground` fields from `MessageInputViewStyle` to `SuggestionListViewStyle`. Their values can be customized via `TransformStyle.suggestionListStyleTransformer`.

@@ -114,6 +114,10 @@ public final class com/getstream/sdk/chat/enums/OnlineStatus : java/lang/Enum {
 	public static fun values ()[Lcom/getstream/sdk/chat/enums/OnlineStatus;
 }
 
+public abstract interface class com/getstream/sdk/chat/images/ImageHeadersProvider {
+	public abstract fun getImageRequestHeaders ()Ljava/util/Map;
+}
+
 public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 	public final fun instance ()Lcom/getstream/sdk/chat/images/StreamImageLoader;
 }
