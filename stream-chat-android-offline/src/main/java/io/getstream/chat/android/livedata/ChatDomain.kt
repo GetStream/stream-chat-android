@@ -30,8 +30,6 @@ import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomain
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
- *
- * Use cases are exposed via chatDomain.useCases
  */
 public sealed interface ChatDomain {
 
