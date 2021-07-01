@@ -29,7 +29,7 @@ If you want to use both Flows and LiveData, only initialize the LiveData-based `
 
 ### Retry Policy
 
-By default, the retry policy for the ChatDomain is set to retry three times and wait `attempt * 1000` milliseconds between attempts. It will also retry when the connection recovers. You can set your own `RetryPolicy` like this:
+By default, the retry policy for the `ChatDomain` is set to retry three times and wait `attempt * 1000` milliseconds between attempts. It will also retry when the connection recovers. You can set your own `RetryPolicy` like this:
 
 ```kotlin
 chatDomain.retryPolicy = object : RetryPolicy {
