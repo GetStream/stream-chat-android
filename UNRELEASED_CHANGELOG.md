@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatUi.Builder#withImageHeadersProvider` to allow adding custom headers to image requests
 
 ### ⚠️ Changed
 
@@ -86,7 +87,8 @@
          - `streamUiSearchInputViewTextColor`
          - `streamUiSearchInputViewHintColor`
          - `streamUiSearchInputViewTextSize`
-- Added the `MessageInputView::setMaxMessageLengthHandler` method which allows to set a handler to display a custom error message when the message length is exceeded.
+- Added `ChatUi#imageHeadersProvider` to allow adding custom headers to image requests
+- Added the `MessageInputView::setMaxMessageLengthHandler` method which allows to set a handler to display a custom error message when the message length is exceeded.  
 
 ### ⚠️ Changed
 - 🚨 Breaking change: moved `commandsTitleTextStyle`, `commandsNameTextStyle`, `commandsDescriptionTextStyle`, `mentionsUsernameTextStyle`, `mentionsNameTextStyle`, `mentionsIcon`, `suggestionsBackground` fields from `MessageInputViewStyle` to `SuggestionListViewStyle`. Their values can be customized via `TransformStyle.suggestionListStyleTransformer`.

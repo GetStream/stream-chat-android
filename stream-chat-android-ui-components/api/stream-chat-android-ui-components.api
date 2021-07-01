@@ -9,6 +9,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
+	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
 	public final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
@@ -17,6 +18,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getUrlSigner ()Lio/getstream/chat/android/ui/common/UrlSigner;
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
+	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
 	public final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
