@@ -60,3 +60,22 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
 Both will have the following result:
 
 ![Custom messages](../assets/custom_messages.png)
+
+It is also possible to change the themes for the UI components. 
+
+You can define a `streamUiTheme` in your `themes.xml` file and define many aspects of the UI components. Example:
+
+```
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/stream_color_primary</item>
+    <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
+    <item name="streamUiTheme">@style/StreamTheme</item>
+</style>
+
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
+    <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
+</style>        	
+```
+
+The options of customization are available here in our [attrs file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml)
