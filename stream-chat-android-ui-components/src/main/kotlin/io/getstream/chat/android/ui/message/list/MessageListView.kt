@@ -569,7 +569,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
-            messageListViewStyle = messageListViewStyle
+            messageListViewStyle = messageListViewStyle,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
