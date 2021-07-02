@@ -35,7 +35,6 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageLinkBackgroundColorMine - background color for message with link, sent by the current user. Default - [R.color.stream_ui_blue_alice]
  * @property messageLinkBackgroundColorTheirs - background color for message with link, sent by other user. Default - [R.color.stream_ui_blue_alice]
  * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
- * @property threadsEnabled - enables/disables threads feature. Enabled by default
  * @property linkDescriptionMaxLines - max lines for link's description. Default - 5
  * @property textStyleMine - appearance for message text sent by the current user
  * @property textStyleTheirs - appearance for message text sent by other user
@@ -69,7 +68,6 @@ public data class MessageListItemStyle(
     @ColorInt public val messageLinkBackgroundColorMine: Int,
     @ColorInt public val messageLinkBackgroundColorTheirs: Int,
     public val reactionsEnabled: Boolean,
-    public val threadsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
     public val textStyleMine: TextStyle,
     public val textStyleTheirs: TextStyle,
@@ -150,7 +148,6 @@ public data class MessageListItemStyle(
         private var messageLinkTextColorTheirs: Int = VALUE_NOT_SET
 
         private var reactionsEnabled: Boolean = true
-        private var threadsEnabled: Boolean = true
 
         private var linkDescriptionMaxLines: Int = 5
 
@@ -187,13 +184,6 @@ public data class MessageListItemStyle(
             defaultValue: Boolean = true,
         ) = apply {
             this.reactionsEnabled = attributes.getBoolean(reactionsEnabled, defaultValue)
-        }
-
-        fun threadsEnabled(
-            @StyleableRes threadsEnabled: Int,
-            defaultValue: Boolean = true,
-        ) = apply {
-            this.threadsEnabled = attributes.getBoolean(threadsEnabled, defaultValue)
         }
 
         fun linkDescriptionMaxLines(
@@ -465,7 +455,6 @@ public data class MessageListItemStyle(
                 messageLinkBackgroundColorMine = linkBackgroundColorMine,
                 messageLinkBackgroundColorTheirs = linkBackgroundColorTheirs,
                 reactionsEnabled = reactionsEnabled,
-                threadsEnabled = threadsEnabled,
                 linkDescriptionMaxLines = linkDescriptionMaxLines,
                 textStyleMine = textStyleMine,
                 textStyleTheirs = textStyleTheirs,
