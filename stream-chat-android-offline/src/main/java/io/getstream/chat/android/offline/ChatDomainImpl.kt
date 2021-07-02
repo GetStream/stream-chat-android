@@ -99,6 +99,9 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
@@ -692,12 +695,16 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
+    // An attempt to synchronize ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
+    private val entitiesRetryMutex = Mutex()
     internal suspend fun retryFailedEntities() {
-        // retry channels, messages and reactions in that order..
-        val channels = retryChannels()
-        val messages = retryMessages()
-        val reactions = retryReactions()
-        logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+        entitiesRetryMutex.withLock {
+            // retry channels, messages and reactions in that order..
+            val channels = retryChannels()
+            val messages = retryMessages()
+            val reactions = retryReactions()
+            logger.logI("Retried ${channels.size} channel entities, ${messages.size} messages and ${reactions.size} reaction entities")
+        }
     }
 
     @VisibleForTesting

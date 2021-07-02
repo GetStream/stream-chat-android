@@ -101,6 +101,9 @@ internal class EventHandlerImpl(
                     }
                 }
                 is HealthEvent -> {
+                    // TODO: consider removing caling the code below on every HealthCheckEvent
+                    // We have retry logic for the most crucial network calls. Why would we need to rely on another mechanism for doing retries?
+                    // We already retry entities inside `domainImpl.connectionRecovered` which is called when the ConnectedEvent is received ☝️
                     domainImpl.scope.launch {
                         domainImpl.retryFailedEntities()
                     }
