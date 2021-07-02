@@ -92,7 +92,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -624,10 +623,17 @@ internal class ChatDomainImpl internal constructor(
      * - API calls to create local channels, messages and reactions
      */
     suspend fun connectionRecovered(recoverAll: Boolean = false) {
-        // 0 ensure load is complete
+        // 0. ensure load is complete
         initJob?.join()
 
-        // 1 update the results for queries that are actively being shown right now
+        val online = isOnline()
+
+        // 1. Retry any failed requests first (synchronous)
+        if (online) {
+            retryFailedEntities()
+        }
+
+        // 2. update the results for queries that are actively being shown right now (synchronous)
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
@@ -647,8 +653,9 @@ internal class ChatDomainImpl internal constructor(
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
-        // 2 update the data for all channels that are being show right now...
+        // 3. update the data for all channels that are being show right now...
         // exclude ones we just updated
+        // (synchronous)
         val cids: List<String> = activeChannelMapImpl
             .entries
             .asSequence()
@@ -658,7 +665,6 @@ internal class ChatDomainImpl internal constructor(
             .map { it.key }
             .toList()
 
-        val online = isOnline()
         logger.logI("recovery called: recoverAll: $recoverAll, online: $online retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
         var missingChannelIds = listOf<String>()
@@ -681,18 +687,12 @@ internal class ChatDomainImpl internal constructor(
                 val channelController = this.channel(c)
                 channelController.watch()
             }
-            // 3 recover events
+            // 4. recover events (async)
             replayEventsForChannels(cids)
-        }
-
-        // 4 retry any failed requests
-        if (online) {
-            retryFailedEntities()
         }
     }
 
     internal suspend fun retryFailedEntities() {
-        delay(1000)
         // retry channels, messages and reactions in that order..
         val channels = retryChannels()
         val messages = retryMessages()
