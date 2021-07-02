@@ -51,6 +51,8 @@ val chatDomain = ChatDomain.Builder(appContext, chatClient)
     .build()
 ```
 
+For more about working with `ChatDomain`, see [Working with Offline](../04-guides/05-working-with-offline.md).
+
 ### Connecting a user
 
 The next step is connecting the user. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.

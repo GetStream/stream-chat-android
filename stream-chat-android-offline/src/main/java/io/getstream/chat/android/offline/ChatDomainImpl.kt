@@ -730,7 +730,7 @@ internal class ChatDomainImpl internal constructor(
 
     private suspend fun retryMessagesWithAttachments(): List<Message> {
         val retriedMessages = repos.selectMessagesWaitForAttachments()
-            .filter { message -> message.attachments.any { it.uploadState == Attachment.UploadState.InProgress } }
+
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
             message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
         }
