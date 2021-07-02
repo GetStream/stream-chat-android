@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -922,6 +923,17 @@ public class ChatClient internal constructor(
         return api.stopWatching(channelType, channelId)
     }
 
+    /**
+     * Updates all of the channel data. Any data that is present on the channel and not included in a full update
+     * will be deleted.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param updateMessage the message object allowing you to show a system message in the channel
+     * @param channelExtraData the updated channel extra data
+     *
+     * @return executable async [Call] responsible for updating channel data
+     */
     @CheckResult
     public fun updateChannel(
         channelType: String,
@@ -943,6 +955,8 @@ public class ChatClient internal constructor(
      * @param channelId the channel id. ie 123
      * @param set the key-value data which will be added to the existing channel data object
      * @param unset the list of fields which will be removed from the existing channel data object
+     *
+     * @return executable async [Call] responsible for updating channel data
      */
     @CheckResult
     public fun updateChannelPartial(
@@ -959,20 +973,45 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
+     * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
+     * between 1-120.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param cooldownTimeInSeconds the duration of the time interval users have to wait between messages
+     *
+     * @return executable async [Call] responsible for enabling slow mode
+     */
     @CheckResult
     public fun enableSlowMode(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int,
-    ): Call<Channel> =
-        api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+    ): Call<Channel> {
+        return if (cooldownTimeInSeconds in 1..120) {
+            api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+        } else {
+            ErrorCall(ChatError("You can't specify a value outside the range 1-120 for cooldown duration."))
+        }
+    }
 
+    /**
+     * Disables slow mode for the channel.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     *
+     * @return executable async [Call] responsible for disabling slow mode
+     */
     @CheckResult
     public fun disableSlowMode(
         channelType: String,
         channelId: String,
-    ): Call<Channel> =
-        api.disableSlowMode(channelType, channelId)
+    ): Call<Channel> {
+        return api.disableSlowMode(channelType, channelId)
+    }
 
     @CheckResult
     public fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
