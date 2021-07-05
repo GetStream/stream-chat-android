@@ -1,6 +1,6 @@
 # Creating a Custom Message Input View
 
-If the built-in [Message Input View](../03-ui/04-components/05-message-input.md) and its available customization options don't fit your app's needs, you can create an Input View of your own.
+If the built-in [Message Input View](../03-components/05-message-input.md) and its available customization options don't fit your app's needs, you can create an Input View of your own.
 
 Note that the UI Components Input View supports many advanced features that you'll otherwise have to implement yourself if you want to use them in your app:
 
@@ -84,7 +84,7 @@ You can add this custom Input View to your layout like so, combining it with oth
 
 Running the app now shows the new message input view, which you can freely style to fit your app's requirements.
 
-![The message list screen with a custom input view](../assets/custom-message-input-layout.png)
+![The message list screen with a custom input view](../../assets/custom-message-input-layout.png)
 
 ### Sending messages
 
@@ -198,7 +198,7 @@ You can use more advanced logic for sending these events in your own application
 
 ### Editing messages
 
-Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../03-ui/04-components/03-message-list.md), by long tapping a message to access various actions.
+Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../03-components/03-message-list.md), by long tapping a message to access various actions.
 
 To support this, you'll need to store the message being edited and add a new method that lets users set this property:
 

@@ -6,7 +6,7 @@ This is what a screen made up of these two components looks like:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![Light mode](../assets/channel_list_view_light.png)|![Dark mode](../assets/channel_list_view_dark.png)|
+|![Light mode](../../assets/channel_list_view_light.png)|![Dark mode](../../assets/channel_list_view_dark.png)|
 
 To add these Views to your app, first create them in an XML layout:
 
