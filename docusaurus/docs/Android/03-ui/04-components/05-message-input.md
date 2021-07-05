@@ -106,6 +106,18 @@ messageInputView.setSendMessageHandler(
 )
 ```
 
+You can show a custom error when maximum message length is exceeded:
+
+```kotlin
+messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
+    if (maxMessageLengthExceeded)  {
+        // Show custom max-length error
+    } else {
+        // Hide custom max-length error
+    }
+}
+```
+
 ## Customizations
 
 `MessageInputView` can be customized in two ways: using XML attributes and programmatically using style transformations.
