@@ -166,6 +166,8 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled,
         appContext
     )
+    // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
+    private val entitiesRetryMutex = Mutex()
 
     internal val job = SupervisorJob()
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
@@ -694,8 +696,6 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
-    private val entitiesRetryMutex = Mutex()
     internal suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {
             // retry channels, messages and reactions in that order..
