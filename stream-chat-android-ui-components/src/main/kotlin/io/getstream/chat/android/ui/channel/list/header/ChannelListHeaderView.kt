@@ -39,7 +39,8 @@ public class ChannelListHeaderView : ConstraintLayout {
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs,
+        context.obtainStyledAttributes(
+            attrs,
             R.styleable.ChannelListHeaderView,
             R.attr.streamUiChannelListHeaderStyle,
             R.style.StreamUi_ChannelListHeader
@@ -85,9 +86,10 @@ public class ChannelListHeaderView : ConstraintLayout {
             isInvisible = !showActionButton
             isClickable = showActionButton
 
-            typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)?.let { colorStateList ->
-                imageTintList = colorStateList
-            }
+            typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)
+                ?.let { colorStateList ->
+                    imageTintList = colorStateList
+                }
 
             val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiActionButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
