@@ -26,6 +26,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved `ChatClient::enableSlowMode`, `ChatClient::disableSlowMode`, `ChannelClient::enableSlowMode`, `ChannelClient::disableSlowMode` methods. Now the methods do partial channel updates so that other channel fields are not affected.
 
 ### ✅ Added
 

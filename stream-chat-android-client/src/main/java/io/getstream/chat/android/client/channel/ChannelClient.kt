@@ -462,20 +462,49 @@ public class ChannelClient internal constructor(
         return client.getRepliesMore(messageId, firstReactionId, limit)
     }
 
+    /**
+     * Updates all of the channel data. Any data that is present on the channel and not included in a full update
+     * will be deleted.
+     *
+     * @param message the message object allowing you to show a system message in the channel
+     * @param extraData the updated channel extra data
+     *
+     * @return executable async [Call] responsible for updating channel data
+     */
     @CheckResult
     public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel> {
         return client.updateChannel(channelType, channelId, message, extraData)
     }
 
+    /**
+     * Updates specific fields of channel data retaining the custom data fields which were set previously.
+     *
+     * @param set the key-value data which will be added to the existing channel data object
+     * @param unset the list of fields which will be removed from the existing channel data object
+     */
     @CheckResult
     public fun updatePartial(set: Map<String, Any> = emptyMap(), unset: List<String> = emptyList()): Call<Channel> {
         return client.updateChannelPartial(channelType, channelId, set, unset)
     }
 
+    /**
+     * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
+     * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
+     * between 1-120.
+     *
+     * @param cooldownTimeInSeconds the duration of the time interval users have to wait between messages
+     *
+     * @return executable async [Call] responsible for enabling slow mode
+     */
     @CheckResult
     public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
         client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
 
+    /**
+     * Disables slow mode for the channel.
+     *
+     * @return executable async [Call] responsible for disabling slow mode
+     */
     @CheckResult
     public fun disableSlowMode(): Call<Channel> =
         client.disableSlowMode(channelType, channelId)
