@@ -82,8 +82,6 @@ public class MentionListView : ViewFlipper {
             )
             addOnScrollListener(scrollListener)
         }
-
-
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
