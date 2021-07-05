@@ -557,17 +557,6 @@ public final class io/getstream/chat/android/client/api/models/SendActionRequest
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/api/models/UpdateCooldownRequest {
-	public fun <init> (I)V
-	public final fun component1 ()I
-	public final fun copy (I)Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;IILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCooldown ()I
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/client/api/models/UpdateUsersRequest {
 	public fun <init> (Ljava/util/Map;)V
 	public final fun component1 ()Ljava/util/Map;

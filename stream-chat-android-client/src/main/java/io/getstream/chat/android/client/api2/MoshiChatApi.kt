@@ -423,7 +423,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = UpdateCooldownRequest(cooldownTimeInSeconds),
+            body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
         ).map(this::flattenChannel)
     }
 
