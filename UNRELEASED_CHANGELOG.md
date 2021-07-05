@@ -71,7 +71,7 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-
+Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView. 
 ### ✅ Added
 
 ### ⚠️ Changed
