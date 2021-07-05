@@ -46,7 +46,6 @@ internal class MessageInputFieldView : FrameLayout {
 
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
-    private var maxMessageLength: Int = Integer.MAX_VALUE
     private var attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
 
     private val _hasBigAttachment = MutableStateFlow(false)
@@ -190,14 +189,6 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
-    fun setMaxMessageLength(maxMessageLength: Int) {
-        this.maxMessageLength = maxMessageLength
-    }
-
-    fun isMaxMessageLengthExceeded(): Boolean {
-        return messageText.length > maxMessageLength
-    }
-
     fun onReply(replyMessage: Message) {
         mode = Mode.ReplyMessageMode(replyMessage)
     }
@@ -323,7 +314,6 @@ internal class MessageInputFieldView : FrameLayout {
     fun hasContent(): Boolean = hasText() || hasValidAttachments()
 
     private fun onMessageTextChanged() {
-        configInputEditTextError()
         resetModeIfNecessary()
         contentChangeListener?.onMessageTextChanged(messageText)
     }
@@ -337,14 +327,6 @@ internal class MessageInputFieldView : FrameLayout {
     private fun resetModeIfNecessary() {
         if (!hasContent() && (mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)) {
             resetMode()
-        }
-    }
-
-    private fun configInputEditTextError() {
-        binding.messageEditText.error = if (isMaxMessageLengthExceeded()) {
-            context.getString(R.string.stream_ui_message_input_error_max_length, maxMessageLength)
-        } else {
-            null
         }
     }
 

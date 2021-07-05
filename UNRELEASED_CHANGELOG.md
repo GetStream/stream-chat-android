@@ -50,6 +50,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+Now it is possible to customize all avatar using themes. Create
+```
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+```
+
+and customize all the avatars that you would like. All options are available here:
+https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
 
 ### ✅ Added
 

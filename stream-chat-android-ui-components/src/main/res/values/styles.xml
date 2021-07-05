@@ -265,6 +265,7 @@
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
+        <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelList.Header.Avatar</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
@@ -298,6 +299,13 @@
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
 
+    <style name="StreamUi.MessageList.Header.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
     <style name="StreamUi.ChannelList.Item.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of MessageList Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
@@ -307,6 +315,72 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.ChannelList.Header.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.ChannelActions.Dialog.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of GroupActions Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.AttachmentGallery.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarBorderWidth">1dp</item>
+    </style>
+
+    <style name="StreamUi.MentionSuggestion.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.SearchResult.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.MessageOptions.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.Reply.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.Thread.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">

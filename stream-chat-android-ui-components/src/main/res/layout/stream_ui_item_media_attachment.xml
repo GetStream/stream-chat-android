@@ -23,7 +23,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="@style/StreamUiGalleryAvatarStyle"
+        style="?attr/streamUiAttachmentGalleryAvatarStyle"
         android:layout_margin="@dimen/stream_ui_spacing_small"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"

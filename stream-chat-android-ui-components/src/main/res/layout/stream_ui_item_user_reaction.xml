@@ -9,7 +9,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="@style/StreamUiUserReactionAvatarStyle"
+        style="?attr/streamUiMessageOptionsAvatarStyle"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"

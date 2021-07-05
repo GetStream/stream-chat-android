@@ -944,6 +944,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setCommandsEnabled (Z)V
 	public final fun setInputMode (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
 	public final fun setMaxMessageLength (I)V
+	public final fun setMaxMessageLengthHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler;)V
 	public final fun setMentionsEnabled (Z)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener;)V
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
@@ -1008,6 +1009,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$I
 	public final fun getParentMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler {
+	public abstract fun onMessageLengthChanged (Ljava/lang/String;IIZ)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler {
