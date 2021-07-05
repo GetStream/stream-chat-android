@@ -50,7 +50,7 @@ As a result, there will only be a _love_ reaction available in the chat, and whe
 | --- | --- |
 |![Light_mode](../assets/chat_ui_custom_reaction.png)|![Dark_mode](../assets/chat_ui_custom_reaction_active.png)|
 
-### Custom MIME type icons
+### Custom MIME Type Icons
 
 When possible, SDK displays thumbnails for image files. Mime type icons are displayed for other files at `MessageListView` as attachments icons and at files gallery screen. 
 By default SDK provides built-in MIME type icons for the most popular file types and displays a generic file icon for others.
@@ -76,7 +76,7 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
 }
 ```
 
-### Transforming avatar bitmap with AvatarBitmapFactory
+### Transforming Avatar Bitmap with AvatarBitmapFactory
 
 Overriding the `AvatarBitmapFactory` allows the avatars to be generated accordingly to a new configuration. 
 It is possible to configure the user bitmap, user default bitmap, channel bitmap, channel default bitmap, also choose
@@ -108,7 +108,7 @@ Result:
 
 ![Blurred images for offline users](../assets/blurred_images.png)
 
-### Intercepting attachments URLs with UrlSigner 
+### Intercepting Attachments URLs with UrlSigner 
 
 `ChatUi.urlSigner` is used internally to transform urls of file and image attachments before displaying them. 
 Providing custom implementation of `UrlSigner` allows intercepting url, e.g. to add authorization tokens to the urls. 
@@ -138,7 +138,7 @@ val urlSigner: UrlSigner = object : UrlSigner {
 ChatUI.urlSigner = urlSigner
 ```
 
-### Setting default Font
+### Setting Default Font
 
 It is possible to customize the default fonts used by all of the UI components. To change the fonts, just implement
 the `ChatFont` interface:

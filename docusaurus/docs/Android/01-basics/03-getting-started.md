@@ -1,4 +1,4 @@
-# Getting started
+# Getting Started
 
 Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./02-dependencies.md). This page tells you what steps you should perform in your app to initialize the Stream Chat SDK.
 
@@ -53,7 +53,7 @@ val chatDomain = ChatDomain.Builder(appContext, chatClient)
 
 For more about working with `ChatDomain`, see [Working with Offline](../02-client/06-guides/06-working-with-offline.md).
 
-### Connecting a user
+### Connecting a User
 
 The next step is connecting the user. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
 

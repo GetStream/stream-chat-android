@@ -186,7 +186,7 @@ TransformStyle.messageInputStyleTransformer = StyleTransformer { viewStyle ->
 
 Note: The transformer should be set before the View is rendered to make sure that the new style was applied.
 
-### Customizing suggestion list popup items
+### Customizing Suggestion List Popup Items
 
 The suggestion list popup is used to provide autocomplete suggestions for commands and mentions. To customize the appearance of suggestion list items you need to provide your own `SuggestionListViewHolderFactory`. Here's an example of a custom command item that displays just a command name:
 

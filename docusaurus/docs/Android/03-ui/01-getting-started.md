@@ -43,7 +43,7 @@ messageListViewModel.bindView(messageListView, viewLifecycleOwner) // 3
 
 You can learn more about setting up each UI component on its individual documentation page.
 
-### Sample app
+### Sample App
 
 The [UI components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) is an open source, fully functional messaging application. It features threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our UI components.
 

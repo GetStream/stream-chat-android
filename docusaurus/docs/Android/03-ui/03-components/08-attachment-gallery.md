@@ -11,7 +11,8 @@ _AttachmentGalleryActivity_ is an _Activity_ used to display attachments that th
 |![attachment_gallery_example1_light](../../assets/attachment_gallery_example1_light.png)|![attachment_gallery_example1_dark](../../assets/attachment_gallery_example1_dark.png)|
 |![attachment_gallery_example2_light](../../assets/attachment_gallery_example2_light.png)|![attachment_gallery_example2_dark](../../assets/attachment_gallery_example2_dark.png)|
 
-## Handling user input
+## Handling User Input
+
 There are 4 behaviours that can be customized by the following handlers:
 
 * AttachmentGalleryActivity.AttachmentReplyOptionHandler

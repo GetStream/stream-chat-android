@@ -25,7 +25,7 @@ dependencies {
 }
 ```
 
-### Offline support
+### Offline Support
 
 To use offline support in your application, add the following dependency:
 

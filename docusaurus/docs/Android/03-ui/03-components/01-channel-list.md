@@ -83,7 +83,8 @@ There are two ways to customize the appearance of `ChannelListView`:
 * Using XML attributes
 * Using the `TransformStyle` API at runtime to customize the style of all `ChannelListView` instances
 
-### Customization with XML attributes
+### Customization with XML Attributes
+
 There are multiple XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
 
 * `app:streamUiChannelDeleteEnabled` Specifying if the delete icon should be displayed.

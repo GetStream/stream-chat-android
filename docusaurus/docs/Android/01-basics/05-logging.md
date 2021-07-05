@@ -18,7 +18,7 @@ val client = ChatClient.Builder("apiKey", context)
 
 It's recommended to only enable logging in development builds.
 
-## Intercepting logs
+## Intercepting Logs
 
 If you need to intercept logs, you can also pass in your own `ChatLoggerHandler`:
 
@@ -34,7 +34,7 @@ val client = ChatClient.Builder("apiKey", context)
      .build()
 ```
 
-## Filtering logs
+## Filtering Logs
 
 All SDK log tags have `Chat:` as a prefix that you can use when filtering logs.
 

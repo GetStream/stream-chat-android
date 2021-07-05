@@ -8,6 +8,7 @@
 
 
 ## Usage
+
 You can add this view via XML:
 
 ```xml
