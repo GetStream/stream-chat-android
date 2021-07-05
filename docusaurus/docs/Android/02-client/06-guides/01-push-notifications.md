@@ -24,20 +24,20 @@ Go to the [Firebase Console](https://console.firebase.google.com/), and select t
 
 #### Step 2
 Click on the gear icon next to _Project Overview_ and navigate to _Project settings_:
-![notifications step 2](../assets/notifications_firebase_setup_step_2.jpeg)
+![notifications step 2](../../assets/notifications_firebase_setup_step_2.jpeg)
 
 #### Step 3
 Navigate to the _Cloud Messaging_ tab. Under _Project Credentials_, locate the _Server key_ and copy it:
-![notifications step 3](../assets/notifications_firebase_setup_step_3.png)
+![notifications step 3](../../assets/notifications_firebase_setup_step_3.png)
 
 #### Step 4
 Enable _Android & Firebase_ push notifications and upload the _Server Key_ to the Chat Dashboard:
-![notifications step 4.1](../assets/notifications_firebase_setup_step_4_1.jpeg)
-![notifications step 4.2](../assets/notifications_firebase_setup_step_4_2.jpeg)
+![notifications step 4.1](../../assets/notifications_firebase_setup_step_4_1.jpeg)
+![notifications step 4.2](../../assets/notifications_firebase_setup_step_4_2.jpeg)
 
 #### Step 5
 Save the push notification settings changes:
-![notifications step 5](../assets/notifications_firebase_setup_step_5.jpeg)
+![notifications step 5](../../assets/notifications_firebase_setup_step_5.jpeg)
 
 :::note
 Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).

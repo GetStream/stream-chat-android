@@ -26,6 +26,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved `ChatClient::enableSlowMode`, `ChatClient::disableSlowMode`, `ChannelClient::enableSlowMode`, `ChannelClient::disableSlowMode` methods. Now the methods do partial channel updates so that other channel fields are not affected.
 
 ### ✅ Added
 
@@ -36,6 +37,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed bug related to editing message in offline mode. The bug was causing message to reset to the previous one after connection was recovered.
 
 ### ⬆️ Improved
 
