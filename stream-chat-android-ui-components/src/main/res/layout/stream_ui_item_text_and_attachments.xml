@@ -87,7 +87,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="@style/StreamUiMessageListAvatarStyle"
+        style="?attr/streamUiMessageListItemAvatarStyle"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"

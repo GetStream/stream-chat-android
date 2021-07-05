@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -71,6 +72,8 @@ public class MessageInputView : ConstraintLayout {
     private var typingListener: TypingListener? = null
     private var isKeyboardListenerRegistered: Boolean = false
 
+    private var maxMessageLength: Int = Integer.MAX_VALUE
+
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
             when (attachmentSource) {
@@ -87,6 +90,19 @@ public class MessageInputView : ConstraintLayout {
             }
         }
     }
+
+    /**
+     * The default implementation of [MaxMessageLengthHandler] which uses the default [EditText] error
+     * popup to display errors when the maximum message length is exceeded.
+     */
+    private var maxMessageLengthHandler: MaxMessageLengthHandler =
+        MaxMessageLengthHandler { _, _, maxMessageLength, maxMessageLengthExceeded ->
+            binding.messageInputFieldView.binding.messageEditText.error = if (maxMessageLengthExceeded) {
+                context.getString(R.string.stream_ui_message_input_error_max_length, maxMessageLength)
+            } else {
+                null
+            }
+        }
 
     private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
     private var messageInputDebouncer: Debouncer? = null
@@ -230,8 +246,27 @@ public class MessageInputView : ConstraintLayout {
         suggestionListController?.userLookupHandler = handler
     }
 
+    /**
+     * Sets the maximum message length. When a message exceeds this limit, the send button becomes
+     * disabled and a error message is shown.
+     *
+     * @param maxMessageLength the maximum message length in characters.
+     *
+     * @see [setMaxMessageLengthHandler] for more information on how to provide a custom error message
+     */
     public fun setMaxMessageLength(maxMessageLength: Int) {
-        binding.messageInputFieldView.setMaxMessageLength(maxMessageLength)
+        this.maxMessageLength = maxMessageLength
+    }
+
+    /**
+     * Sets a custom [MaxMessageLengthHandler] which is responsible to handling max-length errors.
+     */
+    public fun setMaxMessageLengthHandler(maxMessageLengthHandler: MaxMessageLengthHandler) {
+        this.maxMessageLengthHandler = maxMessageLengthHandler
+    }
+
+    private fun isMessageTooLong(): Boolean {
+        return binding.messageInputFieldView.messageText.length > maxMessageLength
     }
 
     override fun onAttachedToWindow() {
@@ -376,6 +411,13 @@ public class MessageInputView : ConstraintLayout {
         binding.messageInputFieldView.setContentChangeListener(
             object : MessageInputFieldView.ContentChangeListener {
                 override fun onMessageTextChanged(messageText: String) {
+                    maxMessageLengthHandler.onMessageLengthChanged(
+                        messageText = messageText,
+                        messageLength = messageText.length,
+                        maxMessageLength = maxMessageLength,
+                        maxMessageLengthExceeded = isMessageTooLong()
+                    )
+
                     refreshControlsState()
                     handleKeyStroke()
                     messageInputDebouncer?.submitSuspendable { suggestionListController?.onNewMessageText(messageText) }
@@ -476,8 +518,7 @@ public class MessageInputView : ConstraintLayout {
         with(binding) {
             val commandMode = messageInputFieldView.mode is MessageInputFieldView.Mode.CommandMode
             val hasContent = messageInputFieldView.hasContent()
-            val messageLengthExceeded = messageInputFieldView.isMaxMessageLengthExceeded()
-            val hasValidContent = hasContent && !messageLengthExceeded
+            val hasValidContent = hasContent && !isMessageTooLong()
 
             attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && !commandMode
             commandsButton.isVisible = shouldShowCommandsButton() && !commandMode
@@ -612,6 +653,28 @@ public class MessageInputView : ConstraintLayout {
 
     public fun interface OnMessageSendButtonClickListener {
         public fun onClick()
+    }
+
+    /**
+     * A handler which can be used to display a custom error message when the maximum
+     * message length has been exceeded.
+     */
+    public fun interface MaxMessageLengthHandler {
+
+        /**
+         * Called when message text length has changed
+         *
+         * @param messageText the updated message text
+         * @param messageLength the updated message length
+         * @param maxMessageLength the maximum allowed message length
+         * @param maxMessageLengthExceeded true if the length of the text is greater than the maximum length.
+         */
+        public fun onMessageLengthChanged(
+            messageText: String,
+            messageLength: Int,
+            maxMessageLength: Int,
+            maxMessageLengthExceeded: Boolean,
+        )
     }
 
     public interface TypingListener {

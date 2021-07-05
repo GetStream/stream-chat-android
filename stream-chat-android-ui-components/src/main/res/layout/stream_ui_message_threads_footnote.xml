@@ -34,6 +34,7 @@
         android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
         android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
         android:layout_marginStart="@dimen/stream_ui_message_thread_reply_avatar_half_size"
+        style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintStart_toStartOf="@id/firstTheirUserImage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:streamUiAvatarBorderWidth="1dp"

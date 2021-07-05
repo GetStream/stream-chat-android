@@ -228,6 +228,12 @@ class Android {
             )
         }
 
+        fun customMaxMessageLengthHandler() {
+            messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
+                // Handle max-length error if needed
+            }
+        }
+
         fun customSuggestionListviewHolderFactory() {
             val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)

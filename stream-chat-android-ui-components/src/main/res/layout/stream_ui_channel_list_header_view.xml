@@ -11,7 +11,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
-        style="@style/StreamUiUserAvatarStyle"
+        style="@attr/streamUiChannelListHeaderAvatarStyle"
         android:layout_width="@dimen/stream_ui_avatar_size_medium"
         android:layout_height="@dimen/stream_ui_avatar_size_medium"
         android:layout_marginStart="8dp"
