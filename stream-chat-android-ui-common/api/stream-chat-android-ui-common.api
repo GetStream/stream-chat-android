@@ -291,6 +291,9 @@ public final class com/getstream/sdk/chat/utils/extensions/DateKt {
 public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt {
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
