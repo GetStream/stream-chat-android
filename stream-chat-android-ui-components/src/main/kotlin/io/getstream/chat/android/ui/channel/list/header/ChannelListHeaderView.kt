@@ -39,7 +39,11 @@ public class ChannelListHeaderView : ConstraintLayout {
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelListHeaderView).use { typedArray ->
+        context.obtainStyledAttributes(attrs,
+            R.styleable.ChannelListHeaderView,
+            R.attr.streamUiChannelListHeaderStyle,
+            R.style.StreamUi_ChannelListHeader
+        ).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)
             configOfflineTitleContainer(typedArray)
