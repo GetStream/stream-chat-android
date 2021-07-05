@@ -99,7 +99,6 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -695,7 +694,7 @@ internal class ChatDomainImpl internal constructor(
         }
     }
 
-    // An attempt to synchronize ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
+    // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
     internal suspend fun retryFailedEntities() {
         entitiesRetryMutex.withLock {
