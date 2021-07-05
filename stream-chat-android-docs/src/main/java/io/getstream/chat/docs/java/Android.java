@@ -257,6 +257,12 @@ public class Android {
             });
         }
 
+        public void customMaxMessageLengthHandler() {
+            messageInputView.setMaxMessageLengthHandler((messageText, messageLength, maxMessageLength, maxMessageLengthExceeded) -> {
+                // Handle max-length error if needed
+            });
+        }
+
         public void customSuggestionListviewHolderFactory() {
             SuggestionListItemViewHolderFactory customViewHolderFactory = new CustomSuggestionListViewHolderFactory();
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory);
