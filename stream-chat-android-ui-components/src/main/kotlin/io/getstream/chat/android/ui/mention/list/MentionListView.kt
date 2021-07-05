@@ -66,7 +66,7 @@ public class MentionListView : ViewFlipper {
                 R.styleable.MentionListView_streamUiEmptyStateDrawable
             ).let(binding.emptyImage::setImageDrawable)
 
-
+            typedArray.getString(R.styleable.MentionListView_streamUiEmptyStateLabel).let(binding.emptyLabel::setText)
         }
 
         binding.mentionListRecyclerView.apply {
