@@ -12,6 +12,7 @@
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/ChannelListHeaderAvatarTheme</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/MentionPreviewAvatarTheme</item>
+        <item name="streamUiMentionListStyle">@style/MentionListTheme</item>
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/ChannelActionsDialogAvatarStyle</item>
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
@@ -25,7 +26,10 @@
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
+
     <style name="MessageListHeaderAvatarTheme" parent="StreamUi.MessageList.Header.Avatar"/>
+
+    <style name="MentionListTheme" parent="StreamUi.MentionList"/>
 
     <style name="MentionPreviewAvatarTheme" parent="StreamUi.MentionPreview.Item.Avatar"/>
 

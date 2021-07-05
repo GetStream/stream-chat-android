@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.Toast
 import android.widget.ViewFlipper
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.view.EndlessScrollListener
@@ -13,6 +14,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.mention.list.internal.MentionListAdapter
 
@@ -49,6 +51,24 @@ public class MentionListView : ViewFlipper {
     private fun init(attrs: AttributeSet?) {
         parseAttrs(attrs)
 
+        context.obtainStyledAttributes(
+            attrs,
+            R.styleable.MentionListView,
+            R.attr.streamUiMentionListStyle,
+            R.style.StreamUi_MentionList
+        ).use { typedArray ->
+            typedArray.getColor(
+                R.styleable.MentionListView_streamUiBackground,
+                context.getColorCompat(R.color.stream_ui_white_snow)
+            ).let(::setBackgroundColor)
+
+            typedArray.getDrawable(
+                R.styleable.MentionListView_streamUiEmptyStateDrawable
+            ).let(binding.emptyImage::setImageDrawable)
+
+
+        }
+
         binding.mentionListRecyclerView.apply {
             setHasFixedSize(true)
             adapter = this@MentionListView.adapter
@@ -57,12 +77,13 @@ public class MentionListView : ViewFlipper {
                     context,
                     LinearLayoutManager.VERTICAL
                 ).apply {
-                    setDrawable(context.getDrawable(R.drawable.stream_ui_divider)!!)
+                    setDrawable(AppCompatResources.getDrawable(context, R.drawable.stream_ui_divider)!!)
                 }
             )
             addOnScrollListener(scrollListener)
         }
-        setBackgroundColor(context.getColorCompat(R.color.stream_ui_white_snow))
+
+
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
