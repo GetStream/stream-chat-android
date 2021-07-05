@@ -81,5 +81,6 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
             it.copy(threadsEnabled = false)
         }
 ```
+`MentionListView` now it is possible to customize background, empty state drawable and empty state label. It can be customisable with XML parameters and with theme.
 
 ### ❌ Removed
