@@ -1,5 +1,7 @@
 # Core Concepts
 
+This page describes some of the basic concepts you'll encounter when using the Android Chat SDK.
+
 ## Calls
 
 Many SDK methods in the client and offline libraries return a `Call` object, which is a pending operation waiting to be executed.

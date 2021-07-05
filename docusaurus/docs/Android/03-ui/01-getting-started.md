@@ -10,14 +10,14 @@ This library builds on top of the offline library, and provides [ViewModels](#vi
 
 See the individual pages of the components to learn more about them:
 
-- [Channel List](./04-components/01-channel-list.md)
-- [Channel List Header](./04-components/02-channel-list-header.md)
-- [Message List](./04-components/03-message-list.md)
-- [Message List Header](./04-components/04-message-list-header.md)
-- [Message Input](./04-components/05-message-input.md)
-- [Mention List View](./04-components/06-mention-list-view.md)
-- [Search View](./04-components/07-search-view.md)
-- [Attachment Gallery](./04-components/08-attachment-gallery.md)
+- [Channel List](03-components/01-channel-list.md)
+- [Channel List Header](03-components/02-channel-list-header.md)
+- [Message List](03-components/03-message-list.md)
+- [Message List Header](03-components/04-message-list-header.md)
+- [Message Input](03-components/05-message-input.md)
+- [Mention List View](03-components/06-mention-list-view.md)
+- [Search View](03-components/07-search-view.md)
+- [Attachment Gallery](03-components/08-attachment-gallery.md)
 
 ### ViewModels
 
@@ -55,6 +55,6 @@ The [UI components sample app](https://github.com/GetStream/stream-chat-android/
 
 The UI components offer customization options via XML attributes as well as instance methods. See the individual pages of the components for more details about this.
 
-Additionally, the SDK provides two entry points for global customization:
-- The [`ChatUI` object](./03-chatui.md) to override such things as fonts, URL signing logic, etc.
-- The [`TransformStyle` object](./02-global-styling.md) to override view attributes programmatically.
+Components can also be customized globally, as described on the [Theming](04-guides/04-theming.md) page.
+
+You can also use the [`ChatUI` object](02-chatui.md) to override such things as fonts, URL signing logic, etc.

@@ -59,7 +59,7 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
 
 Both will have the following result:
 
-![Custom messages](../assets/custom_messages.png)
+![Custom messages](../../assets/custom_messages.png)
 
 It is also possible to change the themes for the UI components. 
 
