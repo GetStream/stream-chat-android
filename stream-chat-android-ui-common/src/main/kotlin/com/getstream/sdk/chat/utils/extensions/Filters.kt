@@ -7,17 +7,10 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public fun Filters.defaultChannelListFilter(user: User?): FilterObject {
-    return if (user == null) {
-        Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.neutral(),
-            Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-        )
-    } else {
-        Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(user.id)),
-            Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-        )
-    }
+    val userFiler = if (user == null) neutral() else `in`("members", listOf(user.id))
+    return and(
+        eq("type", "messaging"),
+        userFiler,
+        or(notExists("draft"), ne("draft", true)),
+    )
 }
