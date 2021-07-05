@@ -110,7 +110,8 @@ internal interface RetrofitApi {
         @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<ChannelResponse>
 
-    @POST("/channels/{type}/{id}")
+    @PATCH("/channels/{type}/{id}")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun updateCooldown(
         @Path("type") channelType: String,
         @Path("id") channelId: String,

@@ -418,7 +418,7 @@ internal class GsonChatApi(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = UpdateCooldownRequest(cooldownTimeInSeconds)
+            body = UpdateCooldownRequest.create(cooldownTimeInSeconds)
         ).map { flattenChannel(it) }
 
     override fun markRead(
