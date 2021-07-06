@@ -321,6 +321,7 @@
         <item name="streamUiBackground">@color/stream_ui_white_snow</item>
         <item name="streamUiEmptyStateDrawable">@drawable/stream_ui_ic_mentions_empty</item>
         <item name="streamUiEmptyStateLabel">@string/stream_ui_mention_list_empty</item>
+        <item name="streamUiSenderNameTextColor">@color/stream_ui_text_color_primary</item>
     </style>
 
     <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">

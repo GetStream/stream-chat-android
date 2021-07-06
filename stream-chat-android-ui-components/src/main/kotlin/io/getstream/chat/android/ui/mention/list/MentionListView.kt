@@ -15,8 +15,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.mention.list.internal.MentionListAdapter
+import io.getstream.chat.android.ui.message.preview.internal.MessagePreviewView
 
 public class MentionListView : ViewFlipper {
 
@@ -67,6 +69,19 @@ public class MentionListView : ViewFlipper {
             ).let(binding.emptyImage::setImageDrawable)
 
             typedArray.getString(R.styleable.MentionListView_streamUiEmptyStateLabel).let(binding.emptyLabel::setText)
+
+            val senderTextStyle = TextStyle.Builder(typedArray)
+                .color(
+                    R.styleable.MentionListView_streamUiSenderNameTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .build()
+
+            val previewConfig = MessagePreviewView.PreviewStyle(
+                messageSenderTextStyle = senderTextStyle
+            )
+
+            adapter.previewStyle = previewConfig
         }
 
         binding.mentionListRecyclerView.apply {

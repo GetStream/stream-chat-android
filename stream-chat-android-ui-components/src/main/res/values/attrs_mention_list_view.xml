@@ -4,5 +4,6 @@
         <attr name="streamUiBackground" format="color|reference"/>
         <attr name="streamUiEmptyStateDrawable" format="reference"/>
         <attr name="streamUiEmptyStateLabel" format="string|reference"/>
+        <attr name="streamUiSenderNameTextColor" format="color|reference"/>
     </declare-styleable>
 </resources>

@@ -29,7 +29,7 @@
 
     <style name="MessageListHeaderAvatarTheme" parent="StreamUi.MessageList.Header.Avatar"/>
 
-    <style name="MentionListTheme" parent="StreamUi.MentionList"/>
+    <style name="MentionListTheme" parent="StreamUi.MentionPreview.Item.Avatar"/>
 
     <style name="MentionPreviewAvatarTheme" parent="StreamUi.MentionPreview.Item.Avatar"/>
 
