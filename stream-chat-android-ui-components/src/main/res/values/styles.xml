@@ -324,6 +324,12 @@
         <item name="streamUiSenderNameTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSenderNameTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiSenderNameTextStyle">normal</item>
+        <item name="streamUiMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextStyle">normal</item>
+        <item name="streamUiMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTimeTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTimeTextStyle">normal</item>
     </style>
 
     <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">

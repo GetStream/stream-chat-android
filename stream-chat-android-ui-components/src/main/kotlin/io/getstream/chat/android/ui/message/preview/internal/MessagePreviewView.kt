@@ -62,7 +62,11 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     fun styleView(previewStyle: PreviewStyle) {
-        previewStyle.messageSenderTextStyle.apply(binding.senderNameLabel)
+        previewStyle.run {
+            messageSenderTextStyle.apply(binding.senderNameLabel)
+            messageTextStyle.apply(binding.messageLabel)
+            messageTimeTextStyle.apply(binding.messageTimeLabel)
+        }
     }
 
     fun setMessage(message: Message, currentUserMention: String? = null) {
@@ -107,6 +111,8 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     data class PreviewStyle(
-        val messageSenderTextStyle: TextStyle
+        val messageSenderTextStyle: TextStyle,
+        val messageTextStyle: TextStyle,
+        val messageTimeTextStyle: TextStyle,
     )
 }

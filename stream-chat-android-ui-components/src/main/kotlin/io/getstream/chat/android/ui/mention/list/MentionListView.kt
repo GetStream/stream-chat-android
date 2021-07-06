@@ -91,8 +91,48 @@ public class MentionListView : ViewFlipper {
                 )
                 .build()
 
+            val messageTextStyle = TextStyle.Builder(typedArray)
+                .size(
+                    R.styleable.MentionListView_streamUiMessageTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .color(
+                    R.styleable.MentionListView_streamUiMessageTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.MentionListView_streamUiMessageTextFontAssets,
+                    R.styleable.MentionListView_streamUiMessageTextFont
+                )
+                .style(
+                    R.styleable.MentionListView_streamUiMessageTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
+            val messageTimeTextStyle = TextStyle.Builder(typedArray)
+                .size(
+                    R.styleable.MentionListView_streamUiMessageTimeTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .color(
+                    R.styleable.MentionListView_streamUiMessageTimeTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.MentionListView_streamUiMessageTimeTextFontAssets,
+                    R.styleable.MentionListView_streamUiMessageTimeTextFont
+                )
+                .style(
+                    R.styleable.MentionListView_streamUiMessageTimeTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
             val previewConfig = MessagePreviewView.PreviewStyle(
-                messageSenderTextStyle = senderTextStyle
+                messageSenderTextStyle = senderTextStyle,
+                messageTextStyle = messageTextStyle,
+                messageTimeTextStyle = messageTimeTextStyle
             )
 
             adapter.previewStyle = previewConfig
