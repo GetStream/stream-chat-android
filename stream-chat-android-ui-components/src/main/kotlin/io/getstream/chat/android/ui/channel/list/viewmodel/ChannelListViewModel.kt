@@ -6,12 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.isMuted
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
@@ -20,7 +20,6 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.ui.utils.FilterUtils
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
@@ -37,14 +36,10 @@ import kotlinx.coroutines.flow.map
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val filter: FilterObject = Filters.and(
-        Filters.eq("type", "messaging"),
-        FilterUtils.userFilter(chatDomain),
-        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-    ),
+    private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
-    messageLimit: Int = 1,
+    private val messageLimit: Int = 1,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -56,10 +51,21 @@ public class ChannelListViewModel(
     private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
+    private val filterLiveData: LiveData<FilterObject?> =
+        filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
+
     init {
+        stateMerger.addSource(filterLiveData) { filter ->
+            if (filter != null) {
+                initData(filter)
+            }
+        }
+    }
+
+    private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
 
-        chatDomain.queryChannels(filter, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
+        chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
 
@@ -145,7 +151,7 @@ public class ChannelListViewModel(
     }
 
     private fun requestMoreChannels() {
-        chatDomain.queryChannelsLoadMore(filter, sort).enqueue()
+        filterLiveData.value?.let { chatDomain.queryChannelsLoadMore(it, sort).enqueue() }
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
@@ -185,14 +191,5 @@ public class ChannelListViewModel(
         public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
 
         private val INITIAL_STATE: State = State(isLoading = true, channels = emptyList())
-    }
-}
-
-private fun userFilter(chatDomain: io.getstream.chat.android.offline.ChatDomain): FilterObject {
-    return chatDomain.user.value?.id?.let { id ->
-        Filters.`in`("members", id)
-    } ?: Filters.neutral().also {
-        ChatLogger.get("ChannelListViewModel")
-            .logE("User is not set in ChatDomain, default filter for ChannelListViewModel won't work")
     }
 }

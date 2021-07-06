@@ -118,8 +118,6 @@ messageListView.setAttachmentDownloadHandler { attachment: Attachment ->
 Handlers must be set before passing any data to `MessageListView`. If you don't use the default binding that `bindView` provides, please make sure you're setting up all handlers.
 :::
 
-___
-
 ### Listeners
 
 In addition to the required handlers, `MessageListView` also provides some optional listeners. They are also set by default if you use `bindView`.
@@ -140,11 +138,11 @@ messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
 
 Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/index.html).
 
-## Customizations
+## Customization
 
 You can change the appearance of this component to fit your app's design requirements. There are two ways to change the style: using XML attributes and runtime changes.
 
-### Customization with XML Attributes
+### Using XML Attributes
 
 `MessageListView` provides a large set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
 
@@ -174,7 +172,7 @@ In order to do that, we need to add additional attributes to `MessageListView`:
     />
 ```
 
-### Customization at Runtime
+### Using Style Transformations
 
 Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/index.html) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/index.html)).
 
@@ -251,6 +249,23 @@ messageListView.setEditMessageEnabled(false)
 | Before | After |
 | --- | --- |
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
+
+## Filtering Messages
+
+You can filter some messages if you don't want to show them in your `MessageListView`.
+Imagine you want to hide all messages that contain the word "secret". This can be done with following lines:
+
+```kotlin
+val forbiddenWord = "secret"
+val predicate = MessageListView.MessageListItemPredicate { item ->
+    !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
+}
+messageListView.setMessageListItemPredicate(predicate)
+```
+
+:::note
+The predicate has to return `true` for the items that you _do_ want to display in the list.
+:::
 
 ## Custom Message Views
 
@@ -374,23 +389,6 @@ class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
 ```kotlin
 messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
 ```
-
-## Filtering Messages
-
-You can filter some messages if you don't want to show them in your `MessageListView`.
-Imagine you want to hide all messages that contain the word "secret". This can be done with following lines:
-
-```kotlin
-val forbiddenWord = "secret"
-val predicate = MessageListView.MessageListItemPredicate { item ->
-    !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
-}
-messageListView.setMessageListItemPredicate(predicate)
-```
-
-:::note
-The predicate has to return `true` for the items that you _do_ want to display in the list.
-:::
 
 ## Custom Empty State
 

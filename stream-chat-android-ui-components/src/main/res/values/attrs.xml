@@ -12,6 +12,7 @@
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
         <attr name="streamUiMentionListStyle" format="reference" />
         <attr name="streamUiMentionPreviewItemAvatarStyle" format="reference" />
+        <attr name="streamUiChannelListHeaderStyle" format="reference" />
         <attr name="streamUiChannelListHeaderAvatarStyle" format="reference" />
         <attr name="streamUiChannelActionsDialogAvatarStyle" format="reference" />
         <attr name="streamUiGlobalAvatarBorderColor" format="reference|color" />

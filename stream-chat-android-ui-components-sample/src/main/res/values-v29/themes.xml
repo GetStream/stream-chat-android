@@ -16,6 +16,7 @@
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
+        <item name="streamUiChannelListHeaderStyle">@style/ChannelListHeaderTheme</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/ChannelListHeaderAvatarTheme</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/MentionPreviewAvatarTheme</item>
         <item name="streamUiMentionListStyle">@style/MentionListTheme</item>
@@ -40,7 +41,12 @@
 
     <style name="ChannelListAvatarTheme" parent="StreamUi.ChannelList.Item.Avatar" />
 
-    <style name="ChannelListHeaderAvatarTheme" parent="StreamUi.ChannelList.Header.Avatar"/>
+    <style name="ChannelListHeaderTheme" parent="StreamUi.ChannelListHeader"/>
+
+    <style name="ChannelListHeaderAvatarTheme" parent="StreamUi.ChannelListHeader.Avatar">
+        <item name="android:layout_width">12dp</item>
+        <item name="android:layout_height">12dp</item>
+    </style>
 
     <style name="ChannelActionsDialogAvatarStyle" parent="StreamUi.ChannelActions.Dialog.Avatar"/>
 
