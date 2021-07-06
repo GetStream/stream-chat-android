@@ -1,6 +1,6 @@
 # Theming
 
-Many parts of the UI components can be changed and customized. It is possible to change colors, fonts, sizes and many other aspects of the `Views` to match a desired look. It is possible to change:
+Many parts of the UI components can be changed and customized. You can change colors, fonts, sizes and many other aspects of the `Views` to match a desired look. It is possible to change:
 
 - Font family
 - Text color

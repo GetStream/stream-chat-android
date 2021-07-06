@@ -17,7 +17,7 @@ val messageResult = channelClient.sendMessage(message).execute()
 
 ### Running Calls Asynchronously
 
-You can run a `Call` asynchronously, automatically scheduled a background thread, using the `enqueue` method. The callback passed to `enqueue` will be called on the UI thread.
+You can run a `Call` asynchronously, automatically scheduled on a background thread using the `enqueue` method. The callback passed to `enqueue` will be called on the UI thread.
 
 ```kotlin
 // Safe to call from the main thread
@@ -43,10 +43,9 @@ viewModelScope.launch {
 
 Actions defined in a `Call` return `Result` objects. These contain either the result of a successful operation or the error that caused the operation to fail.
 
-You can check whether a `Result` is successful or an error:
+You can check whether a `Result` is successful or an error - exactly one of the following will be true for each `Result`:
 
 ```kotlin
-// Exactly one of these will be true for each Result
 result.isSuccess
 result.isError
 ```

@@ -1,15 +1,14 @@
 # Mention List View
 
-`MentionListView` is a view that is responsible for showing previews of messages which contains current user mention.
+`MentionListView` is a UI Component that shows previews of messages that contain mentions of the current user.
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Light mode](../../assets/mentions_list_view_light.png)|![Dark mode](../../assets/mentions_list_view_dark.png)|
 
-
 ## Usage
 
-You can add this view via XML:
+You can add this View via XML:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -31,31 +30,29 @@ You can add this view via XML:
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-We recommend using this view with its ViewModel, which configures the view and makes it fully usable. 
 
-The basic setup of the ViewModel and connecting it to the view is done the following way:
+We recommend using this view with its [ViewModel](../01-getting-started.md#viewmodels), which supplies it with data from the Stream API.
+
+The basic setup of the ViewModel and connecting it to the View is done the following way:
 
 ```kotlin
-private val viewModel: MentionListViewModel by viewModels()
-
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
-}
+val viewModel: MentionListViewModel by viewModels()
+viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
 ```
 
-From that point, you should be able to see messages which contain current user mention.
+From that point, you should be able to see messages which contain mentions of the current user.
 
 :::note
-`bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+`bindView` sets listeners on the View and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 :::
 
 ## Handling Actions
 
-`MentionListView` allows to configure common actions (e.g. click on a single item):
+`MentionListView` allows you to configure certain actions on it:
 
 ```kotlin
 mentionListView.setMentionSelectedListener { message ->
-    // Handle mention click
+    // Handle a mention item being clicked
 }
 ```
 

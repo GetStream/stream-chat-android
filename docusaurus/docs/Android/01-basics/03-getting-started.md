@@ -1,8 +1,10 @@
 # Getting Started
 
-Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./02-dependencies.md). This page tells you what steps you should perform in your app to initialize the Stream Chat SDK.
+Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./02-dependencies.md). This page shows you how to initialize the SDK in your app.
 
+:::note
 If you're looking for a complete, step-by-step guide that includes setting up an Android project from scratch, try the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/) instead.
+:::
 
 ### Creating a ChatClient
 
@@ -31,7 +33,7 @@ If you create the `ChatClient` instance following the pattern in the previous ex
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val chatClient = ChatClient.instance() // Returns the singleton instance of ChatClient
+        val chatClient = ChatClient.instance() // Returns the singleton instance
     }
 }
 ```

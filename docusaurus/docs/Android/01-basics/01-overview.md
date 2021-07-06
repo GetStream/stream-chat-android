@@ -30,7 +30,7 @@ It also contains all the basic model objects you'll interact with when using Str
 
 The offline library builds on top of the client and adds offline caching capabilities using a local database. For example, it allows you to send messages or add reactions while you're offline. When the user comes back online, the library will automatically recover lost events and retry sending messages.
 
-This library exposes easy-to-use StateFlow and LiveData objects for reading messages, reads, typing, members, watchers and more. The entry point to this library is the `ChatDomain` class.
+This library exposes easy-to-use StateFlow and LiveData objects for reading messages, reads, typing, members, watchers and more. The entry point to this library is the `ChatDomain` class. See [Working with Offline](../02-client/06-guides/06-working-with-offline.md) for more details.
 
 If you want to build custom UI for Stream Chat, you can build it on top of the offline library.
 
@@ -40,4 +40,4 @@ The UI Components library includes pre-built Android Views to easily load and di
 
 This library is built on top of the offline support library, and offers the quickest integration of Stream Chat into an Android application.
 
-You can see the components in action by checking out the [UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample), available in the GitHub repository.
+You can see the UI Components in action by checking out the [UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample), available in the GitHub repository.

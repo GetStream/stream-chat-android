@@ -39,9 +39,11 @@ messageListViewModel.bindView(messageListView, viewLifecycleOwner) // 3
 
 `bindView` performs two-way binding: it sets up observers that push data from the ViewModel to the View, and sets up listeners that forward input events from the View to the ViewModel.
 
-> If you're setting your own listeners on the Views, make sure to do it _after_ calling `bindView`.
+:::note
+If you're setting your own listeners on the Views, make sure to do it _after_ calling `bindView`.
+:::
 
-You can learn more about setting up each UI component on its individual documentation page.
+You can learn more about setting up each UI component on their individual documentation pages.
 
 ### Sample App
 
@@ -57,4 +59,4 @@ The UI components offer customization options via XML attributes as well as inst
 
 Components can also be customized globally, as described on the [Theming](04-guides/04-theming.md) page.
 
-You can also use the [`ChatUI` object](02-chatui.md) to override such things as fonts, URL signing logic, etc.
+You can also use the [`ChatUI` object](02-chatui.md) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.

@@ -1,6 +1,6 @@
 # Search View
 
-`SearchInputView` and `SearchResultListView` components can be used to search and display messages that contain specific text. The search is performed across all channels a user is a member of.
+The `SearchInputView` and `SearchResultListView` components can be used to search and display messages that contain specific text. The search is performed across all channels a user is a member of.
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -38,9 +38,9 @@ Here's an example layout using these two Views:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-We recommend using the `SearchViewModel` to get search results from the Stream API and then rendering them using the `SearchResultListView`.
+We recommend using `SearchViewModel` to get search results from the Stream API and then render them using the `SearchResultListView`.
 
-The basic setup of the ViewModel and connecting it to the view is done the following way:
+The basic setup of the ViewModel and connecting it to the View is done the following way:
 
 ```kotlin 
 // Instantiate the ViewModel 
@@ -65,7 +65,7 @@ searchInputView.setSearchStartedListener { query ->
 
 ## Handling Actions
 
-It is possible to listen for query text changes within the `SearchInputView` by using listeners:
+In addition to the `SearchStartedListener` described above, `SearchInputView` allows you to listen for text changes by using listeners:
 
 ```kotlin
 searchInputView.setContinuousInputChangedListener { query ->
@@ -76,9 +76,6 @@ searchInputView.setDebouncedInputChangedListener { query ->
 }
 ```
 
-The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search/-search-input-view/index.html).
-
-
 `SearchResultListView` exposes a listener for handling item clicks:
 
 ```kotlin
@@ -87,19 +84,22 @@ searchResultView.setSearchResultSelectedListener { message ->
 }
 ```
 
-The full list of listeners available for `SearchResultListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/index.html).
+The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search/-search-input-view/index.html), and for `SearchResultListView` [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/index.html).
 
-## Updating Search Query Programmatically
+## Updating the Search Query Programmatically
 
-`SearchInputView` provides a way to change search query programmatically:
+`SearchInputView` provides a way to change the search query programmatically:
 
 ```kotlin
-// Update the current input to the specified string
 searchInputView.setQuery("query")
-// Clear the current input
+```
+
+You can also easily clear the current input:
+
+```kotlin
 searchInputView.clear()
 ```
 
 :::note
-Updating search query programmatically automatically notifies corresponding listeners
+Updating the search query programmatically automatically notifies corresponding listeners.
 :::
