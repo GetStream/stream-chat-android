@@ -24,7 +24,7 @@ internal class MentionListAdapter(
     private var mentionSelectedListener: MentionSelectedListener? = null
     private var dateFormatter = DateFormatter.from(context)
 
-    public var previewStyle: MessagePreviewView.PreviewStyle? = null
+    var previewStyle: MessagePreviewView.PreviewStyle? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding

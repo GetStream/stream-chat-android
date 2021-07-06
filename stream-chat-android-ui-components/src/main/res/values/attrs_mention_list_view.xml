@@ -5,5 +5,13 @@
         <attr name="streamUiEmptyStateDrawable" format="reference"/>
         <attr name="streamUiEmptyStateLabel" format="string|reference"/>
         <attr name="streamUiSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiSenderNameTextFont" format="reference"/>
+        <attr name="streamUiSenderNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

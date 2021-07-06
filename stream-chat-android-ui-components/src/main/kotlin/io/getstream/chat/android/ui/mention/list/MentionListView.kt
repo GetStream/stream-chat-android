@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.mention.list
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.widget.Toast
 import android.widget.ViewFlipper
@@ -13,6 +14,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -71,9 +73,21 @@ public class MentionListView : ViewFlipper {
             typedArray.getString(R.styleable.MentionListView_streamUiEmptyStateLabel).let(binding.emptyLabel::setText)
 
             val senderTextStyle = TextStyle.Builder(typedArray)
+                .size(
+                    R.styleable.MentionListView_streamUiSenderNameTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
                 .color(
                     R.styleable.MentionListView_streamUiSenderNameTextColor,
                     context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.MentionListView_streamUiSenderNameTextFontAssets,
+                    R.styleable.MentionListView_streamUiSenderNameTextFont
+                )
+                .style(
+                    R.styleable.MentionListView_streamUiSenderNameTextStyle,
+                    Typeface.NORMAL
                 )
                 .build()
 
