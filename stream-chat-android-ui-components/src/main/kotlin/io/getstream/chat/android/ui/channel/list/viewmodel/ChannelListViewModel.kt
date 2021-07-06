@@ -51,7 +51,7 @@ public class ChannelListViewModel(
     private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
-    private val filterLiveData: LiveData<FilterObject> =
+    private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
 
     init {

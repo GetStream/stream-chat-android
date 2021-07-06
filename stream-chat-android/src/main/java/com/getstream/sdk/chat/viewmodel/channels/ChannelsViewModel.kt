@@ -41,7 +41,7 @@ public class ChannelsViewModel(
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
-    private val filterLiveData: LiveData<FilterObject> =
+    private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: map(chatDomain.user, Filters::defaultChannelListFilter)
 
     init {
