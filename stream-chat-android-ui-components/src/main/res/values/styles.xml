@@ -265,7 +265,7 @@
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
-        <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelList.Header.Avatar</item>
+        <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
@@ -306,6 +306,22 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
+    <style name="StreamUi.ChannelListHeader" parent="StreamUi">
+        <item name="streamUiOnlineTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiOnlineTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOnlineTitleTextStyle">bold</item>
+        <item name="streamUiOfflineTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiOfflineTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOfflineTitleTextFont">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOfflineTitleTextStyle">bold</item>
+        <item name="streamUiShowOfflineProgressBar">true</item>
+        <item name="streamUiOfflineProgressBarTint">@color/stream_ui_accent_blue</item>
+        <item name="streamUiShowActionButton">true</item>
+        <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
+        <item name="streamUiActionButtonTint">@color/stream_ui_black</item>
+        <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
+    </style>
+
     <style name="StreamUi.ChannelList.Item.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of MessageList Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
@@ -324,10 +340,8 @@
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
     </style>
 
-    <style name="StreamUi.ChannelList.Header.Avatar" parent="StreamUi.BaseAvatar">
+    <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
-        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
-        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>

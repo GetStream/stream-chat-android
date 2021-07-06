@@ -1,31 +1,28 @@
 # Attachment Gallery
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/attachmentgallery/?language=kotlin -->
-
-## Overview
-
-_AttachmentGalleryActivity_ is an _Activity_ used to display attachments that the users have sent in the chat. It is an image gallery where users can see the pictures, share, download, and use a menu to navigate through the pictures.
+`AttachmentGalleryActivity` is an Activity used to display attachments that the users have sent in the chat. It is an image gallery where users can view, share, and download the pictures, and use a menu to easily navigate through them.
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![attachment_gallery_example1_light](../../assets/attachment_gallery_example1_light.png)|![attachment_gallery_example1_dark](../../assets/attachment_gallery_example1_dark.png)|
 |![attachment_gallery_example2_light](../../assets/attachment_gallery_example2_light.png)|![attachment_gallery_example2_dark](../../assets/attachment_gallery_example2_dark.png)|
 
-## Handling user input
-There are 4 behaviours that can be customized by the following handlers:
+## Handling Actions
 
-* AttachmentGalleryActivity.AttachmentReplyOptionHandler
-* AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
-* AttachmentGalleryActivity.AttachmentDownloadOptionHandler
-* AttachmentGalleryActivity.AttachmentDeleteOptionHandler
+There are four user actions that can be customized by the following handlers:
 
-The next section shows how to implement the listeners and inject the desired behaviour.
+- `AttachmentReplyOptionHandler`
+- `AttachmentShowInChatOptionHandler`
+- `AttachmentDownloadOptionHandler`
+- `AttachmentDeleteOptionHandler`
 
-It is also possible to set listener for options in the overflow menu (three dots)
+These are called when the user selects one of the options from the overflow menu in the top right:
 
 |Light|Dark| 
 |---|---|
 |![attachment_gallery_example2_light](../../assets/attachment_activitity_menu_dark.png)|![attachment_gallery_example2_light](../../assets/attachment_activitity_menu_light.png)|  
+
+As the gallery is usually opened from `MessageListView`, you can set these handlers on that View the following way:
 
 ```kotlin
 messageListView.setAttachmentReplyOptionClickHandler { resultItem ->
@@ -52,9 +49,9 @@ messageListView.setAttachmentDeleteOptionClickHandler { resultItem ->
 
 ## Navigating To Attachment Gallery
 
-By default, the Attachment Gallery is opened when a user clicks on an attachment in _MessageListView_. In that case, all actions mentioned above have a default implementation, which can be changed by overriding _MessageListView_'s handlers.
+By default, the Attachment Gallery is opened when a user clicks on an attachment in `MessageListView`. In that case, all actions mentioned above have a default implementation, which can be changed by overriding `MessageListView`'s handlers.
 
-You can also navigate to _AttachmentGalleryActivity_ but in that case, you will need to implement all available actions:
+You can also navigate to `AttachmentGalleryActivity` manually from anywhere else in your code. In this case, you will need to implement all available actions:
 
 ```kotlin
 // Create Attachment Gallery Destination
