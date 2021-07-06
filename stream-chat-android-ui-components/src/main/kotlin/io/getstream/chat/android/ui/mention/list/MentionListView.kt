@@ -70,8 +70,6 @@ public class MentionListView : ViewFlipper {
                 R.styleable.MentionListView_streamUiEmptyStateDrawable
             ).let(binding.emptyImage::setImageDrawable)
 
-            typedArray.getString(R.styleable.MentionListView_streamUiEmptyStateLabel).let(binding.emptyLabel::setText)
-
             val senderTextStyle = TextStyle.Builder(typedArray)
                 .size(
                     R.styleable.MentionListView_streamUiSenderNameTextSize,

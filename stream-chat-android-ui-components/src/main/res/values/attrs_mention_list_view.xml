@@ -3,7 +3,6 @@
     <declare-styleable name="MentionListView">
         <attr name="streamUiBackground" format="color|reference"/>
         <attr name="streamUiEmptyStateDrawable" format="reference"/>
-        <attr name="streamUiEmptyStateLabel" format="string|reference"/>
         <attr name="streamUiSenderNameTextColor" format="color|reference"/>
         <attr name="streamUiSenderNameTextSize" format="dimension"/>
         <attr name="streamUiSenderNameTextFontAssets" format="string"/>
