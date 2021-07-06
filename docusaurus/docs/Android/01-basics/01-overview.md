@@ -38,6 +38,6 @@ If you want to build custom UI for Stream Chat, you can build it on top of the o
 
 The UI Components library includes pre-built Android Views to easily load and display data from the Stream Chat API. These include a Channel List and a Message List, a Message Input View, and more. See the UI Components [Getting Started](../03-ui/01-getting-started.md) page for more details.
 
-This library is built on top of the offline support library, and offers the quickest integration of Stream Chat into an Android application.
+This library is built on top of the offline support library, and offers the quickest integration of Stream Chat into an Android application. It also has a variety of [theming](../03-ui/02-theming.md) options to make it fit your app's needs.
 
 You can see the UI Components in action by checking out the [UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample), available in the GitHub repository.

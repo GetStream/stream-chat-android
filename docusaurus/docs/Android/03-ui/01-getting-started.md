@@ -10,16 +10,28 @@ This library builds on top of the offline library, and provides [ViewModels](#vi
 
 See the individual pages of the components to learn more about them:
 
-- [Channel List](03-components/01-channel-list.md)
-- [Channel List Header](03-components/02-channel-list-header.md)
-- [Message List](03-components/03-message-list.md)
-- [Message List Header](03-components/04-message-list-header.md)
-- [Message Input](03-components/05-message-input.md)
-- [Mention List View](03-components/06-mention-list-view.md)
-- [Search View](03-components/07-search-view.md)
-- [Attachment Gallery](03-components/08-attachment-gallery.md)
+- [Channel List](04-components/01-channel-list.md)
+- [Channel List Header](04-components/02-channel-list-header.md)
+- [Message List](04-components/03-message-list.md)
+- [Message List Header](04-components/04-message-list-header.md)
+- [Message Input](04-components/05-message-input.md)
+- [Mention List View](04-components/06-mention-list-view.md)
+- [Search View](04-components/07-search-view.md)
+- [Attachment Gallery](04-components/08-attachment-gallery.md)
 
-### ViewModels
+## Requirements
+
+To use the UI Components, add the dependency to your app, as described on the [Dependencies](../01-basics/02-dependencies.md#ui-components) page.
+
+Since this library uses Material elements, make sure that you use a Material theme in your application before adding the components. This means that your app's theme should extend a theme from `Theme.MaterialComponents`, and not `Theme.AppCompat`. Here's a correct example:
+
+```xml
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+```
+
+If you want to keep using an `AppCompat` theme for styling, you can use a [Bridge Theme](https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#bridge-themes) to support using Material based components at the same time.
+
+## ViewModels
 
 Each UI component comes with its own ViewModel. These are used to easily connect them to `ChatDomain` to fetch data and perform actions.
 
@@ -45,7 +57,7 @@ If you're setting your own listeners on the Views, make sure to do it _after_ ca
 
 You can learn more about setting up each UI component on their individual documentation pages.
 
-### Sample App
+## Sample App
 
 The [UI components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) is an open source, fully functional messaging application. It features threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our UI components.
 
@@ -53,10 +65,8 @@ The [UI components sample app](https://github.com/GetStream/stream-chat-android/
 | --- | --- |
 | ![Sample app login screen](../assets/sample-login-dark.png) | ![Sample app messages screen](../assets/sample-messages-dark.png) |
 
-### Customization
+## Customization
 
-The UI components offer customization options via XML attributes as well as instance methods. See the individual pages of the components for more details about this.
+The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](02-theming.md) page describes all the available styling options for the SDK in detail.
 
-Components can also be customized globally, as described on the [Theming](04-guides/04-theming.md) page.
-
-You can also use the [`ChatUI` object](02-chatui.md) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.
+You can also use the [`ChatUI` object](03-chatui.md) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.

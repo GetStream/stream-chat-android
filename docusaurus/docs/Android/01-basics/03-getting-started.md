@@ -90,4 +90,4 @@ The methods of the `ChatClient` class allow you to create channels, send message
 
 To add the UI Components to your application, see the [Get Started](../03-ui/01-getting-started.md) page of the UI Components section first, which explains how the components work.
 
-Then you can proceed to our guides that show you how to [build a channel list screen](../03-ui/04-guides/01-building-channel-list-screen.md) and [build a message list screen](../03-ui/04-guides/02-building-message-list-screen.md).
+Then you can proceed to our guides that show you how to [build a channel list screen](../03-ui/05-guides/01-building-channel-list-screen.md) and [build a message list screen](../03-ui/05-guides/02-building-message-list-screen.md).
