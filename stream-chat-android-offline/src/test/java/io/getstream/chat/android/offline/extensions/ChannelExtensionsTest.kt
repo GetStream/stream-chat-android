@@ -32,7 +32,7 @@ internal class ChannelExtensionsTest {
     }
 
     @Test
-    fun `When apply pagination Should sort correctly`() {
+    fun `When apply pagination Should sort correctly descending`() {
         val firstChannel = randomChannel(lastMessageAt = Date(1000))
         val secondChannel = randomChannel(lastMessageAt = Date(3000))
         val thirdChannel = randomChannel(lastMessageAt = Date(2000))
@@ -45,11 +45,31 @@ internal class ChannelExtensionsTest {
             memberLimit = 30,
         )
 
-        val result = listOf(firstChannel, secondChannel, thirdChannel).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
+        val result1 = listOf(firstChannel, secondChannel, thirdChannel).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
         Assertions.assertTrue {
-            result.first() == secondChannel &&
-                result.last() == firstChannel
+            result1.first() == secondChannel && result1.last() == firstChannel
+        }
+    }
+
+    @Test
+    fun `When apply pagination Should sort correctly ascending`() {
+        val firstChannel = randomChannel(lastMessageAt = Date(1000))
+        val secondChannel = randomChannel(lastMessageAt = Date(3000))
+        val thirdChannel = randomChannel(lastMessageAt = Date(2000))
+        val sort = QuerySort<Channel>().asc(Channel::lastMessageAt)
+        val queryPaginationRequest = QueryChannelsPaginationRequest(
+            sort = sort,
+            channelOffset = 0,
+            channelLimit = 30,
+            messageLimit = 10,
+            memberLimit = 30,
+        )
+
+        val result1 = listOf(firstChannel, secondChannel, thirdChannel).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
+
+        Assertions.assertTrue {
+            result1.first() == firstChannel && result1.last() == secondChannel
         }
     }
 }

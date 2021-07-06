@@ -168,7 +168,7 @@ public class QuerySort<T : Any> {
         public const val KEY_FIELD_NAME: String = "field"
         private const val MORE_ON_COMPARISON = 1
         private const val EQUAL_ON_COMPARISON = 0
-        private const val LESS_ON_COMPARISON = 1
+        private const val LESS_ON_COMPARISON = -1
 
         public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> =
             asc(fieldName, T::class)
