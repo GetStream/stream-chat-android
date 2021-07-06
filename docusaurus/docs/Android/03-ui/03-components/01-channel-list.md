@@ -17,7 +17,7 @@ It also implements swiping behaviour which allows handling different actions on 
 
 ## Usage
 
-To use `ChannelListView` in your layout, include it in your XML layout as shown below:
+To use `ChannelListView`, include it in your XML layout as shown below:
 
 ```xml
 <io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -26,9 +26,9 @@ To use `ChannelListView` in your layout, include it in your XML layout as shown 
     android:layout_height="match_parent" />
 ```
 
-We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then rendering it using the `ChannelListView`.
+We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then render it using the `ChannelListView`.
 
-The basic setup of the ViewModel and connecting it to the view is done the following way:
+The basic setup of the ViewModel and connecting it to the View is done the following way:
 
 ```kotlin
 // Instantiate the ViewModel
@@ -50,7 +50,7 @@ All the logic of subscribing to data emitted by the ViewModel is provided by the
 
 ## Handling Actions
 
-`ChannelListView` includes a set of channel actions. Actions on `ChannelListView` items are available on swipe. You can:
+`ChannelListView` includes a set of channel actions. Actions on `ChannelListView` items are available on swipe. With these, you can:
 
 * Delete the channel if you have sufficient permissions
 * See channel members
@@ -60,17 +60,17 @@ All the logic of subscribing to data emitted by the ViewModel is provided by the
 | --- | --- |
 |![Light_mode](../../assets/channel_action_light.png)|![Dark_mode](../../assets/channel_action_dark.png)|
 
-The following actions that are not implemented out of the box:
+The following actions are not implemented by default, so you should add your own listeners if you want to handle them:
 
 ```kotlin
 channelListView.setChannelItemClickListener { channel ->
-    // Handle Channel Click
+    // Handle channel click
 }
 channelListView.setChannelInfoClickListener { channel ->
-    // Handle Channel Info Click
+    // Handle channel info click
 }
 channelListView.setUserClickListener { user ->
-    // Handle Member Click
+    // Handle member click
 }
 ```
 
@@ -83,24 +83,22 @@ There are two ways to customize the appearance of `ChannelListView`:
 * Using XML attributes
 * Using the `TransformStyle` API at runtime to customize the style of all `ChannelListView` instances
 
-### Customization with XML attributes
-There are multiple XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
+### Using XML Attributes
 
-* `app:streamUiChannelDeleteEnabled` Specifying if the delete icon should be displayed.
-* `app:streamUiChannelDeleteIcon` A drawable reference for channel delete icon.
-* `app:streamUiChannelTitleTextColor` Color of channel title text.
-* `app:streamUiChannelTitleTextSize` Size of channel title text.
-* `app:streamUiChannelTitleFontAssets` Font assets reference for title font customization.
-* `app:streamUiChannelTitleTextFont` A font name for channel title.
-* `app:streamUiLastMessageTextSize` Size of last message text.
-* `app:streamUiLastMessageTextColor` Color of last message text.
-* `app:streamUiForegroundLayoutColor` A foreground color of channel list item.
-* `app:streamUiBackgroundLayoutColor` A background color of channel list item, visible when swiping the list item.
+There are many XML attributes that can be used to customize the appearance of the channel list. The most useful ones include:
 
+* `streamUiChannelDeleteEnabled`: Whether the delete icon should be displayed.
+* `streamUiChannelDeleteIcon`: Drawable reference for the channel delete icon.
+* `streamUiChannelTitleTextColor`: Color of the channel title text.
+* `streamUiChannelTitleTextSize`: Size of the channel title text.
+* `streamUiLastMessageTextSize`: Size of the last message text.
+* `streamUiLastMessageTextColor`: Color of the last message text.
+* `streamUiForegroundLayoutColor`: Foreground color of the channel list item.
+* `streamUiBackgroundLayoutColor`: Background color of the channel list item, visible when swiping the list item.
 
-The full list of available XML attributes is available under `ChannelListView` styleable [resource](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_view.xml).
+The full list of available XML attributes is available under `ChannelListView` styleable, [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_view.xml).
 
-### Customization at Runtime
+### Using Style Transformations
 
 The following example shows how to modify the style of all `ChannelListView` instances globally to:
 
@@ -137,12 +135,12 @@ These changes should have the following results:
 
 
 :::note
-The transformer should be set before the view is rendered to make sure that the new style was applied.
+The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
 
 ## Creating a Custom ViewHolder Factory
 
-`ChannelListView` provides a way to completely change the default ViewHolders and add different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's make an example that displays the channel's photo, name, and member count:
+`ChannelListView` provides a way to completely change the default ViewHolders and add different types of views. All you need to do is to provide your own `ChannelListItemViewHolderFactory`. Let's see an example that displays the channel's photo, name, and member count.
 
 1. Create the `custom_channel_list_item.xml` layout:
 
@@ -260,9 +258,7 @@ These changes should have the following results:
 
 ## Creating a Custom Loading View
 
-A custom loading view can be set using the `setLoadingView` method.
-
-Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
+A custom loading view can be set using the `setLoadingView` method. Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
 
 1. Add the Shimmer dependency in your `build.gradle` file's dependencies block:
 

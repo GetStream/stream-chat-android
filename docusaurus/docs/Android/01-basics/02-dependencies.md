@@ -13,7 +13,9 @@ allprojects {
 }
 ```
 
-Check the [Releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version and the changelog. [![Latest version badge](https://img.shields.io/github/v/release/GetStream/stream-chat-android)](https://github.com/GetStream/stream-chat-android/releases) 
+Check the [Releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version and the changelog.
+
+[![Latest version badge](https://img.shields.io/github/v/release/GetStream/stream-chat-android)](https://github.com/GetStream/stream-chat-android/releases)
 
 ### Client
 
@@ -25,7 +27,7 @@ dependencies {
 }
 ```
 
-### Offline support
+### Offline Support
 
 To use offline support in your application, add the following dependency:
 

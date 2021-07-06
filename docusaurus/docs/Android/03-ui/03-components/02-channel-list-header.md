@@ -1,10 +1,6 @@
 # Channel List Header
 
-
-`ChannelListHeaderView` is a component that shows the title of the channels list, current connection status, avatar of the current user, 
-and provides an action button which can be used to create a new conversation. 
-It is designed to be displayed at the top of the channels screen of your app. 
-It consists of the following elements: _User avatar_, _Title view_, _Action button_.
+`ChannelListHeaderView` is a component that shows the title of the channels list, the current connection status, the avatar of the current user, and provides an action button which can be used to create a new conversation. It is designed to be displayed at the top of the channels screen of your app.
  
  | Light Mode | Dark Mode |
  | --- | --- |
@@ -12,8 +8,9 @@ It consists of the following elements: _User avatar_, _Title view_, _Action butt
  
 ## Usage
 
-To use `ChannelListHeaderView` in your layout, include it in your XML layout as shown below:
-```XML
+To use `ChannelListHeaderView`, include it in your XML layout as shown below:
+
+```xml
 <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
     android:id="@+id/channelListHeaderView"
     android:layout_width="match_parent"
@@ -21,44 +18,39 @@ To use `ChannelListHeaderView` in your layout, include it in your XML layout as 
     />
 ```
 
-`ChannelListHeaderView` is supposed to work with `ChannelListHeaderViewModel`. 
-The basic setup of the ViewModel and connecting it with the view can be done in the following way:
+`ChannelListHeaderView` is supposed to work with `ChannelListHeaderViewModel`. The basic setup of the ViewModel and connecting it with the View can be done in the following way:
+
  ```kotlin
 // Instantiate the ViewModel
 val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 // Bind the ViewModel with ChannelListView 
 channelListHeaderViewModel.bindView(chanelHeaderView, viewLifecycleOwner)
-// Optional: setup listeners for user avatar and action button 
-chanelHeaderView.setOnActionButtonClickListener {
-    // e.g. Navigate to "Add new channel screen"
-}
-chanelHeaderView.setOnUserAvatarClickListener {
-    // handle avatar click here
-}
 ```
-All the logic of subscribing to data emitted by the ViewModel is provided by the `ChannelListHeaderViewModel::bindView` function. 
-By default, the ViewModel will make the view display avatar of the currently logged-in user and call the view to display "Searching for network" state when needed.
-  
+
+The `ChannelListHeaderViewModel::bindView` function provides all the logic of subscribing to data emitted by the ViewModel. By default, the ViewModel will make the View display the avatar of the currently logged-in user as well as the "Searching for network" state when needed.
+
  | Light Mode | Dark Mode |
  | --- | --- |
  |![Light_mode](../../assets/channels_header_waiting_for_network.png)|![Dark_mode](../../assets/channels_header_waiting_for_network_dark.png)|
 
 ## Handling Actions
 
-By default the view displays avatar and action button. In order to use them you need to set the following listeners:
+The View displays an avatar and action button by default. You can set listeners to handle when a user clicks these:
+
 ```kotlin
 channelListHeaderView.setOnActionButtonClickListener {
-    // Handle Action Button Click
+    // Handle action button click
 }
 channelListHeaderView.setOnUserAvatarClickListener {
-    // Handle User Avatar Click
+    // Handle user avatar click
 }
 ```
-If you want to hide those views you need to add XML attributes that modify their visibility. This is explained in the next section.
 
-## Customizations
+You can also use XML attributes to hide those Views instead. This is explained below.
 
-### Customization with XML Attributes
+## Customization
+
+### Using XML Attributes
 
 The appearance of `ChannelListHeaderView` can be conveniently modified using its XML attributes.   
 ```xml
@@ -73,10 +65,10 @@ The appearance of `ChannelListHeaderView` can be conveniently modified using its
         />
 ```
 
-The example above hides the avatar view, makes the title text bold and sets the drawable of the action button to a drawable specified.
+The example above hides the avatar view, makes the title text bold and sets the drawable of the action button to a custom icon.
     
 | Before | After |
 | --- | --- |
 |![Light_mode](../../assets/channels_header.png)|![Dark_mode](../../assets/channels_header_after_customization.png)|
 
-A full list of available XML attributes is available [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_header_view.xml)
+A full list of available XML attributes is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_header_view.xml).
