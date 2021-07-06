@@ -73,7 +73,7 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     @Deprecated(
         message = "Use user live data instead",
-        replaceWith = ReplaceWith("user.value!!"),
+        replaceWith = ReplaceWith("user.value"),
         level = DeprecationLevel.WARNING,
     )
     public val currentUser: User
