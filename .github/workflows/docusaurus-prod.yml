@@ -1,9 +1,9 @@
-name: docusaurus
+name: Publish Docusaurus to prod
 
 on:
   push:
     branches:
-      - main # default branch name for each repo that docs should be push from
+      - main
   workflow_dispatch:
 jobs:
   push_docusaurus:
@@ -17,5 +17,7 @@ jobs:
           java-version: 1.8
       - name: push
         uses: GetStream/push-stream-chat-docusaurus-action@main
+        with:
+          target-branch: 'production'
         env:
           DOCUSAURUS_GH_TOKEN: ${{ secrets.DOCUSAURUS_GH_TOKEN }}
