@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.GsonChatApi
+import io.getstream.chat.android.client.api.OfflineMode
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
@@ -34,6 +35,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.offline.OfflineModule
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.GsonChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
@@ -86,6 +88,11 @@ internal open class BaseChatModule(
             networkScope,
         )
     }
+    val offlineModule: OfflineModule? = when (config.offlineMode) {
+        OfflineMode.None -> null
+        OfflineMode.InMemory -> OfflineModule(appContext, false)
+        OfflineMode.Persistence -> OfflineModule(appContext, true)
+    }
 
     //region Modules
 
@@ -103,6 +110,10 @@ internal open class BaseChatModule(
 
     fun notifications(): ChatNotifications {
         return defaultNotifications
+    }
+
+    fun offlineModule(): OfflineModule? {
+        return offlineModule
     }
 
     //endregion
