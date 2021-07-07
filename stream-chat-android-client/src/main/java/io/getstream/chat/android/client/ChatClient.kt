@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.OfflineMode
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -64,6 +65,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
+import io.getstream.chat.android.client.offline.OfflineModule
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -103,6 +105,8 @@ public class ChatClient internal constructor(
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
+    @InternalStreamChatApi
+    public val offlineModule: OfflineModule?,
 ) {
 
     @InternalStreamChatApi
@@ -156,6 +160,7 @@ public class ChatClient internal constructor(
                 }
             }
         }
+        offlineModule?.init(this)
         logger.logI("Initialised: " + getVersion())
     }
 
@@ -1387,6 +1392,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var offlineMode: OfflineMode = OfflineMode.None
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1485,6 +1491,11 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
+        @InternalStreamChatApi
+        public fun withOffline(offlineMode: OfflineMode): Builder = apply {
+            this.offlineMode = offlineMode
+        }
+
         public fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
@@ -1503,20 +1514,22 @@ public class ChatClient internal constructor(
             )
 
             config.enableMoshi = enableMoshi
+            config.offlineMode = offlineMode
 
             val module =
                 ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)
 
             val result = ChatClient(
-                config,
-                module.api(),
-                module.socket(),
-                module.notifications(),
-                tokenManager,
-                module.socketStateService,
-                module.queryChannelsPostponeHelper,
-                EncryptedPushNotificationsConfigStore(appContext),
-                module.userStateService,
+                config = config,
+                api = module.api(),
+                socket = module.socket(),
+                notifications = module.notifications(),
+                tokenManager = tokenManager,
+                socketStateService = module.socketStateService,
+                queryChannelsPostponeHelper = module.queryChannelsPostponeHelper,
+                encryptedUserConfigStorage = EncryptedPushNotificationsConfigStore(appContext),
+                userStateService = module.userStateService,
+                offlineModule = module.offlineModule
             )
 
             instance = result

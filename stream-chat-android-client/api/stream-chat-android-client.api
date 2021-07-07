@@ -50,6 +50,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getNotificationHandler ()Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;
+	public final fun getOfflineModule ()Lio/getstream/chat/android/client/offline/OfflineModule;
 	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -186,6 +187,7 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun getCdnTimeout ()J
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLogger$Config;
+	public final fun getOfflineMode ()Lio/getstream/chat/android/client/api/OfflineMode;
 	public final fun getWarmUp ()Z
 	public final fun getWssUrl ()Ljava/lang/String;
 	public final fun isAnonymous ()Z
@@ -195,6 +197,21 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun setCdnTimeout (J)V
 	public final fun setHttpUrl (Ljava/lang/String;)V
 	public final fun setWssUrl (Ljava/lang/String;)V
+}
+
+public abstract class io/getstream/chat/android/client/api/OfflineMode {
+}
+
+public final class io/getstream/chat/android/client/api/OfflineMode$InMemory : io/getstream/chat/android/client/api/OfflineMode {
+	public static final field INSTANCE Lio/getstream/chat/android/client/api/OfflineMode$InMemory;
+}
+
+public final class io/getstream/chat/android/client/api/OfflineMode$None : io/getstream/chat/android/client/api/OfflineMode {
+	public static final field INSTANCE Lio/getstream/chat/android/client/api/OfflineMode$None;
+}
+
+public final class io/getstream/chat/android/client/api/OfflineMode$Persistence : io/getstream/chat/android/client/api/OfflineMode {
+	public static final field INSTANCE Lio/getstream/chat/android/client/api/OfflineMode$Persistence;
 }
 
 public final class io/getstream/chat/android/client/api/models/AndFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
@@ -2746,9 +2763,7 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 }
 
 public final class io/getstream/chat/android/client/offline/OfflineModule {
-	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Landroid/content/Context;Lio/getstream/chat/android/client/models/Config;)V
-	public final fun buildRepo (Lio/getstream/chat/android/client/models/User;Z)V
-	public static synthetic fun buildRepo$default (Lio/getstream/chat/android/client/offline/OfflineModule;Lio/getstream/chat/android/client/models/User;ZILjava/lang/Object;)V
+	public fun <init> (Landroid/content/Context;Z)V
 }
 
 public final class io/getstream/chat/android/client/offline/repository/database/ChatDatabase_Impl {
