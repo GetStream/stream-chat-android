@@ -341,7 +341,7 @@ client.getRepliesMore(
 
 ### Quoting a Message
 
-Instead of replying in a thread, it's also possible to quote a message. Quoting a message doesn't result in the creation of a thread; the message is quoted inline.
+Instead of replying in a thread, you can quote a message. Quoting a message doesn't result in the creation of a thread; the message is quoted inline.
 
 To quote a message, simply provide the `replyMessageId` when sending a message:
 

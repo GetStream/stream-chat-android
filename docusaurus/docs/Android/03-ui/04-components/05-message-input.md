@@ -77,7 +77,7 @@ messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMes
 }
 ```
 
-It is also possible to change the handler that sends messages. By default, this is set up by `bindView` and calls into the ViewModel to perform these actions.  
+You can also change the handler that sends messages. By default, this is set up by `bindView` and calls into the ViewModel to perform these actions.  
 
 ```kotlin
 messageInputView.setSendMessageHandler(
