@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
 import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -204,6 +205,13 @@ internal interface RetrofitApi {
     fun updateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersRequest,
+    ): RetrofitCall<UpdateUsersResponse>
+
+    @PATCH("/users")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
+    fun partialUpdateUsers(
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: PartialUpdateUsersRequest,
     ): RetrofitCall<UpdateUsersResponse>
 
     @GET("/users")
