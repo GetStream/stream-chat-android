@@ -1084,6 +1084,11 @@ public class ChatClient internal constructor(
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
     ): Call<User> {
+        if (id != getCurrentUser()?.id) {
+            logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")
+            return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))
+        }
+
         return api.partialUpdateUser(
             id = id,
             set = set,
