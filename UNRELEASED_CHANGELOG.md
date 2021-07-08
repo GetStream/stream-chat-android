@@ -81,6 +81,6 @@ Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelL
             it.copy(threadsEnabled = false)
         }
 ```
-`MentionListView` now it is possible to customize background, empty state drawable and empty state label. It can be customisable with XML parameters and with theme.
+- `MentionListView` can be customisable with XML parameters and with a theme.
 
 ### ❌ Removed
