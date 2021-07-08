@@ -43,3 +43,10 @@ internal data class DownstreamUserDto(
 
     val extraData: Map<String, Any>,
 )
+
+@JsonClass(generateAdapter = true)
+internal data class PartialUpdateUserDto(
+    val id: String,
+    val set: Map<String, Any>,
+    val unset: List<String>,
+)

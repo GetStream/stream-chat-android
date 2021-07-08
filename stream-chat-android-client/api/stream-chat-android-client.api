@@ -70,6 +70,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun muteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun onMessageReceived (Lcom/google/firebase/messaging/RemoteMessage;)V
 	public final fun onNewTokenReceived (Ljava/lang/String;)V
+	public final fun partialUpdateUser (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun partialUpdateUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;

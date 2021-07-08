@@ -131,6 +131,13 @@ internal interface ChatApi {
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>
 
+    @CheckResult
+    fun partialUpdateUser(
+        id: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<User>
+
     fun queryChannel(
         channelType: String,
         channelId: String = "",

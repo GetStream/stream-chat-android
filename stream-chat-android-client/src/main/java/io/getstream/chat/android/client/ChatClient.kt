@@ -1069,6 +1069,28 @@ public class ChatClient internal constructor(
         return updateUsers(listOf(user)).map { it.first() }
     }
 
+    /**
+     * Updates specific user fields retaining the custom data fields which were set previously.
+     *
+     * @param id user ids
+     * @param set the key-value data which will be added to the existing user object
+     * @param unset the list of fields which will be removed from the existing user object
+     *
+     * @return executable async [Call]
+     */
+    @CheckResult
+    public fun partialUpdateUser(
+        id: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<User> {
+        return api.partialUpdateUser(
+            id = id,
+            set = set,
+            unset = unset,
+        )
+    }
+
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
