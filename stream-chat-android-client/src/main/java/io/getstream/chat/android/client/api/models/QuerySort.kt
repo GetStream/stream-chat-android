@@ -27,23 +27,33 @@ public class QuerySort<T : Any> {
     private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T>? =
         this.let { compareProperty ->
             Comparator { c0, c1 ->
-                (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
-                    (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
-                        a.compareTo(b) * sortDirection.value
-                    }
-                } ?: EQUAL_ON_COMPARISON
+                compare(
+                    (compareProperty.getter.call(c0) as? Comparable<Any>),
+                    (compareProperty.getter.call(c1) as? Comparable<Any>),
+                    sortDirection
+                )
             }
         }
 
     @Suppress("UNCHECKED_CAST")
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
-            (o1.getMemberPropertyOrExtra(this) as? Comparable<Any>)?.let { a ->
-                (o2.getMemberPropertyOrExtra(this) as? Comparable<Any>)?.let { b ->
-                    a.compareTo(b) * sortDirection.value
-                }
-            } ?: EQUAL_ON_COMPARISON
+            compare(
+                (o1.getMemberPropertyOrExtra(this) as? Comparable<Any>),
+                (o2.getMemberPropertyOrExtra(this) as? Comparable<Any>),
+                sortDirection
+            )
         }
+
+    private fun compare(first: Comparable<Any>?, second: Comparable<Any>?, sortDirection: SortDirection): Int {
+        return when {
+            first == null && second == null -> EQUAL_ON_COMPARISON
+            first == null && second != null -> LESS_ON_COMPARISON * sortDirection.value
+            first != null && second == null -> MORE_ON_COMPARISON * sortDirection.value
+            first != null && second != null -> first.compareTo(second) * sortDirection.value
+            else -> error("Impossible case!")
+        }
+    }
 
     private fun Any.getMemberPropertyOrExtra(name: String): Any? =
         name.snakeToLowerCamelCase().let { fieldName ->
@@ -132,7 +142,10 @@ public class QuerySort<T : Any> {
 
     private sealed class SortAttribute<T> {
         abstract val name: String
-        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) : SortAttribute<T>()
+
+        data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
+            SortAttribute<T>()
+
         data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()
     }
 
@@ -153,7 +166,9 @@ public class QuerySort<T : Any> {
     public companion object {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
+        private const val MORE_ON_COMPARISON = 1
         private const val EQUAL_ON_COMPARISON = 0
+        private const val LESS_ON_COMPARISON = -1
 
         public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> =
             asc(fieldName, T::class)

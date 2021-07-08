@@ -38,6 +38,7 @@
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed bug related to editing message in offline mode. The bug was causing message to reset to the previous one after connection was recovered.
+- Fixed violation of comparison contract for nullable fields in `QuerySort::comparator`
 
 ### ⬆️ Improved
 
