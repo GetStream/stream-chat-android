@@ -8,22 +8,22 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="streamUiTheme">@style/StreamTheme</item>
-        <item name="streamUiMentionSuggestionAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
-        <item name="streamUiReplyAvatarStyle">@style/ReplyAvatarStyle</item>
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
-        <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListAvatarTheme</item>
+        <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListHeaderAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
         <item name="streamUiChannelListHeaderStyle">@style/ChannelListHeaderTheme</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/ChannelListHeaderAvatarTheme</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/MentionPreviewAvatarTheme</item>
+        <item name="streamUiMentionListStyle">@style/MentionListTheme</item>
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/ChannelActionsDialogAvatarStyle</item>
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
+        <item name="streamUiMentionSuggestionAvatarStyle">@style/MentionSuggestionAvatarStyle</item>
         <item name="streamUiSearchResultAvatarStyle">@style/SearchResultAvatarStyle</item>
-        <item name="streamUiMessageOptionsAvatarStyle">@style/SearchResultAvatarStyle</item>
+        <item name="streamUiMessageOptionsAvatarStyle">@style/MessageOptionsAvatarStyle</item>
         <item name="streamUiReplyAvatarStyle">@style/ReplyAvatarStyle</item>
         <item name="streamUiThreadAvatarStyle">@style/ThreadAvatarStyle</item>
         <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderTheme</item>
@@ -31,7 +31,10 @@
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar" />
+
     <style name="MessageListHeaderAvatarTheme" parent="StreamUi.MessageList.Header.Avatar"/>
+
+    <style name="MentionListTheme" parent="StreamUi.MentionList"/>
 
     <style name="MentionPreviewAvatarTheme" parent="StreamUi.MentionPreview.Item.Avatar"/>
 
@@ -40,8 +43,8 @@
     <style name="ChannelListHeaderTheme" parent="StreamUi.ChannelListHeader"/>
 
     <style name="ChannelListHeaderAvatarTheme" parent="StreamUi.ChannelListHeader.Avatar">
-        <item name="android:layout_width">12dp</item>
-        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
     </style>
 
     <style name="ChannelActionsDialogAvatarStyle" parent="StreamUi.ChannelActions.Dialog.Avatar"/>
@@ -56,7 +59,7 @@
 
     <style name="ReplyAvatarStyle" parent="StreamUi.Reply.Avatar"/>
 
-    <style name="ThreadAvatarStyle" parent="StreamUi.Reply.Avatar"/>
+    <style name="ThreadAvatarStyle" parent="StreamUi.Thread.Avatar"/>
       
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>

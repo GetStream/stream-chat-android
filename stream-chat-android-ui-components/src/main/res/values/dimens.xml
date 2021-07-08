@@ -14,6 +14,7 @@
     <dimen name="stream_ui_elevation_small">3dp</dimen>
 
     <!--AvatarView-->
+    <dimen name="stream_ui_avatar_size_extra_tiny">18dp</dimen>
     <dimen name="stream_ui_avatar_size_tiny">24dp</dimen>
     <dimen name="stream_ui_avatar_size_small">32dp</dimen>
     <dimen name="stream_ui_avatar_size_medium">40dp</dimen>

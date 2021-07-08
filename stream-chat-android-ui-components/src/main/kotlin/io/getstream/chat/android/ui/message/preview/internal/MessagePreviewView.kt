@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 
 internal class MessagePreviewView : FrameLayout {
@@ -60,6 +61,14 @@ internal class MessagePreviewView : FrameLayout {
         attrs ?: return
     }
 
+    fun styleView(previewStyle: PreviewStyle) {
+        previewStyle.run {
+            messageSenderTextStyle.apply(binding.senderNameLabel)
+            messageTextStyle.apply(binding.messageLabel)
+            messageTimeTextStyle.apply(binding.messageTimeLabel)
+        }
+    }
+
     fun setMessage(message: Message, currentUserMention: String? = null) {
         binding.avatarView.setUserData(message.user)
         binding.senderNameLabel.text = formatChannelName(message)
@@ -100,4 +109,10 @@ internal class MessagePreviewView : FrameLayout {
 
         return message.text.trim()
     }
+
+    data class PreviewStyle(
+        val messageSenderTextStyle: TextStyle,
+        val messageTextStyle: TextStyle,
+        val messageTimeTextStyle: TextStyle,
+    )
 }

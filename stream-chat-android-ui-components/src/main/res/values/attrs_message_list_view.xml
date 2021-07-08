@@ -8,7 +8,6 @@
         <attr name="streamUiScrollButtonRippleColor" format="color|reference" />
         <attr name="streamUiScrollButtonBadgeColor" format="color|reference" />
         <attr name="streamUiScrollButtonIcon" format="reference" />
-
         <attr name="streamUiScrollButtonBadgeTextSize" format="dimension|reference" />
         <attr name="streamUiScrollButtonBadgeTextColor" format="color|reference" />
         <attr name="streamUiScrollButtonBadgeTextFont" format="reference" />
