@@ -257,7 +257,9 @@
 
     <style name="StreamUiAttachmentGalleryActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
-    <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
+    </style>
 
     <style name="StreamUiAttachmentActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
@@ -491,5 +493,6 @@
     <style name="StreamUi.MediaActivity.Icon" parent="StreamUi">
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">150dp</item>
+        <item name="android:src">@drawable/stream_ui_ic_audio</item>
     </style>
 </resources>
