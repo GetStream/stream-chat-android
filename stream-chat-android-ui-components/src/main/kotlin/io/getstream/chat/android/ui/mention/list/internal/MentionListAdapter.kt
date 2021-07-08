@@ -24,10 +24,13 @@ internal class MentionListAdapter(
     private var mentionSelectedListener: MentionSelectedListener? = null
     private var dateFormatter = DateFormatter.from(context)
 
+    var previewStyle: MessagePreviewView.PreviewStyle? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
+                previewStyle?.let(binding.root::styleView)
                 binding.root.dateFormatter = dateFormatter
                 MessagePreviewViewHolder(binding.root)
             }

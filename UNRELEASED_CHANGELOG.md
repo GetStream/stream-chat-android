@@ -82,5 +82,6 @@ Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelL
             it.copy(threadsEnabled = false)
         }
 ```
+- `MentionListView` can be customisable with XML parameters and with a theme.
 
 ### ❌ Removed
