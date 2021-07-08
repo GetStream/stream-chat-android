@@ -333,6 +333,20 @@
         <item name="android:layout_marginBottom">12dp</item>
     </style>
 
+    <style name="StreamUi.MentionList" parent="StreamUi">
+        <item name="streamUiBackground">@color/stream_ui_white_snow</item>
+        <item name="streamUiEmptyStateDrawable">@drawable/stream_ui_ic_mentions_empty</item>
+        <item name="streamUiSenderNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSenderNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSenderNameTextStyle">normal</item>
+        <item name="streamUiMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextStyle">normal</item>
+        <item name="streamUiMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTimeTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTimeTextStyle">normal</item>
+    </style>
+
     <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
