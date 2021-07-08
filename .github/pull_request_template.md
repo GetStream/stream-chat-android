@@ -27,7 +27,7 @@ _Explain how this change can be tested (or why it can't be tested)_
 - [ ] Changelog is updated with client-facing changes
 - [ ] New code is covered by unit tests
 - [ ] Comparison screenshots added for visual changes
-- [ ] Affected documentation updated (CMS, cookbooks, tutorial)
+- [ ] Affected documentation updated (docusaurus, tutorial, CMS (task created))
 - [ ] Reviewers added
 
 ### 🎉 GIF
