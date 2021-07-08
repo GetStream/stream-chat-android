@@ -121,3 +121,31 @@ Or you can hide the avatar that's shown by default on the message list header:
 :::note
 Your custom themes can use the default styles can use the default styles for these Views as their parent. See the [sample app's themes](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components-sample/src/main/res/values/themes.xml) for examples of this.
 :::
+
+#### Themes for Activities
+In the SDK there are also some activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. To customize this activity, it is necessary to override the activity in your manisfest: 
+
+**AndroidManifest.xml**
+
+```
+<activity
+    android:name="io.getstream.chat.android.ui.gallery.AttachmentMediaActivity"
+    android:theme="@style/StreamTheme"
+    tools:replace="android:theme"
+    />
+```
+
+**themes.xml**
+
+```
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+     <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
+</style>
+
+<style name="MediaActivityIconStyle" parent="StreamUi.MediaActivity.Icon">
+    <item name="android:layout_width">170dp</item>
+    <item name="android:layout_height">170dp</item>
+    <item name="android:src">@drawable/stream_ui_ic_audio</item>
+</style>
+```
+
