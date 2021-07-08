@@ -31,8 +31,6 @@
     
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/secondTheirUserImage"
-        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
-        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
         android:layout_marginStart="@dimen/stream_ui_message_thread_reply_avatar_half_size"
         style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintStart_toStartOf="@id/firstTheirUserImage"
@@ -46,8 +44,7 @@
     
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/firstTheirUserImage"
-        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
-        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintStart_toEndOf="@id/threadsOrnamentLeft"
         app:layout_constraintBottom_toBottomOf="parent"
         app:streamUiAvatarBorderWidth="1dp"
@@ -75,8 +72,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/secondMineUserImage"
-        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
-        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        style="?attr/streamUiThreadAvatarStyle"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@id/firstMineUserImage"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -88,8 +84,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/firstMineUserImage"
-        android:layout_width="@dimen/stream_ui_message_thread_reply_avatar_size"
-        android:layout_height="@dimen/stream_ui_message_thread_reply_avatar_size"
+        style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintEnd_toStartOf="@id/threadsOrnamentRight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:streamUiAvatarBorderWidth="1dp"

@@ -356,6 +356,8 @@
 
     <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
@@ -405,8 +407,8 @@
     </style>
 
     <style name="StreamUi.Thread.Avatar" parent="StreamUi.BaseAvatar">
-        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
-        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_extra_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_extra_tiny</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>

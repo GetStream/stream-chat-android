@@ -11,7 +11,7 @@
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
-        <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListAvatarTheme</item>
+        <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListHeaderAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
         <item name="streamUiChannelListHeaderStyle">@style/ChannelListHeaderTheme</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/ChannelListHeaderAvatarTheme</item>
@@ -20,7 +20,7 @@
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/ChannelActionsDialogAvatarStyle</item>
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
-        <item name="streamUiMentionSuggestionAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
+        <item name="streamUiMentionSuggestionAvatarStyle">@style/MentionSuggestionAvatarStyle</item>
         <item name="streamUiSearchResultAvatarStyle">@style/SearchResultAvatarStyle</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/MessageOptionsAvatarStyle</item>
         <item name="streamUiReplyAvatarStyle">@style/ReplyAvatarStyle</item>
@@ -55,7 +55,7 @@
 
     <style name="ReplyAvatarStyle" parent="StreamUi.Reply.Avatar"/>
 
-    <style name="ThreadAvatarStyle" parent="StreamUi.Reply.Avatar"/>
+    <style name="ThreadAvatarStyle" parent="StreamUi.Thread.Avatar"/>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>

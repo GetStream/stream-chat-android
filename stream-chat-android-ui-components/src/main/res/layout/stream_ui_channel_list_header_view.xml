@@ -11,13 +11,11 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/userAvatar"
-        style="@attr/streamUiChannelListHeaderAvatarStyle"
-        android:layout_width="@dimen/stream_ui_avatar_size_medium"
-        android:layout_height="@dimen/stream_ui_avatar_size_medium"
+        style="?attr/streamUiChannelListHeaderAvatarStyle"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/separator"
         />
 
     <TextView
