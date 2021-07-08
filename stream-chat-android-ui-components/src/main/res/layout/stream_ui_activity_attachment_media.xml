@@ -15,8 +15,7 @@
 
     <ImageView
         android:id="@+id/ivAudio"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        style="@style/StreamUi.MediaActivity.Icon"
         android:background="@drawable/stream_ui_ic_audio"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
