@@ -393,7 +393,7 @@ public class MessageListView : ConstraintLayout {
                     firstVisiblePosition = currentFirstVisible
 
                     val realLastVisibleMessage =
-                        min(max(currentLastVisible, getLastSeenMessagePosition()), currentList.size)
+                        min(max(currentLastVisible, getLastSeenMessagePosition()), currentList.lastIndex)
                     updateLastSeen(currentList[realLastVisibleMessage])
 
                     val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
