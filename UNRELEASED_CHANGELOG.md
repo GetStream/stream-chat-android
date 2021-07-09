@@ -1,5 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fix scroll bug in the `MessageListView` that produces an exception related to index out of bounds.
 
 ### ⬆️ Improved
 
