@@ -276,7 +276,7 @@
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/StreamUi.AttachmentGallery.Avatar</item>
-        <item name="streamUiMentionSuggestionAvatarStyle">@style/StreamUi.MentionSuggestion.Avatar</item>
+        <item name="streamUiSuggestionListViewMentionAvatarStyle">@style/StreamUi.SuggestionListView.Mention.Avatar</item>
         <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
@@ -388,7 +388,7 @@
         <item name="streamUiAvatarBorderWidth">1dp</item>
     </style>
 
-    <style name="StreamUi.MentionSuggestion.Avatar" parent="StreamUi.BaseAvatar">
+    <style name="StreamUi.SuggestionListView.Mention.Avatar" parent="StreamUi.BaseAvatar">
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
@@ -489,7 +489,7 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
-    <style name="StreamUi.SuggestionListView"  parent="StreamUi.MentionSuggestion.Avatar">
+    <style name="StreamUi.SuggestionListView"  parent="StreamUi.SuggestionListView.Mention.Avatar">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
 

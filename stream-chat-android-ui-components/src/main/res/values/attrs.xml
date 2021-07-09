@@ -20,7 +20,6 @@
         <attr name="streamUiGlobalAvatarOnlineIndicatorColor" format="reference|color" />
         <attr name="streamUiChannelActionsDialogStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryAvatarStyle" format="reference" />
-        <attr name="streamUiMentionSuggestionAvatarStyle" format="reference" />
         <attr name="streamUiSearchResultAvatarStyle" format="reference" />
         <attr name="streamUiMessageOptionsAvatarStyle" format="reference" />
         <attr name="streamUiReplyAvatarStyle" format="reference" />
@@ -28,5 +27,6 @@
         <attr name="streamUiMessageListHeaderStyle" format="reference" />
         <attr name="streamUiSearchInputViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewStyle" format="reference" />
+        <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
     </declare-styleable>
 </resources>
