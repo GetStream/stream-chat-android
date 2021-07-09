@@ -475,6 +475,7 @@ public final class com/getstream/sdk/chat/view/MessageListView : androidx/constr
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)V
+	public final fun requireStyle ()Lcom/getstream/sdk/chat/view/MessageListViewStyle;
 	public final fun scrollToBottom ()V
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lcom/getstream/sdk/chat/view/MessageListView$AttachmentClickListener;)V
