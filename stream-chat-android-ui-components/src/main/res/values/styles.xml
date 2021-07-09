@@ -281,6 +281,7 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
         <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
+        <item name="streamUiSuggestionListViewStyle">@style/StreamUi.SuggestionListView</item>
     </style>
 
     <style name="StreamUi">
@@ -486,5 +487,40 @@
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
+    </style>
+
+    <style name="StreamUi.SuggestionListView"  parent="StreamUi.MentionSuggestion.Avatar">
+        <!-- Background -->
+        <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
+
+        <!-- Command title text style -->
+        <item name="streamUiCommandsTitleTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsTitleTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiCommandsTitleStyle">normal</item>
+
+        <!-- Command name text style -->
+        <item name="streamUiCommandsNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiCommandsNameStyle">normal</item>
+
+        <!-- Command description text style -->
+        <item name="streamUiCommandsDescriptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsDescriptionTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiCommandsDescriptionStyle">normal</item>
+
+        <!-- Mention username text style -->
+        <item name="streamUiMentionsUserNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMentionsUserNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMentionsUserNameStyle">normal</item>
+
+        <!-- Mention name text style -->
+        <item name="streamUiMentionsNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMentionsNameTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMentionsNameStyle">normal</item>
+
+        <!-- Icons -->
+        <item name="streamUiMentionsIcon">@drawable/stream_ui_ic_mention</item>
+        <item name="streamUiCommandIcon">@drawable/stream_ui_ic_command_circle</item>
+        <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command_blue</item>
     </style>
 </resources>

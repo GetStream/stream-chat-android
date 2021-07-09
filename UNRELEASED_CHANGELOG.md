@@ -75,6 +75,7 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
 ### ⬆️ Improved
 Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView. 
 ### ✅ Added
+- Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
 
 ### ⚠️ Changed
 - 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
