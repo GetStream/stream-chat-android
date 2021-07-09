@@ -28,6 +28,13 @@
         <item name="streamUiThreadAvatarStyle">@style/ThreadAvatarStyle</item>
         <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderTheme</item>
         <item name="streamUiSearchInputViewStyle">@style/SearchInputViewTheme</item>
+        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/AttachmentGalleryCloseButtonStyle</item>
+        <item name="streamUiAttachmentGalleryTitleStyle">@style/AttachmentGalleryTitleStyle</item>
+        <item name="streamUiAttachmentGalleryDateStyle">@style/AttachmentGalleryDateStyle</item>
+        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/AttachmentGalleryActionsMenuStyle</item>
+        <item name="streamUiAttachmentGalleryImageCountStyle">@style/AttachmentGalleryImageCountStyle</item>
+        <item name="streamUiAttachmentGalleryLeftIconStyle">@style/AttachmentGalleryLeftIconStyle</item>
+        <item name="streamUiAttachmentGalleryRightIconStyle">@style/AttachmentGalleryRightIconStyle</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar" />
@@ -68,4 +75,16 @@
     <style name="MessageListHeaderTheme" parent="StreamUi.MessageListHeader" />
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
+
+    <style name="AttachmentGalleryCloseButtonStyle" parent="StreamUi.AttachmentGallery.CloseButton"/>
+
+    <style name="AttachmentGalleryTitleStyle" parent="StreamUi.AttachmentGallery.Title"/>
+
+    <style name="AttachmentGalleryActionsMenuStyle" parent="StreamUi.AttachmentGallery.ActionsMenu"/>
+
+    <style name="AttachmentGalleryImageCountStyle" parent="StreamUi.AttachmentGallery.ImageCount"/>
+
+    <style name="AttachmentGalleryLeftIconStyle" parent="StreamUi.AttachmentGallery.LeftIcon"/>
+
+    <style name="AttachmentGalleryRightIconStyle" parent="StreamUi.AttachmentGallery.RightIcon"/>
 </resources>
