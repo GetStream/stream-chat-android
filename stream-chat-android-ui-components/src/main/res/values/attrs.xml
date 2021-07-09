@@ -27,5 +27,6 @@
         <attr name="streamUiThreadAvatarStyle" format="reference" />
         <attr name="streamUiMessageListHeaderStyle" format="reference" />
         <attr name="streamUiSearchInputViewStyle" format="reference" />
+        <attr name="streamUiMediaActivityIconStyle" format="reference" />
     </declare-styleable>
 </resources>
