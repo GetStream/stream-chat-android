@@ -1395,7 +1395,7 @@ public class ChatClient internal constructor(
 
         @Deprecated(
             message = "Use logLevel function with ChatLogLevel parameter instead",
-            level = DeprecationLevel.WARNING,
+            level = DeprecationLevel.ERROR,
         )
         public fun logLevel(level: String): Builder {
             logLevel = ChatLogLevel.valueOf(level)

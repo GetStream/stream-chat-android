@@ -113,7 +113,8 @@ internal open class BaseDomainTest {
     fun createClient(): ChatClient {
         val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
         return ChatClient.Builder(data.apiKey, getApplicationContext())
-            .logLevel(logLevel)
+            // TODO Review if we need it
+            // .logLevel(logLevel)
             .loggerHandler(TestLoggerHandler())
             .build()
     }
