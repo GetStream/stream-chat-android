@@ -31,7 +31,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.05 ⌛ | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
-| `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.05.30 ⌛ | 2021.06.30 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
+| `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.13 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Setting external SuggestionListView is no longer necessary |
 | `ChatDomain.usecases` <br/>*offline* | 2021.04.06 | 2021.05.06<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Replace this property call by obtaining a specific use case directly from ChatDomain |
 | `MessageInputView#setMembers` <br/>*ui-components* | 2021.04.07 | 2021.04.21<br/>4.9.0 | 2021.05.05<br>4.10.0 | Use MessageInputView::setUserLookupHandler instead of manually passing the list of users |
