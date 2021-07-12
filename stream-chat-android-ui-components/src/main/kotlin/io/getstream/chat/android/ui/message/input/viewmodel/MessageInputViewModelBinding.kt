@@ -34,12 +34,6 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             MessageInputView.InputMode.Normal
         }
     }
-    @Suppress("DEPRECATION_ERROR")
-    editMessage.observe(lifecycleOwner) { message ->
-        message?.let {
-            view.inputMode = MessageInputView.InputMode.Edit(it)
-        }
-    }
     messageToEdit.observe(lifecycleOwner) { message ->
         message?.let {
             view.inputMode = MessageInputView.InputMode.Edit(it)
