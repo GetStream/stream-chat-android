@@ -66,14 +66,6 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
             view.setNormalMode()
         }
     }
-    @Suppress("DEPRECATION_ERROR")
-    editMessage.observe(lifecycleOwner) { message ->
-        if (message != null) {
-            view.setEditMode(message)
-        } else {
-            view.setNormalMode()
-        }
-    }
     messageToEdit.observe(lifecycleOwner) { message ->
         if (message != null) {
             view.setEditMode(message)

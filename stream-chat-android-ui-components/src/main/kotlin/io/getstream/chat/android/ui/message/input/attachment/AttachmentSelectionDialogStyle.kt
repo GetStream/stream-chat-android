@@ -8,13 +8,13 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 
 public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
-    @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.ERROR)
     val pictureAttachmentIconTint: ColorStateList?,
     val fileAttachmentIcon: Drawable,
-    @Deprecated(message = "Use fileAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use fileAttachmentIcon instead", level = DeprecationLevel.ERROR)
     val fileAttachmentIconTint: ColorStateList?,
     val cameraAttachmentIcon: Drawable,
-    @Deprecated(message = "Use cameraAttachmentIcon instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use cameraAttachmentIcon instead", level = DeprecationLevel.ERROR)
     val cameraAttachmentIconTint: ColorStateList?,
 ) {
     public companion object {
