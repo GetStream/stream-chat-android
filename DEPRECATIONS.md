@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.06 | 2021.07.20 | 2021.08.03 | Use `MessageListViewModel#user.value` instead |
+| `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.07.27 ⌛ | 2021.08.10 ⌛ | Use `MessageListViewModel#user.value` instead |
 | `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.07.29 ⌛ | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
 | `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.13<br/>4.14.0 | 2021.08.14 ⌛ | Use `ChatDomain#sendMessage(message: Message)` instead |
 | Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
