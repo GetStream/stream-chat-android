@@ -2684,9 +2684,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getErrorCaseNotificationTitle ()Ljava/lang/String;
 	public fun getErrorNotificationGroupKey ()Ljava/lang/String;
 	public fun getErrorNotificationGroupSummaryId ()I
-	public fun getFirebaseChannelIdKey ()Ljava/lang/String;
-	public fun getFirebaseChannelTypeKey ()Ljava/lang/String;
-	public fun getFirebaseMessageIdKey ()Ljava/lang/String;
 	public fun getFirebaseMessageParser ()Lio/getstream/chat/android/client/notifications/FirebaseMessageParser;
 	public fun getFirebaseMessaging ()Lcom/google/firebase/messaging/FirebaseMessaging;
 	public fun getNewMessageIntent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
@@ -2694,7 +2691,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationChannelName ()Ljava/lang/String;
 	public fun getNotificationGroupKey (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
-	public fun getSmallIcon ()I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onFirebaseMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 }
