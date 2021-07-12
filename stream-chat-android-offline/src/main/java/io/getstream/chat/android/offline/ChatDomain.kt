@@ -330,7 +330,8 @@ public sealed interface ChatDomain {
      */
     @Deprecated(
         message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)")
+        replaceWith = ReplaceWith("sendMessage(message: Message)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun sendMessage(
         message: Message,

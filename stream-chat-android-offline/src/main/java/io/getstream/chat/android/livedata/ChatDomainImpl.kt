@@ -197,6 +197,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlow.sendMessage(message)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
