@@ -40,6 +40,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         return binding.root
     }
 
+    @Suppress("DEPRECATION_ERROR")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {

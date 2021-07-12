@@ -5,41 +5,6 @@ public final class io/getstream/chat/android/livedata/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/livedata/ChannelData {
-	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun copy (Lio/getstream/chat/android/offline/channel/ChannelData;)Lio/getstream/chat/android/livedata/ChannelData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/livedata/ChannelData;Lio/getstream/chat/android/offline/channel/ChannelData;ILjava/lang/Object;)Lio/getstream/chat/android/livedata/ChannelData;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannelId ()Ljava/lang/String;
-	public final fun getCid ()Ljava/lang/String;
-	public final fun getCooldown ()I
-	public final fun getCreatedAt ()Ljava/util/Date;
-	public final fun getCreatedBy ()Lio/getstream/chat/android/client/models/User;
-	public final fun getDeletedAt ()Ljava/util/Date;
-	public final fun getExtraData ()Ljava/util/Map;
-	public final fun getFrozen ()Z
-	public final fun getMemberCount ()I
-	public final fun getTeam ()Ljava/lang/String;
-	public final fun getType ()Ljava/lang/String;
-	public final fun getUpdatedAt ()Ljava/util/Date;
-	public fun hashCode ()I
-	public final fun setChannelId (Ljava/lang/String;)V
-	public final fun setCid (Ljava/lang/String;)V
-	public final fun setCooldown (I)V
-	public final fun setCreatedAt (Ljava/util/Date;)V
-	public final fun setCreatedBy (Lio/getstream/chat/android/client/models/User;)V
-	public final fun setDeletedAt (Ljava/util/Date;)V
-	public final fun setExtraData (Ljava/util/Map;)V
-	public final fun setFrozen (Z)V
-	public final fun setMemberCount (I)V
-	public final fun setTeam (Ljava/lang/String;)V
-	public final fun setType (Ljava/lang/String;)V
-	public final fun setUpdatedAt (Ljava/util/Date;)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public static final field Companion Lio/getstream/chat/android/livedata/ChatDomain$Companion;
 	public abstract fun cancelMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -140,7 +105,6 @@ public final class io/getstream/chat/android/livedata/ChatDomain$DefaultImpls {
 
 public abstract interface class io/getstream/chat/android/livedata/controller/ChannelController {
 	public abstract fun clean ()V
-	public abstract fun getChannelData ()Landroidx/lifecycle/LiveData;
 	public abstract fun getChannelId ()Ljava/lang/String;
 	public abstract fun getChannelType ()Ljava/lang/String;
 	public abstract fun getCid ()Ljava/lang/String;
