@@ -47,7 +47,7 @@ public class MessageListHeaderView : FrameLayout {
     }
 
     public fun hideAvatar() {
-        binding.avatarView.isVisible = false
+        binding.avatarView.isInvisible = true
     }
 
     public fun showBackButtonBadge(text: String) {

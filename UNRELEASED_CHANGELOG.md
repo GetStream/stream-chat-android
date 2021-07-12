@@ -72,11 +72,13 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ⬆️ Improved
-Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView. 
+- Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView.
+
 ### ✅ Added
-Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
+- Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
 
 ### ⚠️ Changed
 - 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
