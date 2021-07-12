@@ -489,7 +489,7 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
-    <style name="StreamUi.SuggestionListView"  parent="StreamUi.SuggestionListView.Mention.Avatar">
+    <style name="StreamUi.SuggestionListView"  parent="StreamUi">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
 
