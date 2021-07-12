@@ -54,7 +54,7 @@ public data class ChannelListViewStyle(
     public val unreadMessageCounterText: TextStyle,
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
     public val mutedChannelIcon: Drawable,
-    @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.ERROR)
     @ColorInt public val mutedChannelIconTint: Int?
 ) {
 
