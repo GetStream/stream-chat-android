@@ -1246,16 +1246,6 @@ public class ChatClient internal constructor(
     //endregion
 
     @Deprecated(
-        message = "Use ChatClient.handleRemoteMessage instead",
-        replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onMessageReceived(remoteMessage: RemoteMessage) {
-        setUserWithoutConnectingIfNeeded()
-        notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
-    }
-
-    @Deprecated(
         message = "Use ChatClient.setFirebaseToken instead",
         replaceWith = ReplaceWith("setFirebaseToken(token)"),
         level = DeprecationLevel.ERROR,
