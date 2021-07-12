@@ -47,8 +47,8 @@ public data class SuggestionListViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageInputView,
-                0,
-                0,
+                R.attr.streamUiSuggestionListViewStyle,
+                R.style.StreamUi_SuggestionListView,
             ).use { a ->
 
                 val suggestionsBackground = a.getColor(

@@ -55,13 +55,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-Now it is possible to customize all avatar using themes. Create
-```
-<style name="StreamTheme" parent="@style/StreamUiTheme">
-```
-
-and customize all the avatars that you would like. All options are available here:
-https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
 
 ### ✅ Added
 
@@ -74,9 +67,18 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView. 
+
 ### ✅ Added
-Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
+- Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
+- Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
+- `MentionListView` can be customisable with XML parameters and with a theme.
+- Added possibility to customize all avatar using themes. Create
+  ```
+  <style name="StreamTheme" parent="@style/StreamUiTheme">
+  ```
+  and customize all the avatars that you would like. All options are available here:
+  https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
+- Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
 
 ### ⚠️ Changed
 - 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
@@ -85,6 +87,5 @@ Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be su
             it.copy(threadsEnabled = false)
         }
 ```
-- `MentionListView` can be customisable with XML parameters and with a theme.
 
 ### ❌ Removed
