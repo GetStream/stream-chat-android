@@ -772,6 +772,13 @@ public class MessageListView : ConstraintLayout {
         this.onStartThreadListener = onStartThreadListener
     }
 
+    /**
+     * Returns an instance of [MessageListViewStyle] associated with this instance of [MessageListView].
+     * Be sure invoke this method after this view laid out on layout and already initialized, otherwise you'll get an
+     * exception.
+     *
+     * @return [MessageListViewStyle] instance associated with this [MessageListView].
+     */
     public fun requireStyle(): MessageListViewStyle {
         return checkNotNull(style) {
             "View must be initialized first to obtain style!"
