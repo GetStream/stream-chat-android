@@ -14,10 +14,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.offline.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

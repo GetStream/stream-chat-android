@@ -28,16 +28,15 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.offline.model.ChannelConfig
+import io.getstream.chat.android.client.offline.model.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.testDatabaseBuilder
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
@@ -55,12 +54,10 @@ import java.util.Date
 
 internal open class BaseDomainTest {
     lateinit var channelClientMock: ChannelClient
-    lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
     lateinit var client: ChatClient
     lateinit var channelControllerImpl: ChannelController
-    lateinit var db: ChatDatabase
     lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
@@ -107,7 +104,6 @@ internal open class BaseDomainTest {
     @After
     open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
-        db.close()
     }
 
     fun createClient(): ChatClient {
@@ -205,7 +201,6 @@ internal open class BaseDomainTest {
             waitForSetUser(client, data.user1, data.user1Token)
         }
 
-        db = createRoomDB(testCoroutines.dispatcher)
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
         val offlineEnabled = true
@@ -215,7 +210,7 @@ internal open class BaseDomainTest {
         chatDomainImpl = ChatDomainImpl(
             client,
             data.user1,
-            db,
+            testDatabaseBuilder(testCoroutines.dispatcher),
             handler,
             offlineEnabled,
             userPresence,

@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.room.RoomDatabase
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
@@ -22,7 +23,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
@@ -584,17 +584,11 @@ public sealed interface ChatDomain {
             this.user = user
         }
 
-        private var database: ChatDatabase? = null
-
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-
-        internal fun database(db: ChatDatabase): Builder {
-            this.database = db
-            return this
-        }
+        private var databaseBuilder: (RoomDatabase.Builder<*>) -> Unit = { }
 
         public fun enableBackgroundSync(): Builder {
             backgroundSyncEnabled = true
@@ -637,8 +631,12 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            ChatDomain.instance = buildImpl()
-            return ChatDomain.instance()
+            instance = buildImpl()
+            return instance()
+        }
+
+        internal fun databaseBuilder(databaseBuilder: (RoomDatabase.Builder<*>) -> Unit) = apply {
+            this.databaseBuilder = databaseBuilder
         }
 
         internal fun buildImpl(): ChatDomainImpl {
@@ -646,7 +644,7 @@ public sealed interface ChatDomain {
             return ChatDomainImpl(
                 client,
                 user,
-                database,
+                databaseBuilder,
                 handler,
                 storageEnabled,
                 recoveryEnabled,

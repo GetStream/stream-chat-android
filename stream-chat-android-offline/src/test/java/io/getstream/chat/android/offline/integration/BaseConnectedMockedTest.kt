@@ -21,7 +21,6 @@ internal open class BaseConnectedMockedTest : BaseDomainTest() {
         runBlocking {
             chatDomainImpl.disconnect()
             chatDomainImpl.scope.coroutineContext.cancelChildren()
-            db.close()
         }
     }
 }

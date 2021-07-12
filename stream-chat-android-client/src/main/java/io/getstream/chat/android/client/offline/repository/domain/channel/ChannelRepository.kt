@@ -53,6 +53,9 @@ internal class ChannelRepositoryImpl(
     }
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
+        if (channelCIDs.isEmpty()) {
+            return emptyList()
+        }
         val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
         val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
         val dbChannels = channelDao.select(missingChannelIds).map { it.toModel(getUser, getMessage) }.toMutableList()

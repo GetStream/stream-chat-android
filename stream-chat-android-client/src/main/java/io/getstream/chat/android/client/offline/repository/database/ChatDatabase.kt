@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.offline.repository.domain.message.Messag
 import io.getstream.chat.android.client.offline.repository.domain.message.MessageInnerEntity
 import io.getstream.chat.android.client.offline.repository.domain.message.attachment.AttachmentDao
 import io.getstream.chat.android.client.offline.repository.domain.message.attachment.AttachmentEntity
-import io.getstream.chat.android.client.offline.repository.domain.queryChannels.ChannelSortInnerEntity
 import io.getstream.chat.android.client.offline.repository.domain.queryChannels.QueryChannelsDao
 import io.getstream.chat.android.client.offline.repository.domain.queryChannels.QueryChannelsEntity
 import io.getstream.chat.android.client.offline.repository.domain.reaction.ReactionDao
@@ -35,7 +34,6 @@ import io.getstream.chat.android.offline.repository.database.converter.DateConve
 @Database(
     entities = [
         QueryChannelsEntity::class,
-        ChannelSortInnerEntity::class,
         MessageInnerEntity::class,
         AttachmentEntity::class,
         UserEntity::class,
@@ -45,7 +43,7 @@ import io.getstream.chat.android.offline.repository.database.converter.DateConve
         CommandInnerEntity::class,
         SyncStateEntity::class,
     ],
-    version = 45,
+    version = 46,
     exportSchema = false
 )
 

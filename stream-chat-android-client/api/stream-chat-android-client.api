@@ -2764,6 +2764,11 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 
 public final class io/getstream/chat/android/client/offline/OfflineModule {
 	public fun <init> (Landroid/content/Context;Z)V
+	public final fun getRepositoryFacade ()Lio/getstream/chat/android/client/offline/repository/RepositoryFacade;
+}
+
+public final class io/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder$Companion {
+	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder;
 }
 
 public final class io/getstream/chat/android/client/offline/repository/database/ChatDatabase_Impl {

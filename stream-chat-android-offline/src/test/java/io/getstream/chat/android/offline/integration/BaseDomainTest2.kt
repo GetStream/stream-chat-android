@@ -3,9 +3,8 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -24,15 +23,14 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.offline.model.ChannelConfig
+import io.getstream.chat.android.client.offline.model.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
@@ -77,8 +75,6 @@ internal open class BaseDomainTest2 {
     /** a mock for the channel client */
     lateinit var channelClientMock: ChannelClient
 
-    private lateinit var db: ChatDatabase
-
     /** single threaded arch components operations */
     @get:Rule
     val testCoroutines = TestCoroutineRule()
@@ -91,14 +87,12 @@ internal open class BaseDomainTest2 {
     @CallSuper
     open fun setup() {
         clientMock = createClientMock()
-        db = createRoomDb()
-        createChatDomain(clientMock, db)
+        createChatDomain(clientMock)
     }
 
     @After
     open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
-        db.close()
     }
 
     /**
@@ -161,26 +155,21 @@ internal open class BaseDomainTest2 {
         return client
     }
 
-    internal fun createRoomDb(): ChatDatabase {
-        return Room
-            .inMemoryDatabaseBuilder(
-                InstrumentationRegistry.getInstrumentation().targetContext,
-                ChatDatabase::class.java
-            )
+    internal fun databaseBuilder(): (RoomDatabase.Builder<*>) -> Unit = { builder ->
+        builder
             .allowMainThreadQueries()
             // Use a separate thread for Room transactions to avoid deadlocks
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
             .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
-            .build()
     }
 
-    internal fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
+    internal fun createChatDomain(client: ChatClient): Unit = runBlocking {
 
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client)
-            .database(db)
+            .databaseBuilder(databaseBuilder())
             .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()

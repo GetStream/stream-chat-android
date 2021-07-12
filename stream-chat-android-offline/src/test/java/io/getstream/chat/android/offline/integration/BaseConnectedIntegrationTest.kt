@@ -7,10 +7,10 @@ import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.offline.model.ChannelConfig
+import io.getstream.chat.android.client.offline.model.QueryChannelsSpec
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
+import io.getstream.chat.android.offline.testDatabaseBuilder
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.offline.utils.TestLoggerHandler
@@ -39,8 +39,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
     }
 
     suspend fun setupChatDomain(client: ChatClient): ChatDomainImpl {
-        db = createRoomDB(testCoroutines.dispatcher)
-
         val context = ApplicationProvider.getApplicationContext() as Context
         val handler: Handler = mock()
         val offlineEnabled = true
@@ -50,7 +48,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         chatDomainImpl = ChatDomainImpl(
             client,
             data.user1,
-            db,
+            testDatabaseBuilder(testCoroutines.dispatcher),
             handler,
             offlineEnabled,
             userPresence,

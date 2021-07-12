@@ -20,11 +20,13 @@ import io.getstream.chat.android.client.offline.repository.domain.syncState.Sync
 import io.getstream.chat.android.client.offline.repository.domain.user.UserRepository
 import io.getstream.chat.android.client.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.offline.request.isRequestingMoreThanLastMessage
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
-internal class RepositoryFacade constructor(
+@InternalStreamChatApi
+public class RepositoryFacade internal constructor(
     userRepository: UserRepository,
     configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
@@ -46,7 +48,7 @@ internal class RepositoryFacade constructor(
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
-    internal suspend fun selectChannels(
+    public suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
     ): List<Channel> {
@@ -109,7 +111,7 @@ internal class RepositoryFacade constructor(
         channelsRepository.updateMembersForChannel(cid, members)
     }
 
-    internal suspend fun storeStateForChannels(
+    public suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>? = null,
         users: List<User>,
         channels: Collection<Channel>,
@@ -122,7 +124,7 @@ internal class RepositoryFacade constructor(
         insertMessages(messages, cacheForMessages)
     }
 
-    internal suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
+    public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
         selectChannelWithoutMessages(cid)?.also { channel ->
             val messageCreatedAt = checkNotNull(
                 lastMessage.createdAt

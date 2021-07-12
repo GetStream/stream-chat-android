@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.offline.repository.RepositoryFacade
 import io.getstream.chat.android.client.offline.repository.builder.RepositoryFacadeBuilder
-import io.getstream.chat.android.client.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -17,9 +16,8 @@ public class OfflineModule(private val appContext: Context, private val persist:
     private val scope = CoroutineScope(job + DispatcherProvider.IO)
     private val defaultConfig = Config(isConnectEvents = true, isMutes = true)
 
-    internal var database: ChatDatabase? = null
-
-    private var repositoryFacade: RepositoryFacade = createNoOpsRepo()
+    public var repositoryFacade: RepositoryFacade = createNoOpsRepo()
+        private set
 
     internal fun init(chatClient: ChatClient) {
         chatClient.preSetUserListeners.add(::buildRepo)
@@ -29,7 +27,6 @@ public class OfflineModule(private val appContext: Context, private val persist:
     private fun buildRepo(user: User) {
         repositoryFacade = RepositoryFacadeBuilder {
             context(appContext)
-            database(database)
             currentUser(user)
             scope(scope)
             defaultConfig(defaultConfig)
