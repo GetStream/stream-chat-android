@@ -2799,7 +2799,6 @@ public class io/getstream/chat/android/client/socket/SocketListener {
 	public fun <init> ()V
 	public fun onConnected (Lio/getstream/chat/android/client/events/ConnectedEvent;)V
 	public fun onConnecting ()V
-	public fun onDisconnected ()V
 	public fun onDisconnected (Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
 	public fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public fun onEvent (Lio/getstream/chat/android/client/events/ChatEvent;)V
