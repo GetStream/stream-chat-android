@@ -28,8 +28,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatNotificationHandler#getFirebaseChannelIdKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelIdKey` instead |
 | `ChatNotificationHandler#getFirebaseChannelTypeKey`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.14 ⌛ | Use the `NotificationsConfig.firebaseChannelTypeKey` instead |
 | Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.06.30<br/>4.13.0 | 2021.08.30 ⌛ | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
-| `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
-| `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.07⌛ | Use `ChannelController::offlineChannelData` instead
+| `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
+| `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
 | `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.13 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Setting external SuggestionListView is no longer necessary |
