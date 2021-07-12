@@ -18,8 +18,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `AttachmentDialogStyle#fileAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `AttachmentDialogStyle#fileAttachmentIcon` instead |
 | `AttachmentDialogStyle#cameraAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `AttachmentDialogStyle#cameraAttachmentIcon` instead |
 | `ChannelListViewStyle#mutedChannelIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Use the `ChannelListViewStyle#mutedChannelIcon` instead |
-| `AvatarView.OnlineIndicatorPosition.TOP`<br/>*ui-components* | 2021.06.01 | 2021.07.01⌛ | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.TOP_RIGHT` constant instead |
-| `AvatarView.OnlineIndicatorPosition.BOTTOM`<br/>*ui-components* | 2021.06.01 | 2021.07.01⌛ | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.BOTTOM_RIGHT` constant instead |
+| `AvatarView.OnlineIndicatorPosition.TOP`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0 | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.TOP_RIGHT` constant instead |
+| `AvatarView.OnlineIndicatorPosition.BOTTOM`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0| 2021.08.01⌛ | Use the `OnlineIndicatorPosition.BOTTOM_RIGHT` constant instead |
 | `SocketListener::onDisconnected` <br/>*client* | 2021.05.17 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use method with DisconnectCause instead of it |
 | `ChatClient#onMessageReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use the `ChatClient.handleRemoteMessage` method instead |
 | `ChatClient#onNewTokenReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use the `ChatClient.setFirebaseToken` method instead |
