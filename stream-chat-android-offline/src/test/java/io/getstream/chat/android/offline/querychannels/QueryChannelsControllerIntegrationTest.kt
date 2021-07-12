@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.offline.model.QueryChannelsSpec
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.utils.ChannelDiffCallback

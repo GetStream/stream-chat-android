@@ -11,12 +11,12 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.offline.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope

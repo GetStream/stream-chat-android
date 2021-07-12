@@ -322,7 +322,7 @@ internal class EventHandlerImpl(
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
                     domainImpl.repos.selectSyncState(event.user.id)?.let { state ->
-                        if (state.markedAllReadAt == null || state.markedAllReadAt.before(event.createdAt)) {
+                        if (state.markedAllReadAt == null || state.markedAllReadAt!!.before(event.createdAt)) {
                             domainImpl.repos.insertSyncState(state.copy(markedAllReadAt = event.createdAt))
                         }
                     }

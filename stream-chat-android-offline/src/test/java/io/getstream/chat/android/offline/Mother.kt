@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
+import androidx.room.RoomDatabase
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -32,15 +31,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.message.MessageEntity
-import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
-import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsEntity
-import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
-import io.getstream.chat.android.offline.repository.domain.user.UserEntity
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -278,21 +268,6 @@ internal fun randomUser(
     extraData
 )
 
-internal fun randomUserEntity(
-    id: String = randomString(),
-    originalId: String = randomString(),
-    name: String = randomString(),
-    role: String = randomString(),
-    createdAt: Date? = null,
-    updatedAt: Date? = null,
-    lastActive: Date? = null,
-    invisible: Boolean = randomBoolean(),
-    banned: Boolean = randomBoolean(),
-    mutes: List<String> = emptyList(),
-    extraData: Map<String, Any> = emptyMap(),
-): UserEntity =
-    UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
-
 internal fun randomMessage(
     id: String = randomString(),
     cid: String = randomCID(),
@@ -396,60 +371,6 @@ internal fun randomChannel(
     team = team,
     hidden = hidden,
     hiddenMessagesBefore = hiddenMessagesBefore
-)
-
-internal fun randomMessageEntity(
-    id: String = randomString(),
-    cid: String = randomCID(),
-    userId: String = randomString(),
-    text: String = randomString(),
-    attachments: List<AttachmentEntity> = emptyList(),
-    type: String = randomString(),
-    syncStatus: SyncStatus = SyncStatus.COMPLETED,
-    replyCount: Int = randomInt(),
-    createdAt: Date? = randomDate(),
-    createdLocallyAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    updatedLocallyAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    latestReactions: List<ReactionEntity> = emptyList(),
-    ownReactions: List<ReactionEntity> = emptyList(),
-    mentionedUsersId: List<String> = emptyList(),
-    reactionCounts: Map<String, Int> = emptyMap(),
-    reactionScores: Map<String, Int> = emptyMap(),
-    parentId: String? = randomString(),
-    command: String? = randomString(),
-    shadowed: Boolean = randomBoolean(),
-    extraData: Map<String, Any> = emptyMap(),
-    replyToId: String? = randomString(),
-    threadParticipantsIds: List<String> = emptyList(),
-) = MessageEntity(
-    messageInnerEntity = MessageInnerEntity(
-        id = id,
-        cid = cid,
-        userId = userId,
-        text = text,
-        type = type,
-        syncStatus = syncStatus,
-        replyCount = replyCount,
-        createdAt = createdAt,
-        createdLocallyAt = createdLocallyAt,
-        updatedAt = updatedAt,
-        updatedLocallyAt = updatedLocallyAt,
-        deletedAt = deletedAt,
-        mentionedUsersId = mentionedUsersId,
-        reactionCounts = reactionCounts,
-        reactionScores = reactionScores,
-        parentId = parentId,
-        command = command,
-        shadowed = shadowed,
-        extraData = extraData,
-        replyToId = replyToId,
-        threadParticipantsIds = threadParticipantsIds,
-    ),
-    attachments = attachments,
-    latestReactions = latestReactions,
-    ownReactions = ownReactions,
 )
 
 internal fun randomMember(
@@ -619,26 +540,10 @@ internal fun randomConfig(
     commands = commands,
 )
 
-internal fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
-    ChannelConfig(type = type, config = config)
-
-internal fun randomQueryChannelsSpec(
-    filter: FilterObject = NeutralFilterObject,
-    cids: List<String> = emptyList(),
-): QueryChannelsSpec = QueryChannelsSpec(filter, cids)
-
-internal fun randomQueryChannelsEntity(
-    id: String = randomString(),
-    filter: FilterObject = NeutralFilterObject,
-    cids: List<String> = emptyList(),
-
-): QueryChannelsEntity = QueryChannelsEntity(id, filter, cids)
-
-internal fun createRoomDB(dispatcher: CoroutineDispatcher): ChatDatabase =
-    Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)
-        .allowMainThreadQueries()
+internal fun testDatabaseBuilder(dispatcher: CoroutineDispatcher): (RoomDatabase.Builder<*>) -> Unit = { builder ->
+    builder.allowMainThreadQueries()
         // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
         // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
         .setTransactionExecutor(Executors.newSingleThreadExecutor())
         .setQueryExecutor(dispatcher.asExecutor())
-        .build()
+}

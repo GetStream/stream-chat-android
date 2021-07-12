@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -32,16 +31,6 @@ internal class ChatDomainImplTest {
             on { it.channel(any()) } doReturn mock()
         }
         val currentUser = randomUser()
-        val db: ChatDatabase = mock {
-            on { userDao() } doReturn mock()
-            on { channelConfigDao() } doReturn mock()
-            on { channelStateDao() } doReturn mock()
-            on { queryChannelsDao() } doReturn mock()
-            on { messageDao() } doReturn mock()
-            on { reactionDao() } doReturn mock()
-            on { syncStateDao() } doReturn mock()
-            on { attachmentDao() } doReturn mock()
-        }
         val handler: Handler = mock()
         val offlineEnabled = true
         val userPresence = true
@@ -49,14 +38,14 @@ internal class ChatDomainImplTest {
         sut = ChatDomainImpl(
             client,
             currentUser,
-            db,
+            { },
             handler,
             offlineEnabled,
             userPresence,
             recoveryEnabled,
             false,
             mock()
-        )
+        ).apply { repos = mock() }
     }
 
     @Test

@@ -18,7 +18,6 @@ internal open class BaseDisconnectedMockedTest : BaseDomainTest() {
     override fun tearDown() {
         runBlocking {
             chatDomainImpl.disconnect()
-            db.close()
         }
     }
 }

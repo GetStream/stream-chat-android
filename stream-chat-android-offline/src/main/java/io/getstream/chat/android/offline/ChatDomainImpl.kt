@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
+import androidx.room.RoomDatabase
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -27,6 +28,11 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
+import io.getstream.chat.android.client.offline.model.ChannelConfig
+import io.getstream.chat.android.client.offline.model.SyncState
+import io.getstream.chat.android.client.offline.repository.RepositoryFacade
+import io.getstream.chat.android.client.offline.repository.builder.RepositoryFacadeBuilder
+import io.getstream.chat.android.client.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -39,13 +45,7 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.offline.repository.RepositoryFacade
-import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
@@ -139,7 +139,7 @@ internal class ChatDomainImpl internal constructor(
     // the new behaviour for ChatDomain is to follow the ChatClient.setUser
     // the userOverwrite field is here for backwards compatibility
     internal var userOverwrite: User? = null,
-    internal var db: ChatDatabase? = null,
+    internal val databaseBuilder: (RoomDatabase.Builder<*>) -> Unit,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
@@ -158,7 +158,7 @@ internal class ChatDomainImpl internal constructor(
     ) : this(
         client,
         null,
-        null,
+        { },
         handler,
         offlineEnabled,
         recoveryEnabled,
@@ -174,7 +174,13 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
-    internal var repos: RepositoryFacade = createNoOpRepos()
+
+    private var _repos: RepositoryFacade = createNoOpRepos()
+    internal var repos: RepositoryFacade
+        get() = client.offlineModule?.repositoryFacade ?: _repos
+        set(value) {
+            _repos = value
+        }
 
     private val _initialized = MutableStateFlow(false)
     private val _online = MutableStateFlow(false)
@@ -276,7 +282,7 @@ internal class ChatDomainImpl internal constructor(
 
         repos = RepositoryFacadeBuilder {
             context(appContext)
-            database(db)
+            databaseBuilder(databaseBuilder)
             currentUser(user)
             scope(scope)
             defaultConfig(defaultConfig)
