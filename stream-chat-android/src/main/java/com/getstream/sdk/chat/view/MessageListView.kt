@@ -63,7 +63,7 @@ import kotlin.math.min
 public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
 
-    private lateinit var style: MessageListViewStyle
+    private var style: MessageListViewStyle? = null
 
     private lateinit var binding: StreamMessageListViewBinding
 
@@ -150,7 +150,7 @@ public class MessageListView : ConstraintLayout {
                 channel,
                 message,
                 currentUser,
-                style,
+                requireStyle(),
                 onMessageEditHandler,
                 onMessageDeleteHandler,
                 { m: Message ->
@@ -177,7 +177,7 @@ public class MessageListView : ConstraintLayout {
                 channel,
                 message,
                 currentUser,
-                style,
+                requireStyle(),
                 onMessageEditHandler,
                 onMessageDeleteHandler,
                 onStartThreadHandler,
@@ -456,7 +456,7 @@ public class MessageListView : ConstraintLayout {
         messageViewHolderFactory.bubbleHelper = bubbleHelper
         messageViewHolderFactory.messageDateFormatter = messageDateFormatter
 
-        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
+        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, requireStyle())
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
@@ -770,6 +770,19 @@ public class MessageListView : ConstraintLayout {
 
     public fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
         this.onStartThreadListener = onStartThreadListener
+    }
+
+    /**
+     * Returns an instance of [MessageListViewStyle] associated with this instance of [MessageListView].
+     * Be sure invoke this method after this view laid out on layout and already initialized, otherwise you'll get an
+     * exception.
+     *
+     * @return [MessageListViewStyle] instance associated with this [MessageListView].
+     */
+    public fun requireStyle(): MessageListViewStyle {
+        return checkNotNull(style) {
+            "View must be initialized first to obtain style!"
+        }
     }
 
     public fun interface HeaderAvatarGroupClickListener {
