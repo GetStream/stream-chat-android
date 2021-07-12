@@ -12,8 +12,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
 | `ChannelListView.streamUiMutedChannelIconTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
 | Multiple `AttachmentOptionsView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
-| `MessageListViewStyle#warningActionsTintColor`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawable instead |
-| `MessageListViewStyle#iconsTint`<br/>*ui-components* | 2021.06.10 | 2021.07.10⌛ | 2021.08.10⌛ | Override drawables instead |
+| `MessageListViewStyle#warningActionsTintColor`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawable instead |
+| `MessageListViewStyle#iconsTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
 | `AttachmentSelectionDialogStyle#pictureAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#pictureAttachmentIcon` instead |
 | `AttachmentSelectionDialogStyle#fileAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#fileAttachmentIcon` instead |
 | `AttachmentSelectionDialogStyle#cameraAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#cameraAttachmentIcon` instead |
