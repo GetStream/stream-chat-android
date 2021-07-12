@@ -8,8 +8,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.usecase.SetMessageForReply
-import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelData
 
 /**
  * The Channel Controller exposes convenient livedata objects to build your chat interface
@@ -83,7 +83,7 @@ public sealed interface ChannelController {
     public val recoveryNeeded: Boolean
     public val cid: String
 
-    public val offlineChannelData: LiveData<OfflineChannelData>
+    public val offlineChannelData: LiveData<ChannelData>
 
     /**
      * Contains the Message that is selected to be replied to in this channel,

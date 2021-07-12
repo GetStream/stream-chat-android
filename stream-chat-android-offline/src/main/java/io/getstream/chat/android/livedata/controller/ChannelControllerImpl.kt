@@ -12,12 +12,12 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.offline.channel.ChannelData
 import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.flow.map
 import java.io.File
 import io.getstream.chat.android.offline.channel.ChannelController as ChannelControllerStateFlow
 import io.getstream.chat.android.offline.channel.ChannelController.MessagesState as OfflineMessageState
-import io.getstream.chat.android.offline.channel.ChannelData as OfflineChannelData
 
 internal class ChannelControllerImpl(private val channelControllerStateFlow: ChannelControllerStateFlow) :
     ChannelController {
@@ -43,7 +43,7 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
     override val read: LiveData<ChannelUserRead?> = channelControllerStateFlow.read.asLiveData()
     override val unreadCount: LiveData<Int?> = channelControllerStateFlow.unreadCount.asLiveData()
     override val members: LiveData<List<Member>> = channelControllerStateFlow.members.asLiveData()
-    override val offlineChannelData: LiveData<OfflineChannelData> = channelControllerStateFlow.channelData.asLiveData()
+    override val offlineChannelData: LiveData<ChannelData> = channelControllerStateFlow.channelData.asLiveData()
     override val hidden: LiveData<Boolean> = channelControllerStateFlow.hidden.asLiveData()
     override val muted: LiveData<Boolean> = channelControllerStateFlow.muted.asLiveData()
     override val loading: LiveData<Boolean> = channelControllerStateFlow.loading.asLiveData()
