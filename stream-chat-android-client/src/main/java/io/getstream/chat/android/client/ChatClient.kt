@@ -1245,15 +1245,6 @@ public class ChatClient internal constructor(
 
     //endregion
 
-    @Deprecated(
-        message = "Use ChatClient.setFirebaseToken instead",
-        replaceWith = ReplaceWith("setFirebaseToken(token)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onNewTokenReceived(token: String) {
-        notifications.setFirebaseToken(token)
-    }
-
     @InternalStreamChatApi
     public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
         this.pushNotificationReceivedListener = pushNotificationReceivedListener
