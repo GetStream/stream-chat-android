@@ -26,6 +26,7 @@ public final class com/getstream/sdk/chat/ChatUI$Builder {
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/livedata/ChatDomain;Landroid/content/Context;)V
 	public final fun build ()Lcom/getstream/sdk/chat/ChatUI;
 	public final fun withFonts (Lcom/getstream/sdk/chat/style/ChatFonts;)Lcom/getstream/sdk/chat/ChatUI$Builder;
+	public final fun withImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withMarkdown (Lcom/getstream/sdk/chat/ChatMarkdown;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withNavigationHandler (Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;)Lcom/getstream/sdk/chat/ChatUI$Builder;
 	public final fun withStrings (Lcom/getstream/sdk/chat/utils/strings/ChatStrings;)Lcom/getstream/sdk/chat/ChatUI$Builder;
@@ -474,6 +475,7 @@ public final class com/getstream/sdk/chat/view/MessageListView : androidx/constr
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)V
+	public final fun requireStyle ()Lcom/getstream/sdk/chat/view/MessageListViewStyle;
 	public final fun scrollToBottom ()V
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lcom/getstream/sdk/chat/view/MessageListView$AttachmentClickListener;)V

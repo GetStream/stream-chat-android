@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -922,6 +923,17 @@ public class ChatClient internal constructor(
         return api.stopWatching(channelType, channelId)
     }
 
+    /**
+     * Updates all of the channel data. Any data that is present on the channel and not included in a full update
+     * will be deleted.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param updateMessage the message object allowing you to show a system message in the channel
+     * @param channelExtraData the updated channel extra data
+     *
+     * @return executable async [Call] responsible for updating channel data
+     */
     @CheckResult
     public fun updateChannel(
         channelType: String,
@@ -943,6 +955,8 @@ public class ChatClient internal constructor(
      * @param channelId the channel id. ie 123
      * @param set the key-value data which will be added to the existing channel data object
      * @param unset the list of fields which will be removed from the existing channel data object
+     *
+     * @return executable async [Call] responsible for updating channel data
      */
     @CheckResult
     public fun updateChannelPartial(
@@ -959,20 +973,45 @@ public class ChatClient internal constructor(
         )
     }
 
+    /**
+     * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
+     * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
+     * between 1-120.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param cooldownTimeInSeconds the duration of the time interval users have to wait between messages
+     *
+     * @return executable async [Call] responsible for enabling slow mode
+     */
     @CheckResult
     public fun enableSlowMode(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int,
-    ): Call<Channel> =
-        api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+    ): Call<Channel> {
+        return if (cooldownTimeInSeconds in 1..120) {
+            api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+        } else {
+            ErrorCall(ChatError("You can't specify a value outside the range 1-120 for cooldown duration."))
+        }
+    }
 
+    /**
+     * Disables slow mode for the channel.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     *
+     * @return executable async [Call] responsible for disabling slow mode
+     */
     @CheckResult
     public fun disableSlowMode(
         channelType: String,
         channelId: String,
-    ): Call<Channel> =
-        api.disableSlowMode(channelType, channelId)
+    ): Call<Channel> {
+        return api.disableSlowMode(channelType, channelId)
+    }
 
     @CheckResult
     public fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
@@ -1028,6 +1067,33 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
+    }
+
+    /**
+     * Updates specific user fields retaining the custom data fields which were set previously.
+     *
+     * @param id user ids
+     * @param set the key-value data which will be added to the existing user object
+     * @param unset the list of fields which will be removed from the existing user object
+     *
+     * @return executable async [Call]
+     */
+    @CheckResult
+    public fun partialUpdateUser(
+        id: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<User> {
+        if (id != getCurrentUser()?.id) {
+            logger.logE("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it.")
+            return ErrorCall(ChatError("The client-side partial update allows you to update only the current user. Make sure the user is set before updating it."))
+        }
+
+        return api.partialUpdateUser(
+            id = id,
+            set = set,
+            unset = unset,
+        )
     }
 
     @CheckResult
@@ -1179,25 +1245,6 @@ public class ChatClient internal constructor(
 
     //endregion
 
-    @Deprecated(
-        message = "Use ChatClient.handleRemoteMessage instead",
-        replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onMessageReceived(remoteMessage: RemoteMessage) {
-        setUserWithoutConnectingIfNeeded()
-        notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
-    }
-
-    @Deprecated(
-        message = "Use ChatClient.setFirebaseToken instead",
-        replaceWith = ReplaceWith("setFirebaseToken(token)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onNewTokenReceived(token: String) {
-        notifications.setFirebaseToken(token)
-    }
-
     @InternalStreamChatApi
     public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
         this.pushNotificationReceivedListener = pushNotificationReceivedListener
@@ -1346,6 +1393,10 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @Deprecated(
+            message = "Use logLevel function with ChatLogLevel parameter instead",
+            level = DeprecationLevel.ERROR,
+        )
         public fun logLevel(level: String): Builder {
             logLevel = ChatLogLevel.valueOf(level)
             return this
@@ -1378,7 +1429,7 @@ public class ChatClient internal constructor(
          */
         @Deprecated(
             message = "Old serialization will be removed soon",
-            level = DeprecationLevel.WARNING,
+            level = DeprecationLevel.ERROR,
         )
         public fun useNewSerialization(enabled: Boolean): Builder = apply {
             this.enableMoshi = enabled

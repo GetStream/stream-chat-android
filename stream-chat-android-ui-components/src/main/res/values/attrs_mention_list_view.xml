@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MentionListView">
+        <attr name="streamUiBackground" format="color|reference"/>
+        <attr name="streamUiEmptyStateDrawable" format="reference"/>
+        <attr name="streamUiSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiSenderNameTextFont" format="reference"/>
+        <attr name="streamUiSenderNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageTextColor" format="color|reference"/>
+        <attr name="streamUiMessageTextSize" format="dimension"/>
+        <attr name="streamUiMessageTextFontAssets" format="string"/>
+        <attr name="streamUiMessageTextFont" format="reference"/>
+        <attr name="streamUiMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageTimeTextColor" format="color|reference"/>
+        <attr name="streamUiMessageTimeTextSize" format="dimension"/>
+        <attr name="streamUiMessageTimeTextFontAssets" format="string"/>
+        <attr name="streamUiMessageTimeTextFont" format="reference"/>
+        <attr name="streamUiMessageTimeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

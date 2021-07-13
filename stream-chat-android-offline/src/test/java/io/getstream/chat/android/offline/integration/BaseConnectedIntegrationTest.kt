@@ -30,7 +30,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         fun createClient(): ChatClient {
 
             return ChatClient.Builder(data.apiKey, ApplicationProvider.getApplicationContext())
-                .logLevel(data.logLevel)
+                // TODO Review if we need it
+                // .logLevel(data.logLevel)
                 .loggerHandler(TestLoggerHandler())
                 .callbackExecutor { runnable -> runnable.run() }
                 .build()
@@ -93,7 +94,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             runBlocking { chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateDataFromChannel(data.channel1)
-            query = QueryChannelsSpec(data.filter1, QuerySort())
+            query = QueryChannelsSpec(data.filter1)
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 

@@ -42,7 +42,9 @@ public class MessageListViewModel @JvmOverloads constructor(
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
-    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> _mode.postValue(newMode) }
+    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode ->
+        _mode.postValue(newMode)
+    }
     private val _reads: MediatorLiveData<List<ChannelUserRead>> = MediatorLiveData()
     private val reads: LiveData<List<ChannelUserRead>> = _reads
     private val _loadMoreLiveData = MediatorLiveData<Boolean>()
@@ -66,10 +68,16 @@ public class MessageListViewModel @JvmOverloads constructor(
      * @see State
      */
     public val state: LiveData<State> = stateMerger
-    public val currentUser: User
-        get() = domain.currentUser
 
     public val user: LiveData<User?> = domain.user
+
+    @Deprecated(
+        message = "Use user live data instead",
+        replaceWith = ReplaceWith("user.value"),
+        level = DeprecationLevel.WARNING,
+    )
+    public val currentUser: User
+        get() = user.value!!
 
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->

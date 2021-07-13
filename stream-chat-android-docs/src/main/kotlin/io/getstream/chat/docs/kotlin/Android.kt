@@ -106,7 +106,7 @@ class Android {
                 ChannelListViewModelFactory(
                     filter = Filters.and(
                         Filters.eq("type", "messaging"),
-                        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+                        Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
                     ),
                     sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,
@@ -226,6 +226,12 @@ class Android {
                     }
                 }
             )
+        }
+
+        fun customMaxMessageLengthHandler() {
+            messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
+                // Handle max-length error if needed
+            }
         }
 
         fun customSuggestionListviewHolderFactory() {

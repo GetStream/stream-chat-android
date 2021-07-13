@@ -257,6 +257,12 @@ public class Android {
             });
         }
 
+        public void customMaxMessageLengthHandler() {
+            messageInputView.setMaxMessageLengthHandler((messageText, messageLength, maxMessageLength, maxMessageLengthExceeded) -> {
+                // Handle max-length error if needed
+            });
+        }
+
         public void customSuggestionListviewHolderFactory() {
             SuggestionListItemViewHolderFactory customViewHolderFactory = new CustomSuggestionListViewHolderFactory();
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory);
@@ -866,14 +872,7 @@ public class Android {
                                 "Send also to chat custom label",
                                 textStyleGeneric,
                                 true,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                textStyleGeneric,
                                 true,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                genericDrawable,
-                                colorBlack,
                                 colorBlack,
                                 genericDrawable,
                                 genericDrawable,

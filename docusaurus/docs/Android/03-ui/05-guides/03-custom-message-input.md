@@ -1,6 +1,6 @@
 # Creating a Custom Message Input View
 
-If the built-in [Message Input View](../03-ui/04-components/05-message-input.md) and its available customization options don't fit your app's needs, you can create an Input View of your own.
+If the built-in [Message Input View](../04-components/05-message-input.md) and its available customization options don't fit your app's needs, you can create an Input View of your own.
 
 Note that the UI Components Input View supports many advanced features that you'll otherwise have to implement yourself if you want to use them in your app:
 
@@ -17,7 +17,7 @@ With that, let's see how you can build an Input View from scratch.
 This sample is meant to be as simple as possible. You might want to architect your actual custom views in more advanced ways than shown here.
 :::
 
-### Creating a layout
+### Creating a Layout
 
 For this example, you'll create a custom View that extends `ConstraintLayout`. It'll inflate the following layout internally, which consists of a simple `EditText` and a `Button`.
 
@@ -84,9 +84,9 @@ You can add this custom Input View to your layout like so, combining it with oth
 
 Running the app now shows the new message input view, which you can freely style to fit your app's requirements.
 
-![The message list screen with a custom input view](../assets/custom-message-input-layout.png)
+![The message list screen with a custom input view](../../assets/custom-message-input-layout.png)
 
-### Sending messages
+### Sending Messages
 
 Time to add basic functionality to the layout.
 
@@ -147,7 +147,7 @@ Finally, don't forget to set the `cid` after the view is created, like so:
 binding.messageInputView.cid = cid
 ```
 
-### Supporting typing indicators
+### Supporting Typing Indicators
 
 Stream uses events for indicating when a user starts or stop typing in a channel. In a custom Input View, you'll have to send these events if you want to support typing indicators in your app.
 
@@ -196,9 +196,9 @@ In this snippet, you:
 
 You can use more advanced logic for sending these events in your own application, this is a basic example.
 
-### Editing messages
+### Editing Messages
 
-Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../03-ui/04-components/03-message-list.md), by long tapping a message to access various actions.
+Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../04-components/03-message-list.md), by long tapping a message to access various actions.
 
 To support this, you'll need to store the message being edited and add a new method that lets users set this property:
 
@@ -254,7 +254,7 @@ Finally, connect the Input View to the Message List to trigger edits from the li
 binding.messageListView.setMessageEditHandler(binding.messageInputView::editMessage)
 ```
 
-### Handling threads
+### Handling Threads
 
 Message List View has built-in support for threads, and your custom Input View can be integrated with threads as well.
 
@@ -324,7 +324,7 @@ chatDomain.keystroke(cid = cid, parentId = parentMessage?.id).enqueue()
 chatDomain.stopTyping(cid = cid, parentId = parentMessage?.id).enqueue()
 ```
 
-### Full source code
+### Full Source Code
 
 Here's the full source code of a custom message input view that includes all of the features from above:
 

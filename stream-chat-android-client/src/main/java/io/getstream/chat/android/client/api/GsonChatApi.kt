@@ -14,6 +14,8 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.PartialUpdateUser
+import io.getstream.chat.android.client.api.models.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -337,6 +339,15 @@ internal class GsonChatApi(
             }
     }
 
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
+        return retrofitApi.partialUpdateUsers(
+            connectionId = connectionId,
+            body = PartialUpdateUsersRequest(
+                users = listOf(PartialUpdateUser(id = id, set = set, unset = unset)),
+            )
+        ).map { response -> response.users[id]!! }
+    }
+
     override fun queryChannel(
         channelType: String,
         channelId: String,
@@ -418,7 +429,7 @@ internal class GsonChatApi(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = UpdateCooldownRequest(cooldownTimeInSeconds)
+            body = UpdateCooldownRequest.create(cooldownTimeInSeconds)
         ).map { flattenChannel(it) }
 
     override fun markRead(

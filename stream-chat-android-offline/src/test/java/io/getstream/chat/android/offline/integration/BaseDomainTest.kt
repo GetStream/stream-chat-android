@@ -113,7 +113,8 @@ internal open class BaseDomainTest {
     fun createClient(): ChatClient {
         val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
         return ChatClient.Builder(data.apiKey, getApplicationContext())
-            .logLevel(logLevel)
+            // TODO Review if we need it
+            // .logLevel(logLevel)
             .loggerHandler(TestLoggerHandler())
             .build()
     }
@@ -237,7 +238,7 @@ internal open class BaseDomainTest {
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateDataFromChannel(data.channel1)
 
-        query = QueryChannelsSpec(data.filter1, QuerySort())
+        query = QueryChannelsSpec(data.filter1)
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }

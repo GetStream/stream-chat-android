@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -31,7 +32,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
-    private val style: MessageListItemStyle,
+    private val listViewStyle: MessageListViewStyle,
 ) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
@@ -110,7 +111,7 @@ internal class FootnoteDecorator(
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         footnoteView.showSimpleFootnote()
-        setupMessageFooterLabel(footnoteView.footerTextLabel, data, style)
+        setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
     }
@@ -121,7 +122,7 @@ internal class FootnoteDecorator(
         threadGuideline: View,
         data: MessageListItem.MessageItem,
     ) {
-        if (!style.threadsEnabled) {
+        if (!listViewStyle.threadsEnabled) {
             return
         }
         root.updateConstraints {
@@ -132,7 +133,7 @@ internal class FootnoteDecorator(
             data.isMine,
             data.message.replyCount,
             data.message.threadParticipants,
-            style
+            listViewStyle.itemStyle
         )
     }
 
@@ -168,9 +169,9 @@ internal class FootnoteDecorator(
                 dateFormatter.formatTime(
                     updatedAt
                 ),
-                style
+                listViewStyle.itemStyle
             )
-            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), style)
+            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), listViewStyle.itemStyle)
         }
     }
 
@@ -184,11 +185,11 @@ internal class FootnoteDecorator(
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> footnoteView.showStatusIndicator(
-                    style.iconIndicatorPendingSync
+                    listViewStyle.itemStyle.iconIndicatorPendingSync
                 )
                 SyncStatus.COMPLETED -> {
-                    if (data.isMessageRead) footnoteView.showStatusIndicator(style.iconIndicatorRead)
-                    else footnoteView.showStatusIndicator(style.iconIndicatorSent)
+                    if (data.isMessageRead) footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorRead)
+                    else footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorSent)
                 }
             }.exhaustive
         }

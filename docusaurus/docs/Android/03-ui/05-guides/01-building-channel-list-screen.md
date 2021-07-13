@@ -1,12 +1,12 @@
 # Building a Channel List Screen
 
-The SDK provides two components, `ChannelListHeaderView` and `ChannelListView` which work best together to display the channel and other useful information.
+The SDK provides two components, `ChannelListHeaderView` and `ChannelListView` which work best together to display a list of channels.
 
 This is what a screen made up of these two components looks like:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![Light mode](../assets/channel_list_view_light.png)|![Dark mode](../assets/channel_list_view_dark.png)|
+|![Light mode](../../assets/channel_list_view_light.png)|![Dark mode](../../assets/channel_list_view_dark.png)|
 
 To add these Views to your app, first create them in an XML layout:
 
@@ -41,16 +41,17 @@ To add these Views to your app, first create them in an XML layout:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-The Android SDK comes with ViewModels for its components which are responsible for providing all necessary data.
+The Android SDK comes with [ViewModels](../01-getting-started.md#viewmodels) for its components which are responsible for providing all necessary data.
 
 You can create these ViewModels the following way, providing any necessary parameters using a ViewModel factory:
 
 ```kotlin
 val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
+
 val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
     filter = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
+        Filters.`in`("members", listOf(ChatDomain.instance().user.value!!.id)),
     ),
     sort = QuerySort.desc(Channel::lastUpdated),
     limit = 30,
@@ -69,6 +70,6 @@ channelListViewModel.bindView(channelListView, viewLifecycleOwner)
 `bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 :::
 
-From that point, `ChannelListHeaderView` will be able to display the current user avatar as well as online status, while `ChannelListView` will display different channels view states, as well as the channel’s pagination, which will be handled automatically.
+From that point, `ChannelListHeaderView` will be able to display the current user avatar as well as online status, while `ChannelListView` will display the list of channels. Displaying empty and loading states, as well as pagination will be handled automatically.
 
-`ChannelListViewModelFactory` allows customizing _filter_ and _sort_ options. You can find more about possible options [here](https://getstream.io/chat/docs/android/query_channels/?language=java#common-filters-by-use-case).
+`ChannelListViewModelFactory` allows customizing _filter_ and _sort_ options. See [Querying Channels](https://getstream.io/chat/docs/android/query_channels/?language=kotlin) for more info.

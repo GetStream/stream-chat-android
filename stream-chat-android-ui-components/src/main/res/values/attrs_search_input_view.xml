@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchInputView">
+        <attr name="streamUiSearchInputViewHintText" format="string" />
+        <attr name="streamUiSearchInputViewSearchIcon" format="reference" />
+        <attr name="streamUiSearchInputViewClearInputIcon" format="reference" />
+        <attr name="streamUiSearchInputViewBackground" format="reference" />
+        <attr name="streamUiSearchInputViewTextColor" format="color|reference" />
+        <attr name="streamUiSearchInputViewHintColor" format="color|reference" />
+        <attr name="streamUiSearchInputViewTextSize" format="dimension|reference" />
+    </declare-styleable>
+</resources>

@@ -30,14 +30,12 @@ import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomain
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
- *
- * Use cases are exposed via chatDomain.useCases
  */
 public sealed interface ChatDomain {
 
     @Deprecated(
         message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     /** Unsafe property that represent the current user. This property could be not initialized.
      * You should subscribe to [ChatDomain.user] instead
@@ -341,7 +339,8 @@ public sealed interface ChatDomain {
      */
     @Deprecated(
         message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)")
+        replaceWith = ReplaceWith("sendMessage(message: Message)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun sendMessage(
         message: Message,

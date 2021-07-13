@@ -114,6 +114,10 @@ public final class com/getstream/sdk/chat/enums/OnlineStatus : java/lang/Enum {
 	public static fun values ()[Lcom/getstream/sdk/chat/enums/OnlineStatus;
 }
 
+public abstract interface class com/getstream/sdk/chat/images/ImageHeadersProvider {
+	public abstract fun getImageRequestHeaders ()Ljava/util/Map;
+}
+
 public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 	public final fun instance ()Lcom/getstream/sdk/chat/images/StreamImageLoader;
 }
@@ -287,6 +291,9 @@ public final class com/getstream/sdk/chat/utils/extensions/DateKt {
 public final class com/getstream/sdk/chat/utils/extensions/EditTextExtensionsKt {
 }
 
+public final class com/getstream/sdk/chat/utils/extensions/FiltersKt {
+}
+
 public final class com/getstream/sdk/chat/utils/extensions/MessageItemKt {
 }
 
@@ -370,7 +377,6 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
 	public final fun getCommands ()Landroidx/lifecycle/LiveData;
-	public final fun getEditMessage ()Landroidx/lifecycle/MutableLiveData;
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;

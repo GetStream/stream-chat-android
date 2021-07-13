@@ -10,6 +10,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class AvatarStyle(
@@ -24,12 +25,12 @@ public data class AvatarStyle(
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle {
-            return context.obtainStyledAttributes(
+            context.obtainStyledAttributes(
                 attrs,
                 R.styleable.AvatarView,
                 0,
                 0
-            ).let {
+            ).use {
                 val avatarBorderWidth = it.getDimensionPixelSize(
                     R.styleable.AvatarView_streamUiAvatarBorderWidth,
                     context.getDimension(R.dimen.stream_ui_avatar_border_width)
@@ -66,7 +67,7 @@ public data class AvatarStyle(
                 )
                 val onlineIndicatorColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
                 val onlineIndicatorBorderColor = it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor, Color.WHITE)
-                AvatarStyle(
+                return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
                     avatarInitialText = avatarInitialText,

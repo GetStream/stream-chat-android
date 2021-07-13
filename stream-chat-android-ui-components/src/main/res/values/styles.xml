@@ -264,11 +264,24 @@
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
+        <item name="streamUiMessageListHeaderAvatarStyle">@style/StreamUi.MessageList.Header.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
+        <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
+        <item name="streamUiChannelListHeaderStyle">@style/StreamUi.ChannelListHeader</item>
+        <item name="streamUiMentionPreviewItemAvatarStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
+        <item name="streamUiMentionListStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
+        <item name="streamUiChannelActionsDialogAvatarStyle">@style/StreamUi.ChannelActions.Dialog.Avatar</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
+        <item name="streamUiAttachmentGalleryAvatarStyle">@style/StreamUi.AttachmentGallery.Avatar</item>
+        <item name="streamUiSuggestionListViewMentionAvatarStyle">@style/StreamUi.SuggestionListView.Mention.Avatar</item>
+        <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
+        <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
+        <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
+        <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
+        <item name="streamUiSuggestionListViewStyle">@style/StreamUi.SuggestionListView</item>
     </style>
 
     <style name="StreamUi">
@@ -296,6 +309,29 @@
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
 
+    <style name="StreamUi.MessageList.Header.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.ChannelListHeader" parent="StreamUi">
+        <item name="streamUiOnlineTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiOnlineTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOnlineTitleTextStyle">bold</item>
+        <item name="streamUiOfflineTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiOfflineTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOfflineTitleTextFont">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiOfflineTitleTextStyle">bold</item>
+        <item name="streamUiShowOfflineProgressBar">true</item>
+        <item name="streamUiOfflineProgressBarTint">@color/stream_ui_accent_blue</item>
+        <item name="streamUiShowActionButton">true</item>
+        <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
+        <item name="streamUiActionButtonTint">@color/stream_ui_black</item>
+        <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
+    </style>
+
     <style name="StreamUi.ChannelList.Item.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of MessageList Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
@@ -305,6 +341,86 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <style name="StreamUi.MentionList" parent="StreamUi">
+        <item name="streamUiBackground">@color/stream_ui_white_snow</item>
+        <item name="streamUiEmptyStateDrawable">@drawable/stream_ui_ic_mentions_empty</item>
+        <item name="streamUiSenderNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSenderNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSenderNameTextStyle">normal</item>
+        <item name="streamUiMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextStyle">normal</item>
+        <item name="streamUiMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTimeTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTimeTextStyle">normal</item>
+    </style>
+
+    <style name="StreamUi.MentionPreview.Item.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.ChannelActions.Dialog.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of GroupActions Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.AttachmentGallery.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+        <item name="streamUiAvatarBorderWidth">1dp</item>
+    </style>
+
+    <style name="StreamUi.SuggestionListView.Mention.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.SearchResult.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.MessageOptions.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_large</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_large</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_large</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.Reply.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.Thread.Avatar" parent="StreamUi.BaseAvatar">
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_extra_tiny</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_extra_tiny</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_tiny</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUi.ChannelList.ActionsDialog" parent="StreamUi">
@@ -331,5 +447,80 @@
         <item name="streamUiChannelActionsDeleteConversationEnabled">true</item>
         <item name="streamUiChannelActionsCancelIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiChannelActionsCancelEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.MessageListHeader" parent="StreamUi">
+        <!-- Title text style -->
+        <item name="streamUiMessageListHeaderTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageListHeaderTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageListHeaderTitleTextStyle">bold</item>
+
+        <!-- Offline text style -->
+        <item name="streamUiMessageListHeaderOfflineLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderOfflineLabelTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderOfflineLabelTextStyle">normal</item>
+
+        <!-- Searching for network text style -->
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkLabelTextStyle">normal</item>
+
+        <!-- Online text style -->
+        <item name="streamUiMessageListHeaderDefaultLabelTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageListHeaderDefaultLabelTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageListHeaderDefaultLabelTextStyle">normal</item>
+
+        <item name="streamUiMessageListHeaderShowUserAvatar">true</item>
+        <item name="streamUiMessageListHeaderBackButtonIcon">@drawable/stream_ui_arrow_left</item>
+        <item name="streamUiMessageListHeaderShowBackButton">true</item>
+        <item name="streamUiMessageListHeaderShowBackButtonBadge">false</item>
+        <item name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor">@color/stream_ui_accent_red</item>
+        <item name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar">true</item>
+        <item name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint">@color/stream_ui_accent_blue</item>
+    </style>
+
+    <style name="StreamUi.SearchInputView" parent="StreamUi">
+        <item name="streamUiSearchInputViewHintText">@string/stream_ui_search_input_hint</item>
+        <item name="streamUiSearchInputViewSearchIcon">@drawable/stream_ui_ic_search</item>
+        <item name="streamUiSearchInputViewClearInputIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiSearchInputViewBackground">@drawable/stream_ui_shape_search_view_background</item>
+        <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
+    </style>
+
+    <style name="StreamUi.SuggestionListView"  parent="StreamUi">
+        <!-- Background -->
+        <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>
+
+        <!-- Command title text style -->
+        <item name="streamUiCommandsTitleTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsTitleTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiCommandsTitleStyle">normal</item>
+
+        <!-- Command name text style -->
+        <item name="streamUiCommandsNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiCommandsNameStyle">normal</item>
+
+        <!-- Command description text style -->
+        <item name="streamUiCommandsDescriptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiCommandsDescriptionTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiCommandsDescriptionStyle">normal</item>
+
+        <!-- Mention username text style -->
+        <item name="streamUiMentionsUserNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMentionsUserNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMentionsUserNameStyle">normal</item>
+
+        <!-- Mention name text style -->
+        <item name="streamUiMentionsNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMentionsNameTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMentionsNameStyle">normal</item>
+
+        <!-- Icons -->
+        <item name="streamUiMentionsIcon">@drawable/stream_ui_ic_mention</item>
+        <item name="streamUiCommandIcon">@drawable/stream_ui_ic_command_circle</item>
+        <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command_blue</item>
     </style>
 </resources>

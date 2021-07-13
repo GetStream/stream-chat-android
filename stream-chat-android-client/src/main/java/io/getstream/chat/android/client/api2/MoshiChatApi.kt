@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -423,7 +425,7 @@ internal class MoshiChatApi(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
-            body = UpdateCooldownRequest(cooldownTimeInSeconds),
+            body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
         ).map(this::flattenChannel)
     }
 
@@ -621,6 +623,17 @@ internal class MoshiChatApi(
             body = UpdateUsersRequest(map),
         ).map { response ->
             response.users.values.map(DownstreamUserDto::toDomain)
+        }
+    }
+
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
+        return userApi.partialUpdateUsers(
+            connectionId = connectionId,
+            body = PartialUpdateUsersRequest(
+                listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
+            ),
+        ).map { response ->
+            response.users[id]!!.toDomain()
         }
     }
 

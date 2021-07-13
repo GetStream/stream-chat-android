@@ -56,6 +56,7 @@ internal class MessageOptionsView : FrameLayout {
         style: MessageListViewStyle,
         isMessageAuthorMuted: Boolean,
     ) {
+        @Suppress("DEPRECATION_ERROR")
         val iconsTint = style.iconsTint
         val textStyle = style.messageOptionsText
 
@@ -89,6 +90,7 @@ internal class MessageOptionsView : FrameLayout {
         style: MessageListViewStyle,
         syncStatus: SyncStatus,
     ) {
+        @Suppress("DEPRECATION_ERROR")
         val iconsTint = style.iconsTint
 
         configureReply(configuration, style, iconsTint)
@@ -131,6 +133,7 @@ internal class MessageOptionsView : FrameLayout {
         binding.editTV.apply {
             if (configuration.editMessageEnabled) {
                 isVisible = true
+                @Suppress("DEPRECATION_ERROR")
                 configureListItem(style.messageOptionsText, style.editIcon, style.iconsTint)
             } else {
                 isVisible = false
@@ -186,6 +189,7 @@ internal class MessageOptionsView : FrameLayout {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     private fun configureDeleteMessage(configuration: Configuration, style: MessageListViewStyle) {
         if (configuration.deleteMessageEnabled) {
             binding.deleteTV.apply {

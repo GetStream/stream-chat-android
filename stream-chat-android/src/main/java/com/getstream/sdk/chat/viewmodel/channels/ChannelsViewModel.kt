@@ -2,9 +2,11 @@ package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -26,14 +28,11 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val filter: FilterObject = Filters.and(
-        Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(chatDomain.currentUser.id)),
-        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-    ),
+    private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
-    private val limit: Int = 30
+    private val limit: Int = 30,
 ) : ViewModel() {
+
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
     public val typingEvents: LiveData<TypingEvent>
@@ -42,16 +41,28 @@ public class ChannelsViewModel(
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
 
+    private val filterLiveData: LiveData<FilterObject?> =
+        filter?.let(::MutableLiveData) ?: map(chatDomain.user, Filters::defaultChannelListFilter)
+
     init {
+        stateMerger.addSource(filterLiveData) { filterObject ->
+            if (filterObject != null) {
+                initData(filterObject)
+            }
+        }
+    }
+
+    private fun initData(filterObject: FilterObject) {
         stateMerger.value = State.Loading
-        chatDomain.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+        chatDomain.queryChannels(filterObject, sort, limit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
                 stateMerger.addSource(
                     map(queryChannelsController.channelsState) { channelState ->
                         when (channelState) {
                             is QueryChannelsController.ChannelsState.NoQueryActive,
-                            is QueryChannelsController.ChannelsState.Loading -> State.Loading
+                            is QueryChannelsController.ChannelsState.Loading,
+                            -> State.Loading
                             is QueryChannelsController.ChannelsState.OfflineNoResults -> State.NoChannelsAvailable
                             is QueryChannelsController.ChannelsState.Result ->
                                 State.Result(channelState.channels)
@@ -98,7 +109,9 @@ public class ChannelsViewModel(
     }
 
     private fun requestMoreChannels() {
-        chatDomain.queryChannelsLoadMore(filter, sort).enqueue()
+        filterLiveData.value?.let { filter ->
+            chatDomain.queryChannelsLoadMore(filter, sort).enqueue()
+        }
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
@@ -114,7 +127,7 @@ public class ChannelsViewModel(
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
-        val endOfChannels: Boolean = false
+        val endOfChannels: Boolean = false,
     )
 
     public sealed class Event {

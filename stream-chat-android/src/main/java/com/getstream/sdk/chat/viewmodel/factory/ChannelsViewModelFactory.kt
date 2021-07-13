@@ -20,11 +20,7 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see QuerySort
  */
 public class ChannelsViewModelFactory @JvmOverloads constructor(
-    private val filter: FilterObject = Filters.and(
-        Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id)),
-        Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
-    ),
+    private val filter: FilterObject? = null,
     private val sort: QuerySort<Channel> = ChannelsViewModel.DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModelProvider.Factory {

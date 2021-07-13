@@ -68,8 +68,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun muteCurrentUser ()Lio/getstream/chat/android/client/call/Call;
 	public final fun muteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun onMessageReceived (Lcom/google/firebase/messaging/RemoteMessage;)V
-	public final fun onNewTokenReceived (Ljava/lang/String;)V
+	public final fun partialUpdateUser (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun partialUpdateUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;
@@ -553,17 +553,6 @@ public final class io/getstream/chat/android/client/api/models/SendActionRequest
 	public final fun getFormData ()Ljava/util/Map;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/UpdateCooldownRequest {
-	public fun <init> (I)V
-	public final fun component1 ()I
-	public final fun copy (I)Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;IILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/UpdateCooldownRequest;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCooldown ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2693,9 +2682,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getErrorCaseNotificationTitle ()Ljava/lang/String;
 	public fun getErrorNotificationGroupKey ()Ljava/lang/String;
 	public fun getErrorNotificationGroupSummaryId ()I
-	public fun getFirebaseChannelIdKey ()Ljava/lang/String;
-	public fun getFirebaseChannelTypeKey ()Ljava/lang/String;
-	public fun getFirebaseMessageIdKey ()Ljava/lang/String;
 	public fun getFirebaseMessageParser ()Lio/getstream/chat/android/client/notifications/FirebaseMessageParser;
 	public fun getFirebaseMessaging ()Lcom/google/firebase/messaging/FirebaseMessaging;
 	public fun getNewMessageIntent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
@@ -2703,7 +2689,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationChannelName ()Ljava/lang/String;
 	public fun getNotificationGroupKey (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
-	public fun getSmallIcon ()I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onFirebaseMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
 }
@@ -2814,7 +2799,6 @@ public class io/getstream/chat/android/client/socket/SocketListener {
 	public fun <init> ()V
 	public fun onConnected (Lio/getstream/chat/android/client/events/ConnectedEvent;)V
 	public fun onConnecting ()V
-	public fun onDisconnected ()V
 	public fun onDisconnected (Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
 	public fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public fun onEvent (Lio/getstream/chat/android/client/events/ChatEvent;)V

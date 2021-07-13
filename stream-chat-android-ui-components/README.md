@@ -1,8 +1,6 @@
 # Stream Chat Android UI Components
 
-This module contains reusable UI components to use in combination with the [offline support](../stream-chat-android-offline) library. See [the main README](../README.md) in this repo for more info.
-
-This library supports both Kotlin and Java usage, but we strongly recommend using Kotlin.
+This module contains reusable UI components to use in combination with the [offline support](../stream-chat-android-offline) library. See the [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/getting-started/) for more info.
 
 <p align="center">
   <img alt="Channels screen" src="../docs/sample-channels-light.png" width="40%">
@@ -12,17 +10,7 @@ This library supports both Kotlin and Java usage, but we strongly recommend usin
 
 ## Setup
 
-```groovy
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
-}
-```
-
-> For the latest version, check the [Releases page](https://github.com/GetStream/stream-chat-android/releases).
+To start using this library in your project, see [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/), and then [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/).
 
 ## Sample app
 
@@ -32,11 +20,11 @@ To see these components in action, check out our [sample app](../stream-chat-and
 
 You'll find the detailed documentation for the components on our website:
 
-- [Channel List View](https://getstream.io/chat/docs/android/channel_list_view/?language=kotlin)
-- [Channel List Header View](https://getstream.io/chat/docs/android/channel_list_header_view/?language=kotlin)
-- [Message List View](https://getstream.io/chat/docs/android/message_list_view/?language=kotlin)
-- [Message List Header View](https://getstream.io/chat/docs/android/message_list_header_view/?language=kotlin)
-- [Message Input View](https://getstream.io/chat/docs/android/message_input_view/?language=kotlin)
-- [Search Input View](https://getstream.io/chat/docs/android/search_input_view/?language=kotlin)
-- [Search Result List View](https://getstream.io/chat/docs/android/search_result_list_view/?language=kotlin)
-- [Attachment Gallery](https://getstream.io/chat/docs/android/attachmentgallery/?language=kotlin)
+- [Channel List View](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/)
+- [Channel List Header View](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-header/)
+- [Message List View](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/)
+- [Message List Header View](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-header/)
+- [Message Input View](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/)
+- [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/components/mention-list-view/)
+- [Search View](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/)
+- [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/components/attachment-gallery/)

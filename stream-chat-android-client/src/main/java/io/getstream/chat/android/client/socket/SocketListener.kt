@@ -13,14 +13,6 @@ public open class SocketListener {
     public open fun onConnected(event: ConnectedEvent) {
     }
 
-    @Deprecated(
-        "Use method with DisconnectCause",
-        replaceWith = ReplaceWith("Use method with DisconnectCause instead of it"),
-        level = DeprecationLevel.ERROR,
-    )
-    public open fun onDisconnected() {
-    }
-
     public open fun onDisconnected(cause: DisconnectCause) {
     }
 

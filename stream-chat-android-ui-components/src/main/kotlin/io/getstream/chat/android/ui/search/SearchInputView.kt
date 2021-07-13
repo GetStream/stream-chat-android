@@ -12,6 +12,7 @@ import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 
@@ -30,6 +31,8 @@ public class SearchInputView : FrameLayout {
     private var searchStartedListener: SearchStartedListener? = null
 
     private val inputDebouncer = Debouncer(debounceMs = TYPING_DEBOUNCE_MS)
+
+    private lateinit var style: SearchInputViewStyle
 
     private val query: String
         get() = binding.inputField.text.trim().toString()
@@ -53,9 +56,18 @@ public class SearchInputView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        parseAttrs(attrs)
+        style = SearchInputViewStyle(context, attrs)
 
         binding.root.setOnClickListener { binding.inputField.focusAndShowKeyboard() }
+
+        binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
+        binding.searchIcon.setImageDrawable(style.searchIconDrawable)
+        binding.inputField.hint = style.hintText
+        binding.inputField.setHintTextColor(style.hintColor)
+        binding.inputField.setTextColor(style.textColor)
+        binding.root.background = style.backgroundDrawable
+        binding.inputField.setTextSizePx(style.textSize.toFloat())
+
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)
 
@@ -91,10 +103,6 @@ public class SearchInputView : FrameLayout {
             TransitionManager.beginDelayedTransition(binding.root, Fade().setDuration(FADE_DURATION))
         }
         binding.clearInputButton.isVisible = isClearButtonVisible
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        attrs ?: return
     }
 
     override fun onDetachedFromWindow() {

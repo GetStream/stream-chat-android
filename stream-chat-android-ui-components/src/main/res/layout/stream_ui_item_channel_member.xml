@@ -10,9 +10,7 @@
 
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
-        style="@style/StreamUiGroupActionsAvatarStyle"
-        android:layout_width="@dimen/stream_ui_avatar_size_large"
-        android:layout_height="@dimen/stream_ui_avatar_size_large"
+        style="?attr/streamUiChannelActionsDialogAvatarStyle"
         />
 
     <TextView

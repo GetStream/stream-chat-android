@@ -1,12 +1,12 @@
 # Building a Message List Screen
 
-The SDK provides multiple views which combined together helps to create a chat experience out of the box. This section will show how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
+The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
 
-This is what a screen made build with these three components looks like:
+This is what a screen made with these three components looks like:
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![Light mode](../assets/chat_view_light.png)|![Dark mode](../assets/chat_view_dark.png)| 
+|![Light mode](../../assets/chat_view_light.png)|![Dark mode](../../assets/chat_view_dark.png)| 
 
 To add these Views to your app, first create them in an XML layout:
 
@@ -52,7 +52,9 @@ To add these Views to your app, first create them in an XML layout:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Just like other components, those three views come with ViewModels which are responsible for providing all necessary data for its views. However, unlike the other view models, they require some additional setup to pass information between the different chat components.
+Just like other components, these three views come with [ViewModels](../01-getting-started.md#viewmodels) which are responsible for providing all necessary data for them.
+
+After setting up the ViewModels, this screen also requires some additional setup to pass information between the different chat components.
 
 ```kotlin
 // Create view models
@@ -95,11 +97,12 @@ val backHandler = {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 }
 messageListHeaderView.setBackButtonClickListener(backHandler)
+
 // You should also consider overriding default Activity's back button behaviour
 ```
 
 :::note
-`bindView` sets listeners on the view and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
+`bindView` sets listeners on the View and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
 :::
 
-From that point, you will be able to display and send messages, conduct different actions, as well as view different channel info.
+This gives you a fully functional messaging screen, where you're able to display and send messages, and perform various actions in the message list.

@@ -8,10 +8,12 @@ import android.widget.ToggleButton
 import androidx.core.view.forEach
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
+@ExperimentalStreamChatApi
 public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
 
     private var _binding: StreamUiDialogAttachmentBinding? = null
@@ -38,6 +40,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         return binding.root
     }
 
+    @Suppress("DEPRECATION_ERROR")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
