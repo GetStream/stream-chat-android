@@ -55,13 +55,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-Now it is possible to customize all avatar using themes. Create
-```
-<style name="StreamTheme" parent="@style/StreamUiTheme">
-```
-
-and customize all the avatars that you would like. All options are available here:
-https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
 
 ### ✅ Added
 
@@ -75,6 +68,17 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
 - Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ⬆️ Improved
+
+### ✅ Added
+- Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
+- Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
+- `MentionListView` can be customisable with XML parameters and with a theme.
+- Added possibility to customize all avatar using themes. Create
+  ```
+  <style name="StreamTheme" parent="@style/StreamUiTheme">
+  ```
+  and customize all the avatars that you would like. All options are available here:
+  https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
 - Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView.
 
 ### ✅ Added
@@ -87,6 +91,5 @@ https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-u
             it.copy(threadsEnabled = false)
         }
 ```
-- `MentionListView` can be customisable with XML parameters and with a theme.
 
 ### ❌ Removed
