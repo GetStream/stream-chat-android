@@ -65,6 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ⬆️ Improved
 
@@ -78,6 +79,9 @@
   ```
   and customize all the avatars that you would like. All options are available here:
   https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
+- Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView.
+
+### ✅ Added
 - Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
 
 ### ⚠️ Changed
