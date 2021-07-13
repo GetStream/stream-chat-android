@@ -1,6 +1,5 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- Fix scroll bug in the `MessageListView` that produces an exception related to index out of bounds.
 
 ### ⬆️ Improved
 
@@ -27,10 +26,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved `ChatClient::enableSlowMode`, `ChatClient::disableSlowMode`, `ChannelClient::enableSlowMode`, `ChannelClient::disableSlowMode` methods. Now the methods do partial channel updates so that other channel fields are not affected.
 
 ### ✅ Added
-- Added `ChatClient::partialUpdateUser` method for user partial updates.
 
 ### ⚠️ Changed
 
@@ -39,8 +36,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed bug related to editing message in offline mode. The bug was causing message to reset to the previous one after connection was recovered.
-- Fixed violation of comparison contract for nullable fields in `QuerySort::comparator`
 
 ### ⬆️ Improved
 
@@ -65,31 +60,13 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
-- Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
-- `MentionListView` can be customisable with XML parameters and with a theme.
-- Added possibility to customize all avatar using themes. Create
-  ```
-  <style name="StreamTheme" parent="@style/StreamUiTheme">
-  ```
-  and customize all the avatars that you would like. All options are available here:
-  https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
-- Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView.
 
 ### ✅ Added
-- Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
 
 ### ⚠️ Changed
-- 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
-```kotlin
-        TransformStyle.messageListStyleTransformer = StyleTransformer {
-            it.copy(threadsEnabled = false)
-        }
-```
 
 ### ❌ Removed
