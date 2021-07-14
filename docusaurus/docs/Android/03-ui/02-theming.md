@@ -130,7 +130,7 @@ In the SDK there are also some activities: `AttachmentMediaActivity`, `Attachmen
 ```
 <activity
     android:name="io.getstream.chat.android.ui.gallery.AttachmentMediaActivity"
-    android:theme="@style/StreamTheme"
+    android:theme="@style/MediaActivityStyle"
     tools:replace="android:theme"
     />
 ```
@@ -138,13 +138,13 @@ In the SDK there are also some activities: `AttachmentMediaActivity`, `Attachmen
 **themes.xml**
 
 ```
-<style name="StreamTheme" parent="@style/StreamUiTheme">
-     <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
+<style name="MediaActivityStyle" parent="StreamUi.MediaActivity">
+    <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
 </style>
 
 <style name="MediaActivityIconStyle" parent="StreamUi.MediaActivity.Icon">
-    <item name="android:layout_width">170dp</item>
-    <item name="android:layout_height">170dp</item>
+    <item name="android:layout_width">150dp</item>
+    <item name="android:layout_height">150dp</item>
     <item name="android:src">@drawable/stream_ui_ic_audio</item>
 </style>
 ```
