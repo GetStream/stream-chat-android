@@ -1,3 +1,8 @@
+# July 14th, 2021 - 4.14.1
+## stream-chat-android-ui-components
+### ✅ Added
+- Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure to invoke it when view is initialized already.
+
 # July 13th, 2021 - 4.14.0
 ## Common changes for all artifacts
 ### 🐞 Fixed
@@ -30,9 +35,6 @@
   and customize all the avatars that you would like. All options are available here:
   https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml
 - Now you can use the style `streamUiChannelListHeaderStyle` to customize ChannelListHeaderView.
-
-### ✅ Added
-- Added `MessageListView::requireStyle` which expose `MessageListViewStyle`. Be sure invoke it when view is initialized already.
 
 ### ⚠️ Changed
 - 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
