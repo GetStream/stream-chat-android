@@ -1,4 +1,4 @@
-# ChatUI
+# Configuration
 
 The SDK provides an API for general configuration of the UI Component library's behavior and appearance, which is exposed via the `ChatUI` object.
 

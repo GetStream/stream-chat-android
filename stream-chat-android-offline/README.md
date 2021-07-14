@@ -1,6 +1,6 @@
 # Stream Chat Android Offline
 
-This module adds offline support and provides Flow/LiveData APIs for Stream Chat. Check out the [Working with Offline](https://getstream.io/chat/docs/sdk/android/client/guides/working-with-offline/) guide for more info.
+This module adds offline support and provides Flow/LiveData APIs for Stream Chat. Check out the [Working with Offline Support](https://getstream.io/chat/docs/sdk/android/client/guides/working-with-offline/) guide for more info.
 
 ## Setup
 
