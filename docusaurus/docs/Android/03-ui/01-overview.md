@@ -1,4 +1,4 @@
-# Getting Started
+# Overview
 
 The UI components library includes pre-built Android Views to easily load and display data from the Stream Chat API.
 

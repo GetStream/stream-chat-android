@@ -53,7 +53,7 @@ val chatDomain = ChatDomain.Builder(appContext, chatClient)
     .build()
 ```
 
-For more about working with `ChatDomain`, see [Working with Offline](../02-client/06-guides/06-working-with-offline.md).
+For more about working with `ChatDomain`, see [Working with Offline Support](../02-client/06-guides/06-working-with-offline.md).
 
 ### Connecting a User
 
@@ -88,6 +88,6 @@ The methods of the `ChatClient` class allow you to create channels, send message
 
 ### Adding UI Components
 
-To add the UI Components to your application, see the [Get Started](../03-ui/01-getting-started.md) page of the UI Components section first, which explains how the components work.
+To add the UI Components to your application, see the [Get Started](../03-ui/01-overview.md) page of the UI Components section first, which explains how the components work.
 
 Then you can proceed to our guides that show you how to [build a channel list screen](../03-ui/05-guides/01-building-channel-list-screen.md) and [build a message list screen](../03-ui/05-guides/02-building-message-list-screen.md).
