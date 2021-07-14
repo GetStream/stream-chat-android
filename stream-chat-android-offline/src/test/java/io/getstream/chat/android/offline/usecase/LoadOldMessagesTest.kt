@@ -14,18 +14,12 @@ import io.getstream.chat.android.test.failedCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 internal class LoadOldMessagesTest : BaseDomainTest2() {
-
-    @Before
-    override fun setup() {
-        super.setup()
-    }
 
     @Test
     fun `when watching a channel, new messages are updated correctly for the watcher`() = runBlockingTest {

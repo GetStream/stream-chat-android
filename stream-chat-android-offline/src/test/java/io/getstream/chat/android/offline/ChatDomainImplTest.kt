@@ -6,10 +6,12 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -27,6 +29,7 @@ internal class ChatDomainImplTest {
 
     @BeforeEach
     fun setUp() {
+        RepositoryFacadeBuilder.instance = mock { on { build() } doReturn mock() }
         val client: ChatClient = mock {
             on { it.channel(any()) } doReturn mock()
         }
@@ -38,14 +41,19 @@ internal class ChatDomainImplTest {
         sut = ChatDomainImpl(
             client,
             currentUser,
-            { },
+            { it },
             handler,
             offlineEnabled,
             userPresence,
             recoveryEnabled,
             false,
             mock()
-        ).apply { repos = mock() }
+        )
+    }
+
+    @AfterEach
+    fun tearDown() {
+        RepositoryFacadeBuilder.instance = null
     }
 
     @Test

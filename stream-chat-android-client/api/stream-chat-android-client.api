@@ -2768,7 +2768,9 @@ public final class io/getstream/chat/android/client/offline/OfflineModule {
 }
 
 public final class io/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder$Companion {
+	public final fun getInstance ()Lio/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder;
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder;
+	public final fun setInstance (Lio/getstream/chat/android/client/offline/repository/builder/RepositoryFacadeBuilder;)V
 }
 
 public final class io/getstream/chat/android/client/offline/repository/database/ChatDatabase_Impl {
@@ -2839,11 +2841,9 @@ public final class io/getstream/chat/android/client/offline/repository/domain/me
 
 public final class io/getstream/chat/android/client/offline/repository/domain/queryChannels/QueryChannelsDao_Impl {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteSortEntitiesFor (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
-	public fun insert (Lio/getstream/chat/android/client/offline/repository/domain/queryChannels/QueryChannelsWithSorts;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insert (Lio/getstream/chat/android/client/offline/repository/domain/queryChannels/QueryChannelsEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/client/offline/repository/domain/reaction/ReactionDao_Impl : io/getstream/chat/android/client/offline/repository/domain/reaction/ReactionDao {

@@ -3,8 +3,6 @@ package io.getstream.chat.android.offline
 import androidx.room.RoomDatabase
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -540,10 +538,11 @@ internal fun randomConfig(
     commands = commands,
 )
 
-internal fun testDatabaseBuilder(dispatcher: CoroutineDispatcher): (RoomDatabase.Builder<*>) -> Unit = { builder ->
-    builder.allowMainThreadQueries()
-        // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
-        // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
-        .setTransactionExecutor(Executors.newSingleThreadExecutor())
-        .setQueryExecutor(dispatcher.asExecutor())
-}
+internal fun testDatabaseBuilder(dispatcher: CoroutineDispatcher): (RoomDatabase.Builder<*>) -> RoomDatabase.Builder<*> =
+    { builder ->
+        builder.allowMainThreadQueries()
+            // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
+            // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
+            .setTransactionExecutor(Executors.newSingleThreadExecutor())
+            .setQueryExecutor(dispatcher.asExecutor())
+    }

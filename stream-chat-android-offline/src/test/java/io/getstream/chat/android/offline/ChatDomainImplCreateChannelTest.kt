@@ -22,10 +22,11 @@ import io.getstream.chat.android.client.offline.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 
 internal class ChatDomainImplCreateChannelTest {
@@ -40,6 +41,9 @@ internal class ChatDomainImplCreateChannelTest {
     }
     private val channelMembers = listOf(randomMember(), randomMember())
     private val channelExtraData = mutableMapOf<String, Any>("extraData" to true)
+
+    @get:Rule
+    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
     @Test
     fun `given offline chat domain when creating channel should mark it with sync needed and store in database`(): Unit =
@@ -206,13 +210,12 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
     @Test
-    fun `Given failed network response When create distinct channel Should return failed response And do not insert any channel to DB`() {
+    fun `Given failed network response When create distinct channel Should return failed response And do not insert any channel to DB`() = runBlocking {
         val repositoryFacade: RepositoryFacade = mock()
         val sut = Fixture()
             .givenChatClientResult(Result(mock()))
             .givenRepositoryFacade(repositoryFacade)
             .get()
-
         reset(repositoryFacade)
 
         val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
@@ -222,7 +225,7 @@ internal class ChatDomainImplCreateChannelTest {
     }
 
     @Test
-    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() = runBlockingTest {
+    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() = runBlocking {
         val repositoryFacade: RepositoryFacade = mock()
         val networkChannel = randomChannel()
         val sut = Fixture()
@@ -269,10 +272,11 @@ internal class ChatDomainImplCreateChannelTest {
             isOnline = false
         }
 
-        fun get(): ChatDomainImpl {
+        suspend fun get(): ChatDomainImpl {
             return ChatDomain.Builder(context, chatClient).buildImpl().apply {
                 offlineEnabled = false
                 setUser(this@Fixture.user)
+                initJob?.join()
                 repos = repositoryFacade
                 scope = testScope
                 if (isOnline) setOnline() else setOffline()

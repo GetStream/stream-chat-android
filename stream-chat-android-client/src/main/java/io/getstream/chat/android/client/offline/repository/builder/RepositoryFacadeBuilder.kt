@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.offline.repository.builder
 
+import android.annotation.SuppressLint
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.getstream.chat.android.client.models.Config
@@ -15,15 +17,22 @@ import kotlinx.coroutines.launch
 @InternalStreamChatApi
 public class RepositoryFacadeBuilder {
     public companion object {
+        /**
+         * Only test oriented property
+         */
+        @SuppressLint("StaticFieldLeak")
+        @VisibleForTesting
+        public var instance: RepositoryFacadeBuilder? = null
+
         public operator fun invoke(builderAction: RepositoryFacadeBuilder.() -> Unit): RepositoryFacadeBuilder {
-            return RepositoryFacadeBuilder().apply(builderAction)
+            return instance ?: RepositoryFacadeBuilder().apply(builderAction)
         }
     }
 
     private var context: Context? = null
     private var currentUser: User? = null
     private var isOfflineEnabled: Boolean = false
-    private var databaseBuilder: (RoomDatabase.Builder<*>) -> Unit = { }
+    private var databaseBuilder: (RoomDatabase.Builder<*>) -> (RoomDatabase.Builder<*>) = { it }
     private var coroutineScope: CoroutineScope? = null
     private var defaultConfig: Config? = null
 
@@ -32,12 +41,13 @@ public class RepositoryFacadeBuilder {
     public fun setOfflineEnabled(isOfflineEnabled: Boolean): RepositoryFacadeBuilder =
         apply { this.isOfflineEnabled = isOfflineEnabled }
 
-    public fun databaseBuilder(databaseBuilder: (RoomDatabase.Builder<*>) -> Unit): RepositoryFacadeBuilder =
+    public fun databaseBuilder(databaseBuilder: (RoomDatabase.Builder<*>) -> (RoomDatabase.Builder<*>)): RepositoryFacadeBuilder =
         apply { this.databaseBuilder = databaseBuilder }
 
     public fun scope(scope: CoroutineScope): RepositoryFacadeBuilder = apply { this.coroutineScope = scope }
     public fun defaultConfig(config: Config): RepositoryFacadeBuilder = apply { this.defaultConfig = config }
 
+    @Suppress("UNCHECKED_CAST")
     private fun createDatabase(
         scope: CoroutineScope,
         context: Context,
@@ -47,7 +57,7 @@ public class RepositoryFacadeBuilder {
         return if (offlineEnabled && user != null) {
             ChatDatabase.getDatabase(context, user.id)
         } else {
-            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).apply(databaseBuilder).build()
+            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).let { databaseBuilder(it) as RoomDatabase.Builder<ChatDatabase> }.build()
                 .also { inMemoryDatabase ->
                     scope.launch { inMemoryDatabase.clearAllTables() }
                 }

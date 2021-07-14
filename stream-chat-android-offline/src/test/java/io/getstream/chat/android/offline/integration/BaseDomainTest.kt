@@ -175,7 +175,7 @@ internal open class BaseDomainTest {
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
-                listener.onEvent(connectedEvent)
+                // listener.onEvent(connectedEvent)
                 object : Disposable {
                     override val isDisposed: Boolean = true
                     override fun dispose() {}
@@ -203,7 +203,7 @@ internal open class BaseDomainTest {
 
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
-        val offlineEnabled = true
+        val offlineEnabled = false
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false

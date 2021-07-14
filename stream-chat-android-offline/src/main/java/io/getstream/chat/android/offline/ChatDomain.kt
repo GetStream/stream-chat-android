@@ -588,7 +588,7 @@ public sealed interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
-        private var databaseBuilder: (RoomDatabase.Builder<*>) -> Unit = { }
+        private var databaseBuilder: (RoomDatabase.Builder<*>) -> RoomDatabase.Builder<*> = { it }
 
         public fun enableBackgroundSync(): Builder {
             backgroundSyncEnabled = true
@@ -635,7 +635,7 @@ public sealed interface ChatDomain {
             return instance()
         }
 
-        internal fun databaseBuilder(databaseBuilder: (RoomDatabase.Builder<*>) -> Unit) = apply {
+        internal fun databaseBuilder(databaseBuilder: (RoomDatabase.Builder<*>) -> RoomDatabase.Builder<*>) = apply {
             this.databaseBuilder = databaseBuilder
         }
 
