@@ -255,8 +255,6 @@
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
     </style>
 
-    <style name="StreamUiAttachmentGalleryActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-
     <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
     <style name="StreamUiAttachmentActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
@@ -281,13 +279,6 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
         <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
-        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
-        <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
-        <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
-        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/StreamUi.AttachmentGallery.ActionsMenu</item>
-        <item name="streamUiAttachmentGalleryImageCountStyle">@style/StreamUi.AttachmentGallery.ImageCount</item>
-        <item name="streamUiAttachmentGalleryLeftIconStyle">@style/StreamUi.AttachmentGallery.LeftIcon</item>
-        <item name="streamUiAttachmentGalleryRightIconStyle">@style/StreamUi.AttachmentGallery.RightIcon</item>
     </style>
 
     <style name="StreamUi">
@@ -495,6 +486,16 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
+    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
+        <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
+        <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
+        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/StreamUi.AttachmentGallery.ActionsMenu</item>
+        <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
+        <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
+        <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
+    </style>
+
     <style name="StreamUi.AttachmentGallery.CloseButton" parent="StreamUi">
         <item name="android:src">@drawable/stream_ui_ic_close</item>
         <item name="android:layout_width">wrap_content</item>
@@ -515,16 +516,16 @@
         <item name="android:src">@drawable/stream_ui_ic_three_dots_menu</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery.ImageCount" parent="StreamUi">
+    <style name="StreamUi.AttachmentGallery.BottomBar.ImageCount" parent="StreamUi">
         <item name="android:textAppearance">@style/StreamUiTextAppearance.HeadlineBold</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery.LeftIcon" parent="StreamUi">
+    <style name="StreamUi.AttachmentGallery.BottomBar.LeftIcon" parent="StreamUi">
         <item name="android:layout_marginStart">@dimen/stream_ui_spacing_small</item>
         <item name="android:src">@drawable/stream_ui_ic_share</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery.RightIcon" parent="StreamUi">
+    <style name="StreamUi.AttachmentGallery.BottomBar.RightIcon" parent="StreamUi">
         <item name="android:layout_marginEnd">@dimen/stream_ui_spacing_small</item>
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
     </style>

@@ -27,13 +27,5 @@
         <attr name="streamUiThreadAvatarStyle" format="reference" />
         <attr name="streamUiMessageListHeaderStyle" format="reference" />
         <attr name="streamUiSearchInputViewStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryCloseButtonStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryTitleStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryDateStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryActionsMenuStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryImageCountStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryLeftIconStyle" format="reference" />
-        <attr name="streamUiAttachmentGalleryRightIconStyle" format="reference" />
     </declare-styleable>
 </resources>
