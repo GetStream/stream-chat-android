@@ -105,7 +105,7 @@ public class MessageListView : ConstraintLayout {
         private const val LOAD_MORE_THRESHOLD = 10
     }
 
-    private lateinit var messageListViewStyle: MessageListViewStyle
+    private var messageListViewStyle: MessageListViewStyle? = null
 
     private lateinit var binding: StreamUiMessageListViewBinding
 
@@ -267,11 +267,11 @@ public class MessageListView : ConstraintLayout {
                     .newMessageOptionsInstance(
                         message,
                         MessageOptionsView.Configuration(
-                            viewStyle = messageListViewStyle,
+                            viewStyle = requireStyle(),
                             channelConfig = channel.config,
                             suppressThreads = adapter.isThread || message.isInThread()
                         ),
-                        messageListViewStyle
+                        requireStyle()
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -364,10 +364,10 @@ public class MessageListView : ConstraintLayout {
                 MessageOptionsDialogFragment.newReactionOptionsInstance(
                     message,
                     MessageOptionsView.Configuration(
-                        viewStyle = messageListViewStyle,
+                        viewStyle = requireStyle(),
                         channelConfig = channel.config,
                     ),
-                    messageListViewStyle
+                    requireStyle()
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -483,8 +483,8 @@ public class MessageListView : ConstraintLayout {
             }
         }
 
-        binding.scrollToBottomButton.setScrollButtonViewStyle(messageListViewStyle.scrollButtonViewStyle)
-        scrollHelper.scrollToBottomButtonEnabled = messageListViewStyle.scrollButtonViewStyle.scrollButtonEnabled
+        binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
+        scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
 
         NewMessagesBehaviour.parseValue(
             tArray.getInt(
@@ -497,7 +497,7 @@ public class MessageListView : ConstraintLayout {
 
         tArray.recycle()
         if (background == null) {
-            setBackgroundColor(messageListViewStyle.backgroundColor)
+            setBackgroundColor(requireStyle().backgroundColor)
         }
     }
 
@@ -545,9 +545,9 @@ public class MessageListView : ConstraintLayout {
         this.channel = channel
         initAdapter()
 
-        messageListViewStyle = messageListViewStyle.copy(
-            replyEnabled = messageListViewStyle.replyEnabled && channel.config.isRepliesEnabled,
-            threadsEnabled = messageListViewStyle.threadsEnabled && channel.config.isRepliesEnabled,
+        messageListViewStyle = requireStyle().copy(
+            replyEnabled = requireStyle().replyEnabled && channel.config.isRepliesEnabled,
+            threadsEnabled = requireStyle().threadsEnabled && channel.config.isRepliesEnabled,
         )
     }
 
@@ -569,13 +569,13 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
-            messageListViewStyle = messageListViewStyle,
+            messageListViewStyle = requireStyle(),
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
-        messageListItemViewHolderFactory.setMessageListItemStyle(messageListViewStyle.itemStyle)
-        messageListItemViewHolderFactory.setGiphyViewHolderStyle(messageListViewStyle.giphyViewHolderStyle)
+        messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
+        messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)
@@ -641,7 +641,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if editing a message is enabled, false otherwise.
      */
     public fun setEditMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(editMessageEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(editMessageEnabled = enabled)
     }
 
     /**
@@ -650,7 +650,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
     public fun setDeleteMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(deleteMessageEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(deleteMessageEnabled = enabled)
     }
 
     /**
@@ -659,7 +659,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
     public fun setDeleteMessageConfirmationEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(deleteConfirmationEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(deleteConfirmationEnabled = enabled)
     }
 
     /**
@@ -668,7 +668,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if copying a message is enabled, false otherwise.
      */
     public fun setCopyMessageEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(copyTextEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(copyTextEnabled = enabled)
     }
 
     /**
@@ -677,7 +677,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user blocking is enabled, false otherwise.
      */
     public fun setBlockUserEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(blockEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(blockEnabled = enabled)
     }
 
     /**
@@ -686,7 +686,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setMuteUserEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(muteEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(muteEnabled = enabled)
     }
 
     /**
@@ -695,7 +695,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setMessageFlagEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(flagEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(flagEnabled = enabled)
     }
 
     /**
@@ -704,9 +704,9 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(
+        messageListViewStyle = requireStyle().copy(
             reactionsEnabled = enabled,
-            itemStyle = messageListViewStyle.itemStyle.copy(reactionsEnabled = enabled)
+            itemStyle = requireStyle().itemStyle.copy(reactionsEnabled = enabled)
         )
     }
 
@@ -716,7 +716,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setThreadsEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(threadsEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(threadsEnabled = enabled)
     }
 
     /**
@@ -725,7 +725,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setRepliesEnabled(enabled: Boolean) {
-        messageListViewStyle = messageListViewStyle.copy(replyEnabled = enabled)
+        messageListViewStyle = requireStyle().copy(replyEnabled = enabled)
     }
 
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
@@ -754,6 +754,19 @@ public class MessageListView : ConstraintLayout {
 
     public fun handleFlagMessageResult(result: Result<Flag>) {
         flagMessageResultHandler.onHandleResult(result)
+    }
+
+    /**
+     * Returns an instance of [MessageListViewStyle] associated with this instance of [MessageListView].
+     * Be sure invoke this method after this view laid out on layout and already initialized, otherwise you'll get an
+     * exception.
+     *
+     * @return [MessageListViewStyle] instance associated with this [MessageListView].
+     */
+    public fun requireStyle(): MessageListViewStyle {
+        return checkNotNull(messageListViewStyle) {
+            "View must be initialized first to obtain style!"
+        }
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {

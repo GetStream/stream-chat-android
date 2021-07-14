@@ -34,12 +34,6 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val members: LiveData<List<Member>> = _members
     private val _messageToEdit: MutableLiveData<Message?> = MutableLiveData()
     public val messageToEdit: LiveData<Message?> = _messageToEdit
-    @Deprecated(
-        message = "Do not use this LiveData directly",
-        replaceWith = ReplaceWith("messageToEdit: LiveData<Message?> and postMessageToEdit(message: Message?)"),
-        level = DeprecationLevel.ERROR
-    )
-    public val editMessage: MutableLiveData<Message?> = MutableLiveData()
     private val _repliedMessage: MediatorLiveData<Message?> = MediatorLiveData()
     public val repliedMessage: LiveData<Message?> = _repliedMessage
     private val _isDirectMessage: MediatorLiveData<Boolean> = MediatorLiveData()

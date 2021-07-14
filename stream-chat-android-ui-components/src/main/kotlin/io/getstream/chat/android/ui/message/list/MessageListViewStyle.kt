@@ -59,7 +59,7 @@ public data class MessageListViewStyle(
     public val replyMessageStyle: MessageReplyStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
-    @Deprecated(message = "Use custom icons instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use custom icons instead", level = DeprecationLevel.ERROR)
     @ColorInt val iconsTint: Int?,
     val replyIcon: Int,
     val replyEnabled: Boolean,
@@ -81,7 +81,7 @@ public data class MessageListViewStyle(
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
-    @Deprecated(message = "Use deleteIcon instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Use deleteIcon instead", level = DeprecationLevel.ERROR)
     @ColorInt val warningActionsTintColor: Int?,
     val messageOptionsText: TextStyle,
     val warningMessageOptionsText: TextStyle,

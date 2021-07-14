@@ -90,10 +90,6 @@ internal class ChatEventsObservable(
             observable.onNext(event)
         }
 
-        override fun onDisconnected() {
-            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
-        }
-
         override fun onDisconnected(cause: DisconnectCause) {
             observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), cause))
         }

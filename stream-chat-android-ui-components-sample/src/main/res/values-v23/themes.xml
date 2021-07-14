@@ -20,13 +20,14 @@
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/ChannelActionsDialogAvatarStyle</item>
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/AttachmentGalleryAvatarStyle</item>
-        <item name="streamUiMentionSuggestionAvatarStyle">@style/MentionSuggestionAvatarStyle</item>
+        <item name="streamUiSuggestionListViewMentionAvatarStyle">@style/SuggestionListViewMentionAvatarStyle</item>
         <item name="streamUiSearchResultAvatarStyle">@style/SearchResultAvatarStyle</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/MessageOptionsAvatarStyle</item>
         <item name="streamUiReplyAvatarStyle">@style/ReplyAvatarStyle</item>
         <item name="streamUiThreadAvatarStyle">@style/ThreadAvatarStyle</item>
         <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderTheme</item>
         <item name="streamUiSearchInputViewStyle">@style/SearchInputViewTheme</item>
+        <item name="streamUiSuggestionListViewStyle">@style/SuggestionListViewTheme</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar"/>
@@ -47,7 +48,7 @@
 
     <style name="AttachmentGalleryAvatarStyle" parent="StreamUi.AttachmentGallery.Avatar"/>
 
-    <style name="MentionSuggestionAvatarStyle" parent="StreamUi.MentionSuggestion.Avatar"/>
+    <style name="SuggestionListViewMentionAvatarStyle" parent="StreamUi.SuggestionListView.Mention.Avatar"/>
 
     <style name="SearchResultAvatarStyle" parent="StreamUi.SearchResult.Avatar"/>
 
@@ -88,4 +89,6 @@
     <style name="AttachmentGalleryLeftIconStyle" parent="StreamUi.AttachmentGallery.BottomBar.LeftIcon"/>
 
     <style name="AttachmentGalleryRightIconStyle" parent="StreamUi.AttachmentGallery.BottomBar.RightIcon"/>
+  
+    <style name="SuggestionListViewTheme" parent="StreamUi.SuggestionListView" />
 </resources>

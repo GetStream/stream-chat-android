@@ -30,7 +30,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         fun createClient(): ChatClient {
 
             return ChatClient.Builder(data.apiKey, ApplicationProvider.getApplicationContext())
-                .logLevel(data.logLevel)
+                // TODO Review if we need it
+                // .logLevel(data.logLevel)
                 .loggerHandler(TestLoggerHandler())
                 .callbackExecutor { runnable -> runnable.run() }
                 .build()

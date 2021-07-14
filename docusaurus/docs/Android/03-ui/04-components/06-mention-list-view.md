@@ -31,7 +31,7 @@ You can add this View via XML:
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-We recommend using this view with its [ViewModel](../01-getting-started.md#viewmodels), which supplies it with data from the Stream API.
+We recommend using this view with its [ViewModel](../01-overview.md#viewmodels), which supplies it with data from the Stream API.
 
 The basic setup of the ViewModel and connecting it to the View is done the following way:
 
