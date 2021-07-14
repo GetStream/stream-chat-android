@@ -89,8 +89,6 @@ internal class TestDataHelper {
         return cal.time
     }
 
-    val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
-
     val config1 = Config(isTypingEvents = true, isReadEvents = true)
     val channel1 = Channel().apply {
         type = "messaging"

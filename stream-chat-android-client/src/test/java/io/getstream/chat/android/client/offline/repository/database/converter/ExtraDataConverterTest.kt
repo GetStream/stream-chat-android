@@ -1,12 +1,11 @@
-package io.getstream.chat.android.offline.repository.database.converter
+package io.getstream.chat.android.client.offline.repository.database.converter
 
 import com.google.common.truth.Truth
-import io.getstream.chat.android.offline.utils.TestDataHelper
 import org.junit.Test
 
 internal class ExtraDataConverterTest {
 
-    val data = TestDataHelper()
+    private val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
     @Test
     fun testNullEncoding() {
@@ -19,8 +18,8 @@ internal class ExtraDataConverterTest {
     @Test
     fun testSortEncoding() {
         val converter = ExtraDataConverter()
-        val output = converter.mapToString(data.extraData1)
+        val output = converter.mapToString(extraData1)
         val converted = converter.stringToMap(output)
-        Truth.assertThat(converted).isEqualTo(data.extraData1)
+        Truth.assertThat(converted).isEqualTo(extraData1)
     }
 }

@@ -6,12 +6,13 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.Mother.randomQueryChannelsSpec
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.offline.randomQueryChannelsEntity
-import io.getstream.chat.android.offline.randomQueryChannelsSpec
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
-import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
+import io.getstream.chat.android.client.offline.repository.domain.queryChannels.QueryChannelsDao
+import io.getstream.chat.android.client.offline.repository.domain.queryChannels.QueryChannelsEntity
+import io.getstream.chat.android.client.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,7 +56,7 @@ internal class QueryChannelsImplRepositoryTest {
         Truth.assertThat(result).isNotNull()
         Truth.assertThat(result!!.filter).isInstanceOf(ContainsFilterObject::class.java)
         Truth.assertThat((result.filter as ContainsFilterObject).fieldName).isEqualTo("cid")
-        Truth.assertThat(result.filter.value).isEqualTo("cid1")
+        Truth.assertThat((result.filter as ContainsFilterObject).value).isEqualTo("cid1")
         Truth.assertThat(result.cids).isEqualTo(listOf("cid1"))
     }
 
@@ -67,4 +68,7 @@ internal class QueryChannelsImplRepositoryTest {
 
         Truth.assertThat(result).isNull()
     }
+
+    private fun randomQueryChannelsEntity(id: String, filter: FilterObject, cids: List<String>): QueryChannelsEntity =
+        QueryChannelsEntity(id, filter, cids)
 }

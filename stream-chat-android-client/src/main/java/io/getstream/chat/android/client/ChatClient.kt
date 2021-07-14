@@ -106,7 +106,7 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     @InternalStreamChatApi
-    public val offlineModule: OfflineModule?,
+    public val offlineModule: OfflineModule? = null,
 ) {
 
     @InternalStreamChatApi

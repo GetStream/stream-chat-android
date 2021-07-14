@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository
+package io.getstream.chat.android.client.offline.repository
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
@@ -7,12 +7,12 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.Mother.randomUserEntity
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.randomUserEntity
-import io.getstream.chat.android.offline.repository.domain.user.UserDao
-import io.getstream.chat.android.offline.repository.domain.user.UserRepository
-import io.getstream.chat.android.offline.repository.domain.user.UserRepositoryImpl
+import io.getstream.chat.android.client.offline.repository.domain.user.UserDao
+import io.getstream.chat.android.client.offline.repository.domain.user.UserRepository
+import io.getstream.chat.android.client.offline.repository.domain.user.UserRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -25,7 +25,7 @@ internal class UserRepositoryTests {
     private lateinit var sut: UserRepository
 
     private lateinit var userDao: UserDao
-    private val currentUser: User = randomUser(id = "currentUserId")
+    private val currentUser: User = randomUser { id = "currentUserId" }
 
     @BeforeEach
     fun setup() {
@@ -76,7 +76,7 @@ internal class UserRepositoryTests {
 
     @Test
     fun `When insert me Should insert entity with me id to dao`() = runBlockingTest {
-        val user = randomUser(id = "userId")
+        val user = randomUser { id = "userId" }
 
         sut.insertCurrentUser(user)
 

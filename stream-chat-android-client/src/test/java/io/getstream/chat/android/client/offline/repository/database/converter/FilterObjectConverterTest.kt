@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository.database.converter
+package io.getstream.chat.android.client.offline.repository.database.converter
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.models.Filters

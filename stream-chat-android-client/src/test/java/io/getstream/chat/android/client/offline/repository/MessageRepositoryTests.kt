@@ -9,15 +9,16 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.Mother.randomMessage
+import io.getstream.chat.android.client.Mother.randomMessageEntity
+import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomMessageEntity
-import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.repository.domain.message.MessageDao
-import io.getstream.chat.android.offline.repository.domain.message.MessageRepository
-import io.getstream.chat.android.offline.repository.domain.message.MessageRepositoryImpl
-import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.offline.repository.domain.message.MessageDao
+import io.getstream.chat.android.client.offline.repository.domain.message.MessageRepository
+import io.getstream.chat.android.client.offline.repository.domain.message.MessageRepositoryImpl
+import io.getstream.chat.android.client.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -39,14 +40,14 @@ internal class MessageRepositoryTests {
     fun setup() {
         messageDao = mock()
         cache = mock()
-        sut = MessageRepositoryImpl(messageDao, ::randomUser, null, 100, cache)
+        sut = MessageRepositoryImpl(messageDao, { randomUser() }, null, 100, cache)
     }
 
     @Test
     fun `Given 2 messages in cache When select message entities Should return message from dao and cache`() =
         runBlockingTest {
-            val cachedMessage1 = randomMessage(id = "id1")
-            val cachedMessage2 = randomMessage(id = "id2")
+            val cachedMessage1 = randomMessage { id = "id1" }
+            val cachedMessage2 = randomMessage { id = "id2" }
 
             val messageEntity1 = randomMessageEntity(id = "id3")
             val messageEntity2 = randomMessageEntity(id = "id4")
@@ -146,7 +147,7 @@ internal class MessageRepositoryTests {
 
     @Test
     fun `when deleting a message, the cache should be also updated`() = runBlockingTest {
-        val message = randomMessage()
+        val message = Mother.randomMessage()
 
         sut.deleteChannelMessage(message)
 

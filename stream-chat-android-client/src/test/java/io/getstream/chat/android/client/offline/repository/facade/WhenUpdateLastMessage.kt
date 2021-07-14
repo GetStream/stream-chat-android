@@ -7,9 +7,10 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.offline.extensions.lastMessage
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.client.Mother.randomChannel
+import io.getstream.chat.android.client.Mother.randomMessage
+import io.getstream.chat.android.client.extensions.lastMessage
+import io.getstream.chat.android.client.offline.repository.facade.BaseRepositoryFacadeTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
@@ -30,8 +31,8 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given channel without messages in DB Should insert channel with updated last message`() = runBlockingTest {
-        val channel = randomChannel(messages = emptyList())
-        val lastMessage = randomMessage(createdAt = Date())
+        val channel = randomChannel().copy(messages = emptyList())
+        val lastMessage = randomMessage().copy(createdAt = Date())
         whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn channel
 
         sut.updateLastMessageForChannel("cid", lastMessage)
@@ -44,8 +45,8 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
     @Test
     fun `Given channel without lastMessageAt in DB Should insert channel with updated last message at`() =
         runBlockingTest {
-            val channel = randomChannel(messages = listOf(randomMessage()), lastMessageAt = null)
-            val lastMessage = randomMessage(createdAt = Date())
+            val channel = randomChannel().copy(messages = listOf(randomMessage()), lastMessageAt = null)
+            val lastMessage = randomMessage().copy(createdAt = Date())
             whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn channel
 
             sut.updateLastMessageForChannel("cid", lastMessage)
@@ -59,9 +60,9 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
     fun `Given channel with outdated lastMessage in DB Should insert channel with updated last message`() = runBlockingTest {
         val before = Date(1000)
         val after = Date(2000)
-        val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
-        val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
-        val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
+        val outdatedMessage = randomMessage().copy(id = "messageId1", createdAt = before)
+        val newLastMessage = randomMessage().copy(id = "messageId2", createdAt = after)
+        val channel = randomChannel().copy(messages = listOf(outdatedMessage), lastMessageAt = before)
         whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn channel
 
         sut.updateLastMessageForChannel("cid", newLastMessage)
@@ -75,9 +76,9 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
     fun `Given channel with actual lastMessage in DB Should not insert any channel`() = runBlockingTest {
         val before = Date(1000)
         val after = Date(2000)
-        val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
-        val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
-        val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
+        val outdatedMessage = randomMessage().copy(id = "messageId1", createdAt = before)
+        val newLastMessage = randomMessage().copy(id = "messageId2", createdAt = after)
+        val channel = randomChannel().copy(messages = listOf(newLastMessage), lastMessageAt = after)
         whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn channel
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)

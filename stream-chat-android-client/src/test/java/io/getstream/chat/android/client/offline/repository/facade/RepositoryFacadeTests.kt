@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository.facade
+package io.getstream.chat.android.client.offline.repository.facade
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -6,19 +6,19 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.Mother.randomChannel
+import io.getstream.chat.android.client.Mother.randomMember
+import io.getstream.chat.android.client.Mother.randomMessage
+import io.getstream.chat.android.client.Mother.randomReaction
+import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomReaction
-import io.getstream.chat.android.offline.randomUser
-import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.offline.model.ChannelConfig
+import io.getstream.chat.android.client.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -36,10 +36,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(0)
-            val user = randomUser(id = "userId")
+            val user = randomUser { id = "userId" }
             whenever(users.selectUser("userId")) doReturn user
-            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
-            val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
+            val channel1 = randomChannel().copy(messages = emptyList(), cid = "cid1", createdBy = user)
+            val channel2 = randomChannel().copy(messages = emptyList(), cid = "cid2", createdBy = user)
             whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(channel1, channel2)
 
             val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
@@ -53,18 +53,18 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given request more than last message When select channels Should return channels from DB with messages`() =
         runBlockingTest {
             val paginationRequest = AnyChannelPaginationRequest(100)
-            val user = randomUser(id = "userId")
+            val user = randomUser().copy(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
-            val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
-            val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
+            val message1 = randomMessage().copy(id = "messageId1", cid = "cid1", user = user)
+            val message2 = randomMessage().copy(id = "messageId2", cid = "cid2", user = user)
             whenever(messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest))) doReturn listOf(
                 message1
             )
             whenever(messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest))) doReturn listOf(
                 message2
             )
-            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
-            val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
+            val channel1 = randomChannel().copy(messages = emptyList(), cid = "cid1", createdBy = user)
+            val channelEntity2 = randomChannel().copy(messages = emptyList(), cid = "cid2", createdBy = user)
             whenever(channels.selectChannels(eq(listOf("cid1", "cid2")))) doReturn listOf(
                 channel1,
                 channelEntity2
@@ -94,11 +94,11 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val channelUser = randomUser()
         val userRead = randomUser()
         val messageUser = randomUser()
-        val channel = randomChannel(
+        val channel = randomChannel().copy(
             createdBy = channelUser,
             members = listOf(Member(memberUser)),
             read = listOf(ChannelUserRead(userRead)),
-            messages = listOf(randomMessage(user = messageUser))
+            messages = listOf(randomMessage { user = messageUser })
         )
 
         sut.insertChannel(channel)
@@ -122,10 +122,11 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
         val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
         val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
-        val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser
-        val message = randomMessage(
+        val expectedListOfUser =
+            latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser
+        val message = randomMessage().copy(
             user = messageUser,
-            replyTo = randomMessage(user = replyToUser),
+            replyTo = randomMessage { user = replyToUser },
             latestReactions = latestReactions,
             ownReactions = ownReactions,
             mentionedUsers = mentionedUsers,
@@ -151,11 +152,11 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     val channelUser = randomUser()
                     val userRead = randomUser()
                     val messageUser = randomUser()
-                    val channel = randomChannel(
+                    val channel = randomChannel().copy(
                         createdBy = channelUser,
                         members = listOf(Member(memberUser)),
                         read = listOf(ChannelUserRead(userRead)),
-                        messages = listOf(randomMessage(user = messageUser))
+                        messages = listOf(randomMessage { user = messageUser })
                     )
                     acc.first + listOf(memberUser, channelUser, userRead, messageUser) to acc.second + channel
                 }
@@ -183,9 +184,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
                     val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
                     val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
-                    val message = randomMessage(
+                    val message = randomMessage().copy(
                         user = messageUser,
-                        replyTo = randomMessage(user = replyToUser),
+                        replyTo = randomMessage { user = replyToUser },
                         latestReactions = latestReactions,
                         ownReactions = ownReactions,
                         mentionedUsers = mentionedUsers,
@@ -208,7 +209,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a reaction, it should have a valid users and it need to be stored`() = runBlockingTest {
         val user = randomUser()
-        val reaction = randomReaction(user = user)
+        val reaction = randomReaction().copy(user = user)
 
         sut.insertReaction(reaction)
 
@@ -219,7 +220,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When updating members of a channels, they need to be stored`() = runBlockingTest {
         val usersList = List(positiveRandomInt(20)) { randomUser() }
-        val members = usersList.map(::randomMember)
+        val members = usersList.map { user -> randomMember().copy(user = user) }
         val cid = randomCID()
 
         sut.updateMembersForChannel(cid, members)

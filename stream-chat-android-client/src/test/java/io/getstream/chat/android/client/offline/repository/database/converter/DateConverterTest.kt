@@ -1,6 +1,7 @@
-package io.getstream.chat.android.offline.repository.database.converter
+package io.getstream.chat.android.client.offline.repository.database.converter
 
 import com.google.common.truth.Truth
+import io.getstream.chat.android.offline.repository.database.converter.DateConverter
 import org.junit.Test
 import java.util.Date
 

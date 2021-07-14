@@ -1,11 +1,11 @@
-package io.getstream.chat.android.offline.repository.facade
+package io.getstream.chat.android.client.offline.repository.facade
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.Mother.randomChannel
+import io.getstream.chat.android.client.Mother.randomMessage
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.randomChannel
-import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.client.offline.model.ChannelConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
     @Test
     fun `Given a channel config in repo Should update channel by config from repo`() {
         sut.run {
-            val channel = randomChannel(type = "channelType")
+            val channel = randomChannel { type = "channelType" }
             val defaultConfig = Config(name = "default")
             val config = Config(name = "forChannel")
             whenever(configs.selectChannelConfig("channelType")) doReturn ChannelConfig("channelType", config)
@@ -30,7 +30,7 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
     @Test
     fun `Given no channel config in repo Should update channel by default config`() {
         sut.run {
-            val channel = randomChannel(type = "channelType")
+            val channel = randomChannel { type = "channelType" }
             val defaultConfig = Config(name = "default")
             whenever(configs.selectChannelConfig("channelType")) doReturn null
 
@@ -45,7 +45,10 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
         sut.run {
             val message1 = randomMessage()
             val message2 = randomMessage()
-            val channel = randomChannel(cid = "cid1")
+            val channel = randomChannel {
+                cid = "cid1"
+                messages = emptyList()
+            }
             val messageMap = mapOf("cid1" to listOf(message1, message2))
 
             channel.enrichChannel(messageMap, Config())
@@ -63,7 +66,10 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val message1 = randomMessage()
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(message1, message3))
+            val channel = randomChannel {
+                cid = "cid1"
+                messages = listOf(message1, message3)
+            }
             val messageMap = mapOf("cid1" to listOf(message1, message2))
 
             channel.enrichChannel(messageMap, Config())
@@ -79,11 +85,13 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
     @Test
     fun `Given messages for channel in the map And channel messages are not empty And contain message with the same id but different data Should update channel with distinct set of messages`() {
         sut.run {
-            val commonMessageId = "commonMessage"
-            val commonMessage = randomMessage(id = commonMessageId)
+            val commonMessage = randomMessage { id = "commonMessage" }
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(randomMessage(id = commonMessageId), message3))
+            val channel = randomChannel {
+                cid = "cid1"
+                messages = listOf(randomMessage { id = "commonMessage" }, message3)
+            }
             val messageMap = mapOf("cid1" to listOf(commonMessage, message2))
 
             channel.enrichChannel(messageMap, Config())
@@ -102,7 +110,10 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val message1 = randomMessage()
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(message1))
+            val channel = randomChannel {
+                cid = "cid1"
+                messages = listOf(message1)
+            }
             val messageMap = mapOf("cid2" to listOf(message2, message3))
 
             channel.enrichChannel(messageMap, Config())

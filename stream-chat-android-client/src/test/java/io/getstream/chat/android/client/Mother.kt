@@ -5,13 +5,14 @@ import com.flextrade.kfixture.KFixture
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.offline.model.ChannelConfig
 import io.getstream.chat.android.client.offline.model.QueryChannelsSpec
@@ -26,10 +27,16 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import java.util.Date
-import java.util.UUID
 
 internal object Mother {
-    private val fixture = JFixture()
+    private val fixture
+        get() = JFixture().apply {
+            customise().sameInstance(Mute::class.java, mock())
+            customise().circularDependencyBehaviour().omitSpecimen()
+            customise().repeatCount(0)
+        }
+
+    fun randomString() = io.getstream.chat.android.test.randomString()
 
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
         return KFixture(fixture) {
@@ -40,24 +47,22 @@ internal object Mother {
     fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
         return KFixture(fixture) {
             sameInstance(Mute::class.java, mock())
-            sameInstance(Message::class.java, mock())
+            sameInstance(Message::class.java, randomMessage())
             sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
         } <Channel>().apply(channelBuilder)
     }
 
     fun randomUser(userBuilder: User.() -> Unit = { }): User {
         return KFixture(fixture) {
-            sameInstance(Mute::class.java, mock())
+            propertyOf(User::class.java, User::mutes.name, emptyList<Mute>())
         } <User>().apply(userBuilder)
     }
 
-    fun randomString(): String = UUID.randomUUID().toString()
-
     internal fun randomUserEntity(
-        id: String = io.getstream.chat.android.test.randomString(),
-        originalId: String = io.getstream.chat.android.test.randomString(),
-        name: String = io.getstream.chat.android.test.randomString(),
-        role: String = io.getstream.chat.android.test.randomString(),
+        id: String = randomString(),
+        originalId: String = randomString(),
+        name: String = randomString(),
+        role: String = randomString(),
         createdAt: Date? = null,
         updatedAt: Date? = null,
         lastActive: Date? = null,
@@ -69,12 +74,12 @@ internal object Mother {
         UserEntity(id, originalId, name, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
     internal fun randomMessageEntity(
-        id: String = io.getstream.chat.android.test.randomString(),
+        id: String = randomString(),
         cid: String = randomCID(),
-        userId: String = io.getstream.chat.android.test.randomString(),
-        text: String = io.getstream.chat.android.test.randomString(),
+        userId: String = randomString(),
+        text: String = randomString(),
         attachments: List<AttachmentEntity> = emptyList(),
-        type: String = io.getstream.chat.android.test.randomString(),
+        type: String = randomString(),
         syncStatus: SyncStatus = SyncStatus.COMPLETED,
         replyCount: Int = randomInt(),
         createdAt: Date? = randomDate(),
@@ -87,11 +92,11 @@ internal object Mother {
         mentionedUsersId: List<String> = emptyList(),
         reactionCounts: Map<String, Int> = emptyMap(),
         reactionScores: Map<String, Int> = emptyMap(),
-        parentId: String? = io.getstream.chat.android.test.randomString(),
-        command: String? = io.getstream.chat.android.test.randomString(),
+        parentId: String? = randomString(),
+        command: String? = randomString(),
         shadowed: Boolean = randomBoolean(),
         extraData: Map<String, Any> = emptyMap(),
-        replyToId: String? = io.getstream.chat.android.test.randomString(),
+        replyToId: String? = randomString(),
         threadParticipantsIds: List<String> = emptyList(),
     ) = MessageEntity(
         messageInnerEntity = MessageInnerEntity(
@@ -122,19 +127,21 @@ internal object Mother {
         ownReactions = ownReactions,
     )
 
-    internal fun randomChannelConfig(type: String = io.getstream.chat.android.test.randomString(), config: Config = randomConfig()): ChannelConfig =
+    internal fun randomChannelConfig(
+        type: String = randomString(),
+        config: Config = randomConfig(),
+    ): ChannelConfig =
         ChannelConfig(type = type, config = config)
 
     internal fun randomQueryChannelsSpec(
         filter: FilterObject = NeutralFilterObject,
-        sort: QuerySort<Channel> = QuerySort.Companion.asc(Channel::lastMessageAt),
         cids: List<String> = emptyList(),
-    ): QueryChannelsSpec = QueryChannelsSpec(filter, sort, cids)
+    ): QueryChannelsSpec = QueryChannelsSpec(filter, cids)
 
     internal fun randomConfig(
         createdAt: Date? = randomDate(),
         updatedAt: Date? = randomDate(),
-        name: String = io.getstream.chat.android.test.randomString(),
+        name: String = randomString(),
         isTypingEvents: Boolean = randomBoolean(),
         isReadEvents: Boolean = randomBoolean(),
         isConnectEvents: Boolean = randomBoolean(),
@@ -146,11 +153,11 @@ internal object Mother {
         urlEnrichmentEnabled: Boolean = randomBoolean(),
         customEventsEnabled: Boolean = randomBoolean(),
         pushNotificationsEnabled: Boolean = randomBoolean(),
-        messageRetention: String = io.getstream.chat.android.test.randomString(),
+        messageRetention: String = randomString(),
         maxMessageLength: Int = randomInt(),
-        automod: String = io.getstream.chat.android.test.randomString(),
-        automodBehavior: String = io.getstream.chat.android.test.randomString(),
-        blocklistBehavior: String = io.getstream.chat.android.test.randomString(),
+        automod: String = randomString(),
+        automodBehavior: String = randomString(),
+        blocklistBehavior: String = randomString(),
         commands: List<Command> = emptyList(),
     ) = Config(
         created_at = createdAt,
@@ -174,4 +181,22 @@ internal object Mother {
         blocklistBehavior = blocklistBehavior,
         commands = commands,
     )
+
+    fun randomMessage(messageBuilder: Message.() -> Unit = { }): Message {
+        return KFixture(fixture) {
+            propertyOf(Message::class.java, Message::id.name, randomString())
+            propertyOf(Message::class.java, Message::attachments.name, mutableListOf<Attachment>())
+            propertyOf(Message::class.java, Message::user.name, randomUser())
+            propertyOf(Message::class.java, Message::latestReactions.name, mutableListOf<Reaction>())
+            propertyOf(Message::class.java, Message::ownReactions.name, mutableListOf<Reaction>())
+        } <Message>().apply(messageBuilder)
+    }
+
+    fun randomReaction(reactionBuilder: Reaction.() -> Unit = { }): Reaction {
+        return KFixture(fixture) {
+            propertyOf(Reaction::class.java, Reaction::user.name, randomUser())
+        } <Reaction>().apply(reactionBuilder)
+    }
+
+    fun randomMember(memberBuilder: Member.() -> Unit = { }) = KFixture(fixture)<Member>().apply(memberBuilder)
 }

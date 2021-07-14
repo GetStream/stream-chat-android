@@ -1,14 +1,14 @@
-package io.getstream.chat.android.offline.repository.database.converter
+package io.getstream.chat.android.client.offline.repository.database.converter
 
 import com.google.common.truth.Truth
-import io.getstream.chat.android.offline.repository.domain.channel.member.MemberEntity
-import io.getstream.chat.android.offline.repository.domain.channel.userread.ChannelUserReadEntity
-import io.getstream.chat.android.offline.utils.TestDataHelper
+import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.offline.repository.domain.channel.member.MemberEntity
+import io.getstream.chat.android.client.offline.repository.domain.channel.userread.ChannelUserReadEntity
 import org.junit.Test
 import java.util.Date
 
 internal class MapConverterTest {
-    private val data = TestDataHelper()
+    private val user = randomUser()
     // read maps
     @Test
     fun testNullEncoding() {
@@ -21,7 +21,7 @@ internal class MapConverterTest {
     @Test
     fun testEncoding() {
         val converter = MapConverter()
-        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0))
+        val readMap = mutableMapOf(user.id to ChannelUserReadEntity(user.id, Date(), 0))
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         Truth.assertThat(converted).isEqualTo(readMap)
@@ -39,7 +39,7 @@ internal class MapConverterTest {
     @Test
     fun testMemberEncoding() {
         val converter = MapConverter()
-        val memberMap = mutableMapOf(data.user1.id to MemberEntity(data.user1.id))
+        val memberMap = mutableMapOf(user.id to MemberEntity(user.id))
         val output = converter.memberMapToString(memberMap)
         val converted = converter.stringToMemberMap(output)
         Truth.assertThat(converted).isEqualTo(memberMap)

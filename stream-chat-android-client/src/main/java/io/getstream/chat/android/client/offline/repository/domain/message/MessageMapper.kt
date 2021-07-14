@@ -38,6 +38,7 @@ internal suspend fun MessageEntity.toModel(
         ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
         mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
         replyTo = replyToId?.let { getMessage(it) },
+        replyMessageId = replyToId,
         threadParticipants = threadParticipantsIds.map { getUser(it) },
         showInChannel = showInChannel,
         silent = silent,
