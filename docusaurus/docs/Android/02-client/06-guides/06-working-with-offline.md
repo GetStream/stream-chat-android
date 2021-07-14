@@ -1,4 +1,4 @@
-# Working with Offline
+# Working with Offline Support
 
 When using the offline library, you first have to build a `ChatDomain` instance as described on the [Getting Started](../../01-basics/03-getting-started.md#creating-a-chatdomain) page.
 

@@ -1245,25 +1245,6 @@ public class ChatClient internal constructor(
 
     //endregion
 
-    @Deprecated(
-        message = "Use ChatClient.handleRemoteMessage instead",
-        replaceWith = ReplaceWith("handleRemoteMessage(remoteMessage)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onMessageReceived(remoteMessage: RemoteMessage) {
-        setUserWithoutConnectingIfNeeded()
-        notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
-    }
-
-    @Deprecated(
-        message = "Use ChatClient.setFirebaseToken instead",
-        replaceWith = ReplaceWith("setFirebaseToken(token)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun onNewTokenReceived(token: String) {
-        notifications.setFirebaseToken(token)
-    }
-
     @InternalStreamChatApi
     public fun setPushNotificationReceivedListener(pushNotificationReceivedListener: PushNotificationReceivedListener) {
         this.pushNotificationReceivedListener = pushNotificationReceivedListener
@@ -1414,7 +1395,7 @@ public class ChatClient internal constructor(
 
         @Deprecated(
             message = "Use logLevel function with ChatLogLevel parameter instead",
-            level = DeprecationLevel.WARNING,
+            level = DeprecationLevel.ERROR,
         )
         public fun logLevel(level: String): Builder {
             logLevel = ChatLogLevel.valueOf(level)
