@@ -28,7 +28,6 @@
         <item name="streamUiThreadAvatarStyle">@style/ThreadAvatarStyle</item>
         <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderTheme</item>
         <item name="streamUiSearchInputViewStyle">@style/SearchInputViewTheme</item>
-        <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
     </style>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar" />
@@ -70,5 +69,5 @@
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
 
-    <style name="MediaActivityIconStyle" parent="StreamUi.MediaActivity.Icon"/>
+    <style name="MediaActivityStyle" parent="StreamUi.MediaActivity"/>
 </resources>

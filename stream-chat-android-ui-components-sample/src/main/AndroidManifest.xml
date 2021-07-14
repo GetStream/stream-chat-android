@@ -29,7 +29,7 @@
 
         <activity
             android:name="io.getstream.chat.android.ui.gallery.AttachmentMediaActivity"
-            android:theme="@style/StreamTheme"
+            android:theme="@style/MediaActivityStyle"
             tools:replace="android:theme"
             />
     </application>

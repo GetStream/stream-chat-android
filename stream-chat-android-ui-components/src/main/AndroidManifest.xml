@@ -31,7 +31,7 @@
             />
         <activity
             android:name=".gallery.AttachmentMediaActivity"
-            android:theme="@style/StreamUiAttachmentMediaActivityStyle"
+            android:theme="@style/StreamUi.MediaActivity"
             />
         <activity
             android:name=".gallery.AttachmentActivity"

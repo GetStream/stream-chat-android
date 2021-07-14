@@ -257,10 +257,6 @@
 
     <style name="StreamUiAttachmentGalleryActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
-    <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
-    </style>
-
     <style name="StreamUiAttachmentActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
@@ -488,6 +484,10 @@
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
+    </style>
+
+    <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
     </style>
 
     <style name="StreamUi.MediaActivity.Icon" parent="StreamUi">
