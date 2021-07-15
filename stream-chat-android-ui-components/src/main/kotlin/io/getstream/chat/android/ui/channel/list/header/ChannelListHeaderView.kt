@@ -40,7 +40,8 @@ public class ChannelListHeaderView : ConstraintLayout {
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr,
-        defStyleRes) {
+        defStyleRes
+    ) {
         init(attrs)
     }
 
@@ -104,7 +105,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             setImageDrawable(drawable)
             backgroundTintList =
                 typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionBackgroundTint)
-                    ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
+                ?: ContextCompat.getColorStateList(context, R.color.stream_ui_icon_button_background_selector)
         }
     }
 
