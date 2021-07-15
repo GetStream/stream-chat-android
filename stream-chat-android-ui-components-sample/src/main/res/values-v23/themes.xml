@@ -65,6 +65,6 @@
     <style name="MessageListHeaderTheme" parent="StreamUi.MessageListHeader" />
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
-
+  
     <style name="SuggestionListViewTheme" parent="StreamUi.SuggestionListView" />
 </resources>
