@@ -317,8 +317,8 @@
         <item name="streamUiBackgroundColor">@color/stream_ui_white_snow</item>
 
         <!-- Message background color -->
-        <item name="streamUiMessageBackgroundColorMine">#70AF74</item>
-        <item name="streamUiMessageBackgroundColorTheirs">#FFFFFF</item>
+        <item name="streamUiMessageBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
+        <item name="streamUiMessageBackgroundColorTheirs">@color/stream_ui_white</item>
 
         <!-- Message link -->
         <item name="streamUiMessageLinkColorMine">@color/stream_ui_accent_blue</item>
