@@ -63,7 +63,5 @@
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
 
-    <style name="MediaActivityStyle" parent="StreamUi.MediaActivity"/>
-
     <style name="SuggestionListViewTheme" parent="StreamUi.SuggestionListView" />
 </resources>
