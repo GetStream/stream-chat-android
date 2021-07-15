@@ -1756,8 +1756,6 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
-	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
-	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
@@ -2053,10 +2051,6 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun setWatcherCount (I)V
 	public final fun setWatchers (Ljava/util/List;)V
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/models/ChannelKt {
-	public static final field EXTRA_DATA_MUTED Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/ChannelMute {
