@@ -158,6 +158,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder {
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun useNewSerialization (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withModule (Lio/getstream/chat/android/client/Module;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {
@@ -176,6 +177,11 @@ public abstract interface class io/getstream/chat/android/client/ChatEventListen
 public final class io/getstream/chat/android/client/ClientExtensionsKt {
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;Landroidx/lifecycle/LifecycleOwner;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
+}
+
+public abstract interface class io/getstream/chat/android/client/Module {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun init (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
