@@ -64,7 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-Now you can configure the style of `AttachmentMediaActivity`.
+- Now you can configure the style of `AttachmentMediaActivity`.
 
 ### ⚠️ Changed
 
