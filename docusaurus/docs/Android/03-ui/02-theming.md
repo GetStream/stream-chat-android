@@ -123,7 +123,7 @@ Your custom themes can use the default styles can use the default styles for the
 :::
 
 #### Themes for Activities
-In the SDK there are also some activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. To customize those activities, it is necessary to override the activity in your manisfest: 
+SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. You can customize them by overriding the activity with custom `theme` in your manisfest: 
 
 **AndroidManifest.xml**
 
@@ -148,4 +148,3 @@ In the SDK there are also some activities: `AttachmentMediaActivity`, `Attachmen
     <item name="android:src">@drawable/stream_ui_ic_audio</item>
 </style>
 ```
-
