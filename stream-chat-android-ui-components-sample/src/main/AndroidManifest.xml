@@ -26,11 +26,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name="io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity"
-            android:theme="@style/AttachmentGalleryStyle"
-            tools:replace="android:theme"
-            />
     </application>
 </manifest>
