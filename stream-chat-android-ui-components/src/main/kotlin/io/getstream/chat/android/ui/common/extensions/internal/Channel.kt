@@ -78,6 +78,14 @@ internal fun Channel.getLastMessagePreviewText(
     }
 }
 
+private const val EXTRA_DATA_MUTED: String = "mutedChannel"
+
+internal var Channel.isMuted: Boolean
+    get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false
+    set(value) {
+        extraData[EXTRA_DATA_MUTED] = value
+    }
+
 private fun getAttachmentPrefix(attachment: Attachment): String? =
     when (attachment.type) {
         ModelType.attach_giphy -> "/giphy"
