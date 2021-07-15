@@ -32,6 +32,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `Channel::isMuted` extension. Use `User::channelMutes` or subscribe for `NotificationChannelMutesUpdatedEvent` to get information about muted channels.
 
 
 ## stream-chat-android-offline
