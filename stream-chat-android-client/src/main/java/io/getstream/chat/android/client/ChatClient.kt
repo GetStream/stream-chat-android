@@ -101,6 +101,7 @@ public class ChatClient internal constructor(
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
+    private val modules: Collection<Module> = emptyList()
 ) {
 
     @InternalStreamChatApi
@@ -1437,6 +1438,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var modules: List<Module> = emptyList()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1533,6 +1535,10 @@ public class ChatClient internal constructor(
         @VisibleForTesting
         public fun callbackExecutor(callbackExecutor: Executor): Builder = apply {
             this.callbackExecutor = callbackExecutor
+        }
+
+        public fun withModule(module: Module): Builder = apply {
+            modules += module
         }
 
         public fun build(): ChatClient {
