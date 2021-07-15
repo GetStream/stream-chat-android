@@ -261,6 +261,7 @@
 
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="streamUiValidTheme">true</item>
+        <item name="streamUiMessageListStyle">@style/StreamUi.MessageList</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/StreamUi.MessageList.Header.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
@@ -297,6 +298,203 @@
         <item name="streamUiAvatarOnlineIndicatorBorderColor">@color/stream_ui_white</item>
     </style>
 
+    <style name="StreamUi.MessageList" parent="StreamUi">
+        <!-- Scroll button-->
+        <item name="streamUiScrollButtonEnabled">true</item>
+        <item name="streamUiScrollButtonUnreadEnabled">true</item>
+        <item name="streamUiScrollButtonColor">@color/stream_ui_white</item>
+        <item name="streamUiScrollButtonRippleColor">@color/stream_ui_white_smoke</item>
+        <item name="streamUiScrollButtonBadgeColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiScrollButtonIcon">@drawable/stream_ui_ic_down</item>
+        <item name="streamUiScrollButtonBadgeTextSize">@dimen/stream_ui_scroll_button_unread_badge_text_size</item>
+        <item name="streamUiScrollButtonBadgeTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiScrollButtonBadgeTextStyle">normal</item>
+
+        <item name="streamUiLoadMoreThreshold">10</item>
+        <item name="streamUiNewMessagesBehaviour">scroll_to_bottom</item>
+        <item name="streamUiRetryOptionIcon">@drawable/stream_ui_ic_send</item>
+
+        <item name="streamUiBackgroundColor">@color/stream_ui_white_snow</item>
+
+        <!-- Message background color -->
+        <item name="streamUiMessageBackgroundColorMine">#70AF74</item>
+        <item name="streamUiMessageBackgroundColorTheirs">#FFFFFF</item>
+
+        <!-- Message link -->
+        <item name="streamUiMessageLinkColorMine">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageLinkColorTheirs">@color/stream_ui_accent_blue</item>
+        <item name="streamUiLinkDescriptionMaxLines">5</item>
+        <item name="streamUiReactionsEnabled">true</item>
+        <item name="streamUiMessageLinkBackgroundColorMine">@color/stream_ui_blue_alice</item>
+        <item name="streamUiMessageLinkBackgroundColorTheirs">@color/stream_ui_blue_alice</item>
+
+        <!-- Message text style mine -->
+        <item name="streamUiMessageTextSizeMine">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextColorMine">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageTextStyleMine">normal</item>
+
+        <!-- Message text style theirs -->
+        <item name="streamUiMessageTextSizeTheirs">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextColorTheirs">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageTextStyleTheirs">normal</item>
+
+        <!-- Message text style user name in footer -->
+        <item name="streamUiMessageTextSizeUserName">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorUserName">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleUserName">normal</item>
+
+        <!-- Message text style date in footer -->
+        <item name="streamUiMessageTextSizeDate">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorDate">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleDate">normal</item>
+
+        <!-- Message text style thread counter in footer -->
+        <item name="streamUiMessageTextSizeThreadCounter">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorThreadCounter">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageTextStyleThreadCounter">normal</item>
+
+        <!-- Message text style link title -->
+        <item name="streamUiMessageTextSizeLinkTitle">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextColorLinkTitle">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageTextStyleLinkTitle">normal</item>
+        <item name="streamUiMessageTextSizeLinkDescription">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorLinkDescription">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleLinkDescription">normal</item>
+
+        <!-- Message Reply background color -->
+        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
+        <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_white</item>
+
+        <!-- Message Reply text style mine -->
+        <item name="streamUiMessageReplyTextSizeMine">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageReplyTextColorMine">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageReplyTextStyleMine">normal</item>
+
+        <!-- Message Reply text style theirs -->
+        <item name="streamUiMessageReplyTextSizeTheirs">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageReplyTextColorTheirs">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageReplyTextStyleTheirs">normal</item>
+
+        <!-- Message Reply link -->
+        <item name="streamUiMessageReplyLinkColorMine">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageReplyLinkColorTheirs">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageReplyLinkBackgroundColorMine">@color/stream_ui_blue_alice</item>
+        <item name="streamUiMessageReplyLinkBackgroundColorTheirs">@color/stream_ui_blue_alice</item>
+
+        <!-- Message Reply stroke -->
+        <item name="streamUiMessageReplyStrokeColorMine">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiMessageReplyStrokeWidthMine">0dp</item>
+        <item name="streamUiMessageReplyStrokeColorTheirs">@color/stream_ui_grey_whisper</item>
+        <item name="streamUiMessageReplyStrokeWidthTheirs">1dp</item>
+
+        <!-- Date separator -->
+        <item name="streamUiDateSeparatorBackgroundColor">@color/stream_ui_overlay_dark</item>
+
+        <item name="streamUiMessageTextSizeDateSeparator">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorDateSeparator">@color/stream_ui_white</item>
+        <item name="streamUiMessageTextStyleDateSeparator">normal</item>
+
+        <!-- Message reactions view style -->
+        <item name="streamUiMessageReactionsBubbleColorMine">@color/stream_ui_grey_whisper</item>
+        <item name="streamUiMessageReactionsBubbleColorTheirs">@color/stream_ui_grey_gainsboro</item>
+        <item name="streamUiMessageReactionsBubbleBorderColorMine">@color/stream_ui_grey_whisper</item>
+
+        <!-- Message edit reactions view style -->
+        <item name="streamUiEditReactionsBubbleColorMine">@color/stream_ui_white</item>
+        <item name="streamUiEditReactionsBubbleColorTheirs">@color/stream_ui_white</item>
+
+        <!-- Indicator icons -->
+        <item name="streamUiIconIndicatorSent">@drawable/stream_ui_ic_check_single</item>
+        <item name="streamUiIconIndicatorRead">@drawable/stream_ui_ic_check_double</item>
+        <item name="streamUiIconIndicatorPendingSync">@drawable/stream_ui_ic_clock</item>
+        <item name="streamUiIconOnlyVisibleToYou">@drawable/stream_ui_ic_icon_eye_off</item>
+
+        <!-- Message deleted style -->
+        <item name="streamUiDeletedMessageBackgroundColor">@color/stream_ui_grey_whisper</item>
+        <item name="streamUiMessageTextSizeMessageDeleted">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextColorMessageDeleted">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleMessageDeleted">italic</item>
+
+        <!-- System message text style -->
+        <item name="streamUiSystemMessageTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiSystemMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSystemMessageTextStyle">bold</item>
+
+        <!-- Error message text style -->
+        <item name="streamUiErrorMessageTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiErrorMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiErrorMessageTextStyle">bold</item>
+
+        <item name="streamUiMessageStrokeColorMine">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiMessageStrokeWidthMine">0dp</item>
+        <item name="streamUiMessageStrokeColorTheirs">@color/stream_ui_grey_whisper</item>
+        <item name="streamUiMessageStrokeWidthTheirs">1dp</item>
+
+        <!-- Message options -->
+        <item name="streamUiReplyOptionIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
+        <item name="streamUiReplyEnabled">true</item>
+        <item name="streamUiCopyMessageActionEnabled">true</item>
+        <item name="streamUiCopyOptionIcon">@drawable/stream_ui_ic_copy</item>
+        <item name="streamUiEditOptionIcon">@drawable/stream_ui_ic_edit</item>
+        <item name="streamUiEditMessageEnabled">true</item>
+        <item name="streamUiFlagOptionIcon">@drawable/stream_ui_ic_flag</item>
+        <item name="streamUiFlagMessageEnabled">true</item>
+        <item name="streamUiFlagMessageConfirmationEnabled">false</item>
+
+        <item name="streamUiMuteOptionIcon">@drawable/stream_ui_ic_mute</item>
+        <item name="streamUiUnmuteOptionIcon">@drawable/stream_ui_ic_umnute</item>
+        <item name="streamUiMuteUserEnabled">true</item>
+        <item name="streamUiBlockOptionIcon">@drawable/stream_ui_ic_user_block</item>
+        <item name="streamUiBlockUserEnabled">true</item>
+        <item name="streamUiDeleteOptionIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiDeleteConfirmationEnabled">true</item>
+        <item name="streamUiDeleteMessageEnabled">true</item>
+        <item name="streamUiThreadsEnabled">true</item>
+        <item name="streamUiThreadReplyOptionIcon">@drawable/stream_ui_ic_thread_reply</item>
+        <item name="streamUiMessageOptionBackgroundColor">@color/stream_ui_white</item>
+        <item name="streamUiMessageOptionsTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageOptionsTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageOptionsTextStyle">normal</item>
+        <item name="streamUiWarningMessageOptionsTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiWarningMessageOptionsTextColor">@color/stream_ui_accent_red</item>
+        <item name="streamUiWarningMessageOptionsTextStyle">normal</item>
+
+        <!-- User reactions card -->
+        <item name="streamUiUserReactionsBackgroundColor">@color/stream_ui_white</item>
+        <item name="streamUiUserReactionsTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiUserReactionsTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiUserReactionsTitleTextStyle">bold</item>
+
+        <!-- Options overly dialog -->
+        <item name="streamUiOptionsOverlayDimColor">@color/stream_ui_literal_transparent</item>
+
+        <!-- Giphy view holder -->
+        <item name="streamUiGiphyCardBackgroundColor">@color/stream_ui_white</item>
+        <item name="streamUiGiphyCardElevation">@dimen/stream_ui_elevation_small</item>
+        <item name="streamUiGiphyCardButtonDividerColor">@color/stream_ui_border</item>
+        <item name="streamUiGiphyIcon">@drawable/stream_ui_ic_giphy</item>
+
+        <item name="streamUiGiphyLabelTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiGiphyLabelTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiGiphyLabelTextStyle">normal</item>
+
+        <item name="streamUiGiphyQueryTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiGiphyQueryTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiGiphyQueryTextStyle">normal</item>
+
+        <item name="streamUiGiphyCancelButtonTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiGiphyCancelButtonTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiGiphyCancelButtonTextStyle">normal</item>
+
+        <item name="streamUiGiphyShuffleButtonTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiGiphyShuffleButtonTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiGiphyShuffleButtonTextStyle">normal</item>
+
+        <item name="streamUiGiphySendButtonTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiGiphySendButtonTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiGiphySendButtonTextStyle">normal</item>
+    </style>
+
     <style name="StreamUi.MessageList.Item.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of MessageList Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_small</item>
@@ -330,6 +528,14 @@
         <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
     </style>
 
+    <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
+        <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
+        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
+        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
+        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
     <style name="StreamUi.ChannelList.Item.Avatar" parent="StreamUi.BaseAvatar">
         <!--Style properties for Avatar inside of MessageList Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
@@ -360,14 +566,6 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
-    </style>
-
-    <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
-        <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
-        <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
-        <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
-        <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
-        <item name="streamUiAvatarOnlineIndicatorEnabled">false</item>
     </style>
 
     <style name="StreamUi.ChannelActions.Dialog.Avatar" parent="StreamUi.BaseAvatar">

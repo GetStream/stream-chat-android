@@ -407,11 +407,11 @@ public class MessageListView : ConstraintLayout {
     private lateinit var attachmentViewFactory: AttachmentViewFactory
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(context, null)
+        init(null)
     }
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(context, attrs)
+        init(attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
@@ -419,10 +419,10 @@ public class MessageListView : ConstraintLayout {
         attrs,
         defStyle
     ) {
-        init(context, attrs)
+        init(attrs)
     }
 
-    private fun init(context: Context, attr: AttributeSet?) {
+    private fun init(attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
@@ -471,8 +471,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
-        val tArray = context
-            .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
+        val tArray = context.obtainStyledAttributes(
+            attributeSet,
+            R.styleable.MessageListView,
+            R.attr.streamUiMentionListStyle,
+            R.style.StreamUi_MessageList
+        )
 
         tArray.getInteger(
             R.styleable.MessageListView_streamUiLoadMoreThreshold,
