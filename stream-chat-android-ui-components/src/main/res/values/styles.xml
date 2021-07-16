@@ -528,6 +528,7 @@
     <style name="StreamUi.AttachmentGallery.BottomBar.RightIcon" parent="StreamUi">
         <item name="android:layout_marginEnd">@dimen/stream_ui_spacing_small</item>
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
+    </style>
 
     <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
