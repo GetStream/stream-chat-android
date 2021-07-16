@@ -69,7 +69,7 @@ public class QueryChannelsController internal constructor(
 
     public var recoveryNeeded: Boolean = false
 
-    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter)
+    internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
     private val _channels = mutableState._channels
     private val _loading = mutableState._loading

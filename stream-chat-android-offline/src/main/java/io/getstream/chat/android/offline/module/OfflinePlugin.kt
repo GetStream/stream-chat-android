@@ -2,7 +2,7 @@ package io.getstream.chat.android.offline.module
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Plugin
+import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.module.state.StateRegistry
 
