@@ -61,6 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash caused by missing `streamUiReplyAvatarStyle`
 
 ### ⬆️ Improved
 
