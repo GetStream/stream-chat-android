@@ -52,7 +52,7 @@ public class ChannelListHeaderView : ConstraintLayout {
             attrs,
             R.styleable.ChannelListHeaderView,
             R.attr.streamUiChannelListHeaderStyle,
-            R.style.StreamUi_ChannelListHeader
+            R.style.StreamUi_ChannelListHeader,
         ).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)

@@ -29,7 +29,7 @@ public data class AvatarStyle(
                 attrs,
                 R.styleable.AvatarView,
                 0,
-                0
+                0,
             ).use {
                 val avatarBorderWidth = it.getDimensionPixelSize(
                     R.styleable.AvatarView_streamUiAvatarBorderWidth,
