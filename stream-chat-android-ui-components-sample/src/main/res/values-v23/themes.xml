@@ -66,16 +66,6 @@
 
     <style name="SearchInputViewTheme" parent="StreamUi.SearchInputView"/>
 
-    <style name="AttachmentGalleryStyle" parent="StreamUi.AttachmentGallery">
-        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/AttachmentGalleryCloseButtonStyle</item>
-        <item name="streamUiAttachmentGalleryTitleStyle">@style/AttachmentGalleryTitleStyle</item>
-        <item name="streamUiAttachmentGalleryDateStyle">@style/AttachmentGalleryDateStyle</item>
-        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/AttachmentGalleryActionsMenuStyle</item>
-        <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/AttachmentGalleryImageCountStyle</item>
-        <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/AttachmentGalleryLeftIconStyle</item>
-        <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/AttachmentGalleryRightIconStyle</item>
-    </style>
-
     <style name="AttachmentGalleryCloseButtonStyle" parent="StreamUi.AttachmentGallery.CloseButton"/>
 
     <style name="AttachmentGalleryTitleStyle" parent="StreamUi.AttachmentGallery.Title"/>
