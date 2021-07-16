@@ -280,6 +280,7 @@
         <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
         <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
         <item name="streamUiSuggestionListViewStyle">@style/StreamUi.SuggestionListView</item>
+        <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
     </style>
 
     <style name="StreamUi">
