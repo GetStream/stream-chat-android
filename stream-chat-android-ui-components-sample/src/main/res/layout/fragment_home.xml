@@ -14,7 +14,6 @@
 
         <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
             android:id="@+id/channelListHeaderView"
-            style="?attr/streamUiChannelListHeaderStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"

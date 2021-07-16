@@ -52,13 +52,13 @@ public data class ChannelActionsDialogViewStyle(
                 attrs,
                 R.styleable.ChannelListView,
                 0,
-                0
+                0,
             ).use {
 
                 val a = context.obtainStyledAttributes(
                     it.getResourceId(
                         R.styleable.ChannelListView_streamUiChannelActionsDialogStyle,
-                        -1
+                        R.style.StreamUi_ChannelList_ActionsDialog,
                     ),
                     R.styleable.ChannelActionsDialog
                 )
