@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.doOnResult
+import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -65,6 +67,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
+import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -81,6 +84,7 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -103,7 +107,8 @@ public class ChatClient internal constructor(
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    plugins: Collection<Plugin> = emptyList()
+    private val scope: CoroutineScope,
+    plugins: Collection<Plugin> = emptyList(),
 ) {
 
     private val _plugins: MutableCollection<Plugin> = mutableListOf(*plugins.toTypedArray())
@@ -926,14 +931,23 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
-    }
+    ): Call<Channel> = queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
+        .doOnStart(scope) {
+            plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+        }
+        .doOnResult(scope) { result ->
+            plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+        }
 
     @CheckResult
-    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.queryChannels(request)
-    }
+    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
+            .doOnStart(scope) {
+                plugins.forEach { it.onQueryChannelsRequest(request) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onQueryChannelsResult(result, request) }
+            }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -1645,6 +1659,8 @@ public class ChatClient internal constructor(
                 module.queryChannelsPostponeHelper,
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
+                scope = module.networkScope,
+                plugins = plugins,
             )
 
             instance = result

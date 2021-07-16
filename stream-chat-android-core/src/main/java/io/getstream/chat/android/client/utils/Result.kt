@@ -148,3 +148,5 @@ public suspend fun <T : Any, R: Any> Result<T>.flatMapSuspend(func: suspend (T) 
         Result.error(error())
     }
 }
+
+public fun <T: Any> T.toResult(): Result<T> = Result.success(this)

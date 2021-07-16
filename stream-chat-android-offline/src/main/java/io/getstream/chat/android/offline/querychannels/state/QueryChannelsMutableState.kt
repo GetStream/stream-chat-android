@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.querychannels.state
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +17,9 @@ internal class QueryChannelsMutableState(
     override val sort: QuerySort<Channel>,
     scope: CoroutineScope,
 ) : QueryChannelsState {
+
+    internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter)
+
     internal val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
