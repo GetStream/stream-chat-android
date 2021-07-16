@@ -36,11 +36,13 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.offlinePlugin
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.offline.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -132,8 +134,7 @@ private const val CHANNEL_LIMIT = 30
  */
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
-    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
-    // the userOverwrite field is here for backwards compatibility
+    @VisibleForTesting
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -160,6 +161,7 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext
     )
+
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
 
@@ -557,11 +559,13 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+            val mutableState = client.offlinePlugin.state.queryChannels(filter, sort).toMutableState()
             QueryChannelsController(
                 filter,
                 sort,
                 client,
-                this
+                this,
+                mutableState
             )
         }
 
@@ -987,6 +991,7 @@ internal class ChatDomainImpl internal constructor(
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
         context(appContext)
         scope(scope)
+        database(db)
         defaultConfig(defaultConfig)
         setOfflineEnabled(false)
     }.build()

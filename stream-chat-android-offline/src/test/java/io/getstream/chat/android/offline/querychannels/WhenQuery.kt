@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -241,8 +242,15 @@ internal class WhenQuery {
         fun get(): QueryChannelsController {
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repositories
+            val filter = Filters.neutral()
 
-            return QueryChannelsController(Filters.neutral(), querySort, chatClient, chatDomainImpl)
+            return QueryChannelsController(
+                filter,
+                querySort,
+                chatClient,
+                chatDomainImpl,
+                QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
+            )
         }
     }
 }

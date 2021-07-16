@@ -103,8 +103,17 @@ public class ChatClient internal constructor(
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    private val modules: Collection<Module> = emptyList()
+    plugins: Collection<Plugin> = emptyList()
 ) {
+
+    private val _plugins: MutableCollection<Plugin> = mutableListOf(*plugins.toTypedArray())
+    public val plugins: Collection<Plugin> = _plugins
+
+    // TODO Added for backward compatibility with ChatDomain.Builder. Should be removed when ChatDomain will be hidden
+    @InternalStreamChatApi
+    public fun addPlugin(plugin: Plugin) {
+        _plugins += plugin
+    }
 
     @InternalStreamChatApi
     public val notificationHandler: ChatNotificationHandler = notifications.handler
@@ -1510,7 +1519,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private var modules: List<Module> = emptyList()
+        private var plugins: List<Plugin> = emptyList()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1600,8 +1609,8 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public fun withModule(module: Module): Builder = apply {
-            modules += module
+        public fun withModule(plugin: Plugin): Builder = apply {
+            plugins += plugin
         }
 
         public fun build(): ChatClient {

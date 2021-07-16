@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.VisibleForTesting
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -22,12 +23,15 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.module.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
+import io.getstream.chat.android.offline.module.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat
@@ -576,6 +580,7 @@ public sealed interface ChatDomain {
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
 
+        @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
@@ -622,8 +627,25 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+            // TODO remove when ChatDomain will be completely hidden from customers
+            checkOfflinePluginAdded()
+
             instance = buildImpl()
             return instance()
+        }
+
+        private fun checkOfflinePluginAdded() {
+            if (client.plugins.any { it.name == OfflinePlugin.MODULE_NAME }) {
+                return
+            }
+
+            OfflinePluginConfig(
+                backgroundSyncEnabled = backgroundSyncEnabled,
+                userPresence = userPresence,
+                persistenceEnabled = storageEnabled
+            )
+                .let(::OfflinePlugin)
+                .also(client::addPlugin)
         }
 
         internal fun buildImpl(): ChatDomainImpl {
@@ -642,7 +664,8 @@ public sealed interface ChatDomain {
     }
 
     public companion object {
-        private var instance: ChatDomain? = null
+        @VisibleForTesting
+        internal var instance: ChatDomain? = null
 
         @JvmStatic
         public fun instance(): ChatDomain = instance

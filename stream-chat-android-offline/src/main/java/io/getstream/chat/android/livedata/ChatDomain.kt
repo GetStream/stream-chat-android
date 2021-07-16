@@ -25,6 +25,7 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -576,10 +577,6 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client)
-
-        internal fun database(db: ChatDatabase) = apply {
-            offlineChatDomainBuilder.database(db)
-        }
 
         public fun enableBackgroundSync(): Builder = apply {
             offlineChatDomainBuilder.enableBackgroundSync()

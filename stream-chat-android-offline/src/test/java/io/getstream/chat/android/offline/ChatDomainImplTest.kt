@@ -41,7 +41,7 @@ internal class ChatDomainImplTest {
             on { attachmentDao() } doReturn mock()
         }
         val handler: Handler = mock()
-        val offlineEnabled = true
+        val offlineEnabled = false
         val userPresence = true
         val recoveryEnabled = true
         sut = ChatDomainImpl(
