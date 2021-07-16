@@ -24,17 +24,15 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toQueryChannelsRequest
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -48,14 +46,8 @@ public class QueryChannelsController internal constructor(
     public val sort: QuerySort<Channel>,
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl,
+    private val mutableState: QueryChannelsMutableState,
 ) {
-
-    internal constructor(
-        filter: FilterObject,
-        sort: QuerySort<Channel>,
-        client: ChatClient,
-        domain: ChatDomain,
-    ) : this(filter, sort, client, domain as ChatDomainImpl)
 
     private var channelOffset = INITIAL_CHANNEL_OFFSET
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
@@ -79,28 +71,26 @@ public class QueryChannelsController internal constructor(
 
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter)
 
-    private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
-    private val _loading = MutableStateFlow(false)
-    private val _loadingMore = MutableStateFlow(false)
-    private val _endOfChannels = MutableStateFlow(false)
-    private val _sortedChannels = _channels.map { it.values.sortedWith(sort.comparator) }
-        .stateIn(domainImpl.scope, SharingStarted.Eagerly, emptyList())
-    private val _mutedChannelIds = MutableStateFlow<List<String>>(emptyList())
+    private val _channels = mutableState._channels
+    private val _loading = mutableState._loading
+    private val _loadingMore = mutableState._loadingMore
+    private val _endOfChannels = mutableState._endOfChannels
+    private val _mutedChannelIds = mutableState._mutedChannelIds
 
-    public val loading: StateFlow<Boolean> = _loading
-    public val loadingMore: StateFlow<Boolean> = _loadingMore
-    public val endOfChannels: StateFlow<Boolean> = _endOfChannels
-    public val channels: StateFlow<List<Channel>> = _sortedChannels
-    public val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
+    public val loading: StateFlow<Boolean> = mutableState.loading
+    public val loadingMore: StateFlow<Boolean> = mutableState.loadingMore
+    public val endOfChannels: StateFlow<Boolean> = mutableState.endOfChannels
+    public val channels: StateFlow<List<Channel>> = mutableState.channels
+    public val mutedChannelIds: StateFlow<List<String>> = mutableState.mutedChannelIds
 
-    public val channelsState: StateFlow<ChannelsState> =
-        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
-            when {
-                loading -> ChannelsState.Loading
-                channels.isEmpty() -> ChannelsState.OfflineNoResults
-                else -> ChannelsState.Result(channels)
-            }
-        }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
+    public val channelsState: StateFlow<ChannelsState> = mutableState.channelsState.map { state ->
+        when (state) {
+            io.getstream.chat.android.offline.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
+            io.getstream.chat.android.offline.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
+            io.getstream.chat.android.offline.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
+            is io.getstream.chat.android.offline.querychannels.state.ChannelsState.Result -> ChannelsState.Result(state.channels)
+        }
+    }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 

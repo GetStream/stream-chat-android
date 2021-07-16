@@ -24,7 +24,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
@@ -633,11 +632,8 @@ public sealed interface ChatDomain {
         }
 
         @Suppress("DEPRECATION_ERROR")
-        private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client, user)
-
-        internal fun database(db: ChatDatabase) = apply {
-            offlineChatDomainBuilder.database(db)
-        }
+        private val offlineChatDomainBuilder: OfflineChatDomainBuilder =
+            OfflineChatDomainBuilder(appContext, client, user)
 
         public fun enableBackgroundSync(): Builder = apply {
             offlineChatDomainBuilder.enableBackgroundSync()
