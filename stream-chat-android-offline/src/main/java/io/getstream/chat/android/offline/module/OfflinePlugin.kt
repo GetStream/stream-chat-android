@@ -2,10 +2,13 @@ package io.getstream.chat.android.offline.module
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Module
+import io.getstream.chat.android.client.Plugin
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.module.state.StateRegistry
 
-public class OfflineModule(private val config: Config) : Module {
+public class OfflinePlugin(private val config: Config) : Plugin {
+
+    public val state: StateRegistry = StateRegistry()
 
     override val name: String = MODULE_NAME
 

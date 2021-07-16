@@ -11,9 +11,11 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedEvent
@@ -264,8 +266,15 @@ private class Fixture {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
-    fun get(): QueryChannelsController =
-        QueryChannelsController(mock(), querySort, chatClient, chatDomainImpl).apply {
+    fun get(): QueryChannelsController {
+        val filter = Filters.neutral()
+        return QueryChannelsController(
+            filter,
+            querySort,
+            chatClient,
+            chatDomainImpl,
+            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
+        ).apply {
             newChannelEventFilter = { channel, _ ->
                 if (currentUser == null) {
                     true
@@ -274,4 +283,5 @@ private class Fixture {
                 }
             }
         }
+    }
 }

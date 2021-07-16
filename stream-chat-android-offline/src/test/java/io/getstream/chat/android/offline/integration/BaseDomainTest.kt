@@ -15,7 +15,6 @@ import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -35,13 +34,13 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
 import io.getstream.chat.android.offline.model.ChannelConfig
+import io.getstream.chat.android.offline.module.Config
+import io.getstream.chat.android.offline.module.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
-import io.getstream.chat.android.offline.utils.TestLoggerHandler
-import io.getstream.chat.android.offline.utils.waitForSetUser
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
@@ -65,6 +64,11 @@ internal open class BaseDomainTest {
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
+    private val offlineEnabled = true
+    private val userPresence = true
+    private val recoveryEnabled = false
+    private val backgroundSyncEnabled = false
+
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
             Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
@@ -78,6 +82,7 @@ internal open class BaseDomainTest {
     }
 
     var data = TestDataHelper()
+    protected val currentUser = data.user1
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -85,7 +90,7 @@ internal open class BaseDomainTest {
     @get:Rule
     val testCoroutines = TestCoroutineRule()
 
-    fun setupWorkManager() {
+    protected fun setupWorkManager() {
         val config = Configuration.Builder()
             // Set log level to Log.DEBUG to make it easier to debug
             .setMinimumLoggingLevel(Log.DEBUG)
@@ -101,22 +106,13 @@ internal open class BaseDomainTest {
     @CallSuper
     open fun setup() {
         client = createDisconnectedMockClient()
-        setupChatDomain(client, false)
+        setupChatDomain(client)
     }
 
     @After
     open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
         db.close()
-    }
-
-    fun createClient(): ChatClient {
-        val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
-        return ChatClient.Builder(data.apiKey, getApplicationContext())
-            // TODO Review if we need it
-            // .logLevel(logLevel)
-            .loggerHandler(TestLoggerHandler())
-            .build()
     }
 
     fun createDisconnectedMockClient(): ChatClient {
@@ -178,8 +174,8 @@ internal open class BaseDomainTest {
         val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
-                val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
-                listener.onEvent(connectedEvent)
+                /*val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
+                listener.onEvent(connectedEvent)*/
                 object : Disposable {
                     override val isDisposed: Boolean = true
                     override fun dispose() {}
@@ -192,29 +188,29 @@ internal open class BaseDomainTest {
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
+            on { connectUser(any(), any<String>()) } doAnswer {
+                TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
+            }
+            on { plugins } doReturn OfflinePlugin(
+                Config(
+                    backgroundSyncEnabled = backgroundSyncEnabled,
+                    userPresence = userPresence,
+                    persistenceEnabled = offlineEnabled
+                )
+            ).let(::listOf)
         }
-        whenever(client.connectUser(any(), any<String>())) doAnswer {
-            TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
-        }
+
         return client
     }
 
-    fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
-
-        if (setUser) {
-            waitForSetUser(client, data.user1, data.user1Token)
-        }
-
+    fun setupChatDomain(client: ChatClient, user: User? = null) = runBlocking {
         db = createRoomDB(testCoroutines.dispatcher)
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
-        val offlineEnabled = true
-        val userPresence = true
-        val recoveryEnabled = false
-        val backgroundSyncEnabled = false
+
         chatDomainImpl = ChatDomainImpl(
             client,
-            data.user1,
+            null,
             db,
             handler,
             offlineEnabled,
@@ -226,11 +222,17 @@ internal open class BaseDomainTest {
         chatDomainImpl.scope = testCoroutines.scope
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
+        ChatDomain.instance = chatDomainImpl
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
                 println("error event$it")
             }
+        }
+
+        if (user != null) {
+            chatDomainImpl.setUser(user)
+            // waitForSetUser(client, data.user1, data.user1Token)
         }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
