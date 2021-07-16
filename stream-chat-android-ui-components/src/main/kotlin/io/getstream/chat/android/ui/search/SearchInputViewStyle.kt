@@ -34,7 +34,7 @@ public data class SearchInputViewStyle(
                 attrs,
                 R.styleable.SearchInputView,
                 R.attr.streamUiSearchInputViewStyle,
-                R.style.StreamUi_SearchInputView
+                R.style.StreamUi_SearchInputView,
             ).use { a ->
                 val searchIcon = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewSearchIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_search)!!

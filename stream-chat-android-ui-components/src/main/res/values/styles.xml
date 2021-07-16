@@ -257,29 +257,27 @@
 
     <style name="StreamUiAttachmentMediaActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
+    <style name="StreamUiAttachmentGalleryActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
     <style name="StreamUiAttachmentActivityStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiValidTheme">true</item>
+        <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
+        <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
+        <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/StreamUi.MessageList.Header.Avatar</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
-        <item name="streamUiChannelListHeaderStyle">@style/StreamUi.ChannelListHeader</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
         <item name="streamUiMentionListStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/StreamUi.ChannelActions.Dialog.Avatar</item>
-        <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
-        <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
-        <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
-        <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelList.ActionsDialog</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/StreamUi.AttachmentGallery.Avatar</item>
         <item name="streamUiSuggestionListViewMentionAvatarStyle">@style/StreamUi.SuggestionListView.Mention.Avatar</item>
         <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
-        <item name="streamUiMessageListHeaderStyle">@style/StreamUi.MessageListHeader</item>
-        <item name="streamUiSearchInputViewStyle">@style/StreamUi.SearchInputView</item>
-        <item name="streamUiSuggestionListViewStyle">@style/StreamUi.SuggestionListView</item>
+        <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
     </style>
 
     <style name="StreamUi">
@@ -487,6 +485,7 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
+
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -529,6 +528,15 @@
     <style name="StreamUi.AttachmentGallery.BottomBar.RightIcon" parent="StreamUi">
         <item name="android:layout_marginEnd">@dimen/stream_ui_spacing_small</item>
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
+
+    <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
+    </style>
+
+    <style name="StreamUi.MediaActivity.Icon" parent="StreamUi">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">150dp</item>
+        <item name="android:src">@drawable/stream_ui_ic_audio</item>
     </style>
   
     <style name="StreamUi.SuggestionListView"  parent="StreamUi">
