@@ -7,7 +7,6 @@
     </style>
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
-        <item name="streamUiMessageListStyle">@style/MessageListTheme</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/MessageListHeaderAvatarTheme</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/ChannelListAvatarTheme</item>
@@ -27,8 +26,6 @@
         <item name="streamUiSearchInputViewStyle">@style/SearchInputViewTheme</item>
         <item name="streamUiSuggestionListViewStyle">@style/SuggestionListViewTheme</item>
     </style>
-
-    <style name="MessageListTheme" parent="StreamUi.MessageList"/>
 
     <style name="MessageListAvatarTheme" parent="StreamUi.MessageList"/>
 
