@@ -337,6 +337,44 @@
         <item name="android:layout_marginBottom">12dp</item>
     </style>
 
+    <style name="StreamUi.ChannelListView" parent="StreamUi">
+        <item name="streamUiChannelsItemSeparatorDrawable">@drawable/stream_ui_divider</item>
+
+        <!--Background layout-->
+        <item name="streamUiChannelOptionsIcon">@drawable/stream_ui_ic_more</item>
+        <item name="streamUiChannelDeleteIcon">@drawable/stream_ui_ic_delete</item>
+        <item name="streamUiChannelOptionsEnabled">false</item>
+        <item name="streamUiChannelDeleteEnabled">true</item>
+        <item name="streamUiSwipeEnabled">true</item>
+        <item name="streamUiBackgroundLayoutColor">@color/stream_ui_white_smoke</item>
+
+        <!--Foreground layout-->
+        <item name="streamUiChannelTitleTextSize">@dimen/stream_ui_channel_item_title</item>
+        <item name="streamUiChannelTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiChannelTitleTextStyle">bold</item>
+
+        <item name="streamUiLastMessageTextSize">@dimen/stream_ui_channel_item_message</item>
+        <item name="streamUiLastMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiLastMessageTextStyle">normal</item>
+
+        <item name="streamUiLastMessageDateTextSize">@dimen/stream_ui_channel_item_message_date</item>
+        <item name="streamUiLastMessageDateTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiLastMessageDateTextStyle">normal</item>
+
+        <item name="streamUiIndicatorSentIcon">@drawable/stream_ui_ic_check_single</item>
+        <item name="streamUiIndicatorReadIcon">@drawable/stream_ui_ic_check_double</item>
+        <item name="streamUiIndicatorPendingSyncIcon">@drawable/stream_ui_ic_clock</item>
+        <item name="streamUiForegroundLayoutColor">@color/stream_ui_white_snow</item>
+
+        <item name="streamUiUnreadMessageCounterTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiUnreadMessageCounterTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiUnreadMessageCounterTextStyle">normal</item>
+
+        <item name="streamUiUnreadMessageCounterBackgroundColor">@color/stream_ui_accent_red</item>
+
+        <item name="streamUiMutedChannelIcon">@drawable/stream_ui_ic_mute_black</item>
+    </style>
+
     <style name="StreamUi.MentionList" parent="StreamUi">
         <item name="streamUiBackground">@color/stream_ui_white_snow</item>
         <item name="streamUiEmptyStateDrawable">@drawable/stream_ui_ic_mentions_empty</item>
@@ -492,7 +530,7 @@
         <item name="android:layout_height">150dp</item>
         <item name="android:src">@drawable/stream_ui_ic_audio</item>
     </style>
-  
+
     <style name="StreamUi.SuggestionListView"  parent="StreamUi">
         <!-- Background -->
         <item name="streamUiSuggestionBackgroundColor">@color/stream_ui_white</item>

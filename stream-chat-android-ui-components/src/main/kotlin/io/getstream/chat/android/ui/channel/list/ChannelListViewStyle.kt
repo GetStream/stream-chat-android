@@ -63,8 +63,8 @@ public data class ChannelListViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ChannelListView,
-                0,
-                0
+                R.attr.streamUiChannelListViewStyle,
+                R.style.StreamUi_ChannelListView,
             ).use { a ->
                 val optionsIcon = a.getDrawable(R.styleable.ChannelListView_streamUiChannelOptionsIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_more)!!

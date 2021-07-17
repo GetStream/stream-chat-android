@@ -96,7 +96,12 @@ public class ChannelListView : FrameLayout {
     }
 
     private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelListView, 0, 0).use {
+        context.obtainStyledAttributes(
+            attrs,
+            R.styleable.ChannelListView,
+            R.attr.streamUiChannelListViewStyle,
+            R.style.StreamUi_ChannelListView,
+        ).use {
             it.getResourceId(
                 R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable,
                 R.drawable.stream_ui_divider
