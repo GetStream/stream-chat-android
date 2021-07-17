@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
@@ -33,7 +32,7 @@ public class ChannelListView : FrameLayout {
 
     private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
-    private var emptyStateView: View = defaultEmptyStateView()
+    private lateinit var emptyStateView: View
 
     private lateinit var loadingView: View
 
@@ -82,7 +81,7 @@ public class ChannelListView : FrameLayout {
 
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
-        emptyStateView.apply {
+        emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
             isVisible = false
             addView(this, defaultChildLayoutParams)
         }
@@ -293,10 +292,6 @@ public class ChannelListView : FrameLayout {
                 Gravity.CENTER
             )
         }
-    }
-
-    private fun defaultEmptyStateView(): View = TextView(context).apply {
-        setText(R.string.stream_ui_channel_list_empty)
     }
 
     private fun configureDefaultMoreOptionsListener(context: Context) {
