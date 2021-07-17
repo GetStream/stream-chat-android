@@ -21,11 +21,11 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBin
 public class ChannelListHeaderView : ConstraintLayout {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(context, null)
+        init(null)
     }
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(context, attrs)
+        init(attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -33,17 +33,26 @@ public class ChannelListHeaderView : ConstraintLayout {
         attrs,
         defStyleAttr
     ) {
-        init(context, attrs)
+        init(attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr,
+        defStyleRes
+    ) {
+        init(attrs)
     }
 
     private val binding = StreamUiChannelListHeaderViewBinding.inflate(streamThemeInflater, this, true)
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    private fun init(attrs: AttributeSet?) {
         context.obtainStyledAttributes(
             attrs,
             R.styleable.ChannelListHeaderView,
             R.attr.streamUiChannelListHeaderStyle,
-            R.style.StreamUi_ChannelListHeader
+            R.style.StreamUi_ChannelListHeader,
         ).use { typedArray ->
             configUserAvatar(typedArray)
             configOnlineTitle(typedArray)

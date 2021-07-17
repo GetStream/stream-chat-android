@@ -51,7 +51,7 @@ public data class MessageListHeaderViewStyle(
                 attrs,
                 R.styleable.MessageListHeaderView,
                 R.attr.streamUiMessageListHeaderStyle,
-                R.style.StreamUi_MessageListHeader
+                R.style.StreamUi_MessageListHeader,
             ).use { a ->
                 val showUserAvatar =
                     a.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowUserAvatar, true)
