@@ -60,6 +60,7 @@ public data class ChannelListViewStyle(
     public val itemSeparator: Drawable,
     @LayoutRes public val loadingView: Int,
     @LayoutRes public val emptyStateView: Int,
+    @LayoutRes public val loadingMoreView: Int,
 ) {
 
     internal companion object {
@@ -214,6 +215,11 @@ public data class ChannelListViewStyle(
                     R.layout.stream_ui_channel_list_empty_state_view,
                 )
 
+                val loadingMoreView = a.getResourceId(
+                    R.styleable.ChannelListView_streamUiLoadingMoreView,
+                    R.layout.stream_ui_channel_list_loading_more_view,
+                )
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -235,6 +241,7 @@ public data class ChannelListViewStyle(
                     itemSeparator = itemSeparator,
                     loadingView = loadingView,
                     emptyStateView = emptyStateView,
+                    loadingMoreView = loadingMoreView,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }
