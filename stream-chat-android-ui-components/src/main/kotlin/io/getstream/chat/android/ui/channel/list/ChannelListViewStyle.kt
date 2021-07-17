@@ -55,7 +55,8 @@ public data class ChannelListViewStyle(
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
     public val mutedChannelIcon: Drawable,
     @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.ERROR)
-    @ColorInt public val mutedChannelIconTint: Int?
+    @ColorInt public val mutedChannelIconTint: Int?,
+    public val itemSeparator: Drawable,
 ) {
 
     internal companion object {
@@ -196,6 +197,10 @@ public data class ChannelListViewStyle(
                     mutedChannelIcon.setTint(tint)
                 }
 
+                val itemSeparator = a.getDrawable(
+                    R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -213,7 +218,8 @@ public data class ChannelListViewStyle(
                     unreadMessageCounterText = unreadMessageCounterText,
                     unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor,
                     mutedChannelIcon = mutedChannelIcon,
-                    mutedChannelIconTint = mutedChannelIconTint
+                    mutedChannelIconTint = mutedChannelIconTint,
+                    itemSeparator = itemSeparator,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

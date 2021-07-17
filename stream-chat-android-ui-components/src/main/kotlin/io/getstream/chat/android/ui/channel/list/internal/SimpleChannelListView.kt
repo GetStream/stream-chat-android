@@ -36,7 +36,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
     internal val listenerContainer = ChannelListListenerContainerImpl()
 
-    private val style: ChannelListViewStyle
+    private lateinit var style: ChannelListViewStyle
 
     init {
         setHasFixedSize(true)
@@ -44,9 +44,13 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         setLayoutManager(layoutManager)
         setSwipeListener(ChannelItemSwipeListener(this, layoutManager))
 
-        style = ChannelListViewStyle(context, attrs)
-
         addItemDecoration(dividerDecoration)
+    }
+
+    internal fun setChannelListViewStyle(style: ChannelListViewStyle) {
+        this.style = style
+
+        dividerDecoration.drawable = style.itemSeparator
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {

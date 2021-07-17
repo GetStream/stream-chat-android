@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
@@ -56,6 +55,7 @@ public class ChannelListView : FrameLayout {
         }.let(::showToast)
     }
 
+    private lateinit var style: ChannelListViewStyle
     private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
 
     public constructor(context: Context) : this(context, null, 0)
@@ -71,11 +71,13 @@ public class ChannelListView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?, defStyleAttr: Int) {
+        style = ChannelListViewStyle(context, attrs)
         actionDialogStyle = ChannelActionsDialogViewStyle(context, attrs)
 
         simpleChannelListView = SimpleChannelListView(context, attrs, defStyleAttr)
             .apply {
                 id = CHANNEL_LIST_VIEW_ID
+                setChannelListViewStyle(style)
             }
 
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -91,25 +93,6 @@ public class ChannelListView : FrameLayout {
         }
 
         configureDefaultMoreOptionsListener(context)
-
-        parseAttrs(attrs)
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(
-            attrs,
-            R.styleable.ChannelListView,
-            R.attr.streamUiChannelListViewStyle,
-            R.style.StreamUi_ChannelListView,
-        ).use {
-            it.getResourceId(
-                R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable,
-                R.drawable.stream_ui_divider
-            )
-                .let { separator ->
-                    simpleChannelListView.setItemSeparator(separator)
-                }
-        }
     }
 
     /**
