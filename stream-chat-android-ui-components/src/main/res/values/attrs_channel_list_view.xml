@@ -64,6 +64,8 @@
         <!-- {@deprecated Use custom icon instead.} -->
         <attr name="streamUiMutedChannelIconTint" format="color|reference" />
 
+        <attr name="streamUiLoadingView" format="reference" />
+
         <attr name="streamUiChannelActionsDialogStyle" />
     </declare-styleable>
 </resources>

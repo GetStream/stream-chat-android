@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
@@ -57,6 +58,7 @@ public data class ChannelListViewStyle(
     @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.ERROR)
     @ColorInt public val mutedChannelIconTint: Int?,
     public val itemSeparator: Drawable,
+    @LayoutRes public val loadingView: Int,
 ) {
 
     internal companion object {
@@ -201,6 +203,11 @@ public data class ChannelListViewStyle(
                     R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
+                val loadingView = a.getResourceId(
+                    R.styleable.ChannelListView_streamUiLoadingView,
+                    R.layout.stream_ui_channel_list_loading_view,
+                )
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -220,6 +227,7 @@ public data class ChannelListViewStyle(
                     mutedChannelIcon = mutedChannelIcon,
                     mutedChannelIconTint = mutedChannelIconTint,
                     itemSeparator = itemSeparator,
+                    loadingView = loadingView,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

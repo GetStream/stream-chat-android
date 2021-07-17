@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
@@ -28,6 +27,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 
 public class ChannelListView : FrameLayout {
 
@@ -35,7 +35,7 @@ public class ChannelListView : FrameLayout {
 
     private var emptyStateView: View = defaultEmptyStateView()
 
-    private var loadingView: View = defaultLoadingView()
+    private lateinit var loadingView: View
 
     private var channelListItemPredicate: ChannelListItemPredicate = ChannelListItemPredicate { true }
 
@@ -87,9 +87,9 @@ public class ChannelListView : FrameLayout {
             addView(this, defaultChildLayoutParams)
         }
 
-        loadingView.apply {
+        loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
             isVisible = false
-            addView(loadingView, defaultChildLayoutParams)
+            addView(this, defaultChildLayoutParams)
         }
 
         configureDefaultMoreOptionsListener(context)
@@ -294,8 +294,6 @@ public class ChannelListView : FrameLayout {
             )
         }
     }
-
-    private fun defaultLoadingView(): View = ProgressBar(context)
 
     private fun defaultEmptyStateView(): View = TextView(context).apply {
         setText(R.string.stream_ui_channel_list_empty)
