@@ -64,6 +64,7 @@
 - Fixed crash caused by missing `streamUiReplyAvatarStyle` and `streamUiMessageOptionsAvatarStyle`
 
 ### ⬆️ Improved
+- "Copy Message" option is now hidden when the message contains no text to copy.
 
 ### ✅ Added
 - Now you can configure the style of `AttachmentMediaActivity`.
