@@ -137,6 +137,12 @@
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
         <!-- {@deprecated Use streamUiCameraAttachmentIcon instead.} -->
         <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
+        <attr name="streamUiAllowAccessToGalleryText" format="string" />
+        <attr name="streamUiAllowAccessToFilesText" format="string" />
+        <attr name="streamUiAllowAccessToCameraText" format="string" />
+        <attr name="streamUiAllowAccessToGalleryIcon" format="reference" />
+        <attr name="streamUiAllowAccessToCameraIcon" format="reference" />
+        <attr name="streamUiAllowAccessToFilesIcon" format="reference" />
 
         <!--Command Input-->
         <attr name="streamUiCommandInputCancelIcon" format="reference" />

@@ -285,6 +285,27 @@ public data class MessageInputViewStyle(
                 val cameraAttachmentIconTint =
                     a.getColorStateList(R.styleable.MessageInputView_streamUiCameraAttachmentIconTint)
 
+                val allowAccessToCameraIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToCameraIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+
+                val allowAccessToFilesIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToFilesIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+
+                val allowAccessToGalleryIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToGalleryIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+
+                val allowAccessToGalleryText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToGalleryText)
+                    ?: context.getString(R.string.stream_ui_message_input_gallery_access)
+
+                val allowAccessToFilesText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToFilesText)
+                    ?: context.getString(R.string.stream_ui_message_input_files_access)
+
+                val allowAccessToCameraText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToCameraText)
+                    ?: context.getString(R.string.stream_ui_message_input_camera_access)
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
@@ -292,6 +313,12 @@ public data class MessageInputViewStyle(
                     fileAttachmentIconTint = fileAttachmentIconTint,
                     cameraAttachmentIcon = cameraAttachmentIcon,
                     cameraAttachmentIconTint = cameraAttachmentIconTint,
+                    allowAccessToCameraIcon = allowAccessToCameraIcon,
+                    allowAccessToFilesIcon = allowAccessToFilesIcon,
+                    allowAccessToGalleryIcon = allowAccessToGalleryIcon,
+                    allowAccessToGalleryText = allowAccessToGalleryText.toString(),
+                    allowAccessToFilesText = allowAccessToFilesText.toString(),
+                    allowAccessToCameraText = allowAccessToCameraText.toString(),
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

@@ -12,9 +12,9 @@ import androidx.fragment.app.setFragmentResult
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 import java.io.File
 
 internal class CameraAttachmentFragment : Fragment() {
@@ -24,6 +24,8 @@ internal class CameraAttachmentFragment : Fragment() {
 
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
+
+    private val style by lazy { AttachmentSelectionDialogFragment.staticStyle!! }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +45,8 @@ internal class CameraAttachmentFragment : Fragment() {
 
     private fun setupViews() {
         binding.grantPermissionsInclude.apply {
-            grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_camera)
-            grantPermissionsTextView.setText(R.string.stream_ui_message_input_camera_access)
+            grantPermissionsImageView.setImageDrawable(style.allowAccessToCameraIcon)
+            grantPermissionsTextView.text = style.allowAccessToCameraText
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
@@ -95,5 +97,14 @@ internal class CameraAttachmentFragment : Fragment() {
 
     private object LauncherRequestsKeys {
         const val CAPTURE_MEDIA = "capture_media_request_key"
+    }
+
+    companion object {
+        internal var staticStyle: AttachmentSelectionDialogStyle? = null
+
+        fun newInstance(style: AttachmentSelectionDialogStyle): Fragment {
+            staticStyle = style
+            return CameraAttachmentFragment()
+        }
     }
 }

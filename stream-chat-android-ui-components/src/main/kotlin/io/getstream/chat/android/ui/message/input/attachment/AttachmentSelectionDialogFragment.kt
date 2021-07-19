@@ -84,7 +84,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
                 }
             }
 
-            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment)
+            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment, style)
             attachmentPager.isUserInputEnabled = false
         }
     }
