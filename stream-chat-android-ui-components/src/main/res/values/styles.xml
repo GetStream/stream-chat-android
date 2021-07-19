@@ -276,6 +276,7 @@
         <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
+        <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
 
     <style name="StreamUi">
