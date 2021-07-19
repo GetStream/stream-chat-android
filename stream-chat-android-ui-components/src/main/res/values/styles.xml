@@ -321,7 +321,6 @@
         <item name="streamUiOfflineProgressBarTint">@color/stream_ui_accent_blue</item>
         <item name="streamUiShowActionButton">true</item>
         <item name="streamUiActionButtonIcon">@drawable/stream_ui_ic_pen</item>
-        <item name="streamUiActionButtonTint">@color/stream_ui_black</item>
         <item name="streamUiActionBackgroundTint">@color/stream_ui_icon_button_background_selector</item>
     </style>
 
