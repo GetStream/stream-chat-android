@@ -269,13 +269,13 @@
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
-        <item name="streamUiMentionListStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
         <item name="streamUiChannelActionsDialogAvatarStyle">@style/StreamUi.ChannelActions.Dialog.Avatar</item>
         <item name="streamUiAttachmentGalleryAvatarStyle">@style/StreamUi.AttachmentGallery.Avatar</item>
         <item name="streamUiSuggestionListViewMentionAvatarStyle">@style/StreamUi.SuggestionListView.Mention.Avatar</item>
         <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
+        <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
 
     <style name="StreamUi">
