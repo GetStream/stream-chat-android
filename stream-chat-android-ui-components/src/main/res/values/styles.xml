@@ -536,6 +536,27 @@
         <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
     </style>
 
+    <style name="StreamUi.AttachmentActivity" parent="StreamUi">
+        <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
+        <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
+        <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
+    </style>
+
+    <style name="StreamUi.AttachmentActivity.ProgressBar" parent="StreamUi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="StreamUi.AttachmentActivity.Image" parent="StreamUi">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="StreamUi.AttachmentActivity.WebView" parent="StreamUi">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
     <style name="StreamUi.AttachmentGallery.CloseButton" parent="StreamUi">
         <item name="android:src">@drawable/stream_ui_ic_close</item>
         <item name="android:layout_width">wrap_content</item>
