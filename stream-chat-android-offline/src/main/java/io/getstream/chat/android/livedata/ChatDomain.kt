@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import androidx.annotation.CheckResult
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -113,6 +114,8 @@ public sealed interface ChatDomain {
     public fun clean()
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
+
+    @CheckResult
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
     // region use-case functions
@@ -126,6 +129,7 @@ public sealed interface ChatDomain {
      *
      * @return [Call] instance with [Channel].
      */
+    @CheckResult
     public fun createDistinctChannel(
         channelType: String,
         members: List<String>,
@@ -138,6 +142,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for obtainging list of historical [ChatEvent] objects
      */
+    @CheckResult
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     // getting controllers
@@ -150,6 +155,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
+    @CheckResult
     public fun getChannelController(cid: String): Call<ChannelController>
 
     /**
@@ -162,6 +168,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
+    @CheckResult
     public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
     /**
@@ -180,6 +187,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
+    @CheckResult
     public fun queryChannels(
         filter: FilterObject,
         sort: QuerySort<Channel>,
@@ -197,6 +205,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
+    @CheckResult
     public fun getThread(cid: String, parentId: String): Call<ThreadController>
 
     // loading more
@@ -208,6 +217,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading older messages in a channel
      */
+    @CheckResult
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
@@ -218,6 +228,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading new messages in a channel
      */
+    @CheckResult
     public fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
@@ -229,8 +240,8 @@ public sealed interface ChatDomain {
      * @param newerMessagesOffset: how many new messages to load after the requested message
      *
      * @return executable async [Call] responsible for loading a message
-     *
      */
+    @CheckResult
     public fun loadMessageById(
         cid: String,
         messageId: String,
@@ -252,6 +263,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
+    @CheckResult
     public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
@@ -272,6 +284,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
+    @CheckResult
     public fun queryChannelsLoadMore(
         filter: FilterObject,
         sort: QuerySort<Channel>,
@@ -290,6 +303,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
+    @CheckResult
     public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**
@@ -301,6 +315,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for loading more messages in a thread
      */
+    @CheckResult
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     // updating channel data
@@ -313,6 +328,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for creating a channel
      */
+    @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
 
     /**
@@ -325,6 +341,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun sendMessage(message: Message): Call<Message>
 
     /**
@@ -342,6 +359,7 @@ public sealed interface ChatDomain {
         replaceWith = ReplaceWith("sendMessage(message: Message)"),
         level = DeprecationLevel.ERROR,
     )
+    @CheckResult
     public fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
@@ -357,6 +375,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun cancelMessage(message: Message): Call<Boolean>
 
     /**
@@ -370,6 +389,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun shuffleGiphy(message: Message): Call<Message>
 
     /**
@@ -383,6 +403,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun sendGiphy(message: Message): Call<Message>
 
     /**
@@ -395,6 +416,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun editMessage(message: Message): Call<Message>
 
     /**
@@ -406,6 +428,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun deleteMessage(message: Message): Call<Message>
 
     /**
@@ -419,6 +442,7 @@ public sealed interface ChatDomain {
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
+    @CheckResult
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
@@ -430,6 +454,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for deleting reaction
      */
+    @CheckResult
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
@@ -441,6 +466,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent
      */
+    @CheckResult
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
@@ -452,6 +478,7 @@ public sealed interface ChatDomain {
      * @return executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
      * false if it wasn't sent.
      */
+    @CheckResult
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**
@@ -462,6 +489,7 @@ public sealed interface ChatDomain {
      * @return executable async [Call] which completes with [Result] having data equal to true if the mark read event
      * was sent or false if there was no need to mark read (i. e. the messages are already marked as read).
      */
+    @CheckResult
     public fun markRead(cid: String): Call<Boolean>
 
     /**
@@ -469,6 +497,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsinble for marking all messages as read
      */
+    @CheckResult
     public fun markAllRead(): Call<Boolean>
 
     /**
@@ -481,6 +510,7 @@ public sealed interface ChatDomain {
      *
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */
+    @CheckResult
     public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
 
     /**
@@ -490,6 +520,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] responsible for hiding a channel
      */
+    @CheckResult
     public fun showChannel(cid: String): Call<Unit>
 
     /**
@@ -499,6 +530,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] leaving a channel
      */
+    @CheckResult
     public fun leaveChannel(cid: String): Call<Unit>
 
     /**
@@ -508,6 +540,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] deleting a channel
      */
+    @CheckResult
     public fun deleteChannel(cid: String): Call<Unit>
 
     /**
@@ -518,6 +551,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call]
      */
+    @CheckResult
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
@@ -526,6 +560,7 @@ public sealed interface ChatDomain {
      * @param attachment the attachment to download
      * @return executable async [Call] downloading attachment
      */
+    @CheckResult
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**
@@ -539,6 +574,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] querying users
      */
+    @CheckResult
     public fun searchUsersByName(
         querySearch: String,
         offset: Int,
@@ -558,6 +594,7 @@ public sealed interface ChatDomain {
      *
      * @return executable async [Call] querying members
      */
+    @CheckResult
     public fun queryMembers(
         cid: String,
         offset: Int = 0,

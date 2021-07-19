@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.usecase
 
+import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -36,6 +37,7 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
      * @param userLimit The page size in the request.
      * @param userPresence Presence flag to obtain additional info such as last active date.
      */
+    @CheckResult
     operator fun invoke(
         querySearch: String,
         offset: Int,
