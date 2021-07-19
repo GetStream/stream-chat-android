@@ -83,12 +83,12 @@ public class ChannelListView : FrameLayout {
 
         emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
             isVisible = false
-            addView(this, defaultChildLayoutParams)
+            addView(this)
         }
 
         loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
             isVisible = false
-            addView(this, defaultChildLayoutParams)
+            addView(this)
         }
 
         configureDefaultMoreOptionsListener(context)
