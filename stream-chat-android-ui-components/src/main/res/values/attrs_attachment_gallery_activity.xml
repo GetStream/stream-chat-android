@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AttachmentGalleryActivity">
+        <attr name="streamUiAttachmentGalleryStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryCloseButtonStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryTitleStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryDateStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryActionsMenuStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryBottomBarImageCountStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryBottomBarLeftIconStyle" format="reference" />
+        <attr name="streamUiAttachmentGalleryBottomBarRightIconStyle" format="reference" />
+    </declare-styleable>
+</resources>

@@ -220,14 +220,15 @@ internal class MessageOptionsView : FrameLayout {
             operator fun invoke(
                 viewStyle: MessageListViewStyle,
                 channelConfig: Config,
-                suppressThreads: Boolean = false,
+                hasTextToCopy: Boolean,
+                suppressThreads: Boolean,
             ) =
                 Configuration(
                     replyEnabled = viewStyle.replyEnabled && channelConfig.isRepliesEnabled,
                     threadsEnabled = if (suppressThreads) false else viewStyle.threadsEnabled && channelConfig.isRepliesEnabled,
                     editMessageEnabled = viewStyle.editMessageEnabled,
                     deleteMessageEnabled = viewStyle.deleteMessageEnabled,
-                    copyTextEnabled = viewStyle.copyTextEnabled,
+                    copyTextEnabled = viewStyle.copyTextEnabled && hasTextToCopy,
                     deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
                     reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled,
                     flagEnabled = viewStyle.flagEnabled,
