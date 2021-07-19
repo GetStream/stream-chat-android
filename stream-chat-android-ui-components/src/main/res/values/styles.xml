@@ -372,6 +372,10 @@
         <item name="streamUiUnreadMessageCounterBackgroundColor">@color/stream_ui_accent_red</item>
 
         <item name="streamUiMutedChannelIcon">@drawable/stream_ui_ic_mute_black</item>
+
+        <item name="streamUiLoadingView">@layout/stream_ui_channel_list_loading_view</item>
+        <item name="streamUiLoadingMoreView">@layout/stream_ui_channel_list_loading_more_view</item>
+        <item name="streamUiEmptyStateView">@layout/stream_ui_channel_list_empty_state_view</item>
     </style>
 
     <style name="StreamUi.MentionList" parent="StreamUi">
