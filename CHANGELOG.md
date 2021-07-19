@@ -1,3 +1,18 @@
+# July 19th, 2021 - 4.14.2
+## stream-chat-android-client
+### ❌ Removed
+- Removed `Channel::isMuted` extension. Use `User::channelMutes` or subscribe for `NotificationChannelMutesUpdatedEvent` to get information about muted channels.
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed crash caused by missing `streamUiReplyAvatarStyle` and `streamUiMessageOptionsAvatarStyle`
+
+### ⬆️ Improved
+- "Copy Message" option is now hidden when the message contains no text to copy.
+
+### ✅ Added
+- Now you can configure the style of `AttachmentMediaActivity`.
+
 # July 14th, 2021 - 4.14.1
 ## stream-chat-android-ui-components
 ### ✅ Added
