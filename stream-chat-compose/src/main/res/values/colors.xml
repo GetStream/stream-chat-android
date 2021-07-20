@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default colors -->
+    <color name="primaryAccent">#006CFF</color>
+    <color name="appCanvas">#FFFFFF</color>
+    <color name="textHighEmphasis">#0E1621</color>
+    <color name="textMidEmphasis">#8A898E</color>
+    <color name="textLowEmphasis">#B2B1B5</color>
+    <color name="textSelf">#FFFFFF</color>
+    <color name="textPressed">#FFFFFF</color>
+    <color name="cardBackground">#F2F2F2</color>
+    <color name="cardAltBackground">#FFFFFF</color>
+    <color name="cardSelfBackground">#41AFFC</color>
+    <color name="stroke">#E5E5E6</color>
+    <color name="strokeLowEmphasis">#F2F2F2</color>
+
+    <!-- Default Dark colors -->
+    <color name="primaryAccentDark">#006CFF</color>
+    <color name="appCanvasDark">#0E1723</color>
+    <color name="textHighEmphasisDark">#FFFFFF</color>
+    <color name="textMidEmphasisDark">#868B91</color>
+    <color name="textLowEmphasisDark">#57606B</color>
+    <color name="textSelfDark">#FFFFFF</color>
+    <color name="textPressedDark">#FFFFFF</color>
+    <color name="cardBackgroundDark">#152438</color>
+    <color name="cardAltBackgroundDark">#0E1723</color>
+    <color name="cardSelfBackgroundDark">#69727D</color>
+    <color name="strokeDark">#1B2D46</color>
+    <color name="strokeLowEmphasisDark">#1A232E</color>
+</resources>

@@ -74,6 +74,7 @@ apiValidation {
             'stream-chat-android-sample',
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-test',
+            'stream-chat-compose-sample'
     ]
 
     nonPublicMarkers += [

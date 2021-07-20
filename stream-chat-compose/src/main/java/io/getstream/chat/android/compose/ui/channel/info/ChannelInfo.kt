@@ -1,0 +1,270 @@
+package io.getstream.chat.android.compose.ui.channel.info
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonRemove
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.channel.list.*
+
+/**
+ * Shows special UI when an item is selected.
+ * It also prepares the available options for the channel, based on if we're an admin or not.
+ *
+ * @param selectedChannel - The channel the user selected.
+ * @param user - Currently logged-in user data.
+ * @param onChannelOptionClick - Handler for when the user selects a channel option.
+ * @param modifier - Modifier for styling.
+ * */
+@ExperimentalMaterialApi
+@Composable
+fun ChannelInfo(
+    selectedChannel: Channel,
+    user: User?,
+    onChannelOptionClick: (ChannelListAction) -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+) {
+    val isAdmin = selectedChannel.members.firstOrNull { it.user.id == user?.id }?.role == "admin"
+
+    val channelMembers = selectedChannel.members
+    val onlineMembers = channelMembers.count { it.user.online }
+
+    val title = channelMembers.fold("") { current, member ->
+        if (current.isEmpty()) {
+            member.user.name
+        } else {
+            "$current, ${member.user.name}"
+        }
+    }
+
+    val channelOptions = mutableListOf(
+        ChannelOption(
+            title = stringResource(id = R.string.view_info),
+            icon = Icons.Default.Person,
+            action = ViewInfo(selectedChannel)
+        ),
+        ChannelOption(
+            title = stringResource(id = R.string.leave_group),
+            icon = Icons.Default.PersonRemove,
+            action = LeaveGroup(selectedChannel)
+        ),
+        ChannelOption(
+            title = stringResource(id = R.string.cancel),
+            icon = Icons.Default.Cancel,
+            action = Cancel
+        )
+    )
+
+    if (isAdmin) {
+        channelOptions.add(
+            2, ChannelOption(
+                title = stringResource(id = R.string.delete_conversation),
+                titleColor = Color.Red,
+                icon = Icons.Default.Delete,
+                iconColor = Color.Red,
+                action = DeleteConversation(selectedChannel)
+            )
+        )
+    }
+
+    Card(
+        modifier,
+        elevation = 8.dp,
+        shape = shape
+    ) {
+        Column(
+            modifier = Modifier.padding(top = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+            Text(
+                text = stringResource(
+                    id = R.string.channel_members,
+                    channelMembers.size,
+                    onlineMembers
+                ),
+                fontSize = 12.sp
+            )
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp)
+                    .align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+            ) {
+                items(selectedChannel.members) { member ->
+                    ChannelInfoUserItem(member = member)
+                }
+            }
+
+            ChannelOptions(channelOptions, onChannelOptionClick)
+        }
+    }
+}
+
+/**
+ * The UI component that shows a user avatar and user name, as a member of a channel.
+ *
+ * @param modifier - Modifier for styling.
+ * @param member - The member data to show.
+ * */
+@Composable
+private fun ChannelInfoUserItem(
+    member: Member,
+    modifier: Modifier = Modifier
+) {
+    val avatarPainter = rememberImagePainter(member.user.image)
+    val memberName = member.user.name
+
+    Column(
+        modifier = modifier
+            .width(48.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Image(
+            modifier = modifier
+                .size(48.dp)
+                .clip(CircleShape),
+            painter = avatarPainter,
+            contentDescription = memberName
+        )
+
+        Text(
+            text = memberName,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+    }
+}
+
+/**
+ * This is the default bottom drawer UI that shows up when the user long taps on a channel item.
+ *
+ * It sets up different actions that we provide, based on user permissions.
+ *
+ * @param options - The list of options to show in the UI, according to user permissions.
+ * @param onChannelOptionClick - Handler for when the user selects a channel action.
+ * @param modifier - Modifier for styling.
+ * */
+@ExperimentalMaterialApi
+@Composable
+private fun ChannelOptions(
+    options: List<ChannelOption>,
+    onChannelOptionClick: (ChannelListAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        items(options) { option ->
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = Color.LightGray, shape = RectangleShape)
+            )
+
+            ChannelOptionItem(
+                title = option.title,
+                titleColor = option.titleColor,
+                leadingIcon = {
+                    Icon(
+                        imageVector = option.icon,
+                        tint = option.iconColor,
+                        contentDescription = null
+                    )
+                },
+                onClick = { onChannelOptionClick(option.action) }
+            )
+        }
+    }
+}
+
+/**
+ * Default component for channel info options.
+ *
+ * @param title - The text title of the action.
+ * @param titleColor - The color of the title.
+ * @param leadingIcon - The composable that defines the leading icon for the action.
+ * @param onClick - The action to perform once the user taps on any option.
+ * @param modifier - Modifier for styling.
+ * */
+@ExperimentalMaterialApi
+@Composable
+private fun ChannelOptionItem(
+    title: String,
+    titleColor: Color,
+    leadingIcon: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    Row(
+        modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick,
+                indication = rememberRipple(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        leadingIcon()
+
+        Text(
+            modifier = Modifier.padding(start = 12.dp),
+            fontSize = 12.sp,
+            text = title,
+            fontWeight = FontWeight.Bold,
+            color = titleColor
+        )
+    }
+}
