@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.module
+package io.getstream.chat.android.offline.plugin
 
 public data class Config(
     public val backgroundSyncEnabled: Boolean = true,

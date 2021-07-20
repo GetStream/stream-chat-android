@@ -273,7 +273,7 @@ private class Fixture {
             querySort,
             chatClient,
             chatDomainImpl,
-            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
+            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope),
         ).apply {
             newChannelEventFilter = { channel, _ ->
                 if (currentUser == null) {
