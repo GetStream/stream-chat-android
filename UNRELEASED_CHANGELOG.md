@@ -69,3 +69,16 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+
+## stream-chat-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+

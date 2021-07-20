@@ -1,10 +1,17 @@
-import com.getstream.sdk.chat.Dependencies
-import static com.getstream.sdk.chat.DependenciesKt.COMPOSE_VERSION
-import static com.getstream.sdk.chat.DependenciesKt.KOTLIN_VERSION
+import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName + "-beta"
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-components'
+}
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
@@ -25,8 +32,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion KOTLIN_VERSION
-        kotlinCompilerExtensionVersion COMPOSE_VERSION
+        kotlinCompilerVersion Versions.KOTLIN
+        kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 }
 
@@ -42,13 +49,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    implementation project(':stream-chat-android')
-    implementation project(':stream-chat-android-offline')
-    implementation project(':stream-chat-android-ui-common')
+    implementation project(':stream-chat-android') // TODO remove
+    api project(':stream-chat-android-ui-common')
 
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation Dependencies.androidxAppCompat
 
     // Compose
     implementation Dependencies.composeCompiler
@@ -66,9 +70,4 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
-
-    // Test
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
