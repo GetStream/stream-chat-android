@@ -6,20 +6,20 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 
 public interface QueryChannelsListener {
-    public fun onQueryChannelRequest(
+    public suspend fun onQueryChannelRequest(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
     ) {}
 
-    public fun onQueryChannelResult(
+    public suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
     ) {}
 
-    public fun onQueryChannelsRequest(request: QueryChannelsRequest) {}
+    public suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {}
 
-    public fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {}
+    public suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {}
 }

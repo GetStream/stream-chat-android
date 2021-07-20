@@ -80,10 +80,10 @@ public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
     return ZipCall(this, call)
 }
 
-public fun <T : Any> Call<T>.doOnStart(scope: CoroutineScope, function: () -> Unit): Call<T> =
+public fun <T : Any> Call<T>.doOnStart(scope: CoroutineScope, function: suspend () -> Unit): Call<T> =
     DoOnStartCall(this, scope, function)
 
-public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: (Result<T>) -> Unit): Call<T> =
+public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend (Result<T>) -> Unit): Call<T> =
     DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
