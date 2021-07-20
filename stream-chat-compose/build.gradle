@@ -41,7 +41,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
                 '-progressive',
-                //'-Xexplicit-api=strict',
+                '-Xexplicit-api=warning',
                 '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
                 '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
         ]
