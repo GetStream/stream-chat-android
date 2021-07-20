@@ -91,6 +91,7 @@ internal class FileAttachmentFragment : Fragment() {
         binding.apply {
             grantPermissionsInclude.grantPermissionsImageView.setImageDrawable(style.allowAccessToFilesIcon)
             grantPermissionsInclude.grantPermissionsTextView.text = style.allowAccessToFilesText
+            style.grantPermissionsTextStyle.apply(grantPermissionsInclude.grantPermissionsTextView)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

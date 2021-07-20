@@ -143,6 +143,15 @@
         <attr name="streamUiAllowAccessToGalleryIcon" format="reference" />
         <attr name="streamUiAllowAccessToCameraIcon" format="reference" />
         <attr name="streamUiAllowAccessToFilesIcon" format="reference" />
+        <attr name="streamUiGrantPermissionsTextSize" format="dimension" />
+        <attr name="streamUiGrantPermissionsTextColor" format="reference|color" />
+        <attr name="streamUiGrantPermissionsFontAssets" format="string" />
+        <attr name="streamUiGrantPermissionsFont" format="string" />
+        <attr name="streamUiGrantPermissionsTextStyle" format="enum" >
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
 
         <!--Command Input-->
         <attr name="streamUiCommandInputCancelIcon" format="reference" />

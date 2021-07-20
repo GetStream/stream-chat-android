@@ -306,6 +306,25 @@ public data class MessageInputViewStyle(
                 val allowAccessToCameraText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToCameraText)
                     ?: context.getString(R.string.stream_ui_message_input_camera_access)
 
+                val grantPermissionsTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsFontAssets,
+                        R.styleable.MessageInputView_streamUiGrantPermissionsFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
@@ -319,6 +338,7 @@ public data class MessageInputViewStyle(
                     allowAccessToGalleryText = allowAccessToGalleryText.toString(),
                     allowAccessToFilesText = allowAccessToFilesText.toString(),
                     allowAccessToCameraText = allowAccessToCameraText.toString(),
+                    grantPermissionsTextStyle = grantPermissionsTextStyle,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

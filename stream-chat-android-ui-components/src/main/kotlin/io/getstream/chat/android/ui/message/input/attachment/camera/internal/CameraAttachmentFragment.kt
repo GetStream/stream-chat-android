@@ -47,6 +47,7 @@ internal class CameraAttachmentFragment : Fragment() {
         binding.grantPermissionsInclude.apply {
             grantPermissionsImageView.setImageDrawable(style.allowAccessToCameraIcon)
             grantPermissionsTextView.text = style.allowAccessToCameraText
+            style.grantPermissionsTextStyle.apply(grantPermissionsTextView)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }

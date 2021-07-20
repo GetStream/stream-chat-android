@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
+import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
@@ -22,6 +23,7 @@ public data class AttachmentSelectionDialogStyle(
     val allowAccessToGalleryIcon: Drawable,
     val allowAccessToFilesIcon: Drawable,
     val allowAccessToCameraIcon: Drawable,
+    val grantPermissionsTextStyle: TextStyle,
 ) {
     public companion object {
         /**
@@ -41,6 +43,7 @@ public data class AttachmentSelectionDialogStyle(
                 allowAccessToGalleryText = context.getString(R.string.stream_ui_message_input_gallery_access),
                 allowAccessToFilesText = context.getString(R.string.stream_ui_message_input_files_access),
                 allowAccessToCameraText = context.getString(R.string.stream_ui_message_input_camera_access),
+                grantPermissionsTextStyle = TextStyle()
             )
         }
     }

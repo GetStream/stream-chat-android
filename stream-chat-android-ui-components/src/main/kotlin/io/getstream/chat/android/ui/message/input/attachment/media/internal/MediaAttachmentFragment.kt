@@ -81,6 +81,7 @@ internal class MediaAttachmentFragment : Fragment() {
         binding.grantPermissionsInclude.apply {
             grantPermissionsImageView.setImageDrawable(style.allowAccessToGalleryIcon)
             grantPermissionsTextView.text = style.allowAccessToGalleryText
+            style.grantPermissionsTextStyle.apply(grantPermissionsTextView)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
