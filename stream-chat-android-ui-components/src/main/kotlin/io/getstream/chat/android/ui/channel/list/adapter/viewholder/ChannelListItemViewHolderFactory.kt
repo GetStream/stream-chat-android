@@ -65,6 +65,6 @@ public open class ChannelListItemViewHolderFactory {
     }
 
     protected open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-        return ChannelListLoadingMoreViewHolder(parentView)
+        return ChannelListLoadingMoreViewHolder(parentView, style)
     }
 }

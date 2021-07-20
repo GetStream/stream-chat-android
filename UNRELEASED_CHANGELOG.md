@@ -64,6 +64,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Now you can configure the style of `AttachmentMediaActivity`
+- Added `streamUiLoadingView`, `streamUiEmptyStateView` and `streamUiLoadingMoreView` attributes to `ChannelListView` and `ChannelListViewStyle`
+- Added possibility to customize `ChannelListView` using `streamUiChannelListViewStyle`. Check `StreamUi.ChannelListView` style.
 
 ### ⚠️ Changed
 
