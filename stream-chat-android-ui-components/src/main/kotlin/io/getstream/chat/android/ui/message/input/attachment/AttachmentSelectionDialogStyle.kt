@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.input.attachment
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.style.TextStyle
@@ -24,6 +25,9 @@ public data class AttachmentSelectionDialogStyle(
     val allowAccessToFilesIcon: Drawable,
     val allowAccessToCameraIcon: Drawable,
     val grantPermissionsTextStyle: TextStyle,
+    val recentFilesTextStyle: TextStyle,
+    val recentFilesText: String,
+    val fileManagerIcon: Drawable,
 ) {
     public companion object {
         /**
@@ -43,7 +47,10 @@ public data class AttachmentSelectionDialogStyle(
                 allowAccessToGalleryText = context.getString(R.string.stream_ui_message_input_gallery_access),
                 allowAccessToFilesText = context.getString(R.string.stream_ui_message_input_files_access),
                 allowAccessToCameraText = context.getString(R.string.stream_ui_message_input_camera_access),
-                grantPermissionsTextStyle = TextStyle()
+                grantPermissionsTextStyle = TextStyle(), // TODO
+                recentFilesTextStyle = TextStyle(), // TODO
+                recentFilesText = context.getString(R.string.stream_ui_message_input_recent_files),
+                fileManagerIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_manager)!!
             )
         }
     }

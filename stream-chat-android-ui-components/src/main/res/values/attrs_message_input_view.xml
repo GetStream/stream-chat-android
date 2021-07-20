@@ -137,6 +137,18 @@
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
         <!-- {@deprecated Use streamUiCameraAttachmentIcon instead.} -->
         <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
+        <attr name="streamUiAttachmentsRecentFilesText" format="string"/>
+        <attr name="streamUiAttachmentsFileManagerIcon" format="reference"/>
+        <attr name="streamUiAttachmentsRecentFilesTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsRecentFilesTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsRecentFilesFontAssets" format="string" />
+        <attr name="streamUiAttachmentsRecentFilesFont" format="string" />
+        <attr name="streamUiAttachmentsRecentFilesTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />
         <attr name="streamUiAllowAccessToFilesText" format="string" />
         <attr name="streamUiAllowAccessToCameraText" format="string" />

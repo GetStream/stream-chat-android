@@ -325,6 +325,31 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val recentFilesTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val recentFilesText = a.getText(R.styleable.MessageInputView_streamUiAttachmentsRecentFilesText)
+                    ?: context.getString(R.string.stream_ui_message_input_recent_files)
+
+                val fileManagerIcon = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentsFileManagerIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
@@ -339,6 +364,9 @@ public data class MessageInputViewStyle(
                     allowAccessToFilesText = allowAccessToFilesText.toString(),
                     allowAccessToCameraText = allowAccessToCameraText.toString(),
                     grantPermissionsTextStyle = grantPermissionsTextStyle,
+                    recentFilesTextStyle = recentFilesTextStyle,
+                    recentFilesText = recentFilesText.toString(),
+                    fileManagerIcon = fileManagerIcon,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

@@ -96,6 +96,9 @@ internal class FileAttachmentFragment : Fragment() {
                 checkPermissions()
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
+            fileManagerImageView.setImageDrawable(style.fileManagerIcon)
+            recentFilesTextView.text = style.recentFilesText
+            style.recentFilesTextStyle.apply(recentFilesTextView)
             fileManagerImageView.setOnClickListener {
                 activityResultLauncher?.launch(Unit)
             }
