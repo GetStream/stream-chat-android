@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.querychannels.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -27,7 +28,9 @@ internal class QueryChannelsMutableState(
     internal val _sortedChannels =
         _channels.map { it.values.sortedWith(sort.comparator) }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     internal val _mutedChannelIds = MutableStateFlow<List<String>>(emptyList())
+    internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
 
+    override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading
     override val loadingMore: StateFlow<Boolean> = _loadingMore
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.module.state
+package io.getstream.chat.android.offline.plugin.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort

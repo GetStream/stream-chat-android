@@ -1,14 +1,19 @@
-package io.getstream.chat.android.offline.module
+package io.getstream.chat.android.offline.plugin
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.module.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.StateRegistry
 
 public class OfflinePlugin(private val config: Config) : Plugin {
 
     public val state: StateRegistry = StateRegistry()
+    internal val logic: LogicRegistry = LogicRegistry(state)
 
     override val name: String = MODULE_NAME
 
@@ -20,6 +25,12 @@ public class OfflinePlugin(private val config: Config) : Plugin {
             recoveryEnabled()
         }.build()
     }
+
+    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =
+        logic.queryChannels(request).onQueryChannelsRequest(request)
+
+    override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest): Unit =
+        logic.queryChannels(request).onQueryChannelsResult(result, request)
 
     public companion object {
         public const val MODULE_NAME: String = "Offline"

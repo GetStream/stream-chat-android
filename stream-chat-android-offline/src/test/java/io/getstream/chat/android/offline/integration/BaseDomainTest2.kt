@@ -30,8 +30,8 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.module.Config
-import io.getstream.chat.android.offline.module.OfflinePlugin
+import io.getstream.chat.android.offline.plugin.Config
+import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
