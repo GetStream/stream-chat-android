@@ -8,10 +8,10 @@ import io.getstream.chat.android.offline.ChatDomain
 
 class ImagePreviewViewModelFactory(
     private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain
+    private val chatDomain: ChatDomain,
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ImagePreviewViewModel(chatClient, chatDomain) as T
     }
 }

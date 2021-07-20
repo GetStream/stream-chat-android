@@ -2,6 +2,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated Coil to 1.3.0
 
 ### ✅ Added
 

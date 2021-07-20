@@ -20,7 +20,7 @@ class MessagesViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val channelId: String,
-    private val messageLimit: Int
+    private val messageLimit: Int,
 ) : ViewModelProvider.Factory {
 
     @InternalStreamChatApi
@@ -46,7 +46,7 @@ class MessagesViewModelFactory(
     )
 
     @InternalStreamChatApi
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
 

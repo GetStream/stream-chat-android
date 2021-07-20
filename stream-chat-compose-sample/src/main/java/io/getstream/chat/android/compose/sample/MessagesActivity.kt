@@ -41,7 +41,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewModel.factory.conversation.MessagesViewModelFactory
-import io.getstream.chat.android.compose.messages.attachments.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewModel.messages.attachments.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewModel.messages.composer.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewModel.messages.list.MessageListViewModel
 import io.getstream.chat.android.offline.ChatDomain

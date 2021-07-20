@@ -13,7 +13,7 @@ class ChannelViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val querySort: QuerySort<Channel>,
-    private val filters: FilterObject
+    private val filters: FilterObject,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
@@ -22,8 +22,7 @@ class ChannelViewModelFactory(
         }
     )
 
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>):T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
 

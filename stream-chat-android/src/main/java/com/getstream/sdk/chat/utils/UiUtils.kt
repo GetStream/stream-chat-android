@@ -35,7 +35,6 @@ public object UiUtils {
         "angry" to "\uD83D\uDE21"
     )
 
-    @InternalStreamChatApi
     public fun getIcon(mimeType: String?): Int {
         if (mimeType == null) {
             return R.drawable.stream_ic_file
@@ -48,12 +47,10 @@ public object UiUtils {
     }
 
     @JvmStatic
-    @InternalStreamChatApi
     public fun getReactionTypes(): Map<String, String> {
         return reactionTypeToSymbolMap
     }
 
-    @InternalStreamChatApi
     public fun getFileSizeHumanized(fileSize: Int): String {
         if (fileSize <= 0) return "0"
         val digitGroups = (log10(fileSize.toDouble()) / log10(1024.0)).toInt()

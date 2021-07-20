@@ -1,18 +1,15 @@
 import com.getstream.sdk.chat.Dependencies
+import static com.getstream.sdk.chat.DependenciesKt.COMPOSE_VERSION
+import static com.getstream.sdk.chat.DependenciesKt.KOTLIN_VERSION
 
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-}
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+apply from: "${rootDir}/scripts/android.gradle"
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "io.getstream.chat.android.compose.sample"
-        minSdkVersion 21
-        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -30,18 +27,18 @@ android {
         compose true
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     composeOptions {
-        kotlinCompilerVersion "1.5.10"
-        kotlinCompilerExtensionVersion "1.0.0-beta09"
+        kotlinCompilerVersion KOTLIN_VERSION
+        kotlinCompilerExtensionVersion COMPOSE_VERSION
     }
+}
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
-        jvmTarget = '1.8'
+        freeCompilerArgs += [
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi', // TODO remove
+                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi', // TODO remove
+        ]
     }
 }
 
@@ -69,5 +66,4 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
-
 }
