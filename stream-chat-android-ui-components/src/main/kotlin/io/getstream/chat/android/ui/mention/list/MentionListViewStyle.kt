@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -101,7 +102,7 @@ public data class MentionListViewStyle(
                         messageTextStyle = messageTextStyle,
                         messageTimeTextStyle = messageTimeTextStyle,
                     ),
-                )
+                ).let(TransformStyle.mentionListViewStyleTransformer::transform)
             }
         }
     }
