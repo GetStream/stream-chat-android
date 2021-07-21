@@ -2,19 +2,19 @@ package io.getstream.chat.android.ui.message.input.attachment.internal
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.camera.internal.CameraAttachmentFragment
 import io.getstream.chat.android.ui.message.input.attachment.file.internal.FileAttachmentFragment
 import io.getstream.chat.android.ui.message.input.attachment.media.internal.MediaAttachmentFragment
 
-internal class AttachmentDialogPagerAdapter(fragment: Fragment, private val style: AttachmentSelectionDialogStyle) :
+internal class AttachmentDialogPagerAdapter(fragment: Fragment, private val style: MessageInputViewStyle) :
     FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            PAGE_MEDIA_ATTACHMENT -> MediaAttachmentFragment.newInstance(style)
+            PAGE_MEDIA_ATTACHMENT -> MediaAttachmentFragment.newInstance(style.attachmentSelectionDialogStyle)
             PAGE_FILE_ATTACHMENT -> FileAttachmentFragment.newInstance(style)
-            PAGE_CAMERA_ATTACHMENT -> CameraAttachmentFragment.newInstance(style)
+            PAGE_CAMERA_ATTACHMENT -> CameraAttachmentFragment.newInstance(style.attachmentSelectionDialogStyle)
             else -> throw IllegalArgumentException("Can not create page for position $position")
         }
     }

@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -40,7 +39,7 @@ internal class MediaAttachmentFragment : Fragment() {
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
 
-    private val style by lazy { AttachmentSelectionDialogFragment.staticStyle!! }
+    private val style by lazy { staticStyle!! }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

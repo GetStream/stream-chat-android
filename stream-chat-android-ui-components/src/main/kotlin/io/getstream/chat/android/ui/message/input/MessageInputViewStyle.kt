@@ -88,6 +88,8 @@ public data class MessageInputViewStyle(
     public val commandInputBadgeIcon: Drawable,
     public val commandInputBadgeBackgroundDrawable: Drawable,
     public val commandInputBadgeTextStyle: TextStyle,
+    public val fileNameTextStyle: TextStyle,
+    public val fileSizeTextStyle: TextStyle,
 ) {
 
     internal companion object {
@@ -400,6 +402,44 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val fileNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val fileSizeTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -431,6 +471,8 @@ public data class MessageInputViewStyle(
                     commandInputBadgeIcon = commandInputBadgeIcon,
                     commandInputBadgeBackgroundDrawable = commandInputBadgeBackgroundDrawable,
                     commandInputBadgeTextStyle = commandInputBadgeTextStyle,
+                    fileNameTextStyle = fileNameTextStyle,
+                    fileSizeTextStyle = fileSizeTextStyle,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

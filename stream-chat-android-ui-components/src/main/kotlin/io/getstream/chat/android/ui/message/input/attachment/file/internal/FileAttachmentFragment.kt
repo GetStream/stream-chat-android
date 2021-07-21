@@ -17,8 +17,8 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import kotlinx.coroutines.launch
@@ -33,9 +33,9 @@ internal class FileAttachmentFragment : Fragment() {
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
-    private val style by lazy { AttachmentSelectionDialogFragment.staticStyle!! }
+    private val style: MessageInputViewStyle by lazy { staticStyle!! }
 
-    private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter {
+    private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter(style) {
         updateFileAttachment(it)
     }
 
@@ -89,6 +89,7 @@ internal class FileAttachmentFragment : Fragment() {
 
     private fun setupViews() {
         binding.apply {
+            val style = style.attachmentSelectionDialogStyle
             grantPermissionsInclude.grantPermissionsImageView.setImageDrawable(style.allowAccessToFilesIcon)
             grantPermissionsInclude.grantPermissionsTextView.text = style.allowAccessToFilesText
             style.grantPermissionsTextStyle.apply(grantPermissionsInclude.grantPermissionsTextView)
@@ -163,9 +164,9 @@ internal class FileAttachmentFragment : Fragment() {
     }
 
     companion object {
-        internal var staticStyle: AttachmentSelectionDialogStyle? = null
+        internal var staticStyle: MessageInputViewStyle? = null
 
-        fun newInstance(style: AttachmentSelectionDialogStyle): Fragment {
+        fun newInstance(style: MessageInputViewStyle): Fragment {
             staticStyle = style
             return FileAttachmentFragment()
         }

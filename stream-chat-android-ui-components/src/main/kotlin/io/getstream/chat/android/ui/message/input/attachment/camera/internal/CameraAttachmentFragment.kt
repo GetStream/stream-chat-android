@@ -25,7 +25,7 @@ internal class CameraAttachmentFragment : Fragment() {
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
-    private val style by lazy { AttachmentSelectionDialogFragment.staticStyle!! }
+    private val style by lazy { staticStyle!! }
 
     override fun onCreateView(
         inflater: LayoutInflater,

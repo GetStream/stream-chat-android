@@ -360,7 +360,7 @@ public class MessageInputView : ConstraintLayout {
             messageInputViewStyle.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
-                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle.attachmentSelectionDialogStyle)
+                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
                         .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
                         .show(it, AttachmentSelectionDialogFragment.TAG)
                 }

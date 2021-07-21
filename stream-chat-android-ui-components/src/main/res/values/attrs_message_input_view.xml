@@ -148,6 +148,24 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+        <attr name="streamUiAttachmentsFileNameTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFileNameTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFileNameFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFileNameFont" format="string" />
+        <attr name="streamUiAttachmentsFileNameTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsFileSizeTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFileSizeTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFileSizeFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFileSizeFont" format="string" />
+        <attr name="streamUiAttachmentsFileSizeTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />
         <attr name="streamUiAllowAccessToFilesText" format="string" />
