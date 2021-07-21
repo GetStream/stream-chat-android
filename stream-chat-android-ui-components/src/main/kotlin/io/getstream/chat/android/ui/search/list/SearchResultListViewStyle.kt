@@ -2,15 +2,23 @@ package io.getstream.chat.android.ui.search.list
 
 import android.content.Context
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 
 public data class SearchResultListViewStyle(
+    public val searchInfoBarBackground: Drawable,
+    public val searchInfoBarTextStyle: TextStyle,
+    public val emptyStateIcon: Drawable,
+    public val emptyStateTextStyle: TextStyle,
+    @ColorInt public val progressBarTint: Int,
     public val messagePreviewStyle: MessagePreviewStyle,
 ) {
 
@@ -21,9 +29,57 @@ public data class SearchResultListViewStyle(
                 R.styleable.SearchResultListView,
                 R.attr.streamUiSearchResultListViewStyle,
                 0, // TODO
-            ).use { typedArray ->
+            ).use { a ->
 
-                val senderTextStyle = TextStyle.Builder(typedArray)
+                val searchInfoBarBackground =
+                    a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarBackground)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_bg_gradient)!!
+                val searchInfoBarTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarTextFontAssets,
+                        R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarTextFont
+                    )
+                    .style(
+                        R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val emptyStateIcon = a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultEmptyStateIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_search_empty)!!
+                val emptyStateTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.SearchResultListView_streamUiSearchResultEmptyStateTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.SearchResultListView_streamUiSearchResultEmptyStateTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.SearchResultListView_streamUiSearchResultEmptyStateTextFontAssets,
+                        R.styleable.SearchResultListView_streamUiSearchResultEmptyStateTextFont
+                    )
+                    .style(
+                        R.styleable.SearchResultListView_streamUiSearchResultEmptyStateTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val progressBarTint = a.getColor(
+                    R.styleable.SearchResultListView_streamUiSearchResultProgressBarTint,
+                    context.getColorCompat(R.color.stream_ui_accent_blue),
+                )
+
+                val senderTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultSenderNameTextSize,
                         context.getDimension(R.dimen.stream_ui_text_medium)
@@ -42,7 +98,7 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
-                val messageTextStyle = TextStyle.Builder(typedArray)
+                val messageTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTextSize,
                         context.getDimension(R.dimen.stream_ui_text_medium)
@@ -61,7 +117,7 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
-                val messageTimeTextStyle = TextStyle.Builder(typedArray)
+                val messageTimeTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTimeTextSize,
                         context.getDimension(R.dimen.stream_ui_text_medium)
@@ -81,6 +137,11 @@ public data class SearchResultListViewStyle(
                     .build()
 
                 return SearchResultListViewStyle(
+                    searchInfoBarBackground = searchInfoBarBackground,
+                    searchInfoBarTextStyle = searchInfoBarTextStyle,
+                    emptyStateIcon = emptyStateIcon,
+                    emptyStateTextStyle = emptyStateTextStyle,
+                    progressBarTint = progressBarTint,
                     messagePreviewStyle = MessagePreviewStyle(
                         messageSenderTextStyle = senderTextStyle,
                         messageTextStyle = messageTextStyle,
