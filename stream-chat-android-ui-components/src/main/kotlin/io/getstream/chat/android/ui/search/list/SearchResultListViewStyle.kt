@@ -13,6 +13,17 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 
+/**
+ * Style for [SearchResultListView].
+ * Use this class together with [TransformStyle.searchResultListViewStyleTransformer] to change [SearchResultListView] styles programmatically.
+ *
+ * @property searchInfoBarBackground - background for search info bar. Default - [R.drawable.stream_ui_bg_gradient]
+ * @property searchInfoBarTextStyle - appearance for text displayed in search info bar
+ * @property emptyStateIcon - icon for empty state view. Default - [R.drawable.stream_ui_ic_search_empty]
+ * @property emptyStateTextStyle - appearance for empty state text
+ * @property progressBarIcon - animated progress drawable. Default - [R.drawable.stream_ui_rotating_indeterminate_progress_gradient]
+ * @property messagePreviewStyle - style for single search result item
+ */
 public data class SearchResultListViewStyle(
     public val searchInfoBarBackground: Drawable,
     public val searchInfoBarTextStyle: TextStyle,
@@ -72,8 +83,9 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
-                val progressBarIcon = a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultProgressBarIcon)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
+                val progressBarIcon =
+                    a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultProgressBarIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
                 val senderTextStyle = TextStyle.Builder(a)
                     .size(
