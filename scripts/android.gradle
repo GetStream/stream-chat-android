@@ -1,4 +1,4 @@
-import com.getstream.sdk.chat.Configuration
+import io.getstream.chat.android.Configuration
 
 android {
     compileSdkVersion Configuration.compileSdkVersion

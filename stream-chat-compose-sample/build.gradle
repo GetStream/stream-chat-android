@@ -1,6 +1,5 @@
-import com.getstream.sdk.chat.Dependencies
-import static com.getstream.sdk.chat.DependenciesKt.COMPOSE_VERSION
-import static com.getstream.sdk.chat.DependenciesKt.KOTLIN_VERSION
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -28,8 +27,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion KOTLIN_VERSION
-        kotlinCompilerExtensionVersion COMPOSE_VERSION
+        kotlinCompilerVersion Versions.KOTLIN
+        kotlinCompilerExtensionVersion Versions.COMPOSE
     }
 }
 
@@ -43,7 +42,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    implementation project(':stream-chat-android-offline')
     implementation project(':stream-chat-compose')
 
     implementation 'androidx.core:core-ktx:1.6.0'

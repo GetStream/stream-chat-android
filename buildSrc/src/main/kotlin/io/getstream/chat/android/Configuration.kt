@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat
+package io.getstream.chat.android
 
 object Configuration {
     const val compileSdkVersion = 30

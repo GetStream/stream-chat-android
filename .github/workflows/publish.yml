@@ -16,8 +16,8 @@ jobs:
         with:
           java-version: 1.8
       - name: Release build
-        # assembleRelease for all modules, excluding non-library modules: sample, ui-components sample, docs
-        run: ./gradlew assembleRelease -x :stream-chat-android-sample:assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease
+        # assembleRelease for all modules, excluding non-library modules: samples, docs
+        run: ./gradlew assembleRelease -x :stream-chat-android-sample:assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease
       - name: Source jar and dokka
         run: ./gradlew androidSourcesJar javadocJar
       - name: Publish to MavenCentral
