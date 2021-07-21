@@ -84,10 +84,12 @@ To learn about how to create a token and different user types, see [Tokens & Aut
 
 If the `connectUser` call was successful, you are now ready to use the SDK! 🎉
 
-The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that come with ViewModels that will perform data fetching and sending for you, as described below.
+The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
 
 ### Adding UI Components
 
-To add the UI Components to your application, see the [Get Started](../03-ui/01-overview.md) page of the UI Components section first, which explains how the components work.
+There are two UI Component implementations available: one built on regular old Android Views that you can use in XML layouts, and another built from the ground up in [Jetpack Compose](https://developer.android.com/jetpack/compose).
 
-Then you can proceed to our guides that show you how to [build a channel list screen](../03-ui/05-guides/01-building-channel-list-screen.md) and [build a message list screen](../03-ui/05-guides/02-building-message-list-screen.md).
+Take a look at the Overview pages of the implementations to get started with them:
+- [XML based UI Components](../03-ui/01-overview.md)
+- [Jetpack Compose UI Components](../04-compose/01-overview.md)

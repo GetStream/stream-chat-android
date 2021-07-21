@@ -50,3 +50,17 @@ dependencies {
 ```
 
 Adding the UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+### Compose UI Components
+
+To use the Compose UI components instead, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-ui-components:$stream_version-beta"
+}
+```
+
+Note that the Compose SDK's version still has a `-beta` postfix in it.
+
+Adding the Compose UI Components library as a dependency will automatically include the client and offline libraries as well.
