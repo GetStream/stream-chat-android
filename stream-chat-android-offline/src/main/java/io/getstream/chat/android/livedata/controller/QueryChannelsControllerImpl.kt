@@ -31,9 +31,9 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
         }
 
     override var recoveryNeeded: Boolean
-        get() = queryChannels.recoveryNeeded
+        get() = queryChannels.recoveryNeeded.value
         set(value) {
-            queryChannels.recoveryNeeded = value
+            queryChannels.recoveryNeeded.value = value
         }
     val queryChannelsSpec: QueryChannelsSpec = queryChannels.queryChannelsSpec
 
