@@ -52,7 +52,16 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Now it is possible to style the AttachmentActivity. Just replace the activity's theme
+in your Manifest file:
 
+```
+<activity
+    android:name="io.getstream.chat.android.ui.gallery.AttachmentActivity"
+    android:theme="@style/yourTheme"
+    tools:replace="android:theme"
+    />
+```
 ### ⚠️ Changed
 
 ### ❌ Removed

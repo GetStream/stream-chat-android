@@ -35,7 +35,7 @@
             />
         <activity
             android:name=".gallery.AttachmentActivity"
-            android:theme="@style/StreamUiAttachmentActivityStyle"
+            android:theme="@style/StreamUi.AttachmentActivity"
             />
     </application>
 </manifest>
