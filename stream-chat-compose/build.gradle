@@ -8,7 +8,7 @@ apply plugin: 'kotlin-android'
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
     PUBLISH_VERSION = Configuration.versionName + "-beta"
-    PUBLISH_ARTIFACT_ID = 'stream-chat-android-ui-components'
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
