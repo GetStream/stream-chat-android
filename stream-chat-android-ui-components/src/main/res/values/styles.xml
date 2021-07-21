@@ -119,8 +119,8 @@
         <item name="android:layout_width">@dimen/stream_ui_attachment_dialog_button_size</item>
         <item name="android:layout_height">@dimen/stream_ui_attachment_dialog_button_size</item>
         <item name="android:backgroundTint">@color/stream_ui_attachment_tab_button</item>
-        <item name="android:textOff"></item>
-        <item name="android:textOn"></item>
+        <item name="android:textOff"/>
+        <item name="android:textOn"/>
     </style>
 
     <style name="StreamUiUserReactionAvatarStyle" parent="StreamUiBaseAvatarStyle">
@@ -489,6 +489,11 @@
         <item name="streamUiGiphySendButtonTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiGiphySendButtonTextColor">@color/stream_ui_accent_blue</item>
         <item name="streamUiGiphySendButtonTextStyle">normal</item>
+
+        <item name="streamUiProgressBarStyle">?android:attr/progressBarStyleLarge</item>
+        <item name="streamUiEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiEmptyStateTextStyle">normal</item>
     </style>
 
     <style name="StreamUi.MessageList.Item.Avatar" parent="StreamUi.BaseAvatar">

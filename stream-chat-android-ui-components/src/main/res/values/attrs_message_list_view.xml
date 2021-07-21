@@ -338,6 +338,15 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
+        <attr name="streamUiProgressBarStyle" format="reference" />
+        <attr name="streamUiEmptyStateTextSize" format="dimension|reference" />
+        <attr name="streamUiEmptyStateTextColor" format="color|reference" />
+        <attr name="streamUiEmptyStateTextFont" format="reference" />
+        <attr name="streamUiEmptyStateTextFontAssets" format="string" />
+        <attr name="streamUiEmptyStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

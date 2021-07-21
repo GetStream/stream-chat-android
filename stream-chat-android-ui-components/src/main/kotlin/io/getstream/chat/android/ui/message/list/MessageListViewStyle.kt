@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
@@ -89,10 +90,32 @@ public data class MessageListViewStyle(
     @ColorInt val userReactionsBackgroundColor: Int,
     val userReactionsTitleText: TextStyle,
     @ColorInt val optionsOverlayDimColor: Int,
+    val emptyViewTextStyle: TextStyle,
 ) {
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
+
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
+            return TextStyle.Builder(typedArray)
+                .color(
+                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .size(
+                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
+                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+        }
 
         operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
             context.obtainStyledAttributes(
@@ -300,6 +323,8 @@ public data class MessageListViewStyle(
                     context.getColorCompat(R.color.stream_ui_literal_transparent)
                 )
 
+                val emptyViewTextStyle = emptyViewStyle(context, attributes)
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
@@ -334,7 +359,8 @@ public data class MessageListViewStyle(
                     messageOptionsBackgroundColor = messageOptionsBackgroundColor,
                     userReactionsBackgroundColor = userReactionsBackgroundColor,
                     userReactionsTitleText = userReactionsTitleText,
-                    optionsOverlayDimColor = optionsOverlayDimColor
+                    optionsOverlayDimColor = optionsOverlayDimColor,
+                    emptyViewTextStyle = emptyViewTextStyle,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

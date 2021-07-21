@@ -3,6 +3,8 @@ package io.getstream.chat.android.ui.message.list
 import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -37,13 +39,17 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
@@ -433,6 +439,9 @@ public class MessageListView : ConstraintLayout {
         initEmptyStateView()
 
         configureAttributes(attr)
+
+        messageListViewStyle?.emptyViewTextStyle?.apply(binding.defaultEmptyStateView)
+
         layoutTransition = LayoutTransition()
 
         buffer.subscribe(::handleNewWrapper)
@@ -471,35 +480,34 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
-        val tArray = context.obtainStyledAttributes(
+        context.obtainStyledAttributes(
             attributeSet,
             R.styleable.MessageListView,
             R.attr.streamUiMentionListStyle,
             R.style.StreamUi_MessageList
-        )
+        ).use { tArray ->
+            tArray.getInteger(
+                R.styleable.MessageListView_streamUiLoadMoreThreshold,
+                LOAD_MORE_THRESHOLD,
+            ).also { loadMoreThreshold ->
+                loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                    endRegionReachedHandler.onEndRegionReached()
+                }
+            }
 
-        tArray.getInteger(
-            R.styleable.MessageListView_streamUiLoadMoreThreshold,
-            LOAD_MORE_THRESHOLD,
-        ).also { loadMoreThreshold ->
-            loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
-                endRegionReachedHandler.onEndRegionReached()
+            binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
+            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
+
+            NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                    R.styleable.MessageListView_streamUiNewMessagesBehaviour,
+                    NewMessagesBehaviour.COUNT_UPDATE.value
+                )
+            ).also {
+                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             }
         }
 
-        binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-        scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
-
-        NewMessagesBehaviour.parseValue(
-            tArray.getInt(
-                R.styleable.MessageListView_streamUiNewMessagesBehaviour,
-                NewMessagesBehaviour.COUNT_UPDATE.value
-            )
-        ).also {
-            scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-        }
-
-        tArray.recycle()
         if (background == null) {
             setBackgroundColor(requireStyle().backgroundColor)
         }
