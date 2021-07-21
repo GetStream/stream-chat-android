@@ -71,7 +71,7 @@
 ### ❌ Removed
 
 
-## stream-chat-compose
+## stream-chat-android-compose
 ### 🐞 Fixed
 
 ### ⬆️ Improved

@@ -1,6 +1,6 @@
 # Overview
 
-The [Stream Chat Jetpack Compose SDK](https://github.com/GetStream/stream-chat-compose) helps you build a rich and beautiful chat experience for your users, using the modern Android UI toolkit. Based on our Stream Chat API and the Android low-level Client, it provides a rich set of features you can use to integrate essential Chat app features to your app. It currently supports:
+The [Stream Chat Jetpack Compose SDK](https://github.com/GetStream/stream-chat-android-compose) helps you build a rich and beautiful chat experience for your users, using the modern Android UI toolkit. Based on our Stream Chat API and the Android low-level Client, it provides a rich set of features you can use to integrate essential Chat app features to your app. It currently supports:
 
 * Rich and customizable messages
 * Image and file uploads, downloads and attachment messages
@@ -26,7 +26,7 @@ Additionally, there are three major components in the SDK that you can include i
 
 * [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client)
 * [Offline support](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline)
-* [Jetpack Compose UI components](https://github.com/GetStream/stream-chat-compose/tree/main/stream-chat-compose)
+* [Jetpack Compose UI components](https://github.com/GetStream/stream-chat-android-compose/tree/main/stream-chat-android-compose)
 
 ### Client
 
@@ -52,4 +52,4 @@ The Jetpack Compose Components library includes three types of composable functi
 
 You'll learn more about these components in [Component Architecture](./02-component-architecture.md).
 
-You can see the components in action by checking out the [Jetpack Compose Sample App](https://github.com/GetStream/stream-chat-compose/tree/main/app), available in the GitHub repository.
+You can see the components in action by checking out the [Jetpack Compose Sample App](https://github.com/GetStream/stream-chat-android-compose/tree/main/app), available in the GitHub repository.
