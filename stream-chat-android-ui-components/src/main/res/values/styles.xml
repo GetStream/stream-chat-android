@@ -525,6 +525,31 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
+    <style name="StreamUi.SearchResultListView" parent="StreamUi">
+        <item name="streamUiSearchResultSearchInfoBarBackground">@drawable/stream_ui_bg_gradient</item>
+        <item name="streamUiSearchResultSearchInfoBarTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiSearchResultSearchInfoBarTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchResultSearchInfoBarTextStyle">normal</item>
+
+        <item name="streamUiSearchResultEmptyStateIcon">@drawable/stream_ui_ic_search_empty</item>
+        <item name="streamUiSearchResultEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSearchResultEmptyStateTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultEmptyStateTextStyle">normal</item>
+
+        <item name="streamUiSearchResultProgressBarIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+
+        <item name="streamUiSearchResultSenderNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchResultSenderNameTextSize">@dimen/stream_ui_channel_item_title</item>
+        <item name="streamUiSearchResultSenderNameTextStyle">normal</item>
+
+        <item name="streamUiSearchResultMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultMessageTextSize">@dimen/stream_ui_channel_item_message</item>
+        <item name="streamUiSearchResultMessageTextStyle">normal</item>
+
+        <item name="streamUiSearchResultMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultMessageTimeTextSize">@dimen/stream_ui_channel_item_message</item>
+        <item name="streamUiSearchResultMessageTimeTextStyle">normal</item>
+    </style>
 
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>

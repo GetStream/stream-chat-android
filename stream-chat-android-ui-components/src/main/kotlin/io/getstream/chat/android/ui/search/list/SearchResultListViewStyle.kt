@@ -21,16 +21,14 @@ public data class SearchResultListViewStyle(
     public val progressBarIcon: Drawable,
     public val messagePreviewStyle: MessagePreviewStyle,
 ) {
-
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.SearchResultListView,
                 R.attr.streamUiSearchResultListViewStyle,
-                0, // TODO
+                R.style.StreamUi_SearchResultListView,
             ).use { a ->
-
                 val searchInfoBarBackground =
                     a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultSearchInfoBarBackground)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_bg_gradient)!!
@@ -80,7 +78,7 @@ public data class SearchResultListViewStyle(
                 val senderTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultSenderNameTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_channel_item_title)
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultSenderNameTextColor,
@@ -99,11 +97,11 @@ public data class SearchResultListViewStyle(
                 val messageTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message)
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTextFontAssets,
@@ -118,11 +116,11 @@ public data class SearchResultListViewStyle(
                 val messageTimeTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTimeTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message)
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTimeTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultMessageTimeTextFontAssets,
