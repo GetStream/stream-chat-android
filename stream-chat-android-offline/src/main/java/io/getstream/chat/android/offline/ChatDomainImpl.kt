@@ -36,11 +36,11 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
-import io.getstream.chat.android.offline.extensions.offlinePlugin
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
+import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -142,6 +142,7 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
+    private val offlinePlugin: OfflinePlugin,
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -151,6 +152,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
+        offlinePlugin: OfflinePlugin,
     ) : this(
         client = client,
         db = null,
@@ -159,7 +161,8 @@ internal class ChatDomainImpl internal constructor(
         recoveryEnabled = recoveryEnabled,
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
-        appContext = appContext
+        appContext = appContext,
+        offlinePlugin = offlinePlugin,
     )
 
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
@@ -559,12 +562,11 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            val mutableState = client.offlinePlugin.state.queryChannels(filter, sort).toMutableState()
-            val logic = client.offlinePlugin.logic.queryChannels(filter, sort)
+            val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
+            val logic = offlinePlugin.logic.queryChannels(filter, sort)
             QueryChannelsController(
                 filter,
                 sort,
-                client,
                 this,
                 mutableState,
                 logic
@@ -637,7 +639,7 @@ internal class ChatDomainImpl internal constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
-            .filter { it.recoveryNeeded || recoverAll }
+            .filter { it.recoveryNeeded.value || recoverAll }
             .take(3)
         for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(

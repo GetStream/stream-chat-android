@@ -410,10 +410,6 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
-	public static final fun getOfflinePlugin (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/OfflinePlugin;
-}
-
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
@@ -465,13 +461,11 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMutedChannelIds ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getNewChannelEventFilter ()Lkotlin/jvm/functions/Function3;
-	public final fun getRecoveryNeeded ()Z
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun query$default (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;IIILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun refreshChannel (Ljava/lang/String;)V
 	public final fun setNewChannelEventFilter (Lkotlin/jvm/functions/Function3;)V
-	public final fun setRecoveryNeeded (Z)V
 }
 
 public abstract class io/getstream/chat/android/offline/querychannels/QueryChannelsController$ChannelsState {

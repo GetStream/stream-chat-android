@@ -108,17 +108,8 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     private val scope: CoroutineScope,
-    plugins: Collection<Plugin> = emptyList(),
+    public val plugins: Collection<Plugin> = emptyList(),
 ) {
-
-    private val _plugins: MutableCollection<Plugin> = mutableListOf(*plugins.toTypedArray())
-    public val plugins: Collection<Plugin> = _plugins
-
-    // TODO Added for backward compatibility with ChatDomain.Builder. Should be removed when ChatDomain will be hidden
-    @InternalStreamChatApi
-    public fun addPlugin(plugin: Plugin) {
-        _plugins += plugin
-    }
 
     @InternalStreamChatApi
     public val notificationHandler: ChatNotificationHandler = notifications.handler
@@ -925,6 +916,10 @@ public class ChatClient internal constructor(
             set = mapOf("pinned" to false)
         )
     }
+
+    @CheckResult
+    @InternalStreamChatApi
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = queryChannelsPostponeHelper.queryChannels(request)
 
     @CheckResult
     public fun queryChannel(
