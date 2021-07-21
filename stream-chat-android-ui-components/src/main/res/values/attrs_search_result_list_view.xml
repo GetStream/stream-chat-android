@@ -26,7 +26,7 @@
         </attr>
 
         <!-- Progress Bar -->
-        <attr name="streamUiSearchResultProgressBarTint" format="color|reference" />
+        <attr name="streamUiSearchResultProgressBarIcon" format="reference" />
 
         <!-- Message Preview -->
         <attr name="streamUiSearchResultSenderNameTextColor" format="color|reference"/>

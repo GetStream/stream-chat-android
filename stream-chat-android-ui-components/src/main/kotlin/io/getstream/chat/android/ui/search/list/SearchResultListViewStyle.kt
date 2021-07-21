@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -18,7 +17,7 @@ public data class SearchResultListViewStyle(
     public val searchInfoBarTextStyle: TextStyle,
     public val emptyStateIcon: Drawable,
     public val emptyStateTextStyle: TextStyle,
-    @ColorInt public val progressBarTint: Int,
+    public val progressBarIcon: Drawable,
     public val messagePreviewStyle: MessagePreviewStyle,
 ) {
 
@@ -74,10 +73,8 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
-                val progressBarTint = a.getColor(
-                    R.styleable.SearchResultListView_streamUiSearchResultProgressBarTint,
-                    context.getColorCompat(R.color.stream_ui_accent_blue),
-                )
+                val progressBarIcon = a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultProgressBarIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
                 val senderTextStyle = TextStyle.Builder(a)
                     .size(
@@ -141,7 +138,7 @@ public data class SearchResultListViewStyle(
                     searchInfoBarTextStyle = searchInfoBarTextStyle,
                     emptyStateIcon = emptyStateIcon,
                     emptyStateTextStyle = emptyStateTextStyle,
-                    progressBarTint = progressBarTint,
+                    progressBarIcon = progressBarIcon,
                     messagePreviewStyle = MessagePreviewStyle(
                         messageSenderTextStyle = senderTextStyle,
                         messageTextStyle = messageTextStyle,

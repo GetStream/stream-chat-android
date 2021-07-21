@@ -2011,20 +2011,20 @@ public abstract interface class io/getstream/chat/android/ui/search/list/SearchR
 
 public final class io/getstream/chat/android/ui/search/list/SearchResultListViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle$Companion;
-	public fun <init> (Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component5 ()I
+	public final fun component5 ()Landroid/graphics/drawable/Drawable;
 	public final fun component6 ()Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
-	public final fun copy (Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/SearchResultListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEmptyStateIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getEmptyStateTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getMessagePreviewStyle ()Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
-	public final fun getProgressBarTint ()I
+	public final fun getProgressBarIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getSearchInfoBarBackground ()Landroid/graphics/drawable/Drawable;
 	public final fun getSearchInfoBarTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public fun hashCode ()I
