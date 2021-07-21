@@ -2,19 +2,19 @@
 
 You've already learned that the Jetpack Compose SDK exposes three types of components:
 
-* Out-of-box components
-* ViewModel-powered components
-* Stateless components
+* **Screen components**: out-of-the-box, screen-sized composables. 
+* **Bound components**: composables bound to our ViewModels for state handling. 
+* **Stateless components**: low-level, stateless composables for full customizability.
 
 Let's go through each type to see what the difference is and how to use them.
 
-## Out-of-box components
+## Screen components
 
-Complete out-of-box solutions that connect all the operations you need to give users a Chat experience.
+Complete screen solutions that connect all the operations you need to give users a Chat experience.
 
 These components are **very easy to use** and they build entire screens for you, with default behavior. However, they offer **very limited customization** and are great to explore the default behavior of our features.
 
-Currently we only have two out-of-box components:
+Currently we only have two screen components:
 
 * `ChannelsScreen` : Builds a screen that shows a header with user information, a list of channels the current user is a member of and a search input to filter those channels by id.
 * `MessagesScreen`: Builds a full chat experience, with a header that shows information about the channel, a list that supports messages, attachments, reactions, replies, threads and more and a message composer, that lets you write messages and send attachments. 
@@ -48,7 +48,7 @@ This will give you a fully-working screen, as seen below.
 
 You can learn more about the [ChannelsComponent](./channel-components/channels-screen) and [MessagesComponent](./message-components/messages-screen) in their respective pages. 
 
-## ViewModel-powered components
+## Bound components
 
 Next are components which serve a specific use-case and are powered by a `ViewModel`.
 
