@@ -3,8 +3,8 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.VisibleForTesting
 import androidx.annotation.CheckResult
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
@@ -678,25 +678,18 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            // TODO remove when ChatDomain will be completely hidden from customers
-            checkOfflinePluginAdded()
-
             instance = buildImpl()
             return instance()
         }
 
-        private fun checkOfflinePluginAdded() {
-            if (client.plugins.any { it.name == OfflinePlugin.MODULE_NAME }) {
-                return
-            }
-
-            OfflinePluginConfig(
-                backgroundSyncEnabled = backgroundSyncEnabled,
-                userPresence = userPresence,
-                persistenceEnabled = storageEnabled
-            )
-                .let(::OfflinePlugin)
-                .also(client::addPlugin)
+        private fun getPlugin(): OfflinePlugin {
+            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
+                ?: OfflinePluginConfig(
+                    backgroundSyncEnabled = backgroundSyncEnabled,
+                    userPresence = userPresence,
+                    persistenceEnabled = storageEnabled
+                )
+                    .let(::OfflinePlugin)
         }
 
         internal fun buildImpl(): ChatDomainImpl {
@@ -710,7 +703,8 @@ public sealed interface ChatDomain {
                 recoveryEnabled,
                 userPresence,
                 backgroundSyncEnabled,
-                appContext
+                appContext,
+                offlinePlugin = getPlugin()
             )
         }
     }
