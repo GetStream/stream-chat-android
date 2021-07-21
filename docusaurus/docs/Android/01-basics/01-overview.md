@@ -7,18 +7,21 @@ slug: /
 The [Stream Chat Android SDK](https://github.com/GetStream/stream-chat-android) enables you to easily build any type of chat or messaging experience for Android, either in Kotlin or Java.
 
 :::note 
-The fastest way to get started with the SDK is by trying the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/).
+The fastest way to get started with the SDK is by trying the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/). If you're using Jetpack Compose, see the [Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/) instead!
 :::
 
 This section provides an overview of the SDK, explains the basic concepts, and shows you how to get started with building chat features.
 
-The **UI Components** section describes the ready-to-use Android Views provided by the SDK, and the **Guides** section contains instructions for performing common tasks with the SDK.
+The **Client** section contains guides on common tasks you might want to perform in the low level APIs.
 
-There are three major components in the SDK that you can include in your app:
+The **UI Components** section describes the ready-to-use Android Views provided by the SDK, while the **Compose UI Components** section showcases our modular Jetpack Compose UI implementation.
+
+There are four major components in the SDK that you can include in your app:
 
 * [Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client)
 * [Offline support](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-offline)
 * [UI components](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components)
+* [Compose UI components](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-compose-components)
 
 ### Client
 
@@ -41,3 +44,13 @@ The UI Components library includes pre-built Android Views to easily load and di
 This library is built on top of the offline support library, and offers the quickest integration of Stream Chat into an Android application. It also has a variety of [theming](../03-ui/02-theming.md) options to make it fit your app's needs.
 
 You can see the UI Components in action by checking out the [UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample), available in the GitHub repository.
+
+### Compose UI Components
+
+The Compose UI Components library is a chat UI implementation built from scratch with [Jetpack Compose](https://developer.android.com/jetpack/compose). It contains modular Composable functions for building channel lists, messaging screens, and more.
+
+This is also built on top of the offline support library, and offers easy integration of Stream Chat into a Compose-based Android application. It's also highly modular and customizable.
+
+<!-- TODO add theming link for Compose -->
+
+Check out the Compose implementation in action by trying the open-source [Compose UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample).

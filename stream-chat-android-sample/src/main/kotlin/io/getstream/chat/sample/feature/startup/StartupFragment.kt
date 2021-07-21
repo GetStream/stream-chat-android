@@ -45,8 +45,8 @@ class StartupFragment : Fragment() {
         frame.addView(checkbox)
 
         AlertDialog.Builder(context)
-            .setTitle("Deprecation warning")
-            .setMessage(Html.fromHtml("This sample uses our old UI kit.<br/><br/>Take a look at the new UI Components implementation in the <b>ui-components</b> and <b>ui-components-sample</b> modules instead!"))
+            .setTitle("⚠ DEPRECATION WARNING ⚠")
+            .setMessage(Html.fromHtml("This sample uses our old UI kit. Please don't use this.<br/><br/>Instead, check out the new UI Components implementation in the <b>ui-components-sample</b> module, or the Compose implementation in the <b>compose-sample</b> module!"))
             .setView(frame)
             .setPositiveButton("Ok") { _, _ ->
                 if (checkbox.isChecked) {
