@@ -41,6 +41,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property loadingView - loading view. Default - [R.layout.stream_ui_channel_list_loading_view]
  * @property emptyStateView - empty state view. Default - [R.layout.stream_ui_channel_list_empty_state_view]
  * @property loadingMoreView - loading more view. Default - [R.layout.stream_ui_channel_list_loading_more_view]
+ * @property edgeEffectColor - color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default - null.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -65,6 +66,7 @@ public data class ChannelListViewStyle(
     @LayoutRes public val loadingView: Int,
     @LayoutRes public val emptyStateView: Int,
     @LayoutRes public val loadingMoreView: Int,
+    @ColorInt public val edgeEffectColor: Int?,
 ) {
 
     internal companion object {
@@ -224,6 +226,8 @@ public data class ChannelListViewStyle(
                     R.layout.stream_ui_channel_list_loading_more_view,
                 )
 
+                val edgeEffectColor = a.getColorOrNull(R.styleable.ChannelListView_streamUiEdgeEffectColor)
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -246,6 +250,7 @@ public data class ChannelListViewStyle(
                     loadingView = loadingView,
                     emptyStateView = emptyStateView,
                     loadingMoreView = loadingMoreView,
+                    edgeEffectColor = edgeEffectColor,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

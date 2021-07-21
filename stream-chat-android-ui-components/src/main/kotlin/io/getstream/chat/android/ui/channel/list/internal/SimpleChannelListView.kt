@@ -3,6 +3,8 @@ package io.getstream.chat.android.ui.channel.list.internal
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import android.widget.EdgeEffect
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +53,17 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         this.style = style
 
         dividerDecoration.drawable = style.itemSeparator
+        style.edgeEffectColor?.let(::setEdgeEffectColor)
+    }
+
+    private fun setEdgeEffectColor(@ColorInt edgeEffectColor: Int) {
+        edgeEffectFactory = object : EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return super.createEdgeEffect(view, direction).apply {
+                    color = edgeEffectColor
+                }
+            }
+        }
     }
 
     private fun requireAdapter(): ChannelListItemAdapter {
