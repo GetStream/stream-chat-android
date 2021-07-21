@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchResultListView">
+        <attr name="streamUiSearchResultSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultSenderNameTextFont" format="reference"/>
+        <attr name="streamUiSearchResultSenderNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiSearchResultMessageTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultMessageTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultMessageTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultMessageTextFont" format="reference"/>
+        <attr name="streamUiSearchResultMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiSearchResultMessageTimeTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultMessageTimeTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultMessageTimeTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultMessageTimeTextFont" format="reference"/>
+        <attr name="streamUiSearchResultMessageTimeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
