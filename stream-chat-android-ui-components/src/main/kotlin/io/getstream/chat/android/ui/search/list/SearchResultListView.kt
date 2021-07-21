@@ -45,8 +45,10 @@ public class SearchResultListView : ViewFlipper {
         loadMoreListener?.onLoadMoreRequested()
     }
 
+    private lateinit var style: SearchResultListViewStyle
+
     private fun init(attrs: AttributeSet?) {
-        parseAttrs(attrs)
+        style = SearchResultListViewStyle(context, attrs)
 
         binding.searchListView.apply {
             setHasFixedSize(true)
@@ -56,10 +58,6 @@ public class SearchResultListView : ViewFlipper {
 
             addOnScrollListener(scrollListener)
         }
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        attrs ?: return
     }
 
     public fun showMessages(query: String, messages: List<Message>) {
