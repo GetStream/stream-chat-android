@@ -914,6 +914,22 @@ public abstract interface class io/getstream/chat/android/ui/mention/list/Mentio
 	public abstract fun onMentionSelected (Lio/getstream/chat/android/client/models/Message;)V
 }
 
+public final class io/getstream/chat/android/ui/mention/list/MentionListViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/mention/list/MentionListViewStyle$Companion;
+	public fun <init> (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
+	public final fun copy (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;)Lio/getstream/chat/android/ui/mention/list/MentionListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/mention/list/MentionListViewStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/mention/list/MentionListViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public final fun getEmptyStateDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getMessagePreviewStyle ()Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/mention/list/viewmodel/MentionListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
@@ -1912,6 +1928,21 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/M
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/message/preview/MessagePreviewStyle {
+	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component3 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/preview/MessagePreviewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageSenderTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getMessageTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getMessageTimeTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {
