@@ -37,6 +37,7 @@ import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
@@ -45,8 +46,9 @@ import io.getstream.chat.android.compose.state.messages.list.React
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.components.Avatar
 import io.getstream.chat.android.compose.ui.components.MessageBubble
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
-import io.getstream.chat.android.compose.ui.messages.list.MessageText
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
+import io.getstream.chat.android.compose.ui.messages.list.DeletedMessageContent
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * The overlays that's shown when the user selects a message, in the ConversationScreen.
@@ -96,8 +98,7 @@ fun SelectedMessageOverlay(
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            // TODO selected message should be different
-            DefaultMessageContainer(messageItem = MessageItem(message, None), {}, null)
+            SelectedMessage(message)
 
             Spacer(modifier = Modifier.size(8.dp))
 
@@ -117,7 +118,9 @@ fun SelectedMessageOverlay(
  * */
 @ExperimentalFoundationApi
 @Composable
-private fun SelectedTextMessage(message: Message) {
+private fun SelectedMessage(message: Message) {
+    val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
+
     Row(
         Modifier.widthIn(max = 300.dp)
     ) {
@@ -131,13 +134,25 @@ private fun SelectedTextMessage(message: Message) {
             painter = authorImage
         )
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 4.dp)
-        ) {
-            MessageBubble(content = { MessageText(message = message) })
-        }
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.cardBackground, content = {
+            if (message.deletedAt != null) {
+                DeletedMessageContent()
+            } else {
+                Column {
+                    attachmentFactory?.factory?.invoke(
+                        AttachmentState(
+                            modifier = Modifier.padding(4.dp),
+                            message = MessageItem(message, None),
+                            {}
+                        )
+                    )
+
+                    if (message.text.isNotEmpty()) {
+                        DefaultMessageContent(message = message)
+                    }
+                }
+            }
+        })
     }
 }
 

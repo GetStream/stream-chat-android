@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Wraps the content of a message in a bubble.
@@ -19,10 +18,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * */
 @Composable
 fun MessageBubble(
+    color: Color,
+    shape: Shape,
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.cardBackground,
-    shape: Shape = ChatTheme.shapes.messageBubble
 ) {
     Surface(
         modifier = modifier,

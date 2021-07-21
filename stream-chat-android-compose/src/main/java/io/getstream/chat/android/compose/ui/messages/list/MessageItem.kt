@@ -7,13 +7,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
@@ -24,7 +28,11 @@ import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -45,6 +53,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
@@ -106,79 +115,102 @@ internal fun DefaultMessageContainer(
         )
     }
 
-    Row(
-        modifier
-            .widthIn(max = 300.dp)
-            .then(clickModifier)
-    ) {
-        if (position == Bottom || position == None) {
-            val authorImage = rememberImagePainter(data = message.user.image)
+    Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        Row(
+            modifier
+                .widthIn(max = 300.dp)
+                .align(if (ownsMessage) CenterEnd else CenterStart)
+                .then(clickModifier)
+        ) {
 
-            Avatar(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-                    .size(24.dp)
-                    .align(Alignment.Bottom),
-                painter = authorImage
-            )
-        } else {
-            Spacer(modifier = Modifier.width(40.dp))
-        }
-
-
-        Column(modifier) {
-            // reactions
-            val reactionTypes = UiUtils.getReactionTypes()
-
-            val reactions = message.reactionCounts
-                .mapKeys { (type, _) -> reactionTypes[type] ?: "" }
-
-            if (reactions.isNotEmpty()) {
-                MessageReactions(modifier = Modifier.padding(4.dp), reactions)
+            if (!ownsMessage) {
+                MessageAvatar(position, message.user)
             }
 
-            val bubbleShape = if (message.id == parentMessageId) {
-                ChatTheme.shapes.messageBubble
-            } else {
-                when (position) {
-                    Top, Middle -> RoundedCornerShape(16.dp)
-                    Bottom, None -> ChatTheme.shapes.messageBubble
+            Column(horizontalAlignment = if (ownsMessage) End else Start) {
+                // reactions
+                val reactionTypes = UiUtils.getReactionTypes()
+
+                val reactions = message.reactionCounts
+                    .mapKeys { (type, _) -> reactionTypes[type] ?: "" }
+
+                if (reactions.isNotEmpty()) {
+                    MessageReactions(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp), reactions)
                 }
-            }
 
-            // content
-            MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
-                if (message.deletedAt != null) {
-                    DeletedMessageContent()
+                val bubbleShape = if (message.id == parentMessageId) {
+                    ChatTheme.shapes.myMessageBubble
                 } else {
-                    Column {
-                        attachmentFactory?.factory?.invoke(
-                            AttachmentState(
-                                modifier = Modifier.padding(4.dp),
-                                message = messageItem,
-                                onLongItemClick = onLongItemClick
-                            )
-                        )
-
-                        if (message.text.isNotEmpty()) {
-                            DefaultMessageContent(message = message)
+                    when (position) {
+                        Top, Middle -> RoundedCornerShape(16.dp)
+                        else -> {
+                            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
                         }
                     }
                 }
-            })
 
-            /**
-             * We show the footer only if the message position is [Bottom].
-             * */
-            if (isDeleted && ownsMessage) {
-                DeletedMessageFooter(
-                    modifier = Modifier,
-                    message = message
-                )
-            } else if (!isDeleted) {
-                MessageFooter(messageItem)
+                // content
+                MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
+                    if (message.deletedAt != null) {
+                        DeletedMessageContent()
+                    } else {
+                        Column {
+                            attachmentFactory?.factory?.invoke(
+                                AttachmentState(
+                                    modifier = Modifier.padding(4.dp),
+                                    message = messageItem,
+                                    onLongItemClick = onLongItemClick
+                                )
+                            )
+
+                            if (message.text.isNotEmpty()) {
+                                DefaultMessageContent(message = message)
+                            }
+                        }
+                    }
+                })
+
+                if (isDeleted && ownsMessage) {
+                    DeletedMessageFooter(
+                        modifier = Modifier,
+                        message = message
+                    )
+                } else if (!isDeleted) {
+                    MessageFooter(messageItem)
+                }
+            }
+
+            if (ownsMessage) {
+                MessageAvatar(position, message.user)
             }
         }
+    }
+}
+
+/**
+ * Represents the section of each message where the [Avatar] resides. In case we don't need to show an avatar, we instead
+ * add a spacer, to keep messages aligned the same way.
+ *
+ * @param position - Position of the message in a group. This determines if we should show the user image or a spacer.
+ * @param user - The user that owns the message.
+ * */
+@Composable
+private fun RowScope.MessageAvatar(
+    position: MessageItemGroupPosition,
+    user: User
+) {
+    if (position == Bottom || position == None) {
+        val authorImage = rememberImagePainter(data = user.image)
+
+        Avatar(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .size(24.dp)
+                .align(Alignment.Bottom),
+            painter = authorImage
+        )
+    } else {
+        Spacer(modifier = Modifier.width(40.dp))
     }
 }
 
@@ -225,7 +257,7 @@ private fun MessageReactions(
  * */
 @ExperimentalFoundationApi
 @Composable
-private fun DefaultMessageContent(
+internal fun DefaultMessageContent(
     message: Message,
     modifier: Modifier = Modifier,
 ) {
@@ -421,7 +453,7 @@ internal fun QuotedMessage(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        MessageBubble(color = Color.White, content = {
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White, content = {
             MessageText(message = message)
         })
     }
@@ -433,7 +465,7 @@ internal fun QuotedMessage(
  * @param modifier - Modifier for styling.
  * */
 @Composable
-private fun DeletedMessageContent(
+internal fun DeletedMessageContent(
     modifier: Modifier = Modifier,
 ) {
     Text(

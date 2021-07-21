@@ -10,12 +10,13 @@ import androidx.compose.ui.unit.dp
  *
  * // TODO - define our shapes and apply them to components
  * @param avatar - The avatar shape.
- * @param messageBubble - The bubble that wraps message content.
+ * @param myMessageBubble - The bubble that wraps message content.
  * @param inputField - The shape of the input field.
  * */
 class StreamShapes(
     val avatar: Shape,
-    val messageBubble: Shape,
+    val myMessageBubble: Shape,
+    val otherMessageBubble: Shape,
     val inputField: Shape,
     val attachment: Shape,
     val bottomMenu: Shape
@@ -23,7 +24,8 @@ class StreamShapes(
     companion object {
         val default = StreamShapes(
             avatar = CircleShape,
-            messageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp),
+            myMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp),
+            otherMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp),
             inputField = RoundedCornerShape(24.dp),
             attachment = RoundedCornerShape(16.dp),
             bottomMenu = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
