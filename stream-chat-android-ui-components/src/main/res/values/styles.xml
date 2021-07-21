@@ -262,6 +262,7 @@
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="streamUiValidTheme">true</item>
         <item name="streamUiMessageListStyle">@style/StreamUi.MessageList</item>
+        <item name="streamUiMessageListMediaAttachmentStyle">@style/StreamUi.MessageList.MediaAttachment</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
@@ -494,6 +495,17 @@
         <item name="streamUiEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiEmptyStateTextStyle">normal</item>
+    </style>
+
+    <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
+        <item name="streamUiMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+        <item name="streamUiMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
+        <item name="streamUiMediaAttachmentImageBackgroundColor">@color/stream_ui_grey</item>
+        <item name="streamUiMediaAttachmentMoreCountOverlayColor">@color/stream_ui_overlay</item>
+
+        <item name="streamUiMediaAttachmentMoreCountTextSize">@dimen/stream_ui_message_media_attachment_more_count_text_size</item>
+        <item name="streamUiMediaAttachmentMoreCountTextColor">@color/stream_ui_black</item>
+        <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
     </style>
 
     <style name="StreamUi.MessageList.Item.Avatar" parent="StreamUi.BaseAvatar">
