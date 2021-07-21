@@ -65,6 +65,7 @@ public data class ChannelListViewStyle(
     @LayoutRes public val loadingView: Int,
     @LayoutRes public val emptyStateView: Int,
     @LayoutRes public val loadingMoreView: Int,
+    @ColorInt public val edgeEffectColor: Int?,
 ) {
 
     internal companion object {
@@ -224,6 +225,8 @@ public data class ChannelListViewStyle(
                     R.layout.stream_ui_channel_list_loading_more_view,
                 )
 
+                val edgeEffectColor = a.getColorOrNull(R.styleable.ChannelListView_streamUiEdgeEffectColor)
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -246,6 +249,7 @@ public data class ChannelListViewStyle(
                     loadingView = loadingView,
                     emptyStateView = emptyStateView,
                     loadingMoreView = loadingMoreView,
+                    edgeEffectColor = edgeEffectColor,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

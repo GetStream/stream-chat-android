@@ -68,6 +68,8 @@
         <attr name="streamUiEmptyStateView" format="reference" />
         <attr name="streamUiLoadingMoreView" format="reference" />
 
+        <attr name="streamUiEdgeEffectColor" format="color|reference" />
+
         <attr name="streamUiChannelActionsDialogStyle" />
     </declare-styleable>
 </resources>
