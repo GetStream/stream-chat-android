@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.querychannels.logic
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -53,7 +54,7 @@ internal class QueryChannelsLogic(
 
         if (loading.value) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
-            throw IllegalStateException("Another query channels request is in progress. Ignoring this request.")
+            return Result(ChatError("Another query channels request is in progress. Ignoring this request."))
         }
 
         loading.value = true
