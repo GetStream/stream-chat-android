@@ -500,6 +500,7 @@
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
         <item name="streamUiMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
         <item name="streamUiMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
+        <item name="streamUiMediaAttachmentPlaceHolderIcon">@drawable/stream_ui_picture_placeholder</item>
         <item name="streamUiMediaAttachmentImageBackgroundColor">@color/stream_ui_grey</item>
         <item name="streamUiMediaAttachmentMoreCountOverlayColor">@color/stream_ui_overlay</item>
 

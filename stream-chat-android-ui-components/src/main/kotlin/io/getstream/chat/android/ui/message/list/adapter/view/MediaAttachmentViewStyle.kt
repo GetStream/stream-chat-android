@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val giphyIcon: Drawable,
+    public val placeHolderIcon: Drawable,
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
@@ -76,12 +77,17 @@ public data class MediaAttachmentViewStyle(
                     )
                     .build()
 
+                val placeHolderIcon =
+                    a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
+
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     giphyIcon = giphyIcon,
                     imageBackgroundColor = imageBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,
-                    moreCountTextStyle = moreCountTextStyle
+                    moreCountTextStyle = moreCountTextStyle,
+                    placeHolderIcon = placeHolderIcon,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }
