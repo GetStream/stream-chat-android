@@ -2,56 +2,56 @@
 <resources>
     <declare-styleable name="SearchResultListView">
         <!-- Search Info Bar -->
-        <attr name="streamUiSearchResultSearchInfoBarBackground" format="reference" />
-        <attr name="streamUiSearchResultSearchInfoBarTextColor" format="color|reference"/>
-        <attr name="streamUiSearchResultSearchInfoBarTextSize" format="dimension"/>
-        <attr name="streamUiSearchResultSearchInfoBarTextFontAssets" format="string"/>
-        <attr name="streamUiSearchResultSearchInfoBarTextFont" format="reference"/>
-        <attr name="streamUiSearchResultSearchInfoBarTextStyle">
+        <attr name="streamUiSearchResultListSearchInfoBarBackground" format="reference" />
+        <attr name="streamUiSearchResultListSearchInfoBarTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
         <!-- Empty State -->
-        <attr name="streamUiSearchResultEmptyStateIcon" format="reference" />
-        <attr name="streamUiSearchResultEmptyStateTextColor" format="color|reference"/>
-        <attr name="streamUiSearchResultEmptyStateTextSize" format="dimension"/>
-        <attr name="streamUiSearchResultEmptyStateTextFontAssets" format="string"/>
-        <attr name="streamUiSearchResultEmptyStateTextFont" format="reference"/>
-        <attr name="streamUiSearchResultEmptyStateTextStyle">
+        <attr name="streamUiSearchResultListEmptyStateIcon" format="reference" />
+        <attr name="streamUiSearchResultListEmptyStateTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListEmptyStateTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListEmptyStateTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListEmptyStateTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListEmptyStateTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
         <!-- Progress Bar -->
-        <attr name="streamUiSearchResultProgressBarIcon" format="reference" />
+        <attr name="streamUiSearchResultListProgressBarIcon" format="reference" />
 
         <!-- Message Preview -->
-        <attr name="streamUiSearchResultSenderNameTextColor" format="color|reference"/>
-        <attr name="streamUiSearchResultSenderNameTextSize" format="dimension"/>
-        <attr name="streamUiSearchResultSenderNameTextFontAssets" format="string"/>
-        <attr name="streamUiSearchResultSenderNameTextFont" format="reference"/>
-        <attr name="streamUiSearchResultSenderNameTextStyle">
+        <attr name="streamUiSearchResultListSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListSenderNameTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListSenderNameTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="streamUiSearchResultMessageTextColor" format="color|reference"/>
-        <attr name="streamUiSearchResultMessageTextSize" format="dimension"/>
-        <attr name="streamUiSearchResultMessageTextFontAssets" format="string"/>
-        <attr name="streamUiSearchResultMessageTextFont" format="reference"/>
-        <attr name="streamUiSearchResultMessageTextStyle">
+        <attr name="streamUiSearchResultListMessageTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListMessageTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListMessageTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListMessageTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="streamUiSearchResultMessageTimeTextColor" format="color|reference"/>
-        <attr name="streamUiSearchResultMessageTimeTextSize" format="dimension"/>
-        <attr name="streamUiSearchResultMessageTimeTextFontAssets" format="string"/>
-        <attr name="streamUiSearchResultMessageTimeTextFont" format="reference"/>
-        <attr name="streamUiSearchResultMessageTimeTextStyle">
+        <attr name="streamUiSearchResultListMessageTimeTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListMessageTimeTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListMessageTimeTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListMessageTimeTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListMessageTimeTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

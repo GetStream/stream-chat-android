@@ -30,7 +30,7 @@ internal class SearchResultListAdapter(
         return StreamUiItemMentionListBinding
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
-
+                messagePreviewStyle?.let(binding.root::styleView)
                 binding.root.dateFormatter = dateFormatter
 
                 MessagePreviewViewHolder(binding)

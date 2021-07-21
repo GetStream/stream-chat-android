@@ -56,6 +56,8 @@ public class SearchResultListView : ViewFlipper {
             emptyStateTextStyle.apply(binding.emptyLabel)
 
             binding.progressBar.indeterminateDrawable = progressBarIcon
+
+            adapter.messagePreviewStyle = messagePreviewStyle
         }
 
         binding.searchListView.apply {
