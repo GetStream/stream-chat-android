@@ -74,6 +74,7 @@ public data class MessageListItemStyle(
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
     public val textStyleThreadCounter: TextStyle,
+    public val threadSeparatorTextStyle: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
     @ColorInt public val dateSeparatorBackgroundColor: Int,
@@ -291,6 +292,23 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleThreadSeparator = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeThreadSeparator,
+                    context.getDimension(DEFAULT_TEXT_SIZE_THREAD_COUNTER)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorThreadSeparator,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsThreadSeparator,
+                    R.styleable.MessageListView_streamUiMessageTextFontThreadSeparator,
+                    mediumTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadSeparator, DEFAULT_TEXT_STYLE)
+                .build()
+
             val textStyleLinkTitle = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageTextSizeLinkTitle,
@@ -461,6 +479,7 @@ public data class MessageListItemStyle(
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
                 textStyleThreadCounter = textStyleThreadCounter,
+                threadSeparatorTextStyle = textStyleThreadSeparator,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
                 dateSeparatorBackgroundColor = dateSeparatorBackgroundColor,

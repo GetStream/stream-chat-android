@@ -96,6 +96,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style thread separator -->
+        <attr name="streamUiMessageTextSizeThreadSeparator" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorThreadSeparator" format="color" />
+        <attr name="streamUiMessageTextFontThreadSeparator" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsThreadSeparator" format="string" />
+        <attr name="streamUiMessageTextStyleThreadSeparator">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message text style link title -->
         <attr name="streamUiMessageTextSizeLinkTitle" format="dimension|reference" />
         <attr name="streamUiMessageTextColorLinkTitle" format="color" />
