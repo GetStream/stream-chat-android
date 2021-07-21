@@ -12,8 +12,26 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.handlers.ClipboardHandler
-import io.getstream.chat.android.compose.state.messages.*
-import io.getstream.chat.android.compose.state.messages.list.*
+import io.getstream.chat.android.compose.state.messages.MessageMode
+import io.getstream.chat.android.compose.state.messages.MessagesState
+import io.getstream.chat.android.compose.state.messages.MyOwn
+import io.getstream.chat.android.compose.state.messages.NewMessageState
+import io.getstream.chat.android.compose.state.messages.Normal
+import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.Thread
+import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.Middle
+import io.getstream.chat.android.compose.state.messages.items.None
+import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.list.Copy
+import io.getstream.chat.android.compose.state.messages.list.Delete
+import io.getstream.chat.android.compose.state.messages.list.Flag
+import io.getstream.chat.android.compose.state.messages.list.MessageAction
+import io.getstream.chat.android.compose.state.messages.list.MuteUser
+import io.getstream.chat.android.compose.state.messages.list.React
+import io.getstream.chat.android.compose.state.messages.list.Reply
+import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -31,7 +49,7 @@ class MessageListViewModel(
     val chatDomain: ChatDomain,
     private val channelId: String,
     private val messageLimit: Int = 0,
-    private val clipboardHandler: ClipboardHandler
+    private val clipboardHandler: ClipboardHandler,
 ) : ViewModel() {
 
     /**
@@ -142,16 +160,17 @@ class MessageListViewModel(
                 .combine(user) { state, user ->
                     when (state) {
                         is ChannelController.MessagesState.NoQueryActive,
-                        is ChannelController.MessagesState.Loading ->
+                        is ChannelController.MessagesState.Loading,
+                        ->
                             messagesState.copy(isLoading = true)
                         is ChannelController.MessagesState.OfflineNoResults -> messagesState.copy(
                             isLoading = false,
-                            messages = emptyList()
+                            messageItems = emptyList()
                         )
                         is ChannelController.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
-                                messages = filterDeletedMessages(state.messages),
+                                messageItems = groupMessages(filterDeletedMessages(state.messages)),
                                 isLoadingMore = false,
                                 endOfMessages = controller.endOfOlderMessages.value,
                                 currentUser = user
@@ -159,16 +178,18 @@ class MessageListViewModel(
                         }
                     }
                 }.collect { newState ->
+                    val newLastMessage = newState.messageItems.lastOrNull()?.message
+
                     val hasNewMessage = lastLoadedMessage != null
-                        && messagesState.messages.isNotEmpty()
-                        && newState.messages.lastOrNull()?.id != lastLoadedMessage?.id
+                        && messagesState.messageItems.isNotEmpty()
+                        && newLastMessage?.id != lastLoadedMessage?.id
 
                     messagesState = if (hasNewMessage) {
-                        newState.copy(newMessageState = getNewMessageState(newState.messages.lastOrNull()))
+                        newState.copy(newMessageState = getNewMessageState(newLastMessage))
                     } else {
                         newState
                     }
-                    lastLoadedMessage = newState.messages.lastOrNull()
+                    lastLoadedMessage = newLastMessage
                     setChanel(controller.toChannel())
                 }
         }
@@ -220,7 +241,7 @@ class MessageListViewModel(
      * 'messages' as an empty list.
      * */
     private fun onQueryError() {
-        messagesState = messagesState.copy(isLoading = false, messages = emptyList())
+        messagesState = messagesState.copy(isLoading = false, messageItems = emptyList())
     }
 
     /**
@@ -350,12 +371,34 @@ class MessageListViewModel(
                 .combine(controller.endOfOlderMessages) { (loadingOlderMessages, messages), endOfOlderMessages ->
                     threadMessagesState.copy(
                         isLoading = false,
-                        messages = messages,
+                        messageItems = groupMessages(filterDeletedMessages(messages)),
                         isLoadingMore = loadingOlderMessages,
                         endOfMessages = endOfOlderMessages
                     )
                 }.collect { newState -> threadMessagesState = newState }
         }
+    }
+
+    private fun groupMessages(messages: List<Message>): List<MessageItem> {
+        val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
+        val items = mutableListOf<MessageItem>()
+
+        messages.forEachIndexed { index, message ->
+            val user = message.user
+            val previousUser = messages.getOrNull(index - 1)?.user
+            val nextUser = messages.getOrNull(index + 1)?.user
+
+            val position = when {
+                previousUser != user && nextUser == user -> Top
+                previousUser == user && nextUser == user -> Middle
+                previousUser == user && nextUser != user -> Bottom
+                else -> None
+            }
+
+            items.add(MessageItem(message, position, parentMessageId))
+        }
+
+        return items
     }
 
     /**

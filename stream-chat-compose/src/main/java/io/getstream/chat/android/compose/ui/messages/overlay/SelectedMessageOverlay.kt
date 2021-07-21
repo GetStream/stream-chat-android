@@ -4,7 +4,18 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,7 +37,8 @@ import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.MessageOption
 import io.getstream.chat.android.compose.state.messages.list.React
@@ -35,7 +47,6 @@ import io.getstream.chat.android.compose.ui.components.Avatar
 import io.getstream.chat.android.compose.ui.components.MessageBubble
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
 import io.getstream.chat.android.compose.ui.messages.list.MessageText
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * The overlays that's shown when the user selects a message, in the ConversationScreen.
@@ -56,7 +67,7 @@ fun SelectedMessageOverlay(
     messageOptions: List<MessageOption>,
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -85,7 +96,8 @@ fun SelectedMessageOverlay(
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            DefaultMessageContainer(message = message, {}, null)
+            // TODO selected message should be different
+            DefaultMessageContainer(messageItem = MessageItem(message, None), {}, null)
 
             Spacer(modifier = Modifier.size(8.dp))
 
@@ -138,7 +150,7 @@ private fun SelectedTextMessage(message: Message) {
 @Composable
 internal fun ReactionOptions(
     options: List<ReactionOption>,
-    onReactionClick: (ReactionOption) -> Unit
+    onReactionClick: (ReactionOption) -> Unit,
 ) {
     Surface(shape = RoundedCornerShape(16.dp)) {
         LazyRow(
@@ -191,7 +203,7 @@ internal fun ReactionOptionItem(
 internal fun MessageOptions(
     options: List<MessageOption>,
     onMessageAction: (MessageAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(shape = RoundedCornerShape(16.dp)) {
         LazyColumn(modifier) {
@@ -213,7 +225,7 @@ internal fun MessageOptions(
 @Composable
 internal fun MessageOptionItem(
     option: MessageOption,
-    onMessageOptionClick: (MessageOption) -> Unit
+    onMessageOptionClick: (MessageOption) -> Unit,
 ) {
     val title = stringResource(id = option.title)
 

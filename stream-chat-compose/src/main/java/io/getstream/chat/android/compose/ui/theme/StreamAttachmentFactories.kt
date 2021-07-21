@@ -72,9 +72,10 @@ object StreamAttachmentFactories {
     @ExperimentalFoundationApi
     @Composable
     private fun LinkAttachmentFactory(
-        attachmentState: AttachmentState
+        attachmentState: AttachmentState,
     ) {
-        val (modifier, message, onLongItemClick) = attachmentState
+        val (modifier, messageItem, onLongItemClick) = attachmentState
+        val (message, position) = messageItem
 
         val context = LocalContext.current
         val attachment = message.attachments.firstOrNull { it.ogUrl != null }
@@ -90,7 +91,7 @@ object StreamAttachmentFactories {
             modifier = modifier
                 .width(250.dp)
                 .wrapContentHeight()
-                .clip(ChatTheme.shapes.attachment)
+                .clip(ChatTheme.shapes.attachment) // todo change based on shape
                 .background(ChatTheme.colors.cardAltBackground)
                 .combinedClickable(
                     indication = null,
@@ -155,9 +156,10 @@ object StreamAttachmentFactories {
     @ExperimentalFoundationApi
     @Composable
     private fun ImageAttachmentFactory(
-        attachmentState: AttachmentState
+        attachmentState: AttachmentState,
     ) {
-        val (modifier, message, onLongItemClick) = attachmentState
+        val (modifier, messageItem, onLongItemClick) = attachmentState
+        val (message, position) = messageItem
         val context = LocalContext.current
 
         Row(
@@ -274,9 +276,10 @@ object StreamAttachmentFactories {
     @InternalStreamChatApi
     @Composable
     private fun FileAttachmentFactory(
-        attachmentState: AttachmentState
+        attachmentState: AttachmentState,
     ) {
-        val (modifier, message, _) = attachmentState
+        val (modifier, messageItem, _) = attachmentState
+        val (message, position) = messageItem
 
         Column(
             modifier = modifier
@@ -361,7 +364,7 @@ object StreamAttachmentFactories {
  * */
 class AttachmentFactory(
     val factory: @Composable (AttachmentState) -> Unit,
-    private val predicate: (Message) -> Boolean
+    private val predicate: (Message) -> Boolean,
 ) {
     /**
      * Returns if this specific factory can handle a specific message.

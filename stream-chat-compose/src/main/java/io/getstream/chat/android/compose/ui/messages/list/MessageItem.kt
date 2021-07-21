@@ -7,7 +7,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
@@ -17,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.Bottom
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,12 +43,17 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.Middle
+import io.getstream.chat.android.compose.state.messages.items.None
+import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.components.Avatar
 import io.getstream.chat.android.compose.ui.components.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -54,22 +65,24 @@ import java.util.*
  *
  * It also allows for long click and thread click events.
  *
- * @param message - The message to show.
+ * @param messageItem - The message item to show, which holds the message and the group position, if the message is in
+ * a group of messages from the same user.
  * @param onLongItemClick - Handler when the user selects a message, on long tap.
  * @param currentUser - Current user info, required for various states.
  * @param modifier - Modifier for styling.
  * @param onThreadClick - Handler for thread clicks, if this message has a thread going.
  * */
-@InternalStreamChatApi
 @ExperimentalFoundationApi
 @Composable
 internal fun DefaultMessageContainer(
-    message: Message,
+    messageItem: MessageItem,
     onLongItemClick: (Message) -> Unit,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    onThreadClick: (Message) -> Unit = {}
+    onThreadClick: (Message) -> Unit = {},
 ) {
+    val (message, position, parentMessageId) = messageItem
+
     val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
@@ -98,15 +111,20 @@ internal fun DefaultMessageContainer(
             .widthIn(max = 300.dp)
             .then(clickModifier)
     ) {
-        val authorImage = rememberImagePainter(data = message.user.image)
+        if (position == Bottom || position == None) {
+            val authorImage = rememberImagePainter(data = message.user.image)
 
-        Avatar(
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .size(24.dp)
-                .align(Bottom),
-            painter = authorImage
-        )
+            Avatar(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .size(24.dp)
+                    .align(Alignment.Bottom),
+                painter = authorImage
+            )
+        } else {
+            Spacer(modifier = Modifier.width(40.dp))
+        }
+
 
         Column(modifier) {
             // reactions
@@ -119,8 +137,17 @@ internal fun DefaultMessageContainer(
                 MessageReactions(modifier = Modifier.padding(4.dp), reactions)
             }
 
+            val bubbleShape = if (message.id == parentMessageId) {
+                ChatTheme.shapes.messageBubble
+            } else {
+                when (position) {
+                    Top, Middle -> RoundedCornerShape(16.dp)
+                    Bottom, None -> ChatTheme.shapes.messageBubble
+                }
+            }
+
             // content
-            MessageBubble(color = messageCardColor, content = {
+            MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
                 if (message.deletedAt != null) {
                     DeletedMessageContent()
                 } else {
@@ -128,7 +155,7 @@ internal fun DefaultMessageContainer(
                         attachmentFactory?.factory?.invoke(
                             AttachmentState(
                                 modifier = Modifier.padding(4.dp),
-                                message = message,
+                                message = messageItem,
                                 onLongItemClick = onLongItemClick
                             )
                         )
@@ -140,14 +167,16 @@ internal fun DefaultMessageContainer(
                 }
             })
 
-            // footer
+            /**
+             * We show the footer only if the message position is [Bottom].
+             * */
             if (isDeleted && ownsMessage) {
                 DeletedMessageFooter(
                     modifier = Modifier,
                     message = message
                 )
             } else if (!isDeleted) {
-                MessageFooter(message)
+                MessageFooter(messageItem)
             }
         }
     }
@@ -162,7 +191,7 @@ internal fun DefaultMessageContainer(
 @Composable
 private fun MessageReactions(
     modifier: Modifier = Modifier,
-    reactions: Map<String, Int>
+    reactions: Map<String, Int>,
 ) {
     Row(
         modifier = modifier
@@ -198,7 +227,7 @@ private fun MessageReactions(
 @Composable
 private fun DefaultMessageContent(
     message: Message,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val quotedMessage = message.replyTo
 
@@ -206,17 +235,12 @@ private fun DefaultMessageContent(
         modifier = modifier
     ) {
         if (quotedMessage != null) {
-            Column {
-                QuotedMessage(
-                    modifier = Modifier.padding(8.dp),
-                    message = quotedMessage
-                )
-
-                MessageText(message = message)
-            }
-        } else {
-            MessageText(message = message)
+            QuotedMessage(
+                modifier = Modifier.padding(8.dp),
+                message = quotedMessage
+            )
         }
+        MessageText(message = message)
     }
 }
 
@@ -235,7 +259,7 @@ private fun DefaultMessageContent(
 @Composable
 internal fun MessageText(
     message: Message,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -348,11 +372,11 @@ private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
 @Composable
 private fun ThreadParticipants(
     participants: List<User>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
-            .padding(4.dp)
+            .padding(start = 4.dp, end = 4.dp, top = 4.dp)
     ) {
 
         Text(
@@ -384,11 +408,11 @@ private fun ThreadParticipants(
 @Composable
 internal fun QuotedMessage(
     message: Message,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val painter = rememberImagePainter(data = message.user.image)
 
-    Row(modifier = modifier, verticalAlignment = Bottom) {
+    Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
         Avatar(
             modifier = Modifier
                 .size(24.dp),
@@ -410,7 +434,7 @@ internal fun QuotedMessage(
  * */
 @Composable
 private fun DeletedMessageContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         modifier = modifier
@@ -431,19 +455,20 @@ private fun DeletedMessageContent(
  * Default message footer, which contains either [ThreadParticipants] or the default footer, which
  * holds the sender name and the timestamp.
  *
- * @param message - Message to show.
+ * @param messageItem - Message to show.
  * @param modifier - Modifier for styling.
  * */
 @Composable
 internal fun MessageFooter(
-    message: Message,
-    modifier: Modifier = Modifier
+    messageItem: MessageItem,
+    modifier: Modifier = Modifier,
 ) {
+    val (message, position) = messageItem
     val hasThread = message.threadParticipants.isNotEmpty()
 
     if (hasThread) {
         ThreadParticipants(modifier = modifier, participants = message.threadParticipants)
-    } else {
+    } else if (!hasThread && (position == Bottom || position == None)) {
         Row(
             modifier = modifier.padding(top = 4.dp),
             verticalAlignment = CenterVertically
@@ -474,9 +499,9 @@ internal fun MessageFooter(
 @Composable
 private fun DeletedMessageFooter(
     message: Message,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.padding(4.dp), verticalAlignment = CenterVertically) {
+    Row(modifier = modifier.padding(start = 4.dp, end = 4.dp, top = 4.dp), verticalAlignment = CenterVertically) {
         Icon(
             modifier = Modifier
                 .padding(end = 8.dp)
@@ -510,11 +535,11 @@ private fun DeletedMessageFooter(
 @ExperimentalFoundationApi
 @Composable
 internal fun ThreadHeaderItem(
-    message: Message,
-    modifier: Modifier = Modifier
+    message: MessageItem,
+    modifier: Modifier = Modifier,
 ) {
     // TODO we need to change the UI of this. Maybe pull it out of the list.
     Surface(modifier = modifier, color = ChatTheme.colors.appCanvas) {
-        DefaultMessageContainer(message = message, onLongItemClick = {}, null)
+        DefaultMessageContainer(messageItem = message, onLongItemClick = {}, null)
     }
 }

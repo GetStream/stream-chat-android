@@ -2,7 +2,16 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,6 +30,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.ui.components.EmptyView
 import io.getstream.chat.android.compose.ui.components.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -37,14 +49,13 @@ import kotlin.math.abs
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
  * @param modifier - Modifier for styling.
- * @param parentMessageId - The ID of the parent message, if we're in a thread.
  * @param onThreadClick - Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick - Handler for when the user long taps on a message and selects it.
  * @param onMessagesStartReached - Handler for pagination.
  * @param onScrollToBottom - Handler when the user reaches the bottom.
  * @param itemContent - Composable that represents each message item in a list. By default, we provide
- * [DefaultMessageContainer] and connect the the long click handler with it. Users can override this to
- * provide fully custom UI and behavior.
+ * either the [DefaultMessageGroup] or the [DefaultMessageContainer] and connect the the long click handler with it.
+ * Users can override this to provide fully custom UI and behavior.
  * */
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -52,23 +63,21 @@ import kotlin.math.abs
 fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
-    parentMessageId: String? = null,
     onThreadClick: (Message) -> Unit = { viewModel.onMessageThreadClick(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.onMessageSelected(it) },
     onMessagesStartReached: () -> Unit = { viewModel.onLoadMore() },
     onScrollToBottom: () -> Unit = { viewModel.onScrolledToBottom() },
-    itemContent: @Composable (Message) -> Unit = {
+    itemContent: @Composable (MessageItem) -> Unit = {
         DefaultMessageContainer(
-            message = it,
+            messageItem = it,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             currentUser = viewModel.currentMessagesState.currentUser
         )
-    }
+    },
 ) {
     MessageList(
         modifier = modifier,
-        parentMessageId = parentMessageId,
         currentState = viewModel.currentMessagesState,
         onMessagesStartReached = onMessagesStartReached,
         onLongItemClick = onLongItemClick,
@@ -87,7 +96,6 @@ fun MessageList(
  * @param onScrollToBottom - Handler when the user scrolls to the bottom.
  * @param onLongItemClick - Handler for when the user long taps on an item.
  * @param onThreadClick - Handler for when the user taps on a message with an active thread.
- * @param parentMessageId - ID of the parent message, in case we're in a thread.
  * @param itemContent - Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  * */
@@ -97,19 +105,18 @@ fun MessageList(
 fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
-    parentMessageId: String? = null,
     onMessagesStartReached: () -> Unit = {},
     onScrollToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
-    itemContent: @Composable (Message) -> Unit = {
+    itemContent: @Composable (MessageItem) -> Unit = {
         DefaultMessageContainer(
-            message = it,
+            messageItem = it,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             currentUser = currentState.currentUser
         )
-    }
+    },
 ) {
     val (isLoading, _, _, messages) = currentState
 
@@ -118,7 +125,6 @@ fun MessageList(
         !isLoading && messages.isNotEmpty() -> Messages(
             modifier = modifier,
             messagesState = currentState,
-            parentMessageId = parentMessageId,
             onMessagesStartReached = onMessagesStartReached,
             onScrollToBottom = onScrollToBottom,
             itemContent = itemContent
@@ -139,7 +145,6 @@ fun MessageList(
  * @param onMessagesStartReached - Handler for pagination, when the user reaches the start of messages.
  * @param onScrollToBottom - Handler when the user reaches the bottom of the list.
  * @param itemContent - Composable that represents the item that displays each message.
- * @param parentMessageId - ID of the parent message, if we're in a thread.
  * @param modifier - Modifier for styling.
  * */
 @ExperimentalMaterialApi
@@ -149,11 +154,10 @@ private fun Messages(
     messagesState: MessagesState,
     onMessagesStartReached: () -> Unit,
     onScrollToBottom: () -> Unit,
-    itemContent: @Composable (Message) -> Unit,
+    itemContent: @Composable (MessageItem) -> Unit,
     modifier: Modifier = Modifier,
-    parentMessageId: String? = null
 ) {
-    val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState) = messagesState
+    val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
     val state = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -164,16 +168,12 @@ private fun Messages(
             modifier = Modifier.fillMaxSize(),
             state = currentListState,
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
+            verticalArrangement = Arrangement.Bottom,
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             itemsIndexed(messages.reversed()) { index, item ->
-                if (parentMessageId == item.id) {
-                    ThreadHeaderItem(modifier = Modifier.fillMaxSize(), message = item)
-                } else {
-                    itemContent(item)
-                }
+                itemContent(item)
 
                 if (index == 0 && currentListState.isScrollInProgress) {
                     onScrollToBottom()
@@ -181,6 +181,12 @@ private fun Messages(
 
                 if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && currentListState.isScrollInProgress) {
                     onMessagesStartReached()
+                }
+
+                if (item.position == None || item.position == Bottom) {
+                    Spacer(Modifier.size(4.dp))
+                } else {
+                    Spacer(Modifier.size(2.dp))
                 }
             }
 
@@ -221,7 +227,7 @@ private fun Messages(
 @Composable
 private fun BoxScope.MessagesScrollingOption(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         modifier = Modifier

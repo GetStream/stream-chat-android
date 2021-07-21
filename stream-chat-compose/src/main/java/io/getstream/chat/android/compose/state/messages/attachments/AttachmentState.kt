@@ -2,9 +2,10 @@ package io.getstream.chat.android.compose.state.messages.attachments
 
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
 
 data class AttachmentState(
     val modifier: Modifier,
-    val message: Message,
+    val message: MessageItem,
     val onLongItemClick: (Message) -> Unit = {}
 )

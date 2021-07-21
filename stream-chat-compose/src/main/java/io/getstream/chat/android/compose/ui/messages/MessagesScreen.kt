@@ -155,8 +155,6 @@ fun MessagesScreen(
                 )
             }
         ) {
-            val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
-
             MessageList(
                 modifier = Modifier
                     .fillMaxSize()
@@ -165,8 +163,7 @@ fun MessagesScreen(
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(Thread(message))
                     listViewModel.onMessageThreadClick(message)
-                },
-                parentMessageId = parentMessageId
+                }
             )
         }
 
