@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -144,7 +145,7 @@ public data class SearchResultListViewStyle(
                         messageTextStyle = messageTextStyle,
                         messageTimeTextStyle = messageTimeTextStyle,
                     ),
-                )
+                ).let(TransformStyle.searchResultListViewStyleTransformer::transform)
             }
         }
     }
