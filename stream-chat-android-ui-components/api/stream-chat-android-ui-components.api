@@ -2144,6 +2144,20 @@ public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : and
 	public final fun setTypingUsers (Ljava/util/List;)V
 }
 
+public final class io/getstream/chat/android/ui/typing/TypingIndicatorViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle$Companion;
+	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTypingIndicatorAnimationView ()I
+	public final fun getTypingIndicatorUsersTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/typing/viewmodel/TypingIndicatorViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;)V
 	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
