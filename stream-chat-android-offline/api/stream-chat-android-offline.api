@@ -529,6 +529,7 @@ public abstract interface class io/getstream/chat/android/offline/querychannels/
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMutedChannelIds ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getNextRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 }
 
