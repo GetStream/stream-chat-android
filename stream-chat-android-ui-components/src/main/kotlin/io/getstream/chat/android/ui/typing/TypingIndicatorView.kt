@@ -16,11 +16,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 public class TypingIndicatorView : LinearLayout {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init()
+        init(null)
     }
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init()
+        init(attrs)
     }
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -28,22 +28,25 @@ public class TypingIndicatorView : LinearLayout {
         attrs,
         defStyleAttr
     ) {
-        init()
+        init(attrs)
     }
 
     private val userTypingTextView: TextView = TextView(context)
+    private lateinit var style: TypingIndicatorViewStyle
 
-    private fun init() {
+    private fun init(attrs: AttributeSet?) {
         val horizontalPadding = 8.dpToPx()
         setPadding(horizontalPadding, 0, horizontalPadding, 0)
         gravity = Gravity.CENTER_VERTICAL
         orientation = HORIZONTAL
         isVisible = false
 
-        streamThemeInflater.inflate(R.layout.stream_ui_typing_indicator_animation_view, this)
+        style = TypingIndicatorViewStyle(context, attrs)
+
+        streamThemeInflater.inflate(style.typingIndicatorAnimationView, this)
 
         addView(
-            userTypingTextView,
+            userTypingTextView.apply { style.typingIndicatorUsersTextStyle.apply(this) },
             LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 marginStart = 8.dpToPx()
             },
