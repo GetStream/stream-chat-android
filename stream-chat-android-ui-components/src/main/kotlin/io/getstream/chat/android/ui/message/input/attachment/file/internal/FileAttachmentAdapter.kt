@@ -79,6 +79,10 @@ internal class FileAttachmentAdapter(
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 selectionIndicator.isChecked = attachment.isSelected
                 selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
+                style.fileNameTextStyle.apply(fileNameTextView)
+                style.fileSizeTextStyle.apply(fileSizeTextView)
+                selectionIndicator.background = style.fileCheckboxSelectorDrawable
+                selectionIndicator.setTextColor(style.fileCheckboxTextColor)
             }
         }
     }

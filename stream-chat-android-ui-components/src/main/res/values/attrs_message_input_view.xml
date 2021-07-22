@@ -166,6 +166,8 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+        <attr name="streamUiFileCheckBoxSelectorDrawable" format="reference" />
+        <attr name="streamUiFileCheckBoxSelectorTextColor" format="reference" />
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />
         <attr name="streamUiAllowAccessToFilesText" format="string" />

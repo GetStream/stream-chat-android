@@ -90,6 +90,8 @@ public data class MessageInputViewStyle(
     public val commandInputBadgeTextStyle: TextStyle,
     public val fileNameTextStyle: TextStyle,
     public val fileSizeTextStyle: TextStyle,
+    public val fileCheckboxSelectorDrawable: Drawable,
+    @ColorInt public val fileCheckboxTextColor: Int,
 ) {
 
     internal companion object {
@@ -440,6 +442,16 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val fileCheckboxTextColor =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiFileCheckBoxSelectorTextColor,
+                        context.getColorCompat(R.color.stream_ui_white_snow)
+                    )
+
+                val fileCheckboxSelectorDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectorDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -473,6 +485,8 @@ public data class MessageInputViewStyle(
                     commandInputBadgeTextStyle = commandInputBadgeTextStyle,
                     fileNameTextStyle = fileNameTextStyle,
                     fileSizeTextStyle = fileSizeTextStyle,
+                    fileCheckboxTextColor = fileCheckboxTextColor,
+                    fileCheckboxSelectorDrawable = fileCheckboxSelectorDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
