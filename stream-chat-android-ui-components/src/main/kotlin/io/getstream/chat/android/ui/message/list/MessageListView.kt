@@ -275,7 +275,8 @@ public class MessageListView : ConstraintLayout {
                         MessageOptionsView.Configuration(
                             viewStyle = requireStyle(),
                             channelConfig = channel.config,
-                            suppressThreads = adapter.isThread || message.isInThread()
+                            hasTextToCopy = message.text.isNotBlank(),
+                            suppressThreads = adapter.isThread || message.isInThread(),
                         ),
                         requireStyle()
                     )
@@ -372,6 +373,8 @@ public class MessageListView : ConstraintLayout {
                     MessageOptionsView.Configuration(
                         viewStyle = requireStyle(),
                         channelConfig = channel.config,
+                        hasTextToCopy = false, // No effect when displaying reactions
+                        suppressThreads = false, // No effect when displaying reactions
                     ),
                     requireStyle()
                 ).apply {
