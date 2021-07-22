@@ -16,7 +16,7 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import kotlinx.coroutines.launch
@@ -78,6 +78,7 @@ internal class MediaAttachmentFragment : Fragment() {
             adapter = mediaAttachmentsAdapter
         }
         binding.grantPermissionsInclude.apply {
+            val style = style.attachmentSelectionDialogStyle
             grantPermissionsImageView.setImageDrawable(style.allowAccessToGalleryIcon)
             grantPermissionsTextView.text = style.allowAccessToGalleryText
             style.grantPermissionsTextStyle.apply(grantPermissionsTextView)
@@ -130,6 +131,8 @@ internal class MediaAttachmentFragment : Fragment() {
             }
 
             if (attachments.isEmpty()) {
+                style.mediaAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)
+                binding.emptyPlaceholderTextView.text = style.mediaAttachmentEmptyStateText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 mediaAttachmentsAdapter.setAttachments(attachments)
@@ -139,9 +142,9 @@ internal class MediaAttachmentFragment : Fragment() {
     }
 
     companion object {
-        internal var staticStyle: AttachmentSelectionDialogStyle? = null
+        internal var staticStyle: MessageInputViewStyle? = null
 
-        fun newInstance(style: AttachmentSelectionDialogStyle): Fragment {
+        fun newInstance(style: MessageInputViewStyle): Fragment {
             staticStyle = style
             return MediaAttachmentFragment()
         }

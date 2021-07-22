@@ -92,6 +92,10 @@ public data class MessageInputViewStyle(
     public val fileSizeTextStyle: TextStyle,
     public val fileCheckboxSelectorDrawable: Drawable,
     @ColorInt public val fileCheckboxTextColor: Int,
+    public val fileAttachmentEmptyStateTextStyle: TextStyle,
+    public val mediaAttachmentEmptyStateTextStyle: TextStyle,
+    val fileAttachmentEmptyStateText: String,
+    val mediaAttachmentEmptyStateText: String,
 ) {
 
     internal companion object {
@@ -452,6 +456,52 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectorDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
+                val fileAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mediaAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val fileAttachmentEmptyStateText =
+                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateText)
+                        ?: context.getString(R.string.stream_ui_message_input_no_files)
+
+                val mediaAttachmentEmptyStateText =
+                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateText)
+                        ?: context.getString(R.string.stream_ui_message_input_no_files)
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -487,6 +537,10 @@ public data class MessageInputViewStyle(
                     fileSizeTextStyle = fileSizeTextStyle,
                     fileCheckboxTextColor = fileCheckboxTextColor,
                     fileCheckboxSelectorDrawable = fileCheckboxSelectorDrawable,
+                    fileAttachmentEmptyStateTextStyle = fileAttachmentEmptyStateTextStyle,
+                    mediaAttachmentEmptyStateTextStyle = mediaAttachmentEmptyStateTextStyle,
+                    fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
+                    mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

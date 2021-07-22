@@ -184,6 +184,27 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+        <!-- Attachment empty state -->
+        <attr name="streamUiAttachmentsFilesEmptyStateTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFilesEmptyStateTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFilesEmptyStateFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFilesEmptyStateFont" format="string" />
+        <attr name="streamUiAttachmentsFilesEmptyStateStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsFilesEmptyStateText" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsMediaEmptyStateTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsMediaEmptyStateFontAssets" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateFont" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsMediaEmptyStateText" format="string" />
 
         <!--Command Input-->
         <attr name="streamUiCommandInputCancelIcon" format="reference" />

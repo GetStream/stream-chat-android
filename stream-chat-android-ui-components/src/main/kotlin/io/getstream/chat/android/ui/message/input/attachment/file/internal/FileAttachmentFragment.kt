@@ -151,6 +151,8 @@ internal class FileAttachmentFragment : Fragment() {
             }
 
             if (attachments.isEmpty()) {
+                style.fileAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)
+                binding.emptyPlaceholderTextView.text = style.fileAttachmentEmptyStateText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 fileAttachmentsAdapter.setAttachments(attachments)

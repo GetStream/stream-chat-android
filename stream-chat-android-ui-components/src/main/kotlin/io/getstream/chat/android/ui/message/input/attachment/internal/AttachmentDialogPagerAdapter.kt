@@ -12,7 +12,7 @@ internal class AttachmentDialogPagerAdapter(fragment: Fragment, private val styl
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            PAGE_MEDIA_ATTACHMENT -> MediaAttachmentFragment.newInstance(style.attachmentSelectionDialogStyle)
+            PAGE_MEDIA_ATTACHMENT -> MediaAttachmentFragment.newInstance(style)
             PAGE_FILE_ATTACHMENT -> FileAttachmentFragment.newInstance(style)
             PAGE_CAMERA_ATTACHMENT -> CameraAttachmentFragment.newInstance(style.attachmentSelectionDialogStyle)
             else -> throw IllegalArgumentException("Can not create page for position $position")
