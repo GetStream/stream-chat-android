@@ -10,7 +10,7 @@ public interface QueryChannelsState {
     public val filter: FilterObject
     public val sort: QuerySort<Channel>
     public val currentRequest: StateFlow<QueryChannelsRequest?>
-    public val nextRequest: StateFlow<QueryChannelsRequest?>
+    public val nextPageRequest: StateFlow<QueryChannelsRequest?>
     public val loading: StateFlow<Boolean>
     public val loadingMore: StateFlow<Boolean>
     public val endOfChannels: StateFlow<Boolean>

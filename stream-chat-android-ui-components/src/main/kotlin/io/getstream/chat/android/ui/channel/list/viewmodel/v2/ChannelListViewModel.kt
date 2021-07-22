@@ -177,8 +177,8 @@ public class ChannelListViewModel(
     }
 
     private fun requestMoreChannels() {
-        queryChannelsState?.nextRequest?.value?.let { nextRequest ->
-            chatClient.queryChannels(nextRequest).enqueue(::consumeChannelListResult)
+        queryChannelsState?.nextPageRequest?.value?.let { nextPageRequest ->
+            chatClient.queryChannels(nextPageRequest).enqueue(::consumeChannelListResult)
         }
     }
 
