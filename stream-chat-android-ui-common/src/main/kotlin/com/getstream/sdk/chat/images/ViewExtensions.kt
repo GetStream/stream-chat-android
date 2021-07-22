@@ -43,7 +43,6 @@ public fun ImageView.load(
     )
 }
 
-
 @InternalStreamChatApi
 public fun ImageView.loadVideoThumbnail(
     uri: Uri?,

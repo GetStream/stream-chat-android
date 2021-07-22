@@ -24,8 +24,6 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
  * @param moreCountOverlayColor - more count semi-transparent overlay color. Default - [R.color.stream_ui_overlay]
  * @param moreCountTextStyle - appearance for "more count" text
  */
-
-//Here!
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val giphyIcon: Drawable,

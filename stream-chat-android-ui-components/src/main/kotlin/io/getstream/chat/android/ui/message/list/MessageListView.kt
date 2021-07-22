@@ -3,8 +3,6 @@ package io.getstream.chat.android.ui.message.list
 import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -39,8 +37,6 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
@@ -49,7 +45,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
