@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -49,7 +50,7 @@ public data class TypingIndicatorViewStyle(
                 return TypingIndicatorViewStyle(
                     typingIndicatorAnimationView = typingIndicatorAnimationView,
                     typingIndicatorUsersTextStyle = typingIndicatorUsersTextStyle,
-                )
+                ).let(TransformStyle.typingIndicatorViewStyleTransformer::transform)
             }
         }
     }

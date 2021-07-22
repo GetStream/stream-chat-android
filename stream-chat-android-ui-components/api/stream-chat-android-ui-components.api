@@ -81,6 +81,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -97,6 +98,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSuggestionListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setTypingIndicatorViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
 
