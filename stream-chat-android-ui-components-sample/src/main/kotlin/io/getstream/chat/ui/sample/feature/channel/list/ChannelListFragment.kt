@@ -55,13 +55,6 @@ class ChannelListFragment : Fragment() {
         binding.channelsView.apply {
             view as ViewGroup // for use as a parent in inflation
 
-            val loadingView = layoutInflater.inflate(
-                R.layout.channels_loading_view,
-                view,
-                false
-            )
-            setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
-
             val emptyView = layoutInflater.inflate(
                 R.layout.channels_empty_view,
                 view,

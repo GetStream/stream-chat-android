@@ -5,10 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.extensions.showToast
@@ -29,14 +26,15 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 
 public class ChannelListView : FrameLayout {
 
     private val CHANNEL_LIST_VIEW_ID = generateViewId()
 
-    private var emptyStateView: View = defaultEmptyStateView()
+    private lateinit var emptyStateView: View
 
-    private var loadingView: View = defaultLoadingView()
+    private lateinit var loadingView: View
 
     private var channelListItemPredicate: ChannelListItemPredicate = ChannelListItemPredicate { true }
 
@@ -56,6 +54,7 @@ public class ChannelListView : FrameLayout {
         }.let(::showToast)
     }
 
+    private lateinit var style: ChannelListViewStyle
     private lateinit var actionDialogStyle: ChannelActionsDialogViewStyle
 
     public constructor(context: Context) : this(context, null, 0)
@@ -71,40 +70,28 @@ public class ChannelListView : FrameLayout {
     }
 
     private fun init(attrs: AttributeSet?, defStyleAttr: Int) {
+        style = ChannelListViewStyle(context, attrs)
         actionDialogStyle = ChannelActionsDialogViewStyle(context, attrs)
 
         simpleChannelListView = SimpleChannelListView(context, attrs, defStyleAttr)
             .apply {
                 id = CHANNEL_LIST_VIEW_ID
+                setChannelListViewStyle(style)
             }
 
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
-        emptyStateView.apply {
+        emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
             isVisible = false
-            addView(this, defaultChildLayoutParams)
+            addView(this)
         }
 
-        loadingView.apply {
+        loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
             isVisible = false
-            addView(loadingView, defaultChildLayoutParams)
+            addView(this)
         }
 
         configureDefaultMoreOptionsListener(context)
-
-        parseAttrs(attrs)
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChannelListView, 0, 0).use {
-            it.getResourceId(
-                R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable,
-                R.drawable.stream_ui_divider
-            )
-                .let { separator ->
-                    simpleChannelListView.setItemSeparator(separator)
-                }
-        }
     }
 
     /**
@@ -305,12 +292,6 @@ public class ChannelListView : FrameLayout {
                 Gravity.CENTER
             )
         }
-    }
-
-    private fun defaultLoadingView(): View = ProgressBar(context)
-
-    private fun defaultEmptyStateView(): View = TextView(context).apply {
-        setText(R.string.stream_ui_channel_list_empty)
     }
 
     private fun configureDefaultMoreOptionsListener(context: Context) {

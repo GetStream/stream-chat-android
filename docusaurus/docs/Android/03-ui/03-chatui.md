@@ -17,6 +17,7 @@ The full list of `ChatUI` properties you can override include:
 * `fonts`: The default font for TextViews displayed by UI Components.
 * `avatarBitmapFactory`: The factory responsible for creating user and channel avatar bitmaps displayed by `AvatarView`. Can be used to modify the default bitmaps that are loaded, or to add custom avatar loading logic.
 * `urlSigner`: Allows adding authorization tokens in the URL for images, video, etc.
+* `imageHeadersProvider`: Allows adding extra headers to image loading requests.
 * `markdown`: Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic or use more markdown modules.
 * `style`: Allows overriding the global, default style of UI components, like the TextStyle.
 * `navigator`: Allows intercepting and modifying default navigation between SDKs components (e.g. redirection from `MessageListView` to `AttachmentGalleryActivity`).
@@ -139,6 +140,18 @@ ChatUI.urlSigner = object : UrlSigner {
     override fun signImageUrl(url: String): String {
         // Make your changes to the URL here
         return url + "&token=1234"
+    }
+}
+```
+
+### Adding Extra Headers to Image Requests
+
+If you're [using your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn), you might also need to add extra headers to image loading requests. You can do this by creating your own implementation of the `ImageHeadersProvider` interface and then setting it on `ChatUI`:
+
+```kotlin
+ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
+    override fun getImageRequestHeaders(): Map<String, String> {
+        return mapOf("token" to "12345")
     }
 }
 ```
