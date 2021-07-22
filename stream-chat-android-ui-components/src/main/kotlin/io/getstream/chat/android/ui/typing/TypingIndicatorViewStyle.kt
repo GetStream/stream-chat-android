@@ -20,7 +20,7 @@ public data class TypingIndicatorViewStyle(
                 attrs,
                 R.styleable.TypingIndicatorView,
                 R.attr.streamUiTypingIndicatorView,
-                0, // TODO
+                R.style.StreamUi_TypingIndicatorView,
             ).use { a ->
                 val typingIndicatorAnimationView = a.getResourceId(
                     R.styleable.TypingIndicatorView_streamUiTypingIndicatorAnimationView,
