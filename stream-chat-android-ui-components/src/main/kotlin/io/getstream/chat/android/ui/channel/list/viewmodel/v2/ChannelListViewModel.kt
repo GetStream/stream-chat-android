@@ -18,11 +18,13 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.state.ChannelsState
+import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
@@ -62,6 +64,8 @@ public class ChannelListViewModel(
     private val filterLiveData: LiveData<FilterObject?> =
         filter?.let(::MutableLiveData) ?: chatDomain.user.map(Filters::defaultChannelListFilter).asLiveData()
 
+    private var queryChannelsState: QueryChannelsState? = null
+
     init {
         stateMerger.addSource(filterLiveData) { filter ->
             if (filter != null) {
@@ -73,49 +77,51 @@ public class ChannelListViewModel(
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
 
-        val queryChannelsState = offlinePlugin.state.queryChannels(filterObject, sort)
+        queryChannelsState = offlinePlugin.state.queryChannels(filterObject, sort).also { queryChannelsState ->
+            val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
+                queryChannelsState.channelsState.map { channelState ->
+                    channelState to currentUser
+                }
+            }.map { (channelState, currentUser) ->
+                handleChannelState(channelState, currentUser)
+            }.asLiveData()
 
-        val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
-            queryChannelsState.channelsState.map { channelState ->
-                channelState to currentUser
+            stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+
+            stateMerger.addSource(queryChannelsState.mutedChannelIds.asLiveData()) { mutedChannels ->
+                val state = stateMerger.value
+
+                if (state?.channels?.isNotEmpty() == true) {
+                    stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                } else {
+                    stateMerger.value = state?.copy()
+                }
             }
-        }.map { (channelState, currentUser) ->
-            handleChannelState(channelState, currentUser)
-        }.asLiveData()
 
-        stateMerger.addSource(channelState) { state -> stateMerger.value = state }
-
-        stateMerger.addSource(queryChannelsState.mutedChannelIds.asLiveData()) { mutedChannels ->
-            val state = stateMerger.value
-
-            if (state?.channels?.isNotEmpty() == true) {
-                stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
-            } else {
-                stateMerger.value = state?.copy()
+            paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
+                setPaginationState { copy(loadingMore = loadingMore) }
             }
-        }
-
-        paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
-            setPaginationState { copy(loadingMore = loadingMore) }
-        }
-        paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
-            setPaginationState { copy(endOfChannels = endOfChannels) }
+            paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
+                setPaginationState { copy(endOfChannels = endOfChannels) }
+            }
         }
 
         queryChannels(filterObject)
     }
 
     private fun queryChannels(filterObject: FilterObject) {
-        chatClient.queryChannels(
+        val queryChannelsRequest =
             QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit).withMessages(messageLimit)
-        ).enqueue { result ->
-            if (result.isSuccess) {
-                logger.logI("Received channels with size ${result.data().size}")
-            } else {
-                val errorMessage =
-                    result.error().let { chatError -> chatError.message ?: chatError.cause?.toString() ?: "" }
-                logger.logW("Failed tp query channels\n$errorMessage")
-            }
+        chatClient.queryChannels(queryChannelsRequest).enqueue(::consumeChannelListResult)
+    }
+
+    private fun consumeChannelListResult(result: Result<List<Channel>>) {
+        if (result.isSuccess) {
+            logger.logI("Received channels with size ${result.data().size}")
+        } else {
+            val errorMessage =
+                result.error().let { chatError -> chatError.message ?: chatError.cause?.toString() ?: "" }
+            logger.logW("Failed tp query channels\n$errorMessage")
         }
     }
 
@@ -171,7 +177,9 @@ public class ChannelListViewModel(
     }
 
     private fun requestMoreChannels() {
-        filterLiveData.value?.let { chatDomain.queryChannelsLoadMore(it, sort).enqueue() }
+        queryChannelsState?.nextRequest?.value?.let { nextRequest ->
+            chatClient.queryChannels(nextRequest).enqueue(::consumeChannelListResult)
+        }
     }
 
     private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {

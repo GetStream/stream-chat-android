@@ -431,6 +431,15 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 public final class io/getstream/chat/android/client/api/models/QueryChannelsRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;II)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public final fun component5 ()I
+	public final fun component6 ()I
+	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;II)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public final fun getLimit ()I
 	public final fun getMemberLimit ()I
@@ -441,6 +450,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public final fun getSort ()Ljava/util/List;
 	public fun getState ()Z
 	public fun getWatch ()Z
+	public fun hashCode ()I
 	public synthetic fun noPresence ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noPresence ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public synthetic fun noState ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
@@ -454,6 +464,7 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
+	public fun toString ()Ljava/lang/String;
 	public final fun withLimit (I)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public final fun withMessages (I)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public final fun withOffset (I)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
