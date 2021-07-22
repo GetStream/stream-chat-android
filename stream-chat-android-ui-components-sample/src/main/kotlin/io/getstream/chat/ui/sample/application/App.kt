@@ -11,13 +11,16 @@ import io.getstream.chat.ui.sample.data.user.UserRepository
 
 class App : Application() {
 
+    val offlinePluginEnabled: Boolean = true
+
     // done for simplicity, a DI framework should be used in the real app
     val chatInitializer = ChatInitializer(this)
+    val chatInitializerV2 = ChatInitializerV2(this)
     val userRepository = UserRepository(this)
 
     override fun onCreate() {
         super.onCreate()
-        chatInitializer.init(getApiKey())
+        if (offlinePluginEnabled) chatInitializerV2.init(getApiKey()) else chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
         Coil.setImageLoader(

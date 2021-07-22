@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.offline.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 

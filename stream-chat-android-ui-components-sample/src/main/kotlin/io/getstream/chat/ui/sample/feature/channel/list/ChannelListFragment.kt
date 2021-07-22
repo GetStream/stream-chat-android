@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
@@ -22,13 +23,18 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
 import io.getstream.chat.android.ui.search.list.viewmodel.bindView
 import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
+import io.getstream.chat.android.ui.channel.list.viewmodel.v2.ChannelListViewModel as ChannelListViewModelV2
+import io.getstream.chat.android.ui.channel.list.viewmodel.v2.bindView as bindViewV2
+import io.getstream.chat.android.ui.channel.list.viewmodel.v2.factory.ChannelListViewModelFactory as ChannelListViewModelFactoryV2
 
 class ChannelListFragment : Fragment() {
 
+    private val viewModelV2: ChannelListViewModelV2 by viewModels { ChannelListViewModelFactoryV2() }
     private val viewModel: ChannelListViewModel by viewModels {
         ChannelListViewModelFactory(
             filter = Filters.and(
@@ -59,7 +65,7 @@ class ChannelListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupOnClickListeners()
-        viewModel.bindView(binding.channelsView, viewLifecycleOwner)
+        bindView()
         searchViewModel.bindView(binding.searchResultListView, this)
 
         binding.channelsView.apply {
@@ -84,9 +90,8 @@ class ChannelListFragment : Fragment() {
             setChannelDeleteClickListener { channel ->
                 ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.deleteChannel(channel)
-                        }
+                        confirmClickListener =
+                            ConfirmationDialogFragment.ConfirmClickListener { deleteChannel(channel) }
                     }
                     .show(parentFragmentManager, null)
             }
@@ -123,6 +128,22 @@ class ChannelListFragment : Fragment() {
         binding.searchResultListView.setSearchResultSelectedListener { message ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
                 .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
+        }
+    }
+
+    private fun deleteChannel(channel: Channel) {
+        if (App.instance.offlinePluginEnabled) {
+            viewModelV2.deleteChannel(channel)
+        } else {
+            viewModel.deleteChannel(channel)
+        }
+    }
+
+    private fun bindView() {
+        if (App.instance.offlinePluginEnabled) {
+            viewModelV2.bindViewV2(binding.channelsView, viewLifecycleOwner)
+        } else {
+            viewModel.bindView(binding.channelsView, viewLifecycleOwner)
         }
     }
 
