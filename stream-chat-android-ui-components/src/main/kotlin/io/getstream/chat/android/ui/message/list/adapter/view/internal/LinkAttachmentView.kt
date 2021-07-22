@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
@@ -68,11 +69,16 @@ internal class LinkAttachmentView : FrameLayout {
         }
     }
 
-    internal fun setTextColor(@ColorInt textColor: Int) {
-        binding.apply {
-            descriptionTextView.setTextColor(textColor)
-            titleTextView.setTextColor(textColor)
-        }
+    internal fun setTitleTextStyle(textStyle: TextStyle) {
+        textStyle.apply(binding.titleTextView)
+    }
+
+    internal fun setDescriptionTextStyle(textStyle: TextStyle) {
+        textStyle.apply(binding.descriptionTextView)
+    }
+
+    internal fun setLabelTextStyle(textStyle: TextStyle) {
+        textStyle.apply(binding.labelTextView)
     }
 
     internal fun setLinkDescriptionMaxLines(maxLines: Int) {

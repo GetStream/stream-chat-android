@@ -82,9 +82,12 @@ public open class AttachmentViewFactory {
             setPadding(LINK_VIEW_PADDING)
             setLinkPreviewClickListener(listeners.linkClickListener::onLinkClick)
             setLongClickTarget(parent)
-            style.getStyleTextColor(isMine)?.also(::setTextColor)
             setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
             showLinkAttachment(linkAttachment, style)
+
+            setDescriptionTextStyle(style.textStyleLinkDescription)
+            setTitleTextStyle(style.textStyleLinkTitle)
+            setLabelTextStyle(style.textStyleLinkLabel)
         }
         return linkAttachmentView
     }

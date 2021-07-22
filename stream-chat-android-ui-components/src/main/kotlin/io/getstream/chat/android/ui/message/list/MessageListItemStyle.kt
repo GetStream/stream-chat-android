@@ -75,6 +75,7 @@ public data class MessageListItemStyle(
     public val textStyleMessageDate: TextStyle,
     public val textStyleThreadCounter: TextStyle,
     public val threadSeparatorTextStyle: TextStyle,
+    public val textStyleLinkLabel: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
     @ColorInt public val dateSeparatorBackgroundColor: Int,
@@ -342,6 +343,22 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleLinkLabel = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkLabel,
+                    context.getDimension(DEFAULT_TEXT_SIZE_LINK_DESCRIPTION)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkLabel,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_LINK_DESCRIPTION)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkLabel,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkLabel,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkLabel, DEFAULT_TEXT_STYLE)
+                .build()
+
             val dateSeparatorBackgroundColor =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiDateSeparatorBackgroundColor,
@@ -482,6 +499,7 @@ public data class MessageListItemStyle(
                 threadSeparatorTextStyle = textStyleThreadSeparator,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
+                textStyleLinkLabel = textStyleLinkLabel,
                 dateSeparatorBackgroundColor = dateSeparatorBackgroundColor,
                 textStyleDateSeparator = textStyleDateSeparator,
                 reactionsViewStyle = reactionsViewStyle,

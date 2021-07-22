@@ -325,6 +325,17 @@
         <item name="streamUiMessageLinkBackgroundColorMine">@color/stream_ui_blue_alice</item>
         <item name="streamUiMessageLinkBackgroundColorTheirs">@color/stream_ui_blue_alice</item>
 
+        <!-- Message text style link title -->
+        <item name="streamUiMessageTextSizeLinkTitle">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageTextColorLinkTitle">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageTextStyleLinkTitle">normal</item>
+        <item name="streamUiMessageTextSizeLinkDescription">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorLinkDescription">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleLinkDescription">normal</item>
+        <item name="streamUiMessageTextSizeLinkLabel">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorLinkLabel">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleLinkLabel">normal</item>
+
         <!-- Message text style mine -->
         <item name="streamUiMessageTextSizeMine">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageTextColorMine">@color/stream_ui_text_color_primary</item>
@@ -354,14 +365,6 @@
         <item name="streamUiMessageTextSizeThreadSeparator">@dimen/stream_ui_text_small</item>
         <item name="streamUiMessageTextColorThreadSeparator">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiMessageTextStyleThreadSeparator">normal</item>
-
-        <!-- Message text style link title -->
-        <item name="streamUiMessageTextSizeLinkTitle">@dimen/stream_ui_text_medium</item>
-        <item name="streamUiMessageTextColorLinkTitle">@color/stream_ui_text_color_primary</item>
-        <item name="streamUiMessageTextStyleLinkTitle">normal</item>
-        <item name="streamUiMessageTextSizeLinkDescription">@dimen/stream_ui_text_small</item>
-        <item name="streamUiMessageTextColorLinkDescription">@color/stream_ui_text_color_secondary</item>
-        <item name="streamUiMessageTextStyleLinkDescription">normal</item>
 
         <!-- Message Reply background color -->
         <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>

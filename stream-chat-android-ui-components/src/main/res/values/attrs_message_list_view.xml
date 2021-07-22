@@ -128,6 +128,16 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamUiMessageTextSizeLinkLabel" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkLabel" format="color" />
+        <attr name="streamUiMessageTextFontLinkLabel" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkLabel" format="string" />
+        <attr name="streamUiMessageTextStyleLinkLabel">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message Reply background color -->
         <attr name="streamUiMessageReplyBackgroundColorMine" format="color" />
         <attr name="streamUiMessageReplyBackgroundColorTheirs" format="color" />
