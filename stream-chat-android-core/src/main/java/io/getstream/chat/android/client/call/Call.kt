@@ -84,6 +84,7 @@ public fun <T : Any> Call<T>.doOnStart(scope: CoroutineScope, function: suspend 
     DoOnStartCall(this, scope, function)
 
 public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend (Result<T>) -> Unit): Call<T> =
+    DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}
