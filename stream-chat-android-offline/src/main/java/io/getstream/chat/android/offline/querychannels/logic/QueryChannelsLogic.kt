@@ -86,6 +86,8 @@ internal class QueryChannelsLogic(
         if (result.isSuccess) {
             updateOnlineChannels(result.data(), request.isFirstPage)
         }
+        val loading = mutableState.currentRequest.value?.isFirstPage?.let { isFirstPage -> if (isFirstPage) mutableState._loading else mutableState._loadingMore }
+        loading?.value = false
     }
 
     internal suspend fun runQueryOnline(request: QueryChannelsRequest): Result<List<Channel>> {

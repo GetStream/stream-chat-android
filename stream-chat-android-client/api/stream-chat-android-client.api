@@ -160,7 +160,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder {
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun useNewSerialization (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun withModule (Lio/getstream/chat/android/client/plugin/Plugin;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withPlugin (Lio/getstream/chat/android/client/plugin/Plugin;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {

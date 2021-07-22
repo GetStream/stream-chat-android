@@ -105,6 +105,7 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     private val scope: CoroutineScope,
+    private val appContext: Context,
     public val plugins: Collection<Plugin> = emptyList(),
 ) {
 
@@ -160,6 +161,8 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
+
+        plugins.forEach { it.init(appContext, this) }
     }
 
     //region Set user
@@ -1554,7 +1557,7 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public fun withModule(plugin: Plugin): Builder = apply {
+        public fun withPlugin(plugin: Plugin): Builder = apply {
             plugins += plugin
         }
 
@@ -1591,6 +1594,7 @@ public class ChatClient internal constructor(
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
                 scope = module.networkScope,
+                appContext = appContext,
                 plugins = plugins,
             )
 
