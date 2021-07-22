@@ -180,7 +180,7 @@ public class QueryChannelsController internal constructor(
      * @see ChannelController
      */
     internal fun refreshChannels(cIds: Collection<String>) {
-        _channels.value += queryChannelsSpec.cids
+        mutableState._channels.value += queryChannelsSpec.cids
             .intersect(cIds)
             .map { it to domainImpl.channel(it).toChannel() }
             .toMap()
@@ -190,7 +190,7 @@ public class QueryChannelsController internal constructor(
         channelLimit: Int = CHANNEL_LIMIT,
         messageLimit: Int = MESSAGE_LIMIT,
     ): Result<List<Channel>> {
-        val oldChannels = _channels.value.values
+        val oldChannels = mutableState._channels.value.values
         val pagination = loadMoreRequest(channelLimit, messageLimit)
         return runQuery(pagination).map { it - oldChannels }
     }
