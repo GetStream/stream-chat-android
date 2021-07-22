@@ -47,7 +47,7 @@ internal class QueryChannelsMutableState(
             }
         }.stateIn(scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
-    override val nextRequest: StateFlow<QueryChannelsRequest?> =
+    override val nextPageRequest: StateFlow<QueryChannelsRequest?> =
         currentRequest.combine(channelsOffset) { currentRequest, currentOffset ->
             currentRequest?.copy(offset = currentOffset)
         }.stateIn(scope, SharingStarted.Eagerly, null)
