@@ -2137,7 +2137,7 @@ public abstract class io/getstream/chat/android/ui/suggestion/list/adapter/viewh
 	protected final fun getContext ()Landroid/content/Context;
 }
 
-public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : android/widget/FrameLayout {
+public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : android/widget/LinearLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
