@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchResultListView">
+        <!-- Search Info Bar -->
+        <attr name="streamUiSearchResultListSearchInfoBarBackground" format="reference" />
+        <attr name="streamUiSearchResultListSearchInfoBarTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListSearchInfoBarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Empty State -->
+        <attr name="streamUiSearchResultListEmptyStateIcon" format="reference" />
+        <attr name="streamUiSearchResultListEmptyStateTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListEmptyStateTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListEmptyStateTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListEmptyStateTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListEmptyStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Progress Bar -->
+        <attr name="streamUiSearchResultListProgressBarIcon" format="reference" />
+
+        <!-- Message Preview -->
+        <attr name="streamUiSearchResultListSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListSenderNameTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListSenderNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiSearchResultListMessageTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListMessageTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListMessageTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListMessageTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiSearchResultListMessageTimeTextColor" format="color|reference"/>
+        <attr name="streamUiSearchResultListMessageTimeTextSize" format="dimension"/>
+        <attr name="streamUiSearchResultListMessageTimeTextFontAssets" format="string"/>
+        <attr name="streamUiSearchResultListMessageTimeTextFont" format="reference"/>
+        <attr name="streamUiSearchResultListMessageTimeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
