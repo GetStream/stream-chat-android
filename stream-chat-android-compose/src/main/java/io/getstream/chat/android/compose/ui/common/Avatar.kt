@@ -27,7 +27,7 @@ fun Avatar(
     painter: Painter,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(

@@ -17,5 +17,5 @@ class ChannelOption(
     val titleColor: Color = Color.DarkGray,
     val icon: ImageVector,
     val iconColor: Color = Color.DarkGray,
-    val action: ChannelListAction
+    val action: ChannelListAction,
 )

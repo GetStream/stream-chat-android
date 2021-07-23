@@ -25,7 +25,7 @@ sealed class MessageAction(val message: Message)
  * */
 class React(
     val reaction: Reaction,
-    message: Message
+    message: Message,
 ) : MessageAction(message)
 
 class Reply(message: Message) : MessageAction(message)
@@ -49,5 +49,5 @@ class MuteUser(message: Message) : MessageAction(message)
  * */
 class CustomAction(
     message: Message,
-    val extraProperties: Map<String, Any> = emptyMap()
+    val extraProperties: Map<String, Any> = emptyMap(),
 ) : MessageAction(message)

@@ -48,7 +48,7 @@ fun MessageListHeader(
     messageMode: MessageMode,
     onBackPressed: () -> Unit,
     onHeaderActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     val memberCount = channel.memberCount
@@ -126,7 +126,7 @@ private fun MessagesHeaderTitle(
     modifier: Modifier,
     title: String,
     subtitle: String,
-    isNetworkAvailable: Boolean
+    isNetworkAvailable: Boolean,
 ) {
     Column(
         modifier = modifier,

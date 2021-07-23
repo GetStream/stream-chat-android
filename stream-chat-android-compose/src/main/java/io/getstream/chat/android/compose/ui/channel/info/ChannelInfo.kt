@@ -66,7 +66,6 @@ import io.getstream.chat.android.compose.state.channel.list.ViewInfo
  * @param onChannelOptionClick - Handler for when the user selects a channel option.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalMaterialApi
 @Composable
 fun ChannelInfo(
     selectedChannel: Channel,
@@ -209,7 +208,6 @@ private fun ChannelInfoUserItem(
  * @param onChannelOptionClick - Handler for when the user selects a channel action.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalMaterialApi
 @Composable
 private fun ChannelOptions(
     options: List<ChannelOption>,
@@ -254,7 +252,6 @@ private fun ChannelOptions(
  * @param onClick - The action to perform once the user taps on any option.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalMaterialApi
 @Composable
 private fun ChannelOptionItem(
     title: String,

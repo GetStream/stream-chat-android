@@ -57,8 +57,6 @@ import kotlin.math.abs
  * either the [DefaultMessageGroup] or the [DefaultMessageContainer] and connect the the long click handler with it.
  * Users can override this to provide fully custom UI and behavior.
  * */
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
 @Composable
 fun MessageList(
     viewModel: MessageListViewModel,
@@ -99,8 +97,6 @@ fun MessageList(
  * @param itemContent - Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  * */
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
 @Composable
 fun MessageList(
     currentState: MessagesState,
@@ -147,8 +143,6 @@ fun MessageList(
  * @param itemContent - Composable that represents the item that displays each message.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
 @Composable
 private fun Messages(
     messagesState: MessagesState,
@@ -223,7 +217,7 @@ private fun Messages(
     }
 }
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BoxScope.MessagesScrollingOption(
     text: String,

@@ -33,7 +33,7 @@ public class StreamColors(
     public val overlay: Color,
     public val primaryAccent: Color,
     public val errorAccent: Color,
-    public val infoAccent: Color
+    public val infoAccent: Color,
 ) {
 
     public companion object {
@@ -45,12 +45,12 @@ public class StreamColors(
             borders = colorResource(R.color.borders),
             inputBackground = colorResource(R.color.inputBackground),
             appBackground = colorResource(R.color.appBackground),
-            barsBackground =colorResource(R.color.barsBackground),
-            linkBackground =colorResource(R.color.linkBackground),
-            overlay =colorResource(R.color.overlay),
+            barsBackground = colorResource(R.color.barsBackground),
+            linkBackground = colorResource(R.color.linkBackground),
+            overlay = colorResource(R.color.overlay),
             primaryAccent = colorResource(id = R.color.primaryAccent),
-            errorAccent =colorResource(R.color.errorAccent),
-            infoAccent =colorResource(R.color.infoAccent),
+            errorAccent = colorResource(R.color.errorAccent),
+            infoAccent = colorResource(R.color.infoAccent),
         )
 
         @Composable
@@ -61,12 +61,12 @@ public class StreamColors(
             borders = colorResource(R.color.bordersDark),
             inputBackground = colorResource(R.color.inputBackgroundDark),
             appBackground = colorResource(R.color.appBackgroundDark),
-            barsBackground =colorResource(R.color.barsBackgroundDark),
-            linkBackground =colorResource(R.color.linkBackgroundDark),
-            overlay =colorResource(R.color.overlayDark),
+            barsBackground = colorResource(R.color.barsBackgroundDark),
+            linkBackground = colorResource(R.color.linkBackgroundDark),
+            overlay = colorResource(R.color.overlayDark),
             primaryAccent = colorResource(id = R.color.primaryAccentDark),
-            errorAccent =colorResource(R.color.errorAccentDark),
-            infoAccent =colorResource(R.color.infoAccentDark),
+            errorAccent = colorResource(R.color.errorAccentDark),
+            infoAccent = colorResource(R.color.infoAccentDark),
         )
     }
 }

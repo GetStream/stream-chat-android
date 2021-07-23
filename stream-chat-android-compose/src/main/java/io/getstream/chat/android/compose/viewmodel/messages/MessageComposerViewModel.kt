@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class MessageComposerViewModel(
     val chatClient: ChatClient,
     val chatDomain: ChatDomain,
-    private val channelId: String
+    private val channelId: String,
 ) : ViewModel() {
 
     /**
@@ -199,7 +199,7 @@ class MessageComposerViewModel(
      * */
     private fun buildNewMessage(
         message: String,
-        attachments: List<Attachment> = emptyList()
+        attachments: List<Attachment> = emptyList(),
     ): Message {
         val activeAction = activeAction
         val messageMode = messageMode

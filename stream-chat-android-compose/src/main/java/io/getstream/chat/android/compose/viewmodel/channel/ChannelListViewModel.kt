@@ -44,7 +44,7 @@ class ChannelListViewModel(
     val chatClient: ChatClient,
     val chatDomain: ChatDomain,
     initialSort: QuerySort<Channel>,
-    private val initialFilters: FilterObject
+    private val initialFilters: FilterObject,
 ) : ViewModel() {
 
     /**
@@ -98,7 +98,8 @@ class ChannelListViewModel(
                 .collectLatest { (query, config) ->
 
                     // TODO we need to make these filters consistent
-                    val filter = if (query.isNotEmpty()) Filters.and(config.filters, Filters.eq("id", query)) else config.filters
+                    val filter =
+                        if (query.isNotEmpty()) Filters.and(config.filters, Filters.eq("id", query)) else config.filters
 
                     val result = chatDomain.queryChannels(filter, config.querySort).await()
 
@@ -125,7 +126,8 @@ class ChannelListViewModel(
             }.combine(controller.endOfChannels) { (isLoadingMore, state), endOfChannels ->
                 when (state) {
                     QueryChannelsController.ChannelsState.NoQueryActive,
-                    QueryChannelsController.ChannelsState.Loading ->
+                    QueryChannelsController.ChannelsState.Loading,
+                    ->
                         channelsState.copy(isLoading = true)
                     QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
                         isLoading = false,

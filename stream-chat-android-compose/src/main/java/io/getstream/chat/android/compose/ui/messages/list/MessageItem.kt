@@ -59,7 +59,6 @@ import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.reactionTypes
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -80,7 +79,7 @@ import java.util.Date
  * @param modifier - Modifier for styling.
  * @param onThreadClick - Handler for thread clicks, if this message has a thread going.
  * */
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DefaultMessageContainer(
     messageItem: MessageItem,
@@ -114,7 +113,9 @@ internal fun DefaultMessageContainer(
         )
     }
 
-    Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()) {
         Row(
             modifier
                 .widthIn(max = 300.dp)
@@ -252,7 +253,6 @@ private fun MessageReactions(
  * @param message - The message to show.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
@@ -284,7 +284,6 @@ internal fun DefaultMessageContent(
  * @param message - Message to show.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
 @Composable
 internal fun MessageText(
     message: Message,
@@ -433,7 +432,6 @@ private fun ThreadParticipants(
  * @param message - Message to show.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
 @Composable
 internal fun QuotedMessage(
     message: Message,

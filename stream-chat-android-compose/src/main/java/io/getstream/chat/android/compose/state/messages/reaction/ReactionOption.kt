@@ -11,5 +11,5 @@ package io.getstream.chat.android.compose.state.messages.reaction
 class ReactionOption(
     val emoji: String,
     val isSelected: Boolean,
-    val type: String
+    val type: String,
 )

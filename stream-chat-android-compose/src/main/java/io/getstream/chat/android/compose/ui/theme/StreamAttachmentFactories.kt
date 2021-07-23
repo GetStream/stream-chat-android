@@ -36,7 +36,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
 object StreamAttachmentFactories {
@@ -46,8 +45,6 @@ object StreamAttachmentFactories {
      *
      * Uses [ImageAttachmentFactory] and [FileAttachmentFactory] to build UI.
      * */
-    @InternalStreamChatApi
-    @ExperimentalFoundationApi
     val defaultFactories = listOf(
         AttachmentFactory(
             { state -> LinkAttachmentFactory(state) },
@@ -69,7 +66,7 @@ object StreamAttachmentFactories {
      * @param attachmentState - The state of the attachment, holding the root modifier, the message
      * and the onLongItemClick handler.
      * */
-    @ExperimentalFoundationApi
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun LinkAttachmentFactory(
         attachmentState: AttachmentState,
@@ -153,7 +150,7 @@ object StreamAttachmentFactories {
      * @param attachmentState - The state of the attachment, holding the root modifier, the message
      * and the onLongItemClick handler.
      * */
-    @ExperimentalFoundationApi
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun ImageAttachmentFactory(
         attachmentState: AttachmentState,
@@ -273,7 +270,6 @@ object StreamAttachmentFactories {
      * @param attachmentState - The state of the attachment, holding the root modifier, the message
      * and the onLongItemClick handler.
      * */
-    @InternalStreamChatApi
     @Composable
     private fun FileAttachmentFactory(
         attachmentState: AttachmentState,

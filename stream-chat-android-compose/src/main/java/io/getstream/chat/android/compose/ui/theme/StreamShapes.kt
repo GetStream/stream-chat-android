@@ -19,7 +19,7 @@ class StreamShapes(
     val otherMessageBubble: Shape,
     val inputField: Shape,
     val attachment: Shape,
-    val bottomMenu: Shape
+    val bottomMenu: Shape,
 ) {
     companion object {
         val default = StreamShapes(

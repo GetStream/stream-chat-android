@@ -23,5 +23,5 @@ data class MessagesState(
     val selectedMessage: Message? = null,
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,
-    val parentMessageId: String? = null
+    val parentMessageId: String? = null,
 )

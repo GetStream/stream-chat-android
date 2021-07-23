@@ -43,13 +43,12 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-progressive',
                 '-Xexplicit-api=warning',
                 '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
-                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
+                '-Xopt-in=kotlin.RequiresOptIn',
         ]
     }
 }
 
 dependencies {
-    implementation project(':stream-chat-android') // TODO remove
     api project(':stream-chat-android-ui-common')
 
     implementation Dependencies.androidxAppCompat

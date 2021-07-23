@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +41,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalPagerApi::class)
 class ImagePreviewActivity : AppCompatActivity() {
 
     private val factory by lazy {
@@ -51,9 +50,6 @@ class ImagePreviewActivity : AppCompatActivity() {
 
     private val imagePreviewViewModel by viewModels<ImagePreviewViewModel>(factoryProducer = { factory })
 
-    @ExperimentalComposeUiApi
-    @ExperimentalPagerApi
-    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
@@ -73,8 +69,6 @@ class ImagePreviewActivity : AppCompatActivity() {
         }
     }
 
-    @ExperimentalComposeUiApi
-    @ExperimentalPagerApi
     @Composable
     private fun ImagePreviewContentWrapper(message: Message) {
         val pagerState = rememberPagerState(
@@ -121,7 +115,7 @@ class ImagePreviewActivity : AppCompatActivity() {
     @Composable
     private fun ImagePreviewHeaderTitle(
         modifier: Modifier = Modifier,
-        message: Message
+        message: Message,
     ) {
         Column(
             modifier = modifier,
@@ -140,8 +134,6 @@ class ImagePreviewActivity : AppCompatActivity() {
         }
     }
 
-    @ExperimentalComposeUiApi
-    @ExperimentalPagerApi
     @Composable
     private fun ImagePreviewContent(pagerState: PagerState, message: Message) {
         HorizontalPager(state = pagerState) { page ->
@@ -160,7 +152,6 @@ class ImagePreviewActivity : AppCompatActivity() {
         }
     }
 
-    @ExperimentalPagerApi
     @Composable
     private fun ImagePreviewBottomBar(message: Message, pagerState: PagerState) {
         val attachmentCount = message.attachments.size

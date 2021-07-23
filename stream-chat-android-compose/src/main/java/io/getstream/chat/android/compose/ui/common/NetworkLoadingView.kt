@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.R
 fun NetworkLoadingView(
     modifier: Modifier = Modifier,
     spinnerSize: Dp = 18.dp,
-    textStyle: TextStyle = MaterialTheme.typography.h6
+    textStyle: TextStyle = MaterialTheme.typography.h6,
 ) {
     Row(
         modifier,

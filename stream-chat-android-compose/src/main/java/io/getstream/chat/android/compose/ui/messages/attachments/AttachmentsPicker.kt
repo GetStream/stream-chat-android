@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 
 /**
@@ -68,10 +67,7 @@ import java.io.File
  * @param onAttachmentsSelected - Handler when attachments are selected and confirmed by the user.
  * @param onDismiss - Handler when the user dismisses the UI.
  * */
-@InternalStreamChatApi
-@ExperimentalPermissionsApi
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
@@ -201,7 +197,7 @@ fun AttachmentsPicker(
  *
  * @param permissionState - The missing permission.
  * */
-@ExperimentalPermissionsApi
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MissingPermissionContent(permissionState: PermissionState) {
     val title = when (permissionState.permission) {

@@ -22,7 +22,7 @@ import io.getstream.chat.android.compose.R
 @Composable
 internal fun RowScope.DefaultComposerIntegrations(
     onAttachmentsClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         modifier = modifier

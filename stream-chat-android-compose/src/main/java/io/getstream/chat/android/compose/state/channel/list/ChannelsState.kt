@@ -14,5 +14,5 @@ data class ChannelsState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val endOfChannels: Boolean = false,
-    val channels: List<Channel> = emptyList()
+    val channels: List<Channel> = emptyList(),
 )

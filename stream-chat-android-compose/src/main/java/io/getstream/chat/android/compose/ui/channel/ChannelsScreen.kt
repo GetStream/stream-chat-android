@@ -44,8 +44,6 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onItemClick - Handler for Channel item clicks.
  * @param onBackPressed - Handler for back press action.
  * */
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun ChannelsScreen(
     filters: FilterObject = Filters.and(
@@ -59,7 +57,7 @@ fun ChannelsScreen(
     onHeaderClickAction: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,

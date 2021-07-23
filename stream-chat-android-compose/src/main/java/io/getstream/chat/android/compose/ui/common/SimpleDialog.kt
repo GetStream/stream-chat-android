@@ -23,7 +23,7 @@ fun SimpleDialog(
     message: String,
     onPositiveAction: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AlertDialog(
         modifier = modifier,

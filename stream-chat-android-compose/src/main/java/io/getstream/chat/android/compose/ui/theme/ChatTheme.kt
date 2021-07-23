@@ -26,7 +26,6 @@ private val LocalAttachmentFactories =
  * @param attachmentFactories - Attachment factories that we provide. By default, images and files.
  * @param content - The content shown within the theme wrapper.
  * */
-@ExperimentalFoundationApi
 @Composable
 fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -34,7 +33,7 @@ fun ChatTheme(
     typography: StreamTypography = StreamTypography.default,
     shapes: StreamShapes = StreamShapes.default,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalColors provides colors,

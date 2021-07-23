@@ -53,7 +53,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLab
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
@@ -115,8 +114,6 @@ fun MessageInputOptions(
  * @param modifier - Modifier for styling.
  * @param label - Composable function that represents the label UI, when there's no input/focus.
  * */
-@InternalStreamChatApi
-@ExperimentalFoundationApi
 @Composable
 fun MessageInput(
     value: String,
@@ -174,8 +171,6 @@ fun MessageInput(
  * @param onAttachmentRemoved - Handler when the user removes a selected attachment.
  * @param modifier - Modifier for styling.
  * */
-@InternalStreamChatApi
-@ExperimentalFoundationApi
 @Composable
 private fun MessageInputAttachments(
     attachments: List<Attachment>,
@@ -245,7 +240,6 @@ internal fun MessageInputImageAttachments(
  * @param onAttachmentRemoved - Handler when the user removes an attachment from the list.
  * @param modifier - Modifier for styling.
  * */
-@InternalStreamChatApi
 @Composable
 internal fun MessageInputFileAttachments(
     attachments: List<Attachment>,

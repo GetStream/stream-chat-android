@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun BackButton(
     imageVector: ImageVector,
     onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     IconButton(

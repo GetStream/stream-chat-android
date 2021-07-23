@@ -21,7 +21,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.components.Message
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -42,8 +41,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param label - The input field label (hint).
  * @param input - The input field for the composer, [MessageInput] by default.
  * */
-@InternalStreamChatApi
-@ExperimentalFoundationApi
 @Composable
 fun MessageComposer(
     viewModel: MessageComposerViewModel,
@@ -69,7 +66,7 @@ fun MessageComposer(
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
-    }
+    },
 ) {
 
     MessageComposer(
@@ -99,7 +96,6 @@ fun MessageComposer(
  * @param onSendMessage - Handler when the user taps on the send message button.
  * @param onCancelAction - Handler when the user cancels the active action (Reply or Edit).
  * */
-@ExperimentalFoundationApi
 @Composable
 fun MessageComposer(
     value: String,
@@ -110,7 +106,7 @@ fun MessageComposer(
     onSendMessage: (String) -> Unit,
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
-    shouldShowIntegrations: Boolean = true
+    shouldShowIntegrations: Boolean = true,
 ) {
 
     Surface(modifier, elevation = 4.dp) {

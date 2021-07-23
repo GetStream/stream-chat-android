@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.*
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
@@ -18,10 +17,9 @@ import io.getstream.chat.android.offline.ChatDomain
  * Used to load file and media images that are then connected to the UI. It also keeps state of the
  * selected items and prepares items before sending them.
  * */
-@InternalStreamChatApi
 class AttachmentsPickerViewModel constructor(
     private val chatDomain: ChatDomain,
-    private val storageHelper: StorageHelperWrapper
+    private val storageHelper: StorageHelperWrapper,
 ) : ViewModel() {
 
     /**

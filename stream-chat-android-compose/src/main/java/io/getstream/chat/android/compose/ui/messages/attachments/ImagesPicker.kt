@@ -29,12 +29,12 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentIt
  * @param onImageSelected - Handler when the user clicks on any image item.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ImagesPicker(
     images: List<AttachmentItem>,
     onImageSelected: (AttachmentItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -54,7 +54,7 @@ internal fun ImagesPicker(
 @Composable
 internal fun ImageGridItem(
     imageItem: AttachmentItem,
-    onImageSelected: (AttachmentItem) -> Unit
+    onImageSelected: (AttachmentItem) -> Unit,
 ) {
     val painter = rememberImagePainter(data = imageItem.attachmentMetaData.uri.toString())
 

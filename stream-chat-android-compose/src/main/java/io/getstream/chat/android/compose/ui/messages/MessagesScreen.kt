@@ -3,14 +3,12 @@ package io.getstream.chat.android.compose.ui.messages
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
@@ -57,7 +55,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
@@ -74,10 +71,6 @@ import io.getstream.chat.android.offline.ChatDomain
  * back button.
  * @param onHeaderActionClick - Handler for when the user taps on the header action.
  * */
-@InternalStreamChatApi
-@ExperimentalPermissionsApi
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
 @Composable
 fun MessagesScreen(
     channelId: String,
@@ -238,7 +231,6 @@ private fun buildViewModelFactory(
  *
  * @param ownReactions - options the user selected on the message.
  * */
-@InternalStreamChatApi
 fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
     return reactionTypes.entries
         .map { (type, emoji) ->

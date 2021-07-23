@@ -30,7 +30,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting
@@ -41,13 +40,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param onBrowseFilesResult - Handler when the user clicks on the browse more files action.
  * @param modifier - Modifier for styling.
  * */
-@InternalStreamChatApi
 @Composable
 internal fun FilesPicker(
     files: List<AttachmentItem>,
     onItemSelected: (AttachmentItem) -> Unit,
     onBrowseFilesResult: (List<Uri>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val fileSelectContract = rememberLauncherForActivityResult(contract = SelectFilesContract()) {
         onBrowseFilesResult(it)
@@ -88,11 +86,10 @@ internal fun FilesPicker(
  * @param fileItem - File to render.
  * @param onItemSelected - Handler when the item is selected.
  * */
-@InternalStreamChatApi
 @Composable
 fun FileListItem(
     fileItem: AttachmentItem,
-    onItemSelected: (AttachmentItem) -> Unit
+    onItemSelected: (AttachmentItem) -> Unit,
 ) {
     Row(
         Modifier

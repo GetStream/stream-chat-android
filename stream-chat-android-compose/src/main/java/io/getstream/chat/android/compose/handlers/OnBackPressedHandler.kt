@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 @Composable
 fun SystemBackPressedHandler(
     isEnabled: Boolean,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ) {
     val backPressedDispatcher =
         (LocalLifecycleOwner.current as ComponentActivity).onBackPressedDispatcher
@@ -41,7 +41,7 @@ fun SystemBackPressedHandler(
 
 private fun buildBackPressedCallback(
     isEnabled: Boolean,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ): OnBackPressedCallback =
     object : OnBackPressedCallback(isEnabled) {
         override fun handleOnBackPressed() = onBackPressed()

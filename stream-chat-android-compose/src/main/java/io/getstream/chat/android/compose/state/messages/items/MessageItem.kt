@@ -5,5 +5,5 @@ import io.getstream.chat.android.client.models.Message
 data class MessageItem(
     val message: Message,
     val position: MessageItemGroupPosition,
-    val parentMessageId: String? = null
+    val parentMessageId: String? = null,
 )

@@ -26,7 +26,6 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
-
 /**
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and
  * show it on the UI.
@@ -41,8 +40,6 @@ import io.getstream.chat.android.offline.ChatDomain
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
  * */
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun ChannelList(
     modifier: Modifier = Modifier,
@@ -68,7 +65,7 @@ fun ChannelList(
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
-    }
+    },
 ) {
 
     LaunchedEffect(Unit) {
@@ -108,8 +105,6 @@ fun ChannelList(
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
  * */
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun ChannelList(
     channelsState: ChannelsState,
@@ -125,7 +120,7 @@ fun ChannelList(
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
-    }
+    },
 ) {
     val (isLoading, _, _, channels) = channelsState
 
@@ -150,13 +145,12 @@ fun ChannelList(
  * @param itemContent - Customizable UI component, that represents each item in the list.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
 @Composable
 private fun Channels(
     channelsState: ChannelsState,
     onLastItemReached: () -> Unit,
     itemContent: @Composable (Channel) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val (_, isLoadingMore, endOfChannels, channels) = channelsState
     val state = rememberLazyListState()

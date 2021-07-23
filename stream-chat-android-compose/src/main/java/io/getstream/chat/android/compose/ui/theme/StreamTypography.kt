@@ -26,7 +26,7 @@ class StreamTypography(
     val footnoteItalic: TextStyle,
     val footnoteBold: TextStyle,
     val captionBold: TextStyle,
-    val tabBar: TextStyle
+    val tabBar: TextStyle,
 ) {
 
     companion object {

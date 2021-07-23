@@ -7,5 +7,5 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItem
 data class AttachmentState(
     val modifier: Modifier,
     val message: MessageItem,
-    val onLongItemClick: (Message) -> Unit = {}
+    val onLongItemClick: (Message) -> Unit = {},
 )

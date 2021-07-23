@@ -11,5 +11,5 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
  * */
 data class AttachmentItem(
     val attachmentMetaData: AttachmentMetaData,
-    val isSelected: Boolean
+    val isSelected: Boolean,
 )

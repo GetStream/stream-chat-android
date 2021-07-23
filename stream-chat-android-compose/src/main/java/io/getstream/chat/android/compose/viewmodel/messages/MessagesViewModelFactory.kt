@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
 class MessagesViewModelFactory(
@@ -20,7 +19,6 @@ class MessagesViewModelFactory(
     private val messageLimit: Int,
 ) : ViewModelProvider.Factory {
 
-    @InternalStreamChatApi
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageComposerViewModel::class.java to {
             MessageComposerViewModel(chatClient, chatDomain, channelId)
@@ -42,7 +40,6 @@ class MessagesViewModelFactory(
         }
     )
 
-    @InternalStreamChatApi
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException("MessageListViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")

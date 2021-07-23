@@ -12,5 +12,5 @@ import io.getstream.chat.android.client.api.models.QuerySort
  * */
 data class QueryConfig<T : Any>(
     val filters: FilterObject,
-    val querySort: QuerySort<T>
+    val querySort: QuerySort<T>,
 )

@@ -13,7 +13,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * */
 class ImagePreviewViewModel(
     private val chatClient: ChatClient,
-    private val chatDomain: ChatDomain
+    private val chatDomain: ChatDomain,
 ) : ViewModel() {
 
     var message by mutableStateOf(Message())

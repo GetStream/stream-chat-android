@@ -62,7 +62,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onMessageAction - Handler for any of the available message actions (options + reactions).
  * @param onDismiss - Handler when the user dismisses the UI.
  * */
-@ExperimentalFoundationApi
 @Composable
 fun SelectedMessageOverlay(
     reactionOptions: List<ReactionOption>,
@@ -116,7 +115,6 @@ fun SelectedMessageOverlay(
  *
  * @param message - Message to show.
  * */
-@ExperimentalFoundationApi
 @Composable
 private fun SelectedMessage(message: Message) {
     val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }

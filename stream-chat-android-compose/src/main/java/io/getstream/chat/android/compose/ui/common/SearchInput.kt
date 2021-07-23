@@ -37,7 +37,7 @@ fun SearchInput(
     modifier: Modifier = Modifier,
     onSearchStarted: () -> Unit = {},
     leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon() },
-    label: @Composable () -> Unit = { DefaultSearchLabel() }
+    label: @Composable () -> Unit = { DefaultSearchLabel() },
 ) {
     var isFocused by remember { mutableStateOf(false) }
 

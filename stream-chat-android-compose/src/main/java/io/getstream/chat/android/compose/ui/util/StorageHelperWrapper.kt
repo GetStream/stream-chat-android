@@ -5,7 +5,6 @@ import android.net.Uri
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Wrapper around the [StorageHelper] class, with some extra functionality that makes it easier to
@@ -15,10 +14,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param storageHelper - The storage helper that provides all the logic required to work with the
  * system storage.
  * */
-@InternalStreamChatApi
 class StorageHelperWrapper(
     private val context: Context,
-    private val storageHelper: StorageHelper
+    private val storageHelper: StorageHelper,
 ) {
 
     /**

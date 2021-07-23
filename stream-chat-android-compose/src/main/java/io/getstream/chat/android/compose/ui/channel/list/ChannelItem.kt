@@ -36,14 +36,14 @@ import java.util.*
  * @param onChannelLongClick - Handler for a long tap on an item.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DefaultChannelItem(
     item: Channel,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

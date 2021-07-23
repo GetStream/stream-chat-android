@@ -40,7 +40,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * action. If nothing is passed in, the default element will be built, using the [onHeaderActionClick]
  * parameter as its handler, and it will represent [DefaultChannelListHeaderAction].
  * */
-@ExperimentalMaterialApi
 @Composable
 fun ChannelListHeader(
     modifier: Modifier = Modifier,
@@ -49,7 +48,7 @@ fun ChannelListHeader(
     isNetworkAvailable: Boolean = true,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
-    action: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) }
+    action: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
 ) {
     Surface(
         modifier = modifier
@@ -97,7 +96,7 @@ fun ChannelListHeader(
 internal fun ChannelHeaderTitle(
     isNetworkAvailable: Boolean,
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isNetworkAvailable) {
         Text(
@@ -121,11 +120,11 @@ internal fun ChannelHeaderTitle(
  * @param onHeaderActionClick - Handler for when the user taps on the action.
  * @param modifier - Modifier for styling.
  * */
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun DefaultChannelListHeaderAction(
     onHeaderActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier
