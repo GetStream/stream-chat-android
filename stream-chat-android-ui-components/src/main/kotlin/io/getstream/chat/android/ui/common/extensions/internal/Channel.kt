@@ -12,17 +12,8 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.isRegular
+import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.isSystem
-
-internal fun Channel.getLastMessage(): Message? =
-    messages.asSequence()
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
-        .filter { !it.silent }
-        .filter { it.user.isCurrentUser() || !it.shadowed }
-        .filter { it.isRegular() || it.isSystem() }
-        .maxByOrNull { it.getCreatedAtOrThrow() }
 
 internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
     ChannelListPayloadDiff(
