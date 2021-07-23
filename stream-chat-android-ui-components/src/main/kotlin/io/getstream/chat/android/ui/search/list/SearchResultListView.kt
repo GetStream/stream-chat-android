@@ -48,16 +48,16 @@ public class SearchResultListView : ViewFlipper {
     private lateinit var style: SearchResultListViewStyle
 
     private fun init(attrs: AttributeSet?) {
-        style = SearchResultListViewStyle(context, attrs).apply {
-            binding.searchInfoBar.background = searchInfoBarBackground
-            searchInfoBarTextStyle.apply(binding.searchInfoBar)
+        style = SearchResultListViewStyle(context, attrs).also { style ->
+            binding.searchInfoBar.background = style.searchInfoBarBackground
+            style.searchInfoBarTextStyle.apply(binding.searchInfoBar)
 
-            binding.emptyImage.setImageDrawable(emptyStateIcon)
-            emptyStateTextStyle.apply(binding.emptyLabel)
+            binding.emptyImage.setImageDrawable(style.emptyStateIcon)
+            style.emptyStateTextStyle.apply(binding.emptyLabel)
 
-            binding.progressBar.indeterminateDrawable = progressBarIcon
+            binding.progressBar.indeterminateDrawable = style.progressBarIcon
 
-            adapter.messagePreviewStyle = messagePreviewStyle
+            adapter.messagePreviewStyle = style.messagePreviewStyle
         }
 
         binding.searchListView.apply {
