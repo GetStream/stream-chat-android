@@ -1,5 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fixed adding `MessageListItem.TypingItem` to message list
 
 ### ⬆️ Improved
 
