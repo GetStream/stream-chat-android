@@ -27,7 +27,7 @@
 
         <activity
             android:name=".gallery.AttachmentGalleryActivity"
-            android:theme="@style/StreamUiAttachmentGalleryActivityStyle"
+            android:theme="@style/StreamUi.AttachmentGallery"
             />
         <activity
             android:name=".gallery.AttachmentMediaActivity"
@@ -35,7 +35,7 @@
             />
         <activity
             android:name=".gallery.AttachmentActivity"
-            android:theme="@style/StreamUiAttachmentActivityStyle"
+            android:theme="@style/StreamUi.AttachmentActivity"
             />
     </application>
 </manifest>

@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
@@ -36,6 +37,11 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
  * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute_black]
  * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
+ * @property itemSeparator - items' separator. Default - [R.drawable.stream_ui_divider]
+ * @property loadingView - loading view. Default - [R.layout.stream_ui_channel_list_loading_view]
+ * @property emptyStateView - empty state view. Default - [R.layout.stream_ui_channel_list_empty_state_view]
+ * @property loadingMoreView - loading more view. Default - [R.layout.stream_ui_channel_list_loading_more_view]
+ * @property edgeEffectColor - color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default - null.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -55,7 +61,12 @@ public data class ChannelListViewStyle(
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
     public val mutedChannelIcon: Drawable,
     @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.ERROR)
-    @ColorInt public val mutedChannelIconTint: Int?
+    @ColorInt public val mutedChannelIconTint: Int?,
+    public val itemSeparator: Drawable,
+    @LayoutRes public val loadingView: Int,
+    @LayoutRes public val emptyStateView: Int,
+    @LayoutRes public val loadingMoreView: Int,
+    @ColorInt public val edgeEffectColor: Int?,
 ) {
 
     internal companion object {
@@ -63,8 +74,8 @@ public data class ChannelListViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ChannelListView,
-                0,
-                0
+                R.attr.streamUiChannelListViewStyle,
+                R.style.StreamUi_ChannelListView,
             ).use { a ->
                 val optionsIcon = a.getDrawable(R.styleable.ChannelListView_streamUiChannelOptionsIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_more)!!
@@ -196,6 +207,27 @@ public data class ChannelListViewStyle(
                     mutedChannelIcon.setTint(tint)
                 }
 
+                val itemSeparator = a.getDrawable(
+                    R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
+
+                val loadingView = a.getResourceId(
+                    R.styleable.ChannelListView_streamUiLoadingView,
+                    R.layout.stream_ui_channel_list_loading_view,
+                )
+
+                val emptyStateView = a.getResourceId(
+                    R.styleable.ChannelListView_streamUiEmptyStateView,
+                    R.layout.stream_ui_channel_list_empty_state_view,
+                )
+
+                val loadingMoreView = a.getResourceId(
+                    R.styleable.ChannelListView_streamUiLoadingMoreView,
+                    R.layout.stream_ui_channel_list_loading_more_view,
+                )
+
+                val edgeEffectColor = a.getColorOrNull(R.styleable.ChannelListView_streamUiEdgeEffectColor)
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -213,7 +245,12 @@ public data class ChannelListViewStyle(
                     unreadMessageCounterText = unreadMessageCounterText,
                     unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor,
                     mutedChannelIcon = mutedChannelIcon,
-                    mutedChannelIconTint = mutedChannelIconTint
+                    mutedChannelIconTint = mutedChannelIconTint,
+                    itemSeparator = itemSeparator,
+                    loadingView = loadingView,
+                    emptyStateView = emptyStateView,
+                    loadingMoreView = loadingMoreView,
+                    edgeEffectColor = edgeEffectColor,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

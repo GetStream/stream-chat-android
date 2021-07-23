@@ -176,7 +176,7 @@ object StreamAttachmentFactories {
             val imageCount = attachments.size
 
             if (imageCount == 1) {
-                val painter = rememberImagePainter(attachments.first().imageUrl)
+                val painter = rememberImagePainter(attachments.first().imagePreviewUrl)
 
                 Image(
                     modifier = Modifier
@@ -195,7 +195,7 @@ object StreamAttachmentFactories {
                 ) {
                     for (imageIndex in 0..3 step 2) {
                         if (imageIndex < imageCount) {
-                            val painter = rememberImagePainter(attachments[imageIndex].imageUrl)
+                            val painter = rememberImagePainter(attachments[imageIndex].imagePreviewUrl)
 
                             Image(
                                 modifier = Modifier
@@ -216,7 +216,7 @@ object StreamAttachmentFactories {
                 ) {
                     for (imageIndex in 1..4 step 2) {
                         if (imageIndex < imageCount) {
-                            val painter = rememberImagePainter(attachments[imageIndex].imageUrl)
+                            val painter = rememberImagePainter(attachments[imageIndex].imagePreviewUrl)
 
                             if (imageIndex == 3 && imageCount > 4) {
                                 Box(modifier = Modifier.weight(1f)) {

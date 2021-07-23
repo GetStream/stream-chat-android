@@ -49,7 +49,7 @@ We also support Jetpack Compose! You can use our Compose UI Components as an alt
   - [Sample app](/stream-chat-android-compose-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/)
 
-Learn more about these by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
+Learn more about the modules by visiting [the documentation](https://getstream.io/chat/docs/sdk/android/).
 
 ## 📖 Tutorial
 

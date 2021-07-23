@@ -50,9 +50,9 @@ You can learn more about the [ChannelsComponent](./channel-components/channels-s
 
 ## Bound components
 
-Next are components which serve a specific use-case and are powered by a `ViewModel`.
+Next are components which serve a specific use-case and are bound to a `ViewModel`.
 
-These components **offer more customization** and are OoB solutions for a **portion of the screen**.
+These components **offer more customization** and display UI for a **portion of the screen**.
 
 They usually represent features on the screen, like the header, input, search or list of data. Some of these components are:
 

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.usecase
 
+import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -28,6 +29,7 @@ internal class QueryMembers(private val domainImpl: ChatDomainImpl) {
      * @param members
      * @return
      */
+    @CheckResult
     operator fun invoke(
         cid: String,
         offset: Int = 0,
