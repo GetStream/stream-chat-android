@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -91,8 +90,8 @@ object StreamAttachmentFactories {
             modifier = modifier
                 .width(250.dp)
                 .wrapContentHeight()
-                .clip(ChatTheme.shapes.attachment) // todo change based on shape
-                .background(ChatTheme.colors.cardAltBackground)
+                .clip(ChatTheme.shapes.attachment)
+                .background(ChatTheme.colors.borders)
                 .combinedClickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
@@ -234,7 +233,7 @@ object StreamAttachmentFactories {
                                     Surface(
                                         modifier = Modifier
                                             .fillMaxSize(),
-                                        color = Color.DarkGray.copy(alpha = 0.6f) // TODO ChatTheme.colors.overlay)
+                                        color = ChatTheme.colors.overlay
                                     ) {
                                         Text(
                                             modifier = Modifier
@@ -244,7 +243,7 @@ object StreamAttachmentFactories {
                                                 id = R.string.remaining_images_count,
                                                 remainingImagesCount
                                             ),
-                                            color = ChatTheme.colors.textSelf,
+                                            color = ChatTheme.colors.barsBackground,
                                             style = ChatTheme.typography.title1,
                                             textAlign = TextAlign.Center
                                         )
@@ -289,7 +288,7 @@ object StreamAttachmentFactories {
             for (attachment in message.attachments) {
                 Surface(
                     modifier = Modifier.padding(2.dp),
-                    color = ChatTheme.colors.appCanvas, shape = RoundedCornerShape(16.dp)
+                    color = ChatTheme.colors.appBackground, shape = RoundedCornerShape(16.dp)
                 ) {
                     Row(
                         Modifier
@@ -326,7 +325,7 @@ object StreamAttachmentFactories {
                             Text(
                                 text = UiUtils.getFileSizeHumanized(attachment.fileSize),
                                 style = ChatTheme.typography.footnote,
-                                color = ChatTheme.colors.textMidEmphasis
+                                color = ChatTheme.colors.textLowEmphasis
                             )
                         }
 

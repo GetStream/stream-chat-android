@@ -163,7 +163,7 @@ private fun Messages(
 
     val currentListState = if (parentMessageId != null) rememberLazyListState() else state
 
-    Box(modifier = modifier.background(ChatTheme.colors.appCanvas)) {
+    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = currentListState,

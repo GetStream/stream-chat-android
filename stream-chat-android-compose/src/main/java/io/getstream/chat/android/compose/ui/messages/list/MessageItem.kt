@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
@@ -60,7 +59,6 @@ import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.components.Avatar
 import io.getstream.chat.android.compose.ui.components.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -98,7 +96,7 @@ internal fun DefaultMessageContainer(
     val ownsMessage = message.user.id == currentUser?.id
 
     val messageCardColor =
-        if (ownsMessage) ChatTheme.colors.cardBackground else ChatTheme.colors.cardAltBackground
+        if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
 
     val clickModifier = if (isDeleted) {
         Modifier
@@ -197,7 +195,7 @@ internal fun DefaultMessageContainer(
 @Composable
 private fun RowScope.MessageAvatar(
     position: MessageItemGroupPosition,
-    user: User
+    user: User,
 ) {
     if (position == Bottom || position == None) {
         val authorImage = rememberImagePainter(data = user.image)
@@ -227,7 +225,7 @@ private fun MessageReactions(
 ) {
     Row(
         modifier = modifier
-            .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.cardBackground)
+            .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
             .padding(4.dp),
         verticalAlignment = CenterVertically
     ) {
@@ -236,7 +234,7 @@ private fun MessageReactions(
                 Text(
                     modifier = Modifier.padding(2.dp),
                     style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textMidEmphasis,
+                    color = ChatTheme.colors.textLowEmphasis,
                     text = count.toString()
                 )
 
@@ -509,14 +507,14 @@ internal fun MessageFooter(
                 modifier = Modifier.padding(end = 8.dp),
                 text = message.user.name,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textMidEmphasis
+                color = ChatTheme.colors.textLowEmphasis
             )
 
             Text(
                 SimpleDateFormat.getTimeInstance().format(message.createdAt ?: Date()),
                 style = ChatTheme.typography.footnote,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textMidEmphasis
+                color = ChatTheme.colors.textLowEmphasis
             )
         }
     }
@@ -553,25 +551,7 @@ private fun DeletedMessageFooter(
             text = SimpleDateFormat.getTimeInstance().format(message.deletedAt ?: Date()),
             style = ChatTheme.typography.footnote,
             fontSize = 12.sp,
-            color = ChatTheme.colors.textMidEmphasis
+            color = ChatTheme.colors.textLowEmphasis
         )
-    }
-}
-
-/**
- *
- * @param message - Message to show.
- * @param modifier - Modifier for styling.
- * */
-@InternalStreamChatApi
-@ExperimentalFoundationApi
-@Composable
-internal fun ThreadHeaderItem(
-    message: MessageItem,
-    modifier: Modifier = Modifier,
-) {
-    // TODO we need to change the UI of this. Maybe pull it out of the list.
-    Surface(modifier = modifier, color = ChatTheme.colors.appCanvas) {
-        DefaultMessageContainer(messageItem = message, onLongItemClick = {}, null)
     }
 }

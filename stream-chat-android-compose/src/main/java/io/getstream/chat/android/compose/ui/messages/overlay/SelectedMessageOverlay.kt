@@ -134,7 +134,7 @@ private fun SelectedMessage(message: Message) {
             painter = authorImage
         )
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.cardBackground, content = {
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground, content = {
             if (message.deletedAt != null) {
                 DeletedMessageContent()
             } else {

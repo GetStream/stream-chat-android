@@ -110,6 +110,6 @@ internal fun RowScope.DefaultSearchLeadingIcon() {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.query_channels),
-        color = ChatTheme.colors.textMidEmphasis
+        color = ChatTheme.colors.textLowEmphasis
     )
 }

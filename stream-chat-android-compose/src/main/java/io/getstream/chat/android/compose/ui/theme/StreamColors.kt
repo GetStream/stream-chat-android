@@ -8,63 +8,65 @@ import io.getstream.chat.android.compose.R
 /**
  * Contains all the colors in our palette. Each color is used for various things an can be changed to
  * customize the app design style.
- * // TODO - clearly define all these colors.
- * @param primaryAccent - Used for things like primary icon colors, buttons etc.
- * @param appCanvas - Used for the base app background.
- * @param textHighEmphasis - Color for text that's important, like message text.
- * @param textMidEmphasis - Color for text that's somewhat important, like labels.
- * @param textLowEmphasis - Color for text that's less important, like timestamps.
- * @param cardBackground - Color for card backgrounds, usually messages.
- * @param cardAltBackground - Alternate color for car background, like other people's messages.
- * @param stroke - Color of stroke accents, such as card borders.
- * @param strokeLowEmphasis - Color of stroke accents, for less emphasized borders and components.
+ * @param textHighEmphasis - Used for main text and active icon status.
+ * @param textLowEmphasis - Used for secondary text, default icon state, deleted messages text and datestamp background.
+ * @param disabled - Used for disabled icons and empty states.
+ * @param borders - Used for borders, the background of self messages, selected items, pressed state, button dividers.
+ * @param inputBackground - Used for the input background, deleted messages, section headings.
+ * @param appBackground - Used for the default app background and channel list item background.
+ * @param barsBackground - Used for button text, top and bottom bar background and other user messages.
+ * @param linkBackground - Used for the message link card background.
+ * @param overlay - Used for general overlays and background when opening modals.
+ * @param primaryAccent - Used for selected icon state, call to actions, white buttons text and links.
+ * @param errorAccent - Used for error text labels, notification badges and disruptive action text and icons.
+ * @param infoAccent - Used for the online status.
  * */
-class StreamColors(
-    val primaryAccent: Color,
-    val appCanvas: Color,
-    val textHighEmphasis: Color,
-    val textMidEmphasis: Color,
-    val textLowEmphasis: Color,
-    val textSelf: Color,
-    val textPressed: Color,
-    val cardBackground: Color,
-    val cardAltBackground: Color,
-    val cardSelfBackground: Color,
-    val stroke: Color,
-    val strokeLowEmphasis: Color
+public class StreamColors(
+    public val textHighEmphasis: Color,
+    public val textLowEmphasis: Color,
+    public val disabled: Color,
+    public val borders: Color,
+    public val inputBackground: Color,
+    public val appBackground: Color,
+    public val barsBackground: Color,
+    public val linkBackground: Color,
+    public val overlay: Color,
+    public val primaryAccent: Color,
+    public val errorAccent: Color,
+    public val infoAccent: Color
 ) {
 
-    companion object {
+    public companion object {
         @Composable
-        fun defaultColors(): StreamColors = StreamColors(
-            primaryAccent = colorResource(id = R.color.primaryAccent),
-            appCanvas = colorResource(R.color.appCanvas),
+        public fun defaultColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.textHighEmphasis),
-            textMidEmphasis = colorResource(R.color.textMidEmphasis),
             textLowEmphasis = colorResource(R.color.textLowEmphasis),
-            textSelf = colorResource(R.color.textSelf),
-            textPressed = colorResource(R.color.textPressed),
-            cardBackground = colorResource(R.color.cardBackground),
-            cardAltBackground = colorResource(R.color.cardAltBackground),
-            cardSelfBackground = colorResource(R.color.cardSelfBackground),
-            stroke = colorResource(R.color.stroke),
-            strokeLowEmphasis = colorResource(R.color.strokeLowEmphasis)
+            disabled = colorResource(R.color.disabled),
+            borders = colorResource(R.color.borders),
+            inputBackground = colorResource(R.color.inputBackground),
+            appBackground = colorResource(R.color.appBackground),
+            barsBackground =colorResource(R.color.barsBackground),
+            linkBackground =colorResource(R.color.linkBackground),
+            overlay =colorResource(R.color.overlay),
+            primaryAccent = colorResource(id = R.color.primaryAccent),
+            errorAccent =colorResource(R.color.errorAccent),
+            infoAccent =colorResource(R.color.infoAccent),
         )
 
         @Composable
-        fun defaultDarkColors() = StreamColors(
-            primaryAccent = colorResource(R.color.primaryAccentDark),
-            appCanvas = colorResource(R.color.appCanvasDark),
+        public fun defaultDarkColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.textHighEmphasisDark),
-            textMidEmphasis = colorResource(R.color.textMidEmphasisDark),
             textLowEmphasis = colorResource(R.color.textLowEmphasisDark),
-            textSelf = colorResource(R.color.textSelfDark),
-            textPressed = colorResource(R.color.textPressedDark),
-            cardBackground = colorResource(R.color.cardBackgroundDark),
-            cardAltBackground = colorResource(R.color.cardAltBackgroundDark),
-            cardSelfBackground = colorResource(R.color.cardSelfBackgroundDark),
-            stroke = colorResource(R.color.strokeDark),
-            strokeLowEmphasis = colorResource(R.color.strokeLowEmphasisDark)
+            disabled = colorResource(R.color.disabledDark),
+            borders = colorResource(R.color.bordersDark),
+            inputBackground = colorResource(R.color.inputBackgroundDark),
+            appBackground = colorResource(R.color.appBackgroundDark),
+            barsBackground =colorResource(R.color.barsBackgroundDark),
+            linkBackground =colorResource(R.color.linkBackgroundDark),
+            overlay =colorResource(R.color.overlayDark),
+            primaryAccent = colorResource(id = R.color.primaryAccentDark),
+            errorAccent =colorResource(R.color.errorAccentDark),
+            infoAccent =colorResource(R.color.infoAccentDark),
         )
     }
 }

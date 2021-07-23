@@ -165,6 +165,6 @@ fun MessageComposer(
 internal fun DefaultComposerLabel() {
     Text(
         text = stringResource(id = R.string.message_label),
-        color = ChatTheme.colors.textMidEmphasis
+        color = ChatTheme.colors.textLowEmphasis
     )
 }

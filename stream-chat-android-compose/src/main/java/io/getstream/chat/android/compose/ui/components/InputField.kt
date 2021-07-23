@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -24,8 +25,9 @@ fun InputField(
 ) {
     BasicTextField(
         modifier = modifier
-            .border(2.dp, ChatTheme.colors.stroke, shape = ChatTheme.shapes.inputField)
+            .border(2.dp, ChatTheme.colors.borders, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
+            .background(ChatTheme.colors.inputBackground)
             .padding(8.dp),
         value = value,
         onValueChange = onValueChange,

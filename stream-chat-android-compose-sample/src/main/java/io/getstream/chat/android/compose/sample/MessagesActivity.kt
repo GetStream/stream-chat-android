@@ -177,7 +177,7 @@ class MessagesActivity : AppCompatActivity() {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Type something",
-                                color = ChatTheme.colors.textMidEmphasis
+                                color = ChatTheme.colors.textLowEmphasis
                             )
                         }
                     })

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default colors -->
+    <color name="textHighEmphasis">#000000</color>
+    <color name="textLowEmphasis">#72767E</color>
+    <color name="disabled">#B4B7BB</color>
+    <color name="borders">#DBDDE1</color>
+    <color name="inputBackground">#E9EAED</color>
+    <color name="appBackground">#F7F7F8</color>
+    <color name="barsBackground">#FFFFFF</color>
+    <color name="linkBackground">#E9F1FF</color>
+    <color name="overlay">#33000000</color>
     <color name="primaryAccent">#006CFF</color>
-    <color name="appCanvas">#FFFFFF</color>
-    <color name="textHighEmphasis">#0E1621</color>
-    <color name="textMidEmphasis">#8A898E</color>
-    <color name="textLowEmphasis">#B2B1B5</color>
-    <color name="textSelf">#FFFFFF</color>
-    <color name="textPressed">#FFFFFF</color>
-    <color name="cardBackground">#F2F2F2</color>
-    <color name="cardAltBackground">#FFFFFF</color>
-    <color name="cardSelfBackground">#41AFFC</color>
-    <color name="stroke">#E5E5E6</color>
-    <color name="strokeLowEmphasis">#F2F2F2</color>
+    <color name="errorAccent">#FF3742</color>
+    <color name="infoAccent">#20E070</color>
 
     <!-- Default Dark colors -->
-    <color name="primaryAccentDark">#006CFF</color>
-    <color name="appCanvasDark">#0E1723</color>
     <color name="textHighEmphasisDark">#FFFFFF</color>
-    <color name="textMidEmphasisDark">#868B91</color>
-    <color name="textLowEmphasisDark">#57606B</color>
-    <color name="textSelfDark">#FFFFFF</color>
-    <color name="textPressedDark">#FFFFFF</color>
-    <color name="cardBackgroundDark">#152438</color>
-    <color name="cardAltBackgroundDark">#0E1723</color>
-    <color name="cardSelfBackgroundDark">#69727D</color>
-    <color name="strokeDark">#1B2D46</color>
-    <color name="strokeLowEmphasisDark">#1A232E</color>
+    <color name="textLowEmphasisDark">#72767E</color>
+    <color name="disabledDark">#4C525C</color>
+    <color name="bordersDark">#272A30</color>
+    <color name="inputBackgroundDark">#1C1E22</color>
+    <color name="appBackgroundDark">#000000</color>
+    <color name="barsBackgroundDark">#121416</color>
+    <color name="linkBackgroundDark">#00193D</color>
+    <color name="overlayDark">#33000000</color>
+    <color name="primaryAccentDark">#006CFF</color>
+    <color name="errorAccentDark">#FF3742</color>
+    <color name="infoAccentDark">#20E070</color>
 </resources>

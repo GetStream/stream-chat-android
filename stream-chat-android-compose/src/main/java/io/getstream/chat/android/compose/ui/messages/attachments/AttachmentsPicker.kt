@@ -283,7 +283,7 @@ private fun AttachmentPickerOptions(
                     Icon(
                         imageVector = Icons.Default.Image,
                         contentDescription = stringResource(id = R.string.images_option),
-                        tint = if (!hasPickedFiles) ChatTheme.colors.primaryAccent else ChatTheme.colors.strokeLowEmphasis
+                        tint = if (!hasPickedFiles) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 },
                 onClick = { onOptionClick(Images) }
@@ -295,7 +295,7 @@ private fun AttachmentPickerOptions(
                     Icon(
                         imageVector = Icons.Default.Folder,
                         contentDescription = stringResource(id = R.string.files_option),
-                        tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.strokeLowEmphasis
+                        tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 }, onClick = { onOptionClick(Files) }
             )
@@ -306,7 +306,7 @@ private fun AttachmentPickerOptions(
                     Icon(
                         imageVector = Icons.Default.Camera,
                         contentDescription = stringResource(id = R.string.capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.strokeLowEmphasis
+                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 }, onClick = { onOptionClick(MediaCapture) }
             )
@@ -322,7 +322,7 @@ private fun AttachmentPickerOptions(
                     modifier = Modifier.weight(1f),
                     imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = stringResource(id = R.string.send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.strokeLowEmphasis
+                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                 )
             })
     }
