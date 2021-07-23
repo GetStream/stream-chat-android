@@ -1765,7 +1765,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaA
 	public final fun getImageBackgroundColor ()I
 	public final fun getMoreCountOverlayColor ()I
 	public final fun getMoreCountTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun getPlaceHolderIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
