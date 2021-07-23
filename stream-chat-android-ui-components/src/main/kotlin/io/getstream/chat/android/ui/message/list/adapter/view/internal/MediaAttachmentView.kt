@@ -92,7 +92,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
-            placeholderDrawable = style.placeHolderIcon,
+            placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)
