@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Composable that represents the message composer integrations (special actions).
@@ -30,7 +31,8 @@ internal fun RowScope.DefaultComposerIntegrations(
         content = {
             Icon(
                 imageVector = Icons.Default.Attachment,
-                contentDescription = stringResource(id = R.string.attachments)
+                contentDescription = stringResource(id = R.string.attachments),
+                tint = ChatTheme.colors.textLowEmphasis,
             )
         },
         onClick = onAttachmentsClick

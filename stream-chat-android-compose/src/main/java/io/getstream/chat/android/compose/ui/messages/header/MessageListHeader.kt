@@ -70,7 +70,8 @@ fun MessageListHeader(
 
     Surface(
         modifier = modifier.fillMaxWidth(),
-        elevation = 4.dp
+        elevation = 4.dp,
+        color = ChatTheme.colors.barsBackground,
     ) {
         Row(
             modifier = Modifier
@@ -103,8 +104,7 @@ fun MessageListHeader(
 
             Avatar(
                 modifier = Modifier
-                    .size(48.dp)
-                    .weight(1f),
+                    .size(36.dp),
                 painter = painter,
                 contentDescription = channel.name
             )
@@ -135,20 +135,24 @@ private fun MessagesHeaderTitle(
     ) {
         Text(
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.bodyBold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         if (isNetworkAvailable) {
-            Text(text = subtitle)
+            Text(
+                text = subtitle,
+                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.footnote,
+            )
         } else {
             NetworkLoadingView(
                 modifier = Modifier.wrapContentHeight(),
                 textStyle = MaterialTheme.typography.body2,
-                spinnerSize = 12.dp
+                spinnerSize = 12.dp,
             )
         }
     }
 }
-

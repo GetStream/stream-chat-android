@@ -165,7 +165,10 @@ internal fun ReactionOptions(
     options: List<ReactionOption>,
     onReactionClick: (ReactionOption) -> Unit,
 ) {
-    Surface(shape = RoundedCornerShape(16.dp)) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = ChatTheme.colors.barsBackground,
+    ) {
         LazyRow(
             modifier = Modifier
                 .wrapContentWidth()
@@ -218,7 +221,10 @@ internal fun MessageOptions(
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(shape = RoundedCornerShape(16.dp)) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = ChatTheme.colors.barsBackground,
+    ) {
         LazyColumn(modifier) {
             items(options) { option ->
                 MessageOptionItem(

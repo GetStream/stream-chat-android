@@ -68,7 +68,6 @@ fun MessageComposer(
         )
     },
 ) {
-
     MessageComposer(
         modifier = modifier,
         onSendMessage = onSendMessage,
@@ -108,8 +107,11 @@ fun MessageComposer(
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
 ) {
-
-    Surface(modifier, elevation = 4.dp) {
+    Surface(
+        modifier = modifier,
+        elevation = 4.dp,
+        color = ChatTheme.colors.barsBackground,
+    ) {
         Column(
             Modifier
                 .padding(vertical = 6.dp)
@@ -140,7 +142,8 @@ fun MessageComposer(
                     content = {
                         Icon(
                             imageVector = Icons.Default.Send,
-                            contentDescription = stringResource(id = R.string.send_message)
+                            contentDescription = stringResource(id = R.string.send_message),
+                            tint = ChatTheme.colors.textLowEmphasis,
                         )
                     },
                     onClick = {
