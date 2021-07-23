@@ -500,7 +500,7 @@
         <item name="streamUiGiphySendButtonTextColor">@color/stream_ui_accent_blue</item>
         <item name="streamUiGiphySendButtonTextStyle">normal</item>
 
-        <item name="streamUiMessageListProgressBarStyle">?android:attr/progressBarStyleLarge</item>
+        <item name="streamUiMessageListLoadingView">@layout/stream_ui_default_loading_view</item>
         <item name="streamUiEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiEmptyStateTextStyle">normal</item>
@@ -605,7 +605,7 @@
 
         <item name="streamUiMutedChannelIcon">@drawable/stream_ui_ic_mute_black</item>
 
-        <item name="streamUiLoadingView">@layout/stream_ui_channel_list_loading_view</item>
+        <item name="streamUiLoadingView">@layout/stream_ui_default_loading_view</item>
         <item name="streamUiLoadingMoreView">@layout/stream_ui_channel_list_loading_more_view</item>
         <item name="streamUiEmptyStateView">@layout/stream_ui_channel_list_empty_state_view</item>
     </style>

@@ -359,7 +359,7 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="streamUiMessageListProgressBarStyle" format="reference" />
+        <attr name="streamUiMessageListLoadingView" format="reference" />
         <attr name="streamUiEmptyStateTextSize" format="dimension|reference" />
         <attr name="streamUiEmptyStateTextColor" format="color|reference" />
         <attr name="streamUiEmptyStateTextFont" format="reference" />
