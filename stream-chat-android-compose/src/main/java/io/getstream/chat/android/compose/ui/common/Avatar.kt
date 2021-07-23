@@ -39,9 +39,10 @@ fun Avatar(
         modifier
     }
 
+    val shape = ChatTheme.shapes.avatar
     Image(
-        modifier = clickableModifier
-            .clip(ChatTheme.shapes.avatar),
+        modifier = modifier
+            .clip(shape),
         contentScale = ContentScale.Crop,
         painter = painter,
         contentDescription = contentDescription

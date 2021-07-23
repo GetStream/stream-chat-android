@@ -15,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Represents the default network loading view for the header, in case the network is down.
@@ -38,12 +39,14 @@ fun NetworkLoadingView(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(spinnerSize),
-            strokeWidth = 2.dp
+            strokeWidth = 2.dp,
+            color = ChatTheme.colors.primaryAccent,
         )
 
         Text(
             text = stringResource(id = R.string.waiting_for_network),
-            style = textStyle
+            style = textStyle,
+            color = ChatTheme.colors.textHighEmphasis,
         )
     }
 }

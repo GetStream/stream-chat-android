@@ -36,7 +36,7 @@ fun SearchInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onSearchStarted: () -> Unit = {},
-    leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon() },
+    leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon(empty = query.isEmpty()) },
     label: @Composable () -> Unit = { DefaultSearchLabel() },
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -51,7 +51,8 @@ fun SearchInput(
                 content = {
                     Icon(
                         imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.cancel_search)
+                        contentDescription = stringResource(id = R.string.cancel_search),
+                        tint = ChatTheme.colors.textLowEmphasis,
                     )
                 }
             )
@@ -95,11 +96,12 @@ fun SearchInput(
  * Default search input field leading "search" icon.
  * */
 @Composable
-internal fun RowScope.DefaultSearchLeadingIcon() {
+internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
     Icon(
         modifier = Modifier.weight(1f),
         imageVector = Icons.Default.Search,
-        contentDescription = null
+        contentDescription = null,
+        tint = if (!empty) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis,
     )
 }
 
@@ -110,6 +112,6 @@ internal fun RowScope.DefaultSearchLeadingIcon() {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.query_channels),
-        color = ChatTheme.colors.textLowEmphasis
+        color = ChatTheme.colors.textLowEmphasis,
     )
 }

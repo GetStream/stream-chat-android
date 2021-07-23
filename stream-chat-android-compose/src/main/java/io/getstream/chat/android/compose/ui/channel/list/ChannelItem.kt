@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,7 +57,7 @@ internal fun DefaultChannelItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ),
-        verticalAlignment = CenterVertically
+        verticalAlignment = CenterVertically,
     ) {
         val imagePainter = rememberChannelImagePainter(channel = item, currentUser = currentUser)
 
@@ -64,7 +65,7 @@ internal fun DefaultChannelItem(
             modifier = Modifier
                 .padding(start = 8.dp)
                 .size(36.dp),
-            painter = imagePainter
+            painter = imagePainter,
         )
 
         Spacer(Modifier.width(8.dp))
@@ -75,31 +76,33 @@ internal fun DefaultChannelItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.6f)
-                .height(48.dp)
+                .height(48.dp),
         ) {
             Text(
                 text = item.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Text(
                 text = lastMessage?.text ?: "No message",
                 fontSize = 14.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
 
         if (lastMessage != null) {
             Row(
                 modifier = Modifier
-                    .padding(end = 8.dp, bottom = 4.dp)
+                    .padding(end = 4.dp, bottom = 4.dp)
                     .wrapContentHeight()
                     .align(Bottom),
-                verticalAlignment = CenterVertically
+                verticalAlignment = CenterVertically,
             ) {
                 val messageIcon =
                     if (item.getUnreadMessagesCount("") == 0) Icons.Default.Message else Icons.Outlined.Message
@@ -109,12 +112,13 @@ internal fun DefaultChannelItem(
                         .padding(end = 8.dp)
                         .size(12.dp),
                     imageVector = messageIcon,
-                    contentDescription = null
+                    contentDescription = null,
                 ) // TODO seen/not
 
                 Text(
                     text = SimpleDateFormat.getTimeInstance().format(item.lastUpdated ?: Date()),
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
         }

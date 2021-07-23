@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -56,6 +55,7 @@ import io.getstream.chat.android.compose.state.channel.list.ChannelOption
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
 import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Shows special UI when an item is selected.
@@ -90,18 +90,24 @@ fun ChannelInfo(
     val channelOptions = mutableListOf(
         ChannelOption(
             title = stringResource(id = R.string.view_info),
+            titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Person,
+            iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
         ChannelOption(
             title = stringResource(id = R.string.leave_group),
+            titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.PersonRemove,
+            iconColor = ChatTheme.colors.textLowEmphasis,
             action = LeaveGroup(selectedChannel)
         ),
         ChannelOption(
             title = stringResource(id = R.string.cancel),
+            titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Cancel,
-            action = Cancel
+            iconColor = ChatTheme.colors.textLowEmphasis,
+            action = Cancel,
         )
     )
 
@@ -109,9 +115,9 @@ fun ChannelInfo(
         channelOptions.add(
             2, ChannelOption(
                 title = stringResource(id = R.string.delete_conversation),
-                titleColor = Color.Red,
+                titleColor = ChatTheme.colors.errorAccent,
                 icon = Icons.Default.Delete,
-                iconColor = Color.Red,
+                iconColor = ChatTheme.colors.errorAccent,
                 action = DeleteConversation(selectedChannel)
             )
         )
@@ -120,7 +126,8 @@ fun ChannelInfo(
     Card(
         modifier,
         elevation = 8.dp,
-        shape = shape
+        shape = shape,
+        backgroundColor = ChatTheme.colors.barsBackground,
     ) {
         Column(
             modifier = Modifier.padding(top = 16.dp),
@@ -131,7 +138,8 @@ fun ChannelInfo(
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = ChatTheme.colors.textHighEmphasis,
             )
             Text(
                 text = stringResource(
@@ -139,7 +147,8 @@ fun ChannelInfo(
                     channelMembers.size,
                     onlineMembers
                 ),
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                color = ChatTheme.colors.textLowEmphasis,
             )
 
             LazyRow(
@@ -194,7 +203,8 @@ private fun ChannelInfoUserItem(
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
             overflow = TextOverflow.Ellipsis,
-            maxLines = 1
+            maxLines = 1,
+            color = ChatTheme.colors.textHighEmphasis,
         )
     }
 }

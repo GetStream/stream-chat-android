@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ fun ChannelListHeader(
         modifier = modifier
             .fillMaxWidth(),
         elevation = 4.dp,
+        color = ChatTheme.colors.barsBackground,
     ) {
         Row(
             Modifier
@@ -66,8 +68,7 @@ fun ChannelListHeader(
 
             Avatar(
                 modifier = Modifier
-                    .size(48.dp)
-                    .weight(1f),
+                    .size(36.dp),
                 painter = painter,
                 contentDescription = currentUser?.name,
                 onClick = { onAvatarClick(currentUser) }
@@ -104,7 +105,7 @@ internal fun ChannelHeaderTitle(
                 .wrapContentWidth()
                 .padding(horizontal = 16.dp),
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.bodyBold,
             maxLines = 1,
             fontWeight = FontWeight.Bold,
             color = ChatTheme.colors.textHighEmphasis
@@ -128,16 +129,18 @@ internal fun DefaultChannelListHeaderAction(
 ) {
     Surface(
         modifier = modifier
-            .size(48.dp)
+            .size(36.dp)
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(bounded = false, radius = 24.dp)
+        indication = rememberRipple(bounded = false, radius = 24.dp),
+        color = ChatTheme.colors.primaryAccent,
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
             imageVector = Icons.Default.Edit,
-            contentDescription = stringResource(id = R.string.edit_action)
+            contentDescription = stringResource(id = R.string.edit_action),
+            tint = Color.White,
         )
     }
 }

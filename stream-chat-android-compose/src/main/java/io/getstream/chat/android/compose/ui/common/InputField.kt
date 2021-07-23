@@ -7,6 +7,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -27,9 +29,14 @@ fun InputField(
         modifier = modifier
             .border(2.dp, ChatTheme.colors.borders, shape = ChatTheme.shapes.inputField)
             .clip(ChatTheme.shapes.inputField)
-            .background(ChatTheme.colors.inputBackground)
+            .background(ChatTheme.colors.appBackground)
             .padding(8.dp),
         value = value,
         onValueChange = onValueChange,
-        decorationBox = { innerTextField -> decorationBox(innerTextField) })
+        textStyle = ChatTheme.typography.body.copy(
+            color = ChatTheme.colors.textHighEmphasis,
+        ),
+        cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
+        decorationBox = { innerTextField -> decorationBox(innerTextField) },
+    )
 }
