@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui
 import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
+import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
@@ -15,6 +16,7 @@ import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewSty
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
+import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 
 public object TransformStyle {
@@ -33,7 +35,9 @@ public object TransformStyle {
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentsViewStyle> = noopTransformer()
     public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
+    public var mentionListViewStyleTransformer: StyleTransformer<MentionListViewStyle> = noopTransformer()
     public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()
+    public var searchResultListViewStyleTransformer: StyleTransformer<SearchResultListViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

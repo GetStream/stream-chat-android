@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.mention.list.MentionListView.MentionSelectedListener
 import io.getstream.chat.android.ui.mention.list.internal.MentionListAdapter.MessagePreviewViewHolder
+import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.message.preview.internal.MessagePreviewView
 
 internal class MentionListAdapter(
@@ -24,7 +25,7 @@ internal class MentionListAdapter(
     private var mentionSelectedListener: MentionSelectedListener? = null
     private var dateFormatter = DateFormatter.from(context)
 
-    var previewStyle: MessagePreviewView.PreviewStyle? = null
+    var previewStyle: MessagePreviewStyle? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
