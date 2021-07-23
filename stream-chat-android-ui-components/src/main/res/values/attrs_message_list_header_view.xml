@@ -37,6 +37,7 @@
         <attr name="streamUiMessageListHeaderShowSearchingForNetworkProgressBar" format="boolean" />
         <attr name="streamUiMessageListHeaderSearchingForNetworkProgressBarTint" format="color|reference" />
 
+        <attr name="streamUiMessageListHeaderBackButtonIcon" format="reference" />
         <attr name="streamUiMessageListHeaderShowBackButton" format="boolean" />
         <attr name="streamUiMessageListHeaderShowBackButtonBadge" format="boolean" />
         <attr name="streamUiMessageListHeaderBackButtonBadgeBackgroundColor" format="color" />
@@ -50,6 +51,5 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="streamUiMessageListHeaderBackButtonIcon" format="reference" />
     </declare-styleable>
 </resources>
