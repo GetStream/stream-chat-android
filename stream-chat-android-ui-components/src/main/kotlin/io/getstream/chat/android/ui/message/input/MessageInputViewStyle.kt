@@ -359,6 +359,30 @@ public data class MessageInputViewStyle(
                 val fileManagerIcon = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentsFileManagerIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
+                val videoIconDrawable = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentVideoLogoIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
+
+                val videoLengthTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentVideoLengthTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+                val videoLengthVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoLengthVisible, true)
+                val videoIconVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoIconVisible, true)
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
@@ -376,6 +400,10 @@ public data class MessageInputViewStyle(
                     recentFilesTextStyle = recentFilesTextStyle,
                     recentFilesText = recentFilesText.toString(),
                     fileManagerIcon = fileManagerIcon,
+                    videoIconDrawable = videoIconDrawable,
+                    videoDurationTextStyle = videoLengthTextStyle,
+                    videoLengthLabelVisible = videoLengthVisible,
+                    videoIconVisible = videoIconVisible,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

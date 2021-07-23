@@ -28,6 +28,10 @@ public data class AttachmentSelectionDialogStyle(
     val recentFilesTextStyle: TextStyle,
     val recentFilesText: String,
     val fileManagerIcon: Drawable,
+    val videoDurationTextStyle: TextStyle,
+    val videoIconDrawable: Drawable,
+    val videoIconVisible: Boolean,
+    val videoLengthLabelVisible: Boolean,
 ) {
     public companion object {
         /**
@@ -50,7 +54,11 @@ public data class AttachmentSelectionDialogStyle(
                 grantPermissionsTextStyle = TextStyle(), // TODO
                 recentFilesTextStyle = TextStyle(), // TODO
                 recentFilesText = context.getString(R.string.stream_ui_message_input_recent_files),
-                fileManagerIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_manager)!!
+                fileManagerIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_manager)!!,
+                videoDurationTextStyle = TextStyle(), // TODO
+                videoIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!,
+                videoIconVisible = true,
+                videoLengthLabelVisible = true,
             )
         }
     }

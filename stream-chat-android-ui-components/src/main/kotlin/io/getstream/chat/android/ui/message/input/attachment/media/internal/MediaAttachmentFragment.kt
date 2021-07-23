@@ -32,14 +32,14 @@ internal class MediaAttachmentFragment : Fragment() {
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
-    private val mediaAttachmentsAdapter: MediaAttachmentAdapter = MediaAttachmentAdapter {
+    private val style by lazy { staticStyle!! }
+
+    private val mediaAttachmentsAdapter: MediaAttachmentAdapter = MediaAttachmentAdapter(style = style.attachmentSelectionDialogStyle) {
         updateMediaAttachment(it)
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
     private var attachmentSelectionListener: AttachmentSelectionListener? = null
-
-    private val style by lazy { staticStyle!! }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

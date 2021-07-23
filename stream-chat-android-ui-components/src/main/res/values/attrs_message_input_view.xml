@@ -169,6 +169,18 @@
         </attr>
         <attr name="streamUiFileCheckBoxSelectorDrawable" format="reference" />
         <attr name="streamUiFileCheckBoxSelectorTextColor" format="reference" />
+        <attr name="streamUiAttachmentVideoLogoIcon" format="reference" />
+        <attr name="streamUiAttachmentVideoLengthTextSize" format="dimension" />
+        <attr name="streamUiAttachmentVideoLengthTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentVideoLengthFontAssets" format="string" />
+        <attr name="streamUiAttachmentVideoLengthFont" format="string" />
+        <attr name="streamUiAttachmentVideoLengthTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentVideoLengthVisible" format="boolean" />
+        <attr name="streamUiAttachmentVideoIconVisible" format="boolean" />
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />
         <attr name="streamUiAllowAccessToFilesText" format="string" />
