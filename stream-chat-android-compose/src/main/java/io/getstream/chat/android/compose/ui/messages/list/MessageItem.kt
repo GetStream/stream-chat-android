@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import com.getstream.sdk.chat.utils.UiUtils
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
@@ -59,6 +58,8 @@ import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.reactionTypes
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -127,8 +128,6 @@ internal fun DefaultMessageContainer(
 
             Column(horizontalAlignment = if (ownsMessage) End else Start) {
                 // reactions
-                val reactionTypes = UiUtils.getReactionTypes()
-
                 val reactions = message.reactionCounts
                     .mapKeys { (type, _) -> reactionTypes[type] ?: "" }
 

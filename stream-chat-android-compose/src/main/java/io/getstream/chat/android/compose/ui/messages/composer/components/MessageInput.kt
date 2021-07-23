@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
-import com.getstream.sdk.chat.utils.UiUtils
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -275,7 +276,7 @@ internal fun MessageInputFileAttachments(
                         modifier = Modifier
                             .size(height = 40.dp, width = 35.dp)
                             .clip(RoundedCornerShape(8.dp)),
-                        painter = painterResource(id = UiUtils.getIcon(file.mimeType)),
+                        painter = painterResource(id = MimeTypeIconProvider.getIconRes(file.mimeType)),
                         contentDescription = null
                     )
 
@@ -297,7 +298,7 @@ internal fun MessageInputFileAttachments(
                         )
 
                         Text(
-                            text = UiUtils.getFileSizeHumanized(file.fileSize),
+                            text = MediaStringUtil.convertFileSizeByteCount(file.fileSize.toLong()),
                             style = ChatTheme.typography.footnote,
                             color = ChatTheme.colors.textLowEmphasis
                         )

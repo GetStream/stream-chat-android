@@ -29,12 +29,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import com.getstream.sdk.chat.utils.UiUtils
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
+import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
@@ -301,7 +302,7 @@ object StreamAttachmentFactories {
                             modifier = Modifier
                                 .size(height = 40.dp, width = 35.dp)
                                 .clip(RoundedCornerShape(8.dp)),
-                            painter = painterResource(id = UiUtils.getIcon(attachment.mimeType)),
+                            painter = painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType)),
                             contentDescription = null
                         )
 
@@ -323,7 +324,7 @@ object StreamAttachmentFactories {
                             )
 
                             Text(
-                                text = UiUtils.getFileSizeHumanized(attachment.fileSize),
+                                text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
                                 style = ChatTheme.typography.footnote,
                                 color = ChatTheme.colors.textLowEmphasis
                             )

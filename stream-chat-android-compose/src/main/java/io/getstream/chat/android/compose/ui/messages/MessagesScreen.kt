@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.getstream.sdk.chat.utils.UiUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -53,6 +52,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
+import io.getstream.chat.android.compose.ui.util.reactionTypes
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -240,7 +240,7 @@ private fun buildViewModelFactory(
  * */
 @InternalStreamChatApi
 fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
-    return UiUtils.getReactionTypes().entries
+    return reactionTypes.entries
         .map { (type, emoji) ->
             ReactionOption(
                 emoji = emoji,

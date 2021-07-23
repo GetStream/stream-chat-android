@@ -25,10 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.SelectFilesContract
-import com.getstream.sdk.chat.utils.UiUtils
+import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -121,7 +122,7 @@ fun FileListItem(
                 .padding(start = 16.dp)
                 .size(height = 40.dp, width = 35.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            painter = painterResource(id = UiUtils.getIcon(fileItem.attachmentMetaData.mimeType)),
+            painter = painterResource(id = MimeTypeIconProvider.getIconRes(fileItem.attachmentMetaData.mimeType)),
             contentDescription = null
         )
 
@@ -137,7 +138,7 @@ fun FileListItem(
             )
 
             Text(
-                text = UiUtils.getFileSizeHumanized(fileItem.attachmentMetaData.size.toInt()),
+                text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
                 style = ChatTheme.typography.footnote
             )
         }
