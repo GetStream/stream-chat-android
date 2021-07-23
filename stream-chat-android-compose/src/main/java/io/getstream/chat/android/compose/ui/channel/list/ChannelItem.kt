@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.ui.components.Avatar
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
@@ -77,7 +78,7 @@ internal fun DefaultChannelItem(
                 .height(48.dp)
         ) {
             Text(
-                text = item.id,
+                text = item.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 maxLines = 1,
