@@ -46,8 +46,8 @@ If you want to build custom UI for Stream Chat, you can build it on top of the o
 
 The Jetpack Compose Components library includes three types of composable functions you can use, to easily load and display data from the Stream Chat API:
 
-* **Out-of-box (OoB) components**: Complete out-of-box solutions that connect all the operations you need to give users a Chat experience.
-* **ViewModel-powered components**: Components which serve a specific use-case and are powered by a `ViewModel`.
+* **Screen components**: Complete, out-of-the-box screen composables that connect all the operations you need to give users a Chat experience.
+* **Bound components**: Components which serve a specific use-case and are bound to a `ViewModel`.
 * **Stateless components**: Pure components that rely just on state and expose various events you can handle yourself.
 
 You'll learn more about these components in [Component Architecture](./02-component-architecture.md).

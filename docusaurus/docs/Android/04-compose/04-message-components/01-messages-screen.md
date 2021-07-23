@@ -1,6 +1,6 @@
 # MessagesScreen
 
-The `MessagesScreen` component is the second **out-of-box** solution for an entire screen, which sets up the following components and `ViewModel`s where needed, within a `Scaffold`:
+The `MessagesScreen` component is the second screen component in the SDK, which sets up the following components and `ViewModel`s as needed, within a `Scaffold`:
 
 * `MessageListHeader`: Displays a back button, the name of the channel or thread and a channel avatar, in a `Row`. 
 * `MessageList` and `MessageListViewModel`: Loads messages data and shows different states based on the data such as loading, empty and loaded states. Also sets up various action handlers, such as long and single item taps, as well as pagination and an option to scroll to the bottom.
@@ -12,7 +12,7 @@ The `MessagesScreen` is very complex and sets up many interactions between diffe
 
 ## Usage
 
-The benefit of an OoB solution is that the integration is very easy. All you need to do, to integrate the `MessagesScreen` in your app, is to call it within `setContent()` in your `Activity` or `Fragment` and pass in your `channelId`:
+The benefit of a screen component solution is that the integration is very easy. All you need to do, to integrate the `MessagesScreen` in your app, is to call it within `setContent()` in your `Activity` or `Fragment` and pass in your `channelId`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +78,7 @@ This way, you can customize what happens when the user taps on the back arrow, a
 
 ## Customization
 
-Given that the `MessagesScreen` is an OoB solution, it offers very limited customization. Currently, the only option offered in the signature is the following:
+Given that the `MessagesScreen` is an screen level solution, it offers very limited customization. Currently, the only option offered in the signature is the following:
 
 ```kotlin
 @Composable
