@@ -11,6 +11,13 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
+/**
+ * Style for [TypingIndicatorView].
+ * Use this class together with [TransformStyle.typingIndicatorViewStyleTransformer] to change [TypingIndicatorView] style programmatically.
+ *
+ * @property typingIndicatorAnimationView - typing animation view. Default - [R.layout.stream_ui_typing_indicator_animation_view]
+ * @property typingIndicatorUsersTextStyle - appearance for typing users text
+ */
 public data class TypingIndicatorViewStyle(
     @LayoutRes public val typingIndicatorAnimationView: Int,
     public val typingIndicatorUsersTextStyle: TextStyle,
