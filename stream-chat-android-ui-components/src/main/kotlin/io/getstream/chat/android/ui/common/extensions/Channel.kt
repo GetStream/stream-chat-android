@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.annotation.StringRes
 import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 
 /**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.
@@ -26,3 +28,18 @@ public fun Channel.getDisplayName(
             .takeIf { it.isNotEmpty() }
         ?: context.getString(devValue)
 }
+
+/**
+ * Returns channel's last regular or system message if exists.
+ *  Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
+ *
+ * @return Last message from the channel or null if it doesn't exist
+ */
+public fun Channel.getLastMessage(): Message? =
+    messages.asSequence()
+        .filter { it.createdAt != null || it.createdLocallyAt != null }
+        .filter { it.deletedAt == null }
+        .filter { !it.silent }
+        .filter { it.user.isCurrentUser() || !it.shadowed }
+        .filter { it.isRegular() || it.isSystem() }
+        .maxByOrNull { it.getCreatedAtOrThrow() }
