@@ -15,7 +15,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * */
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
-
     Box(
         modifier,
         contentAlignment = Alignment.Center

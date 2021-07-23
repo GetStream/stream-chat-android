@@ -5,6 +5,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Basic back button, that shows an icon and calls [onBackPressed] when tapped.
@@ -24,6 +25,10 @@ fun BackButton(
         modifier = modifier,
         onClick = onBackPressed
     ) {
-        Icon(imageVector = imageVector, contentDescription = null)
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null,
+            tint = ChatTheme.colors.textHighEmphasis,
+        )
     }
 }

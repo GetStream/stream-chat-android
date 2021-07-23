@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Generic dialog component that allows us to prompt the user.
@@ -28,8 +29,20 @@ fun SimpleDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(text = title) },
-        text = { Text(message) },
+        title = {
+            Text(
+                text = title,
+                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyBold,
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.body,
+            )
+        },
         confirmButton = {
             Button(onClick = { onPositiveAction() }) {
                 Text(text = stringResource(id = R.string.yes))
@@ -39,6 +52,7 @@ fun SimpleDialog(
             Button(onClick = onDismiss) {
                 Text(text = stringResource(id = R.string.cancel))
             }
-        }
+        },
+        backgroundColor = ChatTheme.colors.barsBackground,
     )
 }

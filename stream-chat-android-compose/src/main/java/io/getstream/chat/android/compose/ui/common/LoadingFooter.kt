@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
  * */
 @Composable
 fun LoadingFooter(modifier: Modifier = Modifier) {
-
     Box(modifier = modifier.padding(top = 8.dp, bottom = 48.dp)) {
         LoadingView(modifier = Modifier.size(16.dp))
     }
