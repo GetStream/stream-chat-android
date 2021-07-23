@@ -4,6 +4,6 @@
     >
 
     <application>
-        <activity android:name=".ui.imagePreview.ImagePreviewActivity" />
+        <activity android:name=".ui.imagepreview.ImagePreviewActivity" />
     </application>
 </manifest>

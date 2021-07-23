@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewModel.factory.channel
+package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.compose.viewModel.channel.list.ChannelListViewModel
 import io.getstream.chat.android.offline.ChatDomain
 
 class ChannelViewModelFactory(

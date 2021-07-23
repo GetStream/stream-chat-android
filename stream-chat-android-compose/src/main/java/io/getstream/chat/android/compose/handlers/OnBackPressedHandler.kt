@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
  *
  * This intercepts the system back action and allows you to react to the click. If you want to build
  * a special back button component you can use the
- * [io.getstream.chat.android.compose.ui.components.BackButton] instead.
+ * [io.getstream.chat.android.compose.ui.common.BackButton] instead.
  *
  * To use this, simply call [SystemBackPressedHandler] in any of your UI components and pass in the
  * following two parameters:

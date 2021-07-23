@@ -21,9 +21,9 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessageMode
 import io.getstream.chat.android.compose.state.messages.Normal
-import io.getstream.chat.android.compose.ui.components.Avatar
-import io.getstream.chat.android.compose.ui.components.BackButton
-import io.getstream.chat.android.compose.ui.components.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.common.BackButton
+import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewModel.factory.conversation
+package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,9 +8,6 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.compose.viewModel.messages.attachments.AttachmentsPickerViewModel
-import io.getstream.chat.android.compose.viewModel.messages.composer.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewModel.messages.list.MessageListViewModel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 

@@ -1,9 +1,8 @@
-package io.getstream.chat.android.compose.viewModel.factory.imagePreview
+package io.getstream.chat.android.compose.viewmodel.imagepreview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.viewModel.imagePreview.ImagePreviewViewModel
 import io.getstream.chat.android.offline.ChatDomain
 
 class ImagePreviewViewModelFactory(

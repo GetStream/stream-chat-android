@@ -20,7 +20,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.components.Default
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewModel.messages.composer.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**

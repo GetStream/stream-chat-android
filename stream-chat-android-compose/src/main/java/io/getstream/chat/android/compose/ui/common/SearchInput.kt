@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.components
+package io.getstream.chat.android.compose.ui.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon

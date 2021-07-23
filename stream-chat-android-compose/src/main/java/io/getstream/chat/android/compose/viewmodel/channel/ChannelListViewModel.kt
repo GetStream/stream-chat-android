@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewModel.channel.list
+package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

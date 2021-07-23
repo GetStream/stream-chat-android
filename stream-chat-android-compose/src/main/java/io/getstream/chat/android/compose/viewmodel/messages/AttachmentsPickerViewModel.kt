@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewModel.messages.attachments
+package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.compose.runtime.getValue

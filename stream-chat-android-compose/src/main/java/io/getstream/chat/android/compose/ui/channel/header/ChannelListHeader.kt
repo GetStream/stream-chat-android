@@ -21,8 +21,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.Avatar
-import io.getstream.chat.android.compose.ui.components.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -104,9 +105,10 @@ internal fun ChannelHeaderTitle(
                 .wrapContentWidth()
                 .padding(horizontal = 16.dp),
             text = title,
-            style = MaterialTheme.typography.h6,
+            style = ChatTheme.typography.title3Bold,
             maxLines = 1,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = ChatTheme.colors.textHighEmphasis
         )
     } else {
         NetworkLoadingView(modifier = modifier)

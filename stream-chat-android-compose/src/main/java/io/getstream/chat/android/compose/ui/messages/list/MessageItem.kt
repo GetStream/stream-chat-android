@@ -56,8 +56,8 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
-import io.getstream.chat.android.compose.ui.components.Avatar
-import io.getstream.chat.android.compose.ui.components.MessageBubble
+import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.text.SimpleDateFormat
 import java.util.Date

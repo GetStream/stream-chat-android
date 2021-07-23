@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.imagePreview
+package io.getstream.chat.android.compose.ui.imagepreview
 
 import android.content.Context
 import android.content.Intent
@@ -37,8 +37,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewModel.factory.imagePreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.compose.viewModel.imagePreview.ImagePreviewViewModel
+import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.offline.ChatDomain
 import java.text.SimpleDateFormat
 import java.util.*

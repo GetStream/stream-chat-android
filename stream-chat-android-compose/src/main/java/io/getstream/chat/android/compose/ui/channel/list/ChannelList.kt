@@ -19,11 +19,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
-import io.getstream.chat.android.compose.ui.components.EmptyView
-import io.getstream.chat.android.compose.ui.components.LoadingFooter
-import io.getstream.chat.android.compose.ui.components.LoadingView
-import io.getstream.chat.android.compose.viewModel.channel.list.ChannelListViewModel
-import io.getstream.chat.android.compose.viewModel.factory.channel.ChannelViewModelFactory
+import io.getstream.chat.android.compose.ui.common.EmptyView
+import io.getstream.chat.android.compose.ui.common.LoadingFooter
+import io.getstream.chat.android.compose.ui.common.LoadingView
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
 
@@ -51,7 +51,7 @@ fun ChannelList(
         ChannelViewModelFactory(
             ChatClient.instance(),
             ChatDomain.instance(),
-            QuerySort.Companion.desc("id"),
+            QuerySort.desc("id"),
             Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
@@ -170,7 +170,6 @@ private fun Channels(
         itemsIndexed(channels) { index, item ->
             itemContent(item)
 
-            // TODO check the performance of this
             if (!endOfChannels && channels.isNotEmpty() && state.isScrollInProgress && index == channels.lastIndex) {
                 onLastItemReached()
             }

@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.compose.ui.components.Avatar
+import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
 import java.util.*

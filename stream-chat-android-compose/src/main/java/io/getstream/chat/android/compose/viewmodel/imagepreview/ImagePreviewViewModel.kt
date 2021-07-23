@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewModel.imagePreview
+package io.getstream.chat.android.compose.viewmodel.imagepreview
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

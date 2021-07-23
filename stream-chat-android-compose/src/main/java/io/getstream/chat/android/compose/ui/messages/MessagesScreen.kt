@@ -47,16 +47,16 @@ import io.getstream.chat.android.compose.state.messages.list.MuteUser
 import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
-import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.common.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.viewModel.factory.conversation.MessagesViewModelFactory
-import io.getstream.chat.android.compose.viewModel.messages.attachments.AttachmentsPickerViewModel
-import io.getstream.chat.android.compose.viewModel.messages.composer.MessageComposerViewModel
-import io.getstream.chat.android.compose.viewModel.messages.list.MessageListViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 

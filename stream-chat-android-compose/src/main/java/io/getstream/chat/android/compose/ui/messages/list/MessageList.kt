@@ -33,10 +33,10 @@ import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.ui.components.EmptyView
-import io.getstream.chat.android.compose.ui.components.LoadingView
+import io.getstream.chat.android.compose.ui.common.EmptyView
+import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewModel.messages.list.MessageListViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 

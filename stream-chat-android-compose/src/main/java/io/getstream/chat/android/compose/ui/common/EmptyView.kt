@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.components
+package io.getstream.chat.android.compose.ui.common
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

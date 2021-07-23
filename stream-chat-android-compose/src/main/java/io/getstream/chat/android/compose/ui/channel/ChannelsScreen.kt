@@ -24,10 +24,10 @@ import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
-import io.getstream.chat.android.compose.ui.components.SearchInput
-import io.getstream.chat.android.compose.ui.components.SimpleDialog
-import io.getstream.chat.android.compose.viewModel.channel.list.ChannelListViewModel
-import io.getstream.chat.android.compose.viewModel.factory.channel.ChannelViewModelFactory
+import io.getstream.chat.android.compose.ui.common.SearchInput
+import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
