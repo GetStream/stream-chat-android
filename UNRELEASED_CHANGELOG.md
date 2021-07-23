@@ -69,6 +69,7 @@ in your Manifest file:
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed "operator $ne is not supported for custom fields" error when querying channels
 
 ### ⬆️ Improved
 
@@ -90,5 +91,6 @@ in your Manifest file:
 - Added possibility to customize `SearchResultListView` style via `TransformStyle.SearchResultListViewStyleTransformer`.
 
 ### ⚠️ Changed
+- Made `Channel::getLastMessage` function public
 
 ### ❌ Removed
