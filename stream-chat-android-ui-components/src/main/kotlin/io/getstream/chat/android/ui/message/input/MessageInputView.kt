@@ -469,6 +469,7 @@ public class MessageInputView : ConstraintLayout {
         }
 
         binding.separator.background = messageInputViewStyle.dividerBackground
+        binding.dismissInputMode.setImageDrawable(messageInputViewStyle.dismissIconDrawable)
     }
 
     /**

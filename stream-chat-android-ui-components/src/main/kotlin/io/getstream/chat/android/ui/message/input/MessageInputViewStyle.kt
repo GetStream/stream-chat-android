@@ -94,8 +94,9 @@ public data class MessageInputViewStyle(
     @ColorInt public val fileCheckboxTextColor: Int,
     public val fileAttachmentEmptyStateTextStyle: TextStyle,
     public val mediaAttachmentEmptyStateTextStyle: TextStyle,
-    val fileAttachmentEmptyStateText: String,
-    val mediaAttachmentEmptyStateText: String,
+    public val fileAttachmentEmptyStateText: String,
+    public val mediaAttachmentEmptyStateText: String,
+    public val dismissIconDrawable: Drawable,
 ) {
 
     internal companion object {
@@ -502,6 +503,10 @@ public data class MessageInputViewStyle(
                     a.getString(R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateText)
                         ?: context.getString(R.string.stream_ui_message_input_no_files)
 
+                val dismissIconDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiMessageInputCloseButtonIconDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -541,6 +546,7 @@ public data class MessageInputViewStyle(
                     mediaAttachmentEmptyStateTextStyle = mediaAttachmentEmptyStateTextStyle,
                     fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
                     mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
+                    dismissIconDrawable = dismissIconDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

@@ -39,6 +39,7 @@
             <enum name="italic" value="2"/>
         </attr>
         <attr name="streamUiMessageInputDividerBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageInputCloseButtonIconDrawable" format="reference" />
 
         <!--Send Button-->
         <!-- {@deprecated Use sendButton icons instead.} -->
