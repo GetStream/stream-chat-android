@@ -80,5 +80,6 @@ in your Manifest file:
 - Added `edgeEffectColor` attribute to `ChannelListView` and `ChannelListViewStyle` to allow configuring edge effect color.
 
 ### ⚠️ Changed
+- Made `Channel::getLastMessage` function public
 
 ### ❌ Removed
