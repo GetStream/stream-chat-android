@@ -108,7 +108,7 @@ internal class MessageListItemLiveData(
             typingUser.id != currentUser?.id
         }
 
-        return if (newTypingUsers != typingUsers) {
+        return if (newTypingUsers != this.typingUsers) {
             typingChanged(newTypingUsers)
         } else {
             null
