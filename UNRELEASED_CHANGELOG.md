@@ -69,6 +69,7 @@ in your Manifest file:
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed "operator $ne is not supported for custom fields" error when querying channels
 
 ### ⬆️ Improved
 
