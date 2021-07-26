@@ -12,6 +12,8 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 
 public class OfflinePlugin(private val config: Config) : Plugin {
 
+    internal constructor() : this(Config())
+
     public val state: StateRegistry = StateRegistry()
     internal val logic: LogicRegistry = LogicRegistry(state)
 

@@ -68,6 +68,13 @@ internal open class BaseDomainTest {
     private val userPresence = true
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
+    private val offlinePlugin = OfflinePlugin(
+        Config(
+            backgroundSyncEnabled = backgroundSyncEnabled,
+            userPresence = userPresence,
+            persistenceEnabled = offlineEnabled
+        )
+    )
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
@@ -191,13 +198,7 @@ internal open class BaseDomainTest {
             on { connectUser(any(), any<String>()) } doAnswer {
                 TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
             }
-            on { plugins } doReturn OfflinePlugin(
-                Config(
-                    backgroundSyncEnabled = backgroundSyncEnabled,
-                    userPresence = userPresence,
-                    persistenceEnabled = offlineEnabled
-                )
-            ).let(::listOf)
+            on { plugins } doReturn listOf(offlinePlugin)
         }
 
         return client
@@ -217,7 +218,8 @@ internal open class BaseDomainTest {
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
-            context
+            context,
+            offlinePlugin = offlinePlugin,
         )
         chatDomainImpl.scope = testCoroutines.scope
         chatDomainImpl.retryPolicy = NoRetryPolicy()
