@@ -135,7 +135,7 @@ fun FileListItem(
 //            }
         }
 
-        Image(
+        Icon(
             modifier = Modifier
                 .padding(start = 16.dp)
                 .size(height = 40.dp, width = 35.dp)
