@@ -41,15 +41,15 @@ public data class Config(
     /**
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
      */
-    @SerializedName("connect_events")
     @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("connectEventsEnabled"))
+    @SerializedName("connect_events")
     val isConnectEvents: Boolean = true,
 
     /**
      * Controls if messages should be searchable (this is a premium feature). Disabled by default.
      */
-    @SerializedName("search")
     @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("searchEnabled"))
+    @SerializedName("search")
     val isSearch: Boolean = true,
 
     /**
@@ -67,8 +67,8 @@ public data class Config(
     /**
      * Determines if users are able to mute other users. Enabled by default.
      */
-    @SerializedName("mutes")
     @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("muteEnabled"))
+    @SerializedName("mutes")
     val isMutes: Boolean = true,
 
     /**
@@ -117,24 +117,45 @@ public data class Config(
      */
     val commands: List<Command> = mutableListOf(),
 ) {
+    /**
+     * Date of channel creation.
+     */
     val createdAt: Date?
         get() = created_at
 
+    /**
+     * Date of last channel update.
+     */
     val updatedAt: Date?
         get() = updated_at
 
+    /**
+     * Controls if typing indicators are shown. Enabled by default.
+     */
     val typingEventsEnabled: Boolean
         get() = isTypingEvents
 
+    /**
+     * Controls whether the chat shows how far you’ve read. Enabled by default.
+     */
     val readEventsEnabled: Boolean
         get() = isReadEvents
 
+    /**
+     * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
+     */
     val connectEventsEnabled: Boolean
         get() = isConnectEvents
 
+    /**
+     * Controls if messages should be searchable (this is a premium feature). Disabled by default.
+     */
     val searchEnabled: Boolean
         get() = isSearch
 
+    /**
+     * Determines if users are able to mute other users. Enabled by default.
+     */
     val muteEnabled: Boolean
         get() = isMutes
 }
