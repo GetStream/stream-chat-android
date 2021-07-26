@@ -8,14 +8,14 @@ public data class Config(
     /**
      * Date of channel creation.
      */
-    @Deprecated("Deprecated. Use createdAt instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("createdAt"))
     @SerializedName("created_at")
     val created_at: Date? = null,
 
     /**
      * Date of last channel update.
      */
-    @Deprecated("Deprecated. Use updatedAt instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("updatedAt"))
     @SerializedName("updated_at")
     val updated_at: Date? = null,
 
@@ -27,14 +27,14 @@ public data class Config(
     /**
      * Controls if typing indicators are shown. Enabled by default.
      */
-    @Deprecated("Deprecated. Use isTypingEventsEnabled instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("typingEventsEnabled"))
     @SerializedName("typing_events")
     val isTypingEvents: Boolean = true,
 
     /**
      * Controls whether the chat shows how far you’ve read. Enabled by default.
      */
-    @Deprecated("Deprecated. Use isReadEventsEnabled instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("readEventsEnabled"))
     @SerializedName("read_events")
     val isReadEvents: Boolean = true,
 
@@ -42,14 +42,14 @@ public data class Config(
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
      */
     @SerializedName("connect_events")
-    @Deprecated("Deprecated. Use isConnectEventsEnabled instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("connectEventsEnabled"))
     val isConnectEvents: Boolean = true,
 
     /**
      * Controls if messages should be searchable (this is a premium feature). Disabled by default.
      */
     @SerializedName("search")
-    @Deprecated("Deprecated. Use isSearchEnabled instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("searchEnabled"))
     val isSearch: Boolean = true,
 
     /**
@@ -68,7 +68,7 @@ public data class Config(
      * Determines if users are able to mute other users. Enabled by default.
      */
     @SerializedName("mutes")
-    @Deprecated("Deprecated. Use isMuteEnabled instead")
+    @Deprecated("", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("muteEnabled"))
     val isMutes: Boolean = true,
 
     /**
@@ -123,18 +123,18 @@ public data class Config(
     val updatedAt: Date?
         get() = updated_at
 
-    val isTypingEventsEnabled: Boolean
+    val typingEventsEnabled: Boolean
         get() = isTypingEvents
 
-    val isReadEventsEnabled: Boolean
+    val readEventsEnabled: Boolean
         get() = isReadEvents
 
-    val isConnectEventsEnabled: Boolean
+    val connectEventsEnabled: Boolean
         get() = isConnectEvents
 
-    val isSearchEnabled: Boolean
+    val searchEnabled: Boolean
         get() = isSearch
 
-    val isMuteEnabled: Boolean
+    val muteEnabled: Boolean
         get() = isMutes
 }
