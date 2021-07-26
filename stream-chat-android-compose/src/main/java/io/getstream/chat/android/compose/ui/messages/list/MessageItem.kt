@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Patterns
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -347,17 +349,12 @@ internal fun MessageText(
 @Composable
 private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
     val text = message.text
-    val linkAttachments = message.attachments.filter { it.ogUrl != null }
     val parts = text.split(" ")
     val links = parts.filter { Patterns.WEB_URL.matcher(it).matches() }
 
     return buildAnnotatedString {
-
-        /**
-         * First we add the whole text to the [AnnotatedString] and style it as a regular text.
-         * */
+        // First we add the whole text to the [AnnotatedString] and style it as a regular text.
         append(text)
-
         addStyle(
             SpanStyle(
                 color = ChatTheme.colors.textHighEmphasis,
@@ -367,32 +364,43 @@ private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
             end = text.length
         )
 
-        /**
-         * Then for each available link in the text, we add a different style, to represent the links,
-         * as well as add a String annotation to its start and end. This will give us the ability to
-         * open the original URL for the link preview on clicks.
-         * */
-        links.forEachIndexed { index, link ->
-            val start = text.indexOf(link)
-            val end = start + link.length
+        // Then for each available link in the text, we add a different style, to represent the links,
+        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
+        @SuppressLint("RestrictedApi")
+        val matcher = PatternsCompat.AUTOLINK_WEB_URL.matcher(text)
+        while (matcher.find()) {
+            val start = matcher.start()
+            val end = matcher.end()
 
             addStyle(
                 style = SpanStyle(
                     color = ChatTheme.colors.primaryAccent,
                     textDecoration = TextDecoration.Underline,
                 ),
-                start = start, end = end
+                start = start,
+                end = end,
             )
+
+            val linkText = requireNotNull(matcher.group(0)!!)
+
+            // Add "http://" prefix if link has no scheme in it
+            val url = if (URL_SCHEMES.none { scheme -> linkText.startsWith(scheme) }) {
+                URL_SCHEMES[0] + linkText
+            } else {
+                linkText
+            }
 
             addStringAnnotation(
                 tag = "URL",
-                annotation = linkAttachments[index].ogUrl ?: "",
+                annotation = url,
                 start = start,
-                end = end
+                end = end,
             )
         }
     }
 }
+
+private val URL_SCHEMES = listOf("http://", "https://")
 
 /**
  * Shows a row of participants in the message thread, if they exist.
