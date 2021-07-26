@@ -1,7 +1,25 @@
+## New Jetpack Compose UI Components 🎉
+
+Starting from this release, we have a new `stream-chat-android-compose` artifact that contains a UI
+implementation for Chat built in Jetpack Compose.
+
+The new artifact is available as a beta for now (note the postfix in the version number):
+
+```groovy
+implementation "io.getstream:stream-chat-android-compose:4.15.0-beta"
+```
+
+Learn more in the [announcement blog post](https://getstream.io/blog/jetpack-compose-sdk/), check
+out
+the [documentation of the Compose UI Components](https://getstream.io/chat/docs/sdk/android/compose/overview/)
+, and try them today with the [Compose Chat tutorial](https://getstream.io/chat/compose/tutorial/)!
+
 ## Common changes for all artifacts
+
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+
 - ⚠ Downgraded Kotlin version to 1.5.10 to support Jetpack Compose
 - Removed AndroidX Media dependency
 - Updated dependency versions
@@ -20,7 +38,6 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android
 ### 🐞 Fixed
 
@@ -31,7 +48,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -44,7 +60,6 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
@@ -55,7 +70,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -77,7 +91,6 @@ in your Manifest file:
 
 ### ❌ Removed
 
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 
@@ -92,7 +105,6 @@ in your Manifest file:
 ### ⚠️ Changed
 
 ### ❌ Removed
-
 
 ## stream-chat-android-compose
 ### 🐞 Fixed

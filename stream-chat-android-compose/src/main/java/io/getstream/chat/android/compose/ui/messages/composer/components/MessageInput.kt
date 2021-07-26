@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.composer.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -80,12 +79,14 @@ fun MessageInputOptions(
         Icon(
             modifier = Modifier.padding(4.dp),
             imageVector = optionImage,
-            contentDescription = null
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis,
         )
 
         Text(
             text = title,
-            style = ChatTheme.typography.bodyBold
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Icon(
@@ -97,7 +98,8 @@ fun MessageInputOptions(
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             imageVector = Icons.Default.Cancel,
-            contentDescription = stringResource(id = R.string.cancel)
+            contentDescription = stringResource(id = R.string.cancel),
+            tint = ChatTheme.colors.textLowEmphasis,
         )
     }
 }

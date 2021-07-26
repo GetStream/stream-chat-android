@@ -118,7 +118,8 @@ fun MessagesScreen(
     SystemBackPressedHandler(isEnabled = true, onBackPressed = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(modifier = Modifier.fillMaxSize(),
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
                     MessageListHeader(
@@ -168,7 +169,9 @@ fun MessagesScreen(
                 onMessageAction = { action ->
                     composerViewModel.onMessageAction(action)
                     listViewModel.onMessageAction(action)
-                }, onDismiss = { listViewModel.removeOverlay() })
+                },
+                onDismiss = { listViewModel.removeOverlay() }
+            )
         }
 
         if (isShowingAttachments) {
@@ -278,7 +281,8 @@ public fun defaultMessageOptions(
 
     if (!inThread) {
         messageOptions.add(
-            1, MessageOption(
+            1,
+            MessageOption(
                 title = R.string.thread_reply,
                 icon = Icons.Default.Chat,
                 action = ThreadReply(selectedMessage)

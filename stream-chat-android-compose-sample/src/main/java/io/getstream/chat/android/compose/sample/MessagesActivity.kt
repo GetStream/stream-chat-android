@@ -97,7 +97,8 @@ class MessagesActivity : AppCompatActivity() {
         val user by listViewModel.user.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
-            Scaffold(modifier = Modifier.fillMaxSize(),
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     MyCustomComposer()
                 }
@@ -182,7 +183,8 @@ class MessagesActivity : AppCompatActivity() {
                                 color = ChatTheme.colors.textLowEmphasis
                             )
                         }
-                    })
+                    }
+                )
             }
         )
     }

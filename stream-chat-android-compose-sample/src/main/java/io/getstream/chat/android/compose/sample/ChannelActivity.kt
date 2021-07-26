@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.app.R
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
@@ -127,14 +126,16 @@ class ChannelActivity : AppCompatActivity() {
                     isNetworkAvailable = isNetworkAvailable
                 )
 
-                SearchInput(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                SearchInput(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     query = query,
                     onValueChange = {
                         query = it
                         listViewModel.onSearchChanged(it)
-                    })
+                    }
+                )
 
                 ChannelList(
                     viewModel = listViewModel,

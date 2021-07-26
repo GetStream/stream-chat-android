@@ -74,8 +74,9 @@ fun SelectedMessageOverlay(
             .fillMaxSize()
             .background(Color.DarkGray.copy(alpha = 0.7f))
             .clickable(
+                onClick = onDismiss,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() }) { onDismiss() },
+                interactionSource = remember { MutableInteractionSource() }),
         contentAlignment = Alignment.CenterStart
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -230,7 +231,8 @@ internal fun MessageOptions(
             items(options) { option ->
                 MessageOptionItem(
                     option = option,
-                    onMessageOptionClick = { onMessageAction(it.action) })
+                    onMessageOptionClick = { onMessageAction(it.action) }
+                )
             }
         }
     }

@@ -7,7 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.compose.state.messages.attachments.*
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentItem
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.Files
+import io.getstream.chat.android.compose.state.messages.attachments.Images
+import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.offline.ChatDomain
 

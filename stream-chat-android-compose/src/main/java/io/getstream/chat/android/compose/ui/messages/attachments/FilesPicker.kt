@@ -5,11 +5,19 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -21,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,7 +67,8 @@ internal fun FilesPicker(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.recent_files),
                 style = ChatTheme.typography.body,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.weight(6f))
@@ -68,7 +78,7 @@ internal fun FilesPicker(
                     Icon(
                         imageVector = Icons.Default.AddCircleOutline,
                         contentDescription = stringResource(id = R.string.send_attachment),
-                        tint = ChatTheme.colors.primaryAccent
+                        tint = ChatTheme.colors.primaryAccent,
                     )
                 },
                 onClick = { fileSelectContract.launch(Unit) }
@@ -105,7 +115,17 @@ fun FileListItem(
     ) {
         Box(contentAlignment = Alignment.Center) {
             // TODO use a Canvas maybe to draw this UI, instead of using a checkbox.
-            Checkbox(checked = fileItem.isSelected, onCheckedChange = null)
+            Checkbox(
+                checked = fileItem.isSelected,
+                onCheckedChange = null,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = ChatTheme.colors.primaryAccent,
+                    uncheckedColor = ChatTheme.colors.disabled,
+                    checkmarkColor = ChatTheme.colors.primaryAccent,
+                    disabledColor = ChatTheme.colors.disabled,
+                    disabledIndeterminateColor = ChatTheme.colors.disabled,
+                ),
+            )
 
 //            if (fileItem.isSelected && fileItem.attachmentMetaData.selectedPosition != Int.MIN_VALUE) {
 //                Text(
@@ -121,7 +141,8 @@ fun FileListItem(
                 .size(height = 40.dp, width = 35.dp)
                 .clip(RoundedCornerShape(8.dp)),
             painter = painterResource(id = MimeTypeIconProvider.getIconRes(fileItem.attachmentMetaData.mimeType)),
-            contentDescription = null
+            contentDescription = null,
+            tint = Color.Unspecified,
         )
 
         Column(
@@ -132,12 +153,14 @@ fun FileListItem(
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
                 style = ChatTheme.typography.body,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Text(
                 text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
-                style = ChatTheme.typography.footnote
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
     }

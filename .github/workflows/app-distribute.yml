@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_sample_app:
-    name: Build Sample App
+    name: Build and Distribute Sample App
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
           file: stream-chat-android-sample/build/outputs/apk/demo/release/stream-chat-android-sample-demo-release.apk
 
   build_ui_components_sample_app:
-    name: Build UI-Components Sample App
+    name: Build and Distribute UI Components Sample App
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -68,3 +68,34 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
+
+  build_compose_sample_app:
+    name: Build and Distribute Compose Sample App
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Prepare environment
+        run: |
+          git fetch --unshallow
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
+      - name: Assemble
+        run: bash ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: stream-chat-android-compose-sample-release
+          path: stream-chat-android-compose-sample/build/outputs/apk/release/
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: stream-testers
+          file: stream-chat-android-compose-sample/build/outputs/apk/release/stream-chat-android-compose-sample-release.apk

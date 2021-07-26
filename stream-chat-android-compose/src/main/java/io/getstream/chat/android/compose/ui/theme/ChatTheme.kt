@@ -1,11 +1,9 @@
 package io.getstream.chat.android.compose.ui.theme
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import io.getstream.chat.android.client.models.Message
 
 /**
  * Local providers for various properties we connect to our components, for styling.
