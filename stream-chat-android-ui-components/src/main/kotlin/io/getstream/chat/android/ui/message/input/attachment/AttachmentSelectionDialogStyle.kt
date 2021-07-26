@@ -2,9 +2,11 @@ package io.getstream.chat.android.ui.message.input.attachment
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.style.TextStyle
 
@@ -51,11 +53,22 @@ public data class AttachmentSelectionDialogStyle(
                 allowAccessToGalleryText = context.getString(R.string.stream_ui_message_input_gallery_access),
                 allowAccessToFilesText = context.getString(R.string.stream_ui_message_input_files_access),
                 allowAccessToCameraText = context.getString(R.string.stream_ui_message_input_camera_access),
-                grantPermissionsTextStyle = TextStyle(), // TODO
-                recentFilesTextStyle = TextStyle(), // TODO
+                grantPermissionsTextStyle = TextStyle(
+                    size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium),
+                    color = context.getColorCompat(R.color.stream_ui_accent_blue),
+                    style = Typeface.BOLD,
+                ),
+                recentFilesTextStyle = TextStyle(
+                    size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium),
+                    color = context.getColorCompat(R.color.stream_ui_black),
+                    style = Typeface.BOLD,
+                ),
                 recentFilesText = context.getString(R.string.stream_ui_message_input_recent_files),
                 fileManagerIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_manager)!!,
-                videoDurationTextStyle = TextStyle(), // TODO
+                videoDurationTextStyle = TextStyle(
+                    size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small),
+                    color = context.getColorCompat(R.color.stream_ui_white),
+                ),
                 videoIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!,
                 videoIconVisible = true,
                 videoLengthLabelVisible = true,
