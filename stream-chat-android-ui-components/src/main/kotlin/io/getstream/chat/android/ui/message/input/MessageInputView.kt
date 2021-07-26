@@ -449,9 +449,9 @@ public class MessageInputView : ConstraintLayout {
             }
 
         binding.messageInputFieldView.run {
-            setTextColor(messageInputViewStyle.messageInputTextColor)
-            setHintTextColor(messageInputViewStyle.messageInputHintTextColor)
-            setTextSizePx(messageInputViewStyle.messageInputTextSize)
+            setTextColor(messageInputViewStyle.messageInputTextStyle.color)
+            setHintTextColor(messageInputViewStyle.messageInputTextStyle.hintColor)
+            setTextSizePx(messageInputViewStyle.messageInputTextStyle.size.toFloat())
             setInputFieldScrollBarEnabled(messageInputViewStyle.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(messageInputViewStyle.messageInputScrollbarFadingEnabled)
             setCustomBackgroundDrawable(messageInputViewStyle.editTextBackgroundDrawable)
