@@ -564,6 +564,7 @@ public class ChannelClient internal constructor(
         return client.sendEvent(EventType.TYPING_START, channelType, channelId)
     }
 
+    @CheckResult
     public fun keystroke(parentId: String): Call<ChatEvent> {
         return client.sendEvent(
             eventType = EventType.TYPING_START,

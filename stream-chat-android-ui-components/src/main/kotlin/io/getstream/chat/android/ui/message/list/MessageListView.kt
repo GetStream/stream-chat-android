@@ -269,7 +269,8 @@ public class MessageListView : ConstraintLayout {
                         MessageOptionsView.Configuration(
                             viewStyle = requireStyle(),
                             channelConfig = channel.config,
-                            suppressThreads = adapter.isThread || message.isInThread()
+                            hasTextToCopy = message.text.isNotBlank(),
+                            suppressThreads = adapter.isThread || message.isInThread(),
                         ),
                         requireStyle()
                     )
@@ -366,6 +367,8 @@ public class MessageListView : ConstraintLayout {
                     MessageOptionsView.Configuration(
                         viewStyle = requireStyle(),
                         channelConfig = channel.config,
+                        hasTextToCopy = false, // No effect when displaying reactions
+                        suppressThreads = false, // No effect when displaying reactions
                     ),
                     requireStyle()
                 ).apply {
@@ -704,10 +707,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(
-            reactionsEnabled = enabled,
-            itemStyle = requireStyle().itemStyle.copy(reactionsEnabled = enabled)
-        )
+        messageListViewStyle = requireStyle().copy(reactionsEnabled = enabled)
     }
 
     /**

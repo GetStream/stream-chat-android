@@ -26,6 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchInputView"
         app:streamUiChannelOptionsEnabled="true"
+        app:streamUiLoadingView="@layout/channels_loading_view"
         />
 
     <io.getstream.chat.android.ui.search.list.SearchResultListView

@@ -20,9 +20,9 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
+import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.getLastMessagePreviewText
 import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
