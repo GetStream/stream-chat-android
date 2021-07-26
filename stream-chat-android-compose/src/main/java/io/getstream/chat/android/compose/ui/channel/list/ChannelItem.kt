@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Message
@@ -107,12 +108,13 @@ internal fun DefaultChannelItem(
                 val messageIcon =
                     if (item.getUnreadMessagesCount("") == 0) Icons.Default.Message else Icons.Outlined.Message
 
-                Image(
+                Icon(
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .size(12.dp),
                     imageVector = messageIcon,
                     contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
                 ) // TODO seen/not
 
                 Text(

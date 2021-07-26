@@ -80,12 +80,14 @@ fun MessageInputOptions(
         Icon(
             modifier = Modifier.padding(4.dp),
             imageVector = optionImage,
-            contentDescription = null
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis,
         )
 
         Text(
             text = title,
-            style = ChatTheme.typography.bodyBold
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Icon(
@@ -97,7 +99,8 @@ fun MessageInputOptions(
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             imageVector = Icons.Default.Cancel,
-            contentDescription = stringResource(id = R.string.cancel)
+            contentDescription = stringResource(id = R.string.cancel),
+            tint = ChatTheme.colors.textLowEmphasis,
         )
     }
 }

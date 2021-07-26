@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.overlay
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -132,7 +131,7 @@ private fun SelectedMessage(message: Message) {
             painter = authorImage
         )
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground, content = {
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground) {
             if (message.deletedAt != null) {
                 DeletedMessageContent()
             } else {
@@ -150,7 +149,7 @@ private fun SelectedMessage(message: Message) {
                     }
                 }
             }
-        })
+        }
     }
 }
 

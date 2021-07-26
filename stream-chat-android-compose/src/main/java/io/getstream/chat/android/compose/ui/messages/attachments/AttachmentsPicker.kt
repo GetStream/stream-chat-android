@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -109,7 +107,7 @@ fun AttachmentsPicker(
             modifier = modifier.clickable { },
             elevation = 4.dp,
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            backgroundColor = Color.LightGray
+            backgroundColor = ChatTheme.colors.inputBackground,
         ) {
             Column {
 
@@ -126,7 +124,8 @@ fun AttachmentsPicker(
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    color = ChatTheme.colors.barsBackground,
                 ) {
                     val pickerMode = attachmentsPickerViewModel.attachmentsPickerMode
                     val permissionState = when (pickerMode) {
@@ -219,7 +218,8 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
         Text(
             modifier = Modifier.padding(16.dp),
             style = ChatTheme.typography.bodyBold,
-            text = stringResource(id = title)
+            text = stringResource(id = title),
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Spacer(modifier = Modifier.size(16.dp))
@@ -228,7 +228,8 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
             modifier = Modifier.padding(horizontal = 16.dp),
             style = ChatTheme.typography.body,
             text = stringResource(id = message),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = ChatTheme.colors.textLowEmphasis,
         )
 
         Spacer(modifier = Modifier.size(16.dp))

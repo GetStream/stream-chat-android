@@ -148,7 +148,7 @@ internal fun DefaultMessageContainer(
                 }
 
                 // content
-                MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
+                MessageBubble(shape = bubbleShape, color = messageCardColor) {
                     if (message.deletedAt != null) {
                         DeletedMessageContent()
                     } else {
@@ -166,7 +166,7 @@ internal fun DefaultMessageContainer(
                             }
                         }
                     }
-                })
+                }
 
                 if (isDeleted && ownsMessage) {
                     DeletedMessageFooter(
@@ -448,9 +448,9 @@ internal fun QuotedMessage(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White, content = {
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White) {
             MessageText(message = message)
-        })
+        }
     }
 }
 

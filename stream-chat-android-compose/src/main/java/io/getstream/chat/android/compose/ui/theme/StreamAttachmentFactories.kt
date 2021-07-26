@@ -122,7 +122,8 @@ object StreamAttachmentFactories {
                     text = title,
                     style = ChatTheme.typography.bodyBold,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
             }
 
@@ -138,7 +139,8 @@ object StreamAttachmentFactories {
                     ),
                     text = description,
                     style = ChatTheme.typography.footnote,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
             }
         }

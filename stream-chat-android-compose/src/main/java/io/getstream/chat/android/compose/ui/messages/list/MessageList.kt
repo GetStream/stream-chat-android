@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -229,11 +228,13 @@ private fun BoxScope.MessagesScrollingOption(
             .padding(16.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = 4.dp,
-        onClick = onClick
+        onClick = onClick,
+        color = ChatTheme.colors.inputBackground,
     ) {
         Text(
             modifier = Modifier.padding(8.dp),
-            text = text
+            text = text,
+            color = ChatTheme.colors.textHighEmphasis,
         )
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
@@ -78,10 +79,11 @@ internal fun ImageGridItem(
         if (imageItem.isSelected) {
             Icon(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp),
+                    .align(Alignment.BottomEnd)
+                    .padding(4.dp),
                 imageVector = Icons.Default.CheckCircle,
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.White,
             )
         }
     }
