@@ -37,6 +37,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed the event sync process when connection is recovered
 
 ### ⬆️ Improved
 

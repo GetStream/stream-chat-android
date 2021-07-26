@@ -1334,7 +1334,7 @@ public class ChatClient internal constructor(
         )
 
     /**
-     * Returns all events that happened for a list of channels since last sync (while use was not
+     * Returns all events that happened for a list of channels since last sync (while the user was not
      * connected to the web-socket).
      *
      * @param channelsIds the list of channel CIDs
