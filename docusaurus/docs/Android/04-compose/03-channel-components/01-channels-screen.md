@@ -111,4 +111,4 @@ fun ChannelsScreen(
 * `isShowingHeader`: Flag that affects if we show the `ChannelListHeader`. `true` by default.
 * `isShowingSearch`: Flag that affects if we show the `SearchInput`. `true` by default.
 
-If you want to build a custom Channels screen UI or override the default the behavior, follow our [Building Custom Screens](../08-guides/06-building-custom-screens.md) guide.
+If you want to build a custom Channels screen UI or override the default the behavior, follow our [Building Custom Screens](../07-guides/06-building-custom-screens.md) guide.

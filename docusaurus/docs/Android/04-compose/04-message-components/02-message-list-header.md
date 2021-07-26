@@ -106,4 +106,4 @@ fun MessageListHeader(
 * `messageMode`: Used to determine the header title. If we're in a thread, we show a title saying who the owner of the parent message is.
 * `modifier`: Applied to the root component of the header. Useful for padding and height.
 
-These will change what data is displayed in the header. If you want to build a fully custom header, read our [Building Custom Screens](../08-guides/06-building-custom-screens.md) guide.
+These will change what data is displayed in the header. If you want to build a fully custom header, read our [Building Custom Screens](../07-guides/06-building-custom-screens.md) guide.

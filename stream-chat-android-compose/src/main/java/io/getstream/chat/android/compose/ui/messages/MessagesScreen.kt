@@ -10,47 +10,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FileCopy
-import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.messages.Thread
-import io.getstream.chat.android.compose.state.messages.list.Copy
 import io.getstream.chat.android.compose.state.messages.list.Delete
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageOption
-import io.getstream.chat.android.compose.state.messages.list.MuteUser
-import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.state.messages.list.ThreadReply
-import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.common.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.reactionTypes
+import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -72,7 +53,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onHeaderActionClick - Handler for when the user taps on the header action.
  * */
 @Composable
-fun MessagesScreen(
+public fun MessagesScreen(
     channelId: String,
     messageLimit: Int = 30,
     showHeader: Boolean = true,
@@ -163,9 +144,8 @@ fun MessagesScreen(
 
         if (selectedMessage != null) {
             SelectedMessageOverlay(
-                defaultReactionOptions(selectedMessage.ownReactions),
-                defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
-                selectedMessage,
+                messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                message = selectedMessage,
                 onMessageAction = { action ->
                     composerViewModel.onMessageAction(action)
                     listViewModel.onMessageAction(action)
@@ -227,96 +207,4 @@ private fun buildViewModelFactory(
         channelId,
         messageLimit
     )
-}
-
-/**
- * Builds the default reaction options we show to our users.
- *
- * @param ownReactions - options the user selected on the message.
- *
- * @return - List of [ReactionOption]s that represent the reactions we support.
- * */
-@Composable
-public fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
-    return reactionTypes.entries
-        .map { (type, drawable) ->
-            ReactionOption(
-                drawable = painterResource(drawable),
-                isSelected = ownReactions.any { it.type == type },
-                type = type
-            )
-        }
-}
-
-/**
- * Builds the default message options we show to our users.
- *
- * @param selectedMessage - Currently selected message, used to callbacks.
- * @param user - Current user, used to expose different states for messages.
- * @param inThread - If the message is in a thread or not, to block off some options.
- * */
-@Composable
-public fun defaultMessageOptions(
-    selectedMessage: Message,
-    user: User?,
-    inThread: Boolean,
-): List<MessageOption> {
-    val messageOptions = arrayListOf(
-        MessageOption(
-            title = R.string.reply,
-            icon = Icons.Default.Reply,
-            action = Reply(selectedMessage)
-        )
-    )
-
-    if (selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()) {
-        messageOptions.add(
-            MessageOption(
-                title = R.string.copy_message,
-                icon = Icons.Default.FileCopy,
-                action = Copy(selectedMessage)
-            )
-        )
-    }
-
-    if (!inThread) {
-        messageOptions.add(
-            1,
-            MessageOption(
-                title = R.string.thread_reply,
-                icon = Icons.Default.Chat,
-                action = ThreadReply(selectedMessage)
-            )
-        )
-    }
-
-    if (selectedMessage.user.id == user?.id) {
-        messageOptions.add(
-            MessageOption(
-                title = R.string.edit_message,
-                icon = Icons.Default.Edit,
-                action = Edit(selectedMessage)
-            )
-        )
-
-        messageOptions.add(
-            MessageOption(
-                title = R.string.delete_message,
-                icon = Icons.Default.Delete,
-                action = Delete(selectedMessage),
-                iconColor = Color.Red,
-                titleColor = Color.Red
-            )
-        )
-    } else {
-        messageOptions.add(
-            MessageOption(
-                title = R.string.mute_user,
-                icon = Icons.Default.VolumeMute,
-                action = MuteUser(selectedMessage)
-            )
-        )
-    }
-
-    return messageOptions
 }

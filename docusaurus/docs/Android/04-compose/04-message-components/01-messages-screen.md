@@ -8,7 +8,7 @@ The `MessagesScreen` component is the second screen component in the SDK, which 
 * `SelectedMessageOverlay`: Shown when the user long taps and selects a message. Allows the user to react to messages and apply different actions, like deleting, editing, replying, starting a thread and more.
 * `AttachmentPicker` and `AttachmentPickerViewModel`: Allows the user to select images, files and media capture, to send to the channel.
 
-The `MessagesScreen` is very complex and sets up many interactions between different components. This is why we recommend reading our [Building Messages Screen](../08-guides/02-building-messages-screen.md) guide, for more information on this component and other internal components.
+The `MessagesScreen` is very complex and sets up many interactions between different components. This is why we recommend reading our [Building Messages Screen](../07-guides/02-building-messages-screen.md) guide, for more information on this component and other internal components.
 
 ## Usage
 
@@ -94,4 +94,4 @@ In case you pass in `false` as `showHeader`, you'll get the following UI.
 
 ![MessagesScreen without the MessageListHeader](../../assets/message_list_without_header.png)
 
-As you can see, the header is removed from the screen, rendering only the list and the composer. If you want more customization of this screen, read our [Building Messages Screen](../08-guides/02-building-messages-screen.md) and [Building Custom Screens](../08-guides/06-building-custom-screens.md) guides.
+As you can see, the header is removed from the screen, rendering only the list and the composer. If you want more customization of this screen, read our [Building Messages Screen](../08-guides/02-building-messages-screen.md) and [Building Custom Screens](../07-guides/06-building-custom-screens.md) guides.

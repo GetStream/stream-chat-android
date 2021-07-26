@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
 
 /**
  * Local providers for various properties we connect to our components, for styling.
@@ -14,6 +15,8 @@ private val LocalShapes = compositionLocalOf<StreamShapes> { error("No shapes pr
 private val LocalAttachmentFactories =
     compositionLocalOf<List<AttachmentFactory>> { error("No attachment factories provided!") }
 
+private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> { error("No reactions provided") }
+
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
@@ -22,46 +25,53 @@ private val LocalAttachmentFactories =
  * @param typography - The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes - The set of shapes we provide, wrapped in [StreamShapes].
  * @param attachmentFactories - Attachment factories that we provide. By default, images and files.
+ * @param reactionTypes - The reaction types supported in the Messaging screen.
  * @param content - The content shown within the theme wrapper.
  * */
 @Composable
-fun ChatTheme(
+public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     typography: StreamTypography = StreamTypography.default,
     shapes: StreamShapes = StreamShapes.default,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories,
+    reactionTypes: Map<String, Int> = defaultReactionTypes,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalTypography provides typography,
         LocalShapes provides shapes,
-        LocalAttachmentFactories provides attachmentFactories
+        LocalAttachmentFactories provides attachmentFactories,
+        LocalReactionTypes provides reactionTypes
     ) {
         content()
     }
 }
 
-object ChatTheme {
+public object ChatTheme {
 
     /**
-     * These represent the default ease-of-use accessors for colors, typography, shapes and attachment
-     * factories.
+     * These represent the default ease-of-use accessors for colors, typography, shapes, attachment factories and
+     * reaction types.
      * */
-    val colors: StreamColors
+    public val colors: StreamColors
         @Composable
         get() = LocalColors.current
 
-    val typography: StreamTypography
+    public val typography: StreamTypography
         @Composable
         get() = LocalTypography.current
 
-    val shapes: StreamShapes
+    public val shapes: StreamShapes
         @Composable
         get() = LocalShapes.current
 
-    val attachmentFactories: List<AttachmentFactory>
+    public val attachmentFactories: List<AttachmentFactory>
         @Composable
         get() = LocalAttachmentFactories.current
+
+    public val reactionTypes: Map<String, Int>
+        @Composable
+        get() = LocalReactionTypes.current
 }

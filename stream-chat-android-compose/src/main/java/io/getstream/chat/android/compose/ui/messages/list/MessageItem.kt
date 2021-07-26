@@ -60,7 +60,6 @@ import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.reactionTypes
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -133,12 +132,13 @@ internal fun DefaultMessageContainer(
 
             Column(horizontalAlignment = if (ownsMessage) End else Start) {
                 val ownReactions = message.ownReactions
+                val supportedReactions = ChatTheme.reactionTypes
 
                 // reactions
                 val reactions = message.reactionCounts
                     .map { it.key }
-                    .filter { reactionTypes[it] != null }
-                    .map { type -> requireNotNull(reactionTypes[type]) to (type in ownReactions.map { it.type }) }
+                    .filter { supportedReactions[it] != null }
+                    .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
 
                 if (reactions.isNotEmpty()) {
                     MessageReactions(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp), reactions)

@@ -8,14 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -35,10 +28,9 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
-import io.getstream.chat.android.compose.ui.messages.defaultMessageOptions
-import io.getstream.chat.android.compose.ui.messages.defaultReactionOptions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
+import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -134,9 +126,8 @@ class MessagesActivity : AppCompatActivity() {
 
             if (selectedMessage != null) {
                 SelectedMessageOverlay(
-                    defaultReactionOptions(selectedMessage.ownReactions),
-                    defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
-                    selectedMessage,
+                    messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                    message = selectedMessage,
                     onMessageAction = { action ->
                         composerViewModel.onMessageAction(action)
                         listViewModel.onMessageAction(action)

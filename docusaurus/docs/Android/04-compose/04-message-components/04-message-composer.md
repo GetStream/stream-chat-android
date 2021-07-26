@@ -233,4 +233,4 @@ This snippet will provide the following UI.
 
  ![Custom MessageComposer component](../../assets/custom_message_composer_component.png)
 
-If you want a completely custom UI for the composer with custom behavior, please read our [Creating a Custom Message Input](../08-guides/03-custom-message-input.md) guide.
+If you want a completely custom UI for the composer with custom behavior, please read our [Creating a Custom Message Input](../07-guides/03-custom-message-input.md) guide.

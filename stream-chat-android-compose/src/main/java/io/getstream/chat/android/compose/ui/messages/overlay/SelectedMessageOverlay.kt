@@ -22,12 +22,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FileCopy
+import androidx.compose.material.icons.filled.Reply
+import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,13 +43,21 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
+import io.getstream.chat.android.compose.state.messages.list.Copy
+import io.getstream.chat.android.compose.state.messages.list.Delete
+import io.getstream.chat.android.compose.state.messages.list.Edit
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.MessageOption
+import io.getstream.chat.android.compose.state.messages.list.MuteUser
 import io.getstream.chat.android.compose.state.messages.list.React
+import io.getstream.chat.android.compose.state.messages.list.Reply
+import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
@@ -55,20 +71,31 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * It shows various message options, as well as reactions, that the user can take. It also shows the
  * currently selected message in the middle of these options.
  *
- * @param reactionOptions - The options the user can send, to react to messages.
+ * @param reactionTypes - The types of reactions the user can use to react to messages.
  * @param messageOptions - The [MessageOption] the user can select to trigger on the message.
  * @param message - Selected message.
  * @param onMessageAction - Handler for any of the available message actions (options + reactions).
  * @param onDismiss - Handler when the user dismisses the UI.
  * */
 @Composable
-fun SelectedMessageOverlay(
-    reactionOptions: List<ReactionOption>,
+public fun SelectedMessageOverlay(
+    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
     messageOptions: List<MessageOption>,
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val ownReactions = message.ownReactions
+
+    val reactionOptions = reactionTypes.entries
+        .map { (type, drawable) ->
+            ReactionOption(
+                drawable = painterResource(drawable),
+                isSelected = ownReactions.any { it.type == type },
+                type = type
+            )
+        }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -278,3 +305,77 @@ internal fun MessageOptionItem(
         )
     }
 }
+
+/**
+ * Builds the default message options we show to our users.
+ *
+ * @param selectedMessage - Currently selected message, used to callbacks.
+ * @param user - Current user, used to expose different states for messages.
+ * @param inThread - If the message is in a thread or not, to block off some options.
+ * */
+@Composable
+public fun defaultMessageOptions(
+    selectedMessage: Message,
+    user: User?,
+    inThread: Boolean,
+): List<MessageOption> {
+    val messageOptions = arrayListOf(
+        MessageOption(
+            title = R.string.reply,
+            icon = Icons.Default.Reply,
+            action = Reply(selectedMessage)
+        )
+    )
+
+    if (selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()) {
+        messageOptions.add(
+            MessageOption(
+                title = R.string.copy_message,
+                icon = Icons.Default.FileCopy,
+                action = Copy(selectedMessage)
+            )
+        )
+    }
+
+    if (!inThread) {
+        messageOptions.add(
+            1,
+            MessageOption(
+                title = R.string.thread_reply,
+                icon = Icons.Default.Chat,
+                action = ThreadReply(selectedMessage)
+            )
+        )
+    }
+
+    if (selectedMessage.user.id == user?.id) {
+        messageOptions.add(
+            MessageOption(
+                title = R.string.edit_message,
+                icon = Icons.Default.Edit,
+                action = Edit(selectedMessage)
+            )
+        )
+
+        messageOptions.add(
+            MessageOption(
+                title = R.string.delete_message,
+                icon = Icons.Default.Delete,
+                action = Delete(selectedMessage),
+                iconColor = Color.Red,
+                titleColor = Color.Red
+            )
+        )
+    } else {
+        messageOptions.add(
+            MessageOption(
+                title = R.string.mute_user,
+                icon = Icons.Default.VolumeMute,
+                action = MuteUser(selectedMessage)
+            )
+        )
+    }
+
+    return messageOptions
+}
+
