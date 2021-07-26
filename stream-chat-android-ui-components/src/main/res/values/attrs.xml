@@ -32,5 +32,6 @@
         <attr name="streamUiSearchResultListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
+        <attr name="streamUiTypingIndicatorView" format="reference" />
     </declare-styleable>
 </resources>

@@ -883,4 +883,12 @@
         <item name="streamUiCommandIcon">@drawable/stream_ui_ic_command_circle</item>
         <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command_blue</item>
     </style>
+
+    <style name="StreamUi.TypingIndicatorView" parent="StreamUi">
+        <item name="streamUiTypingIndicatorAnimationView">@layout/stream_ui_typing_indicator_animation_view</item>
+
+        <item name="streamUiTypingIndicatorUsersTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiTypingIndicatorUsersTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiTypingIndicatorUsersTextStyle">normal</item>
+    </style>
 </resources>
