@@ -96,6 +96,8 @@ internal class MockClientBuilder(
             userStateService = userStateService,
             encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtil,
+            appContext = mock(),
+            scope = testCoroutineScope,
         )
 
         client.connectUser(user, token).enqueue()

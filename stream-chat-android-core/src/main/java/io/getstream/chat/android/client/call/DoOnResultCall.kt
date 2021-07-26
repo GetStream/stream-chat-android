@@ -20,8 +20,8 @@ internal class DoOnResultCall<T : Any>(
 
     override fun enqueue(callback: Call.Callback<T>) {
         originalCall.enqueue { result ->
-            callback.onResult(result)
             job = scope.launch { consumer(result) }
+            callback.onResult(result)
         }
     }
 
