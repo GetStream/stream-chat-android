@@ -78,12 +78,11 @@ internal fun DefaultChannelItem(
 
         Spacer(Modifier.width(8.dp))
 
-        val lastMessage =
-            item.messages.lastOrNull { it.deletedAt == null && it.attachments.isEmpty() }
+        val lastMessage = item.messages.lastOrNull()
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.6f)
+                .weight(1f)
                 .height(48.dp),
         ) {
             Text(
@@ -107,7 +106,7 @@ internal fun DefaultChannelItem(
         if (lastMessage != null) {
             Row(
                 modifier = Modifier
-                    .padding(end = 4.dp, bottom = 4.dp)
+                    .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
                     .wrapContentHeight()
                     .align(Bottom),
                 verticalAlignment = CenterVertically,
