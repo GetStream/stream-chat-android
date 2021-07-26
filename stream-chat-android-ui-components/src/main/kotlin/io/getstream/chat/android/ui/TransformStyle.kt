@@ -18,6 +18,7 @@ import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsVie
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
+import io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
 
 public object TransformStyle {
     public var avatarStyleTransformer: StyleTransformer<AvatarStyle> = noopTransformer()
@@ -38,6 +39,7 @@ public object TransformStyle {
     public var mentionListViewStyleTransformer: StyleTransformer<MentionListViewStyle> = noopTransformer()
     public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()
     public var searchResultListViewStyleTransformer: StyleTransformer<SearchResultListViewStyle> = noopTransformer()
+    public var typingIndicatorViewStyleTransformer: StyleTransformer<TypingIndicatorViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

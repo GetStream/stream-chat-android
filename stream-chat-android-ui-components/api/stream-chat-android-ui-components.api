@@ -83,6 +83,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSearchResultListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -101,6 +102,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSearchResultListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSuggestionListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setTypingIndicatorViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
 
@@ -2194,11 +2196,25 @@ public abstract class io/getstream/chat/android/ui/suggestion/list/adapter/viewh
 	protected final fun getContext ()Landroid/content/Context;
 }
 
-public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : android/widget/FrameLayout {
+public final class io/getstream/chat/android/ui/typing/TypingIndicatorView : android/widget/LinearLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun setTypingUsers (Ljava/util/List;)V
+}
+
+public final class io/getstream/chat/android/ui/typing/TypingIndicatorViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle$Companion;
+	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/typing/TypingIndicatorViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTypingIndicatorAnimationView ()I
+	public final fun getTypingIndicatorUsersTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/typing/viewmodel/TypingIndicatorViewModel : androidx/lifecycle/ViewModel {
