@@ -150,6 +150,7 @@ internal open class BaseDomainTest2 {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
+            on { queryChannelsInternal(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
