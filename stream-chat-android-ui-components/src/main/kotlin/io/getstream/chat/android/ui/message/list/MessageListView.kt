@@ -707,10 +707,7 @@ public class MessageListView : ConstraintLayout {
      * @param enabled True if user muting is enabled, false otherwise.
      */
     public fun setReactionsEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(
-            reactionsEnabled = enabled,
-            itemStyle = requireStyle().itemStyle.copy(reactionsEnabled = enabled)
-        )
+        messageListViewStyle = requireStyle().copy(reactionsEnabled = enabled)
     }
 
     /**

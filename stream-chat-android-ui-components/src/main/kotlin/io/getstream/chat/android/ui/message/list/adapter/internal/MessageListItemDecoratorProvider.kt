@@ -27,7 +27,7 @@ internal class MessageListItemDecoratorProvider(
         MaxPossibleWidthDecorator(),
         AvatarDecorator(),
         FailedIndicatorDecorator(),
-        ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.itemStyle.reactionsEnabled },
+        ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
         ReplyDecorator(messageListViewStyle.replyMessageStyle),
         FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle),
     )
