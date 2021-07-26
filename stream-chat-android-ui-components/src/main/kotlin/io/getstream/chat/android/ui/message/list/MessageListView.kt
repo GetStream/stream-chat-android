@@ -412,16 +412,16 @@ public class MessageListView : ConstraintLayout {
     private lateinit var attachmentViewFactory: AttachmentViewFactory
 
     public constructor(context: Context) : this(context, null, 0)
-    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
         init(attrs)
     }
-    
-    private fun init(attr: AttributeSet?) {
+
+    private fun init(attr: AttributeSet) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
