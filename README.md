@@ -63,13 +63,21 @@ This repo includes a fully functional [example app](/stream-chat-android-ui-comp
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Next, open [Android Studio](https://developer.android.com/studio) and open the newly created project folder. You'll want to run the [`stream-chat-android-ui-components-sample`](/stream-chat-android-ui-components-sample) app.
+Next, open [Android Studio](https://developer.android.com/studio) and open the newly created project
+folder. You'll want to run
+the [`stream-chat-android-ui-components-sample`](/stream-chat-android-ui-components-sample) app.
 
 ## 🏗️ Jetpack Compose Sample App
 
 We also have a UI implementation built in Jetpack Compose available, currently in a beta version.
 
-This also comes with its own [example app](/stream-chat-android-compose-sample), which you can try by cloning this repo, and then running the app in the [`stream-chat-android-compose-sample`](/stream-chat-android-compose-sample) module.
+This also comes with its own [example app](/stream-chat-android-compose-sample), which you can try
+by cloning this repo, and then running the app in
+the [`stream-chat-android-compose-sample`](/stream-chat-android-compose-sample) module.
+
+As this is a beta, we're eager to hear your feedback. Join us
+in [this repo's discussions](https://github.com/GetStream/stream-chat-android/discussions) or tweet
+at us [@getstream_io](https://twitter.com/getstream_io)!
 
 ## 💡 Supported features 🎨
 
