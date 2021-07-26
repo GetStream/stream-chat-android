@@ -5,11 +5,9 @@
 This modules includes a sample app featuring threads, reactions, optimistic UI updates and offline storage. All built on top of our [Compose components](../stream-chat-android-compose).
 
 <p align="center">
-  <img alt="Login screen" src="../docs/compose-sample-login-dark.png" width="30%">
+  <img alt="Channels screen" src="../docs/compose-sample-channels-dark.png" width="40%">
 &nbsp; &nbsp;
-  <img alt="Channels screen" src="../docs/compose-sample-channels-dark.png" width="30%">
-&nbsp; &nbsp;
-  <img alt="Messages screen" src="../docs/compose-sample-messages-dark.png" width="30%">
+  <img alt="Messages screen" src="../docs/compose-sample-messages-dark.png" width="40%">
 </p>
 
 <!-- TODO add missing images -->
