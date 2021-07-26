@@ -2,7 +2,17 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Updated Coil to 1.3.0
+- ⚠ Downgraded Kotlin version to 1.5.10 to support Jetpack Compose
+- Removed AndroidX Media dependency
+- Updated dependency versions
+  - Coil 1.3.0
+  - AndroidX Activity 1.2.4
+  - AndroidX AppCompat 1.3.1
+  - Android Ktx 1.6.0
+  - AndroidX RecyclerView 1.2.1
+  - Kotlin Coroutines 1.5.1
+  - Dexter 6.2.3
+  - Lottie 3.7.2
 
 ### ✅ Added
 
