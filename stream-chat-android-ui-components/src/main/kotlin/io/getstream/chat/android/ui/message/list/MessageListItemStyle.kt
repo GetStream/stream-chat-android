@@ -34,7 +34,6 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageLinkTextColorTheirs - color for links sent by other user. Default - [R.color.stream_ui_accent_blue]
  * @property messageLinkBackgroundColorMine - background color for message with link, sent by the current user. Default - [R.color.stream_ui_blue_alice]
  * @property messageLinkBackgroundColorTheirs - background color for message with link, sent by other user. Default - [R.color.stream_ui_blue_alice]
- * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
  * @property linkDescriptionMaxLines - max lines for link's description. Default - 5
  * @property textStyleMine - appearance for message text sent by the current user
  * @property textStyleTheirs - appearance for message text sent by other user
@@ -67,7 +66,6 @@ public data class MessageListItemStyle(
     @ColorInt public val messageLinkTextColorTheirs: Int?,
     @ColorInt public val messageLinkBackgroundColorMine: Int,
     @ColorInt public val messageLinkBackgroundColorTheirs: Int,
-    public val reactionsEnabled: Boolean,
     public val linkDescriptionMaxLines: Int,
     public val textStyleMine: TextStyle,
     public val textStyleTheirs: TextStyle,
@@ -454,7 +452,6 @@ public data class MessageListItemStyle(
                 messageLinkTextColorTheirs = messageLinkTextColorTheirs.nullIfNotSet(),
                 messageLinkBackgroundColorMine = linkBackgroundColorMine,
                 messageLinkBackgroundColorTheirs = linkBackgroundColorTheirs,
-                reactionsEnabled = reactionsEnabled,
                 linkDescriptionMaxLines = linkDescriptionMaxLines,
                 textStyleMine = textStyleMine,
                 textStyleTheirs = textStyleTheirs,

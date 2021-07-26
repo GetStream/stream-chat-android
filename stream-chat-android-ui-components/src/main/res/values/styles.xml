@@ -525,6 +525,31 @@
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
     </style>
 
+    <style name="StreamUi.SearchResultListView" parent="StreamUi">
+        <item name="streamUiSearchResultListSearchInfoBarBackground">@drawable/stream_ui_bg_gradient</item>
+        <item name="streamUiSearchResultListSearchInfoBarTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiSearchResultListSearchInfoBarTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchResultListSearchInfoBarTextStyle">normal</item>
+
+        <item name="streamUiSearchResultListEmptyStateIcon">@drawable/stream_ui_ic_search_empty</item>
+        <item name="streamUiSearchResultListEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiSearchResultListEmptyStateTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultListEmptyStateTextStyle">normal</item>
+
+        <item name="streamUiSearchResultListProgressBarIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+
+        <item name="streamUiSearchResultListSenderNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiSearchResultListSenderNameTextSize">@dimen/stream_ui_channel_item_title</item>
+        <item name="streamUiSearchResultListSenderNameTextStyle">normal</item>
+
+        <item name="streamUiSearchResultListMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultListMessageTextSize">@dimen/stream_ui_channel_item_message</item>
+        <item name="streamUiSearchResultListMessageTextStyle">normal</item>
+
+        <item name="streamUiSearchResultListMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSearchResultListMessageTimeTextSize">@dimen/stream_ui_channel_item_message</item>
+        <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
+    </style>
 
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
@@ -634,5 +659,13 @@
         <item name="streamUiMentionsIcon">@drawable/stream_ui_ic_mention</item>
         <item name="streamUiCommandIcon">@drawable/stream_ui_ic_command_circle</item>
         <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command_blue</item>
+    </style>
+
+    <style name="StreamUi.TypingIndicatorView" parent="StreamUi">
+        <item name="streamUiTypingIndicatorAnimationView">@layout/stream_ui_typing_indicator_animation_view</item>
+
+        <item name="streamUiTypingIndicatorUsersTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiTypingIndicatorUsersTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiTypingIndicatorUsersTextStyle">normal</item>
     </style>
 </resources>
