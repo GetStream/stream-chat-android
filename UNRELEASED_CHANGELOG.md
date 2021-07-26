@@ -99,3 +99,4 @@ in your Manifest file:
 - Made `Channel::getLastMessage` function public
 
 ### ❌ Removed
+- `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`
