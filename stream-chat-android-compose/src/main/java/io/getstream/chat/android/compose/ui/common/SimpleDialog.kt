@@ -19,7 +19,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier - Modifier for styling.
  * */
 @Composable
-fun SimpleDialog(
+public fun SimpleDialog(
     title: String,
     message: String,
     onPositiveAction: () -> Unit,
@@ -33,7 +33,7 @@ fun SimpleDialog(
             Text(
                 text = title,
                 color = ChatTheme.colors.textHighEmphasis,
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.title3Bold,
             )
         },
         text = {

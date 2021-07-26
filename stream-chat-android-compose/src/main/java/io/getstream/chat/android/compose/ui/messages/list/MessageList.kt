@@ -1,16 +1,7 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -53,11 +44,11 @@ import kotlin.math.abs
  * @param onMessagesStartReached - Handler for pagination.
  * @param onScrollToBottom - Handler when the user reaches the bottom.
  * @param itemContent - Composable that represents each message item in a list. By default, we provide
- * either the [DefaultMessageGroup] or the [DefaultMessageContainer] and connect the the long click handler with it.
+ * the [DefaultMessageContainer] and connect the the long click handler with it.
  * Users can override this to provide fully custom UI and behavior.
  * */
 @Composable
-fun MessageList(
+public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = { viewModel.onMessageThreadClick(it) },
@@ -97,7 +88,7 @@ fun MessageList(
  * for custom UI and behavior.
  * */
 @Composable
-fun MessageList(
+public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
     onMessagesStartReached: () -> Unit = {},
@@ -124,7 +115,7 @@ fun MessageList(
             onScrollToBottom = onScrollToBottom,
             itemContent = itemContent
         )
-        else -> EmptyView()
+        else -> EmptyView(modifier = Modifier.fillMaxSize())
     }
 }
 
@@ -234,6 +225,7 @@ private fun BoxScope.MessagesScrollingOption(
         Text(
             modifier = Modifier.padding(8.dp),
             text = text,
+            style = ChatTheme.typography.body,
             color = ChatTheme.colors.textHighEmphasis,
         )
     }

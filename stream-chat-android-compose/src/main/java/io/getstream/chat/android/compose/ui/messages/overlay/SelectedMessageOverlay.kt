@@ -3,18 +3,7 @@ package io.getstream.chat.android.compose.ui.messages.overlay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -23,12 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FileCopy
-import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.filled.VolumeMute
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,9 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -49,15 +31,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.list.Copy
-import io.getstream.chat.android.compose.state.messages.list.Delete
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
-import io.getstream.chat.android.compose.state.messages.list.MessageOption
-import io.getstream.chat.android.compose.state.messages.list.MuteUser
-import io.getstream.chat.android.compose.state.messages.list.React
-import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.state.messages.list.ThreadReply
+import io.getstream.chat.android.compose.state.messages.list.*
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
@@ -72,7 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * currently selected message in the middle of these options.
  *
  * @param reactionTypes - The types of reactions the user can use to react to messages.
- * @param messageOptions - The [MessageOption] the user can select to trigger on the message.
+ * @param messageOptions - The [buildMessageOption] the user can select to trigger on the message.
  * @param message - Selected message.
  * @param onMessageAction - Handler for any of the available message actions (options + reactions).
  * @param onDismiss - Handler when the user dismisses the UI.
@@ -223,9 +197,8 @@ private fun SelectedMessage(message: Message) {
                     attachmentFactory?.factory?.invoke(
                         AttachmentState(
                             modifier = Modifier.padding(4.dp),
-                            message = MessageItem(message, None),
-                            {}
-                        )
+                            message = MessageItem(message, None)
+                        ) {}
                     )
 
                     if (message.text.isNotEmpty()) {
@@ -293,14 +266,13 @@ internal fun MessageOptionItem(
         Icon(
             imageVector = option.icon,
             tint = option.iconColor,
-            contentDescription = title
+            contentDescription = title,
         )
 
         Text(
             modifier = Modifier.padding(start = 12.dp),
-            fontSize = 12.sp,
             text = title,
-            fontWeight = FontWeight.Bold,
+            style = ChatTheme.typography.footnoteBold,
             color = option.titleColor
         )
     }
@@ -320,7 +292,7 @@ public fun defaultMessageOptions(
     inThread: Boolean,
 ): List<MessageOption> {
     val messageOptions = arrayListOf(
-        MessageOption(
+        buildMessageOption(
             title = R.string.reply,
             icon = Icons.Default.Reply,
             action = Reply(selectedMessage)
@@ -329,7 +301,7 @@ public fun defaultMessageOptions(
 
     if (selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()) {
         messageOptions.add(
-            MessageOption(
+            buildMessageOption(
                 title = R.string.copy_message,
                 icon = Icons.Default.FileCopy,
                 action = Copy(selectedMessage)
@@ -340,7 +312,7 @@ public fun defaultMessageOptions(
     if (!inThread) {
         messageOptions.add(
             1,
-            MessageOption(
+            buildMessageOption(
                 title = R.string.thread_reply,
                 icon = Icons.Default.Chat,
                 action = ThreadReply(selectedMessage)
@@ -350,7 +322,7 @@ public fun defaultMessageOptions(
 
     if (selectedMessage.user.id == user?.id) {
         messageOptions.add(
-            MessageOption(
+            buildMessageOption(
                 title = R.string.edit_message,
                 icon = Icons.Default.Edit,
                 action = Edit(selectedMessage)
@@ -362,13 +334,13 @@ public fun defaultMessageOptions(
                 title = R.string.delete_message,
                 icon = Icons.Default.Delete,
                 action = Delete(selectedMessage),
-                iconColor = Color.Red,
-                titleColor = Color.Red
+                iconColor = ChatTheme.colors.errorAccent,
+                titleColor = ChatTheme.colors.errorAccent
             )
         )
     } else {
         messageOptions.add(
-            MessageOption(
+            buildMessageOption(
                 title = R.string.mute_user,
                 icon = Icons.Default.VolumeMute,
                 action = MuteUser(selectedMessage)

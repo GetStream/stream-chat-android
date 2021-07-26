@@ -45,7 +45,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param input - The input field for the composer, [MessageInput] by default.
  * */
 @Composable
-fun MessageComposer(
+public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
     onSendMessage: (String) -> Unit = { viewModel.onSendMessage(it) },
@@ -99,7 +99,7 @@ fun MessageComposer(
  * @param onCancelAction - Handler when the user cancels the active action (Reply or Edit).
  * */
 @Composable
-fun MessageComposer(
+public fun MessageComposer(
     value: String,
     attachments: List<Attachment>,
     integrations: @Composable RowScope.() -> Unit,

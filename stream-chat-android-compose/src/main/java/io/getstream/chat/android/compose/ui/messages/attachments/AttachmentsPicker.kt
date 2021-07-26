@@ -8,22 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Folder
@@ -67,7 +54,7 @@ import java.io.File
  * */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AttachmentsPicker(
+public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onDismiss: () -> Unit,
@@ -105,7 +92,11 @@ fun AttachmentsPicker(
             )
     ) {
         Card(
-            modifier = modifier.clickable { },
+            modifier = modifier.clickable(
+                indication = null,
+                onClick = { },
+                interactionSource = remember { MutableInteractionSource() }
+            ),
             elevation = 4.dp,
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             backgroundColor = ChatTheme.colors.inputBackground,
@@ -217,7 +208,7 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.title3Bold,
             text = stringResource(id = title),
             color = ChatTheme.colors.textHighEmphasis,
         )

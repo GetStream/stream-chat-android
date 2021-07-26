@@ -7,17 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
@@ -42,7 +32,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
@@ -51,17 +40,12 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.state.messages.items.Bottom
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
-import io.getstream.chat.android.compose.state.messages.items.Middle
-import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.items.*
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -156,7 +140,7 @@ internal fun DefaultMessageContainer(
                 }
 
                 // content
-                MessageBubble(shape = bubbleShape, color = messageCardColor) {
+                MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
                     if (message.deletedAt != null) {
                         DeletedMessageContent()
                     } else {
@@ -174,7 +158,7 @@ internal fun DefaultMessageContainer(
                             }
                         }
                     }
-                }
+                })
 
                 if (isDeleted && ownsMessage) {
                     DeletedMessageFooter(
@@ -239,7 +223,8 @@ private fun MessageReactions(
     ) {
         for ((icon, ownReaction) in reactions) {
             Icon(
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
                     .padding(2.dp)
                     .align(CenterVertically),
                 painter = painterResource(icon),
@@ -354,8 +339,8 @@ private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
         append(text)
         addStyle(
             SpanStyle(
-                color = ChatTheme.colors.textHighEmphasis,
-                fontSize = 14.sp
+                fontStyle = ChatTheme.typography.body.fontStyle,
+                color = ChatTheme.colors.textHighEmphasis
             ),
             start = 0,
             end = text.length
@@ -418,8 +403,8 @@ private fun ThreadParticipants(
         Text(
             modifier = Modifier.padding(end = 4.dp),
             text = stringResource(id = R.string.thread_footnote),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis
+            style = ChatTheme.typography.footnoteBold,
+            color = ChatTheme.colors.primaryAccent
         )
 
         for (user in participants) {
@@ -457,9 +442,9 @@ internal fun QuotedMessage(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White) {
+        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White, content = {
             MessageText(message = message)
-        }
+        })
     }
 }
 
@@ -482,8 +467,7 @@ internal fun DeletedMessageContent(
             ),
         text = stringResource(id = R.string.message_deleted),
         color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.bodyItalic,
-        fontSize = 12.sp
+        style = ChatTheme.typography.footnoteItalic
     )
 }
 
@@ -512,14 +496,13 @@ internal fun MessageFooter(
             Text(
                 modifier = Modifier.padding(end = 8.dp),
                 text = message.user.name,
-                fontSize = 12.sp,
+                style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textLowEmphasis
             )
 
             Text(
                 SimpleDateFormat.getTimeInstance().format(message.createdAt ?: Date()),
                 style = ChatTheme.typography.footnote,
-                fontSize = 12.sp,
                 color = ChatTheme.colors.textLowEmphasis
             )
         }
@@ -556,7 +539,6 @@ private fun DeletedMessageFooter(
             modifier = Modifier.padding(start = 8.dp),
             text = SimpleDateFormat.getTimeInstance().format(message.deletedAt ?: Date()),
             style = ChatTheme.typography.footnote,
-            fontSize = 12.sp,
             color = ChatTheme.colors.textLowEmphasis
         )
     }

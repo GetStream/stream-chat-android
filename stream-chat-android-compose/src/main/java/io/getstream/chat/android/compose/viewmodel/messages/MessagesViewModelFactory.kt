@@ -10,7 +10,11 @@ import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.offline.ChatDomain
 
-class MessagesViewModelFactory(
+/**
+ * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
+ * Currenty builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
+ * */
+public class MessagesViewModelFactory(
     private val context: Context,
     private val clipboardManager: ClipboardManager,
     private val chatClient: ChatClient,
@@ -34,7 +38,6 @@ class MessagesViewModelFactory(
         },
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
-                chatDomain,
                 StorageHelperWrapper(context, StorageHelper())
             )
         }

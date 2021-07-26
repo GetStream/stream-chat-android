@@ -21,22 +21,22 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  * */
-class MessageComposerViewModel(
-    val chatClient: ChatClient,
-    val chatDomain: ChatDomain,
+public class MessageComposerViewModel(
+    public val chatClient: ChatClient,
+    public val chatDomain: ChatDomain,
     private val channelId: String,
 ) : ViewModel() {
 
     /**
      * UI state of the current composer input.
      * */
-    var input by mutableStateOf("")
+    public var input: String by mutableStateOf("")
         private set
 
     /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      * */
-    var selectedAttachments by mutableStateOf(emptyList<Attachment>())
+    public var selectedAttachments: List<Attachment> by mutableStateOf(emptyList())
         private set
 
     /**
@@ -54,7 +54,7 @@ class MessageComposerViewModel(
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      * */
-    val activeAction: MessageAction?
+    public val activeAction: MessageAction?
         get() = messageActions.lastOrNull { it is Edit || it is Reply }
 
     /**
@@ -68,7 +68,7 @@ class MessageComposerViewModel(
      *
      * @param value - Current state value.
      * */
-    fun onInputChange(value: String) {
+    public fun onInputChange(value: String) {
         this.input = value
     }
 
@@ -79,7 +79,7 @@ class MessageComposerViewModel(
      *
      * @param messageMode - The current message mode.
      * */
-    fun setMessageMode(messageMode: MessageMode) {
+    public fun setMessageMode(messageMode: MessageMode) {
         this.messageMode = messageMode
     }
 
@@ -92,7 +92,7 @@ class MessageComposerViewModel(
      *
      * @param messageAction - The newly selected action.
      * */
-    fun onMessageAction(messageAction: MessageAction) {
+    public fun onMessageAction(messageAction: MessageAction) {
         when (messageAction) {
             is ThreadReply -> {
                 setMessageMode(Thread(messageAction.message))
@@ -113,7 +113,7 @@ class MessageComposerViewModel(
     /**
      * Dismisses all message actions from the UI and clears the input if [isInEditMode] is true.
      * */
-    fun onDismissMessageActions() {
+    public fun onDismissMessageActions() {
         if (isInEditMode) {
             onInputChange("")
         }
@@ -128,7 +128,7 @@ class MessageComposerViewModel(
      *
      * @param attachments - The attachments to store and show in the composer.
      * */
-    fun onAttachmentsSelected(attachments: List<Attachment>) {
+    public fun onAttachmentsSelected(attachments: List<Attachment>) {
         this.selectedAttachments = attachments
     }
 
@@ -139,7 +139,7 @@ class MessageComposerViewModel(
      *
      * @param attachment - The attachment to remove.
      * */
-    fun removeSelectedAttachment(attachment: Attachment) {
+    public fun removeSelectedAttachment(attachment: Attachment) {
         this.selectedAttachments = this.selectedAttachments - attachment
     }
 
@@ -149,7 +149,7 @@ class MessageComposerViewModel(
      *
      * @param message - The message to send.
      * */
-    fun onSendMessage(message: String) {
+    public fun onSendMessage(message: String) {
         val messageToSend = buildNewMessage(message, selectedAttachments)
 
         sendMessage(messageToSend)
@@ -231,7 +231,7 @@ class MessageComposerViewModel(
      * It also dismisses any currently active message actions, such as [Edit] and [Reply], as the
      * user left the relevant thread, by calling [onDismissMessageActions].
      * */
-    fun leaveThread() {
+    public fun leaveThread() {
         setMessageMode(Normal)
         onDismissMessageActions()
     }

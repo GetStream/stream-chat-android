@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * parameter as its handler, and it will represent [DefaultChannelListHeaderAction].
  * */
 @Composable
-fun ChannelListHeader(
+public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = ChatClient.instance().getCurrentUser(),
@@ -113,9 +113,8 @@ internal fun ChannelHeaderTitle(
                 .wrapContentWidth()
                 .padding(horizontal = 16.dp),
             text = title,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.title3Bold,
             maxLines = 1,
-            fontWeight = FontWeight.Bold,
             color = ChatTheme.colors.textHighEmphasis
         )
     } else {

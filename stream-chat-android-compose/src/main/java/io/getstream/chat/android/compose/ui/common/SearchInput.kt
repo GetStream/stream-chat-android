@@ -1,21 +1,13 @@
 package io.getstream.chat.android.compose.ui.common
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
@@ -39,7 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param label - The label shown in the search component, when there's no input.
  * */
 @Composable
-fun SearchInput(
+public fun SearchInput(
     query: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -121,6 +113,7 @@ internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.query_channels),
+        style = ChatTheme.typography.body,
         color = ChatTheme.colors.textLowEmphasis,
     )
 }

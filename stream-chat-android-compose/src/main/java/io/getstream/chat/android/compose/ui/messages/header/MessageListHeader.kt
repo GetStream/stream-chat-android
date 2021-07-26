@@ -2,15 +2,7 @@ package io.getstream.chat.android.compose.ui.messages.header
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -48,7 +40,7 @@ import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
  * @param onHeaderActionClick - Action handler when the user taps on the header action.
  * */
 @Composable
-fun MessageListHeader(
+public fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
     isNetworkAvailable: Boolean,
@@ -142,7 +134,7 @@ private fun MessagesHeaderTitle(
     ) {
         Text(
             text = title,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textHighEmphasis,
@@ -157,7 +149,6 @@ private fun MessagesHeaderTitle(
         } else {
             NetworkLoadingView(
                 modifier = Modifier.wrapContentHeight(),
-                textStyle = MaterialTheme.typography.body2,
                 spinnerSize = 12.dp,
             )
         }

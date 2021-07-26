@@ -52,7 +52,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onBackPressed - Handler for back press action.
  * */
 @Composable
-fun ChannelsScreen(
+public fun ChannelsScreen(
     filters: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))

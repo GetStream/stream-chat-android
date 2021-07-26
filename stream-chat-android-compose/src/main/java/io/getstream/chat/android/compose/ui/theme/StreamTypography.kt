@@ -15,77 +15,76 @@ import androidx.compose.ui.unit.sp
  * @param footnote - Used for footnote information, like timestamps.
  * @param tabBar - Used for items on top/bottom bars.
  * */
-class StreamTypography(
-    val title1: TextStyle,
-    val title3: TextStyle,
-    val title3Bold: TextStyle,
-    val body: TextStyle,
-    val bodyItalic: TextStyle,
-    val bodyBold: TextStyle,
-    val footnote: TextStyle,
-    val footnoteItalic: TextStyle,
-    val footnoteBold: TextStyle,
-    val captionBold: TextStyle,
-    val tabBar: TextStyle,
+public class StreamTypography(
+    public val title1: TextStyle,
+    public val title3: TextStyle,
+    public val title3Bold: TextStyle,
+    public val body: TextStyle,
+    public val bodyItalic: TextStyle,
+    public val bodyBold: TextStyle,
+    public val footnote: TextStyle,
+    public val footnoteItalic: TextStyle,
+    public val footnoteBold: TextStyle,
+    public val captionBold: TextStyle,
+    public val tabBar: TextStyle,
 ) {
 
-    companion object {
-        // TODO - We might need to provide the custom font family
+    public companion object {
         /**
          * Builds the default typography set for our theme.
          * */
-        val default = StreamTypography(
+        public val default: StreamTypography = StreamTypography(
             title1 = TextStyle(
-                fontSize = 28.sp,
+                fontSize = 24.sp,
                 lineHeight = 34.sp,
                 fontWeight = FontWeight.W500
             ),
             title3 = TextStyle(
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 lineHeight = 25.sp,
                 fontWeight = FontWeight.W400
             ),
             title3Bold = TextStyle(
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 lineHeight = 25.sp,
                 fontWeight = FontWeight.W500
             ),
             body = TextStyle(
-                fontSize = 17.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.W400
             ),
             bodyItalic = TextStyle(
-                fontSize = 17.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
                 fontStyle = FontStyle.Italic
             ),
             bodyBold = TextStyle(
-                fontSize = 20.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.W500
             ),
             footnote = TextStyle(
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W400
             ),
             footnoteItalic = TextStyle(
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W400,
                 fontStyle = FontStyle.Italic
             ),
             footnoteBold = TextStyle(
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W500
             ),
             captionBold = TextStyle(
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 lineHeight = 16.sp,
                 fontWeight = FontWeight.W700
             ),
             tabBar = TextStyle(
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.W400
             )
         )

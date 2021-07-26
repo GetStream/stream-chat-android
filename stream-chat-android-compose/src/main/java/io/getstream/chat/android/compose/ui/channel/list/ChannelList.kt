@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * [onChannelLongClick].
  * */
 @Composable
-fun ChannelList(
+public fun ChannelList(
     modifier: Modifier = Modifier,
     viewModel: ChannelListViewModel = viewModel(
         factory =
@@ -104,7 +104,7 @@ fun ChannelList(
  * [onChannelLongClick].
  * */
 @Composable
-fun ChannelList(
+public fun ChannelList(
     channelsState: ChannelsState,
     currentUser: User?,
     modifier: Modifier = Modifier,
@@ -130,7 +130,7 @@ fun ChannelList(
             onLastItemReached = onLastItemReached,
             itemContent = itemContent
         )
-        else -> EmptyView()
+        else -> EmptyView(modifier = Modifier.fillMaxSize())
     }
 }
 

@@ -66,8 +66,7 @@ internal fun FilesPicker(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.recent_files),
-                style = ChatTheme.typography.body,
-                fontWeight = FontWeight.Bold,
+                style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
@@ -98,7 +97,7 @@ internal fun FilesPicker(
  * @param onItemSelected - Handler when the item is selected.
  * */
 @Composable
-fun FileListItem(
+public fun FileListItem(
     fileItem: AttachmentItem,
     onItemSelected: (AttachmentItem) -> Unit,
 ) {
@@ -121,9 +120,9 @@ fun FileListItem(
                 colors = CheckboxDefaults.colors(
                     checkedColor = ChatTheme.colors.primaryAccent,
                     uncheckedColor = ChatTheme.colors.disabled,
-                    checkmarkColor = ChatTheme.colors.primaryAccent,
+                    checkmarkColor = Color.White,
                     disabledColor = ChatTheme.colors.disabled,
-                    disabledIndeterminateColor = ChatTheme.colors.disabled,
+                    disabledIndeterminateColor = ChatTheme.colors.disabled
                 ),
             )
 
@@ -152,8 +151,7 @@ fun FileListItem(
         ) {
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
-                style = ChatTheme.typography.body,
-                fontWeight = FontWeight.SemiBold,
+                style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
             )
 

@@ -8,7 +8,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.ChatDomain
 
-class ChannelViewModelFactory(
+/**
+ * Builds the factory that contains all the dependencies required for the Channels Screen.
+ * It currently provides the [ChannelListViewModel] using those dependencies.
+ * */
+public class ChannelViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val querySort: QuerySort<Channel>,

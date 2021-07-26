@@ -15,7 +15,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier - Modifier for styling.
  * */
 @Composable
-fun BackButton(
+public fun BackButton(
     imageVector: ImageVector,
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,

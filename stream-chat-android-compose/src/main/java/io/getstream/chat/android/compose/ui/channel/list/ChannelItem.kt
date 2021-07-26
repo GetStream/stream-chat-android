@@ -3,26 +3,15 @@ package io.getstream.chat.android.compose.ui.channel.list
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,11 +19,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
@@ -83,12 +73,12 @@ internal fun DefaultChannelItem(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .height(48.dp),
+                .wrapContentHeight(),
         ) {
             Text(
                 text = item.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
+                style = ChatTheme.typography.bodyBold,
+                fontSize = 16.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = ChatTheme.colors.textHighEmphasis,
@@ -96,9 +86,9 @@ internal fun DefaultChannelItem(
 
             Text(
                 text = lastMessage?.text ?: "No message",
-                fontSize = 14.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                style = ChatTheme.typography.body,
                 color = ChatTheme.colors.textLowEmphasis,
             )
         }
@@ -111,17 +101,18 @@ internal fun DefaultChannelItem(
                     .align(Bottom),
                 verticalAlignment = CenterVertically,
             ) {
-                val messageIcon =
-                    if (item.getUnreadMessagesCount("") == 0) Icons.Default.Message else Icons.Outlined.Message
+                val seenMessage = item.getUnreadMessagesCount(currentUser?.id ?: "") == 0
+
+                val messageIcon = if (seenMessage) R.drawable.stream_ui_message_seen else R.drawable.stream_ui_message_not_seen
 
                 Icon(
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .size(12.dp),
-                    imageVector = messageIcon,
+                    painter = painterResource(id = messageIcon),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
-                ) // TODO seen/not
+                    tint = if (seenMessage) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
+                )
 
                 Text(
                     text = SimpleDateFormat.getTimeInstance().format(item.lastUpdated ?: Date()),

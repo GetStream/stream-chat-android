@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -21,14 +19,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Represents the default network loading view for the header, in case the network is down.
  *
  * @param modifier - Styling for the [Row]
- * @param textStyle - Text styling for the view label.
  * @param spinnerSize - The size of the spinner.
  * */
 @Composable
-fun NetworkLoadingView(
+public fun NetworkLoadingView(
     modifier: Modifier = Modifier,
-    spinnerSize: Dp = 18.dp,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
+    spinnerSize: Dp = 18.dp
 ) {
     Row(
         modifier,
@@ -45,7 +41,7 @@ fun NetworkLoadingView(
 
         Text(
             text = stringResource(id = R.string.waiting_for_network),
-            style = textStyle,
+            style = ChatTheme.typography.title3Bold,
             color = ChatTheme.colors.textHighEmphasis,
         )
     }

@@ -44,9 +44,9 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  * */
-class MessageListViewModel(
-    val chatClient: ChatClient,
-    val chatDomain: ChatDomain,
+public class MessageListViewModel(
+    public val chatClient: ChatClient,
+    public val chatDomain: ChatDomain,
     private val channelId: String,
     private val messageLimit: Int = 0,
     private val clipboardHandler: ClipboardHandler,
@@ -57,7 +57,7 @@ class MessageListViewModel(
      *
      * It chooses between [threadMessagesState] and [messagesState] based on if we're in a thread or not.
      * */
-    val currentMessagesState: MessagesState
+    public val currentMessagesState: MessagesState
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
@@ -73,44 +73,44 @@ class MessageListViewModel(
     /**
      * Holds the current [MessageMode] that's used for the messages list. [Normal] by default.
      * */
-    var messageMode by mutableStateOf<MessageMode>(Normal)
+    public var messageMode: MessageMode by mutableStateOf(Normal)
         private set
 
     /**
      * The information for the current [Channel].
      * */
-    var channel: Channel by mutableStateOf(Channel())
+    public var channel: Channel by mutableStateOf(Channel())
         private set
 
     /**
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
      * similar actions.
      * */
-    var messageActions by mutableStateOf<Set<MessageAction>>(mutableSetOf())
+    public var messageActions: Set<MessageAction> by mutableStateOf(mutableSetOf())
         private set
 
     /**
      * Gives us information if we're currently in the [Thread] message mode.
      * */
-    val isInThread: Boolean
+    public val isInThread: Boolean
         get() = messageMode is Thread
 
     /**
      * Gives us information if we're showing the selected message overlay.
      * */
-    val isShowingOverlay: Boolean
+    public val isShowingOverlay: Boolean
         get() = messagesState.selectedMessage != null || threadMessagesState.selectedMessage != null
 
     /**
      * Gives us information about the online state of the device.
      * */
-    val isOnline: StateFlow<Boolean>
+    public val isOnline: StateFlow<Boolean>
         get() = chatDomain.online
 
     /**
      * Gives us information about the logged in user state.
      * */
-    val user: StateFlow<User?>
+    public val user: StateFlow<User?>
         get() = chatDomain.user
 
     /**
@@ -129,7 +129,7 @@ class MessageListViewModel(
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
      * */
-    fun start() {
+    public fun start() {
         viewModelScope.launch {
             val result =
                 chatDomain.watchChannel(channelId, messageLimit)
@@ -246,7 +246,7 @@ class MessageListViewModel(
     /**
      * Triggered when the user loads more data by reaching the end of the current messages.
      * */
-    fun onLoadMore() {
+    public fun onLoadMore() {
         val messageMode = messageMode
 
         if (messageMode is Thread) {
@@ -265,7 +265,7 @@ class MessageListViewModel(
      *
      * @param message - The selected message.
      * */
-    fun onMessageSelected(message: Message?) {
+    public fun onMessageSelected(message: Message?) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessage = message)
         } else {
@@ -279,7 +279,7 @@ class MessageListViewModel(
      *
      * @param message - The selected message with a thread.
      * */
-    fun onMessageThreadClick(message: Message) {
+    public fun onMessageThreadClick(message: Message) {
         this.messageMode = Thread(message)
 
         loadThread(message)
@@ -290,14 +290,14 @@ class MessageListViewModel(
      *
      * @param messageAction - The action to dismiss.
      * */
-    fun dismissMessageAction(messageAction: MessageAction) {
+    public fun dismissMessageAction(messageAction: MessageAction) {
         this.messageActions = messageActions - messageAction
     }
 
     /**
      * Dismisses all message actions, when we cancel them in the rest of the UI.
      * */
-    fun dismissAllMessageActions() {
+    public fun dismissAllMessageActions() {
         this.messageActions = emptySet()
     }
 
@@ -310,7 +310,7 @@ class MessageListViewModel(
      *
      * @param messageAction - The action the user chose.
      * */
-    fun onMessageAction(messageAction: MessageAction) {
+    public fun onMessageAction(messageAction: MessageAction) {
         removeOverlay()
 
         when (messageAction) {
@@ -406,7 +406,7 @@ class MessageListViewModel(
      *
      * @param message - Message to delete.
      * */
-    fun deleteMessage(message: Message) {
+    public fun deleteMessage(message: Message) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
 
@@ -454,7 +454,7 @@ class MessageListViewModel(
      *
      * It also cancels the [threadJob] to clean up resources.
      * */
-    fun leaveThread() {
+    public fun leaveThread() {
         messageMode = Normal
         messagesState = messagesState.copy(selectedMessage = null)
         threadMessagesState = MessagesState()
@@ -464,7 +464,7 @@ class MessageListViewModel(
     /**
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      * */
-    fun removeOverlay() {
+    public fun removeOverlay() {
         threadMessagesState = threadMessagesState.copy(selectedMessage = null)
         messagesState = messagesState.copy(selectedMessage = null)
     }
@@ -473,7 +473,7 @@ class MessageListViewModel(
      * Clears the [NewMessageState] from our UI state, after the user taps on the "Scroll to bottom"
      * or "New Message" actions in the list or simply scrolls to the bottom.
      * */
-    fun onScrolledToBottom() {
+    public fun onScrolledToBottom() {
         threadMessagesState = threadMessagesState.copy(newMessageState = null)
         messagesState = messagesState.copy(newMessageState = null)
     }

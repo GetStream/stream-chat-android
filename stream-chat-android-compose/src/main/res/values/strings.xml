@@ -32,7 +32,7 @@
     <string name="reply_to_message">Reply to message</string>
     <string name="message_deleted">Message deleted</string>
     <string name="only_visible_to_you">Only visible to you</string>
-    <string name="thread_footnote">Thread</string>
+    <string name="thread_footnote">Thread Reply</string>
     <string name="download">Download</string>
     <string name="share">Share</string>
     <string name="photos">Photos</string>
@@ -45,4 +45,7 @@
     <string name="query_channels">Query channels by id</string>
     <string name="grant_permission">Give permission</string>
     <string name="remaining_images_count">+%1$d</string>
+    <string name="stream_ui_empty_state_title">Let\'s start chatting!</string>
+    <string name="stream_ui_empty_state_message">How about sending your first message to a friend?</string>
+    <string name="stream_ui_attachment_gallery_share">Share Image</string>
 </resources>

@@ -15,16 +15,17 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param iconColor - The color of the icon.
  * @param action - The [MessageAction] the option represents.
  * */
-class MessageOption(
-    @StringRes val title: Int,
-    val titleColor: Color,
-    val icon: ImageVector,
-    val iconColor: Color,
-    val action: MessageAction,
+
+public class MessageOption(
+    @StringRes public val title: Int,
+    public val titleColor: Color,
+    public val icon: ImageVector,
+    public val iconColor: Color,
+    public val action: MessageAction,
 )
 
 @Composable
-fun MessageOption(
+public fun buildMessageOption(
     @StringRes title: Int,
     icon: ImageVector,
     action: MessageAction,

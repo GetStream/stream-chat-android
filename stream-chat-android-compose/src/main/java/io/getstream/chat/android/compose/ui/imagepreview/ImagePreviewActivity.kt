@@ -2,26 +2,21 @@ package io.getstream.chat.android.compose.ui.imagepreview
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
@@ -30,7 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberImagePainter
+import com.getstream.sdk.chat.StreamFileUtil
+import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -43,15 +42,15 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 @OptIn(ExperimentalPagerApi::class)
-class ImagePreviewActivity : AppCompatActivity() {
+public class ImagePreviewActivity : AppCompatActivity() {
 
     private val factory by lazy {
-        ImagePreviewViewModelFactory(ChatClient.instance(), ChatDomain.instance())
+        ImagePreviewViewModelFactory(ChatClient.instance())
     }
 
     private val imagePreviewViewModel by viewModels<ImagePreviewViewModel>(factoryProducer = { factory })
@@ -96,7 +95,8 @@ class ImagePreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            elevation = 4.dp
+            elevation = 4.dp,
+            color = ChatTheme.colors.barsBackground
         ) {
             Box(
                 Modifier.fillMaxWidth()
@@ -110,12 +110,13 @@ class ImagePreviewActivity : AppCompatActivity() {
                             indication = null
                         ) { finish() },
                     imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.cancel)
+                    contentDescription = stringResource(id = R.string.cancel),
+                    tint = ChatTheme.colors.textHighEmphasis
                 )
 
                 ImagePreviewHeaderTitle(modifier = Modifier.align(Alignment.Center), message)
 
-                // TODO extra actions
+                // TODO extra actions (reply, show in chat, save image)
             }
         }
     }
@@ -128,23 +129,25 @@ class ImagePreviewActivity : AppCompatActivity() {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = message.user.name,
-                style = ChatTheme.typography.title3Bold
+                style = ChatTheme.typography.title3Bold,
+                color = ChatTheme.colors.textHighEmphasis
             )
 
             Text(
                 text = SimpleDateFormat.getTimeInstance().format(message.createdAt ?: Date()),
-                style = ChatTheme.typography.tabBar
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis
             ) // TODO format properly
         }
     }
 
     @Composable
     private fun ImagePreviewContent(pagerState: PagerState, message: Message) {
-        HorizontalPager(state = pagerState) { page ->
+        HorizontalPager(modifier = Modifier.background(ChatTheme.colors.appBackground), state = pagerState) { page ->
 
             if (message.attachments.isNotEmpty()) {
                 val painter = rememberImagePainter(data = message.attachments[page].imagePreviewUrl)
@@ -168,15 +171,18 @@ class ImagePreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            elevation = 4.dp
+            elevation = 4.dp,
+            color = ChatTheme.colors.barsBackground
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Icon(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .clickable { onShareImageClick(message, pagerState.currentPage) },
                     imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(id = R.string.share)
+                    contentDescription = stringResource(id = R.string.share),
+                    tint = ChatTheme.colors.textHighEmphasis
                 )
 
                 Text(
@@ -186,24 +192,57 @@ class ImagePreviewActivity : AppCompatActivity() {
                         pagerState.currentPage + 1,
                         attachmentCount
                     ),
-                    style = ChatTheme.typography.title3Bold
+                    style = ChatTheme.typography.title3Bold,
+                    color = ChatTheme.colors.textHighEmphasis
                 )
 
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(8.dp),
-                    imageVector = Icons.Default.Apps,
-                    contentDescription = stringResource(id = R.string.photos)
-                )
+                // TODO we need to open a gallery of images here
+//                Icon(
+//                    modifier = Modifier
+//                        .align(Alignment.CenterEnd)
+//                        .padding(8.dp),
+//                    imageVector = Icons.Default.Apps,
+//                    contentDescription = stringResource(id = R.string.photos),
+//                    tint = ChatTheme.colors.textHighEmphasis
+//                )
             }
         }
     }
 
-    companion object {
+    private fun onShareImageClick(message: Message, currentPage: Int) {
+        lifecycleScope.launch {
+            val uri = StreamImageLoader.instance().loadAsBitmap(
+                context = applicationContext,
+                url = message.attachments[currentPage].imagePreviewUrl!!
+            )?.let {
+                StreamFileUtil.writeImageToSharableFile(applicationContext, it)
+            }
+
+            if (uri != null) {
+                shareImage(uri)
+            }
+        }
+    }
+
+    private fun shareImage(imageUri: Uri) {
+        ContextCompat.startActivity(
+            this,
+            Intent.createChooser(
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "image/*"
+                    putExtra(Intent.EXTRA_STREAM, imageUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                },
+                getString(R.string.stream_ui_attachment_gallery_share),
+            ),
+            null
+        )
+    }
+
+    public companion object {
         private const val KEY_MESSAGE_ID = "messageId"
 
-        fun getIntent(context: Context, messageId: String): Intent {
+        public fun getIntent(context: Context, messageId: String): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KEY_MESSAGE_ID, messageId)
             }

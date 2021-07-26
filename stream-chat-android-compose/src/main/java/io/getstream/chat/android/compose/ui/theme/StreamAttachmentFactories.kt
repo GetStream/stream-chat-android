@@ -2,26 +2,9 @@ package io.getstream.chat.android.compose.ui.theme
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -40,11 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
@@ -55,14 +36,14 @@ import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.offline.ChatDomain
 
-object StreamAttachmentFactories {
+public object StreamAttachmentFactories {
 
     /**
      * Default attachment factories we provide, which can transform image and file attachments.
      *
      * Uses [ImageAttachmentFactory] and [FileAttachmentFactory] to build UI.
      * */
-    val defaultFactories = listOf(
+    public val defaultFactories: List<AttachmentFactory> = listOf(
         AttachmentFactory(
             { state -> LinkAttachmentFactory(state) },
             { message -> message.attachments.any { it.ogUrl != null } }
@@ -92,7 +73,7 @@ object StreamAttachmentFactories {
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
-        val (message, position) = messageItem
+        val (message, _) = messageItem
 
         val context = LocalContext.current
         val attachment = message.attachments.firstOrNull { it.ogUrl != null }
@@ -142,8 +123,6 @@ object StreamAttachmentFactories {
                     modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                     text = title,
                     style = ChatTheme.typography.bodyBold,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
                     color = ChatTheme.colors.textHighEmphasis,
                 )
             }
@@ -160,7 +139,6 @@ object StreamAttachmentFactories {
                     ),
                     text = description,
                     style = ChatTheme.typography.footnote,
-                    fontSize = 12.sp,
                     color = ChatTheme.colors.textHighEmphasis,
                 )
             }
@@ -179,7 +157,7 @@ object StreamAttachmentFactories {
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
-        val (message, position) = messageItem
+        val (message, _) = messageItem
         val context = LocalContext.current
 
         Row(
@@ -300,7 +278,7 @@ object StreamAttachmentFactories {
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, _) = attachmentState
-        val (message, position) = messageItem
+        val (message, _) = messageItem
 
         Column(
             modifier = modifier
@@ -336,9 +314,7 @@ object StreamAttachmentFactories {
                         ) {
                             Text(
                                 text = attachment.title ?: attachment.name ?: "",
-                                style = ChatTheme.typography.body,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
+                                style = ChatTheme.typography.bodyBold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = ChatTheme.colors.textHighEmphasis
@@ -383,8 +359,8 @@ object StreamAttachmentFactories {
  * @param predicate - Function that checks the message and returns if the factory can consume it or
  * not.
  * */
-class AttachmentFactory(
-    val factory: @Composable (AttachmentState) -> Unit,
+public class AttachmentFactory(
+    public val factory: @Composable (AttachmentState) -> Unit,
     private val predicate: (Message) -> Boolean,
 ) {
     /**
@@ -393,7 +369,7 @@ class AttachmentFactory(
      * @param message - The message to check.
      * @return a boolean value, if we can consume the message and render UI.
      * */
-    fun canHandle(message: Message): Boolean {
+    public fun canHandle(message: Message): Boolean {
         return predicate(message)
     }
 }

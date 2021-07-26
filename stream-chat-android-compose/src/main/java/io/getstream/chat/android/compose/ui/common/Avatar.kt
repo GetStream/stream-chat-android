@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onClick - OnClick action, that can be nullable.
  * */
 @Composable
-fun Avatar(
+public fun Avatar(
     painter: Painter,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
@@ -41,7 +41,7 @@ fun Avatar(
 
     val shape = ChatTheme.shapes.avatar
     Image(
-        modifier = modifier
+        modifier = clickableModifier
             .clip(shape),
         contentScale = ContentScale.Crop,
         painter = painter,

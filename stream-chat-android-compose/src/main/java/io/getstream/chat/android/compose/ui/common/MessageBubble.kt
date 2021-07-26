@@ -18,11 +18,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param shape - The shape of the bubble.
  * */
 @Composable
-fun MessageBubble(
+public fun MessageBubble(
     color: Color,
     shape: Shape,
-    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier,

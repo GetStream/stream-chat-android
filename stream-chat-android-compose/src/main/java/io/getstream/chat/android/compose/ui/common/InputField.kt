@@ -18,7 +18,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Within it, we allow for custom decoration, so that
  * */
 @Composable
-fun InputField(
+public fun InputField(
     value: String,
     onValueChange: (String) -> Unit,
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,

@@ -13,7 +13,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
@@ -21,49 +20,48 @@ import io.getstream.chat.android.offline.ChatDomain
  * Used to load file and media images that are then connected to the UI. It also keeps state of the
  * selected items and prepares items before sending them.
  * */
-class AttachmentsPickerViewModel constructor(
-    private val chatDomain: ChatDomain,
+public class AttachmentsPickerViewModel(
     private val storageHelper: StorageHelperWrapper,
 ) : ViewModel() {
 
     /**
      * Currently selected picker mode. [Images], [Files] or [MediaCapture].
      * */
-    var attachmentsPickerMode: AttachmentsPickerMode by mutableStateOf(Images)
+    public var attachmentsPickerMode: AttachmentsPickerMode by mutableStateOf(Images)
         private set
 
     /**
      * List of images available, from the system.
      * */
-    var images: List<AttachmentItem> by mutableStateOf(emptyList())
+    public var images: List<AttachmentItem> by mutableStateOf(emptyList())
 
     /**
      * List of files available, from the system.
      * */
-    var files: List<AttachmentItem> by mutableStateOf(emptyList())
+    public var files: List<AttachmentItem> by mutableStateOf(emptyList())
 
     /**
      * Gives us info if there are any file items that are selected.
      * */
-    val hasPickedFiles: Boolean
+    public val hasPickedFiles: Boolean
         get() = files.any { it.isSelected }
 
     /**
      * Gives us info if there are any image items that are selected.
      * */
-    val hasPickedImages: Boolean
+    public val hasPickedImages: Boolean
         get() = images.any { it.isSelected }
 
     /**
      * Gives us information if we're showing the attachments picker or not.
      * */
-    var isShowingAttachments: Boolean by mutableStateOf(false)
+    public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
 
     /**
      * Starts the ViewModel, by loading all the items based on the current type.
      * */
-    fun start() {
+    public fun start() {
         loadAttachmentsData(attachmentsPickerMode)
     }
 
@@ -72,7 +70,7 @@ class AttachmentsPickerViewModel constructor(
      *
      * @param attachmentsPickerMode - The currently selected picker mode.
      * */
-    fun onAttachmentsModeSelected(attachmentsPickerMode: AttachmentsPickerMode) {
+    public fun onAttachmentsModeSelected(attachmentsPickerMode: AttachmentsPickerMode) {
         this.attachmentsPickerMode = attachmentsPickerMode
 
         loadAttachmentsData(attachmentsPickerMode)
@@ -83,7 +81,7 @@ class AttachmentsPickerViewModel constructor(
      *
      * @param showAttachments - If we need to show attachments or hide them.
      * */
-    fun onShowAttachments(showAttachments: Boolean) {
+    public fun onShowAttachments(showAttachments: Boolean) {
         isShowingAttachments = showAttachments
 
         if (!showAttachments) {
@@ -112,7 +110,7 @@ class AttachmentsPickerViewModel constructor(
      *
      * @param attachmentItem - The selected item.
      * */
-    fun onAttachmentSelected(attachmentItem: AttachmentItem) {
+    public fun onAttachmentSelected(attachmentItem: AttachmentItem) {
         val dataSet = if (attachmentsPickerMode == Files) files else images
 
         val itemIndex = dataSet.indexOf(attachmentItem)
@@ -136,7 +134,7 @@ class AttachmentsPickerViewModel constructor(
      *
      * It maps all files to a list of [Attachment] objects, based on their type.
      * */
-    fun getSelectedAttachments(): List<Attachment> {
+    public fun getSelectedAttachments(): List<Attachment> {
         val dataSet = if (attachmentsPickerMode == Files) files else images
         val selectedAttachments = dataSet.filter { it.isSelected }
 
@@ -149,7 +147,7 @@ class AttachmentsPickerViewModel constructor(
      * @param uris - Selected Uris.
      * @return - List of [Attachment]s ready for uploading.
      * */
-    fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
+    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
         return storageHelper.getAttachmentsFromUris(uris)
     }
 
@@ -159,7 +157,7 @@ class AttachmentsPickerViewModel constructor(
      * @param metaData - List of attachment meta data items.
      * @return - List of [Attachment]s, ready for uploading.
      * */
-    fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
+    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
         return storageHelper.getAttachmentsForUpload(metaData)
     }
 
@@ -167,7 +165,7 @@ class AttachmentsPickerViewModel constructor(
      * Triggered when we dismiss the attachments picker. We reset the state to show images and clear
      * the items for now, until the user needs them again.
      * */
-    fun onDismiss() {
+    public fun onDismiss() {
         attachmentsPickerMode = Images
         images = emptyList()
         files = emptyList()

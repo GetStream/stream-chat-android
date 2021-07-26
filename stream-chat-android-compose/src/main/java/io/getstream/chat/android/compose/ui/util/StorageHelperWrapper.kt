@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Attachment
  * @param storageHelper - The storage helper that provides all the logic required to work with the
  * system storage.
  * */
-class StorageHelperWrapper(
+public class StorageHelperWrapper(
     private val context: Context,
     private val storageHelper: StorageHelper,
 ) {
@@ -24,14 +24,14 @@ class StorageHelperWrapper(
      *
      * @return - List of [AttachmentMetaData] that describe the files.
      * */
-    fun getFiles(): List<AttachmentMetaData> = storageHelper.getFileAttachments(context)
+    public fun getFiles(): List<AttachmentMetaData> = storageHelper.getFileAttachments(context)
 
     /**
      * Loads a list of media metadata from the system.
      *
      * @return - List of [AttachmentMetaData] that describe the files.
      * */
-    fun getMedia(): List<AttachmentMetaData> = storageHelper.getMediaAttachments(context)
+    public fun getMedia(): List<AttachmentMetaData> = storageHelper.getMediaAttachments(context)
 
     /**
      * Transforms a list of [AttachmentMetaData] into a list of [Attachment]s. This is required
@@ -40,7 +40,7 @@ class StorageHelperWrapper(
      * @param attachments - The list of attachment meta data that we transform.
      * @return - List of [Attachment]s that we will upload.
      * */
-    fun getAttachmentsForUpload(attachments: List<AttachmentMetaData>): List<Attachment> {
+    public fun getAttachmentsForUpload(attachments: List<AttachmentMetaData>): List<Attachment> {
         return getAttachmentsFromMetaData(attachments)
     }
 
@@ -71,7 +71,7 @@ class StorageHelperWrapper(
      * @param uris - Selected file Uris, to be transformed.
      * @return - List of [Attachment]s with files prepared for uploading.
      * */
-    fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
+    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
         return getAttachmentsFromMetaData(storageHelper.getAttachmentsFromUriList(context, uris))
     }
 }
