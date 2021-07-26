@@ -14,6 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
@@ -23,7 +24,9 @@ internal class LinkAttachmentView : FrameLayout {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr)
 
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
         previewUrl = attachment.ogUrl
@@ -69,15 +72,15 @@ internal class LinkAttachmentView : FrameLayout {
     }
 
     internal fun setTitleTextStyle(textStyle: TextStyle) {
-        textStyle.apply(binding.titleTextView)
+        binding.titleTextView.setTextStyle(textStyle)
     }
 
     internal fun setDescriptionTextStyle(textStyle: TextStyle) {
-        textStyle.apply(binding.descriptionTextView)
+        binding.descriptionTextView.setTextStyle(textStyle)
     }
 
     internal fun setLabelTextStyle(textStyle: TextStyle) {
-        textStyle.apply(binding.labelTextView)
+        binding.labelTextView.setTextStyle(textStyle)
     }
 
     internal fun setLinkDescriptionMaxLines(maxLines: Int) {

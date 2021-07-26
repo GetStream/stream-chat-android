@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
@@ -410,22 +411,16 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(null)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(attrs)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+    public constructor(context: Context) : this(context, null, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyle
+        defStyleAttr
     ) {
         init(attrs)
     }
-
+    
     private fun init(attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
@@ -438,7 +433,7 @@ public class MessageListView : ConstraintLayout {
 
         configureAttributes(attr)
 
-        messageListViewStyle?.emptyViewTextStyle?.apply(binding.defaultEmptyStateView)
+        binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
         layoutTransition = LayoutTransition()
 
