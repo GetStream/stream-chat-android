@@ -101,7 +101,8 @@ fun AttachmentsPicker(
             .clickable(
                 onClick = onDismiss,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() })
+                interactionSource = remember { MutableInteractionSource() }
+            )
     ) {
         Card(
             modifier = modifier.clickable { },
@@ -234,15 +235,18 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
 
         Spacer(modifier = Modifier.size(16.dp))
 
-        Button(onClick = {
-            // TODO pull this out into a utility function
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                val uri: Uri = Uri.fromParts("package", context.packageName, null)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                data = uri
-            }
-            context.startActivity(intent)
-        }, content = { Text(stringResource(id = R.string.grant_permission)) })
+        Button(
+            onClick = {
+                // TODO pull this out into a utility function
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    val uri: Uri = Uri.fromParts("package", context.packageName, null)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    data = uri
+                }
+                context.startActivity(intent)
+            },
+            content = { Text(stringResource(id = R.string.grant_permission)) }
+        )
     }
 }
 
@@ -294,7 +298,8 @@ private fun AttachmentPickerOptions(
                         contentDescription = stringResource(id = R.string.files_option),
                         tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
-                }, onClick = { onOptionClick(Files) }
+                },
+                onClick = { onOptionClick(Files) }
             )
 
             IconButton(
@@ -305,7 +310,8 @@ private fun AttachmentPickerOptions(
                         contentDescription = stringResource(id = R.string.capture_option),
                         tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
-                }, onClick = { onOptionClick(MediaCapture) }
+                },
+                onClick = { onOptionClick(MediaCapture) }
             )
         }
 
@@ -321,6 +327,7 @@ private fun AttachmentPickerOptions(
                     contentDescription = stringResource(id = R.string.send_attachment),
                     tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                 )
-            })
+            }
+        )
     }
 }

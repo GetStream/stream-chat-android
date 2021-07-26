@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.state.channel.list
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * UI representation of a Channel option, when the user selects a channel in the list.

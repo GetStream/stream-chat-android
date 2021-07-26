@@ -3,7 +3,6 @@ package io.getstream.chat.android.compose.ui.messages
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -118,7 +117,8 @@ fun MessagesScreen(
     SystemBackPressedHandler(isEnabled = true, onBackPressed = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(modifier = Modifier.fillMaxSize(),
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
                     MessageListHeader(
@@ -168,7 +168,9 @@ fun MessagesScreen(
                 onMessageAction = { action ->
                     composerViewModel.onMessageAction(action)
                     listViewModel.onMessageAction(action)
-                }, onDismiss = { listViewModel.removeOverlay() })
+                },
+                onDismiss = { listViewModel.removeOverlay() }
+            )
         }
 
         if (isShowingAttachments) {
@@ -275,7 +277,8 @@ fun defaultMessageOptions(
 
     if (!inThread) {
         messageOptions.add(
-            1, MessageOption(
+            1,
+            MessageOption(
                 title = R.string.thread_reply,
                 icon = Icons.Default.Chat,
                 action = ThreadReply(selectedMessage)

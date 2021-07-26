@@ -113,9 +113,11 @@ internal fun DefaultMessageContainer(
         )
     }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
         Row(
             modifier
                 .widthIn(max = 300.dp)
@@ -378,7 +380,8 @@ private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
                 style = SpanStyle(
                     color = ChatTheme.colors.primaryAccent,
                     textDecoration = TextDecoration.Underline,
-                ), start = start, end = end
+                ),
+                start = start, end = end
             )
 
             addStringAnnotation(
@@ -419,7 +422,8 @@ private fun ThreadParticipants(
             Avatar(
                 modifier = Modifier
                     .padding(2.dp)
-                    .size(16.dp), painter = painter
+                    .size(16.dp),
+                painter = painter
             )
         }
     }

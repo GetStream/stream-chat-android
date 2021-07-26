@@ -40,10 +40,10 @@ import io.getstream.chat.android.compose.ui.messages.defaultReactionOptions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 
 class MessagesActivity : AppCompatActivity() {
@@ -97,7 +97,8 @@ class MessagesActivity : AppCompatActivity() {
         val user by listViewModel.user.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
-            Scaffold(modifier = Modifier.fillMaxSize(),
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     MyCustomComposer()
                 }
@@ -139,7 +140,9 @@ class MessagesActivity : AppCompatActivity() {
                     onMessageAction = { action ->
                         composerViewModel.onMessageAction(action)
                         listViewModel.onMessageAction(action)
-                    }, onDismiss = { listViewModel.removeOverlay() })
+                    },
+                    onDismiss = { listViewModel.removeOverlay() }
+                )
             }
         }
     }
@@ -180,7 +183,8 @@ class MessagesActivity : AppCompatActivity() {
                                 color = ChatTheme.colors.textLowEmphasis
                             )
                         }
-                    })
+                    }
+                )
             }
         )
     }

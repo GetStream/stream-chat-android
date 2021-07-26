@@ -180,9 +180,9 @@ class MessageListViewModel(
                 }.collect { newState ->
                     val newLastMessage = newState.messageItems.lastOrNull()?.message
 
-                    val hasNewMessage = lastLoadedMessage != null
-                        && messagesState.messageItems.isNotEmpty()
-                        && newLastMessage?.id != lastLoadedMessage?.id
+                    val hasNewMessage = lastLoadedMessage != null &&
+                        messagesState.messageItems.isNotEmpty() &&
+                        newLastMessage?.id != lastLoadedMessage?.id
 
                     messagesState = if (hasNewMessage) {
                         newState.copy(newMessageState = getNewMessageState(newLastMessage))

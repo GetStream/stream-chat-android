@@ -113,7 +113,8 @@ fun ChannelInfo(
 
     if (isAdmin) {
         channelOptions.add(
-            2, ChannelOption(
+            2,
+            ChannelOption(
                 title = stringResource(id = R.string.delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
                 icon = Icons.Default.Delete,

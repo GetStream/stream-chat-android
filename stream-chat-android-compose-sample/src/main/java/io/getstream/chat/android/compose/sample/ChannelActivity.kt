@@ -127,14 +127,16 @@ class ChannelActivity : AppCompatActivity() {
                     isNetworkAvailable = isNetworkAvailable
                 )
 
-                SearchInput(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                SearchInput(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     query = query,
                     onValueChange = {
                         query = it
                         listViewModel.onSearchChanged(it)
-                    })
+                    }
+                )
 
                 ChannelList(
                     viewModel = listViewModel,

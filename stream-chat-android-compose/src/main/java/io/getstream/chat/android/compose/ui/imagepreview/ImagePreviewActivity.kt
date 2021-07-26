@@ -9,7 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -35,11 +41,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
+import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 @OptIn(ExperimentalPagerApi::class)
 class ImagePreviewActivity : AppCompatActivity() {
@@ -76,10 +82,12 @@ class ImagePreviewActivity : AppCompatActivity() {
             initialOffscreenLimit = 2
         )
 
-        Scaffold(modifier = Modifier.fillMaxSize(),
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
             topBar = { ImagePreviewTopBar(message) },
             content = { ImagePreviewContent(pagerState, message) },
-            bottomBar = { ImagePreviewBottomBar(message, pagerState) })
+            bottomBar = { ImagePreviewBottomBar(message, pagerState) }
+        )
     }
 
     @Composable
