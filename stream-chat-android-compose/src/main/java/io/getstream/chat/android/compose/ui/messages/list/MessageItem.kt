@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -58,7 +59,7 @@ import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.reactionTypes
+import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.reactionTypes
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -128,9 +129,13 @@ internal fun DefaultMessageContainer(
             }
 
             Column(horizontalAlignment = if (ownsMessage) End else Start) {
+                val ownReactions = message.ownReactions
+
                 // reactions
                 val reactions = message.reactionCounts
-                    .mapKeys { (type, _) -> reactionTypes[type] ?: "" }
+                    .map { it.key }
+                    .filter { reactionTypes[it] != null }
+                    .map { type -> requireNotNull(reactionTypes[type]) to (type in ownReactions.map { it.type }) }
 
                 if (reactions.isNotEmpty()) {
                     MessageReactions(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp), reactions)
@@ -221,7 +226,7 @@ private fun RowScope.MessageAvatar(
 @Composable
 private fun MessageReactions(
     modifier: Modifier = Modifier,
-    reactions: Map<String, Int>,
+    reactions: List<Pair<Int, Boolean>>,
 ) {
     Row(
         modifier = modifier
@@ -229,20 +234,15 @@ private fun MessageReactions(
             .padding(4.dp),
         verticalAlignment = CenterVertically
     ) {
-        for ((emoji, count) in reactions) {
-            Row(verticalAlignment = CenterVertically) {
-                Text(
-                    modifier = Modifier.padding(2.dp),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
-                    text = count.toString()
-                )
-
-                Text(
-                    modifier = Modifier.padding(2.dp),
-                    text = emoji
-                )
-            }
+        for ((icon, ownReaction) in reactions) {
+            Icon(
+                modifier = Modifier.size(20.dp)
+                    .padding(2.dp)
+                    .align(CenterVertically),
+                painter = painterResource(icon),
+                tint = if (ownReaction) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
+                contentDescription = null
+            )
         }
     }
 }

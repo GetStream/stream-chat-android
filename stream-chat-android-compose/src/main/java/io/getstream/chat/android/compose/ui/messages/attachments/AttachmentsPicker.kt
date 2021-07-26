@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -71,9 +69,9 @@ import java.io.File
 @Composable
 fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
-    modifier: Modifier = Modifier,
-    onAttachmentsSelected: (List<Attachment>) -> Unit = {},
-    onDismiss: () -> Unit = {},
+    onAttachmentsSelected: (List<Attachment>) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val storagePermissionState =
@@ -112,7 +110,6 @@ fun AttachmentsPicker(
             backgroundColor = Color.LightGray
         ) {
             Column {
-
                 AttachmentPickerOptions(
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,

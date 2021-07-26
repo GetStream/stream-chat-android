@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.overlay
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -110,6 +109,62 @@ fun SelectedMessageOverlay(
 }
 
 /**
+ * A row of selectable reactions on a message. Users can provide their own, or use the default.
+ *
+ * @param options - The options to show.
+ * @param onReactionClick - Handler when the user clicks on any reaction.
+ * */
+@Composable
+internal fun ReactionOptions(
+    options: List<ReactionOption>,
+    onReactionClick: (ReactionOption) -> Unit,
+) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = ChatTheme.colors.barsBackground,
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item { Spacer(modifier = Modifier.width(2.dp)) }
+            items(options) { option ->
+                ReactionOptionItem(option = option, onReactionClick = onReactionClick)
+            }
+
+            item { Spacer(modifier = Modifier.width(2.dp)) }
+        }
+    }
+}
+
+/**
+ * Each reaction item in the row of reactions.
+ *
+ * @param option - The reaction to show.
+ * @param onReactionClick - Handler when the user clicks on the reaction.
+ * */
+@Composable
+internal fun ReactionOptionItem(
+    option: ReactionOption,
+    onReactionClick: (ReactionOption) -> Unit,
+) {
+    Icon(
+        modifier = Modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(bounded = false),
+                onClick = { onReactionClick(option) }
+            )
+            .padding(2.dp),
+        painter = option.drawable,
+        contentDescription = option.type,
+        tint = if (option.isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+    )
+}
+
+/**
  * The UI for a basic text message that's selected. It doesn't have all the components as a message
  * in the list, as those are not as important.
  *
@@ -152,60 +207,6 @@ private fun SelectedMessage(message: Message) {
             }
         })
     }
-}
-
-/**
- * A row of selectable reactions on a message. Users can provide their own, or use the default.
- *
- * @param options - The options to show.
- * @param onReactionClick - Handler when the user clicks on any reaction.
- * */
-@Composable
-internal fun ReactionOptions(
-    options: List<ReactionOption>,
-    onReactionClick: (ReactionOption) -> Unit,
-) {
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = ChatTheme.colors.barsBackground,
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .wrapContentWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item { Spacer(modifier = Modifier.width(2.dp)) }
-            items(options) { option ->
-                ReactionOptionItem(option = option, onReactionClick = onReactionClick)
-            }
-
-            item { Spacer(modifier = Modifier.width(2.dp)) }
-        }
-    }
-}
-
-/**
- * Each reaction item in the row of reactions.
- *
- * @param option - The reaction to show.
- * @param onReactionClick - Handler when the user clicks on the reaction.
- * */
-@Composable
-internal fun ReactionOptionItem(
-    option: ReactionOption,
-    onReactionClick: (ReactionOption) -> Unit,
-) {
-    Text(
-        modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
-                onClick = { onReactionClick(option) }
-            )
-            .padding(2.dp),
-        text = option.emoji
-    )
 }
 
 /**

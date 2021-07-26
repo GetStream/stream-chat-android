@@ -161,8 +161,7 @@ class MessageListViewModel(
                     when (state) {
                         is ChannelController.MessagesState.NoQueryActive,
                         is ChannelController.MessagesState.Loading,
-                        ->
-                            messagesState.copy(isLoading = true)
+                        -> messagesState.copy(isLoading = true)
                         is ChannelController.MessagesState.OfflineNoResults -> messagesState.copy(
                             isLoading = false,
                             messageItems = emptyList()
@@ -364,16 +363,16 @@ class MessageListViewModel(
      * */
     private fun observeThreadMessages(controller: ThreadController) {
         threadJob = viewModelScope.launch {
-            controller.loadingOlderMessages
-                .combine(controller.messages) { loadingOlderMessages, messages ->
-                    loadingOlderMessages to messages
-                }
-                .combine(controller.endOfOlderMessages) { (loadingOlderMessages, messages), endOfOlderMessages ->
+            controller.messages
+                .combine(user) { messages, user -> messages to user }
+                .combine(controller.endOfOlderMessages) { (messages, user), endOfOlderMessages ->
                     threadMessagesState.copy(
                         isLoading = false,
                         messageItems = groupMessages(filterDeletedMessages(messages)),
-                        isLoadingMore = loadingOlderMessages,
-                        endOfMessages = endOfOlderMessages
+                        isLoadingMore = false,
+                        endOfMessages = endOfOlderMessages,
+                        currentUser = user,
+                        parentMessageId = controller.threadId
                     )
                 }.collect { newState -> threadMessagesState = newState }
         }

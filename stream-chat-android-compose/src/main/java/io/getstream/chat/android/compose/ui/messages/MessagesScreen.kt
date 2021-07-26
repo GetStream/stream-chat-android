@@ -3,7 +3,6 @@ package io.getstream.chat.android.compose.ui.messages
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
-import io.getstream.chat.android.compose.ui.util.reactionTypes
+import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.reactionTypes
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -230,13 +230,16 @@ private fun buildViewModelFactory(
  * Builds the default reaction options we show to our users.
  *
  * @param ownReactions - options the user selected on the message.
+ *
+ * @return - List of [ReactionOption]s that represent the reactions we support.
  * */
-fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
+@Composable
+public fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
     return reactionTypes.entries
-        .map { (type, emoji) ->
+        .map { (type, drawable) ->
             ReactionOption(
-                emoji = emoji,
-                isSelected = ownReactions.any { it.type == "love" },
+                drawable = painterResource(drawable),
+                isSelected = ownReactions.any { it.type == type },
                 type = type
             )
         }
@@ -250,7 +253,7 @@ fun defaultReactionOptions(ownReactions: List<Reaction>): List<ReactionOption> {
  * @param inThread - If the message is in a thread or not, to block off some options.
  * */
 @Composable
-fun defaultMessageOptions(
+public fun defaultMessageOptions(
     selectedMessage: Message,
     user: User?,
     inThread: Boolean,

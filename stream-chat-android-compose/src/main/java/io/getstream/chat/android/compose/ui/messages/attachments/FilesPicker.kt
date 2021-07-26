@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -114,7 +115,7 @@ fun FileListItem(
 //            }
         }
 
-        Icon(
+        Image(
             modifier = Modifier
                 .padding(start = 16.dp)
                 .size(height = 40.dp, width = 35.dp)
