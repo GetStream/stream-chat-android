@@ -3,7 +3,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.util.Patterns
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -349,8 +348,6 @@ internal fun MessageText(
 @Composable
 private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
     val text = message.text
-    val parts = text.split(" ")
-    val links = parts.filter { Patterns.WEB_URL.matcher(it).matches() }
 
     return buildAnnotatedString {
         // First we add the whole text to the [AnnotatedString] and style it as a regular text.
