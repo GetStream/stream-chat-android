@@ -32,7 +32,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                         ChatDomain.instance().user.value?.id?.let(members::plus) ?: members
                     }
                 ),
-                Filters.or(Filters.notExists("draft"), Filters.ne("draft", true)),
+                Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
                 Filters.greaterThan("member_count", 2),
             ),
         )

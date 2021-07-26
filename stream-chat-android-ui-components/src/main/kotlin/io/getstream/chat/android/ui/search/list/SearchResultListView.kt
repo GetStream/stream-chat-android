@@ -45,8 +45,20 @@ public class SearchResultListView : ViewFlipper {
         loadMoreListener?.onLoadMoreRequested()
     }
 
+    private lateinit var style: SearchResultListViewStyle
+
     private fun init(attrs: AttributeSet?) {
-        parseAttrs(attrs)
+        style = SearchResultListViewStyle(context, attrs).also { style ->
+            binding.searchInfoBar.background = style.searchInfoBarBackground
+            style.searchInfoBarTextStyle.apply(binding.searchInfoBar)
+
+            binding.emptyImage.setImageDrawable(style.emptyStateIcon)
+            style.emptyStateTextStyle.apply(binding.emptyLabel)
+
+            binding.progressBar.indeterminateDrawable = style.progressBarIcon
+
+            adapter.messagePreviewStyle = style.messagePreviewStyle
+        }
 
         binding.searchListView.apply {
             setHasFixedSize(true)
@@ -56,10 +68,6 @@ public class SearchResultListView : ViewFlipper {
 
             addOnScrollListener(scrollListener)
         }
-    }
-
-    private fun parseAttrs(attrs: AttributeSet?) {
-        attrs ?: return
     }
 
     public fun showMessages(query: String, messages: List<Message>) {

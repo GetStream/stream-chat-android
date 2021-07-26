@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
+import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.list.SearchResultListView.SearchResultSelectedListener
 
@@ -23,11 +24,15 @@ internal class SearchResultListAdapter(
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
     private var dateFormatter = DateFormatter.from(context)
 
+    var messagePreviewStyle: MessagePreviewStyle? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
             .inflate(parent.streamThemeInflater, parent, false)
             .let { binding ->
+                messagePreviewStyle?.let(binding.root::styleView)
                 binding.root.dateFormatter = dateFormatter
+
                 MessagePreviewViewHolder(binding)
             }
     }

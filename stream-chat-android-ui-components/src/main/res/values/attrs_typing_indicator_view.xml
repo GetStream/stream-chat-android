@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TypingIndicatorView">
+        <attr name="streamUiTypingIndicatorAnimationView" format="reference" />
+
+        <attr name="streamUiTypingIndicatorUsersTextColor" format="color|reference" />
+        <attr name="streamUiTypingIndicatorUsersTextSize" format="dimension" />
+        <attr name="streamUiTypingIndicatorUsersTextFontAssets" format="string" />
+        <attr name="streamUiTypingIndicatorUsersTextFont" format="reference" />
+        <attr name="streamUiTypingIndicatorUsersTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
