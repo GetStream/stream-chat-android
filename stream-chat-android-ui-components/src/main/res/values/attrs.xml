@@ -28,5 +28,6 @@
         <attr name="streamUiSearchInputViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
+        <attr name="streamUiMessageInputViewStyle" format="reference" />
     </declare-styleable>
 </resources>

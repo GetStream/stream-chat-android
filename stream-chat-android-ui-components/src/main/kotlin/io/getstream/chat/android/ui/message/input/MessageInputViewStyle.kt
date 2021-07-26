@@ -104,8 +104,8 @@ public data class MessageInputViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageInputView,
-                0,
-                0,
+                R.attr.streamUiMessageInputViewStyle,
+                R.style.StreamUi_MessageInputView,
             ).use { a ->
                 val attachButtonEnabled = a.getBoolean(
                     R.styleable.MessageInputView_streamUiAttachButtonEnabled,
@@ -524,7 +524,7 @@ public data class MessageInputViewStyle(
                     .build()
 
                 val fileAttachmentEmptyStateText =
-                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateText)
+                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateText)
                         ?: context.getString(R.string.stream_ui_message_input_no_files)
 
                 val mediaAttachmentEmptyStateText =

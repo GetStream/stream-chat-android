@@ -276,6 +276,7 @@
         <item name="streamUiSearchResultAvatarStyle">@style/StreamUi.SearchResult.Avatar</item>
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
+        <item name="streamUiMessageInputViewStyle">@style/StreamUi.MessageInputView</item>
     </style>
 
     <style name="StreamUi">
@@ -526,5 +527,75 @@
         <item name="streamUiMentionsIcon">@drawable/stream_ui_ic_mention</item>
         <item name="streamUiCommandIcon">@drawable/stream_ui_ic_command_circle</item>
         <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command_blue</item>
+    </style>
+
+    <style name="StreamUi.MessageInputView" parent="StreamUi">
+        <item name="streamUiAttachButtonEnabled">true</item>
+        <item name="streamUiAttachButtonIcon">@drawable/stream_ui_ic_attach</item>
+        <item name="streamUiLightningButtonEnabled">true</item>
+        <item name="streamUiLightningButtonIcon">@drawable/stream_ui_ic_command</item>
+        <item name="streamUiMessageInputTextSize">@dimen/stream_ui_text_size_input</item>
+        <item name="streamUiMessageInputTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageInputHintTextColor">@color/stream_ui_text_color_hint</item>
+        <item name="streamUiMessageInputScrollbarEnabled">false</item>
+        <item name="streamUiMessageInputScrollbarFadingEnabled">false</item>
+        <item name="streamUiSendButtonEnabled">true</item>
+        <item name="streamUiSendButtonEnabledIcon">@drawable/stream_ui_ic_filled_up_arrow</item>
+        <item name="streamUiSendButtonDisabledIcon">@drawable/stream_ui_ic_filled_right_arrow</item>
+        <item name="streamUiShowSendAlsoToChannelCheckbox">true</item>
+        <item name="streamUiSendAlsoToChannelCheckboxGroupChatText">@string/stream_ui_message_input_send_to_channel</item>
+        <item name="streamUiSendAlsoToChannelCheckboxDirectChatText">@string/stream_ui_message_input_send_as_direct_message</item>
+        <item name="streamUiSendAlsoToChannelCheckboxTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiSendAlsoToChannelCheckboxTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiSendAlsoToChannelCheckboxTextStyle">normal</item>
+        <item name="streamUiMentionsEnabled">true</item>
+        <item name="streamUiMessageInputTextStyle">normal</item>
+        <item name="streamUiMessageInputHintText">@string/stream_ui_message_input_hint</item>
+        <item name="streamUiCommandsEnabled">true</item>
+        <item name="streamUiMessageInputEditTextBackgroundDrawable">@drawable/stream_ui_shape_edit_text_round</item>
+        <item name="streamUiMessageInputDividerBackgroundDrawable">@drawable/stream_ui_divider</item>
+        <item name="streamUiPictureAttachmentIcon">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiFileAttachmentIcon">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiCameraAttachmentIcon">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiAllowAccessToCameraIcon">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiAllowAccessToFilesIcon">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiAllowAccessToGalleryIcon">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiAllowAccessToGalleryText">@string/stream_ui_message_input_gallery_access</item>
+        <item name="streamUiAllowAccessToFilesText">@string/stream_ui_message_input_files_access</item>
+        <item name="streamUiAllowAccessToCameraText">@string/stream_ui_message_input_camera_access</item>
+        <item name="streamUiGrantPermissionsTextSize">@dimen/stream_ui_spacing_medium</item>
+        <item name="streamUiGrantPermissionsTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiGrantPermissionsTextStyle">bold</item>
+        <item name="streamUiAttachmentsRecentFilesTextSize">@dimen/stream_ui_spacing_medium</item>
+        <item name="streamUiAttachmentsRecentFilesTextColor">@color/stream_ui_black</item>
+        <item name="streamUiAttachmentsRecentFilesTextStyle">bold</item>
+        <item name="streamUiAttachmentsRecentFilesText">@string/stream_ui_message_input_recent_files</item>
+        <item name="streamUiAttachmentsFileManagerIcon">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiAttachmentVideoLogoIcon">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentVideoLengthVisible">true</item>
+        <item name="streamUiAttachmentVideoIconVisible">true</item>
+        <item name="streamUiCommandInputCancelIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiCommandInputBadgeBackgroundDrawable">@drawable/stream_ui_shape_command_background</item>
+        <item name="streamUiCommandInputBadgeIcon">@drawable/stream_ui_ic_command_white</item>
+        <item name="streamUiCommandInputBadgeTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiCommandInputBadgeTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiCommandInputBadgeStyle">bold</item>
+        <item name="streamUiAttachmentsFileNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiAttachmentsFileNameTextColor">@color/stream_ui_black</item>
+        <item name="streamUiAttachmentsFileNameTextStyle">bold</item>
+        <item name="streamUiAttachmentsFileSizeTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiAttachmentsFileSizeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiAttachmentsFileSizeTextStyle">bold</item>
+        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_white_snow</item>
+        <item name="streamUiFileCheckBoxSelectorDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiAttachmentsFilesEmptyStateTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiAttachmentsFilesEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiAttachmentsFilesEmptyStateStyle">normal</item>
+        <item name="streamUiAttachmentsMediaEmptyStateTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiAttachmentsMediaEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiAttachmentsMediaEmptyStateStyle">normal</item>
+        <item name="streamUiAttachmentsFilesEmptyStateText">@string/stream_ui_message_input_no_files</item>
+        <item name="streamUiAttachmentsMediaEmptyStateText">@string/stream_ui_message_input_no_files</item>
+        <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
     </style>
 </resources>
