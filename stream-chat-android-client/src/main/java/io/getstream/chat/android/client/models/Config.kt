@@ -8,12 +8,14 @@ public data class Config(
     /**
      * Date of channel creation.
      */
+    @Deprecated("Deprecated. Use createdAt instead")
     @SerializedName("created_at")
     val created_at: Date? = null,
 
     /**
      * Date of last channel update.
      */
+    @Deprecated("Deprecated. Use updatedAt instead")
     @SerializedName("updated_at")
     val updated_at: Date? = null,
 
@@ -25,12 +27,14 @@ public data class Config(
     /**
      * Controls if typing indicators are shown. Enabled by default.
      */
+    @Deprecated("Deprecated. Use isTypingEventsEnabled instead")
     @SerializedName("typing_events")
     val isTypingEvents: Boolean = true,
 
     /**
      * Controls whether the chat shows how far you’ve read. Enabled by default.
      */
+    @Deprecated("Deprecated. Use isReadEventsEnabled instead")
     @SerializedName("read_events")
     val isReadEvents: Boolean = true,
 
@@ -38,12 +42,14 @@ public data class Config(
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
      */
     @SerializedName("connect_events")
+    @Deprecated("Deprecated. Use isConnectEventsEnabled instead")
     val isConnectEvents: Boolean = true,
 
     /**
      * Controls if messages should be searchable (this is a premium feature). Disabled by default.
      */
     @SerializedName("search")
+    @Deprecated("Deprecated. Use isSearchEnabled instead")
     val isSearch: Boolean = true,
 
     /**
@@ -62,6 +68,7 @@ public data class Config(
      * Determines if users are able to mute other users. Enabled by default.
      */
     @SerializedName("mutes")
+    @Deprecated("Deprecated. Use isMutesEnabled instead")
     val isMutes: Boolean = true,
 
     /**
@@ -109,4 +116,26 @@ public data class Config(
      * The commands that are available on this channel type, e.g. /giphy.
      */
     val commands: List<Command> = mutableListOf(),
-)
+
+    ) {
+    val createdAt: Date?
+        get() = created_at
+
+    val updatedAt: Date?
+        get() = updated_at
+
+    val isTypingEventsEnabled: Boolean
+        get() = isTypingEvents
+
+    val isReadEventsEnabled: Boolean
+        get() = isReadEvents
+
+    val isConnectEventsEnabled: Boolean
+        get() = isConnectEvents
+
+    val isSearchEnabled: Boolean
+        get() = isSearch
+
+    val isMutesEnabled: Boolean
+        get() = isMutes
+}
