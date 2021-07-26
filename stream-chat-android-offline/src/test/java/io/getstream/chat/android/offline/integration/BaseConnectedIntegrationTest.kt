@@ -51,13 +51,11 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
 
-        client.addPlugin(
-            OfflinePlugin(
-                Config(
-                    backgroundSyncEnabled = backgroundSyncEnabled,
-                    userPresence = userPresence,
-                    persistenceEnabled = offlineEnabled
-                )
+        val plugin = OfflinePlugin(
+            Config(
+                backgroundSyncEnabled = backgroundSyncEnabled,
+                userPresence = userPresence,
+                persistenceEnabled = offlineEnabled
             )
         )
 
@@ -70,7 +68,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
-            context
+            context,
+            offlinePlugin = plugin,
         )
         chatDomain = chatDomainImpl
         chatDomainImpl.retryPolicy = NoRetryPolicy()

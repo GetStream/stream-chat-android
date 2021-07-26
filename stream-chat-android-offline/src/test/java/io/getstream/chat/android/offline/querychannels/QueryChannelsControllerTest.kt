@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
@@ -268,12 +269,13 @@ private class Fixture {
 
     fun get(): QueryChannelsController {
         val filter = Filters.neutral()
+        val mutableState = QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
         return QueryChannelsController(
             filter,
             querySort,
-            chatClient,
             chatDomainImpl,
-            QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope),
+            mutableState,
+            QueryChannelsLogic(mutableState, chatDomainImpl),
         ).apply {
             newChannelEventFilter = { channel, _ ->
                 if (currentUser == null) {
