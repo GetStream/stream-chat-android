@@ -68,7 +68,7 @@ public data class Config(
      * Determines if users are able to mute other users. Enabled by default.
      */
     @SerializedName("mutes")
-    @Deprecated("Deprecated. Use isMutesEnabled instead")
+    @Deprecated("Deprecated. Use isMuteEnabled instead")
     val isMutes: Boolean = true,
 
     /**
@@ -136,6 +136,6 @@ public data class Config(
     val isSearchEnabled: Boolean
         get() = isSearch
 
-    val isMutesEnabled: Boolean
+    val isMuteEnabled: Boolean
         get() = isMutes
 }
