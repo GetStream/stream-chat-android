@@ -5,6 +5,7 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -91,6 +92,7 @@ public data class MessageListViewStyle(
     val userReactionsTitleText: TextStyle,
     @ColorInt val optionsOverlayDimColor: Int,
     val emptyViewTextStyle: TextStyle,
+    @LayoutRes public val loadingView: Int,
 ) {
 
     internal companion object {
@@ -325,6 +327,11 @@ public data class MessageListViewStyle(
 
                 val emptyViewTextStyle = emptyViewStyle(context, attributes)
 
+                val loadingView = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListLoadingView,
+                    R.layout.stream_ui_default_loading_view,
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
@@ -361,6 +368,7 @@ public data class MessageListViewStyle(
                     userReactionsTitleText = userReactionsTitleText,
                     optionsOverlayDimColor = optionsOverlayDimColor,
                     emptyViewTextStyle = emptyViewTextStyle,
+                    loadingView = loadingView,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

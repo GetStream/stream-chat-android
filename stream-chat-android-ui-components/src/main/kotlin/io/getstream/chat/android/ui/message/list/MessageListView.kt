@@ -447,8 +447,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initLoadingView() {
-        loadingView = binding.defaultLoadingView
         loadingViewContainer = binding.loadingViewContainer
+
+        loadingViewContainer.removeView(binding.defaultLoadingView)
+        messageListViewStyle?.loadingView?.let { loadingView ->
+            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+                isVisible = true
+                loadingViewContainer.addView(this)
+            }
+        }
     }
 
     private fun initEmptyStateView() {
