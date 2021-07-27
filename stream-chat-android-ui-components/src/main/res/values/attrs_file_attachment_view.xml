@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- MediaAttachmentView -->
+    <!-- FileAttachmentsView -->
     <declare-styleable name="FileAttachmentView">
         <attr name="streamUiFileAttachmentProgressBarDrawable" format="reference" />
         <attr name="streamUiFileAttachmentActionButton" format="reference" />
