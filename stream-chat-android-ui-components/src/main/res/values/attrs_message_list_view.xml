@@ -96,6 +96,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style thread separator -->
+        <attr name="streamUiMessageTextSizeThreadSeparator" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorThreadSeparator" format="color" />
+        <attr name="streamUiMessageTextFontThreadSeparator" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsThreadSeparator" format="string" />
+        <attr name="streamUiMessageTextStyleThreadSeparator">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message text style link title -->
         <attr name="streamUiMessageTextSizeLinkTitle" format="dimension|reference" />
         <attr name="streamUiMessageTextColorLinkTitle" format="color" />
@@ -112,6 +123,16 @@
         <attr name="streamUiMessageTextFontLinkDescription" format="reference" />
         <attr name="streamUiMessageTextFontAssetsLinkDescription" format="string" />
         <attr name="streamUiMessageTextStyleLinkDescription">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageTextSizeLinkLabel" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLinkLabel" format="color" />
+        <attr name="streamUiMessageTextFontLinkLabel" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLinkLabel" format="string" />
+        <attr name="streamUiMessageTextStyleLinkLabel">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -338,6 +359,15 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
+        <attr name="streamUiMessageListLoadingView" format="reference" />
+        <attr name="streamUiEmptyStateTextSize" format="dimension|reference" />
+        <attr name="streamUiEmptyStateTextColor" format="color|reference" />
+        <attr name="streamUiEmptyStateTextFont" format="reference" />
+        <attr name="streamUiEmptyStateTextFontAssets" format="string" />
+        <attr name="streamUiEmptyStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

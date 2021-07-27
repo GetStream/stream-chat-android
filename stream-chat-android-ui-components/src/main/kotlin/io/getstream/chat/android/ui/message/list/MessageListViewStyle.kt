@@ -1,9 +1,11 @@
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -89,17 +91,40 @@ public data class MessageListViewStyle(
     @ColorInt val userReactionsBackgroundColor: Int,
     val userReactionsTitleText: TextStyle,
     @ColorInt val optionsOverlayDimColor: Int,
+    val emptyViewTextStyle: TextStyle,
+    @LayoutRes public val loadingView: Int,
 ) {
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
 
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
+            return TextStyle.Builder(typedArray)
+                .color(
+                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .size(
+                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
+                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+        }
+
         operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageListView,
-                0,
-                0
+                R.attr.streamUiMessageListStyle,
+                R.style.StreamUi_MessageList
             ).use { attributes ->
                 val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
                     .scrollButtonEnabled(
@@ -300,6 +325,13 @@ public data class MessageListViewStyle(
                     context.getColorCompat(R.color.stream_ui_literal_transparent)
                 )
 
+                val emptyViewTextStyle = emptyViewStyle(context, attributes)
+
+                val loadingView = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListLoadingView,
+                    R.layout.stream_ui_default_loading_view,
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
@@ -334,7 +366,9 @@ public data class MessageListViewStyle(
                     messageOptionsBackgroundColor = messageOptionsBackgroundColor,
                     userReactionsBackgroundColor = userReactionsBackgroundColor,
                     userReactionsTitleText = userReactionsTitleText,
-                    optionsOverlayDimColor = optionsOverlayDimColor
+                    optionsOverlayDimColor = optionsOverlayDimColor,
+                    emptyViewTextStyle = emptyViewTextStyle,
+                    loadingView = loadingView,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

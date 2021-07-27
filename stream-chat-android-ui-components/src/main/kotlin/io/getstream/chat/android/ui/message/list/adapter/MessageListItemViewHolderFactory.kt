@@ -137,7 +137,7 @@ public open class MessageListItemViewHolderFactory {
     protected fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
-        return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators)
+        return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
     protected fun createGiphyMessageItemViewHolder(
