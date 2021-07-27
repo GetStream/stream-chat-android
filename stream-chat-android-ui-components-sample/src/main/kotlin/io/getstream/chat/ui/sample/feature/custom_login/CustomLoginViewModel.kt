@@ -33,7 +33,7 @@ class CustomLoginViewModel : ViewModel() {
      * reinitialize the Chat SDK here with the new API key.
      */
     private fun initChatSdk(credentials: LoginCredentials) {
-        App.instance.chatInitializer.init(credentials.apiKey)
+        App.instance.initializeSDK(credentials.apiKey)
     }
 
     private fun initChatUser(loginCredentials: LoginCredentials) {
