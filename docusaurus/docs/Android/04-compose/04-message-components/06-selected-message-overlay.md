@@ -36,7 +36,7 @@ As you can see, adding the overlay is very simple. If a `selectedMessage` exists
 
 This small snippet produces the following UI.
 
-![Default SelectedMessageOverlay component](../../assets/default_selected_message_overlay_component.png)
+![Default SelectedMessageOverlay component](../../assets/compose_default_selected_message_overlay_component.png)
 
 As you can see, the reactions you can take are shown on the top, followed by the selected message and finally by message actions.
 

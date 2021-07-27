@@ -39,34 +39,34 @@ public class StreamColors(
     public companion object {
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
-            textHighEmphasis = colorResource(R.color.textHighEmphasis),
-            textLowEmphasis = colorResource(R.color.textLowEmphasis),
-            disabled = colorResource(R.color.disabled),
-            borders = colorResource(R.color.borders),
-            inputBackground = colorResource(R.color.inputBackground),
-            appBackground = colorResource(R.color.appBackground),
-            barsBackground = colorResource(R.color.barsBackground),
-            linkBackground = colorResource(R.color.linkBackground),
-            overlay = colorResource(R.color.overlay),
-            primaryAccent = colorResource(id = R.color.primaryAccent),
-            errorAccent = colorResource(R.color.errorAccent),
-            infoAccent = colorResource(R.color.infoAccent),
+            textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
+            textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis),
+            disabled = colorResource(R.color.stream_compose_disabled),
+            borders = colorResource(R.color.stream_compose_borders),
+            inputBackground = colorResource(R.color.stream_compose_input_background),
+            appBackground = colorResource(R.color.stream_compose_app_background),
+            barsBackground = colorResource(R.color.stream_compose_bars_background),
+            linkBackground = colorResource(R.color.stream_compose_link_background),
+            overlay = colorResource(R.color.stream_compose_overlay),
+            primaryAccent = colorResource(id = R.color.stream_compose_primary_accent),
+            errorAccent = colorResource(R.color.stream_compose_error_accent),
+            infoAccent = colorResource(R.color.stream_compose_info_accent),
         )
 
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
-            textHighEmphasis = colorResource(R.color.textHighEmphasisDark),
-            textLowEmphasis = colorResource(R.color.textLowEmphasisDark),
-            disabled = colorResource(R.color.disabledDark),
-            borders = colorResource(R.color.bordersDark),
-            inputBackground = colorResource(R.color.inputBackgroundDark),
-            appBackground = colorResource(R.color.appBackgroundDark),
-            barsBackground = colorResource(R.color.barsBackgroundDark),
-            linkBackground = colorResource(R.color.linkBackgroundDark),
-            overlay = colorResource(R.color.overlayDark),
-            primaryAccent = colorResource(id = R.color.primaryAccentDark),
-            errorAccent = colorResource(R.color.errorAccentDark),
-            infoAccent = colorResource(R.color.infoAccentDark),
+            textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+            textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis_dark),
+            disabled = colorResource(R.color.stream_compose_disabled_dark),
+            borders = colorResource(R.color.stream_compose_borders_dark),
+            inputBackground = colorResource(R.color.stream_compose_input_background_dark),
+            appBackground = colorResource(R.color.stream_compose_app_background_dark),
+            barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
+            linkBackground = colorResource(R.color.stream_compose_link_background_dark),
+            overlay = colorResource(R.color.stream_compose_overlay_dark),
+            primaryAccent = colorResource(id = R.color.stream_compose_primary_accent_dark),
+            errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
+            infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
         )
     }
 }

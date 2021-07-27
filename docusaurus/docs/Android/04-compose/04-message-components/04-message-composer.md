@@ -121,7 +121,7 @@ Also bear in mind you have to provide the `AttachmentsPickerViewModel`, `Message
 
 The provided snippet will render the following UI.
 
-![Default MessageComposer component](../../assets/default_message_composer_component.png)
+![Default MessageComposer component](../../assets/compose_default_message_composer_component.png)
 
 Notice how the composer shows the attachments we've selected in the input area, how it shows the message actions at the top, as well as integrations on the left side and the send button on the right side.
 
@@ -231,6 +231,6 @@ Notice how you've removed the integrations by passing in an empty composable fun
 
 This snippet will provide the following UI.
 
- ![Custom MessageComposer component](../../assets/custom_message_composer_component.png)
+ ![Custom MessageComposer component](../../assets/compose_custom_message_composer_component.png)
 
 If you want a completely custom UI for the composer with custom behavior, please read our [Creating a Custom Message Input](../07-guides/03-custom-message-input.md) guide.

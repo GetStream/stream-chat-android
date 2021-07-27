@@ -40,7 +40,7 @@ We recommend using either our `ChatDomain` directly and combining information yo
 
 The snippet above, after providing the data, generates the following UI.
 
-![Default MessagesScreen component](../../assets/default_message_list_header_component.png)
+![Default MessagesScreen component](../../assets/compose_default_message_list_header_component.png)
 
 Let's see how to handle the header actions.
 

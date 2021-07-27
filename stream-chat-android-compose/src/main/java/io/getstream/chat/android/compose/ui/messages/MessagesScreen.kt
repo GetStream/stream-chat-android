@@ -176,8 +176,8 @@ public fun MessagesScreen(
         if (deleteAction != null) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.delete_message_title),
-                message = stringResource(id = R.string.delete_message_text),
+                title = stringResource(id = R.string.stream_compose_delete_message_title),
+                message = stringResource(id = R.string.stream_compose_delete_message_text),
                 onPositiveAction = { listViewModel.deleteMessage(deleteAction.message) },
                 onDismiss = { listViewModel.dismissMessageAction(deleteAction) }
             )

@@ -10,10 +10,10 @@ public object DefaultReactionTypes {
     private const val WUT: String = "wow"
 
     internal val defaultReactionTypes: Map<String, Int> = mapOf(
-        THUMBS_UP to R.drawable.stream_ui_ic_reaction_thumbs_up,
-        LOVE to R.drawable.stream_ui_ic_reaction_love,
-        LOL to R.drawable.stream_ui_ic_reaction_lol,
-        WUT to R.drawable.stream_ui_ic_reaction_wut,
-        THUMBS_DOWN to R.drawable.stream_ui_ic_reaction_thumbs_down
+        THUMBS_UP to R.drawable.stream_compose_ic_reaction_thumbs_up,
+        LOVE to R.drawable.stream_compose_ic_reaction_love,
+        LOL to R.drawable.stream_compose_ic_reaction_lol,
+        WUT to R.drawable.stream_compose_ic_reaction_wut,
+        THUMBS_DOWN to R.drawable.stream_compose_ic_reaction_thumbs_down
     )
 }

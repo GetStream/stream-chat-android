@@ -31,7 +31,7 @@ internal fun RowScope.DefaultComposerIntegrations(
         content = {
             Icon(
                 imageVector = Icons.Default.Attachment,
-                contentDescription = stringResource(id = R.string.attachments),
+                contentDescription = stringResource(id = R.string.stream_compose_attachments),
                 tint = ChatTheme.colors.textLowEmphasis,
             )
         },

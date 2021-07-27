@@ -52,7 +52,7 @@ As you can see, it's easy to add the component to the rest of your UI, combine t
 
 The snippet above will produce the following UI.
 
- ![The Default MessageList component with a MessageListHeader](../../assets/default_message_list_component.png)
+ ![The Default MessageList component with a MessageListHeader](../../assets/compose_default_message_list_component.png)
 
 Notice how easy it was to integrate this component with other composable functions, like our `MessageListHeader`. You can see that the component shows messages and their reactions. As mentioned, it also shows attachment messages and handles pagination and reaching the bottom of the list.
 
@@ -174,7 +174,7 @@ This snippet of code prepares a custom message item component, using the `itemCo
 
 These components also use modifiers and other properties to style them and make them look nicer. With a simple custom parameter, you this snippet will produce the following UI.
 
-![Custom MessageList items](../../assets/custom_message_list_component.png)
+![Custom MessageList items](../../assets/compose_custom_message_list_component.png)
 
 As per our description, the `Avatar` and the user name `Text` are shown in a `Row`, after which we see the `MessageBubble`.
 

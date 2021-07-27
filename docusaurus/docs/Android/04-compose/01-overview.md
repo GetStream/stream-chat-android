@@ -10,7 +10,7 @@ The [Stream Chat Jetpack Compose SDK](https://github.com/GetStream/stream-chat-a
 * Channel and message lists
 
 :::note 
-The fastest way to get started with the SDK is by trying the [Jetpack Compose In-App Messaging Tutorial](https://github.com/GetStream/stream/pull/2712/files).
+The fastest way to get started with the SDK is by trying the [Jetpack Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/).
 :::
 
 The documentation is split into the following sections:
@@ -34,7 +34,7 @@ The client library is a low-level wrapper around the Stream Chat API. It lets yo
 
 It also contains all the basic model objects you'll interact with when using Stream Chat, such as `User`, `Channel`, or `Message`.
 
-### Offline support
+### Offline Support
 
 The offline library builds on top of the client and adds offline caching capabilities using a local database. For example, it allows you to send messages or add reactions while you're offline. When the user comes back online, the library will automatically recover lost events and retry sending messages.
 
@@ -42,9 +42,9 @@ This library exposes easy-to-use StateFlow and LiveData objects for reading mess
 
 If you want to build custom UI for Stream Chat, you can build it on top of the offline library.
 
-### Jetpack Compose components
+### Jetpack Compose UI Components
 
-The Jetpack Compose Components library includes three types of composable functions you can use, to easily load and display data from the Stream Chat API:
+The Jetpack Compose UI Components library includes three types of composable functions you can use, to easily load and display data from the Stream Chat API:
 
 * **Screen components**: Complete, out-of-the-box screen composables that connect all the operations you need to give users a Chat experience.
 * **Bound components**: Components which serve a specific use-case and are bound to a `ViewModel`.

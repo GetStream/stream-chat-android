@@ -4,7 +4,18 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -56,7 +67,7 @@ public fun MessageInputOptions(
 ) {
     val optionImage = if (activeAction is Reply) Icons.Default.Reply else Icons.Default.Edit
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.reply_to_message else R.string.edit_message
+        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message
     )
 
     Row(
@@ -85,7 +96,7 @@ public fun MessageInputOptions(
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             imageVector = Icons.Default.Cancel,
-            contentDescription = stringResource(id = R.string.cancel),
+            contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textLowEmphasis,
         )
     }
@@ -215,7 +226,7 @@ internal fun MessageInputImageAttachments(
                             onClick = { onAttachmentRemoved(image) }
                         ),
                     imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.cancel),
+                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     tint = ChatTheme.colors.textLowEmphasis
                 )
             }
@@ -296,7 +307,7 @@ internal fun MessageInputFileAttachments(
                                 onClick = { onAttachmentRemoved(file) }
                             ),
                         imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.cancel),
+                        contentDescription = stringResource(id = R.string.stream_compose_cancel),
                         tint = ChatTheme.colors.textLowEmphasis
                     )
                 }

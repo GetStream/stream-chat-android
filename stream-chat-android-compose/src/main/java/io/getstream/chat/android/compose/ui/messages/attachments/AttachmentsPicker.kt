@@ -8,9 +8,22 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Folder
@@ -235,7 +248,7 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
                 }
                 context.startActivity(intent)
             },
-            content = { Text(stringResource(id = R.string.grant_permission)) }
+            content = { Text(stringResource(id = R.string.stream_compose_grant_permission)) }
         )
     }
 }
@@ -273,7 +286,7 @@ private fun AttachmentPickerOptions(
                 content = {
                     Icon(
                         imageVector = Icons.Default.Image,
-                        contentDescription = stringResource(id = R.string.images_option),
+                        contentDescription = stringResource(id = R.string.stream_compose_images_option),
                         tint = if (!hasPickedFiles) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 },
@@ -285,7 +298,7 @@ private fun AttachmentPickerOptions(
                 content = {
                     Icon(
                         imageVector = Icons.Default.Folder,
-                        contentDescription = stringResource(id = R.string.files_option),
+                        contentDescription = stringResource(id = R.string.stream_compose_files_option),
                         tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 },
@@ -297,7 +310,7 @@ private fun AttachmentPickerOptions(
                 content = {
                     Icon(
                         imageVector = Icons.Default.Camera,
-                        contentDescription = stringResource(id = R.string.capture_option),
+                        contentDescription = stringResource(id = R.string.stream_compose_capture_option),
                         tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                     )
                 },
@@ -314,7 +327,7 @@ private fun AttachmentPickerOptions(
                 Icon(
                     modifier = Modifier.weight(1f),
                     imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = stringResource(id = R.string.send_attachment),
+                    contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                     tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
                 )
             }

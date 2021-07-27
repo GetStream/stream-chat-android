@@ -11,7 +11,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -44,7 +50,7 @@ import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewView
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 @OptIn(ExperimentalPagerApi::class)
 public class ImagePreviewActivity : AppCompatActivity() {
@@ -110,7 +116,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             indication = null
                         ) { finish() },
                     imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.cancel),
+                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
 
@@ -181,14 +187,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
                         .padding(8.dp)
                         .clickable { onShareImageClick(message, pagerState.currentPage) },
                     imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(id = R.string.share),
+                    contentDescription = stringResource(id = R.string.stream_compose_share),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = stringResource(
-                        id = R.string.image_order,
+                        id = R.string.stream_compose_image_order,
                         pagerState.currentPage + 1,
                         attachmentCount
                     ),
@@ -233,7 +239,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, imageUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
-                getString(R.string.stream_ui_attachment_gallery_share),
+                getString(R.string.stream_compose_attachment_gallery_share),
             ),
             null
         )

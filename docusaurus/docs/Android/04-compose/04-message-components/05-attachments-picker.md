@@ -41,7 +41,7 @@ Because the `AttachmentsPicker` is a **bound** component, you should rely on the
 
 The following code snippet, will show the following UI.
 
- ![Default AttachmentsPicker component](../../assets/default_attachments_picker_component.png)
+ ![Default AttachmentsPicker component](../../assets/compose_default_attachments_picker_component.png)
 
 As you can see, the picker is really easy to add to the UI, and it lets your users choose from different types of attachments when sending their messages.
 

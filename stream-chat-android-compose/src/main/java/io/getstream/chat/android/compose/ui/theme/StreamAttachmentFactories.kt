@@ -2,9 +2,26 @@ package io.getstream.chat.android.compose.ui.theme
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -240,7 +257,7 @@ public object StreamAttachmentFactories {
                                                 .wrapContentSize()
                                                 .align(Center),
                                             text = stringResource(
-                                                id = R.string.remaining_images_count,
+                                                id = R.string.stream_compose_remaining_images_count,
                                                 remainingImagesCount
                                             ),
                                             color = ChatTheme.colors.barsBackground,
@@ -341,7 +358,7 @@ public object StreamAttachmentFactories {
                                 },
                             imageVector = Icons.Default.CloudDownload,
                             contentDescription = stringResource(
-                                id = R.string.download
+                                id = R.string.stream_compose_download
                             )
                         )
                     }

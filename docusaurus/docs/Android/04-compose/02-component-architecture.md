@@ -44,7 +44,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 This will give you a fully-working screen, as seen below.
 
-![The ChannelScreen Component](../assets/channel_screen_component.png)
+![The ChannelScreen Component](../assets/compose_channel_screen_component.png)
 
 You can learn more about the [ChannelsComponent](./channel-components/channels-screen) and [MessagesComponent](./message-components/messages-screen) in their respective pages. 
 
@@ -87,7 +87,7 @@ You can go about two ways of building these components:
 
 Either way, these components connect all the required operations related to them and they expose more customization, as you can override both behavior and UI, like the items in the list. The snippet above will produce the following screen:
 
-![The ChannelList Component](../assets/channel_list_component.png)
+![The ChannelList Component](../assets/compose_channel_list_component.png)
 
 You can combine this component with your custom UI, within `ChatTheme()`, with other components from the SDK, or use it as a standalone. You'll learn more about each of these components in the **Channel Components** and **Message Components** sections.
 
@@ -125,6 +125,6 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 As you can see, these components are still fairly easy to use, but do require instructions on what state they show and how they look. This snippet will produce the UI as seen in the photo below.
 
-![The ChannelList Component](../assets/search_input_component.png)
+![The ChannelList Component](../assets/compose_search_input_component.png)
 
 You can customize the component to add a background, touch event handlers, elevation and much more. You'll learn more about stateless components, in the **Utility Components** section.

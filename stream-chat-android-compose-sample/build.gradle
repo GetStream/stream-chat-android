@@ -63,15 +63,6 @@ android {
     }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += [
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi', // TODO remove
-                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi', // TODO remove
-        ]
-    }
-}
-
 dependencies {
     implementation project(':stream-chat-android-compose')
 

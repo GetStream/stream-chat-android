@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.utils.MediaStringUtil
@@ -65,7 +63,7 @@ internal fun FilesPicker(
         Row(Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = stringResource(id = R.string.recent_files),
+                text = stringResource(id = R.string.stream_compose_recent_files),
                 style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
             )
@@ -76,7 +74,7 @@ internal fun FilesPicker(
                 content = {
                     Icon(
                         imageVector = Icons.Default.AddCircleOutline,
-                        contentDescription = stringResource(id = R.string.send_attachment),
+                        contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                         tint = ChatTheme.colors.primaryAccent,
                     )
                 },

@@ -2,7 +2,14 @@ package io.getstream.chat.android.compose.ui.messages.header
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -58,13 +65,13 @@ public fun MessageListHeader(
     val title = if (messageMode == Normal) {
         channelName
     } else {
-        stringResource(id = R.string.thread_title)
+        stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = if (messageMode == Normal) {
-        stringResource(id = R.string.channel_members, memberCount, onlineCount)
+        stringResource(id = R.string.stream_compose_channel_members, memberCount, onlineCount)
     } else {
-        stringResource(id = R.string.thread_subtitle, channelName)
+        stringResource(id = R.string.stream_compose_thread_subtitle, channelName)
     }
 
     Surface(

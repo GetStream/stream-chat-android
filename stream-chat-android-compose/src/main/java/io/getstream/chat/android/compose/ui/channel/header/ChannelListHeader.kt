@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.ChatClient
@@ -146,7 +145,7 @@ internal fun DefaultChannelListHeaderAction(
         Icon(
             modifier = Modifier.wrapContentSize(),
             imageVector = Icons.Default.Edit,
-            contentDescription = stringResource(id = R.string.edit_action),
+            contentDescription = stringResource(id = R.string.stream_compose_edit_action),
             tint = Color.White,
         )
     }

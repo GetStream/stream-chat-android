@@ -35,7 +35,7 @@ The `ChannelScreen` can be used without any parameters, but we advise that you p
 
 This small snippet will produce a fully-working solution, as shown in the image below.
 
-![The ChannelScreen Component](../../assets/default_channel_screen_component.png) 
+![The ChannelScreen Component](../../assets/compose_default_channel_screen_component.png) 
 
 To get a better feel of the component, you'll want to customize its actions.
 

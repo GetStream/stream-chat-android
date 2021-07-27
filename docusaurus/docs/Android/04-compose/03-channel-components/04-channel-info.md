@@ -49,7 +49,7 @@ Notice how you also show the `ChannelInfo`, only if the `selectedChannel` is not
 
 With a bit of extra code for the rest of the content, when selecting a channel, the snippet above will produce the next UI:
 
-![The ChannelInfo Component](../../assets/default_channel_info_component.png)
+![The ChannelInfo Component](../../assets/compose_default_channel_info_component.png)
 
 This just represents the `ChannelInfo` component, the rest of the UI can be whatever your implementation requires. In the header you can see information about the `Channel` members, as well as how many members are in the channel and how many are online.
 
@@ -123,6 +123,6 @@ ChannelInfo(
 ```
 
 In this example, we centered the component on the screen, made it wrap its content, added some padding and rounded corners for all sides. This code will produce the following UI:
-![The ChannelInfo Component](../../assets/custom_channel_info_component.png)
+![The ChannelInfo Component](../../assets/compose_custom_channel_info_component.png)
 
 The `ChannelInfo` component now looks more like a dialog, that displays over other elements. This is just an example of UI customization, the component still isn't a dialog, with a special scrim or dismiss actions.
