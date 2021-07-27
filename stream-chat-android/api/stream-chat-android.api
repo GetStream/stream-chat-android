@@ -554,7 +554,6 @@ public abstract interface class com/getstream/sdk/chat/view/MessageListView$Mess
 
 public final class com/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour : java/lang/Enum {
 	public static final field COUNT_UPDATE Lcom/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour;
-	public static final field Companion Lcom/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour$Companion;
 	public static final field SCROLL_TO_BOTTOM Lcom/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour;
 	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour;
 	public static fun values ()[Lcom/getstream/sdk/chat/view/MessageListView$NewMessagesBehaviour;
