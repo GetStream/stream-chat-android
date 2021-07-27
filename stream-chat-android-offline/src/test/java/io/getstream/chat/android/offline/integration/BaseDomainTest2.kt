@@ -190,10 +190,10 @@ internal open class BaseDomainTest2 {
 
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client)
+            .database(db)
             .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()
-        chatDomainImpl.db = db
         ChatDomain.instance = chatDomainImpl
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)

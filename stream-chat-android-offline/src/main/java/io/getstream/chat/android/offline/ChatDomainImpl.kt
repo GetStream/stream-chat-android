@@ -141,8 +141,7 @@ internal class ChatDomainImpl internal constructor(
     // the new behaviour for ChatDomain is to follow the ChatClient.setUser
     // the userOverwrite field is here for backwards compatibility
     internal var userOverwrite: User? = null,
-    @VisibleForTesting
-    internal var db: ChatDatabase? = null,
+    private val db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
