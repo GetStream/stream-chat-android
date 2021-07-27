@@ -31,8 +31,8 @@ public data class FileAttachmentViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.FileAttachmentView,
-                R.attr.streamUiFileAttachmentViewStyle,
-                R.style.StreamUi_FileAttachmentView
+                R.attr.streamUiMessageListFileAttachmentViewStyle,
+                R.style.StreamUi_MessageList_FileAttachment
             ).use { a ->
                 val progressBarDrawable =
                     a.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentProgressBarDrawable)
