@@ -44,9 +44,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 This will give you a fully-working screen, as seen below.
 
-![The ChannelsScreen Component](../assets/default_channels_screen_component.png)
+![The ChannelsScreen Component](../assets/compose_default_channels_screen_component.png)
 
-You can learn more about the [ChannelsComponent](./channel-components/channels-screen) and [MessagesComponent](./message-components/messages-screen) in their respective pages. 
+You can learn more about the [ChannelsComponent](./03-channel-components/01-channels-screen.md) and [MessagesComponent](./04-message-components/01-messages-screen.md) in their respective pages. 
 
 ## Bound components
 

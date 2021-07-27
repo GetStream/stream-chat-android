@@ -46,7 +46,7 @@ All you have to do is pass in the UI content you want to show, within its traili
 
 You'll also notice that if you switch to the dark theme in your system UI, the app will re-draw accordingly.
 
-![Default Dark Mode MessagesScreen Component](../../assets/dark_compose_default_messages_screen_component.png)
+![Default Dark Mode MessagesScreen Component](../../assets/compose_default_messages_screen_component_dark.png)
 
 Let's see how to customize the theme.
 
@@ -79,7 +79,7 @@ In the snippet above, we customized the shapes to be different from the default 
 
 This snippet above will produce the following screen.
 
-![Custom ChatTheme Component](../../assets/custom_chat_theme_component.png)
+![Custom ChatTheme Component](../../assets/compose_custom_chat_theme_component.png)
 
 You can see how the input field is rectangular, how all messages have rounded corners, regardless of their position in the list or who sent the message. Finally, the avatars are now a squircle, instead of a circle.
 
