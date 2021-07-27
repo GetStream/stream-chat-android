@@ -10,8 +10,6 @@ This module contains reusable UI components built in Jetpack Compose, which you 
   <img alt="Messages screen" src="../docs/compose-sample-messages-light.png" width="40%">
 </p>
 
-<!-- TODO add missing images -->
-
 ## Setup
 
 To start using this library in your project, see [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/), and then [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/).

@@ -10,8 +10,6 @@ This modules includes a sample app featuring threads, reactions, optimistic UI u
   <img alt="Messages screen" src="../docs/compose-sample-messages-dark.png" width="40%">
 </p>
 
-<!-- TODO add missing images -->
-
 ## Running the sample
 
 To run this sample app, start by cloning this repo:
