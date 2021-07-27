@@ -22,10 +22,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -165,9 +165,6 @@ internal open class BaseDomainTest {
     }
 
     fun createConnectedMockClient(): ChatClient {
-
-        val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
-
         val result = Result(listOf(data.channel1))
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
@@ -179,20 +176,17 @@ internal open class BaseDomainTest {
         }
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
-        val client = mock<ChatClient> {
-            on { subscribe(any()) } doAnswer { invocation ->
-                /*val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
-                listener.onEvent(connectedEvent)*/
-                object : Disposable {
-                    override val isDisposed: Boolean = true
-                    override fun dispose() {}
-                }
+
+        return mock<ChatClient> {
+            on { subscribe(any()) } doReturn object : Disposable {
+                override val isDisposed: Boolean = true
+                override fun dispose() = Unit
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
+            on { sendReaction(any<Reaction>(), any()) } doReturn TestCall(
                 Result(data.reaction1)
             )
             on { connectUser(any(), any<String>()) } doAnswer {
@@ -200,8 +194,6 @@ internal open class BaseDomainTest {
             }
             on { plugins } doReturn listOf(offlinePlugin)
         }
-
-        return client
     }
 
     fun setupChatDomain(client: ChatClient, user: User? = null) = runBlocking {
@@ -233,7 +225,6 @@ internal open class BaseDomainTest {
 
         if (user != null) {
             chatDomainImpl.setUser(user)
-            // waitForSetUser(client, data.user1, data.user1Token)
         }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
