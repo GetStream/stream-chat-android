@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemThreadDividerBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -12,6 +13,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 internal class ThreadSeparatorViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
+    private val style: MessageListItemStyle,
     internal val binding: StreamUiItemThreadDividerBinding =
         StreamUiItemThreadDividerBinding.inflate(
             parent.streamThemeInflater,
@@ -26,6 +28,7 @@ internal class ThreadSeparatorViewHolder(
     ) {
         super.bindData(data, diff)
 
+        style.threadSeparatorTextStyle.apply(binding.threadSeparatorLabel)
         binding.threadSeparatorLabel.text = context.resources.getQuantityString(
             R.plurals.stream_ui_message_list_thread_separator,
             data.messageCount,
