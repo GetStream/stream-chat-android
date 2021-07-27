@@ -39,7 +39,7 @@ This is a very basic and crude example, that just shows a list of channels with 
 
 The snippet above will generate the following UI.
 
-![The Default ChannelList Component](../../assets/default_channel_list_component.png)
+![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)
 
 In order to fully utilize the `Channel` items, let's see how to handle actions and state from the ViewModel.
 
@@ -184,6 +184,6 @@ ChannelList(
 
 This simple example shows how you can build your own channel item, by overriding the `itemContent` parameter. The snippet above will generate the following UI.
 
-![Customized ChannelItem Component](../../assets/custom_channel_item.png)
+![Customized ChannelItem Component](../../assets/compose_custom_channel_item.png)
 
 As you can see, the items are now within a card and show just the image and the text. You can customize the items to any extent, whatever your design specification might require.

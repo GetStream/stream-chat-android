@@ -30,7 +30,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 This small snippet of code will render the UI as shown below.
 
-![Default MessagesScreen component](../../assets/default_messages_screen_component.png)
+![Default MessagesScreen component](../../assets/compose_default_messages_screen_component.png)
 
 The component shows a navigation action and the information about the channel, members and the channel image in the header. It also shows a list of paginated messages, which support attachments, threads, replies, deleted messages and more. Finally, you can access the composer, to send new messages or attachments.
 
@@ -92,6 +92,6 @@ fun MessagesScreen(
 
 In case you pass in `false` as `showHeader`, you'll get the following UI.
 
-![MessagesScreen without the MessageListHeader](../../assets/message_list_without_header.png)
+![MessagesScreen without the MessageListHeader](../../assets/compose_message_list_without_header.png)
 
 As you can see, the header is removed from the screen, rendering only the list and the composer. If you want more customization of this screen, read our [Building Messages Screen](../08-guides/02-building-messages-screen.md) and [Building Custom Screens](../07-guides/06-building-custom-screens.md) guides.
