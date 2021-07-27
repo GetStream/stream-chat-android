@@ -2142,7 +2142,7 @@ public final class io/getstream/chat/android/client/models/Config {
 	public final fun getCustomEventsEnabled ()Z
 	public final fun getMaxMessageLength ()I
 	public final fun getMessageRetention ()Ljava/lang/String;
-	public final fun getMuteEnabled ()Z
+	public final fun getMutesEnabled ()Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPushNotificationsEnabled ()Z
 	public final fun getReadEventsEnabled ()Z
