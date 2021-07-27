@@ -52,6 +52,7 @@ Learn more in the [announcement blog post](https://getstream.io/blog/jetpack-com
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the names of properties in the `Config` class
 
 ### ✅ Added
 
