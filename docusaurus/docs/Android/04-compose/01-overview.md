@@ -10,7 +10,7 @@ The [Stream Chat Jetpack Compose SDK](https://github.com/GetStream/stream-chat-a
 * Channel and message lists
 
 :::note 
-The fastest way to get started with the SDK is by trying the [Jetpack Compose In-App Messaging Tutorial](https://github.com/GetStream/stream/pull/2712/files).
+The fastest way to get started with the SDK is by trying the [Jetpack Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/).
 :::
 
 The documentation is split into the following sections:
