@@ -149,9 +149,9 @@ public fun ChannelsScreen(
         if (activeAction is LeaveGroup) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.leave_group),
+                title = stringResource(id = R.string.stream_compose_leave_group),
                 message = stringResource(
-                    id = R.string.leave_group_text,
+                    id = R.string.stream_compose_leave_group_text,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -160,9 +160,9 @@ public fun ChannelsScreen(
         } else if (activeAction is DeleteConversation) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.delete_conversation),
+                title = stringResource(id = R.string.stream_compose_delete_conversation),
                 message = stringResource(
-                    id = R.string.delete_conversation_text,
+                    id = R.string.stream_compose_delete_conversation_text,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

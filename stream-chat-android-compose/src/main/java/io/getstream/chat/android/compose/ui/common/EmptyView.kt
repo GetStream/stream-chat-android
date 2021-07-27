@@ -30,7 +30,7 @@ public fun EmptyView(modifier: Modifier = Modifier) {
     ) {
 
         Icon(
-            painter = painterResource(id = R.drawable.stream_ui_empty_state_bubble),
+            painter = painterResource(id = R.drawable.stream_compose_empty_state_bubble),
             contentDescription = null,
             tint = ChatTheme.colors.textLowEmphasis
         )
@@ -38,7 +38,7 @@ public fun EmptyView(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(16.dp))
 
         Text(
-            text = stringResource(id = R.string.stream_ui_empty_state_title),
+            text = stringResource(id = R.string.stream_compose_empty_state_title),
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
             textAlign = TextAlign.Center
@@ -47,7 +47,7 @@ public fun EmptyView(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(8.dp))
 
         Text(
-            text = stringResource(id = R.string.stream_ui_empty_state_message),
+            text = stringResource(id = R.string.stream_compose_empty_state_message),
             style = ChatTheme.typography.body,
             color = ChatTheme.colors.textLowEmphasis,
             textAlign = TextAlign.Center

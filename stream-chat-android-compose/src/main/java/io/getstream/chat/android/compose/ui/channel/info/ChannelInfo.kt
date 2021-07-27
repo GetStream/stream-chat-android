@@ -87,21 +87,21 @@ public fun ChannelInfo(
 
     val channelOptions = mutableListOf(
         ChannelOption(
-            title = stringResource(id = R.string.view_info),
+            title = stringResource(id = R.string.stream_compose_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Person,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
         ChannelOption(
-            title = stringResource(id = R.string.leave_group),
+            title = stringResource(id = R.string.stream_compose_leave_group),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.PersonRemove,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = LeaveGroup(selectedChannel)
         ),
         ChannelOption(
-            title = stringResource(id = R.string.cancel),
+            title = stringResource(id = R.string.stream_compose_cancel),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Cancel,
             iconColor = ChatTheme.colors.textLowEmphasis,
@@ -113,7 +113,7 @@ public fun ChannelInfo(
         channelOptions.add(
             2,
             ChannelOption(
-                title = stringResource(id = R.string.delete_conversation),
+                title = stringResource(id = R.string.stream_compose_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
                 icon = Icons.Default.Delete,
                 iconColor = ChatTheme.colors.errorAccent,
@@ -141,7 +141,7 @@ public fun ChannelInfo(
             )
             Text(
                 text = stringResource(
-                    id = R.string.channel_members,
+                    id = R.string.stream_compose_channel_members,
                     channelMembers.size,
                     onlineMembers
                 ),

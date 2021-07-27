@@ -420,7 +420,7 @@ private fun ThreadParticipants(
 
         Text(
             modifier = Modifier.padding(end = 4.dp),
-            text = stringResource(id = R.string.thread_footnote),
+            text = stringResource(id = R.string.stream_compose_thread_footnote),
             style = ChatTheme.typography.footnoteBold,
             color = ChatTheme.colors.primaryAccent
         )
@@ -486,7 +486,7 @@ internal fun DeletedMessageContent(
                 top = 8.dp,
                 bottom = 8.dp
             ),
-        text = stringResource(id = R.string.message_deleted),
+        text = stringResource(id = R.string.stream_compose_message_deleted),
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteItalic
     )
@@ -551,7 +551,7 @@ private fun DeletedMessageFooter(
         )
 
         Text(
-            text = stringResource(id = R.string.only_visible_to_you),
+            text = stringResource(id = R.string.stream_compose_only_visible_to_you),
             style = ChatTheme.typography.footnote,
             color = ChatTheme.colors.textHighEmphasis
         )

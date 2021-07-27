@@ -67,7 +67,7 @@ public fun MessageInputOptions(
 ) {
     val optionImage = if (activeAction is Reply) Icons.Default.Reply else Icons.Default.Edit
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.reply_to_message else R.string.edit_message
+        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message else R.string.stream_compose_edit_message
     )
 
     Row(
@@ -96,7 +96,7 @@ public fun MessageInputOptions(
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             imageVector = Icons.Default.Cancel,
-            contentDescription = stringResource(id = R.string.cancel),
+            contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textLowEmphasis,
         )
     }
@@ -226,7 +226,7 @@ internal fun MessageInputImageAttachments(
                             onClick = { onAttachmentRemoved(image) }
                         ),
                     imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.cancel),
+                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     tint = ChatTheme.colors.textLowEmphasis
                 )
             }
@@ -307,7 +307,7 @@ internal fun MessageInputFileAttachments(
                                 onClick = { onAttachmentRemoved(file) }
                             ),
                         imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.cancel),
+                        contentDescription = stringResource(id = R.string.stream_compose_cancel),
                         tint = ChatTheme.colors.textLowEmphasis
                     )
                 }

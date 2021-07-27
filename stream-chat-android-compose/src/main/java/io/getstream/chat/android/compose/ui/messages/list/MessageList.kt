@@ -203,7 +203,7 @@ private fun Messages(
 
             abs(currentListState.firstVisibleItemIndex) >= 3 -> {
                 val title =
-                    if (newMessageState == Other) R.string.new_message else R.string.scroll_to_bottom
+                    if (newMessageState == Other) R.string.stream_compose_new_message else R.string.stream_compose_scroll_to_bottom
 
                 MessagesScrollingOption(text = stringResource(id = title)) {
                     coroutineScope.launch {

@@ -65,13 +65,13 @@ public fun MessageListHeader(
     val title = if (messageMode == Normal) {
         channelName
     } else {
-        stringResource(id = R.string.thread_title)
+        stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = if (messageMode == Normal) {
-        stringResource(id = R.string.channel_members, memberCount, onlineCount)
+        stringResource(id = R.string.stream_compose_channel_members, memberCount, onlineCount)
     } else {
-        stringResource(id = R.string.thread_subtitle, channelName)
+        stringResource(id = R.string.stream_compose_thread_subtitle, channelName)
     }
 
     Surface(

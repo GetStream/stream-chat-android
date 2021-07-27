@@ -110,7 +110,7 @@ internal fun DefaultChannelItem(
             ) {
                 val seenMessage = item.getUnreadMessagesCount(currentUser?.id ?: "") == 0
 
-                val messageIcon = if (seenMessage) R.drawable.stream_ui_message_seen else R.drawable.stream_ui_message_not_seen
+                val messageIcon = if (seenMessage) R.drawable.stream_compose_message_seen else R.drawable.stream_compose_message_not_seen
 
                 Icon(
                     modifier = Modifier

@@ -145,7 +145,7 @@ internal fun DefaultChannelListHeaderAction(
         Icon(
             modifier = Modifier.wrapContentSize(),
             imageVector = Icons.Default.Edit,
-            contentDescription = stringResource(id = R.string.edit_action),
+            contentDescription = stringResource(id = R.string.stream_compose_edit_action),
             tint = Color.White,
         )
     }

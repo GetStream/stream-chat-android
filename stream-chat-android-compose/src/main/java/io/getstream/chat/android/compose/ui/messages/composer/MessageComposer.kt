@@ -145,7 +145,7 @@ public fun MessageComposer(
                     content = {
                         Icon(
                             imageVector = Icons.Default.Send,
-                            contentDescription = stringResource(id = R.string.send_message),
+                            contentDescription = stringResource(id = R.string.stream_compose_send_message),
                             tint = ChatTheme.colors.textLowEmphasis,
                         )
                     },
@@ -166,7 +166,7 @@ public fun MessageComposer(
 @Composable
 internal fun DefaultComposerLabel() {
     Text(
-        text = stringResource(id = R.string.message_label),
+        text = stringResource(id = R.string.stream_compose_message_label),
         color = ChatTheme.colors.textLowEmphasis
     )
 }

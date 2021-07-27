@@ -116,7 +116,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             indication = null
                         ) { finish() },
                     imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.cancel),
+                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
 
@@ -187,14 +187,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
                         .padding(8.dp)
                         .clickable { onShareImageClick(message, pagerState.currentPage) },
                     imageVector = Icons.Default.Share,
-                    contentDescription = stringResource(id = R.string.share),
+                    contentDescription = stringResource(id = R.string.stream_compose_share),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
 
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = stringResource(
-                        id = R.string.image_order,
+                        id = R.string.stream_compose_image_order,
                         pagerState.currentPage + 1,
                         attachmentCount
                     ),
@@ -239,7 +239,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_STREAM, imageUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
-                getString(R.string.stream_ui_attachment_gallery_share),
+                getString(R.string.stream_compose_attachment_gallery_share),
             ),
             null
         )

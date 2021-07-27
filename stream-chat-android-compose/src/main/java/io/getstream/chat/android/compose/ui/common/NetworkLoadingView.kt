@@ -40,7 +40,7 @@ public fun NetworkLoadingView(
         )
 
         Text(
-            text = stringResource(id = R.string.waiting_for_network),
+            text = stringResource(id = R.string.stream_compose_waiting_for_network),
             style = ChatTheme.typography.title3Bold,
             color = ChatTheme.colors.textHighEmphasis,
         )

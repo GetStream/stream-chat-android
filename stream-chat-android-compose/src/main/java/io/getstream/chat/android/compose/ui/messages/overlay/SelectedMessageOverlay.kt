@@ -322,7 +322,7 @@ public fun defaultMessageOptions(
 ): List<MessageOption> {
     val messageOptions = arrayListOf(
         buildMessageOption(
-            title = R.string.reply,
+            title = R.string.stream_compose_reply,
             icon = Icons.Default.Reply,
             action = Reply(selectedMessage)
         )
@@ -331,7 +331,7 @@ public fun defaultMessageOptions(
     if (selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()) {
         messageOptions.add(
             buildMessageOption(
-                title = R.string.copy_message,
+                title = R.string.stream_compose_copy_message,
                 icon = Icons.Default.FileCopy,
                 action = Copy(selectedMessage)
             )
@@ -342,7 +342,7 @@ public fun defaultMessageOptions(
         messageOptions.add(
             1,
             buildMessageOption(
-                title = R.string.thread_reply,
+                title = R.string.stream_compose_thread_reply,
                 icon = Icons.Default.Chat,
                 action = ThreadReply(selectedMessage)
             )
@@ -352,7 +352,7 @@ public fun defaultMessageOptions(
     if (selectedMessage.user.id == user?.id) {
         messageOptions.add(
             buildMessageOption(
-                title = R.string.edit_message,
+                title = R.string.stream_compose_edit_message,
                 icon = Icons.Default.Edit,
                 action = Edit(selectedMessage)
             )
@@ -360,7 +360,7 @@ public fun defaultMessageOptions(
 
         messageOptions.add(
             MessageOption(
-                title = R.string.delete_message,
+                title = R.string.stream_compose_delete_message,
                 icon = Icons.Default.Delete,
                 action = Delete(selectedMessage),
                 iconColor = ChatTheme.colors.errorAccent,
@@ -370,7 +370,7 @@ public fun defaultMessageOptions(
     } else {
         messageOptions.add(
             buildMessageOption(
-                title = R.string.mute_user,
+                title = R.string.stream_compose_mute_user,
                 icon = Icons.Default.VolumeMute,
                 action = MuteUser(selectedMessage)
             )

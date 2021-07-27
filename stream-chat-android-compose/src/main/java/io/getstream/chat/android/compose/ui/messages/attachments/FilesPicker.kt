@@ -63,7 +63,7 @@ internal fun FilesPicker(
         Row(Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = stringResource(id = R.string.recent_files),
+                text = stringResource(id = R.string.stream_compose_recent_files),
                 style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
             )
@@ -74,7 +74,7 @@ internal fun FilesPicker(
                 content = {
                     Icon(
                         imageVector = Icons.Default.AddCircleOutline,
-                        contentDescription = stringResource(id = R.string.send_attachment),
+                        contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                         tint = ChatTheme.colors.primaryAccent,
                     )
                 },

@@ -258,7 +258,7 @@ public object StreamAttachmentFactories {
                                                 .wrapContentSize()
                                                 .align(Center),
                                             text = stringResource(
-                                                id = R.string.remaining_images_count,
+                                                id = R.string.stream_compose_remaining_images_count,
                                                 remainingImagesCount
                                             ),
                                             color = ChatTheme.colors.barsBackground,
@@ -359,7 +359,7 @@ public object StreamAttachmentFactories {
                                 },
                             imageVector = Icons.Default.CloudDownload,
                             contentDescription = stringResource(
-                                id = R.string.download
+                                id = R.string.stream_compose_download
                             )
                         )
                     }

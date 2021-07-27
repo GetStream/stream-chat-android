@@ -59,7 +59,7 @@ public fun SearchInput(
                 content = {
                     Icon(
                         imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.cancel_search),
+                        contentDescription = stringResource(id = R.string.stream_compose_cancel_search),
                         tint = ChatTheme.colors.textLowEmphasis,
                     )
                 }
@@ -120,7 +120,7 @@ internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
 @Composable
 internal fun DefaultSearchLabel() {
     Text(
-        text = stringResource(id = R.string.query_channels),
+        text = stringResource(id = R.string.stream_compose_query_channels),
         style = ChatTheme.typography.body,
         color = ChatTheme.colors.textLowEmphasis,
     )

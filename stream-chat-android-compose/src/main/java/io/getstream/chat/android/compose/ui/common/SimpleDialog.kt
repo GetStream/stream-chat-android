@@ -45,12 +45,12 @@ public fun SimpleDialog(
         },
         confirmButton = {
             Button(onClick = { onPositiveAction() }) {
-                Text(text = stringResource(id = R.string.yes))
+                Text(text = stringResource(id = R.string.stream_compose_yes))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(text = stringResource(id = R.string.cancel))
+                Text(text = stringResource(id = R.string.stream_compose_cancel))
             }
         },
         backgroundColor = ChatTheme.colors.barsBackground,
