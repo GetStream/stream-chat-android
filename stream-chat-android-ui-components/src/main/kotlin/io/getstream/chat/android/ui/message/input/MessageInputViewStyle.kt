@@ -579,6 +579,8 @@ public data class MessageInputViewStyle(
             }
         }
 
+        fun createDefault(context: Context) = invoke(context, null)
+
         private fun setTintListIfNeeded(
             typedArray: TypedArray,
             drawable: Drawable,
