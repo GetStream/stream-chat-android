@@ -72,6 +72,8 @@ public data class MessageListItemStyle(
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
     public val textStyleThreadCounter: TextStyle,
+    public val threadSeparatorTextStyle: TextStyle,
+    public val textStyleLinkLabel: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
     @ColorInt public val dateSeparatorBackgroundColor: Int,
@@ -289,6 +291,23 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val textStyleThreadSeparator = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeThreadSeparator,
+                    context.getDimension(DEFAULT_TEXT_SIZE_THREAD_COUNTER)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorThreadSeparator,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_THREAD_COUNTER)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsThreadSeparator,
+                    R.styleable.MessageListView_streamUiMessageTextFontThreadSeparator,
+                    mediumTypeface
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadSeparator, DEFAULT_TEXT_STYLE)
+                .build()
+
             val textStyleLinkTitle = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageTextSizeLinkTitle,
@@ -320,6 +339,22 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextFontLinkDescription,
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkDescription, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleLinkLabel = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLinkLabel,
+                    context.getDimension(DEFAULT_TEXT_SIZE_LINK_DESCRIPTION)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLinkLabel,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_LINK_DESCRIPTION)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkLabel,
+                    R.styleable.MessageListView_streamUiMessageTextFontLinkLabel,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLinkLabel, DEFAULT_TEXT_STYLE)
                 .build()
 
             val dateSeparatorBackgroundColor =
@@ -458,8 +493,10 @@ public data class MessageListItemStyle(
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
                 textStyleThreadCounter = textStyleThreadCounter,
+                threadSeparatorTextStyle = textStyleThreadSeparator,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
+                textStyleLinkLabel = textStyleLinkLabel,
                 dateSeparatorBackgroundColor = dateSeparatorBackgroundColor,
                 textStyleDateSeparator = textStyleDateSeparator,
                 reactionsViewStyle = reactionsViewStyle,

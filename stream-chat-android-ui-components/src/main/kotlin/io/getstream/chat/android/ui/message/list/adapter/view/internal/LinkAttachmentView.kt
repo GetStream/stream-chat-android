@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
-import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
@@ -14,6 +13,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
@@ -23,7 +24,11 @@ internal class LinkAttachmentView : FrameLayout {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    )
 
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
         previewUrl = attachment.ogUrl
@@ -68,11 +73,16 @@ internal class LinkAttachmentView : FrameLayout {
         }
     }
 
-    internal fun setTextColor(@ColorInt textColor: Int) {
-        binding.apply {
-            descriptionTextView.setTextColor(textColor)
-            titleTextView.setTextColor(textColor)
-        }
+    internal fun setTitleTextStyle(textStyle: TextStyle) {
+        binding.titleTextView.setTextStyle(textStyle)
+    }
+
+    internal fun setDescriptionTextStyle(textStyle: TextStyle) {
+        binding.descriptionTextView.setTextStyle(textStyle)
+    }
+
+    internal fun setLabelTextStyle(textStyle: TextStyle) {
+        binding.labelTextView.setTextStyle(textStyle)
     }
 
     internal fun setLinkDescriptionMaxLines(maxLines: Int) {
