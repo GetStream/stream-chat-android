@@ -503,6 +503,9 @@
         <item name="streamUiEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiEmptyStateTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiEmptyStateTextStyle">normal</item>
+
+        <item name="streamUiMessagesStart">bottom</item>
+        <item name="streamUiThreadMessagesStart">bottom</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
