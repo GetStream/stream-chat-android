@@ -318,7 +318,7 @@ public data class MessageInputViewStyle(
                 val grantPermissionsTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiGrantPermissionsTextSize,
-                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium)
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large)
                     )
                     .color(
                         R.styleable.MessageInputView_streamUiGrantPermissionsTextColor,
