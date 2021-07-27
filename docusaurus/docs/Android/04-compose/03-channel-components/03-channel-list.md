@@ -2,12 +2,12 @@
 
 The `ChannelList` component allows us to build paginated list of `Channel` items, with exposed long tap and single tap actions. We support two versions of the `ChannelList` component:
 
-* **ViewModel-powered**: This version connects itself to the `ChannelListViewModel` and loads all the required data. It also connects long item tap and pagination events to the `ViewModel`.
+* **Bound**: This version binds itself to the `ChannelListViewModel` and loads all the required data. It also connects long item tap and pagination events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list, which doesn't know about the `ViewModel` and depends on pure state from external sources, to render its UI.
 
 :::note 
 
-The **ViewModel-powered** version of the list uses the **stateless** list internally. That way, when providing the same state to either component, the behavior will be the same. 
+The **bound** version of the list uses the **stateless** list internally. That way, when providing the same state to either component, the behavior will be the same. 
 
 :::
 
@@ -21,7 +21,7 @@ Let's see how to show a list of channels.
 
 ## Usage
 
-To use the **ViewModel-powered** `ChannelList`, add it to your UI, within `setContent()`:
+To use the **bound** `ChannelList`, add it to your UI, within `setContent()`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ In order to fully utilize the `Channel` items, let's see how to handle actions a
 
 ## Handling Actions & State
 
-If you've chosen the **ViewModel-powered** version of the `ChannelList` component, we recommend either providing your own instance of the `ViewModel`, or overriding default actions to react to state changes. To support that, the `ChannelList` signature exposes the following parameters:
+If you've chosen the **bound** version of the `ChannelList` component, we recommend either providing your own instance of the `ViewModel`, or overriding default actions to react to state changes. To support that, the `ChannelList` signature exposes the following parameters:
 
 ```kotlin
 @Composable
@@ -186,4 +186,4 @@ This simple example shows how you can build your own channel item, by overriding
 
 ![Customized ChannelItem Component](../../assets/compose_custom_channel_item.png)
 
-As you can see, the items are now within a card and show just the image and the text. You can customize the items to any extent, whatever your design specification might require.
+As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.

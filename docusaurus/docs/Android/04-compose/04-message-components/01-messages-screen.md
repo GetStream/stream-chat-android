@@ -92,6 +92,6 @@ fun MessagesScreen(
 
 In case you pass in `false` as `showHeader`, you'll get the following UI.
 
-![MessagesScreen without the MessageListHeader](../../assets/compose_message_list_without_header.png)
+![MessagesScreen without the MessageListHeader](../../assets/compose_custom_messages_screen_component.png)
 
 As you can see, the header is removed from the screen, rendering only the list and the composer. If you want more customization of this screen, read our [Building Messages Screen](../07-guides/02-building-messages-screen.md) and [Building Custom Screens](../07-guides/06-building-custom-screens.md) guides.

@@ -1,2 +1,6 @@
-# Building a Channel List Screen
+# Building a Channels Screen
+
+```
+TODO: This documentation is in progress. Please stay tuned for more!
+```
 

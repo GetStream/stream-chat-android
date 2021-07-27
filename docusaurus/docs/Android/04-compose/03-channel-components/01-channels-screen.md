@@ -1,8 +1,8 @@
 # ChannelsScreen
 
-The easiest way to set up a screen that shows the active user's channels and give them the ability to search for a specific channel, is to use the `ChannelScreen`.
+The easiest way to set up a screen that shows the active user's channels and give them the ability to search for a specific channel, is to use the `ChannelsScreen`.
 
-`ChannelScreen` sets up four components internally:
+`ChannelsScreen` sets up four components internally:
 
 * `ChannelListHeader`: Shows the information of the current user and exposes a trailing action.
 * `ChannelSearch`: Allows users to query channels by ID.
@@ -29,19 +29,19 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 :::note 
 
-The `ChannelScreen` can be used without any parameters, but we advise that you pass in the title of your app, as well as the action handlers.
+The `ChannelsScreen` can be used without any parameters, but we advise that you pass in the title of your app, as well as the action handlers.
 
 :::
 
 This small snippet will produce a fully-working solution, as shown in the image below.
 
-![The ChannelScreen Component](../../assets/compose_default_channel_screen_component.png) 
+![The ChannelsScreen Component](../../assets/compose_default_channels_screen_component.png) 
 
 To get a better feel of the component, you'll want to customize its actions.
 
 ## Handling Actions
 
-When it comes to action handlers exposed in the `ChannelScreen` signature you have access to the following:
+When it comes to action handlers exposed in the `ChannelsScreen` signature you have access to the following:
 
 ```kotlin
 fun ChannelsScreen(
@@ -53,7 +53,7 @@ fun ChannelsScreen(
 )
 ```
 
-There are four main action handlers you can use with the `ChannelScreen`:
+There are four main action handlers you can use with the `ChannelsScreen`:
 
 * `onHeaderClickAction`: Handler for the default header trailing icon click action.
 * `onItemClick`: Handler when a `Channel` is clicked.
@@ -83,13 +83,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-These four parameters let you customize the behavior of the `ChannelScreen` to an extent, as you can react to the **Header Action Click**, **Back Pressed**, **Item Click** and **Channel Info** actions.
+These four parameters let you customize the behavior of the `ChannelsScreen` to an extent, as you can react to the **Header Action Click**, **Back Pressed**, **Item Click** and **Channel Info** actions.
 
 ## Customization
 
-`ChannelScreen` is one of our **out-of-box** solution components and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it the `ChatTheme`.
+`ChannelsScreen` is one of our **screen components** and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it the `ChatTheme`.
 
-When it comes to UI and behavior customization in the `ChannelScreen` signature, you have access to the following:
+When it comes to UI and behavior customization in the `ChannelsScreen` signature, you have access to the following:
 
 ```kotlin
 fun ChannelsScreen(

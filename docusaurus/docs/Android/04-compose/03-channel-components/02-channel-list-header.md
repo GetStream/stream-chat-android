@@ -37,7 +37,7 @@ The `ChannelListHeader` can be used without any parameters, but we advise that y
 
 This snippet will produce the UI as shown below.
 
-![The ChannelListHeader Component](../../assets/compose_channel_list_header_component.png)
+![The ChannelListHeader Component](../../assets/compose_default_channel_list_header_component.png)
 
 Next, let's see how to handle actions in the header.
 
@@ -115,7 +115,8 @@ ChannelListHeader(
                 // click handler for the custom action
             },
             imageVector = Icons.Default.Add,
-            contentDescription = "Add"
+            contentDescription = "Add",
+            tint = ChatTheme.colors.textHighEmphasis
         )
     }
 )
@@ -127,6 +128,6 @@ By overriding the `action` parameter, you replace the default action UI with you
 
 The snippet above will produce the following UI.
 
-![The ChannelListHeader Component](../../assets/compose_customized_channel_list_header.png)
+![The ChannelListHeader Component](../../assets/compose_custom_channel_list_header_component.png)
 
 You can also choose to build a completely custom header and integrate with the rest of our components. To learn how to do that, read our [Building Custom Screens](../07-guides/06-building-custom-screens.md) guide.

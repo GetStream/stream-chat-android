@@ -21,8 +21,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun InputField(
     value: String,
     onValueChange: (String) -> Unit,
-    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
     modifier: Modifier = Modifier,
+    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
     BasicTextField(
         modifier = modifier

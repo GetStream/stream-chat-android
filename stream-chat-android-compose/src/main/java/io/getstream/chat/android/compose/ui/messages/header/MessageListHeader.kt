@@ -87,7 +87,8 @@ public fun MessageListHeader(
         ) {
 
             BackButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .size(36.dp),
                 imageVector = Icons.Default.ArrowBack,
                 onBackPressed = onBackPressed
             )

@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -67,7 +66,7 @@ public object StreamAttachmentFactories {
         ),
         AttachmentFactory(
             { state -> ImageAttachmentFactory(state) },
-            { message -> message.attachments.any { it.type == "image" } }
+            { message -> message.attachments.all { it.type == "image" } }
         ),
         AttachmentFactory(
             { state -> FileAttachmentFactory(state) },
@@ -107,7 +106,7 @@ public object StreamAttachmentFactories {
                 .width(250.dp)
                 .wrapContentHeight()
                 .clip(ChatTheme.shapes.attachment)
-                .background(ChatTheme.colors.borders)
+                .background(ChatTheme.colors.linkBackground)
                 .combinedClickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
@@ -180,7 +179,7 @@ public object StreamAttachmentFactories {
         Row(
             modifier
                 .size(height = 200.dp, width = 250.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(ChatTheme.shapes.attachment)
                 .combinedClickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
@@ -304,7 +303,7 @@ public object StreamAttachmentFactories {
             for (attachment in message.attachments) {
                 Surface(
                     modifier = Modifier.padding(2.dp),
-                    color = ChatTheme.colors.appBackground, shape = RoundedCornerShape(16.dp)
+                    color = ChatTheme.colors.appBackground, shape = ChatTheme.shapes.attachment
                 ) {
                     Row(
                         Modifier
@@ -316,7 +315,7 @@ public object StreamAttachmentFactories {
                         Image(
                             modifier = Modifier
                                 .size(height = 40.dp, width = 35.dp)
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(ChatTheme.shapes.attachment),
                             painter = painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType)),
                             contentDescription = null
                         )

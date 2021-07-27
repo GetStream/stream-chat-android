@@ -147,8 +147,8 @@ public fun ChannelList(
 private fun Channels(
     channelsState: ChannelsState,
     onLastItemReached: () -> Unit,
-    itemContent: @Composable (Channel) -> Unit,
     modifier: Modifier = Modifier,
+    itemContent: @Composable (Channel) -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channels) = channelsState
     val state = rememberLazyListState()

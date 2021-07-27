@@ -4,12 +4,12 @@ The `MessageComposer` is arguably one of the most important components when buil
 
 There are two versions of the composer that we provide:
 
-* **ViewModel-powered**: This version relies on a `ViewModel` to set up all of its operations, like sending, editing and replying to a message, as well as handling UI state when the user performs different message actions. 
+* **Bound**: This version relies on a `ViewModel` to set up all of its operations, like sending, editing and replying to a message, as well as handling UI state when the user performs different message actions. 
 * **Stateless**: This is a stateless version of the composer that doesn't know about `ViewModel`s or business logic. It exposes several actions and customization options that let you override the behavior and UI of the component.
 
 :::note 
 
-The **ViewModel-powered** version of the composer uses the **stateless** composer internally. That way, when providing the same state to either component, the behavior will be the same. 
+The **bound** version of the composer uses the **stateless** composer internally. That way, when providing the same state to either component, the behavior will be the same. 
 
 Additionally, we cannot provide a default `ViewModel`, as it requires the `channelId` to send data, so you'll have to build an instance yourself.
 
@@ -194,7 +194,7 @@ fun MyCustomComposer() {
             .wrapContentHeight(),
         viewModel = composerViewModel,
         integrations = {}, // removing integrations
-        input = { // customizing input
+        input = { // building a custom input
             MessageInput(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -205,7 +205,7 @@ fun MyCustomComposer() {
                 activeAction = composerViewModel.activeAction,
                 onValueChange = { composerViewModel.onInputChange(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                label = { // customizing the label within the input
+                label = { // adding custom labels to the input
                     Row(
                         Modifier.wrapContentWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -218,10 +218,11 @@ fun MyCustomComposer() {
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "Type something",
-                            color = ChatTheme.colors.textMidEmphasis
+                            color = ChatTheme.colors.textLowEmphasis
                         )
                     }
-                })
+                }
+            )
         }
     )
 }

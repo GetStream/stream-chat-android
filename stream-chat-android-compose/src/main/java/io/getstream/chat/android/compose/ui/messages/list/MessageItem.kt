@@ -140,7 +140,10 @@ internal fun DefaultMessageContainer(
                     .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
 
                 if (reactions.isNotEmpty()) {
-                    MessageReactions(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp), reactions)
+                    MessageReactions(
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp),
+                        reactions = reactions
+                    )
                 }
 
                 val bubbleShape = if (message.id == parentMessageId) {
@@ -230,8 +233,8 @@ private fun RowScope.MessageAvatar(
  * */
 @Composable
 private fun MessageReactions(
-    modifier: Modifier = Modifier,
     reactions: List<Pair<Int, Boolean>>,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

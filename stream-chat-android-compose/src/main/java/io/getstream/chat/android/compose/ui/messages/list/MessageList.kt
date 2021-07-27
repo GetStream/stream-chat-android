@@ -147,8 +147,8 @@ private fun Messages(
     messagesState: MessagesState,
     onMessagesStartReached: () -> Unit,
     onScrollToBottom: () -> Unit,
-    itemContent: @Composable (MessageItem) -> Unit,
     modifier: Modifier = Modifier,
+    itemContent: @Composable (MessageItem) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
     val state = rememberLazyListState()

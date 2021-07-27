@@ -21,8 +21,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun MessageBubble(
     color: Color,
     shape: Shape,
-    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     Surface(
         modifier = modifier,

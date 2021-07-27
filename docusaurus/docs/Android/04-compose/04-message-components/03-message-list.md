@@ -2,12 +2,12 @@
 
 The `MessageList` component is a crucial part when building a chat experience. We support two versions of the `MessageList` component:
 
-* **ViewModel-powered**: This version connects itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination and bottom reached events to the `ViewModel`.
+* **Bound**: This version binds itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination and bottom reached events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list, which doesn't know about the `ViewModel` and depends on pure state from external sources, to render its UI.
 
 :::note 
 
-The **ViewModel-powered** version of the list uses the **stateless** list internally. That way, when providing the same state to either component, the behavior will be the same. 
+The **bound** version of the list uses the **stateless** list internally. That way, when providing the same state to either component, the behavior will be the same. 
 
 Additionally, we cannot provide a default `ViewModel`, as it requires the `channelId` to load the data, so you'll have to build an instance yourself.
 
@@ -23,7 +23,7 @@ Let's see how to show a list of messages.
 
 ## Usage
 
-To use the **ViewModel-powered** `MessagesList`, add it to the rest of your UI, e.g. within `setContent()`:
+To use the **bound** `MessagesList`, add it to the rest of your UI, e.g. within `setContent()`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,13 +48,15 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-As you can see, it's easy to add the component to the rest of your UI, combine them with our other component or even your own, to build a custom screen. Additionally, if you choose the **ViewModel-powered** version, as seen here, you just need to provide a `MessageListViewModel` and the component will work on its own.
+As you can see, it's easy to add the component to the rest of your UI, combine them with our other component or even your own, to build a custom screen. Additionally, if you choose the **bound** version, as seen here, you just need to provide a `MessageListViewModel` and the component will work on its own.
 
 The snippet above will produce the following UI.
 
  ![The Default MessageList component with a MessageListHeader](../../assets/compose_default_message_list_component.png)
 
-Notice how easy it was to integrate this component with other composable functions, like our `MessageListHeader`. You can see that the component shows messages and their reactions. As mentioned, it also shows attachment messages and handles pagination and reaching the bottom of the list.
+Notice how easy it was to integrate this component with other composable functions, like our `MessageListHeader`. You can see that the component shows different types of messages, such as link and image previews.
+
+ It also handles pagination and various other events when scrolling or receiving new messages.
 
 Let's see how to handle the actions within the list.
 
@@ -92,11 +94,11 @@ MessageList(
 )
 ```
 
-If you're using the **ViewModel-powered** version of the component, these actions update the state within the `ViewModel` by default, while the default actions of the **stateless** version are all empty.
+If you're using the **bound** version of the component, these actions update the state within the `ViewModel` by default, while the default actions of the **stateless** version are all empty.
 
 If you override the default actions to build your custom behavior, we still recommend storing the data in the `ViewModel`, as most of the behavior like having threads and pagination is already built for you.
 
-We recommend using the **ViewModel-powered** version for ease of use. Alternatively, you can use the stateless version and provide the data manually, for more control.
+We recommend using the **bound** version for ease of use. Alternatively, you can use the stateless version and provide the data manually, for more control.
 
 ##  Customization
 
@@ -129,7 +131,8 @@ fun CustomMessageList() {
     MessageList(
         viewModel = listViewModel,
         modifier = Modifier.fillMaxSize(),
-        itemContent = { message ->
+        itemContent = { messageItem ->
+		val (message, position) = messageItem
             Column(
                 modifier = Modifier
                     .padding(8.dp)
@@ -138,7 +141,7 @@ fun CustomMessageList() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Avatar(
                         modifier = Modifier.size(36.dp),
-                        painter = rememberCoilPainter(request = message.user.image)
+                        painter = rememberImagePainter(data = message.user.image)
                     )
 
                     Text(
@@ -150,6 +153,7 @@ fun CustomMessageList() {
                 }
 
                 MessageBubble(
+                    color = ChatTheme.colors.barsBackground,
                     modifier = Modifier.padding(top = 4.dp),
                     shape = RoundedCornerShape(
                         topEnd = 16.dp,
@@ -176,6 +180,6 @@ These components also use modifiers and other properties to style them and make 
 
 ![Custom MessageList items](../../assets/compose_custom_message_list_component.png)
 
-As per our description, the `Avatar` and the user name `Text` are shown in a `Row`, after which we see the `MessageBubble`.
+As per our description, the `Avatar` and the user name `Text` are shown in a `Row`, after which we see the `MessageBubble`. Note that this approach doesn't automatically display attachments, so you'll have to show attachment UI based on the provided `attachmentFactories` within the `ChatTheme`.
 
 Using this approach, you can completely customize the items to your needs and you can use click, touch and combined modifiers to customize the touch event behavior.

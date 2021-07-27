@@ -135,9 +135,12 @@ public fun ChannelInfo(
         ) {
 
             Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 text = title,
                 style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = stringResource(

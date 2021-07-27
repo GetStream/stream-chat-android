@@ -102,13 +102,13 @@ public fun MessageComposer(
 public fun MessageComposer(
     value: String,
     attachments: List<Attachment>,
-    integrations: @Composable RowScope.() -> Unit,
-    input: @Composable RowScope.() -> Unit,
     activeAction: MessageAction?,
     onSendMessage: (String) -> Unit,
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
+    integrations: @Composable RowScope.() -> Unit,
+    input: @Composable RowScope.() -> Unit,
 ) {
     Surface(
         modifier = modifier,
