@@ -112,7 +112,7 @@ in your Manifest file:
   - `streamUiTypingIndicatorAnimationView` - typing view
   - `streamUiTypingIndicatorUsersTextSize`, `streamUiTypingIndicatorUsersTextColor`, `streamUiTypingIndicatorUsersTextFont`, `streamUiTypingIndicatorUsersTextFontAssets`, `streamUiTypingIndicatorUsersTextStyle` attributes to customize typing users text
 - Added possibility to customize `TypingIndicatorView` style via `TransformStyle.typingIndicatorViewStyleTransformer`
-- Added `streamUiMessageListFileAttachmentViewStyle` theme attribute to customize the appearance of file attachments within messages.
+- Added `streamUiMessageListFileAttachmentStyle` theme attribute to customize the appearance of file attachments within messages.
 
 ### ⚠️ Changed
 - Made `Channel::getLastMessage` function public
