@@ -278,7 +278,6 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
-        <item name="streamUiMessageInputViewStyle">@style/StreamUi.MessageInputView</item>
     </style>
 
     <style name="StreamUi">
