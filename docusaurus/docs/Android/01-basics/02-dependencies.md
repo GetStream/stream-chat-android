@@ -41,7 +41,7 @@ This also adds the client library automatically.
 
 ### UI Components
 
-To use UI components in your application, add the following dependency:
+To use the [UI Components](../03-ui/01-overview.md) in your application, add the following dependency:
 
 ```groovy
 dependencies {
@@ -53,7 +53,7 @@ Adding the UI Components library as a dependency will automatically include the 
 
 ### Compose UI Components
 
-To use the Compose UI components instead, add the following dependency:
+To use the [Compose UI Components](../04-compose/01-overview.md) instead, add the following dependency:
 
 ```groovy
 dependencies {

@@ -23,5 +23,3 @@ git clone git@github.com:GetStream/stream-chat-android.git
 Next, open [Android Studio](https://developer.android.com/studio) and open the newly cloned project folder. Make sure you run the app in this module (`stream-chat-android-compose-sample`).
 
 ![Android Studio app selection](../docs/android-studio-app-selection-compose-sample.png)
-
-> The `stream-chat-android-sample` module contains the sample app for our previous UI implementation. 
