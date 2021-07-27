@@ -1,8 +1,8 @@
-# Stream Chat Android Compose Components Sample App
+# Stream Chat Android Compose UI Components Sample App
 
 > Not using Compose yet? Check out the [UI Components sample app](../stream-chat-android-ui-components-sample) built with XML layouts!
 
-This modules includes a sample app featuring threads, reactions, optimistic UI updates and offline storage. All built on top of our [Compose components](../stream-chat-android-compose).
+This modules includes a sample app featuring threads, reactions, optimistic UI updates and offline storage. All built on top of our [Compose UI Components](../stream-chat-android-compose).
 
 <p align="center">
   <img alt="Channels screen" src="../docs/compose-sample-channels-dark.png" width="40%">
