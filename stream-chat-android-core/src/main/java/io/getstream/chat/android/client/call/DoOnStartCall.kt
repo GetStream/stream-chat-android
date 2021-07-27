@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 internal class DoOnStartCall<T : Any>(
-    private val originCall: Call<T>,
+    private val originalCall: Call<T>,
     private val scope: CoroutineScope,
     private val sideEffect: suspend () -> Unit,
 ) : Call<T> {
@@ -16,13 +16,13 @@ internal class DoOnStartCall<T : Any>(
 
     override fun execute(): Result<T> = runBlocking {
         sideEffect()
-        originCall.execute()
+        originalCall.execute()
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
         job = scope.launch {
             sideEffect()
-            originCall.enqueue(callback)
+            originalCall.enqueue(callback)
         }
     }
 
