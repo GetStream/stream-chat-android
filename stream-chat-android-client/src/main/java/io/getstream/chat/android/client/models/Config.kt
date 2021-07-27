@@ -8,12 +8,14 @@ public data class Config(
     /**
      * Date of channel creation.
      */
+    @Deprecated("Use createdAt instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("createdAt"))
     @SerializedName("created_at")
     val created_at: Date? = null,
 
     /**
      * Date of last channel update.
      */
+    @Deprecated("Use updatedAt instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("updatedAt"))
     @SerializedName("updated_at")
     val updated_at: Date? = null,
 
@@ -25,24 +27,28 @@ public data class Config(
     /**
      * Controls if typing indicators are shown. Enabled by default.
      */
+    @Deprecated("Use typingEventsEnabled instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("typingEventsEnabled"))
     @SerializedName("typing_events")
     val isTypingEvents: Boolean = true,
 
     /**
      * Controls whether the chat shows how far you’ve read. Enabled by default.
      */
+    @Deprecated("Use readEventsEnabled instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("readEventsEnabled"))
     @SerializedName("read_events")
     val isReadEvents: Boolean = true,
 
     /**
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
      */
+    @Deprecated("Use connectEventsEnabled instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("connectEventsEnabled"))
     @SerializedName("connect_events")
     val isConnectEvents: Boolean = true,
 
     /**
      * Controls if messages should be searchable (this is a premium feature). Disabled by default.
      */
+    @Deprecated("Use searchEnabled instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("searchEnabled"))
     @SerializedName("search")
     val isSearch: Boolean = true,
 
@@ -61,6 +67,7 @@ public data class Config(
     /**
      * Determines if users are able to mute other users. Enabled by default.
      */
+    @Deprecated("Use mutesEnabled instead", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("muteEnabled"))
     @SerializedName("mutes")
     val isMutes: Boolean = true,
 
@@ -109,4 +116,46 @@ public data class Config(
      * The commands that are available on this channel type, e.g. /giphy.
      */
     val commands: List<Command> = mutableListOf(),
-)
+) {
+    /**
+     * Date of channel creation.
+     */
+    val createdAt: Date?
+        get() = created_at
+
+    /**
+     * Date of last channel update.
+     */
+    val updatedAt: Date?
+        get() = updated_at
+
+    /**
+     * Controls if typing indicators are shown. Enabled by default.
+     */
+    val typingEventsEnabled: Boolean
+        get() = isTypingEvents
+
+    /**
+     * Controls whether the chat shows how far you’ve read. Enabled by default.
+     */
+    val readEventsEnabled: Boolean
+        get() = isReadEvents
+
+    /**
+     * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
+     */
+    val connectEventsEnabled: Boolean
+        get() = isConnectEvents
+
+    /**
+     * Controls if messages should be searchable (this is a premium feature). Disabled by default.
+     */
+    val searchEnabled: Boolean
+        get() = isSearch
+
+    /**
+     * Determines if users are able to mute other users. Enabled by default.
+     */
+    val mutesEnabled: Boolean
+        get() = isMutes
+}
