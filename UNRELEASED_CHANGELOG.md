@@ -27,6 +27,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the names of properties in the `Config` class
 
 ### ✅ Added
 
