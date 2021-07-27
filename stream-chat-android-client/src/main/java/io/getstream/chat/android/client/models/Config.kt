@@ -156,6 +156,6 @@ public data class Config(
     /**
      * Determines if users are able to mute other users. Enabled by default.
      */
-    val muteEnabled: Boolean
+    val mutesEnabled: Boolean
         get() = isMutes
 }
