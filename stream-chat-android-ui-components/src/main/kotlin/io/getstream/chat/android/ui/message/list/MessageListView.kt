@@ -41,9 +41,11 @@ import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManage
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
@@ -409,23 +411,17 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(context, null)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(context, attrs)
-    }
-
-    public constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+    public constructor(context: Context) : this(context, null, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyle
+        defStyleAttr
     ) {
-        init(context, attrs)
+        init(attrs)
     }
 
-    private fun init(context: Context, attr: AttributeSet?) {
+    private fun init(attr: AttributeSet?) {
         messageListViewStyle = MessageListViewStyle(context, attr)
 
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
@@ -436,6 +432,9 @@ public class MessageListView : ConstraintLayout {
         initEmptyStateView()
 
         configureAttributes(attr)
+
+        binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
+
         layoutTransition = LayoutTransition()
 
         buffer.subscribe(::handleNewWrapper)
@@ -443,8 +442,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initLoadingView() {
-        loadingView = binding.defaultLoadingView
         loadingViewContainer = binding.loadingViewContainer
+
+        loadingViewContainer.removeView(binding.defaultLoadingView)
+        messageListViewStyle?.loadingView?.let { loadingView ->
+            this.loadingView = streamThemeInflater.inflate(loadingView, null).apply {
+                isVisible = true
+                loadingViewContainer.addView(this)
+            }
+        }
     }
 
     private fun initEmptyStateView() {
@@ -474,31 +480,34 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
-        val tArray = context
-            .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
+        context.obtainStyledAttributes(
+            attributeSet,
+            R.styleable.MessageListView,
+            R.attr.streamUiMentionListStyle,
+            R.style.StreamUi_MessageList
+        ).use { tArray ->
+            tArray.getInteger(
+                R.styleable.MessageListView_streamUiLoadMoreThreshold,
+                LOAD_MORE_THRESHOLD,
+            ).also { loadMoreThreshold ->
+                loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+                    endRegionReachedHandler.onEndRegionReached()
+                }
+            }
 
-        tArray.getInteger(
-            R.styleable.MessageListView_streamUiLoadMoreThreshold,
-            LOAD_MORE_THRESHOLD,
-        ).also { loadMoreThreshold ->
-            loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
-                endRegionReachedHandler.onEndRegionReached()
+            binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
+            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
+
+            NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                    R.styleable.MessageListView_streamUiNewMessagesBehaviour,
+                    NewMessagesBehaviour.COUNT_UPDATE.value
+                )
+            ).also {
+                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             }
         }
 
-        binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-        scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
-
-        NewMessagesBehaviour.parseValue(
-            tArray.getInt(
-                R.styleable.MessageListView_streamUiNewMessagesBehaviour,
-                NewMessagesBehaviour.COUNT_UPDATE.value
-            )
-        ).also {
-            scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
-        }
-
-        tArray.recycle()
         if (background == null) {
             setBackgroundColor(requireStyle().backgroundColor)
         }
