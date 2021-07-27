@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param type - The String representation of the reaction, for the API. Can be any of:
  * ["like", "love", "haha", "wow", "sad"].
  * */
-class ReactionOption(
-    val drawable: Painter,
-    val isSelected: Boolean,
-    val type: String,
+public class ReactionOption(
+    public val drawable: Painter,
+    public val isSelected: Boolean,
+    public val type: String,
 )

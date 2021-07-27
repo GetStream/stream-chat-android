@@ -15,7 +15,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItem
  * @param currentUser - The data of the current user, required for various UI states.
  * @param newMessageState - The state that represents any new messages.
  * */
-data class MessagesState(
+public data class MessagesState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val endOfMessages: Boolean = false,

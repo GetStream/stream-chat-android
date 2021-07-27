@@ -18,36 +18,36 @@ import io.getstream.chat.android.client.models.Reaction
  * [MuteUser] - Show a mute user dialog, for another user.
  * [CustomAction] - User-customizable action, with a map of properties they can define.
  * */
-sealed class MessageAction(val message: Message)
+public sealed class MessageAction(public val message: Message)
 
 /**
  * @param reaction - The reaction to add or remove from the message.
  * */
-class React(
-    val reaction: Reaction,
+public class React(
+    public val reaction: Reaction,
     message: Message,
 ) : MessageAction(message)
 
-class Reply(message: Message) : MessageAction(message)
+public class Reply(message: Message) : MessageAction(message)
 
-class ThreadReply(message: Message) : MessageAction(message)
+public class ThreadReply(message: Message) : MessageAction(message)
 
-class Copy(message: Message) : MessageAction(message)
+public class Copy(message: Message) : MessageAction(message)
 
-class Edit(message: Message) : MessageAction(message)
+public class Edit(message: Message) : MessageAction(message)
 
-class Delete(message: Message) : MessageAction(message)
+public class Delete(message: Message) : MessageAction(message)
 
-class Flag(message: Message) : MessageAction(message)
+public class Flag(message: Message) : MessageAction(message)
 
-class MuteUser(message: Message) : MessageAction(message)
+public class MuteUser(message: Message) : MessageAction(message)
 
 /**
  * Used to define any custom actions you need, with any number of extra properties.
  *
  * @param extraProperties - Map of key-value pairs that let you store extra data for this action.
  * */
-class CustomAction(
+public class CustomAction(
     message: Message,
-    val extraProperties: Map<String, Any> = emptyMap(),
+    public val extraProperties: Map<String, Any> = emptyMap(),
 ) : MessageAction(message)

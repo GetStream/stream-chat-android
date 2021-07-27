@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
  * @param onBackPressed - The action to execute any time the system back button is tapped.
  * */
 @Composable
-fun SystemBackPressedHandler(
+public fun SystemBackPressedHandler(
     isEnabled: Boolean,
     onBackPressed: () -> Unit,
 ) {

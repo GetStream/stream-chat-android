@@ -12,12 +12,12 @@ import io.getstream.chat.android.client.models.Channel
  * [DeleteConversation] - Shows a dialog to delete the conversation, if we have the permission.
  * [Cancel] - Dismisses the actions.
  * */
-sealed class ChannelListAction(val channel: Channel)
+public sealed class ChannelListAction(public val channel: Channel)
 
-class ViewInfo(channel: Channel) : ChannelListAction(channel)
+public class ViewInfo(channel: Channel) : ChannelListAction(channel)
 
-class LeaveGroup(channel: Channel) : ChannelListAction(channel)
+public class LeaveGroup(channel: Channel) : ChannelListAction(channel)
 
-class DeleteConversation(channel: Channel) : ChannelListAction(channel)
+public class DeleteConversation(channel: Channel) : ChannelListAction(channel)
 
-object Cancel : ChannelListAction(Channel())
+public object Cancel : ChannelListAction(Channel())

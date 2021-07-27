@@ -86,7 +86,7 @@ public fun MessagesScreen(
         val isShowingOverlay = listViewModel.isShowingOverlay
 
         when {
-            isShowingAttachments -> attachmentsPickerViewModel.onShowAttachments(false)
+            attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.onShowAttachments(false)
             isShowingOverlay -> listViewModel.onMessageSelected(null)
             isInThread -> {
                 listViewModel.leaveThread()

@@ -1,11 +1,11 @@
 package io.getstream.chat.android.compose.state.messages.items
 
-sealed class MessageItemGroupPosition
+public sealed class MessageItemGroupPosition
 
-object Top : MessageItemGroupPosition()
+public object Top : MessageItemGroupPosition()
 
-object Middle : MessageItemGroupPosition()
+public object Middle : MessageItemGroupPosition()
 
-object Bottom : MessageItemGroupPosition()
+public object Bottom : MessageItemGroupPosition()
 
-object None : MessageItemGroupPosition()
+public object None : MessageItemGroupPosition()

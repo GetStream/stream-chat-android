@@ -6,8 +6,8 @@ package io.getstream.chat.android.compose.state.messages
  * [MyOwn] - If the message is our own (we sent it), we scroll to the bottom of the list.
  * [Other] - If the message is someone else's (we didn't send it), we show a "New message" bubble.
  * */
-sealed class NewMessageState
+public sealed class NewMessageState
 
-object MyOwn : NewMessageState()
+public object MyOwn : NewMessageState()
 
-object Other : NewMessageState()
+public object Other : NewMessageState()

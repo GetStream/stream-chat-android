@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
  * @param filters - The [FilterObject] to apply to the query.
  * @param querySort - The sorting option for the query results.
  * */
-data class QueryConfig<T : Any>(
+public data class QueryConfig<T : Any>(
     val filters: FilterObject,
     val querySort: QuerySort<T>,
 )

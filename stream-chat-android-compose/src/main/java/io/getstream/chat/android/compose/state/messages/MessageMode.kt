@@ -8,11 +8,11 @@ import io.getstream.chat.android.client.models.Message
  * [Normal] - Regular mode, conversation with other users.
  * [Thread] - Thread mode, where there's a parent message to respond to.
  * */
-sealed class MessageMode
+public sealed class MessageMode
 
-object Normal : MessageMode()
+public object Normal : MessageMode()
 
 /**
  * @param parentMessage - The message users are responding to in a Thread.
  * */
-class Thread(val parentMessage: Message) : MessageMode()
+public class Thread(public val parentMessage: Message) : MessageMode()

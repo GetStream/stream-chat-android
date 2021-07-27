@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * @param iconColor - The color of the icon.
  * @param action - The [ChannelListAction] the option represents.
  * */
-class ChannelOption(
-    val title: String,
-    val titleColor: Color,
-    val icon: ImageVector,
-    val iconColor: Color,
-    val action: ChannelListAction,
+public class ChannelOption(
+    public val title: String,
+    public val titleColor: Color,
+    public val icon: ImageVector,
+    public val iconColor: Color,
+    public val action: ChannelListAction,
 )

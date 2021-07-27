@@ -188,7 +188,6 @@ public object StreamAttachmentFactories {
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // TODO - See if there's a better way to do this
                 Column(
                     modifier = Modifier
                         .weight(1f, fill = false)
