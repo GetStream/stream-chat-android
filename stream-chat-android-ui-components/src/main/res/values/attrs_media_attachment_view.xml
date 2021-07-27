@@ -4,6 +4,7 @@
     <declare-styleable name="MediaAttachmentView">
         <attr name="streamUiMediaAttachmentProgressIcon" format="reference" />
         <attr name="streamUiMediaAttachmentGiphyIcon" format="reference" />
+        <attr name="streamUiMediaAttachmentPlaceHolderIcon" format="reference" />
         <attr name="streamUiMediaAttachmentImageBackgroundColor" format="color|reference" />
         <attr name="streamUiMediaAttachmentMoreCountOverlayColor" format="color|reference" />
 

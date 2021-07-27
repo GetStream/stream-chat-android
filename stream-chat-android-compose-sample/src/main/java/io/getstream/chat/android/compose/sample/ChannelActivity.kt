@@ -35,7 +35,6 @@ import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
 import io.getstream.chat.android.compose.ui.common.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamAttachmentFactories
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain

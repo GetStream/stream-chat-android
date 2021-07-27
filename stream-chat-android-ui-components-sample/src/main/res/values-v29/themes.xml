@@ -13,7 +13,7 @@
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
     </style>
-      
+  
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
     </style>

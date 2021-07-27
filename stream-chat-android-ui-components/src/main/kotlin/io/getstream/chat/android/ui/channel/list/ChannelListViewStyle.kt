@@ -38,7 +38,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute_black]
  * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
  * @property itemSeparator - items' separator. Default - [R.drawable.stream_ui_divider]
- * @property loadingView - loading view. Default - [R.layout.stream_ui_channel_list_loading_view]
+ * @property loadingView - loading view. Default - [R.layout.stream_ui_default_loading_view]
  * @property emptyStateView - empty state view. Default - [R.layout.stream_ui_channel_list_empty_state_view]
  * @property loadingMoreView - loading more view. Default - [R.layout.stream_ui_channel_list_loading_more_view]
  * @property edgeEffectColor - color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default - null.
@@ -213,7 +213,7 @@ public data class ChannelListViewStyle(
 
                 val loadingView = a.getResourceId(
                     R.styleable.ChannelListView_streamUiLoadingView,
-                    R.layout.stream_ui_channel_list_loading_view,
+                    R.layout.stream_ui_default_loading_view,
                 )
 
                 val emptyStateView = a.getResourceId(

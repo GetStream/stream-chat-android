@@ -123,6 +123,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 }
 
 public final class com/getstream/sdk/chat/images/StreamImageLoader$DefaultImpls {
+	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun loadAsBitmap$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
@@ -145,6 +146,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 }
 
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
+	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }

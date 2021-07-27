@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.sample
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
 

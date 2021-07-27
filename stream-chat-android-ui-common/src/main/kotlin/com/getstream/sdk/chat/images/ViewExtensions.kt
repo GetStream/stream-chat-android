@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.images
 
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -18,6 +19,24 @@ public fun ImageView.load(
         target = this,
         data = data,
         placeholderResId = placeholderResId,
+        transformation = transformation,
+        onStart = onStart,
+        onComplete = onComplete
+    )
+}
+
+@InternalStreamChatApi
+public fun ImageView.load(
+    data: Any?,
+    placeholderDrawable: Drawable,
+    transformation: ImageTransformation = ImageTransformation.None,
+    onStart: () -> Unit = {},
+    onComplete: () -> Unit = {},
+) {
+    StreamImageLoader.instance().load(
+        target = this,
+        data = data,
+        placeholderDrawable = placeholderDrawable,
         transformation = transformation,
         onStart = onStart,
         onComplete = onComplete

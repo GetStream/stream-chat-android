@@ -89,22 +89,6 @@ public final class io/getstream/chat/android/compose/state/channel/list/ViewInfo
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
-public abstract class io/getstream/chat/android/compose/state/messages/ConversationTypingIndicatorState {
-	public static final field $stable I
-	public synthetic fun <init> (ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun isShowing ()Z
-}
-
-public final class io/getstream/chat/android/compose/state/messages/FooterTypingIndicator : io/getstream/chat/android/compose/state/messages/ConversationTypingIndicatorState {
-	public static final field $stable I
-	public fun <init> (Z)V
-}
-
-public final class io/getstream/chat/android/compose/state/messages/HeaderTypingIndicator : io/getstream/chat/android/compose/state/messages/ConversationTypingIndicatorState {
-	public static final field $stable I
-	public fun <init> (Z)V
-}
-
 public abstract class io/getstream/chat/android/compose/state/messages/MessageMode {
 	public static final field $stable I
 }
@@ -391,7 +375,7 @@ public final class io/getstream/chat/android/compose/ui/common/EmptyViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/InputFieldKt {
-	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/LoadingFooterKt {
@@ -403,7 +387,7 @@ public final class io/getstream/chat/android/compose/ui/common/LoadingViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/MessageBubbleKt {
-	public static final fun MessageBubble-euL9pac (JLandroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageBubble-euL9pac (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/NetworkLoadingViewKt {
@@ -465,7 +449,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/MessageComposerKt {
 	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/components/ComposableSingletons$ComposerIntegrationsKt {
