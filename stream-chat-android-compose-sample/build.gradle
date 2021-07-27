@@ -10,10 +10,8 @@ apply from: "${rootDir}/scripts/android.gradle"
 android {
     defaultConfig {
         applicationId "io.getstream.chat.android.compose.sample"
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode sampleAppVersionCode
+        versionName sampleAppVersionName
     }
 
     File signFile = rootProject.file('.sign/keystore.properties')
@@ -66,9 +64,9 @@ android {
 dependencies {
     implementation project(':stream-chat-android-compose')
 
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation Dependencies.androidxCoreKtx
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.materialComponents
 
     // Compose
     implementation Dependencies.composeCompiler
