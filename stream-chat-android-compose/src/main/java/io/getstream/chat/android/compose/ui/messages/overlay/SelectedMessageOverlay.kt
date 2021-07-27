@@ -3,7 +3,18 @@ package io.getstream.chat.android.compose.ui.messages.overlay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -12,7 +23,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FileCopy
+import androidx.compose.material.icons.filled.Reply
+import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,7 +47,16 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.list.*
+import io.getstream.chat.android.compose.state.messages.list.Copy
+import io.getstream.chat.android.compose.state.messages.list.Delete
+import io.getstream.chat.android.compose.state.messages.list.Edit
+import io.getstream.chat.android.compose.state.messages.list.MessageAction
+import io.getstream.chat.android.compose.state.messages.list.MessageOption
+import io.getstream.chat.android.compose.state.messages.list.MuteUser
+import io.getstream.chat.android.compose.state.messages.list.React
+import io.getstream.chat.android.compose.state.messages.list.Reply
+import io.getstream.chat.android.compose.state.messages.list.ThreadReply
+import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
@@ -77,7 +102,8 @@ public fun SelectedMessageOverlay(
             .clickable(
                 onClick = onDismiss,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() }),
+                interactionSource = remember { MutableInteractionSource() }
+            ),
         contentAlignment = Alignment.CenterStart
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -189,24 +215,27 @@ private fun SelectedMessage(message: Message) {
             painter = authorImage
         )
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground, content = {
-            if (message.deletedAt != null) {
-                DeletedMessageContent()
-            } else {
-                Column {
-                    attachmentFactory?.factory?.invoke(
-                        AttachmentState(
-                            modifier = Modifier.padding(4.dp),
-                            message = MessageItem(message, None)
-                        ) {}
-                    )
+        MessageBubble(
+            shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
+            content = {
+                if (message.deletedAt != null) {
+                    DeletedMessageContent()
+                } else {
+                    Column {
+                        attachmentFactory?.factory?.invoke(
+                            AttachmentState(
+                                modifier = Modifier.padding(4.dp),
+                                message = MessageItem(message, None)
+                            ) {}
+                        )
 
-                    if (message.text.isNotEmpty()) {
-                        DefaultMessageContent(message = message)
+                        if (message.text.isNotEmpty()) {
+                            DefaultMessageContent(message = message)
+                        }
                     }
                 }
             }
-        })
+        )
     }
 }
 
@@ -350,4 +379,3 @@ public fun defaultMessageOptions(
 
     return messageOptions
 }
-

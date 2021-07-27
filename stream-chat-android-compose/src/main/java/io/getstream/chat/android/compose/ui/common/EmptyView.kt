@@ -26,7 +26,8 @@ public fun EmptyView(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
 
         Icon(
             painter = painterResource(id = R.drawable.stream_ui_empty_state_bubble),

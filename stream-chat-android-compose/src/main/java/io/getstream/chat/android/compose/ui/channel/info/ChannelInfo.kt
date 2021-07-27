@@ -4,7 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,9 +41,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channel.list.*
+import io.getstream.chat.android.compose.state.channel.list.Cancel
+import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
+import io.getstream.chat.android.compose.state.channel.list.ChannelOption
+import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
+import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
+import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**

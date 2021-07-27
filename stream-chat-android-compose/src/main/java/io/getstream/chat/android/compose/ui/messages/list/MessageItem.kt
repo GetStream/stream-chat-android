@@ -7,7 +7,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
@@ -40,12 +50,17 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.state.messages.items.*
+import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
+import io.getstream.chat.android.compose.state.messages.items.Middle
+import io.getstream.chat.android.compose.state.messages.items.None
+import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -140,25 +155,28 @@ internal fun DefaultMessageContainer(
                 }
 
                 // content
-                MessageBubble(shape = bubbleShape, color = messageCardColor, content = {
-                    if (message.deletedAt != null) {
-                        DeletedMessageContent()
-                    } else {
-                        Column {
-                            attachmentFactory?.factory?.invoke(
-                                AttachmentState(
-                                    modifier = Modifier.padding(4.dp),
-                                    message = messageItem,
-                                    onLongItemClick = onLongItemClick
+                MessageBubble(
+                    shape = bubbleShape, color = messageCardColor,
+                    content = {
+                        if (message.deletedAt != null) {
+                            DeletedMessageContent()
+                        } else {
+                            Column {
+                                attachmentFactory?.factory?.invoke(
+                                    AttachmentState(
+                                        modifier = Modifier.padding(4.dp),
+                                        message = messageItem,
+                                        onLongItemClick = onLongItemClick
+                                    )
                                 )
-                            )
 
-                            if (message.text.isNotEmpty()) {
-                                DefaultMessageContent(message = message)
+                                if (message.text.isNotEmpty()) {
+                                    DefaultMessageContent(message = message)
+                                }
                             }
                         }
                     }
-                })
+                )
 
                 if (isDeleted && ownsMessage) {
                     DeletedMessageFooter(
@@ -442,9 +460,12 @@ internal fun QuotedMessage(
 
         Spacer(modifier = Modifier.size(8.dp))
 
-        MessageBubble(shape = ChatTheme.shapes.otherMessageBubble, color = Color.White, content = {
-            MessageText(message = message)
-        })
+        MessageBubble(
+            shape = ChatTheme.shapes.otherMessageBubble, color = Color.White,
+            content = {
+                MessageText(message = message)
+            }
+        )
     }
 }
 
