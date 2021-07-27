@@ -53,6 +53,8 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property userReactionsBackgroundColor - background color of user reactions card. Default - [R.color.stream_ui_white]
  * @property userReactionsTitleText - text appearance of of user reactions card title
  * @property optionsOverlayDimColor - overlay dim color. Default - [R.color.stream_ui_literal_transparent]
+ * @property messagesStart - Messages start at the bottom or top of the screen. Default: bottom
+ * @property threadMessagesStart - Thread messages start at the bottom or top of the screen. Default: bottom
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
