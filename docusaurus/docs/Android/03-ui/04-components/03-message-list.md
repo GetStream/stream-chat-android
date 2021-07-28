@@ -250,6 +250,24 @@ messageListView.setEditMessageEnabled(false)
 | --- | --- |
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
+## Messages and Thread Messages Start
+It is possible to configure the messages to start at the top or at the bottom of the view (Default: bottom). 
+
+| Bottom | Top |
+| --- | --- |
+|![messages at the bottom](../../assets/messages_at_the_top.png)|![messages at the top](../../assets/messages_at_the_bottom.png)|
+
+:::note
+The stack is always from bottom to top, this changes where the stack starts
+:::
+
+For this configuration use `streamUiMessagesStart` and `streamUiThreadMessagesStart`. 
+
+:::note
+It is not recomended to use different values for then. It will create a small glitch in the transition between threads and normal messages.
+:::
+
+
 ## Filtering Messages
 
 You can filter some messages if you don't want to show them in your `MessageListView`.

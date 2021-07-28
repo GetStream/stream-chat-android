@@ -53,6 +53,8 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property userReactionsBackgroundColor - background color of user reactions card. Default - [R.color.stream_ui_white]
  * @property userReactionsTitleText - text appearance of of user reactions card title
  * @property optionsOverlayDimColor - overlay dim color. Default - [R.color.stream_ui_literal_transparent]
+ * @property messagesStart - Messages start at the bottom or top of the screen. Default: bottom
+ * @property threadMessagesStart - Thread messages start at the bottom or top of the screen. Default: bottom
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -93,6 +95,8 @@ public data class MessageListViewStyle(
     @ColorInt val optionsOverlayDimColor: Int,
     val emptyViewTextStyle: TextStyle,
     @LayoutRes public val loadingView: Int,
+    public val messagesStart: Int,
+    public val threadMessagesStart: Int,
 ) {
 
     internal companion object {
@@ -332,6 +336,16 @@ public data class MessageListViewStyle(
                     R.layout.stream_ui_default_loading_view,
                 )
 
+                val messagesStart = attributes.getInt(
+                    R.styleable.MessageListView_streamUiMessagesStart,
+                    MessageListView.MessagesStart.BOTTOM.value,
+                )
+
+                val threadMessagesStart = attributes.getInt(
+                    R.styleable.MessageListView_streamUiMessagesStart,
+                    MessageListView.MessagesStart.BOTTOM.value,
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     reactionsEnabled = reactionsEnabled,
@@ -369,6 +383,8 @@ public data class MessageListViewStyle(
                     optionsOverlayDimColor = optionsOverlayDimColor,
                     emptyViewTextStyle = emptyViewTextStyle,
                     loadingView = loadingView,
+                    messagesStart = messagesStart,
+                    threadMessagesStart = threadMessagesStart,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

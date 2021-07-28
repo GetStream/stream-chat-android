@@ -39,6 +39,7 @@
             <enum name="italic" value="2"/>
         </attr>
         <attr name="streamUiMessageInputDividerBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageInputCloseButtonIconDrawable" format="reference" />
 
         <!--Send Button-->
         <!-- {@deprecated Use sendButton icons instead.} -->
@@ -137,6 +138,86 @@
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
         <!-- {@deprecated Use streamUiCameraAttachmentIcon instead.} -->
         <attr name="streamUiCameraAttachmentIconTint" format="color|reference" />
+        <attr name="streamUiAttachmentsRecentFilesText" format="string"/>
+        <attr name="streamUiAttachmentsFileManagerIcon" format="reference"/>
+        <attr name="streamUiAttachmentsRecentFilesTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsRecentFilesTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsRecentFilesFontAssets" format="string" />
+        <attr name="streamUiAttachmentsRecentFilesFont" format="string" />
+        <attr name="streamUiAttachmentsRecentFilesTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsFileNameTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFileNameTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFileNameFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFileNameFont" format="string" />
+        <attr name="streamUiAttachmentsFileNameTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsFileSizeTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFileSizeTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFileSizeFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFileSizeFont" format="string" />
+        <attr name="streamUiAttachmentsFileSizeTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiFileCheckBoxSelectorDrawable" format="reference" />
+        <attr name="streamUiFileCheckBoxSelectorTextColor" format="reference" />
+        <attr name="streamUiAttachmentVideoLogoIcon" format="reference" />
+        <attr name="streamUiAttachmentVideoLengthTextSize" format="dimension" />
+        <attr name="streamUiAttachmentVideoLengthTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentVideoLengthFontAssets" format="string" />
+        <attr name="streamUiAttachmentVideoLengthFont" format="string" />
+        <attr name="streamUiAttachmentVideoLengthTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentVideoLengthVisible" format="boolean" />
+        <attr name="streamUiAttachmentVideoIconVisible" format="boolean" />
+        <!-- Attachment permissions -->
+        <attr name="streamUiAllowAccessToGalleryText" format="string" />
+        <attr name="streamUiAllowAccessToFilesText" format="string" />
+        <attr name="streamUiAllowAccessToCameraText" format="string" />
+        <attr name="streamUiAllowAccessToGalleryIcon" format="reference" />
+        <attr name="streamUiAllowAccessToCameraIcon" format="reference" />
+        <attr name="streamUiAllowAccessToFilesIcon" format="reference" />
+        <attr name="streamUiGrantPermissionsTextSize" format="dimension" />
+        <attr name="streamUiGrantPermissionsTextColor" format="reference|color" />
+        <attr name="streamUiGrantPermissionsFontAssets" format="string" />
+        <attr name="streamUiGrantPermissionsFont" format="string" />
+        <attr name="streamUiGrantPermissionsTextStyle" format="enum" >
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <!-- Attachment empty state -->
+        <attr name="streamUiAttachmentsFilesEmptyStateTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsFilesEmptyStateTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsFilesEmptyStateFontAssets" format="string" />
+        <attr name="streamUiAttachmentsFilesEmptyStateFont" format="string" />
+        <attr name="streamUiAttachmentsFilesEmptyStateStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsFilesEmptyStateText" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateTextSize" format="dimension" />
+        <attr name="streamUiAttachmentsMediaEmptyStateTextColor" format="reference|color" />
+        <attr name="streamUiAttachmentsMediaEmptyStateFontAssets" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateFont" format="string" />
+        <attr name="streamUiAttachmentsMediaEmptyStateStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiAttachmentsMediaEmptyStateText" format="string" />
 
         <!--Command Input-->
         <attr name="streamUiCommandInputCancelIcon" format="reference" />
