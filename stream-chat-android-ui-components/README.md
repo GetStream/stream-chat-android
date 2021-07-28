@@ -2,6 +2,8 @@
 
 This module contains reusable UI components to use in combination with the [offline support](../stream-chat-android-offline) library. See the [UI Components documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/) for more info.
 
+> Already using Compose? Check out our [Compose UI Components](../stream-chat-android-compose) instead!
+
 <p align="center">
   <img alt="Channels screen" src="../docs/sample-channels-light.png" width="40%">
 &nbsp; &nbsp;

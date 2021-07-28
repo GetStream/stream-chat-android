@@ -1,0 +1,76 @@
+import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName + "-beta"
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
+}
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
+
+android {
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    resourcePrefix 'stream_compose_'
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Versions.KOTLIN
+        kotlinCompilerExtensionVersion Versions.COMPOSE
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
+                '-Xopt-in=kotlin.RequiresOptIn',
+        ]
+    }
+}
+
+dependencies {
+    api project(':stream-chat-android-ui-common')
+
+    implementation Dependencies.androidxAppCompat
+
+    // Compose
+    implementation Dependencies.composeCompiler
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeUiTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterialIconsCore
+    implementation Dependencies.composeMaterialIconsExtended
+
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeAccompanistPermissions
+    implementation Dependencies.composeAccompanistPager
+
+    // Coil
+    implementation Dependencies.composeCoil
+}

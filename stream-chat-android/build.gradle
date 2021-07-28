@@ -1,5 +1,5 @@
-import com.getstream.sdk.chat.Dependencies
-import com.getstream.sdk.chat.Configuration
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
@@ -65,7 +65,6 @@ dependencies {
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.androidxLifecycleViewModelKtx
-    implementation Dependencies.androidxMedia
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
     api Dependencies.androidxRecyclerview

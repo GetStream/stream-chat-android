@@ -1,0 +1,87 @@
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Versions
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+
+apply from: "${rootDir}/scripts/android.gradle"
+
+android {
+    defaultConfig {
+        applicationId "io.getstream.chat.android.compose.sample"
+        versionCode sampleAppVersionCode
+        versionName sampleAppVersionName
+    }
+
+    File signFile = rootProject.file('.sign/keystore.properties')
+    if (signFile.exists()) {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream(signFile))
+        signingConfigs {
+            release {
+                storeFile rootProject.file(properties['keystore'])
+                storePassword properties['storePassword']
+                keyAlias properties['keyAlias']
+                keyPassword properties['keyPassword']
+            }
+        }
+    } else {
+        signingConfigs {
+            release {
+                storeFile rootProject.file('.sign/debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }
+
+    signingConfigs.debug {
+        storeFile rootProject.file('.sign/debug.keystore')
+        storePassword 'android'
+        keyAlias 'androiddebugkey'
+        keyPassword 'android'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Versions.KOTLIN
+        kotlinCompilerExtensionVersion Versions.COMPOSE
+    }
+}
+
+dependencies {
+    implementation project(':stream-chat-android-compose')
+
+    implementation Dependencies.androidxCoreKtx
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.materialComponents
+
+    // Compose
+    implementation Dependencies.composeCompiler
+    implementation Dependencies.composeUi
+    implementation Dependencies.composeUiTooling
+    implementation Dependencies.composeFoundation
+    implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterialIconsCore
+    implementation Dependencies.composeMaterialIconsExtended
+
+    implementation Dependencies.composeActivity
+    implementation Dependencies.composeViewModel
+    implementation Dependencies.composeAccompanistPermissions
+    implementation Dependencies.composeAccompanistPager
+
+    // Coil
+    implementation Dependencies.composeCoil
+}

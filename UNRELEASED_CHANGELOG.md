@@ -1,8 +1,33 @@
+## New Jetpack Compose UI Components 🎉
+
+Starting from this release, we have a new `stream-chat-android-compose` artifact that contains a UI implementation for Chat built in Jetpack Compose.
+
+The new artifact is available as a beta for now (note the postfix in the version number):
+
+```groovy
+implementation "io.getstream:stream-chat-android-compose:4.15.0-beta"
+```
+
+Learn more in the [announcement blog post](https://getstream.io/blog/jetpack-compose-sdk/), check out the [documentation of the Compose UI Components](https://getstream.io/chat/docs/sdk/android/compose/overview/), and try them today with the [Compose Chat tutorial](https://getstream.io/chat/compose/tutorial/)!
+
 ## Common changes for all artifacts
+
 ### 🐞 Fixed
 - Fixed adding `MessageListItem.TypingItem` to message list
 
 ### ⬆️ Improved
+
+- ⚠ Downgraded Kotlin version to 1.5.10 to support Jetpack Compose
+- Removed AndroidX Media dependency
+- Updated dependency versions
+  - Coil 1.3.0
+  - AndroidX Activity 1.2.4
+  - AndroidX AppCompat 1.3.1
+  - Android Ktx 1.6.0
+  - AndroidX RecyclerView 1.2.1
+  - Kotlin Coroutines 1.5.1
+  - Dexter 6.2.3
+  - Lottie 3.7.2
 
 ### ✅ Added
 
@@ -211,3 +236,16 @@ in your Manifest file:
 
 ### ❌ Removed
 - 🚨 Breaking change: `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`
+
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+

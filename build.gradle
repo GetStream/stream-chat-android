@@ -1,4 +1,4 @@
-import com.getstream.sdk.chat.Dependencies
+import io.getstream.chat.android.Dependencies
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -74,6 +74,7 @@ apiValidation {
             'stream-chat-android-sample',
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-test',
+            'stream-chat-android-compose-sample',
     ]
 
     nonPublicMarkers += [

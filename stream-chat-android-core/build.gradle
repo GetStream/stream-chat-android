@@ -1,4 +1,5 @@
-import com.getstream.sdk.chat.Dependencies
+import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
 
 plugins {
     id 'java-library'
@@ -7,8 +8,8 @@ plugins {
 
 
 ext {
-    PUBLISH_GROUP_ID = com.getstream.sdk.chat.Configuration.artifactGroup
-    PUBLISH_VERSION = com.getstream.sdk.chat.Configuration.versionName
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_VERSION = Configuration.versionName
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-core'
 }
 
