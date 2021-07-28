@@ -86,8 +86,8 @@ public fun MessagesScreen(
         val isShowingOverlay = listViewModel.isShowingOverlay
 
         when {
-            attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.onShowAttachments(false)
-            isShowingOverlay -> listViewModel.onMessageSelected(null)
+            attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(false)
+            isShowingOverlay -> listViewModel.selectMessage(null)
             isInThread -> {
                 listViewModel.leaveThread()
                 composerViewModel.leaveThread()
@@ -122,10 +122,10 @@ public fun MessagesScreen(
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     viewModel = composerViewModel,
-                    onAttachmentsClick = { attachmentsPickerViewModel.onShowAttachments(true) },
+                    onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
                     onCancelAction = {
                         listViewModel.dismissAllMessageActions()
-                        composerViewModel.onDismissMessageActions()
+                        composerViewModel.dismissMessageActions()
                     }
                 )
             }
@@ -137,7 +137,7 @@ public fun MessagesScreen(
                 viewModel = listViewModel,
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(Thread(message))
-                    listViewModel.onMessageThreadClick(message)
+                    listViewModel.openMessageThread(message)
                 }
             )
         }
@@ -147,8 +147,8 @@ public fun MessagesScreen(
                 messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
                 message = selectedMessage,
                 onMessageAction = { action ->
-                    composerViewModel.onMessageAction(action)
-                    listViewModel.onMessageAction(action)
+                    composerViewModel.performMessageAction(action)
+                    listViewModel.performMessageAction(action)
                 },
                 onDismiss = { listViewModel.removeOverlay() }
             )
@@ -161,12 +161,12 @@ public fun MessagesScreen(
                     .align(Alignment.BottomCenter)
                     .height(350.dp),
                 onAttachmentsSelected = { attachments ->
-                    attachmentsPickerViewModel.onShowAttachments(false)
-                    composerViewModel.onAttachmentsSelected(attachments)
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    composerViewModel.addSelectedAttachments(attachments)
                 },
                 onDismiss = {
-                    attachmentsPickerViewModel.onShowAttachments(false)
-                    attachmentsPickerViewModel.onDismiss()
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.dismissAttachments()
                 }
             )
         }

@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -116,12 +115,12 @@ internal fun DefaultMessageContainer(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        contentAlignment = if (ownsMessage) CenterEnd else CenterStart
     ) {
         Row(
             modifier
                 .widthIn(max = 300.dp)
-                .align(if (ownsMessage) CenterEnd else CenterStart)
                 .then(clickModifier)
         ) {
 
@@ -139,6 +138,7 @@ internal fun DefaultMessageContainer(
                         .map { it.key }
                         .filter { supportedReactions[it] != null }
                         .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
+
                     if (reactions.isNotEmpty()) {
                         MessageReactions(
                             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp),
@@ -160,7 +160,9 @@ internal fun DefaultMessageContainer(
 
                 // content
                 MessageBubble(
-                    shape = bubbleShape, color = messageCardColor,
+                    modifier = Modifier.widthIn(max = 250.dp),
+                    shape = bubbleShape,
+                    color = messageCardColor,
                     content = {
                         if (message.deletedAt != null) {
                             DeletedMessageContent()
@@ -466,14 +468,16 @@ internal fun QuotedMessage(
         Spacer(modifier = Modifier.size(8.dp))
 
         MessageBubble(
-            shape = ChatTheme.shapes.otherMessageBubble, color = Color.White,
+            shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {
-                    factory?.factory?.invoke(AttachmentState(
-                        modifier = Modifier.padding(4.dp),
-                        message = MessageItem(message, None),
-                        onLongItemClick = { }
-                    ))
+                    factory?.factory?.invoke(
+                        AttachmentState(
+                            modifier = Modifier.padding(4.dp),
+                            message = MessageItem(message, None),
+                            onLongItemClick = { }
+                        )
+                    )
 
                     if (message.text.isNotEmpty()) {
                         MessageText(message = message)

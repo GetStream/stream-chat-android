@@ -48,11 +48,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
-    onSendMessage: (String) -> Unit = { viewModel.onSendMessage(it) },
+    onSendMessage: (String) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
-    onValueChange: (String) -> Unit = { viewModel.onInputChange(it) },
+    onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
-    onCancelAction: () -> Unit = { viewModel.onDismissMessageActions() },
+    onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     integrations: @Composable RowScope.() -> Unit = {
         DefaultComposerIntegrations(onAttachmentsClick)
     },

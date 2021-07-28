@@ -70,7 +70,7 @@ public class AttachmentsPickerViewModel(
      *
      * @param attachmentsPickerMode - The currently selected picker mode.
      * */
-    public fun onAttachmentsModeSelected(attachmentsPickerMode: AttachmentsPickerMode) {
+    public fun changeAttachmentPickerMode(attachmentsPickerMode: AttachmentsPickerMode) {
         this.attachmentsPickerMode = attachmentsPickerMode
 
         loadAttachmentsData(attachmentsPickerMode)
@@ -81,7 +81,7 @@ public class AttachmentsPickerViewModel(
      *
      * @param showAttachments - If we need to show attachments or hide them.
      * */
-    public fun onShowAttachments(showAttachments: Boolean) {
+    public fun changeAttachmentState(showAttachments: Boolean) {
         isShowingAttachments = showAttachments
 
         if (!showAttachments) {
@@ -110,7 +110,7 @@ public class AttachmentsPickerViewModel(
      *
      * @param attachmentItem - The selected item.
      * */
-    public fun onAttachmentSelected(attachmentItem: AttachmentItem) {
+    public fun changeSelectedAttachments(attachmentItem: AttachmentItem) {
         val dataSet = if (attachmentsPickerMode == Files) files else images
 
         val itemIndex = dataSet.indexOf(attachmentItem)
@@ -165,7 +165,7 @@ public class AttachmentsPickerViewModel(
      * Triggered when we dismiss the attachments picker. We reset the state to show images and clear
      * the items for now, until the user needs them again.
      * */
-    public fun onDismiss() {
+    public fun dismissAttachments() {
         attachmentsPickerMode = Images
         images = emptyList()
         files = emptyList()

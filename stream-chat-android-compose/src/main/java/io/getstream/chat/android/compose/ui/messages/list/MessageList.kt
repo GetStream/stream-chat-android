@@ -60,10 +60,10 @@ import kotlin.math.abs
 public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
-    onThreadClick: (Message) -> Unit = { viewModel.onMessageThreadClick(it) },
-    onLongItemClick: (Message) -> Unit = { viewModel.onMessageSelected(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.onLoadMore() },
-    onScrollToBottom: () -> Unit = { viewModel.onScrolledToBottom() },
+    onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
+    onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
+    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     itemContent: @Composable (MessageItem) -> Unit = {
         DefaultMessageContainer(
             messageItem = it,

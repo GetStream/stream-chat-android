@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +25,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun EmptyView(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.background(color = ChatTheme.colors.appBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

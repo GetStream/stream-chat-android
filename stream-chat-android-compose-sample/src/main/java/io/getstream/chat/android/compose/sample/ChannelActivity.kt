@@ -133,14 +133,14 @@ class ChannelActivity : AppCompatActivity() {
                     query = query,
                     onValueChange = {
                         query = it
-                        listViewModel.onSearchChanged(it)
+                        listViewModel.setSearchQuery(it)
                     }
                 )
 
                 ChannelList(
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
-                    onChannelLongClick = { listViewModel.onChannelSelected(it) }
+                    onChannelLongClick = { listViewModel.selectChannel(it) }
                 )
             }
 
@@ -154,7 +154,7 @@ class ChannelActivity : AppCompatActivity() {
                     shape = RoundedCornerShape(16.dp),
                     selectedChannel = selectedChannel,
                     user = user,
-                    onChannelOptionClick = { action -> listViewModel.onChannelAction(action) }
+                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
             }
         }

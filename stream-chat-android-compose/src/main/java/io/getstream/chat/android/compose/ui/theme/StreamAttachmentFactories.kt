@@ -198,7 +198,7 @@ public object StreamAttachmentFactories {
                 Image(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     painter = painter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop
@@ -302,7 +302,9 @@ public object StreamAttachmentFactories {
         ) {
             for (attachment in message.attachments) {
                 Surface(
-                    modifier = Modifier.padding(2.dp),
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .fillMaxWidth(),
                     color = ChatTheme.colors.appBackground, shape = ChatTheme.shapes.attachment
                 ) {
                     Row(

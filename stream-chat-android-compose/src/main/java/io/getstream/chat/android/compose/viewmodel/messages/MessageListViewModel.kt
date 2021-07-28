@@ -141,7 +141,7 @@ public class MessageListViewModel(
                 observeConversation(controller)
             } else {
                 result.error().cause?.printStackTrace()
-                onQueryError()
+                showEmptyState()
             }
         }
     }
@@ -239,14 +239,14 @@ public class MessageListViewModel(
      * If there's an error, we just set the current state to be empty - 'isLoading' as false and
      * 'messages' as an empty list.
      * */
-    private fun onQueryError() {
+    private fun showEmptyState() {
         messagesState = messagesState.copy(isLoading = false, messageItems = emptyList())
     }
 
     /**
      * Triggered when the user loads more data by reaching the end of the current messages.
      * */
-    public fun onLoadMore() {
+    public fun loadMore() {
         val messageMode = messageMode
 
         if (messageMode is Thread) {
@@ -265,7 +265,7 @@ public class MessageListViewModel(
      *
      * @param message - The selected message.
      * */
-    public fun onMessageSelected(message: Message?) {
+    public fun selectMessage(message: Message?) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessage = message)
         } else {
@@ -279,7 +279,7 @@ public class MessageListViewModel(
      *
      * @param message - The selected message with a thread.
      * */
-    public fun onMessageThreadClick(message: Message) {
+    public fun openMessageThread(message: Message) {
         this.messageMode = Thread(message)
 
         loadThread(message)
@@ -310,7 +310,7 @@ public class MessageListViewModel(
      *
      * @param messageAction - The action the user chose.
      * */
-    public fun onMessageAction(messageAction: MessageAction) {
+    public fun performMessageAction(messageAction: MessageAction) {
         removeOverlay()
 
         when (messageAction) {
@@ -473,7 +473,7 @@ public class MessageListViewModel(
      * Clears the [NewMessageState] from our UI state, after the user taps on the "Scroll to bottom"
      * or "New Message" actions in the list or simply scrolls to the bottom.
      * */
-    public fun onScrolledToBottom() {
+    public fun clearNewMessageState() {
         threadMessagesState = threadMessagesState.copy(newMessageState = null)
         messagesState = messagesState.copy(newMessageState = null)
     }

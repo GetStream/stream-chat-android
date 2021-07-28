@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
  * impact which data is shown on the UI.
  *
  * @property searchQuery - The current channel query. Users can change it through
- * [onSearchChanged]. This impacts what data is shown on the UI.
+ * [setSearchQuery]. This impacts what data is shown on the UI.
  *
  * @property channelsState - The state of the ChannelsList, represented by [ChannelsState].
  *
@@ -149,7 +149,7 @@ public class ChannelListViewModel(
      * Changes the currently selected channel state. This updates the UI state and allows us to observe
      * the state change.
      * */
-    public fun onChannelSelected(channel: Channel?) {
+    public fun selectChannel(channel: Channel?) {
         this.selectedChannel = channel
     }
 
@@ -158,7 +158,7 @@ public class ChannelListViewModel(
      *
      * The new operation will hold the channels that match the new query.
      * */
-    public fun onSearchChanged(newQuery: String) {
+    public fun setSearchQuery(newQuery: String) {
         this.searchQuery.value = newQuery
     }
 
@@ -207,7 +207,7 @@ public class ChannelListViewModel(
      *
      * @param channelListAction - The selected action.
      * */
-    public fun onChannelAction(channelListAction: ChannelListAction) {
+    public fun performChannelAction(channelListAction: ChannelListAction) {
         if (channelListAction is Cancel) {
             selectedChannel = null
         }

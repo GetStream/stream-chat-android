@@ -55,7 +55,7 @@ public fun ChannelList(
     ),
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
-    onChannelLongClick: (Channel) -> Unit = { viewModel.onChannelSelected(it) },
+    onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,

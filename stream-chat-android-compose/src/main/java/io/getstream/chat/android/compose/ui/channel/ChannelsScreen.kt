@@ -82,7 +82,7 @@ public fun ChannelsScreen(
 
     SystemBackPressedHandler(isEnabled = true) {
         if (selectedChannel != null) {
-            listViewModel.onChannelSelected(null)
+            listViewModel.selectChannel(null)
         } else {
             onBackPressed()
         }
@@ -111,7 +111,7 @@ public fun ChannelsScreen(
                     onSearchStarted = {},
                     onValueChange = {
                         searchQuery = it
-                        listViewModel.onSearchChanged(it)
+                        listViewModel.setSearchQuery(it)
                     },
                 )
             }
@@ -122,7 +122,7 @@ public fun ChannelsScreen(
                 viewModel = listViewModel,
                 onChannelClick = onItemClick,
                 onChannelLongClick = {
-                    listViewModel.onChannelSelected(it)
+                    listViewModel.selectChannel(it)
                 }
             )
         }
@@ -138,7 +138,7 @@ public fun ChannelsScreen(
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
-                        else -> listViewModel.onChannelAction(action)
+                        else -> listViewModel.performChannelAction(action)
                     }
                 }
             )

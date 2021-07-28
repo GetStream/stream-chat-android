@@ -68,7 +68,7 @@ public class MessageComposerViewModel(
      *
      * @param value - Current state value.
      * */
-    public fun onInputChange(value: String) {
+    public fun setMessageInput(value: String) {
         this.input = value
     }
 
@@ -92,7 +92,7 @@ public class MessageComposerViewModel(
      *
      * @param messageAction - The newly selected action.
      * */
-    public fun onMessageAction(messageAction: MessageAction) {
+    public fun performMessageAction(messageAction: MessageAction) {
         when (messageAction) {
             is ThreadReply -> {
                 setMessageMode(Thread(messageAction.message))
@@ -113,9 +113,9 @@ public class MessageComposerViewModel(
     /**
      * Dismisses all message actions from the UI and clears the input if [isInEditMode] is true.
      * */
-    public fun onDismissMessageActions() {
+    public fun dismissMessageActions() {
         if (isInEditMode) {
-            onInputChange("")
+            setMessageInput("")
         }
 
         this.messageActions = emptySet()
@@ -128,7 +128,7 @@ public class MessageComposerViewModel(
      *
      * @param attachments - The attachments to store and show in the composer.
      * */
-    public fun onAttachmentsSelected(attachments: List<Attachment>) {
+    public fun addSelectedAttachments(attachments: List<Attachment>) {
         this.selectedAttachments = attachments
     }
 
@@ -144,12 +144,11 @@ public class MessageComposerViewModel(
     }
 
     /**
-     * Sends a basic text message.  We first prepare the data to send the message,
-     * using [buildNewMessage], after which we send the message using [sendMessage].
+     * Sends a message to the API with all the required information.
      *
      * @param message - The message to send.
      * */
-    public fun onSendMessage(message: String) {
+    public fun sendMessage(message: String) {
         val messageToSend = buildNewMessage(message, selectedAttachments)
 
         sendMessage(messageToSend)
@@ -169,7 +168,7 @@ public class MessageComposerViewModel(
      * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
      * message, or we send a new message, using the [ChatDomain].
      *
-     * It also dismisses any current message actions, using [onDismissMessageActions].
+     * It also dismisses any current message actions.
      *
      * @param message - The message to send.
      * */
@@ -181,7 +180,7 @@ public class MessageComposerViewModel(
                 chatDomain.sendMessage(message)
             }
 
-            onDismissMessageActions()
+            dismissMessageActions()
             sendMessageCall.enqueue()
         }
     }
@@ -229,10 +228,10 @@ public class MessageComposerViewModel(
      * calling [setMessageMode].
      *
      * It also dismisses any currently active message actions, such as [Edit] and [Reply], as the
-     * user left the relevant thread, by calling [onDismissMessageActions].
+     * user left the relevant thread.
      * */
     public fun leaveThread() {
         setMessageMode(Normal)
-        onDismissMessageActions()
+        dismissMessageActions()
     }
 }

@@ -109,7 +109,7 @@ class MessagesActivity : AppCompatActivity() {
                     viewModel = listViewModel,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(Thread(message))
-                        listViewModel.onMessageThreadClick(message)
+                        listViewModel.openMessageThread(message)
                     }
                 )
             }
@@ -121,12 +121,12 @@ class MessagesActivity : AppCompatActivity() {
                         .align(Alignment.BottomCenter)
                         .height(350.dp),
                     onAttachmentsSelected = { attachments ->
-                        attachmentsPickerViewModel.onShowAttachments(false)
-                        composerViewModel.onAttachmentsSelected(attachments)
+                        attachmentsPickerViewModel.changeAttachmentState(false)
+                        composerViewModel.addSelectedAttachments(attachments)
                     },
                     onDismiss = {
-                        attachmentsPickerViewModel.onShowAttachments(false)
-                        attachmentsPickerViewModel.onDismiss()
+                        attachmentsPickerViewModel.changeAttachmentState(false)
+                        attachmentsPickerViewModel.dismissAttachments()
                     }
                 )
             }
@@ -136,8 +136,8 @@ class MessagesActivity : AppCompatActivity() {
                     messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
                     message = selectedMessage,
                     onMessageAction = { action ->
-                        composerViewModel.onMessageAction(action)
-                        listViewModel.onMessageAction(action)
+                        composerViewModel.performMessageAction(action)
+                        listViewModel.performMessageAction(action)
                     },
                     onDismiss = { listViewModel.removeOverlay() }
                 )
@@ -163,7 +163,7 @@ class MessagesActivity : AppCompatActivity() {
                     value = composerViewModel.input,
                     attachments = composerViewModel.selectedAttachments,
                     activeAction = composerViewModel.activeAction,
-                    onValueChange = { composerViewModel.onInputChange(it) },
+                    onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {
                         Row(

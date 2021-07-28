@@ -119,7 +119,7 @@ public fun AttachmentsPicker(
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
-                        attachmentsPickerViewModel.onAttachmentsModeSelected(it)
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(it)
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
@@ -143,7 +143,7 @@ public fun AttachmentsPicker(
                         when (pickerMode) {
                             Files -> FilesPicker(
                                 files = attachmentsPickerViewModel.files,
-                                onItemSelected = attachmentsPickerViewModel::onAttachmentSelected,
+                                onItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onBrowseFilesResult = { uris ->
                                     onAttachmentsSelected(
                                         attachmentsPickerViewModel.getAttachmentsFromUris(
@@ -160,7 +160,7 @@ public fun AttachmentsPicker(
                                     bottom = 2.dp
                                 ),
                                 images = attachmentsPickerViewModel.images,
-                                onImageSelected = attachmentsPickerViewModel::onAttachmentSelected
+                                onImageSelected = attachmentsPickerViewModel::changeSelectedAttachments
                             )
                             MediaCapture -> Box(modifier = Modifier.fillMaxSize()) {
                                 LaunchedEffect(Unit) {
