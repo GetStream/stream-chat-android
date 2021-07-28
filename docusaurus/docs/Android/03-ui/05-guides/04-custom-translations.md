@@ -1,6 +1,6 @@
 # Localizing SDK strings
 
-Stream SDK is available with US English string resources out-of-the box. The solution for adding you own localization is based on standard [Android mechanism](https://developer.android.com/guide/topics/resources/localization) of switching resources on system Locale change. You can provide custom localization for the SDK's string resources by overriding them in the locale-specific `/res/values` directories of your project.
+Stream SDK is available with US English string resources out-of-the-box. The solution for adding your own localization is based on standard [Android mechanism](https://developer.android.com/guide/topics/resources/localization) of switching resources on system Locale change. You can provide custom localization for the SDK's string resources by overriding them in the locale-specific `/res/values` directories of your project.
  
 
 :::note
