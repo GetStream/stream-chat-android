@@ -1,3 +1,7 @@
+---
+hide_from_search: true
+---
+
 # Creating a Custom Message Input
 
 ```

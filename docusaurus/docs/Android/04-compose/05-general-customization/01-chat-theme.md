@@ -75,7 +75,7 @@ setContent {
 }
 ```
 
-In the snippet above, we customized the shapes to be different from the default values. We made both the message types rounded, the input field rectangular and changed the avatar to not use be circular.
+In the snippet above, we customized the shapes to be different from the default values. We made both the message types rounded, the input field rectangular and changed the avatar to not be circular.
 
 This snippet above will produce the following screen.
 
