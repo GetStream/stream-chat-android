@@ -1,43 +1,40 @@
 # ChannelListHeader
 
-The `ChannelListHeader` component allows you to build a header for the channel screen. It sets up the following:
+The `ChannelListHeader` component allows you to display a header for the channel screen. It sets up the following:
 
-* `Avatar`: Shows the current user image. The style is applied from the `ChatTheme` wrapper.
-* `ChannelHeaderTitle`: A component that either shows the title of the header, or a `NetworkLoadingView` if there's no network available.
+* `Avatar`: Shows the current user image. The style is applied from the `ChatTheme` wrapper. <!-- TODO WIP PAGE -->
+* `ChannelHeaderTitle`: A component that shows the title of the header, or a loading view if there's no network available.
 * `action`: A customizable trailing action shown at the end of the header, exposed as a parameter.  `DefaultChannelListHeaderAction` by default.
 
 Let's see how to use the header.
 
 ## Usage
 
-To use the `ChannelListHeader`, you can just add it to your UI, within `setContent()`:
+To use the `ChannelListHeader`, you can add it to your UI, within `setContent()`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
         
     setContent {
-            
         ChatTheme {
             ChannelListHeader(
                 modifier = Modifier.fillMaxWidth(),
                 currentUser = user,
-                title = "My Awesome App"
+                title = "My Awesome App",
             )
         }
     }
 }
 ```
 
-:::note 
-
-The `ChannelListHeader` can be used without any parameters, but we advise that you pass in the title of your app, the current user, as well as the action handlers.
-
-:::
-
-This snippet will produce the UI as shown below.
+This will produce the UI below:
 
 ![The ChannelListHeader Component](../../assets/compose_default_channel_list_header_component.png)
+
+:::note 
+The `ChannelListHeader` can be used without any parameters, but we advise that you pass in the title of your app, the current user, as well as the action handlers.
+:::
 
 Next, let's see how to handle actions in the header.
 
@@ -48,7 +45,7 @@ The `ChannelListHeader` exposes two main actions you can override and handle you
 ```kotlin
 @Composable
 fun ChannelListHeader(
-  ..., // state
+  ..., // State
   onAvatarClick: (User?) -> Unit = {},
   onHeaderActionClick: () -> Unit = {},
   action: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) }
@@ -68,9 +65,9 @@ To override the actions, you can use the following approach:
 
 ```kotlin
 ChannelListHeader(
-    ..., // state
-    onHeaderActionClick = {}, // default header action
-    onAvatarClick = {} // avatar click action
+    ..., // State
+    onHeaderActionClick = {}, // Default header action
+    onAvatarClick = {} // Avatar click action
 )
 ```
 
@@ -90,29 +87,31 @@ fun ChannelListHeader(
     action: (@Composable () -> Unit)? = { 
         DefaultChannelListHeaderAction(onHeaderActionClick)
     },
-    ... // action handlers
+    ... // Action handlers
 )
 ```
 
 * `modifier`: Modifier for the root component styling. You can add things like a background, elevation, padding and more.
 * `title`: The text to show when you're connected to the Internet.
-* `currentUser`: The state of the current user, for the `Avatar`.
-* `isNetworkAvailable`: If we should show the title or the `NetworkLoadingView`.
-* `action`: Customizable composable function parameter, that overrides the trailing action. This allows you to either override the default behavior, but keep the UI - by overriding `onHeaderActionClick`, or overriding both the UI and behavior, by changing the `action` parameter from the default to your own.
+* `currentUser`: The state of the current user, for displaying the `Avatar`.
+* `isNetworkAvailable`: Whether we should show the title or the `NetworkLoadingView`.
+* `action`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
+    * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
+    * or override both the UI and behavior by changing the `action` parameter from the default to your own.
 
 Here's an example of customizing the UI of the header:
 
 ```kotlin
 ChannelListHeader(
-    // customizing the appearance
+    // Customizing the appearance
     modifier = Modifier.fillMaxWidth(), 
     isNetworkAvailable = false,
     currentUser = user,
     title = "My Chat App",
-    action = { // customizing the trailing action
+    action = { // Customizing the trailing action
         Icon(
             modifier = Modifier.clickable {
-                // click handler for the custom action
+                // Click handler for the custom action
             },
             imageVector = Icons.Default.Add,
             contentDescription = "Add",
@@ -130,4 +129,4 @@ The snippet above will produce the following UI.
 
 ![The ChannelListHeader Component](../../assets/compose_custom_channel_list_header_component.png)
 
-You can also choose to build a completely custom header and integrate with the rest of our components. To learn how to do that, read our [Building Custom Screens](../07-guides/06-building-custom-screens.md) guide.
+<!-- TODO WIP PAGE You can also choose to build a completely custom header and integrate with the rest of our components. To learn how to do that, read our [Building Custom Screens](../07-guides/06-building-custom-screens.md) guide. -->
