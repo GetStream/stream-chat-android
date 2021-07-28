@@ -11,7 +11,7 @@ All of the string resources names provided by Stream SDK are prefixed with `stre
 
 In this guide we are going to implement a custom translation for ChannelListHeaderView UI component. We are going to provide Polish language translation.
 
-Usually, base string resources are located in the `/res/values/strings.xml` file. In order to add a translations for the new language (PL) we are going to create a new `strings.xml` file under `res/values-pl` directory.
+Usually, base string resources are located in the `/res/values/strings.xml` file. In order to add translations for the new language (PL) we are going to create a new `strings.xml` file under `res/values-pl` directory.
 
 Let's take a look at the [strings_channel_list_header.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_channel_list_header.xml) file and discover strings defined for `ChannelListHeaderView`:
 ```xml
