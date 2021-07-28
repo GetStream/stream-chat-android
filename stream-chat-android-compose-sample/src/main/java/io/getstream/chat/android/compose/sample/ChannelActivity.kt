@@ -44,7 +44,7 @@ class ChannelActivity : AppCompatActivity() {
     private val factory by lazy {
         ChannelViewModelFactory(
             ChatClient.instance(), ChatDomain.instance(),
-            QuerySort.desc("id"),
+            QuerySort.desc("last_updated"),
             Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))

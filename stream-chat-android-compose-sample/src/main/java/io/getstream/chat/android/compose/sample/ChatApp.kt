@@ -17,7 +17,7 @@ class ChatApp : Application() {
         val user = User(
             id = "1f37e58d-d8b0-476a-a4f2-f8611e0d85d9",
             extraData = mutableMapOf(
-                "Jc" to "Tutorial Droid",
+                "name" to "Jc",
                 "image" to "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FJc.png?alt=media",
             ),
         )

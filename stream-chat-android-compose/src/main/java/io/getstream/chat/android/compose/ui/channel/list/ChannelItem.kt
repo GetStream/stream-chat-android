@@ -1,8 +1,10 @@
 package io.getstream.chat.android.compose.ui.channel.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,17 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
@@ -66,12 +73,21 @@ internal fun DefaultChannelItem(
     ) {
         val imagePainter = rememberChannelImagePainter(channel = channel, currentUser = currentUser)
 
-        Avatar(
-            modifier = Modifier
+        Box(
+            Modifier
                 .padding(start = 8.dp)
-                .size(36.dp),
-            painter = imagePainter,
-        )
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(ChatTheme.colors.borders)
+                    .size(36.dp)
+            )
+            Avatar(
+                modifier = Modifier.size(36.dp),
+                painter = imagePainter,
+            )
+        }
 
         Spacer(Modifier.width(8.dp))
 
@@ -83,7 +99,7 @@ internal fun DefaultChannelItem(
                 .wrapContentHeight(),
         ) {
             Text(
-                text = channel.name,
+                text = channel.getDisplayName(),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -91,13 +107,16 @@ internal fun DefaultChannelItem(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            Text(
-                text = lastMessage?.text ?: "No message",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textLowEmphasis,
-            )
+            val lastMessageText = lastMessage?.text?.takeIf { it.isNotBlank() }
+            if (lastMessageText != null) {
+                Text(
+                    text = lastMessageText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ChatTheme.typography.body,
+                    color = ChatTheme.colors.textLowEmphasis,
+                )
+            }
         }
 
         if (lastMessage != null) {
@@ -110,7 +129,8 @@ internal fun DefaultChannelItem(
             ) {
                 val seenMessage = channel.getUnreadMessagesCount(currentUser?.id ?: "") == 0
 
-                val messageIcon = if (seenMessage) R.drawable.stream_compose_message_seen else R.drawable.stream_compose_message_not_seen
+                val messageIcon =
+                    if (seenMessage) R.drawable.stream_compose_message_seen else R.drawable.stream_compose_message_not_seen
 
                 Icon(
                     modifier = Modifier
@@ -129,4 +149,14 @@ internal fun DefaultChannelItem(
             }
         }
     }
+}
+
+@Composable
+@ReadOnlyComposable
+private fun Channel.getDisplayName(): String {
+    return name.takeIf { it.isNotEmpty() }
+        ?: getUsers()
+            .joinToString { it.name }
+            .takeIf { it.isNotEmpty() }
+        ?: stringResource(id = R.string.stream_compose_channel_list_untitled_channel)
 }
