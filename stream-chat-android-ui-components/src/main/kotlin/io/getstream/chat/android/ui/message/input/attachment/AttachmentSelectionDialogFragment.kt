@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
 
 @ExperimentalStreamChatApi
@@ -49,11 +50,11 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
                 attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
                 dismiss()
             }
-
+            val attachmentSelectionDialogStyle = style.attachmentSelectionDialogStyle
             mediaAttachmentButton.run {
-                background = style.pictureAttachmentIcon
-                if (style.pictureAttachmentIconTint != null) {
-                    backgroundTintList = style.pictureAttachmentIconTint
+                background = attachmentSelectionDialogStyle.pictureAttachmentIcon
+                if (attachmentSelectionDialogStyle.pictureAttachmentIconTint != null) {
+                    backgroundTintList = attachmentSelectionDialogStyle.pictureAttachmentIconTint
                 }
 
                 isChecked = true
@@ -63,9 +64,9 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
             }
 
             fileAttachmentButton.run {
-                background = style.fileAttachmentIcon
-                if (style.fileAttachmentIconTint != null) {
-                    backgroundTintList = style.fileAttachmentIconTint
+                background = attachmentSelectionDialogStyle.fileAttachmentIcon
+                if (attachmentSelectionDialogStyle.fileAttachmentIconTint != null) {
+                    backgroundTintList = attachmentSelectionDialogStyle.fileAttachmentIconTint
                 }
 
                 setOnClickListener {
@@ -74,9 +75,9 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
             }
 
             cameraAttachmentButton.run {
-                background = style.cameraAttachmentIcon
-                if (style.cameraAttachmentIconTint != null) {
-                    backgroundTintList = style.cameraAttachmentIconTint
+                background = attachmentSelectionDialogStyle.cameraAttachmentIcon
+                if (attachmentSelectionDialogStyle.cameraAttachmentIconTint != null) {
+                    backgroundTintList = attachmentSelectionDialogStyle.cameraAttachmentIconTint
                 }
 
                 setOnClickListener {
@@ -84,7 +85,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
                 }
             }
 
-            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment)
+            attachmentPager.adapter = AttachmentDialogPagerAdapter(this@AttachmentSelectionDialogFragment, style)
             attachmentPager.isUserInputEnabled = false
         }
     }
@@ -158,7 +159,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         internal const val REQUEST_KEY_FILE_MANAGER = "key_file_manager"
         internal const val BUNDLE_KEY = "bundle_attachments"
 
-        internal var staticStyle: AttachmentSelectionDialogStyle? = null
+        internal var staticStyle: MessageInputViewStyle? = null
 
         /**
          * Create a new instance of the Attachment picker dialog.
@@ -166,8 +167,8 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
          * See [AttachmentSelectionDialogStyle.createDefault] to load a default set of icons to be used for the
          * attachment dialog's tabs.
          */
-        public fun newInstance(attachmentSelectionDialogStyle: AttachmentSelectionDialogStyle): AttachmentSelectionDialogFragment {
-            staticStyle = attachmentSelectionDialogStyle
+        public fun newInstance(style: MessageInputViewStyle): AttachmentSelectionDialogFragment {
+            staticStyle = style
             return AttachmentSelectionDialogFragment()
         }
     }
