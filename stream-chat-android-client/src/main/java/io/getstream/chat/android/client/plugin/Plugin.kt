@@ -4,6 +4,10 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.plugin.listeners.OperationListenersFacade
 
+/**
+ * Plugin is an extension for [ChatClient]. It extends [OperationListenersFacade] and provides additionally
+ * name attribute and init method.
+ */
 public interface Plugin : OperationListenersFacade {
     public val name: String
 
