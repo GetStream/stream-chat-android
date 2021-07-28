@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.ui.channel.list.viewmodel.v2.ChannelListViewModel
 
 /**
@@ -34,15 +33,10 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         }
 
         val chatClient = ChatClient.instance()
-        val offlinePlugin =
-            requireNotNull(chatClient.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME } as? OfflinePlugin) {
-                "Offline plugin must be configured in ChatClient"
-            }
 
         @Suppress("UNCHECKED_CAST")
         return ChannelListViewModel(
             chatClient,
-            offlinePlugin,
             ChatDomain.instance(),
             filter,
             sort,
