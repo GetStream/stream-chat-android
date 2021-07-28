@@ -116,6 +116,7 @@ in your Manifest file:
 
 ### ⚠️ Changed
 - Made `Channel::getLastMessage` function public
+- Renamed `FileAttachmentsViewStyle` class to `FileAttachmentViewStyle`
 
 ### ❌ Removed
 - 🚨 Breaking change: `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`
