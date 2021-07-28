@@ -133,17 +133,18 @@ internal fun DefaultMessageContainer(
                 val ownReactions = message.ownReactions
                 val supportedReactions = ChatTheme.reactionTypes
 
-                // reactions
-                val reactions = message.reactionCounts
-                    .map { it.key }
-                    .filter { supportedReactions[it] != null }
-                    .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
-
-                if (reactions.isNotEmpty()) {
-                    MessageReactions(
-                        modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp),
-                        reactions = reactions
-                    )
+                if (!isDeleted) {
+                    // reactions
+                    val reactions = message.reactionCounts
+                        .map { it.key }
+                        .filter { supportedReactions[it] != null }
+                        .map { type -> requireNotNull(supportedReactions[type]) to (type in ownReactions.map { it.type }) }
+                    if (reactions.isNotEmpty()) {
+                        MessageReactions(
+                            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp),
+                            reactions = reactions
+                        )
+                    }
                 }
 
                 val bubbleShape = if (message.id == parentMessageId) {
@@ -453,6 +454,7 @@ internal fun QuotedMessage(
     modifier: Modifier = Modifier,
 ) {
     val painter = rememberImagePainter(data = message.user.image)
+    val factory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
 
     Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
         Avatar(
@@ -466,7 +468,17 @@ internal fun QuotedMessage(
         MessageBubble(
             shape = ChatTheme.shapes.otherMessageBubble, color = Color.White,
             content = {
-                MessageText(message = message)
+                Column {
+                    factory?.factory?.invoke(AttachmentState(
+                        modifier = Modifier.padding(4.dp),
+                        message = MessageItem(message, None),
+                        onLongItemClick = { }
+                    ))
+
+                    if (message.text.isNotEmpty()) {
+                        MessageText(message = message)
+                    }
+                }
             }
         )
     }

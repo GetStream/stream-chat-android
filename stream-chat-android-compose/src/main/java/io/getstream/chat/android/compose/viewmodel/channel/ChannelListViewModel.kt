@@ -97,9 +97,9 @@ public class ChannelListViewModel(
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
 
-                    // TODO we need to make these filters consistent
-                    val filter =
-                        if (query.isNotEmpty()) Filters.and(config.filters, Filters.eq("id", query)) else config.filters
+                    val filter = if (query.isNotEmpty())
+                        Filters.and(config.filters, Filters.autocomplete("name", query))
+                    else config.filters
 
                     val result = chatDomain.queryChannels(filter, config.querySort).await()
 
@@ -240,7 +240,7 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatDomain.leaveChannel(channel.id).enqueue()
+        chatDomain.leaveChannel(channel.cid).enqueue()
     }
 
     /**
@@ -248,5 +248,6 @@ public class ChannelListViewModel(
      * */
     public fun dismissChannelAction() {
         activeChannelAction = null
+        selectedChannel = null
     }
 }

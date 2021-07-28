@@ -385,6 +385,6 @@ public class AttachmentFactory(
      * @return a boolean value, if we can consume the message and render UI.
      * */
     public fun canHandle(message: Message): Boolean {
-        return predicate(message)
+        return message.attachments.isNotEmpty() && predicate(message)
     }
 }

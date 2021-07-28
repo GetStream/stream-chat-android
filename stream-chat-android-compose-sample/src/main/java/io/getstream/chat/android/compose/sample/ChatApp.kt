@@ -10,21 +10,21 @@ class ChatApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val client = ChatClient.Builder("b67pax5b2wdq", applicationContext)
+        val client = ChatClient.Builder("qx5us2v6xvmh", applicationContext)
             .build()
         ChatDomain.Builder(client, applicationContext).build()
 
         val user = User(
-            id = "tutorial-droid",
+            id = "1f37e58d-d8b0-476a-a4f2-f8611e0d85d9",
             extraData = mutableMapOf(
-                "name" to "Tutorial Droid",
-                "image" to "https://bit.ly/2TIt8NR",
+                "Jc" to "Tutorial Droid",
+                "image" to "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FJc.png?alt=media",
             ),
         )
 
         client.connectUser(
             user = user,
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.NhEr0hP9W9nwqV7ZkdShxvi02C5PR7SJE7Cs4y7kyqg"
+            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYzN2U1OGQtZDhiMC00NzZhLWE0ZjItZjg2MTFlMGQ4NWQ5In0.l3u9P1NKhJ91rI1tzOcABGh045Kj69-iVkC2yUtohVw"
         ).enqueue()
     }
 }
