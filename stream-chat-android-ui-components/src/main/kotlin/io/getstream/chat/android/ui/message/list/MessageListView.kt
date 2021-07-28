@@ -483,7 +483,7 @@ public class MessageListView : ConstraintLayout {
         context.obtainStyledAttributes(
             attributeSet,
             R.styleable.MessageListView,
-            R.attr.streamUiMentionListStyle,
+            R.attr.streamUiMessageListStyle,
             R.style.StreamUi_MessageList
         ).use { tArray ->
             tArray.getInteger(
