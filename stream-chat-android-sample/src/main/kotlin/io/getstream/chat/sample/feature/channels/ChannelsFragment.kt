@@ -14,6 +14,8 @@ import com.getstream.sdk.chat.view.channels.ChannelListView
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.common.navigateSafely
@@ -22,7 +24,15 @@ import io.getstream.chat.sample.databinding.FragmentChannelsBinding
 
 class ChannelsFragment : Fragment() {
 
-    private val channelsViewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
+    private val channelsViewModel: ChannelsViewModel by viewModels {
+        ChannelsViewModelFactory(
+            filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
+                Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+            ),
+        )
+    }
 
     private var _binding: FragmentChannelsBinding? = null
     protected val binding get() = _binding!!

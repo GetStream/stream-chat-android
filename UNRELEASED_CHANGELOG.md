@@ -92,7 +92,7 @@ in your Manifest file:
 ### ⚠️ Changed
 
 ### ❌ Removed
-
+- Removed unnecessary "draft" filter from the default channel list filter as it is only relevant to the sample app
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
