@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default colors -->
+    <color name="stream_compose_text_high_emphasis">#000000</color>
+    <color name="stream_compose_text_low_emphasis">#72767E</color>
+    <color name="stream_compose_disabled">#B4B7BB</color>
+    <color name="stream_compose_borders">#DBDDE1</color>
+    <color name="stream_compose_input_background">#E9EAED</color>
+    <color name="stream_compose_app_background">#F7F7F8</color>
+    <color name="stream_compose_bars_background">#FFFFFF</color>
+    <color name="stream_compose_link_background">#E9F1FF</color>
+    <color name="stream_compose_overlay">#33000000</color>
+    <color name="stream_compose_primary_accent">#006CFF</color>
+    <color name="stream_compose_error_accent">#FF3742</color>
+    <color name="stream_compose_info_accent">#20E070</color>
+
+    <!-- Default Dark colors -->
+    <color name="stream_compose_text_high_emphasis_dark">#FFFFFF</color>
+    <color name="stream_compose_text_low_emphasis_dark">#72767E</color>
+    <color name="stream_compose_disabled_dark">#4C525C</color>
+    <color name="stream_compose_borders_dark">#272A30</color>
+    <color name="stream_compose_input_background_dark">#1C1E22</color>
+    <color name="stream_compose_app_background_dark">#000000</color>
+    <color name="stream_compose_bars_background_dark">#121416</color>
+    <color name="stream_compose_link_background_dark">#00193D</color>
+    <color name="stream_compose_overlay_dark">#33000000</color>
+    <color name="stream_compose_primary_accent_dark">#006CFF</color>
+    <color name="stream_compose_error_accent_dark">#FF3742</color>
+    <color name="stream_compose_info_accent_dark">#20E070</color>
+</resources>
