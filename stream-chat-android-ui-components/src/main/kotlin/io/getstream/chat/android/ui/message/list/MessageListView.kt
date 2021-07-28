@@ -422,9 +422,10 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun init(attr: AttributeSet?) {
-        messageListViewStyle = MessageListViewStyle(context, attr)
-
         binding = StreamUiMessageListViewBinding.inflate(streamThemeInflater, this)
+
+        messageListViewStyle = MessageListViewStyle(context, attr)
+        messageListViewStyle?.messagesStart?.let(::chatMessageStart)
 
         initRecyclerView()
         initScrollHelper()
@@ -465,7 +466,7 @@ public class MessageListView : ConstraintLayout {
 
         binding.chatMessagesRV.apply {
             layoutManager = this@MessageListView.layoutManager
-            setHasFixedSize(true)
+            setHasFixedSize(false)
             setItemViewCacheSize(20)
         }
     }
@@ -785,6 +786,7 @@ public class MessageListView : ConstraintLayout {
                 buffer.hold()
 
                 val isThreadStart = !adapter.isThread && listItem.isThread
+                val isNormalModeStart = adapter.isThread && !listItem.isThread
                 val isOldListEmpty = adapter.currentList.isEmpty()
                 if (isThreadStart) {
                     listItem.items
@@ -794,14 +796,44 @@ public class MessageListView : ConstraintLayout {
                         ?.let { enterThreadListener.onThreadEntered(it.message) }
                 }
                 adapter.isThread = listItem.isThread
+
+                if (isThreadStart) {
+                    messageListViewStyle?.threadMessagesStart?.let(::chatMessageStart)
+                } else if (isNormalModeStart) {
+                    messageListViewStyle?.messagesStart?.let(::chatMessageStart)
+                }
+
                 adapter.submitList(filteredList) {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty()
                     )
+
                     buffer.active()
                 }
+            }
+        }
+    }
+
+    private fun chatMessageStart(messageStartValue: Int) {
+        messageStartValue
+            .let(MessagesStart::parseValue)
+            .let(::changeLayoutForMessageStart)
+    }
+
+    private fun changeLayoutForMessageStart(messagesStart: MessagesStart) {
+        val messagesRV = binding.chatMessagesRV
+
+        when (messagesStart) {
+            MessagesStart.BOTTOM -> {
+                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                messagesRV.overScrollMode = View.OVER_SCROLL_NEVER
+            }
+
+            MessagesStart.TOP -> {
+                messagesRV.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+                messagesRV.overScrollMode = View.OVER_SCROLL_ALWAYS
             }
         }
     }
@@ -1133,6 +1165,17 @@ public class MessageListView : ConstraintLayout {
             fun parseValue(value: Int): NewMessagesBehaviour {
                 return values().find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
+            }
+        }
+    }
+
+    public enum class MessagesStart(internal val value: Int) {
+        BOTTOM(0), TOP(1);
+
+        internal companion object {
+            fun parseValue(value: Int): MessagesStart {
+                return values().find { behaviour -> behaviour.value == value }
+                    ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
             }
         }
     }
