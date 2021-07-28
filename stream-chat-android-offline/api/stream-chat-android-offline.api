@@ -410,6 +410,10 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
+	public static final fun getOfflinePlugin (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/OfflinePlugin;
+}
+
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
