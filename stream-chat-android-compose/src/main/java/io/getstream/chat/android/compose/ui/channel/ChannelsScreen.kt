@@ -57,7 +57,7 @@ public fun ChannelsScreen(
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
     ),
-    querySort: QuerySort<Channel> = QuerySort.Companion.desc("id"),
+    querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = true,

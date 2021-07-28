@@ -97,9 +97,11 @@ public class ChannelListViewModel(
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
 
-                    val filter = if (query.isNotEmpty())
+                    val filter = if (query.isNotEmpty()) {
                         Filters.and(config.filters, Filters.autocomplete("name", query))
-                    else config.filters
+                    } else {
+                        config.filters
+                    }
 
                     val result = chatDomain.queryChannels(filter, config.querySort).await()
 
