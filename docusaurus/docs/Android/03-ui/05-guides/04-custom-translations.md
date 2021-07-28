@@ -45,5 +45,4 @@ String resources in SDK are grouped in the resource files, usually prefixed with
 * [strings_message_list_header.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_message_list_header.xml) 
 * [strings_search.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_search.xml) 
 * [strings_common.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_common.xml)
-* [strings.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android/src/main/res/values/strings.xml)
 :::
