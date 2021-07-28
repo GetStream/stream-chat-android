@@ -21,7 +21,7 @@ Learn more in the [announcement blog post](https://getstream.io/blog/jetpack-com
 - Removed AndroidX Media dependency
 - Updated dependency versions
   - Coil 1.3.0
-  - AndroidX Activity 1.2.4
+  - AndroidX Activity 1.3.0
   - AndroidX AppCompat 1.3.1
   - Android Ktx 1.6.0
   - AndroidX RecyclerView 1.2.1

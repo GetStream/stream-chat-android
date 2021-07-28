@@ -3,10 +3,10 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.0.0-rc01"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.0.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
-    internal const val ANDROIDX_ACTIVITY_KTX = "1.2.4"
+    internal const val ANDROIDX_ACTIVITY_KTX = "1.3.0"
     internal const val ANDROIDX_ANNOTATIONS = "1.2.0"
     internal const val ANDROIDX_APPCOMPAT = "1.3.1"
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
@@ -25,9 +25,9 @@ object Versions {
     internal const val ASSERTJ = "3.20.2"
     internal const val COIL = "1.3.0"
     internal const val COMPOSE_ACCOMPANIST = "0.14.0"
-    internal const val COMPOSE_ACTIVITY = "1.3.0-rc02"
+    internal const val COMPOSE_ACTIVITY = "1.3.0"
     internal const val COMPOSE_VIEW_MODEL = "1.0.0-alpha07"
-    public const val COMPOSE = "1.0.0-rc02"
+    public const val COMPOSE = "1.0.0"
     internal const val CONSTRAINT_LAYOUT = "2.0.4"
     internal const val COROUTINES = "1.5.1"
     internal const val DEXTER = "6.2.3"
