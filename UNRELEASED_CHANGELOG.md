@@ -229,10 +229,12 @@ in your Manifest file:
     - streamUiAttachmentsFilesEmptyStateText
     - streamUiAttachmentsMediaEmptyStateText
     - streamUiMessageInputCloseButtonIconDrawable
+- Added `streamUiMessageListFileAttachmentStyle` theme attribute to customize the appearance of file attachments within messages.
 
 ### ⚠️ Changed
 - Made `Channel::getLastMessage` function public
 - `AttachmentSelectionDialogFragment::newInstance` requires instance of `MessageInputViewStyle` as a parameter. You can obtain a default implementation of `MessageInputViewStyle` with `MessageInputViewStyle::createDefault` method.
+- Renamed `FileAttachmentsViewStyle` class to `FileAttachmentViewStyle`
 
 ### ❌ Removed
 - 🚨 Breaking change: `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`

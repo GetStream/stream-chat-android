@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
-import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
+import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -41,17 +41,13 @@ internal class FileAttachmentsView : RecyclerView {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
 
-    private lateinit var style: FileAttachmentsViewStyle
+    private lateinit var style: FileAttachmentViewStyle
 
     private lateinit var fileAttachmentsAdapter: FileAttachmentsAdapter
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(null)
-    }
+    constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
@@ -66,8 +62,8 @@ internal class FileAttachmentsView : RecyclerView {
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
     }
 
-    fun init(attrs: AttributeSet?) {
-        style = FileAttachmentsViewStyle(context, attrs)
+    private fun init(attrs: AttributeSet?) {
+        style = FileAttachmentViewStyle(context, attrs)
         fileAttachmentsAdapter = FileAttachmentsAdapter(
             attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
             attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
@@ -96,7 +92,7 @@ private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    private val style: FileAttachmentsViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -119,7 +115,7 @@ private class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    private val style: FileAttachmentsViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private lateinit var attachment: Attachment
 
