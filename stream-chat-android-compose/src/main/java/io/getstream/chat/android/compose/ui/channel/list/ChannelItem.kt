@@ -37,7 +37,7 @@ import java.util.Date
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
  *
  * @param modifier - For special styling, like theming.
- * @param item - The channel data to show.
+ * @param channel - The channel data to show.
  * @param onChannelClick - Handler for a single tap on an item.
  * @param onChannelLongClick - Handler for a long tap on an item.
  * @param modifier - Modifier for styling.
@@ -45,7 +45,7 @@ import java.util.Date
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DefaultChannelItem(
-    item: Channel,
+    channel: Channel,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
@@ -57,14 +57,14 @@ internal fun DefaultChannelItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .combinedClickable(
-                onClick = { onChannelClick(item) },
-                onLongClick = { onChannelLongClick(item) },
+                onClick = { onChannelClick(channel) },
+                onLongClick = { onChannelLongClick(channel) },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ),
         verticalAlignment = CenterVertically,
     ) {
-        val imagePainter = rememberChannelImagePainter(channel = item, currentUser = currentUser)
+        val imagePainter = rememberChannelImagePainter(channel = channel, currentUser = currentUser)
 
         Avatar(
             modifier = Modifier
@@ -75,7 +75,7 @@ internal fun DefaultChannelItem(
 
         Spacer(Modifier.width(8.dp))
 
-        val lastMessage = item.messages.lastOrNull()
+        val lastMessage = channel.messages.lastOrNull()
 
         Column(
             modifier = Modifier
@@ -83,7 +83,7 @@ internal fun DefaultChannelItem(
                 .wrapContentHeight(),
         ) {
             Text(
-                text = item.name,
+                text = channel.name,
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -108,7 +108,7 @@ internal fun DefaultChannelItem(
                     .align(Bottom),
                 verticalAlignment = CenterVertically,
             ) {
-                val seenMessage = item.getUnreadMessagesCount(currentUser?.id ?: "") == 0
+                val seenMessage = channel.getUnreadMessagesCount(currentUser?.id ?: "") == 0
 
                 val messageIcon = if (seenMessage) R.drawable.stream_compose_message_seen else R.drawable.stream_compose_message_not_seen
 
@@ -122,7 +122,7 @@ internal fun DefaultChannelItem(
                 )
 
                 Text(
-                    text = SimpleDateFormat.getTimeInstance().format(item.lastUpdated ?: Date()),
+                    text = SimpleDateFormat.getTimeInstance().format(channel.lastUpdated ?: Date()),
                     fontSize = 14.sp,
                     color = ChatTheme.colors.textLowEmphasis,
                 )
