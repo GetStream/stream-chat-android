@@ -40,6 +40,8 @@
 - Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ✅ Added
+- Added `streamUiMessagesStart` that allows to controll if the stack of messages starts at the bottom or the top.
+- Added `streamUiThreadMessagesStart` that allows to controll if the stack of thread messages starts at the bottom or the top. 
 - Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
 - Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
 - `MentionListView` can be customisable with XML parameters and with a theme.
@@ -900,7 +902,7 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
     - Add `parentId` to `Keystroke` and `StopTyping` use cases
 
 ## stream-chat-android-ui-common
-- Add a new `isMessageRead` flag to the `MessageListItem.MessageItem` class, which indicates 
+- Add a new `isMessageRead` flag to the `MessageListItem.MessageItem` class, which indicates
   that a particular message is read by other members in this channel.
 - Add handling threads typing in `MessageInputViewModel`
 
