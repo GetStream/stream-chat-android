@@ -88,7 +88,7 @@ The methods of the `ChatClient` class allow you to create channels, send message
 
 ### Adding UI Components
 
-There are two UI Component implementations available: one built on regular old Android Views that you can use in XML layouts, and another built from the ground up in [Jetpack Compose](https://developer.android.com/jetpack/compose).
+There are two UI Component implementations available: one built on regular, XML based Android Views, and another built from the ground up in [Jetpack Compose](https://developer.android.com/jetpack/compose).
 
 Take a look at the Overview pages of the implementations to get started with them:
 - [XML based UI Components](../03-ui/01-overview.md)

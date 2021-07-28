@@ -9,13 +9,21 @@ import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultRea
 /**
  * Local providers for various properties we connect to our components, for styling.
  * */
-private val LocalColors = compositionLocalOf<StreamColors> { error("No colors provided!") }
-private val LocalTypography = compositionLocalOf<StreamTypography> { error("No typography provided!") }
-private val LocalShapes = compositionLocalOf<StreamShapes> { error("No shapes provided!") }
-private val LocalAttachmentFactories =
-    compositionLocalOf<List<AttachmentFactory>> { error("No attachment factories provided!") }
-
-private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> { error("No reactions provided") }
+private val LocalColors = compositionLocalOf<StreamColors> {
+    error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalTypography = compositionLocalOf<StreamTypography> {
+    error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalShapes = compositionLocalOf<StreamShapes> {
+    error("No shapes provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
+    error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
+    error("No reactions provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
