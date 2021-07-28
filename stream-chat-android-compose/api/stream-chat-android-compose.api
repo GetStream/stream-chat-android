@@ -626,11 +626,11 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun leaveGroup (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun loadMore ()V
-	public final fun onChannelAction (Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;)V
-	public final fun onChannelSelected (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun onSearchChanged (Ljava/lang/String;)V
+	public final fun performChannelAction (Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;)V
+	public final fun selectChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/client/api/models/QuerySort;)V
+	public final fun setSearchQuery (Ljava/lang/String;)V
 	public final fun start ()V
 }
 
@@ -656,6 +656,10 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 public final class io/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/compose/ui/util/StorageHelperWrapper;)V
+	public final fun changeAttachmentPickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;)V
+	public final fun changeAttachmentState (Z)V
+	public final fun changeSelectedAttachments (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentItem;)V
+	public final fun dismissAttachments ()V
 	public final fun getAttachmentsFromMetaData (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsFromUris (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
@@ -665,10 +669,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getImages ()Ljava/util/List;
 	public final fun getSelectedAttachments ()Ljava/util/List;
 	public final fun isShowingAttachments ()Z
-	public final fun onAttachmentSelected (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentItem;)V
-	public final fun onAttachmentsModeSelected (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;)V
-	public final fun onDismiss ()V
-	public final fun onShowAttachments (Z)V
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setImages (Ljava/util/List;)V
 	public final fun start ()V
@@ -677,18 +677,18 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
+	public final fun addSelectedAttachments (Ljava/util/List;)V
+	public final fun dismissMessageActions ()V
 	public final fun getActiveAction ()Lio/getstream/chat/android/compose/state/messages/list/MessageAction;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
 	public final fun getInput ()Ljava/lang/String;
 	public final fun getSelectedAttachments ()Ljava/util/List;
 	public final fun leaveThread ()V
-	public final fun onAttachmentsSelected (Ljava/util/List;)V
-	public final fun onDismissMessageActions ()V
-	public final fun onInputChange (Ljava/lang/String;)V
-	public final fun onMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
-	public final fun onSendMessage (Ljava/lang/String;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun sendMessage (Ljava/lang/String;)V
+	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/compose/state/messages/MessageMode;)V
 }
 
@@ -696,6 +696,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;ILio/getstream/chat/android/compose/handlers/ClipboardHandler;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;ILio/getstream/chat/android/compose/handlers/ClipboardHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clearNewMessageState ()V
 	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
@@ -710,12 +711,11 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isShowingOverlay ()Z
 	public final fun leaveThread ()V
-	public final fun onLoadMore ()V
-	public final fun onMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
-	public final fun onMessageSelected (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onMessageThreadClick (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun onScrolledToBottom ()V
+	public final fun loadMore ()V
+	public final fun openMessageThread (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun removeOverlay ()V
+	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun start ()V
 }
 
