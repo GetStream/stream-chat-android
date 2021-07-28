@@ -16,8 +16,8 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -33,7 +33,9 @@ internal class FileAttachmentFragment : Fragment() {
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
 
-    private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter {
+    private val style: MessageInputViewStyle by lazy { staticStyle!! }
+
+    private val fileAttachmentsAdapter: FileAttachmentAdapter = FileAttachmentAdapter(style) {
         updateFileAttachment(it)
     }
 
@@ -87,12 +89,17 @@ internal class FileAttachmentFragment : Fragment() {
 
     private fun setupViews() {
         binding.apply {
-            grantPermissionsInclude.grantPermissionsImageView.setImageResource(R.drawable.stream_ui_attachment_permission_file)
-            grantPermissionsInclude.grantPermissionsTextView.setText(R.string.stream_ui_message_input_files_access)
+            val style = style.attachmentSelectionDialogStyle
+            grantPermissionsInclude.grantPermissionsImageView.setImageDrawable(style.allowAccessToFilesIcon)
+            grantPermissionsInclude.grantPermissionsTextView.text = style.allowAccessToFilesText
+            style.grantPermissionsTextStyle.apply(grantPermissionsInclude.grantPermissionsTextView)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
+            fileManagerImageView.setImageDrawable(style.fileManagerIcon)
+            recentFilesTextView.text = style.recentFilesText
+            style.recentFilesTextStyle.apply(recentFilesTextView)
             fileManagerImageView.setOnClickListener {
                 activityResultLauncher?.launch(Unit)
             }
@@ -144,6 +151,8 @@ internal class FileAttachmentFragment : Fragment() {
             }
 
             if (attachments.isEmpty()) {
+                style.fileAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)
+                binding.emptyPlaceholderTextView.text = style.fileAttachmentEmptyStateText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 fileAttachmentsAdapter.setAttachments(attachments)
@@ -154,5 +163,14 @@ internal class FileAttachmentFragment : Fragment() {
 
     private object LauncherRequestsKeys {
         const val SELECT_FILES = "select_files_request_key"
+    }
+
+    companion object {
+        internal var staticStyle: MessageInputViewStyle? = null
+
+        fun newInstance(style: MessageInputViewStyle): Fragment {
+            staticStyle = style
+            return FileAttachmentFragment()
+        }
     }
 }

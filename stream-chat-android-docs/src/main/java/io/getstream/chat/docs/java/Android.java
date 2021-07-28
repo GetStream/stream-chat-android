@@ -847,7 +847,21 @@ public class Android {
                     genericDrawable,
                     ColorStateList.valueOf(colorBlack),
                     genericDrawable,
-                    ColorStateList.valueOf(colorBlack)
+                    ColorStateList.valueOf(colorBlack),
+                    "Allow access to media",
+                    "Allow access to files",
+                    "Allow access to camera",
+                    genericDrawable,
+                    genericDrawable,
+                    genericDrawable,
+                    textStyleGeneric,
+                    textStyleGeneric,
+                    "Recent files",
+                    genericDrawable,
+                    textStyleGeneric,
+                    genericDrawable,
+                    true,
+                    true
             );
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
@@ -882,7 +896,16 @@ public class Android {
                                 genericDrawable,
                                 genericDrawable,
                                 genericDrawable,
-                                textStyleGeneric
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                genericDrawable,
+                                colorBlack,
+                                textStyleGeneric,
+                                textStyleGeneric,
+                                "Empty state text",
+                                "Empty state text",
+                                genericDrawable
                         )
 
             );

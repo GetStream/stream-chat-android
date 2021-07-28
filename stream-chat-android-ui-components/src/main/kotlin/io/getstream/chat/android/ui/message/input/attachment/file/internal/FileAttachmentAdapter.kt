@@ -7,8 +7,10 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
+import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 
 internal class FileAttachmentAdapter(
+    private val style: MessageInputViewStyle,
     private val onAttachmentSelected: (AttachmentMetaData) -> Unit,
 ) : RecyclerView.Adapter<FileAttachmentAdapter.FileAttachmentViewHolder>() {
 
@@ -31,7 +33,7 @@ internal class FileAttachmentAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return StreamUiItemAttachmentFileBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { FileAttachmentViewHolder(it, onAttachmentSelected) }
+            .let { FileAttachmentViewHolder(it, onAttachmentSelected, style) }
     }
 
     private fun toggleSelection(attachment: AttachmentMetaData, isSelected: Boolean) {
@@ -57,6 +59,7 @@ internal class FileAttachmentAdapter(
     class FileAttachmentViewHolder(
         private val binding: StreamUiItemAttachmentFileBinding,
         private val onAttachmentClick: (AttachmentMetaData) -> Unit,
+        private val style: MessageInputViewStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var attachment: AttachmentMetaData
@@ -76,6 +79,10 @@ internal class FileAttachmentAdapter(
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
                 selectionIndicator.isChecked = attachment.isSelected
                 selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
+                style.fileNameTextStyle.apply(fileNameTextView)
+                style.fileSizeTextStyle.apply(fileSizeTextView)
+                selectionIndicator.background = style.fileCheckboxSelectorDrawable
+                selectionIndicator.setTextColor(style.fileCheckboxTextColor)
             }
         }
     }

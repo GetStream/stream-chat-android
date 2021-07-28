@@ -13,8 +13,10 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 
 internal class MediaAttachmentAdapter(
+    private val style: AttachmentSelectionDialogStyle,
     private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit,
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MediaAttachmentViewHolder>() {
 
@@ -23,7 +25,7 @@ internal class MediaAttachmentAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
         return StreamUiItemAttachmentMediaBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { MediaAttachmentViewHolder(it, onAttachmentSelected) }
+            .let { MediaAttachmentViewHolder(it, onAttachmentSelected, style) }
     }
 
     override fun onBindViewHolder(holder: MediaAttachmentViewHolder, position: Int) {
@@ -58,6 +60,7 @@ internal class MediaAttachmentAdapter(
     class MediaAttachmentViewHolder(
         private val binding: StreamUiItemAttachmentMediaBinding,
         private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit,
+        private val style: AttachmentSelectionDialogStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         lateinit var attachment: AttachmentMetaData
@@ -99,8 +102,8 @@ internal class MediaAttachmentAdapter(
 
         private fun bindAttachmentType(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
-                binding.videoLengthTextView.isVisible = true
-                binding.videoLogoImageView.isVisible = true
+                binding.videoLengthTextView.isVisible = style.videoLengthLabelVisible
+                binding.videoLogoImageView.isVisible = style.videoIconVisible
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
                 binding.videoLengthTextView.isVisible = false

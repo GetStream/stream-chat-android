@@ -112,9 +112,102 @@ in your Manifest file:
   - `streamUiTypingIndicatorAnimationView` - typing view
   - `streamUiTypingIndicatorUsersTextSize`, `streamUiTypingIndicatorUsersTextColor`, `streamUiTypingIndicatorUsersTextFont`, `streamUiTypingIndicatorUsersTextFontAssets`, `streamUiTypingIndicatorUsersTextStyle` attributes to customize typing users text
 - Added possibility to customize `TypingIndicatorView` style via `TransformStyle.typingIndicatorViewStyleTransformer`
+- Added new properties allowing customizing `MessageInputView` using `MessageInputViewStyle` and `AttachmentSelectionDialogStyle`:
+    - `MessageInputViewStyle.fileNameTextStyle`
+    - `MessageInputViewStyle.fileSizeTextStyle`
+    - `MessageInputViewStyle.fileCheckboxSelectorDrawable`
+    - `MessageInputViewStyle.fileCheckboxTextColor`
+    - `MessageInputViewStyle.fileAttachmentEmptyStateTextStyle`
+    - `MessageInputViewStyle.mediaAttachmentEmptyStateTextStyle`
+    - `MessageInputViewStyle.fileAttachmentEmptyStateText`
+    - `MessageInputViewStyle.mediaAttachmentEmptyStateText`
+    - `MessageInputViewStyle.dismissIconDrawable`
+    - `AttachmentSelectionDialogStyle.allowAccessToGalleryText`
+    - `AttachmentSelectionDialogStyle.allowAccessToFilesText`
+    - `AttachmentSelectionDialogStyle.allowAccessToCameraText`
+    - `AttachmentSelectionDialogStyle.allowAccessToGalleryIcon`
+    - `AttachmentSelectionDialogStyle.allowAccessToFilesIcon`
+    - `AttachmentSelectionDialogStyle.allowAccessToCameraIcon`
+    - `AttachmentSelectionDialogStyle.grantPermissionsTextStyle`
+    - `AttachmentSelectionDialogStyle.recentFilesTextStyle`
+    - `AttachmentSelectionDialogStyle.recentFilesText`
+    - `AttachmentSelectionDialogStyle.fileManagerIcon`
+    - `AttachmentSelectionDialogStyle.videoDurationTextStyle`
+    - `AttachmentSelectionDialogStyle.videoIconDrawable`
+    - `AttachmentSelectionDialogStyle.videoIconVisible`
+    - `AttachmentSelectionDialogStyle.videoLengthLabelVisible`
+- Added `StreamUi.MessageInputView` theme allowing to customize all of the `MessageInputViewStyle` properties:
+    - streamUiAttachButtonEnabled
+    - streamUiAttachButtonIcon
+    - streamUiLightningButtonEnabled
+    - streamUiLightningButtonIcon
+    - streamUiMessageInputTextSize
+    - streamUiMessageInputTextColor
+    - streamUiMessageInputHintTextColor
+    - streamUiMessageInputScrollbarEnabled
+    - streamUiMessageInputScrollbarFadingEnabled
+    - streamUiSendButtonEnabled
+    - streamUiSendButtonEnabledIcon
+    - streamUiSendButtonDisabledIcon
+    - streamUiShowSendAlsoToChannelCheckbox
+    - streamUiSendAlsoToChannelCheckboxGroupChatText
+    - streamUiSendAlsoToChannelCheckboxDirectChatText
+    - streamUiSendAlsoToChannelCheckboxTextSize
+    - streamUiSendAlsoToChannelCheckboxTextColor
+    - streamUiSendAlsoToChannelCheckboxTextStyle
+    - streamUiMentionsEnabled
+    - streamUiMessageInputTextStyle
+    - streamUiMessageInputHintText
+    - streamUiCommandsEnabled
+    - streamUiMessageInputEditTextBackgroundDrawable
+    - streamUiMessageInputDividerBackgroundDrawable
+    - streamUiPictureAttachmentIcon
+    - streamUiFileAttachmentIcon
+    - streamUiCameraAttachmentIcon
+    - streamUiAllowAccessToCameraIcon
+    - streamUiAllowAccessToFilesIcon
+    - streamUiAllowAccessToGalleryIcon
+    - streamUiAllowAccessToGalleryText
+    - streamUiAllowAccessToFilesText
+    - streamUiAllowAccessToCameraText
+    - streamUiGrantPermissionsTextSize
+    - streamUiGrantPermissionsTextColor
+    - streamUiGrantPermissionsTextStyle
+    - streamUiAttachmentsRecentFilesTextSize
+    - streamUiAttachmentsRecentFilesTextColor
+    - streamUiAttachmentsRecentFilesTextStyle
+    - streamUiAttachmentsRecentFilesText
+    - streamUiAttachmentsFileManagerIcon
+    - streamUiAttachmentVideoLogoIcon
+    - streamUiAttachmentVideoLengthVisible
+    - streamUiAttachmentVideoIconVisible
+    - streamUiCommandInputCancelIcon
+    - streamUiCommandInputBadgeBackgroundDrawable
+    - streamUiCommandInputBadgeIcon
+    - streamUiCommandInputBadgeTextSize
+    - streamUiCommandInputBadgeTextColor
+    - streamUiCommandInputBadgeStyle
+    - streamUiAttachmentsFileNameTextSize
+    - streamUiAttachmentsFileNameTextColor
+    - streamUiAttachmentsFileNameTextStyle
+    - streamUiAttachmentsFileSizeTextSize
+    - streamUiAttachmentsFileSizeTextColor
+    - streamUiAttachmentsFileSizeTextStyle
+    - streamUiFileCheckBoxSelectorTextColor
+    - streamUiFileCheckBoxSelectorDrawable
+    - streamUiAttachmentsFilesEmptyStateTextSize
+    - streamUiAttachmentsFilesEmptyStateTextColor
+    - streamUiAttachmentsFilesEmptyStateStyle
+    - streamUiAttachmentsMediaEmptyStateTextSize
+    - streamUiAttachmentsMediaEmptyStateTextColor
+    - streamUiAttachmentsMediaEmptyStateStyle
+    - streamUiAttachmentsFilesEmptyStateText
+    - streamUiAttachmentsMediaEmptyStateText
+    - streamUiMessageInputCloseButtonIconDrawable
 
 ### ⚠️ Changed
 - Made `Channel::getLastMessage` function public
+- `AttachmentSelectionDialogFragment::newInstance` requires instance of `MessageInputViewStyle` as a parameter. You can obtain a default implementation of `MessageInputViewStyle` with `MessageInputViewStyle::createDefault` method.
 
 ### ❌ Removed
 - 🚨 Breaking change: `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`

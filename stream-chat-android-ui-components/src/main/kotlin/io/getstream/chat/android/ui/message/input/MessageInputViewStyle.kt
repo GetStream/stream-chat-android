@@ -88,6 +88,15 @@ public data class MessageInputViewStyle(
     public val commandInputBadgeIcon: Drawable,
     public val commandInputBadgeBackgroundDrawable: Drawable,
     public val commandInputBadgeTextStyle: TextStyle,
+    public val fileNameTextStyle: TextStyle,
+    public val fileSizeTextStyle: TextStyle,
+    public val fileCheckboxSelectorDrawable: Drawable,
+    @ColorInt public val fileCheckboxTextColor: Int,
+    public val fileAttachmentEmptyStateTextStyle: TextStyle,
+    public val mediaAttachmentEmptyStateTextStyle: TextStyle,
+    public val fileAttachmentEmptyStateText: String,
+    public val mediaAttachmentEmptyStateText: String,
+    public val dismissIconDrawable: Drawable,
 ) {
 
     internal companion object {
@@ -95,8 +104,8 @@ public data class MessageInputViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageInputView,
-                0,
-                0,
+                R.attr.streamUiMessageInputViewStyle,
+                R.style.StreamUi_MessageInputView,
             ).use { a ->
                 val attachButtonEnabled = a.getBoolean(
                     R.styleable.MessageInputView_streamUiAttachButtonEnabled,
@@ -285,6 +294,95 @@ public data class MessageInputViewStyle(
                 val cameraAttachmentIconTint =
                     a.getColorStateList(R.styleable.MessageInputView_streamUiCameraAttachmentIconTint)
 
+                val allowAccessToCameraIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToCameraIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+
+                val allowAccessToFilesIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToFilesIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+
+                val allowAccessToGalleryIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToGalleryIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+
+                val allowAccessToGalleryText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToGalleryText)
+                    ?: context.getString(R.string.stream_ui_message_input_gallery_access)
+
+                val allowAccessToFilesText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToFilesText)
+                    ?: context.getString(R.string.stream_ui_message_input_files_access)
+
+                val allowAccessToCameraText = a.getText(R.styleable.MessageInputView_streamUiAllowAccessToCameraText)
+                    ?: context.getString(R.string.stream_ui_message_input_camera_access)
+
+                val grantPermissionsTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsFontAssets,
+                        R.styleable.MessageInputView_streamUiGrantPermissionsFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiGrantPermissionsTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val recentFilesTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_medium)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val recentFilesText = a.getText(R.styleable.MessageInputView_streamUiAttachmentsRecentFilesText)
+                    ?: context.getString(R.string.stream_ui_message_input_recent_files)
+
+                val fileManagerIcon = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentsFileManagerIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
+                val videoIconDrawable = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentVideoLogoIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
+
+                val videoLengthTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentVideoLengthTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsRecentFilesTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+                val videoLengthVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoLengthVisible, true)
+                val videoIconVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoIconVisible, true)
+
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
                     pictureAttachmentIconTint = pictureAttachmentIconTint,
@@ -292,6 +390,20 @@ public data class MessageInputViewStyle(
                     fileAttachmentIconTint = fileAttachmentIconTint,
                     cameraAttachmentIcon = cameraAttachmentIcon,
                     cameraAttachmentIconTint = cameraAttachmentIconTint,
+                    allowAccessToCameraIcon = allowAccessToCameraIcon,
+                    allowAccessToFilesIcon = allowAccessToFilesIcon,
+                    allowAccessToGalleryIcon = allowAccessToGalleryIcon,
+                    allowAccessToGalleryText = allowAccessToGalleryText.toString(),
+                    allowAccessToFilesText = allowAccessToFilesText.toString(),
+                    allowAccessToCameraText = allowAccessToCameraText.toString(),
+                    grantPermissionsTextStyle = grantPermissionsTextStyle,
+                    recentFilesTextStyle = recentFilesTextStyle,
+                    recentFilesText = recentFilesText.toString(),
+                    fileManagerIcon = fileManagerIcon,
+                    videoIconDrawable = videoIconDrawable,
+                    videoDurationTextStyle = videoLengthTextStyle,
+                    videoLengthLabelVisible = videoLengthVisible,
+                    videoIconVisible = videoIconVisible,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(
@@ -325,6 +437,104 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
+                val fileNameTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextColor,
+                        context.getColorCompat(R.color.stream_ui_black)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileNameTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val fileSizeTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_small)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFileSizeTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val fileCheckboxTextColor =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiFileCheckBoxSelectorTextColor,
+                        context.getColorCompat(R.color.stream_ui_white_snow)
+                    )
+
+                val fileCheckboxSelectorDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectorDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
+                val fileAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val mediaAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateFontAssets,
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+
+                val fileAttachmentEmptyStateText =
+                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsFilesEmptyStateText)
+                        ?: context.getString(R.string.stream_ui_message_input_no_files)
+
+                val mediaAttachmentEmptyStateText =
+                    a.getString(R.styleable.MessageInputView_streamUiAttachmentsMediaEmptyStateText)
+                        ?: context.getString(R.string.stream_ui_message_input_no_files)
+
+                val dismissIconDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiMessageInputCloseButtonIconDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -356,9 +566,20 @@ public data class MessageInputViewStyle(
                     commandInputBadgeIcon = commandInputBadgeIcon,
                     commandInputBadgeBackgroundDrawable = commandInputBadgeBackgroundDrawable,
                     commandInputBadgeTextStyle = commandInputBadgeTextStyle,
+                    fileNameTextStyle = fileNameTextStyle,
+                    fileSizeTextStyle = fileSizeTextStyle,
+                    fileCheckboxTextColor = fileCheckboxTextColor,
+                    fileCheckboxSelectorDrawable = fileCheckboxSelectorDrawable,
+                    fileAttachmentEmptyStateTextStyle = fileAttachmentEmptyStateTextStyle,
+                    mediaAttachmentEmptyStateTextStyle = mediaAttachmentEmptyStateTextStyle,
+                    fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
+                    mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
+                    dismissIconDrawable = dismissIconDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
+
+        fun createDefault(context: Context) = invoke(context, null)
 
         private fun setTintListIfNeeded(
             typedArray: TypedArray,
