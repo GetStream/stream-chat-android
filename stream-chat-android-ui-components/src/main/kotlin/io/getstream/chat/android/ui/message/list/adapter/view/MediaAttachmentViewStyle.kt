@@ -38,7 +38,7 @@ public data class MediaAttachmentViewStyle(
                 attrs,
                 R.styleable.MediaAttachmentView,
                 R.attr.streamUiMessageListMediaAttachmentStyle,
-                0
+                R.style.StreamUi_MessageList_MediaAttachment
             ).use { a ->
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
