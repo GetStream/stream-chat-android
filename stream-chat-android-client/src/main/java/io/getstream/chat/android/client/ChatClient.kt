@@ -825,9 +825,18 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> {
-        return api.sendMessage(channelType, channelId, message)
-    }
+    ): Call<Message> = api.sendMessage(channelType, channelId, message)
+        .doOnStart(scope) { plugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
+        .doOnResult(scope) { result ->
+            plugins.forEach {
+                it.onMessageSendResult(
+                    result,
+                    channelType,
+                    channelId,
+                    message
+                )
+            }
+        }
 
     @CheckResult
     public fun updateMessage(
@@ -916,7 +925,8 @@ public class ChatClient internal constructor(
 
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = queryChannelsPostponeHelper.queryChannels(request)
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
 
     @CheckResult
     public fun queryChannel(

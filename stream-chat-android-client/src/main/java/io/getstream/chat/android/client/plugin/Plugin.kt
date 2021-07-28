@@ -2,9 +2,9 @@ package io.getstream.chat.android.client.plugin
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.OperationListenersFacade
 
-public interface Plugin : QueryChannelsListener {
+public interface Plugin : OperationListenersFacade {
     public val name: String
 
     /**
