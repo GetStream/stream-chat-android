@@ -253,6 +253,7 @@ public class com/getstream/sdk/chat/adapter/MessageViewHolderFactory {
 	public static final field MESSAGEITEM_DATE_SEPARATOR I
 	public static final field MESSAGEITEM_LOADING_MORE I
 	public static final field MESSAGEITEM_MESSAGE I
+	public static final field MESSAGEITEM_THREAD_PLACEHOLDER I
 	public static final field MESSAGEITEM_THREAD_SEPARATOR I
 	public static final field MESSAGEITEM_TYPING I
 	public fun <init> ()V
