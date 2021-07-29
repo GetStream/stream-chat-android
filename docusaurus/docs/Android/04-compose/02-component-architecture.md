@@ -7,7 +7,7 @@ The Jetpack Compose SDK exposes three types of components:
 * **Stateless components**: low-level, stateless composables for full customizability.
 
 :::note
-All components from the SDK have to be wrapped in a [`ChatTheme`](./05-general-customization/01-chat-theme.md) which provides theming and other customization options. You don't have to individually wrap components in `ChatTheme`, but it has to be present somewhere above the Chat components in the hierarchy.
+All components from the SDK have to be wrapped in a [`ChatTheme`](02-general-customization/01-chat-theme.md) which provides theming and other customization options. You don't have to individually wrap components in `ChatTheme`, but it has to be present somewhere above the Chat components in the hierarchy.
 :::
 
 Let's go through each type to see what the difference is and how to use them.
