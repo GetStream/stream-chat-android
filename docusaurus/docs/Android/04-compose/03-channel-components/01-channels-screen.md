@@ -83,7 +83,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ## Customization
 
-`ChannelsScreen` is one of our **screen components** and as such, it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it the [`ChatTheme`](../05-general-customization/01-chat-theme.md).
+`ChannelsScreen` is one of our **screen components** and as such, it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it the [`ChatTheme`](../02-general-customization/01-chat-theme.md).
 
 When it comes to UI and behavior customization in the `ChannelsScreen` signature, you have access to the following:
 
