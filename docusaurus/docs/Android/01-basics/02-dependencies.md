@@ -57,7 +57,7 @@ To use the [Compose UI Components](../04-compose/01-overview.md) instead, add th
 
 ```groovy
 dependencies {
-    implementation "io.getstream:stream-chat-android-ui-components:$stream_version-beta"
+    implementation "io.getstream:stream-chat-android-compose:$stream_version-beta"
 }
 ```
 
