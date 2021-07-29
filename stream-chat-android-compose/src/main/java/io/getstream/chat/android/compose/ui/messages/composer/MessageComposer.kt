@@ -141,16 +141,19 @@ public fun MessageComposer(
 
                 input()
 
+                val isInputValid = value.isNotEmpty() || attachments.isNotEmpty()
+
                 IconButton(
+                    enabled = isInputValid,
                     content = {
                         Icon(
                             imageVector = Icons.Default.Send,
                             contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                            tint = ChatTheme.colors.textLowEmphasis,
+                            tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
                         )
                     },
                     onClick = {
-                        if (value.isNotEmpty() || attachments.isNotEmpty()) {
+                        if (isInputValid) {
                             onSendMessage(value)
                         }
                     }
