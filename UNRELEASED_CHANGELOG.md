@@ -230,6 +230,7 @@ in your Manifest file:
     - streamUiAttachmentsMediaEmptyStateText
     - streamUiMessageInputCloseButtonIconDrawable
 - Added `streamUiMessageListFileAttachmentStyle` theme attribute to customize the appearance of file attachments within messages.
+- Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
 
 ### ⚠️ Changed
 - Made `Channel::getLastMessage` function public

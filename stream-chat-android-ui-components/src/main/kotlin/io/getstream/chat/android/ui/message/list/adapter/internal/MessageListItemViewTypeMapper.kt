@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 
@@ -26,6 +27,7 @@ internal object MessageListItemViewTypeMapper {
             is MessageListItem.ThreadSeparatorItem -> THREAD_SEPARATOR
             is MessageListItem.MessageItem -> messageItemToViewType(messageListItem)
             is MessageListItem.TypingItem -> TYPING_INDICATOR
+            is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
         }
     }
 

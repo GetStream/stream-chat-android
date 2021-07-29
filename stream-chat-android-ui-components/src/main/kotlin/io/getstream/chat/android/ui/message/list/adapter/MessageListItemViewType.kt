@@ -17,4 +17,5 @@ public object MessageListItemViewType {
     public const val GIPHY: Int = OFFSET + 8
     public const val SYSTEM_MESSAGE: Int = OFFSET + 9
     public const val ERROR_MESSAGE: Int = OFFSET + 10
+    public const val THREAD_PLACEHOLDER: Int = OFFSET + 11
 }

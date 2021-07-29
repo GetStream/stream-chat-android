@@ -226,6 +226,12 @@ internal class MessageListItemLiveData(
             )
             previousMessage = message
         }
+
+        // thread placeholder when a message has zero replies
+        if (isThread && items.size == 1) {
+            items.add(MessageListItem.ThreadPlaceholderItem)
+        }
+
         return items.toList()
     }
 
