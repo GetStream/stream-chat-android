@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -1113,6 +1114,11 @@ public class ChannelController internal constructor(
             is NotificationInviteRejectedEvent -> {
                 upsertMember(event.member)
                 updateChannelData(event.channel)
+            }
+            is NotificationChannelMutesUpdatedEvent -> {
+                _muted.value = event.me.channelMutes.any { mute ->
+                    mute.channel.cid == cid
+                }
             }
         }
     }
