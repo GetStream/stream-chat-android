@@ -342,7 +342,7 @@ public data class MessageListViewStyle(
                 )
 
                 val threadMessagesStart = attributes.getInt(
-                    R.styleable.MessageListView_streamUiMessagesStart,
+                    R.styleable.MessageListView_streamUiThreadMessagesStart,
                     MessageListView.MessagesStart.BOTTOM.value,
                 )
 
