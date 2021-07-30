@@ -197,10 +197,11 @@ internal fun createAttachment(
     fallback: String? = randomString(),
     uploadFile: File? = null,
     uploadState: Attachment.UploadState? = null,
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
+    authorLink: String?
 ): Attachment = Attachment(
-    authorName, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
-    fileSize, title, text, type, image, url, name, fallback, uploadFile, uploadState, extraData
+    authorName, authorLink, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
+    fileSize, title, text, type, image, url, name, fallback, uploadFile, uploadState, extraData,
 )
 
 internal fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }

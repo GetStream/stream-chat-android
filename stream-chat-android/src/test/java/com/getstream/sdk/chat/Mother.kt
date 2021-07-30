@@ -136,9 +136,10 @@ internal fun createAttachment(
     fallback: String? = randomString(),
     uploadFile: File? = null,
     uploadState: Attachment.UploadState? = null,
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
+    authorLink: String? = randomString(),
 ): Attachment = Attachment(
-    authorName, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
+    authorName, titleLink, authorLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
     fileSize, title, text, type, image, url, name, fallback, uploadFile, uploadState, extraData
 )
 
