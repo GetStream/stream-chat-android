@@ -118,7 +118,7 @@ class ChatFragment : Fragment() {
         chatViewModel.members.observe(viewLifecycleOwner) { members ->
             binding.messagesHeaderView.apply {
                 setAvatarClickListener {
-                    chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))
+                    startActivity(CustomChannelListActivity.createIntent(context))
                 }
                 setTitleClickListener {
                     chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))

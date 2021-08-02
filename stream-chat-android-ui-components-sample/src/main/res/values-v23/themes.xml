@@ -9,11 +9,31 @@
         <item name="streamUiTheme">@style/StreamTheme</item>
     </style>
 
+    <!-- Customization via App theme -->
+
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+
+        <item name="streamUiChannelListHeaderStyle">@style/ChannelListHeaderTheme</item>
     </style>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+    </style>
+
+    <style name="ChannelListHeaderTheme" parent="StreamUi.ChannelListHeader" >
+        <item name="streamUiShowActionButton">true</item>
+    </style>
+
+    <!-- Customization via Activity theme -->
+
+    <style name="StreamActivityTheme" parent="@style/StreamUiTheme">
+        <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+
+        <item name="streamUiChannelListHeaderStyle">@style/ActivityChannelListHeaderTheme</item>
+    </style>
+
+    <style name="ActivityChannelListHeaderTheme" parent="StreamUi.ChannelListHeader" >
+        <item name="streamUiShowActionButton">false</item>
     </style>
 </resources>
