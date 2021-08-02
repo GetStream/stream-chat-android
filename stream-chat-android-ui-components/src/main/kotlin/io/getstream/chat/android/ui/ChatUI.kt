@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -78,5 +79,18 @@ public object ChatUI {
         get() = mimeTypeIconProviderOverride ?: defaultMimeTypeIconProvider
         set(value) {
             mimeTypeIconProviderOverride = value
+        }
+
+    private var deletedMessageBehaviourHandlerOverride: ((deletedMessage: Message) -> Boolean)? =
+        null
+
+    private val defaultDeletedMessageBehaviourHandler: (deletedMessage: Message) -> Boolean by lazy {
+        { message -> true }
+    }
+
+    public var deletedMessageBehaviourHandler: (deletedMessage: Message) -> Boolean
+        get() = deletedMessageBehaviourHandlerOverride ?: defaultDeletedMessageBehaviourHandler
+        set(value) {
+            deletedMessageBehaviourHandlerOverride = value
         }
 }

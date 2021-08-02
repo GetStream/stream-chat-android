@@ -18,14 +18,16 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  */
 public class ChannelViewModelFactory @JvmOverloads constructor(
     private val cid: String,
-    private val messageId: String? = null
+    private val messageId: String? = null,
 ) :
     ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
+        MessageListViewModel::class.java to {
+            MessageListViewModel(cid, messageId, deletedMessageDisplayCondition = { true })
+        },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

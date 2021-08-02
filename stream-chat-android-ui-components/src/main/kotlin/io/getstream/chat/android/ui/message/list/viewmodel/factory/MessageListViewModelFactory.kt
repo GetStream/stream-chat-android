@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 
 /**
@@ -24,7 +25,13 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
+        MessageListViewModel::class.java to {
+            MessageListViewModel(
+                cid,
+                messageId,
+                deletedMessageDisplayCondition = ChatUI.deletedMessageBehaviourHandler
+            )
+        },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

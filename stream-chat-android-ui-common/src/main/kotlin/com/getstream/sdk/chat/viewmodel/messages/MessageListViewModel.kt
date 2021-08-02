@@ -38,6 +38,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val messageId: String? = null,
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance(),
+    private val deletedMessageDisplayCondition: (message: Message) -> Boolean,
 ) : ViewModel() {
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
@@ -109,10 +110,20 @@ public class MessageListViewModel @JvmOverloads constructor(
                     _channel.removeSource(channelController.offlineChannelData)
                 }
                 val typingIds = Transformations.map(channelController.typing) { (_, idList) -> idList }
-
+                // val messages = channelController.messages
+                // val messages2 = Transformations.switchMap(messages) { messages ->
+                //     val filteredMessages = messages.filter {
+                //         val isDeleted = it.deletedAt != null
+                //         !isDeleted
+                //     }
+                //     MutableLiveData(filteredMessages)
+                // }
+                val messages = Transformations.switchMap(channelController.messages) { messages ->
+                    messages.filter(deletedMessageDisplayCondition).toList().run { MutableLiveData(this) }
+                }
                 messageListData = MessageListItemLiveData(
                     user,
-                    channelController.messages,
+                    messages,
                     channelController.reads,
                     typingIds,
                     false,
