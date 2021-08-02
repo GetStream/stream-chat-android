@@ -1,6 +1,6 @@
 # MessageComposer
 
-The `MessageComposer` is arguably one of the most important components when building the Chat experience. It allows users to send messages and attachments to the chat, effectively participating in communication.
+The `MessageComposer` is arguably one of the most important components when building the Chat experience. It allows users to send messages and attachments to the chat, participating in conversation.
 
 There are two versions of the composer that we provide:
 
@@ -8,19 +8,17 @@ There are two versions of the composer that we provide:
 * **Stateless**: This is a stateless version of the composer that doesn't know about `ViewModel`s or business logic. It exposes several actions and customization options that let you override the behavior and UI of the component.
 
 :::note 
-
 The **bound** version of the composer uses the **stateless** composer internally. That way, when providing the same state to either component, the behavior will be the same. 
 
 Additionally, we cannot provide a default `ViewModel`, as it requires the `channelId` to send data, so you'll have to build an instance yourself.
-
 :::
 
-Internally, it sets up the following components:
+Internally, the message composer sets up the following components:
 
 * `MessageInputOptions`: These options are shown at the top of the composer, when a message is being edited, or we're replying to another message. They allow you to cancel the message action.
 * `integrations`: By default, we show the attachment integration in our composer, so that users can send image, file and media capture attachments. You can override this to support custom integrations, by default `DefaultComposerIntegrations` are shown.
-* `MessageInput`: The core part of the composer, where the user can write new messages. It also shows the `MessageInputAttachments` component, if the user adds attachments for uploading.
-* `IconButton`: Represents the **Send** button, to send a new message, with or without attachments.
+* `MessageInput`: The core part of the composer, where the user can write new messages. It also shows displays pending attachments, if the user adds attachments for uploading.
+* Send button: tap to send a new message, with or without attachments.
 
 Let's see how to integrate the `MessageComposer` in your UI.
 
@@ -45,7 +43,7 @@ fun MyCustomUi() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     viewModel = composerViewModel,
-                    // customize the composer actions
+                    // Customize the composer actions
                     onSendMessage = {
                         composerViewModel.onSendMessage(it)
                         listViewModel.onMessageSent()
@@ -112,11 +110,9 @@ Because it doesn't make sense to use the `MessageComposer` as a standalone compo
 * **Step 5**: You show the `SelectedMessageOverlay`, within the `Box` again, if the `selectedMessage` is not `null`. This is used to show an overlay centered in the screen, when the user long taps on a message.
 
 :::note
-
 Notice how there are many actions and components in place here. This allows you to customize the UI to whatever your needs may be, as well as customize the behavior to update your UI state accordingly.
 
 Also bear in mind you have to provide the `AttachmentsPickerViewModel`, `MessageListViewModel` and `MessageComposerViewModel` in this case. 
-
 :::
 
 The provided snippet will render the following UI.
@@ -129,7 +125,7 @@ Next, you'll want to handle and customize the actions of the `MessageComposer`.
 
 ## Handling Actions
 
-The composer offers three actions you can customize, as per the signature:
+The composer offers these actions you can customize, as per the signature:
 
 ```kotlin
 @Composable
@@ -142,17 +138,17 @@ fun MessageComposer(
 )
 ```
 
-* `onSendMessage`: Handler when the user taps on the **Send** button. By default it propagates the action to the `MessageComposerViewModel`.
-* `onAttachmentsClick`: Handler when the user taps on the default attachments integrations. Empty by default.
-* `onValueChange`: Handler when the value in the composer changes. By default, it updates the `ViewModel`.
-* `onAttachmentRemoved`: Handler when the user removes an attachment from selected attachments, in the input area. By default, it updates the `ViewModel`.
-* `onCancelAction`: Handler when the user cancels the current message action, usually `Edit` or `Reply` actions. This updates the `MessageComposerViewModel` and removes those actions from the UI.
+* `onSendMessage`: Handler for the user tapping on the **Send** button. By default it propagates the action to the `MessageComposerViewModel`.
+* `onAttachmentsClick`: Handler for the user tapping on the default attachments integrations. Empty by default.
+* `onValueChange`: Exposes desired values changes in the composer. By default, it updates state in the `ViewModel`.
+* `onAttachmentRemoved`: Handler for the user removing an attachment from selected attachments, in the input area. By default, it updates state in the `ViewModel`.
+* `onCancelAction`: Handler for the user cancelling the current message action, usually `Edit` or `Reply` actions. This updates the `ViewModel`'s state and removes those actions from the UI.
 
 To customize these actions, simply pass in a lambda function for each when building your custom UI with our `MessageComposer`, like in the example above.
 
 ## Customization
 
-In terms of UI customization, the `MessageComposer` offers four options, as per the signature:
+`MessageComposer` offers the following options for UI customization:
 
 ```kotlin
 @Composable
@@ -162,19 +158,7 @@ fun MessageComposer(
         DefaultComposerIntegrations(onAttachmentsClick)
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.() -> Unit = {
-        MessageInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            label = label,
-            value = viewModel.input,
-            attachments = viewModel.selectedAttachments,
-            activeAction = viewModel.activeAction,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved
-        )
-    }
+    input: @Composable RowScope.() -> Unit = { MessageInput(...) },
 )
 ```
 
@@ -234,4 +218,4 @@ This snippet will provide the following UI.
 
  ![Custom MessageComposer component](../../assets/compose_custom_message_composer_component.png)
 
-If you want a completely custom UI for the composer with custom behavior, please read our [Creating a Custom Message Input](../07-guides/03-custom-message-input.md) guide.
+<!-- TODO WIP PAGE If you want a completely custom UI for the composer with custom behavior, please read our [Creating a Custom Message Input](../07-guides/03-custom-message-input.md) guide.-->

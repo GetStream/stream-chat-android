@@ -34,6 +34,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             is MessageListItem.ThreadSeparatorItem -> oldItem.date == (newItem as? MessageListItem.ThreadSeparatorItem)?.date
             is MessageListItem.LoadingMoreIndicatorItem -> true
             is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(User::id)
+            is MessageListItem.ThreadPlaceholderItem -> true
         }
 
     override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? {

@@ -26,6 +26,7 @@ public open class MessageViewHolderFactory {
         public const val MESSAGEITEM_TYPING: Int = 3
         public const val MESSAGEITEM_THREAD_SEPARATOR: Int = 4
         public const val MESSAGEITEM_LOADING_MORE: Int = 5
+        public const val MESSAGEITEM_THREAD_PLACEHOLDER: Int = 6
     }
 
     public lateinit var listenerContainer: ListenerContainer
@@ -47,6 +48,7 @@ public open class MessageViewHolderFactory {
             is MessageItem -> MESSAGEITEM_MESSAGE
             is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
             is MessageListItem.LoadingMoreIndicatorItem -> MESSAGEITEM_LOADING_MORE
+            is MessageListItem.ThreadPlaceholderItem -> MESSAGEITEM_THREAD_PLACEHOLDER
         }
     }
 

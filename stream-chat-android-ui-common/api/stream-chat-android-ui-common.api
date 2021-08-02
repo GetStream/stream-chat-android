@@ -67,6 +67,10 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$Position : jav
 	public static fun values ()[Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
 }
 
+public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem : com/getstream/sdk/chat/adapter/MessageListItem {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem;
+}
+
 public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
 	public fun <init> (Ljava/util/Date;I)V
 	public final fun component1 ()Ljava/util/Date;

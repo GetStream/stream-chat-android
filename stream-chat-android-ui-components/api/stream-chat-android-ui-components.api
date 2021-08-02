@@ -1739,6 +1739,7 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public static final field PLAIN_TEXT I
 	public static final field SYSTEM_MESSAGE I
 	public static final field TEXT_AND_ATTACHMENTS I
+	public static final field THREAD_PLACEHOLDER I
 	public static final field THREAD_SEPARATOR I
 	public static final field TYPING_INDICATOR I
 }
