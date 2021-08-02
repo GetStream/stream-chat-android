@@ -422,7 +422,7 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
-	public static final fun getOfflinePlugin (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/OfflinePlugin;
+	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/state/StateRegistry;
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
