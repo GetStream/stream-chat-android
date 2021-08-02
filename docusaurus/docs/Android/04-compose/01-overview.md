@@ -111,4 +111,4 @@ Our Compose UI Components offer different ways of customization:
 * **Content**: Some components provide [slot APIs](https://developer.android.com/jetpack/compose/layouts/basics#slot-based-layouts), composable function parameters that let you define (or override) their internal content.
 * **Design style**: By using our `ChatTheme` component as the root of all of your UI, you can define the colors, typography, shapes, attachment factories and reaction types all our components use. Through this, you can apply your own design style to all Compose UI Components.
 
-To learn what level of customization each component exposes, check out their respective documentation pages. If you want to learn about general customization, read our [ChatTheme](05-general-customization/01-chat-theme.md) page.
+To learn what level of customization each component exposes, check out their respective documentation pages. If you want to learn about general customization, read our [ChatTheme](02-general-customization/01-chat-theme.md) page.

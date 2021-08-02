@@ -1,6 +1,6 @@
-# AttachmentFactory
+# Custom Attachments
 
-The `AttachmentFactory` is a class that allows you to build your own attachment factories. It exposes the following properties and behavior:
+The `AttachmentFactory` class allows you to build your own attachments to display in the [Message List](../04-message-components/03-message-list.md). It exposes the following properties and behavior:
 
 ```kotlin
 public class AttachmentFactory(
@@ -15,10 +15,9 @@ public class AttachmentFactory(
 ```
 
 * `factory`: Defines the composable function that accepts an `AttachmentState` and shows any given attachment component.
-* `predicate`: Lambda function that accepts a message and returns if a given factory can consume the message to show an attachment.
-* `canHandle()`: A function that is called when showing messages. It validates the message using all defined factories and it chooses the one that can consume it.
+* `predicate`: Lambda function that accepts a message and returns `true` if a given factory can consume the message to show an attachment. The first factory in the list of available factories that can handle the message will be used to render its attachments.
 
-There are three examples of default attachment factory implementations, in the **StreamAttachmentFactories.kt** file:
+There are three examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories.kt):
 
 ```kotlin
 public val defaultFactories: List<AttachmentFactory> = listOf(
