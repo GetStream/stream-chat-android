@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.offlinePlugin
+import io.getstream.chat.android.offline.extensions.state
 import io.getstream.chat.android.offline.querychannels.state.ChannelsState
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
@@ -76,7 +76,7 @@ public class ChannelListViewModel(
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
 
-        queryChannelsState = chatClient.offlinePlugin.state.queryChannels(filterObject, sort).also { queryChannelsState ->
+        queryChannelsState = chatClient.state.queryChannels(filterObject, sort).also { queryChannelsState ->
             val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
                 queryChannelsState.channelsState.map { channelState ->
                     channelState to currentUser
