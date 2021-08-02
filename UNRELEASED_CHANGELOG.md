@@ -28,6 +28,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Channel::isMutedFor` extension function which might be used to check if the Channel is muted for User
 
 ### ⚠️ Changed
 
@@ -36,6 +37,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed updating `ChannelController::muted` value
 
 ### ⬆️ Improved
 
