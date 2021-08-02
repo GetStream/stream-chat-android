@@ -185,7 +185,7 @@ public class MessageComposerViewModel(
      *
      * @return [Message] object, with all the data required to send it to the API.
      * */
-    public fun buildNewMessage(
+    internal fun buildNewMessage(
         message: String,
         attachments: List<Attachment> = emptyList(),
     ): Message {
@@ -193,8 +193,8 @@ public class MessageComposerViewModel(
         val messageMode = messageMode
 
         val actionMessage = activeAction?.message ?: Message()
-        val replyMessageId = if (activeAction is Reply) activeAction.message.id else null
-        val parentMessageId = if (messageMode is Thread) messageMode.parentMessage.id else null
+        val replyMessageId = (activeAction as? Reply)?.message?.id
+        val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
 
         return if (isInEditMode) {
             actionMessage.copy(
