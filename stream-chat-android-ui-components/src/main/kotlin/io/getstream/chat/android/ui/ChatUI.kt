@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
-import io.getstream.chat.android.client.models.Message
+import com.getstream.sdk.chat.viewmodel.messages.DeletedMessageAppearance
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -81,16 +81,15 @@ public object ChatUI {
             mimeTypeIconProviderOverride = value
         }
 
-    private var deletedMessageBehaviourHandlerOverride: ((deletedMessage: Message) -> Boolean)? =
-        null
+    private var deletedMessageAppearanceOverride: DeletedMessageAppearance? = null
 
-    private val defaultDeletedMessageBehaviourHandler: (deletedMessage: Message) -> Boolean by lazy {
-        { message -> true }
+    private val defaultDeletedMessageAppearance: DeletedMessageAppearance by lazy {
+        DeletedMessageAppearance.VisibleToEveryone
     }
 
-    public var deletedMessageBehaviourHandler: (deletedMessage: Message) -> Boolean
-        get() = deletedMessageBehaviourHandlerOverride ?: defaultDeletedMessageBehaviourHandler
+    public var deletedMessageAppearance: DeletedMessageAppearance
+        get() = this.deletedMessageAppearanceOverride ?: defaultDeletedMessageAppearance
         set(value) {
-            deletedMessageBehaviourHandlerOverride = value
+            this.deletedMessageAppearanceOverride = value
         }
 }

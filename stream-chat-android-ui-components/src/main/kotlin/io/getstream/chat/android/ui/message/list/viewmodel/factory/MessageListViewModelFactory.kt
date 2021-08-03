@@ -29,7 +29,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             MessageListViewModel(
                 cid,
                 messageId,
-                deletedMessageDisplayCondition = ChatUI.deletedMessageBehaviourHandler
+                deletedMessageDisplayCondition = ChatUI.deletedMessageAppearance
             )
         },
     )

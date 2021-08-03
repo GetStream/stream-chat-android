@@ -8,7 +8,7 @@ public final class io/getstream/chat/android/ui/BuildConfig {
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public final fun getAvatarBitmapFactory ()Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;
-	public final fun getDeletedMessageBehaviourHandler ()Lkotlin/jvm/functions/Function1;
+	public final fun getDeletedMessageAppearance ()Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;
 	public final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
 	public final fun getMarkdown ()Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;
@@ -18,7 +18,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public final fun getUrlSigner ()Lio/getstream/chat/android/ui/common/UrlSigner;
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
-	public final fun setDeletedMessageBehaviourHandler (Lkotlin/jvm/functions/Function1;)V
+	public final fun setDeletedMessageAppearance (Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
 	public final fun setMarkdown (Lio/getstream/chat/android/ui/common/markdown/ChatMarkdown;)V
