@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.docs.MainActivity
@@ -21,7 +22,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
          */
         fun registeringDevice() {
-            client.addDevice("firebase-token").enqueue { result ->
+            client.addDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
@@ -68,7 +74,12 @@ class Push(val context: Context, val client: ChatClient) {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setFirebaseToken(token)
+                    ChatClient.setDevice(
+                        Device(
+                            token = token,
+                            pushProvider = PushProvider.FIREBASE,
+                        )
+                    )
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -117,7 +128,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
          */
         fun registerADevice() {
-            client.addDevice("firebase-token").enqueue { result ->
+            client.addDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
@@ -130,7 +146,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#unregister-a-device">Unregister a Device</a>
          */
         fun unregisterADevice() {
-            client.deleteDevice("firebase-token").enqueue { result ->
+            client.deleteDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully unregistered
                 } else {

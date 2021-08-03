@@ -17,7 +17,9 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
@@ -26,7 +28,7 @@ import kotlinx.coroutines.launch
 internal interface ChatNotifications {
     val handler: ChatNotificationHandler
     fun onSetUser()
-    fun setFirebaseToken(firebaseToken: String)
+    fun setDevice(device: Device)
     fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onChatEvent(event: ChatEvent)
     fun isValidRemoteMessage(message: RemoteMessage): Boolean
@@ -54,15 +56,22 @@ internal class ChatNotificationsImpl constructor(
         handler.getFirebaseMessaging()?.token?.addOnCompleteListener {
             if (it.isSuccessful) {
                 logger.logI("Firebase returned token successfully")
-                setFirebaseToken(it.result!!)
+                setDevice(
+                    Device(
+                        token = it.result!!,
+                        pushProvider = PushProvider.FIREBASE,
+                    )
+                )
             } else {
                 logger.logI("Error: Firebase didn't returned token")
             }
         }
     }
 
-    override fun setFirebaseToken(firebaseToken: String) {
-        pushTokenUpdateHandler.updateTokenIfNecessary(firebaseToken)
+    override fun setDevice(device: Device) {
+        GlobalScope.launch(DispatcherProvider.IO) {
+            pushTokenUpdateHandler.updateDeviceIfNecessary(device)
+        }
     }
 
     override fun onFirebaseMessage(
@@ -222,7 +231,7 @@ internal class ChatNotificationsImpl constructor(
 
 internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
     override fun onSetUser() = Unit
-    override fun setFirebaseToken(firebaseToken: String) = Unit
+    override fun setDevice(device: Device) = Unit
     override fun onFirebaseMessage(
         message: RemoteMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,

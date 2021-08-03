@@ -12,6 +12,7 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
+import io.getstream.chat.android.client.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.docs.MainActivity;
@@ -30,7 +31,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
          */
         public void registeringDevice() {
-            client.addDevice("firebase-token").enqueue(result -> {
+            client.addDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
@@ -117,7 +123,12 @@ public class Push {
             public void onNewToken(@NotNull String token) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setFirebaseToken(token);
+                    ChatClient.setDevice(
+                            new Device(
+                                    "push-provider-token",
+                                    PushProvider.FIREBASE
+                            )
+                    );
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -198,7 +209,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#register-a-device">Register a Device</a>
          */
         public void registerADevice() {
-            client.addDevice("firebase-token").enqueue(result -> {
+            client.addDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
@@ -211,7 +227,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#unregister-a-device">Unregister a Device</a>
          */
         public void unregisterADevice() {
-            client.deleteDevice("firebase-token").enqueue(result -> {
+            client.deleteDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully unregistered
                 } else {

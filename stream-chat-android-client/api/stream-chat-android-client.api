@@ -10,7 +10,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static final field Companion Lio/getstream/chat/android/client/ChatClient$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun addDevice (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun addDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun addSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
@@ -26,7 +26,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun createChannel (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun createChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun deleteDevice (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun deleteDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -111,7 +111,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun setAnonymousUser (Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
 	public static synthetic fun setAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
-	public static final fun setFirebaseToken (Ljava/lang/String;)V
+	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
 	public final fun setGuestUser (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
 	public static synthetic fun setGuestUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
@@ -168,7 +168,7 @@ public final class io/getstream/chat/android/client/ChatClient$Companion {
 	public final fun isInitialized ()Z
 	public final fun isValidRemoteMessage (Lcom/google/firebase/messaging/RemoteMessage;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)Z
 	public static synthetic fun isValidRemoteMessage$default (Lio/getstream/chat/android/client/ChatClient$Companion;Lcom/google/firebase/messaging/RemoteMessage;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILjava/lang/Object;)Z
-	public final fun setFirebaseToken (Ljava/lang/String;)V
+	public final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/ChatEventListener {
@@ -2212,17 +2212,16 @@ public final class io/getstream/chat/android/client/models/CustomObject$DefaultI
 }
 
 public final class io/getstream/chat/android/client/models/Device {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/models/Device;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Device;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Device;
+	public final fun component2 ()Lio/getstream/chat/android/client/models/PushProvider;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;)Lio/getstream/chat/android/client/models/Device;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Device;Ljava/lang/String;Lio/getstream/chat/android/client/models/PushProvider;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Device;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getId ()Ljava/lang/String;
-	public final fun getPushProvider ()Ljava/lang/String;
+	public final fun getPushProvider ()Lio/getstream/chat/android/client/models/PushProvider;
+	public final fun getToken ()Ljava/lang/String;
 	public fun hashCode ()I
-	public final fun setPushProvider (Ljava/lang/String;)V
+	public final fun setPushProvider (Lio/getstream/chat/android/client/models/PushProvider;)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2513,6 +2512,14 @@ public final class io/getstream/chat/android/client/models/Mute {
 	public final fun setUpdatedAt (Ljava/util/Date;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/PushProvider : java/lang/Enum {
+	public static final field FIREBASE Lio/getstream/chat/android/client/models/PushProvider;
+	public static final field HUAWEI Lio/getstream/chat/android/client/models/PushProvider;
+	public static final field UNKNOWN Lio/getstream/chat/android/client/models/PushProvider;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/PushProvider;
+	public static fun values ()[Lio/getstream/chat/android/client/models/PushProvider;
 }
 
 public final class io/getstream/chat/android/client/models/Reaction : io/getstream/chat/android/client/models/CustomObject {

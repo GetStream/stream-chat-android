@@ -5,8 +5,10 @@ import com.flextrade.kfixture.KFixture
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
 import java.util.UUID
 
@@ -34,4 +36,13 @@ internal object Mother {
     }
 
     fun randomString(): String = UUID.randomUUID().toString()
+
+    fun randomDevice(
+        token: String = randomString(),
+        pushProvider: PushProvider = PushProvider.values().random(),
+    ): Device =
+        Device(
+            token = token,
+            pushProvider = pushProvider,
+        )
 }

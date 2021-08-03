@@ -718,13 +718,13 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
-    public fun deleteDevice(deviceId: String): Call<Unit> {
-        return api.deleteDevice(deviceId)
+    public fun deleteDevice(device: Device): Call<Unit> {
+        return api.deleteDevice(device)
     }
 
     @CheckResult
-    public fun addDevice(deviceId: String): Call<Unit> {
-        return api.addDevice(deviceId)
+    public fun addDevice(device: Device): Call<Unit> {
+        return api.addDevice(device)
     }
 
     @CheckResult
@@ -1634,15 +1634,15 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Sets Firebase token.
+         * Sets device.
          * Be sure to initialize ChatClient before calling this method!
          *
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
         @JvmStatic
-        public fun setFirebaseToken(token: String) {
-            ensureClientInitialized().notifications.setFirebaseToken(token)
+        public fun setDevice(device: Device) {
+            ensureClientInitialized().notifications.setDevice(device)
         }
 
         @Throws(IllegalStateException::class)

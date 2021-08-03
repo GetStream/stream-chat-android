@@ -5,6 +5,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 
 internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
     private val logger = ChatLogger.get("ChatFirebaseMessagingService")
@@ -22,7 +24,12 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         try {
-            ChatClient.setFirebaseToken(token)
+            ChatClient.setDevice(
+                Device(
+                    token = token,
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            )
         } catch (exception: IllegalStateException) {
             Log.e(TAG, "Error while handling remote message: ${exception.message}")
         }
