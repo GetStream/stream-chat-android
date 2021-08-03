@@ -4,7 +4,6 @@ import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdownImpl
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
@@ -17,14 +16,12 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  *
  * @param fonts Allows setting default fonts used by UI components.
  * @param markdown Allows customizing the markdown parsing behaviour, e.g. useful if you want to use more markdown modules.
- * @param urlSigner URL signing mechanism. Allows intercepting and transforming attachment url, e.g. to add authorization tokens for images, video, etc.
  * @param avatarBitmapFactory Allows intercepting and providing custom bitmap displayed with AvatarView.
  * @param navigator A class responsible for handling navigation to chat destinations. Allows overriding a default navigation between chat components.
  * @param supportedReactions Allows overriding default set of message reactions available.
  * @param mimeTypeIconProvider Allows overriding default icons for attachments MIME types.
  *
  * @see ChatMarkdown
- * @see UrlSigner
  * @see ChatFonts
  * @see ImageHeadersProvider
  */
@@ -33,7 +30,6 @@ public object ChatUI {
 
     public var style: ChatStyle = ChatStyle()
     public var navigator: ChatNavigator = ChatNavigator()
-    public var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
     public var imageHeadersProvider: ImageHeadersProvider
         get() = StreamImageLoader.instance().imageHeadersProvider
         set(value) {
