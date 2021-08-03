@@ -399,21 +399,21 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun stopTyping ()V
 }
 
-public abstract class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance {
+public abstract class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility {
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getDeletedMessageVisibilityCondition ()Lkotlin/jvm/functions/Function1;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$NotVisibleToAnyone : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$NotVisibleToAnyone;
+public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$NotVisibleToAnyone : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$NotVisibleToAnyone;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$VisibleToAuthor : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$VisibleToAuthor;
+public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$VisibleToAuthor : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$VisibleToAuthor;
 }
 
-public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$VisibleToEveryone : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance {
-	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance$VisibleToEveryone;
+public final class com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$VisibleToEveryone : com/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility$VisibleToEveryone;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLiveDataKt {
@@ -422,11 +422,11 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLive
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field MESSAGES_LIMIT I
-	public fun <init> (Ljava/lang/String;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageAppearance;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/ChatClient;Lcom/getstream/sdk/chat/viewmodel/messages/DeletedMessageVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;

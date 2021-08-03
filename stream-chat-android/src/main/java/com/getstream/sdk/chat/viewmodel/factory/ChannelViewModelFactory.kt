@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.messages.DeletedMessageAppearance
+import com.getstream.sdk.chat.viewmodel.messages.DeletedMessageVisibility
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
 /**
@@ -27,7 +27,7 @@ public class ChannelViewModelFactory @JvmOverloads constructor(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
         MessageListViewModel::class.java to {
-            MessageListViewModel(cid, messageId, deletedMessageDisplayCondition = DeletedMessageAppearance.VisibleToEveryone)
+            MessageListViewModel(cid, messageId, deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone)
         },
     )
 

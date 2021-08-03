@@ -32,13 +32,14 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param cid the full channel id, i.e. "messaging:123"
  * @param domain entry point for all livedata & offline operations
  * @param client entry point for all low-level operations
+ * @param deletedMessageVisibility condition for deleted message item visibility
  */
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance(),
-    private val deletedMessageDisplayCondition: DeletedMessageAppearance,
+    private val deletedMessageVisibility: DeletedMessageVisibility,
 ) : ViewModel() {
     private var messageListData: MessageListItemLiveData? = null
     private var threadListData: MessageListItemLiveData? = null
@@ -114,7 +115,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     messages.filter { message ->
                         val isDeleted = message.deletedAt != null
                         if (isDeleted) {
-                            deletedMessageDisplayCondition.deletedMessageVisibilityCondition(message)
+                            deletedMessageVisibility.deletedMessageVisibilityCondition(message)
                         } else {
                             true
                         }

@@ -3,7 +3,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.viewmodel.messages.DeletedMessageAppearance
+import com.getstream.sdk.chat.viewmodel.messages.DeletedMessageVisibility
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -23,6 +23,9 @@ import io.getstream.chat.android.ui.common.style.ChatStyle
  * @param navigator A class responsible for handling navigation to chat destinations. Allows overriding a default navigation between chat components.
  * @param supportedReactions Allows overriding default set of message reactions available.
  * @param mimeTypeIconProvider Allows overriding default icons for attachments MIME types.
+ * @param deletedMessageVisibility Allows customizing the appearance of the deleted messages.
+ * You can set it to one of the [DeletedMessageVisibility] subclasses: [DeletedMessageVisibility.VisibleToEveryone], [DeletedMessageVisibility.VisibleToAuthor], and [DeletedMessageVisibility.NotVisibleToAnyone],
+ * or set your own instance of [DeletedMessageVisibility] subclass.
  *
  * @see ChatMarkdown
  * @see UrlSigner
@@ -81,15 +84,13 @@ public object ChatUI {
             mimeTypeIconProviderOverride = value
         }
 
-    private var deletedMessageAppearanceOverride: DeletedMessageAppearance? = null
-
-    private val defaultDeletedMessageAppearance: DeletedMessageAppearance by lazy {
-        DeletedMessageAppearance.VisibleToEveryone
+    private var deletedMessageVisibilityOverride: DeletedMessageVisibility? = null
+    private val defaultDeletedMessageVisibility: DeletedMessageVisibility by lazy {
+        DeletedMessageVisibility.VisibleToEveryone
     }
-
-    public var deletedMessageAppearance: DeletedMessageAppearance
-        get() = this.deletedMessageAppearanceOverride ?: defaultDeletedMessageAppearance
+    public var deletedMessageVisibility: DeletedMessageVisibility
+        get() = this.deletedMessageVisibilityOverride ?: defaultDeletedMessageVisibility
         set(value) {
-            this.deletedMessageAppearanceOverride = value
+            this.deletedMessageVisibilityOverride = value
         }
 }
