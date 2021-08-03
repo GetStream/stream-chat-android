@@ -62,11 +62,23 @@ internal data class MessageInnerEntity(
     val shadowed: Boolean = false,
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
-    /** if the message  **/
+    /** if the message is silent  **/
     val silent: Boolean = false,
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap(),
+    /** the ID of the quoted message **/
     val replyToId: String?,
+    /** whether message is pinned or not **/
+    val pinned: Boolean,
+    /** date when the message got pinned **/
+    val pinnedAt: Date? = null,
+    /** date when pinned message expires **/
+    val pinExpires: Date? = null,
+    /** the ID of the user who pinned the message **/
+    val pinnedByUserId: String?,
+
+    // channel info
+
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
 )

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Command
@@ -320,6 +321,12 @@ internal fun randomMessage(
     replyTo: Message? = null,
     showInChannel: Boolean = randomBoolean(),
     shadowed: Boolean = false,
+    channelInfo: ChannelInfo? = randomChannelInfo(),
+    replyMessageId: String? = randomString(),
+    pinned: Boolean = randomBoolean(),
+    pinnedAt: Date? = randomDate(),
+    pinExpires: Date? = randomDate(),
+    pinnedBy: User? = randomUser(),
     threadParticipants: List<User> = emptyList(),
 ): Message = Message(
     id = id,
@@ -349,7 +356,27 @@ internal fun randomMessage(
     replyTo = replyTo,
     showInChannel = showInChannel,
     shadowed = shadowed,
+    channelInfo = channelInfo,
+    replyMessageId = replyMessageId,
+    pinned = pinned,
+    pinnedAt = pinnedAt,
+    pinExpires = pinExpires,
+    pinnedBy = pinnedBy,
     threadParticipants = threadParticipants,
+)
+
+internal fun randomChannelInfo(
+    cid: String? = randomString(),
+    id: String? = randomString(),
+    type: String = randomString(),
+    memberCount: Int = randomInt(),
+    name: String? = randomString()
+): ChannelInfo = ChannelInfo(
+    cid = cid,
+    id = id,
+    type = type,
+    memberCount = memberCount,
+    name = name
 )
 
 internal fun randomChannel(
@@ -422,6 +449,10 @@ internal fun randomMessageEntity(
     shadowed: Boolean = randomBoolean(),
     extraData: Map<String, Any> = emptyMap(),
     replyToId: String? = randomString(),
+    pinned: Boolean = randomBoolean(),
+    pinnedAt: Date? = randomDate(),
+    pinExpires: Date? = randomDate(),
+    pinnedByUserId: String? = randomString(),
     threadParticipantsIds: List<String> = emptyList(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
@@ -445,6 +476,10 @@ internal fun randomMessageEntity(
         shadowed = shadowed,
         extraData = extraData,
         replyToId = replyToId,
+        pinned = pinned,
+        pinnedAt = pinnedAt,
+        pinExpires = pinExpires,
+        pinnedByUserId = pinnedByUserId,
         threadParticipantsIds = threadParticipantsIds,
     ),
     attachments = attachments,
