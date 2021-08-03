@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.getstream.chat.ui.sample"
     >
 
@@ -25,5 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity"
+            android:theme="@style/StreamUi.AttachmentGallery.Light"
+            tools:replace="android:theme"
+            />
     </application>
 </manifest>

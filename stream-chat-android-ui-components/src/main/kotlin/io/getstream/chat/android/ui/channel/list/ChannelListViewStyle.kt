@@ -9,6 +9,7 @@ import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -71,6 +72,8 @@ public data class ChannelListViewStyle(
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
+            val forceLightMode = context.forceLightMode(attrs)
+
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ChannelListView,
@@ -100,7 +103,11 @@ public data class ChannelListViewStyle(
 
                 val backgroundLayoutColor = a.getColor(
                     R.styleable.ChannelListView_streamUiBackgroundLayoutColor,
-                    context.getColorCompat(R.color.stream_ui_white_smoke)
+                    context.getColorCompat(
+                        R.color.stream_ui_white_smoke,
+                        R.color.stream_ui_literal_white_smoke,
+                        forceLightMode
+                    )
                 )
 
                 val channelTitleText = TextStyle.Builder(a)
@@ -110,7 +117,11 @@ public data class ChannelListViewStyle(
                     )
                     .color(
                         R.styleable.ChannelListView_streamUiChannelTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(
+                            R.color.stream_ui_text_color_primary,
+                            R.color.stream_ui_literal_black,
+                            forceLightMode
+                        )
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiChannelTitleFontAssets,
@@ -172,7 +183,11 @@ public data class ChannelListViewStyle(
 
                 val foregroundLayoutColor = a.getColor(
                     R.styleable.ChannelListView_streamUiForegroundLayoutColor,
-                    context.getColorCompat(R.color.stream_ui_white_snow)
+                    context.getColorCompat(
+                        R.color.stream_ui_white_snow,
+                        R.color.stream_ui_literal_white_snow,
+                        forceLightMode
+                    )
                 )
 
                 val unreadMessageCounterText = TextStyle.Builder(a)
@@ -201,7 +216,11 @@ public data class ChannelListViewStyle(
 
                 val mutedChannelIcon = a.getDrawable(
                     R.styleable.ChannelListView_streamUiMutedChannelIcon
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute_black)!!
+                ) ?: context.getDrawableCompat(
+                    R.drawable.stream_ui_ic_mute_black,
+                    R.drawable.stream_ui_ic_mute_black_light_mode,
+                    forceLightMode
+                )!!
 
                 val mutedChannelIconTint = a.getColorOrNull(R.styleable.ChannelListView_streamUiMutedChannelIconTint)?.also { tint ->
                     mutedChannelIcon.setTint(tint)
@@ -209,7 +228,11 @@ public data class ChannelListViewStyle(
 
                 val itemSeparator = a.getDrawable(
                     R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
-                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
+                ) ?: context.getDrawableCompat(
+                    R.drawable.stream_ui_divider,
+                    R.drawable.stream_ui_divider_light_mode,
+                    forceLightMode
+                )!!
 
                 val loadingView = a.getResourceId(
                     R.styleable.ChannelListView_streamUiLoadingView,

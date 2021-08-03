@@ -9,5 +9,6 @@
         <attr name="streamUiAttachmentGalleryBottomBarImageCountStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryBottomBarLeftIconStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryBottomBarRightIconStyle" format="reference" />
+        <attr name="streamUiDividerStyle" format="reference"/>
     </declare-styleable>
 </resources>
