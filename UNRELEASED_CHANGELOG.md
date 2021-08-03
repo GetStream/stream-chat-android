@@ -67,7 +67,7 @@
 
 ### ✅ Added
 - Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
-- `authorLink` to `Attachment`. The website of the link.
+- Added `authorLink` to `Attachment` - the link to the website
 
 ### ⚠️ Changed
 
