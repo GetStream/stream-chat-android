@@ -85,6 +85,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryChannelsNew (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/QueryChannelsReference;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun reconnectSocket ()V
@@ -177,6 +178,16 @@ public abstract interface class io/getstream/chat/android/client/ChatEventListen
 public final class io/getstream/chat/android/client/ClientExtensionsKt {
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;Landroidx/lifecycle/LifecycleOwner;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/ChatClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
+}
+
+public final class io/getstream/chat/android/client/QueryChannelsReference : io/getstream/chat/android/client/QueryReference {
+	public fun <init> (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/CoroutineScope;)V
+	public fun get ()Lio/getstream/chat/android/client/call/Call;
+	public final fun getRequest ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+}
+
+public abstract interface class io/getstream/chat/android/client/QueryReference {
+	public abstract fun get ()Lio/getstream/chat/android/client/call/Call;
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
