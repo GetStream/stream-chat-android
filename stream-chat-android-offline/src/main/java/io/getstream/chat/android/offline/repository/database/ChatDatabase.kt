@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import io.getstream.chat.android.offline.repository.database.converter.ChannelInfoConverter
 import io.getstream.chat.android.offline.repository.database.converter.DateConverter
 import io.getstream.chat.android.offline.repository.database.converter.ExtraDataConverter
 import io.getstream.chat.android.offline.repository.database.converter.FilterObjectConverter
@@ -55,6 +56,7 @@ import io.getstream.chat.android.offline.repository.domain.user.UserEntity
     SetConverter::class,
     SyncStatusConverter::class,
     DateConverter::class,
+    ChannelInfoConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao
