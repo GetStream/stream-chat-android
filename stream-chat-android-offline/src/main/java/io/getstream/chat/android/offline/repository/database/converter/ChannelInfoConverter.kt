@@ -7,12 +7,12 @@ import io.getstream.chat.android.offline.gson
 
 internal class ChannelInfoConverter {
     @TypeConverter
-    fun stringToChannelInfo(data: String): ChannelInfo {
+    fun stringToChannelInfo(data: String?): ChannelInfo? {
         return gson.fromJson(data, object : TypeToken<ChannelInfo>() {}.type)
     }
 
     @TypeConverter
-    fun channelInfoToString(channelInfo: ChannelInfo): String {
+    fun channelInfoToString(channelInfo: ChannelInfo?): String? {
         return gson.toJson(channelInfo)
     }
 }
