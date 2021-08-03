@@ -10,5 +10,7 @@
         <!-- {@deprecated Use streamUiDeleteIcon instead.} -->
         <attr name="streamUiDeleteIconTint" format="reference" />
         <attr name="streamUiDeleteTextTint" format="reference" />
+        <attr name="streamUiOptionsBackground" format="reference" />
+        <attr name="streamUiOptionsDividerStyle" format="reference" />
     </declare-styleable>
 </resources>

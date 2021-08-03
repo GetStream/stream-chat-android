@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/stream_ui_white_snow"
     app:cardCornerRadius="@dimen/stream_ui_options_menu_corner_radius"
     >
 
@@ -12,35 +11,35 @@
         android:id="@+id/optionListContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@drawable/stream_ui_divider"
+        android:divider="?attr/streamUiMessagesOptionsDivider"
         android:orientation="vertical"
         android:showDividers="middle"
         >
 
         <TextView
             android:id="@+id/reply"
-            style="@style/StreamUiMessageOptionItem"
+            style="?attr/streamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_reply"
             tools:drawableStart="@drawable/stream_ui_ic_arrow_curve_left_grey"
             />
 
         <TextView
             android:id="@+id/showInChat"
-            style="@style/StreamUiMessageOptionItem"
+            style="?attr/streamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_show_in_chat"
             tools:drawableStart="@drawable/stream_ui_ic_show_in_chat"
             />
 
         <TextView
             android:id="@+id/saveImage"
-            style="@style/StreamUiMessageOptionItem"
+            style="?attr/streamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_save_image"
             tools:drawableStart="@drawable/stream_ui_ic_download"
             />
 
         <TextView
             android:id="@+id/delete"
-            style="@style/StreamUiMessageOptionItem"
+            style="?attr/streamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_delete"
             tools:drawableStart="@drawable/stream_ui_ic_delete"
             />

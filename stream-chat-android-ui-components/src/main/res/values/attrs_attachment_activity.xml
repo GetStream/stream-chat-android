@@ -4,5 +4,7 @@
         <attr name="streamUiProgressBarStyle" format="reference"/>
         <attr name="streamUiImageStyle" format="reference"/>
         <attr name="streamUiWebViewStyle" format="reference"/>
+        <attr name="streamUiMessageOptionItem" format="reference"/>
+        <attr name="streamUiMessagesOptionsDivider" format="reference"/>
     </declare-styleable>
 </resources>

@@ -2,7 +2,6 @@
 <resources>
     <declare-styleable name="MessageListView">
         <!-- Scroll button-->
-        <attr name="streamUiMessageListForceLightMode" format="boolean" />
         <attr name="streamUiScrollButtonEnabled" format="boolean" />
         <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
         <attr name="streamUiScrollButtonColor" format="color|reference" />

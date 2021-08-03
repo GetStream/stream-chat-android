@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.options.attachment.internal
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -9,6 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
@@ -64,7 +67,8 @@ internal class AttachmentOptionsView : FrameLayout {
 
     private fun init(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.AttachmentOptionsView).use { array ->
-            readConfiguration(array).run {
+            readConfiguration(array, context.forceLightMode(attrs)).run {
+                binding.optionListContainer.setBackgroundColor(background)
                 binding.reply.configureListItem(replyIcon, iconsDefaultTint)
                 binding.showInChat.configureListItem(showInChatIcon, iconsDefaultTint)
                 binding.saveImage.configureListItem(saveImageIcon, iconsDefaultTint)
@@ -77,7 +81,16 @@ internal class AttachmentOptionsView : FrameLayout {
         binding.delete.isVisible = visible
     }
 
-    private fun readConfiguration(array: TypedArray): Configuration {
+    private fun readConfiguration(array: TypedArray, forceLightMode: Boolean): Configuration {
+        val background = array.getColor(
+            R.styleable.AttachmentOptionsView_streamUiOptionsBackground,
+            context.getColorCompat(
+                R.color.stream_ui_white_snow,
+                R.color.stream_ui_literal_white_snow,
+                forceLightMode
+            )
+        )
+
         val iconsTint = array.getColorOrNull(R.styleable.AttachmentOptionsView_streamUiIconsDefaultTint)
 
         val replyIcon = array.getResourceId(
@@ -107,6 +120,7 @@ internal class AttachmentOptionsView : FrameLayout {
         )
 
         return Configuration(
+            background = background,
             iconsDefaultTint = iconsTint,
             replyIcon = replyIcon,
             showInChatIcon = showInChatIcon,
@@ -118,6 +132,8 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     internal data class Configuration(
+        val background: Int,
+        val divider: Drawable? = null,
         val iconsDefaultTint: Int?,
         val replyIcon: Int,
         val showInChatIcon: Int,
