@@ -77,10 +77,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Allowed for better message customization before sending the message.
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Changed the exposed type of the `MessageComposer`'s `onSendMessage` handler. This way people can customize messages before we send them to the API.
 
 ### ❌ Removed
 
