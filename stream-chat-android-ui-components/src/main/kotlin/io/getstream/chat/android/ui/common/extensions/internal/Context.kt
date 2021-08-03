@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import androidx.annotation.ArrayRes
@@ -33,12 +34,28 @@ internal fun Context.getColorCompat(@ColorRes color: Int): Int {
     return ContextCompat.getColor(this, color)
 }
 
+internal fun Context.getColorCompat(
+    @ColorRes color: Int,
+    @ColorRes lightModeColor: Int,
+    forceLightMode: Boolean
+): Int {
+    return if (forceLightMode) getColorCompat(lightModeColor) else getColorCompat(color)
+}
+
 internal fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? {
     return ContextCompat.getColorStateList(this, color)
 }
 
 internal fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
     return ContextCompat.getDrawable(this, id)
+}
+
+internal fun Context.getDrawableCompat(
+    @DrawableRes id: Int,
+    @DrawableRes lightThemeId: Int,
+    forceLightTheme: Boolean
+): Drawable? {
+    return if (forceLightTheme) getDrawableCompat(lightThemeId) else getDrawableCompat(id)
 }
 
 internal fun Context?.getFragmentManager(): FragmentManager? {
@@ -60,5 +77,19 @@ internal fun Context.createStreamThemeWrapper(): Context {
         theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
         theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
         else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
+    }
+}
+
+internal fun Context.forceLightMode(attrs: AttributeSet?): Boolean {
+    obtainStyledAttributes(
+        attrs,
+        R.styleable.StreamUiStyleable,
+        R.attr.streamUiForceLightMode,
+        R.style.StreamUiTheme
+    ).use { attributes ->
+        return attributes.getBoolean(
+            R.styleable.StreamUiStyleable_streamUiForceLightMode,
+            false
+        )
     }
 }

@@ -1,4 +1,3 @@
-
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -52,22 +51,34 @@ public data class MessageReplyStyle(
     @Px public val messageStrokeWidthTheirs: Float,
 ) {
     internal companion object {
-        operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
+        operator fun invoke(attributes: TypedArray, context: Context, forceLightMode: Boolean): MessageReplyStyle {
             val messageBackgroundColorMine: Int = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyBackgroundColorMine,
                 VALUE_NOT_SET
             )
             val messageBackgroundColorTheirs: Int = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyBackgroundColorTheirs,
-                VALUE_NOT_SET
+                context.getColorCompat(
+                    R.color.stream_ui_white,
+                    R.color.stream_ui_literal_white,
+                    forceLightMode
+                )
             )
             val linkBackgroundColorMine = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorMine,
-                VALUE_NOT_SET
+                context.getColorCompat(
+                    R.color.stream_ui_literal_blue_alice,
+                    R.color.stream_ui_literal_blue_alice,
+                    forceLightMode
+                )
             )
             val linkBackgroundColorTheirs = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorTheirs,
-                VALUE_NOT_SET
+                context.getColorCompat(
+                    R.color.stream_ui_literal_blue_alice,
+                    R.color.stream_ui_literal_blue_alice,
+                    forceLightMode
+                )
             )
             val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
             val textStyleMine = TextStyle.Builder(attributes)
@@ -77,7 +88,11 @@ public data class MessageReplyStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyTextColorMine,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageReplyTextFontAssetsMine,
@@ -94,7 +109,11 @@ public data class MessageReplyStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyTextColorTheirs,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageReplyTextFontAssetsTheirs,
@@ -133,7 +152,11 @@ public data class MessageReplyStyle(
             val messageStrokeColorTheirs =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageReplyStrokeColorTheirs,
-                    context.getColorCompat(MESSAGE_STROKE_COLOR_THEIRS)
+                    context.getColorCompat(
+                        MESSAGE_STROKE_COLOR_THEIRS,
+                        R.color.stream_ui_literal_grey_whisper,
+                        forceLightMode
+                    )
                 )
             val messageStrokeWidthTheirs =
                 attributes.getDimension(

@@ -12,6 +12,7 @@
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+        <item name="streamUiForceLightMode">true</item>
     </style>
   
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">

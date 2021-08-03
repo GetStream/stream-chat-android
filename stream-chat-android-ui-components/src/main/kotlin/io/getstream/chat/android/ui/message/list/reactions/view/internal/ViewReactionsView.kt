@@ -11,6 +11,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
 import io.getstream.chat.android.ui.common.extensions.supportedReactionCounts
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
@@ -66,7 +67,7 @@ public class ViewReactionsView : RecyclerView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        applyStyle(ViewReactionsViewStyle(context, attrs))
+        applyStyle(ViewReactionsViewStyle(context, attrs, context.forceLightMode(attrs)))
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         itemAnimator = null
         overScrollMode = View.OVER_SCROLL_NEVER

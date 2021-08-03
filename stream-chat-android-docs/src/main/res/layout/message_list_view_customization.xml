@@ -24,8 +24,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-        app:streamUiMessageBackgroundColorMine="#70AF74"
-        app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
         app:streamUiMessageTextColorMine="#FFFFFF"
         app:streamUiMessageTextColorTheirs="#000000"
         />

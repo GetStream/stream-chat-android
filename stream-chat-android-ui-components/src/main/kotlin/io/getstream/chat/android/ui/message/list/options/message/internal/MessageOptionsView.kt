@@ -49,6 +49,8 @@ internal class MessageOptionsView : FrameLayout {
         }
         binding.blockTV.isVisible = false
         binding.messageOptionsContainer.setCardBackgroundColor(style.messageOptionsBackgroundColor)
+
+        binding.optionListContainer.dividerDrawable = style.messageOptionsDivider
     }
 
     private fun configureTheirsMessage(

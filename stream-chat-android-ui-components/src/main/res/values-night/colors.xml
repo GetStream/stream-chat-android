@@ -5,9 +5,12 @@
     <color name="stream_ui_black_50">#80FFFFFF</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#2D2F2F</color>
+    <color name="stream_ui_literal_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_whisper">#1C1E22</color>
     <color name="stream_ui_white_smoke">#13151B</color>
+    <color name="stream_ui_literal_white_smoke">#F2F2F2</color>
     <color name="stream_ui_white_snow">#070A0D</color>
+    <color name="stream_ui_literal_white_snow">#FCFCFC</color>
     <color name="stream_ui_white">#101418</color>
     <color name="stream_ui_blue_alice">#00193D</color>
 

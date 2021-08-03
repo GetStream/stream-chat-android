@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import com.getstream.sdk.chat.images.load
@@ -71,6 +72,10 @@ internal class LinkAttachmentView : FrameLayout {
             binding.linkPreviewImageView.isVisible = false
             binding.progressBar.isVisible = false
         }
+    }
+
+    internal fun setCardBackgroundColor(@ColorInt colorInt: Int) {
+        binding.container.setBackgroundColor(colorInt)
     }
 
     internal fun setTitleTextStyle(textStyle: TextStyle) {

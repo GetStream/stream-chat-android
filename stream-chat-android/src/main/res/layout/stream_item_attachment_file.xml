@@ -9,7 +9,6 @@
     android:paddingBottom="1dp"
     >
 
-
     <ImageView
         android:id="@+id/ivFileThumb"
         android:layout_width="25dp"

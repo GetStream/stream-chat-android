@@ -65,6 +65,9 @@ internal class FootnoteView : ConstraintLayout {
             threadsOrnamentLeft.isVisible = !isMine
             threadsOrnamentRight.isVisible = isMine
 
+            threadsOrnamentRight.setImageDrawable(style.threadOrnamentRightIcon)
+            threadsOrnamentLeft.setImageDrawable(style.threadOrnamentLeftIcon)
+
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_message_list_thread_reply, replyCount, replyCount)
             style.textStyleThreadCounter.apply(threadRepliesButton)

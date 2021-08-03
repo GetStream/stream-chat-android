@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
@@ -161,7 +162,7 @@ private class FileAttachmentViewHolder(
             .apply {
                 setStroke(
                     STROKE_WIDTH_PX,
-                    ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_whisper)
+                    itemView.context.getColorCompat(R.color.stream_ui_grey_whisper)
                 )
                 setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
             }

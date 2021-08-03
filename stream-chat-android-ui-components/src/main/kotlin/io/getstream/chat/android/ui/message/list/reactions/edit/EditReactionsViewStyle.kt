@@ -28,19 +28,38 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleOffset: Int,
 ) {
 
-    internal data class Builder(private val array: TypedArray, private val context: Context) {
+    internal data class Builder(
+        private val array: TypedArray,
+        private val context: Context,
+        private val forceLightTheme: Boolean,
+    ) {
         @ColorInt
         private var bubbleColorMine: Int = context.getColorCompat(R.color.stream_ui_white)
 
         @ColorInt
-        private var bubbleColorTheirs: Int = context.getColorCompat(R.color.stream_ui_white)
+        private var bubbleColorTheirs: Int =
+            context.getColorCompat(R.color.stream_ui_white, R.color.stream_ui_literal_white, forceLightTheme)
 
         fun bubbleColorMine(@StyleableRes bubbleColorMineResId: Int) = apply {
-            bubbleColorMine = array.getColor(bubbleColorMineResId, context.getColorCompat(R.color.stream_ui_white))
+            bubbleColorMine = array.getColor(
+                bubbleColorMineResId,
+                context.getColorCompat(
+                    R.color.stream_ui_white,
+                    R.color.stream_ui_literal_white,
+                    forceLightTheme
+                )
+            )
         }
 
         fun bubbleColorTheirs(@StyleableRes bubbleColorTheirsResId: Int) = apply {
-            bubbleColorTheirs = array.getColor(bubbleColorTheirsResId, context.getColorCompat(R.color.stream_ui_white))
+            bubbleColorTheirs = array.getColor(
+                bubbleColorTheirsResId,
+                context.getColorCompat(
+                    R.color.stream_ui_white,
+                    R.color.stream_ui_literal_white,
+                    forceLightTheme
+                )
+            )
         }
 
         fun build(): EditReactionsViewStyle {
@@ -87,14 +106,14 @@ public data class EditReactionsViewStyle(
 
     public companion object {
 
-        internal operator fun invoke(context: Context, attrs: AttributeSet?): EditReactionsViewStyle {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?, forceLightTheme: Boolean): EditReactionsViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.EditReactionsView,
                 0,
                 0,
             ).use { a ->
-                return Builder(a, context)
+                return Builder(a, context, forceLightTheme)
                     .bubbleColorMine(R.styleable.EditReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.EditReactionsView_streamUiReactionsBubbleColorTheirs)
                     .build()

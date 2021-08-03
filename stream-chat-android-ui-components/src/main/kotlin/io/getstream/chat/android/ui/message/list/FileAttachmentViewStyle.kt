@@ -9,6 +9,7 @@ import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -28,6 +29,8 @@ public data class FileAttachmentViewStyle(
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle {
+            val forceLightTheme = context.forceLightMode(attrs)
+
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.FileAttachmentView,
@@ -40,7 +43,11 @@ public data class FileAttachmentViewStyle(
 
                 val backgroundColor = a.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(
+                        R.color.stream_ui_white,
+                        R.color.stream_ui_literal_white,
+                        forceLightTheme
+                    )
                 )
 
                 val actionIcon = a.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentActionButton)
@@ -53,7 +60,11 @@ public data class FileAttachmentViewStyle(
                     )
                     .color(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(
+                            R.color.stream_ui_text_color_primary,
+                            R.color.stream_ui_literal_black,
+                            forceLightTheme
+                        )
                     )
                     .font(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleFontAssets,
@@ -72,7 +83,11 @@ public data class FileAttachmentViewStyle(
                     )
                     .color(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(
+                            R.color.stream_ui_text_color_primary,
+                            R.color.stream_ui_literal_black,
+                            forceLightTheme
+                        )
                     )
                     .font(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeFontAssets,
@@ -90,7 +105,11 @@ public data class FileAttachmentViewStyle(
 
                 val strokeColor = a.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeColor,
-                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    context.getColorCompat(
+                        R.color.stream_ui_grey_whisper,
+                        R.color.stream_ui_literal_grey_whisper,
+                        forceLightTheme
+                    )
                 )
 
                 val strokeWidth = a.getDimensionPixelSize(

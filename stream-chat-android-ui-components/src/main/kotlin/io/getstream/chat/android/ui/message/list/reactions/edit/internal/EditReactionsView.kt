@@ -64,7 +64,7 @@ public class EditReactionsView : RecyclerView {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        applyStyle(EditReactionsViewStyle(context, attrs))
+        applyStyle(EditReactionsViewStyle(context, attrs, false))
 
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         itemAnimator = null

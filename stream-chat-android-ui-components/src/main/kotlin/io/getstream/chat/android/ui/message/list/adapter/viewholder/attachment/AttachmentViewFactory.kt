@@ -85,6 +85,7 @@ public open class AttachmentViewFactory {
             setLinkDescriptionMaxLines(style.linkDescriptionMaxLines)
             showLinkAttachment(linkAttachment, style)
 
+            setCardBackgroundColor(style.linkCardBackgroundColor)
             setDescriptionTextStyle(style.textStyleLinkDescription)
             setTitleTextStyle(style.textStyleLinkTitle)
             setLabelTextStyle(style.textStyleLinkLabel)

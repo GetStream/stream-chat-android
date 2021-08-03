@@ -34,14 +34,14 @@ public data class ViewReactionsViewStyle(
         private val DEFAULT_BUBBLE_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_THEIRS = R.color.stream_ui_grey_gainsboro
 
-        operator fun invoke(context: Context, attrs: AttributeSet?): ViewReactionsViewStyle {
+        operator fun invoke(context: Context, attrs: AttributeSet?, forceLightTheme: Boolean): ViewReactionsViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ViewReactionsView,
                 0,
                 0,
             ).use { a ->
-                return Builder(a, context)
+                return Builder(a, context, forceLightTheme)
                     .bubbleBorderColor(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorMine)
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
@@ -49,27 +49,54 @@ public data class ViewReactionsViewStyle(
             }
         }
 
-        class Builder(private val array: TypedArray, private val context: Context) {
+        class Builder(
+            private val typedArray: TypedArray,
+            private val context: Context,
+            private val forceLightTheme: Boolean,
+        ) {
             @ColorInt
             private var bubbleColorTheirs: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_THEIRS)
+
             @ColorInt
             private var bubbleColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE)
+
             @ColorInt
             private var bubbleBorderColor: Int = context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR)
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
                 bubbleColorTheirs =
-                    array.getColor(theirsBubbleColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_COLOR_THEIRS))
+                    typedArray.getColor(
+                        theirsBubbleColorAttribute,
+                        context.getColorCompat(
+                            DEFAULT_BUBBLE_COLOR_THEIRS,
+                            R.color.stream_ui_literal_grey_gainsboro,
+                            forceLightTheme
+                        )
+                    )
             }
 
             fun bubbleColorMine(@StyleableRes mineBubbleColorAttribute: Int) = apply {
                 bubbleColorMine =
-                    array.getColor(mineBubbleColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE))
+                    typedArray.getColor(
+                        mineBubbleColorAttribute,
+                        context.getColorCompat(
+                            DEFAULT_BUBBLE_COLOR_MINE,
+                            R.color.stream_ui_literal_grey_whisper,
+                            forceLightTheme
+                        )
+                    )
             }
 
             fun bubbleBorderColor(@StyleableRes bubbleBorderColorAttribute: Int) = apply {
                 bubbleBorderColor =
-                    array.getColor(bubbleBorderColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR))
+                    typedArray.getColor(
+                        bubbleBorderColorAttribute,
+                        context.getColorCompat(
+                            DEFAULT_BUBBLE_BORDER_COLOR,
+                            R.color.stream_ui_literal_grey_whisper,
+                            forceLightTheme
+                        )
+                    )
             }
 
             fun build(): ViewReactionsViewStyle {

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
@@ -52,7 +53,7 @@ internal class SingleReactionView : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        this.reactionsViewStyle = ViewReactionsViewStyle(context, attrs)
+        this.reactionsViewStyle = ViewReactionsViewStyle(context, attrs, context.forceLightMode(attrs))
         this.bubbleDrawer = ViewReactionsBubbleDrawer(reactionsViewStyle)
 
         setWillNotDraw(false)

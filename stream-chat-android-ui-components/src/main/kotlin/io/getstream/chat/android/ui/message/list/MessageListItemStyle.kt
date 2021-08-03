@@ -72,7 +72,10 @@ public data class MessageListItemStyle(
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
     public val textStyleThreadCounter: TextStyle,
+    public val threadOrnamentLeftIcon: Drawable,
+    public val threadOrnamentRightIcon: Drawable,
     public val threadSeparatorTextStyle: TextStyle,
+    @ColorInt public val linkCardBackgroundColor: Int,
     public val textStyleLinkLabel: TextStyle,
     public val textStyleLinkTitle: TextStyle,
     public val textStyleLinkDescription: TextStyle,
@@ -134,7 +137,11 @@ public data class MessageListItemStyle(
         internal val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
     }
 
-    internal class Builder(private val attributes: TypedArray, private val context: Context) {
+    internal class Builder(
+        private val attributes: TypedArray,
+        private val context: Context,
+        private val forceLightMode: Boolean,
+    ) {
         @ColorInt
         private var messageBackgroundColorMine: Int = VALUE_NOT_SET
 
@@ -197,12 +204,20 @@ public data class MessageListItemStyle(
             val linkBackgroundColorMine =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageLinkBackgroundColorMine,
-                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_LINK_BACKGROUND_COLOR,
+                        R.color.stream_ui_literal_blue_alice,
+                        forceLightMode
+                    )
                 )
             val linkBackgroundColorTheirs =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageLinkBackgroundColorTheirs,
-                    context.getColorCompat(DEFAULT_LINK_BACKGROUND_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_LINK_BACKGROUND_COLOR,
+                        R.color.stream_ui_literal_blue_alice,
+                        forceLightMode
+                    )
                 )
 
             val mediumTypeface = ResourcesCompat.getFont(context, R.font.roboto_medium) ?: Typeface.DEFAULT
@@ -215,7 +230,11 @@ public data class MessageListItemStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageTextColorMine,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsMine,
@@ -232,7 +251,11 @@ public data class MessageListItemStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageTextColorTheirs,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsTheirs,
@@ -308,6 +331,16 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadSeparator, DEFAULT_TEXT_STYLE)
                 .build()
 
+            val linkCardBackgroundColor =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiLinkCardBackgroundColor,
+                    context.getColorCompat(
+                        R.color.stream_ui_white,
+                        R.color.stream_ui_literal_white,
+                        forceLightMode
+                    )
+                )
+
             val textStyleLinkTitle = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageTextSizeLinkTitle,
@@ -315,7 +348,11 @@ public data class MessageListItemStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageTextColorLinkTitle,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsLinkTitle,
@@ -360,7 +397,11 @@ public data class MessageListItemStyle(
             val dateSeparatorBackgroundColor =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiDateSeparatorBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_overlay_dark)
+                    context.getColorCompat(
+                        R.color.stream_ui_overlay_dark,
+                        R.color.stream_ui_literal_overlay_dark,
+                        forceLightMode
+                    )
                 )
 
             val textStyleDateSeparator = TextStyle.Builder(attributes)
@@ -370,7 +411,11 @@ public data class MessageListItemStyle(
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageTextColorDateSeparator,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE_SEPARATOR)
+                    context.getColorCompat(
+                        DEFAULT_TEXT_COLOR_DATE_SEPARATOR,
+                        R.color.stream_ui_literal_white,
+                        forceLightMode
+                    )
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageTextFontAssetsDateSeparator,
@@ -379,13 +424,13 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleDateSeparator, DEFAULT_TEXT_STYLE)
                 .build()
 
-            val reactionsViewStyle = ViewReactionsViewStyle.Companion.Builder(attributes, context)
+            val reactionsViewStyle = ViewReactionsViewStyle.Companion.Builder(attributes, context, forceLightMode)
                 .bubbleBorderColor(R.styleable.MessageListView_streamUiMessageReactionsBubbleBorderColorMine)
                 .bubbleColorMine(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorMine)
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorTheirs)
                 .build()
 
-            val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
+            val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context, forceLightMode)
                 .bubbleColorMine(R.styleable.MessageListView_streamUiEditReactionsBubbleColorMine)
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
                 .build()
@@ -407,7 +452,11 @@ public data class MessageListItemStyle(
             val messageDeletedBackground =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiDeletedMessageBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    context.getColorCompat(
+                        R.color.stream_ui_grey_whisper,
+                        R.color.stream_ui_literal_grey_whisper,
+                        forceLightMode
+                    )
                 )
 
             val textStyleMessageDeleted = TextStyle.Builder(attributes)
@@ -439,7 +488,9 @@ public data class MessageListItemStyle(
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageStrokeColorTheirs,
                     context.getColorCompat(
-                        MESSAGE_STROKE_COLOR_THEIRS
+                        MESSAGE_STROKE_COLOR_THEIRS,
+                        R.color.stream_ui_literal_grey_whisper,
+                        forceLightMode
                     )
                 )
             val messageStrokeWidthTheirs =
@@ -480,6 +531,18 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiErrorMessageTextStyle, Typeface.BOLD)
                 .build()
 
+            val threadOrnamentLeftIcon = if (forceLightMode) {
+                R.drawable.stream_ui_thread_replies_ornament_left_light_theme
+            } else {
+                R.drawable.stream_ui_thread_replies_ornament_left
+            }.let(context::getDrawableCompat)!!
+
+            val threadOrnamentRightIcon = if (forceLightMode) {
+                R.drawable.stream_ui_thread_replies_ornament_right_light_theme
+            } else {
+                R.drawable.stream_ui_thread_replies_ornament_right
+            }.let(context::getDrawableCompat)!!
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -493,7 +556,10 @@ public data class MessageListItemStyle(
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
                 textStyleThreadCounter = textStyleThreadCounter,
+                threadOrnamentLeftIcon = threadOrnamentLeftIcon,
+                threadOrnamentRightIcon = threadOrnamentRightIcon,
                 threadSeparatorTextStyle = textStyleThreadSeparator,
+                linkCardBackgroundColor = linkCardBackgroundColor,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,
                 textStyleLinkLabel = textStyleLinkLabel,

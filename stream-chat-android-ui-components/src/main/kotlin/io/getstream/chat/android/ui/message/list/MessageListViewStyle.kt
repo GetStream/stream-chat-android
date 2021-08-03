@@ -3,11 +3,13 @@ package io.getstream.chat.android.ui.message.list
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.forceLightMode
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -88,6 +90,7 @@ public data class MessageListViewStyle(
     @Deprecated(message = "Use deleteIcon instead", level = DeprecationLevel.ERROR)
     @ColorInt val warningActionsTintColor: Int?,
     val messageOptionsText: TextStyle,
+    val messageOptionsDivider: Drawable,
     val warningMessageOptionsText: TextStyle,
     @ColorInt val messageOptionsBackgroundColor: Int,
     @ColorInt val userReactionsBackgroundColor: Int,
@@ -102,11 +105,15 @@ public data class MessageListViewStyle(
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
 
-        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray, forceLightMode: Boolean): TextStyle {
             return TextStyle.Builder(typedArray)
                 .color(
                     R.styleable.MessageListView_streamUiEmptyStateTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(
+                        R.color.stream_ui_text_color_primary,
+                        R.color.stream_ui_literal_black,
+                        forceLightMode
+                    )
                 )
                 .size(
                     R.styleable.MessageListView_streamUiEmptyStateTextSize,
@@ -123,38 +130,55 @@ public data class MessageListViewStyle(
                 .build()
         }
 
+        private fun scrollButtonViewStyle(
+            context: Context,
+            attrs: TypedArray,
+            forceLightMode: Boolean,
+        ): ScrollButtonViewStyle {
+            return ScrollButtonViewStyle.Builder(context, attrs)
+                .scrollButtonEnabled(
+                    R.styleable.MessageListView_streamUiScrollButtonEnabled,
+                    true
+                )
+                .scrollButtonUnreadEnabled(
+                    R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
+                    true
+                )
+                .scrollButtonColor(
+                    R.styleable.MessageListView_streamUiScrollButtonColor,
+                    context.getColorCompat(R.color.stream_ui_white, R.color.stream_ui_literal_white, forceLightMode)
+                )
+                .scrollButtonRippleColor(
+                    R.styleable.MessageListView_streamUiScrollButtonRippleColor,
+                    context.getColorCompat(R.color.stream_ui_white_smoke,
+                        R.color.stream_ui_literal_white_smoke,
+                        forceLightMode
+                    )
+                )
+                .scrollButtonBadgeColor(
+                    R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
+                    context.getColorCompat(R.color.stream_ui_accent_blue)
+                )
+                .scrollButtonIcon(
+                    R.styleable.MessageListView_streamUiScrollButtonIcon,
+                    context.getDrawableCompat(
+                        R.drawable.stream_ui_ic_down,
+                        R.drawable.stream_ui_ic_down_light_theme,
+                        forceLightMode
+                    )
+                ).build()
+        }
+
         operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
+            val forceLightMode = context.forceLightMode(attrs)
+
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageListView,
                 R.attr.streamUiMessageListStyle,
                 R.style.StreamUi_MessageList
             ).use { attributes ->
-                val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
-                    .scrollButtonEnabled(
-                        R.styleable.MessageListView_streamUiScrollButtonEnabled,
-                        true
-                    )
-                    .scrollButtonUnreadEnabled(
-                        R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
-                        true
-                    )
-                    .scrollButtonColor(
-                        R.styleable.MessageListView_streamUiScrollButtonColor,
-                        context.getColorCompat(R.color.stream_ui_white)
-                    )
-                    .scrollButtonRippleColor(
-                        R.styleable.MessageListView_streamUiScrollButtonRippleColor,
-                        context.getColorCompat(R.color.stream_ui_white_smoke)
-                    )
-                    .scrollButtonBadgeColor(
-                        R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
-                        context.getColorCompat(R.color.stream_ui_accent_blue)
-                    )
-                    .scrollButtonIcon(
-                        R.styleable.MessageListView_streamUiScrollButtonIcon,
-                        context.getDrawableCompat(R.drawable.stream_ui_ic_down)
-                    ).build()
+                val scrollButtonViewStyle = scrollButtonViewStyle(context, attributes, forceLightMode)
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
@@ -163,20 +187,46 @@ public data class MessageListViewStyle(
 
                 val backgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiBackgroundColor,
-                    context.getColorCompat(DEFAULT_BACKGROUND_COLOR)
+                    context.getColorCompat(
+                        DEFAULT_BACKGROUND_COLOR,
+                        R.color.stream_ui_literal_white_snow,
+                        forceLightMode
+                    )
                 )
 
-                val itemStyle = MessageListItemStyle.Builder(attributes, context)
-                    .messageBackgroundColorMine(R.styleable.MessageListView_streamUiMessageBackgroundColorMine)
-                    .messageBackgroundColorTheirs(R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs)
-                    .messageLinkTextColorMine(R.styleable.MessageListView_streamUiMessageLinkColorMine)
-                    .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
+                val itemStyle = MessageListItemStyle.Builder(attributes, context, forceLightMode)
+                    .messageBackgroundColorMine(
+                        R.styleable.MessageListView_streamUiMessageBackgroundColorMine,
+                        context.getColorCompat(
+                            R.color.stream_ui_grey_gainsboro,
+                            R.color.stream_ui_literal_grey_gainsboro,
+                            forceLightMode
+                        )
+                    )
+                    .messageBackgroundColorTheirs(
+                        R.styleable.MessageListView_streamUiMessageBackgroundColorTheirs,
+                        context.getColorCompat(
+                            R.color.stream_ui_white,
+                            R.color.stream_ui_literal_white,
+                            forceLightMode
+                        )
+                    )
+                    .messageLinkTextColorMine(
+                        R.styleable.MessageListView_streamUiMessageLinkColorMine
+                    )
+                    .messageLinkTextColorTheirs(
+                        R.styleable.MessageListView_streamUiMessageLinkColorTheirs
+                    )
                     .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
-                val replyMessageStyle = MessageReplyStyle(context = context, attributes = attributes)
+                val replyMessageStyle = MessageReplyStyle(
+                    context = context,
+                    attributes = attributes,
+                    forceLightMode = context.forceLightMode(attrs)
+                )
 
                 val iconsTint = attributes.getColorOrNull(R.styleable.MessageListView_streamUiMessageOptionIconColor)
 
@@ -264,7 +314,11 @@ public data class MessageListViewStyle(
                     )
                     .color(
                         R.styleable.MessageListView_streamUiMessageOptionsTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(
+                            R.color.stream_ui_text_color_primary,
+                            R.color.stream_ui_literal_black,
+                            forceLightMode
+                        )
                     )
                     .font(
                         R.styleable.MessageListView_streamUiMessageOptionsTextFontAssets,
@@ -297,12 +351,20 @@ public data class MessageListViewStyle(
 
                 val messageOptionsBackgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageOptionBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(
+                        R.color.stream_ui_white,
+                        R.color.stream_ui_literal_white,
+                        forceLightMode
+                    )
                 )
 
                 val userReactionsBackgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiUserReactionsBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(
+                        R.color.stream_ui_white,
+                        R.color.stream_ui_literal_white,
+                        forceLightMode
+                    )
                 )
 
                 val userReactionsTitleText = TextStyle.Builder(attributes)
@@ -312,7 +374,11 @@ public data class MessageListViewStyle(
                     )
                     .color(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(
+                            R.color.stream_ui_text_color_primary,
+                            R.color.stream_ui_literal_black,
+                            forceLightMode
+                        )
                     )
                     .font(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextFontAssets,
@@ -329,7 +395,7 @@ public data class MessageListViewStyle(
                     context.getColorCompat(R.color.stream_ui_literal_transparent)
                 )
 
-                val emptyViewTextStyle = emptyViewStyle(context, attributes)
+                val emptyViewTextStyle = emptyViewStyle(context, attributes, forceLightMode)
 
                 val loadingView = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiMessageListLoadingView,
@@ -345,6 +411,12 @@ public data class MessageListViewStyle(
                     R.styleable.MessageListView_streamUiThreadMessagesStart,
                     MessageListView.MessagesStart.BOTTOM.value,
                 )
+
+                val messageOptionsDivider = if (forceLightMode) {
+                    R.drawable.stream_ui_divider_light_mode
+                } else {
+                    R.drawable.stream_ui_divider
+                }.let(context::getDrawable)!!
 
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
@@ -376,6 +448,7 @@ public data class MessageListViewStyle(
                     threadsEnabled = threadsEnabled,
                     warningActionsTintColor = warningActionsTintColor,
                     messageOptionsText = messageOptionsText,
+                    messageOptionsDivider = messageOptionsDivider,
                     warningMessageOptionsText = warningMessageOptionsText,
                     messageOptionsBackgroundColor = messageOptionsBackgroundColor,
                     userReactionsBackgroundColor = userReactionsBackgroundColor,
