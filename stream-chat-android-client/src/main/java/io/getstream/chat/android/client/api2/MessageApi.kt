@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api2
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -15,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -41,6 +43,13 @@ internal interface MessageApi {
         @Path("id") messageId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body message: MessageRequest,
+    ): RetrofitCall<MessageResponse>
+
+    @PUT("/messages/{id}")
+    fun partialUpdateMessage(
+        @Path("id") messageId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: PartialUpdateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @DELETE("/messages/{id}")
