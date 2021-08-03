@@ -150,7 +150,8 @@ public data class MessageListViewStyle(
                 )
                 .scrollButtonRippleColor(
                     R.styleable.MessageListView_streamUiScrollButtonRippleColor,
-                    context.getColorCompat(R.color.stream_ui_white_smoke,
+                    context.getColorCompat(
+                        R.color.stream_ui_white_smoke,
                         R.color.stream_ui_literal_white_smoke,
                         forceLightMode
                     )
