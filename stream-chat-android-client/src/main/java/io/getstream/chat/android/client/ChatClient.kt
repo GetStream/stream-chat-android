@@ -103,7 +103,7 @@ public class ChatClient internal constructor(
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
-    private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    internal val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -956,6 +956,9 @@ public class ChatClient internal constructor(
             .doOnResult(scope) { result ->
                 plugins.forEach { it.onQueryChannelsResult(result, request) }
             }
+
+    public fun queryChannelsNew(request: QueryChannelsRequest): QueryChannelsReference =
+        QueryChannelsReference(request = request, chatClient = this, scope = scope)
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
