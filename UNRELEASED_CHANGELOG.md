@@ -81,6 +81,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Moved permissions and queries from the compose sample app `AndroidManifest.xml` to the SDK `AndroidManifest.xml` so users don't have to add permissions themselves.
 
 ### ❌ Removed
 
