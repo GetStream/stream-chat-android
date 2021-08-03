@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -22,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.state
+import io.getstream.chat.android.offline.extensions.asState
 import io.getstream.chat.android.offline.querychannels.state.ChannelsState
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
@@ -75,8 +76,10 @@ public class ChannelListViewModel(
 
     private fun initData(filterObject: FilterObject) {
         stateMerger.value = INITIAL_STATE
+        val queryChannelsRequest =
+            QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit).withMessages(messageLimit)
 
-        queryChannelsState = chatClient.state.queryChannels(filterObject, sort).also { queryChannelsState ->
+        queryChannelsState = chatClient.queryChannelsNew(queryChannelsRequest).asState(scope = viewModelScope).also { queryChannelsState ->
             val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
                 queryChannelsState.channelsState.map { channelState ->
                     channelState to currentUser
@@ -105,7 +108,8 @@ public class ChannelListViewModel(
             }
         }
 
-        queryChannels(filterObject)
+        // Called internally in .asState()
+        // queryChannels(filterObject)
     }
 
     private fun queryChannels(filterObject: FilterObject) {

@@ -421,12 +421,12 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
-	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/state/StateRegistry;
-}
-
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
+}
+
+public final class io/getstream/chat/android/offline/extensions/QueryReferenceKt {
+	public static final fun asState (Lio/getstream/chat/android/client/QueryChannelsReference;Lkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/querychannels/state/QueryChannelsState;
 }
 
 public final class io/getstream/chat/android/offline/plugin/Config {
