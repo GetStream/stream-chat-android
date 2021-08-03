@@ -15,7 +15,6 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
-	public final fun getUrlSigner ()Lio/getstream/chat/android/ui/common/UrlSigner;
 	public final fun setAvatarBitmapFactory (Lio/getstream/chat/android/ui/avatar/AvatarBitmapFactory;)V
 	public final fun setFonts (Lio/getstream/chat/android/ui/common/style/ChatFonts;)V
 	public final fun setImageHeadersProvider (Lcom/getstream/sdk/chat/images/ImageHeadersProvider;)V
@@ -24,7 +23,6 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
-	public final fun setUrlSigner (Lio/getstream/chat/android/ui/common/UrlSigner;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/MimeTypeIconProvider {
@@ -574,17 +572,6 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/UrlSigner {
-	public abstract fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/UrlSigner$DefaultUrlSigner : io/getstream/chat/android/ui/common/UrlSigner {
-	public fun <init> ()V
-	public fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
