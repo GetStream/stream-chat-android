@@ -81,9 +81,7 @@ public object ChatUI {
         }
 
     private var deletedMessageVisibilityOverride: DeletedMessageVisibility? = null
-    private val defaultDeletedMessageVisibility: DeletedMessageVisibility by lazy {
-        DeletedMessageVisibility.VisibleToEveryone
-    }
+    private val defaultDeletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone
     public var deletedMessageVisibility: DeletedMessageVisibility
         get() = this.deletedMessageVisibilityOverride ?: defaultDeletedMessageVisibility
         set(value) {
