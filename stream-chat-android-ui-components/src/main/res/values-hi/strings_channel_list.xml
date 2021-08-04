@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">कोई चैनल उपलब्ध नहीं है</string>
+    <string name="stream_ui_channel_list_you">आप</string>
+    <string name="stream_ui_channel_list_untitled_channel">बिना नाम वाला चैनल</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">जानकारी देखें</string>
+    <string name="stream_ui_channel_list_leave_channel">ग्रुप छोड़ेें</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">रद्द करें</string>
+    <string name="stream_ui_channel_list_delete_channel">बातचीत मिटायें</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="one">%1d सदस्य, %2d ऑनलाइन</item>
+        <item quantity="other">%1d सदस्य, %2d ऑनलाइन</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">चैनल मिटायें</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">क्या आप वाकई इस बातचीत को स्थायी रूप से मिटाना चाहते हैं?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">मिटायें</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">रद्द करें</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">चैनल नहीं छुपाया जा सका</string>
+    <string name="stream_ui_channel_list_error_delete_channel">चैनल नहीं मिटाया जा सका</string>
+    <string name="stream_ui_channel_list_error_leave_channel">चैनल नहीं छोड़ा जा सका</string>
+</resources>

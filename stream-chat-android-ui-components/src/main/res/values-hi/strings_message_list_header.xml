@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Header Title -->
+    <string name="stream_ui_message_list_header_thread_title">चर्चा पर जवाब दें</string>
+    <string name="stream_ui_message_list_header_untitled_channel">बिना नाम वाला चैनल</string>
+
+    <!-- Header Subtitle -->
+    <string name="stream_ui_message_list_header_thread_subtitle">%s के साथ</string>
+    <string name="stream_ui_message_list_header_disconnected">नेटवर्क खोजा जा रहा है</string>
+    <string name="stream_ui_message_list_header_offline">ऑफलाइन…</string>
+    <string name="stream_ui_message_list_header_retry">पुनः प्रयास करें</string>
+    <string name="stream_ui_message_list_header_member_count_online">%s, %d ऑनलाइन</string>
+    <plurals name="stream_ui_message_list_header_member_count">
+        <item quantity="one">%1d सदस्य</item>
+        <item quantity="other">%1d सदस्य</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_header_typing_users">
+        <item quantity="one">%s लिख रहे/रहीं हैं</item>
+        <item quantity="other">%s and %d अन्य लिख रहें हैं</item>
+    </plurals>
+
+    <string name="stream_ui_message_list_header_back_button_content_description">पिछला बटन</string>
+</resources>
