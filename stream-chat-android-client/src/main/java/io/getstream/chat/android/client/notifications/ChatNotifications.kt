@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
@@ -52,19 +51,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override fun onSetUser() {
-        handler.getFirebaseMessaging()?.token?.addOnCompleteListener {
-            if (it.isSuccessful) {
-                logger.logI("Firebase returned token successfully")
-                setDevice(
-                    Device(
-                        token = it.result!!,
-                        pushProvider = PushProvider.FIREBASE,
-                    )
-                )
-            } else {
-                logger.logI("Error: Firebase didn't returned token")
-            }
-        }
+        handler.onCreateDevice(::setDevice)
     }
 
     override fun setDevice(device: Device) {

@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
 import io.getstream.chat.android.client.models.PushMessage;
 import io.getstream.chat.android.client.models.PushProvider;
+import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
@@ -59,7 +60,6 @@ public class Push {
             int smallIcon = R.drawable.stream_ic_notification;
             int errorCaseNotificationTitle = R.string.stream_chat_notification_title;
             int errorCaseNotificationContent = R.string.stream_chat_notification_content;
-            boolean useProvidedFirebaseInstance = true;
             int loadNotificationDataChannelName = R.string.stream_chat_load_notification_data_title;
             int loadNotificationDataIcon = R.drawable.stream_ic_notification;
             int loadNotificationDataTitle = R.string.stream_chat_load_notification_data_title;
@@ -68,7 +68,10 @@ public class Push {
             int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
             boolean shouldGroupNotifications = true;
             boolean pushNotificationsEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>();
+            List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>() {{
+                    add(new FirebasePushDeviceGenerator());
+                }};
+
 
             NotificationConfig notificationsConfig = new NotificationConfig(
                     notificationChannelId,
@@ -76,7 +79,6 @@ public class Push {
                     smallIcon,
                     errorCaseNotificationTitle,
                     errorCaseNotificationContent,
-                    useProvidedFirebaseInstance,
                     loadNotificationDataChannelName,
                     loadNotificationDataIcon,
                     loadNotificationDataTitle,

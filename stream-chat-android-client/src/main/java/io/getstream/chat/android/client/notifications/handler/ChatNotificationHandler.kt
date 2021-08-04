@@ -11,11 +11,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.name
@@ -269,12 +268,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         )
     }
 
-    public open fun getFirebaseMessaging(): FirebaseMessaging? =
-        if (config.useProvidedFirebaseInstance && FirebaseApp.getApps(context).isNotEmpty()) {
-            FirebaseMessaging.getInstance()
-        } else {
-            null
-        }
+    internal fun onCreateDevice(onDeviceCreated: (device: Device) -> Unit) {
+        config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+            ?.asyncGenerateDevice(onDeviceCreated)
+    }
 
     private companion object {
         private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"

@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.docs.MainActivity
@@ -41,7 +42,9 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#setting-up-notification-data-payload-at-stream-dashboard">Setting up notification</a>
          */
         fun setupNotifications() {
-            val notificationsConfig = NotificationConfig()
+            val notificationsConfig = NotificationConfig(
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
+            )
 
             val notificationHandler = MyNotificationHandler(context, notificationsConfig)
 
