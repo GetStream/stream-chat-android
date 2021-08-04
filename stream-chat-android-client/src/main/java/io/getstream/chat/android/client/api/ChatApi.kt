@@ -120,6 +120,13 @@ internal interface ChatApi {
     ): Call<Message>
 
     @CheckResult
+    fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Message>
+
+    @CheckResult
     fun stopWatching(
         channelType: String,
         channelId: String,

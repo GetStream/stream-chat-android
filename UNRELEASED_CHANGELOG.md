@@ -26,9 +26,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved `ChatClient::pinMessage` and `ChatClient::unpinMessage`. Now the methods use partial message updates and the data in other `Message` fields is not lost.
 
 ### ✅ Added
 - Added `Channel::isMutedFor` extension function which might be used to check if the Channel is muted for User
+- Added `ChatClient::partialUpdateMessage` method to update specific `Message` fields retaining the other fields
 
 ### ⚠️ Changed
 
@@ -67,11 +69,12 @@
 
 ### ✅ Added
 - Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
+- Added `authorLink` to `Attachment` - the link to the website
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-
+- Removed `UrlSigner` class
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -85,4 +88,3 @@
 - Changed the exposed type of the `MessageComposer`'s `onSendMessage` handler. This way people can customize messages before we send them to the API.
 
 ### ❌ Removed
-

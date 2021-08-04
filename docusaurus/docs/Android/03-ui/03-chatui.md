@@ -16,7 +16,6 @@ The full list of `ChatUI` properties you can override include:
 * `mimeTypeIconProvider`: The icons used for different mime types.
 * `fonts`: The default font for TextViews displayed by UI Components.
 * `avatarBitmapFactory`: The factory responsible for creating user and channel avatar bitmaps displayed by `AvatarView`. Can be used to modify the default bitmaps that are loaded, or to add custom avatar loading logic.
-* `urlSigner`: Allows adding authorization tokens in the URL for images, video, etc.
 * `imageHeadersProvider`: Allows adding extra headers to image loading requests.
 * `markdown`: Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic or use more markdown modules.
 * `style`: Allows overriding the global, default style of UI components, like the TextStyle.
@@ -116,33 +115,6 @@ This example uses the [Coil](https://github.com/coil-kt/coil) library for loadin
 This results in avatars rendered like this:
 
 ![Blurred images for offline users](../assets/blurred_images.png)
-
-### Intercepting Attachments URLs with UrlSigner
-
-`ChatUi.urlSigner` can be used to transform URLs of file and image attachments before loading them from the network. Providing a custom implementation of `UrlSigner` allows you to intercept attachment URLs, for example, to add authorization tokens to them.
-
-```kotlin
-interface UrlSigner {
-    fun signFileUrl(url: String): String
-    fun signImageUrl(url: String): String
-}
-```
-
-This is the way to add a new `UrlSigner`:
-
-```kotlin
-ChatUI.urlSigner = object : UrlSigner {
-    override fun signFileUrl(url: String): String {
-        // Make your changes to the URL here
-        return url + "&token=1234"
-    }
-
-    override fun signImageUrl(url: String): String {
-        // Make your changes to the URL here
-        return url + "&token=1234"
-    }
-}
-```
 
 ### Adding Extra Headers to Image Requests
 

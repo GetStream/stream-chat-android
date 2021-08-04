@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
 import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api.models.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersResponse
@@ -53,6 +54,7 @@ import retrofit2.http.GET
 import retrofit2.http.OPTIONS
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -306,6 +308,14 @@ internal interface RetrofitApi {
         @Path("id") messageId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body message: MessageRequest,
+    ): RetrofitCall<MessageResponse>
+
+    @PUT("/messages/{id}")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
+    fun partialUpdateMessage(
+        @Path("id") messageId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: PartialUpdateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}")

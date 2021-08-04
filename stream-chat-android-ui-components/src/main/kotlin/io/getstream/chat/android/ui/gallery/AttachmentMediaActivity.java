@@ -14,7 +14,6 @@ import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
-import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.R;
 
 /**
@@ -54,7 +53,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             iv_audio.setVisibility(View.GONE);
 
 
-        playVideo(ChatUI.INSTANCE.getUrlSigner().signFileUrl(url));
+        playVideo(url);
     }
 
     /**
@@ -64,7 +63,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      */
     public void playVideo(String url) {
         videoView.isPlaying(); // Workaround to init some internals of the library
-        videoView.setVideoURI(Uri.parse(ChatUI.INSTANCE.getUrlSigner().signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(url));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }
