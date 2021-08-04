@@ -14,9 +14,6 @@ class ChatInitializer(private val context: Context) {
     fun init(apiKey: String) {
         val notificationConfig =
             NotificationConfig(
-                firebaseMessageIdKey = "message_id",
-                firebaseChannelIdKey = "channel_id",
-                firebaseChannelTypeKey = "channel_type",
                 smallIcon = R.drawable.ic_chat_bubble,
                 loadNotificationDataIcon = R.drawable.ic_chat_bubble,
                 shouldGroupNotifications = true,

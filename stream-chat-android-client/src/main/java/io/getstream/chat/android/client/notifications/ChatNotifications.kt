@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -19,6 +18,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -29,9 +29,8 @@ internal interface ChatNotifications {
     val handler: ChatNotificationHandler
     fun onSetUser()
     fun setDevice(device: Device)
-    fun onFirebaseMessage(message: RemoteMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onChatEvent(event: ChatEvent)
-    fun isValidRemoteMessage(message: RemoteMessage): Boolean
     fun cancelLoadDataWork()
     suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
 }
@@ -74,20 +73,17 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override fun onFirebaseMessage(
-        message: RemoteMessage,
+    override fun onPushMessage(
+        message: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) {
-        logger.logI("onReceiveFirebaseMessage: payload: ${message.data}")
+        logger.logI("onReceivePushMessage: $message")
 
-        if (isValidRemoteMessage(message)) {
-            val data = handler.getFirebaseMessageParser().run { parse(message) }
-            pushNotificationReceivedListener.onPushNotificationReceived(data.channelType, data.channelId)
-        }
+        pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
 
-        if (!handler.onFirebaseMessage(message)) {
+        if (!handler.onPushMessage(message)) {
             if (isForeground()) return
-            handleRemoteMessage(message)
+            handlePushMessage(message)
         }
     }
 
@@ -108,28 +104,20 @@ internal class ChatNotificationsImpl constructor(
         LoadNotificationDataWorker.cancel(context)
     }
 
-    private fun handleRemoteMessage(message: RemoteMessage) {
-        if (isValidRemoteMessage(message)) {
-            val data = handler.getFirebaseMessageParser().run { parse(message) }
-
-            if (!wasNotificationDisplayed(data.messageId)) {
-                showedNotifications.add(data.messageId)
-                LoadNotificationDataWorker.start(
-                    context = context,
-                    channelId = data.channelId,
-                    channelType = data.channelType,
-                    messageId = data.messageId,
-                    notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
-                    notificationIcon = handler.config.loadNotificationDataIcon,
-                    notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
-                )
-            }
-        } else {
-            logger.logE("Push payload is not configured correctly: {${message.data}}")
+    private fun handlePushMessage(message: PushMessage) {
+        if (!wasNotificationDisplayed(message.messageId)) {
+            showedNotifications.add(message.messageId)
+            LoadNotificationDataWorker.start(
+                context = context,
+                channelId = message.channelId,
+                channelType = message.channelType,
+                messageId = message.messageId,
+                notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
+                notificationIcon = handler.config.loadNotificationDataIcon,
+                notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
+            )
         }
     }
-
-    override fun isValidRemoteMessage(message: RemoteMessage) = handler.isValidRemoteMessage(message)
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
@@ -232,13 +220,12 @@ internal class ChatNotificationsImpl constructor(
 internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
     override fun onSetUser() = Unit
     override fun setDevice(device: Device) = Unit
-    override fun onFirebaseMessage(
-        message: RemoteMessage,
+    override fun onPushMessage(
+        message: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 
     override fun onChatEvent(event: ChatEvent) = Unit
-    override fun isValidRemoteMessage(message: RemoteMessage) = false
     override fun cancelLoadDataWork() = Unit
     override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
 }

@@ -13,15 +13,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.FirebaseMessageParser
-import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
@@ -32,7 +30,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
     public val config: NotificationConfig = NotificationConfig(),
 ) {
-    private val firebaseMessageParserImpl: FirebaseMessageParser by lazy { FirebaseMessageParserImpl(config) }
 
     /**
      * Handles showing notification after receiving [NewMessageEvent] from other users.
@@ -45,12 +42,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     /**
-     * Handles showing notification after receiving [RemoteMessage].
+     * Handles showing notification after receiving [PushMessage].
      * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
      *
      * @return false if remote message should be handled internally
      */
-    public open fun onFirebaseMessage(message: RemoteMessage): Boolean {
+    public open fun onPushMessage(message: PushMessage): Boolean {
         return false
     }
 
@@ -193,10 +190,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun getErrorCaseIntent(): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
-
-    public open fun getFirebaseMessageParser(): FirebaseMessageParser = firebaseMessageParserImpl
-    internal fun isValidRemoteMessage(message: RemoteMessage): Boolean =
-        getFirebaseMessageParser().isValidRemoteMessage(message)
 
     private fun getNotificationBuilder(
         contentTitle: String,

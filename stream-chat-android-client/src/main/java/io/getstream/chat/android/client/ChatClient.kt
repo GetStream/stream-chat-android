@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -38,7 +37,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
-import io.getstream.chat.android.client.extensions.isValid
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -56,12 +54,12 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.ModelFields
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -1406,9 +1404,6 @@ public class ChatClient internal constructor(
 
     private fun isUserSet() = userStateService.state !is UserState.NotSet
 
-    private fun isValidRemoteMessage(remoteMessage: RemoteMessage): Boolean =
-        notifications.isValidRemoteMessage(remoteMessage)
-
     public fun devToken(userId: String): String {
         require(userId.isNotEmpty()) { "User id must not be empty" }
         val header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
@@ -1588,35 +1583,20 @@ public class ChatClient internal constructor(
             get() = instance != null
 
         /**
-         * Checks if remote message can be handled
-         *
-         * @return true if message can be handled
-         */
-        @JvmStatic
-        public fun isValidRemoteMessage(
-            remoteMessage: RemoteMessage,
-            defaultNotificationConfig: NotificationConfig = NotificationConfig(),
-        ): Boolean {
-            return instance?.isValidRemoteMessage(remoteMessage) ?: remoteMessage.isValid(
-                defaultNotificationConfig
-            )
-        }
-
-        /**
-         * Handles remote message.
+         * Handles push message.
          * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
-         * Remote message will be handled internally unless user overrides [ChatNotificationHandler.onFirebaseMessage]
+         * Push message will be handled internally unless user overrides [ChatNotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *
-         * @see [ChatNotificationHandler.onFirebaseMessage]
+         * @see [ChatNotificationHandler.onPushMessage]
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
         @JvmStatic
-        public fun handleRemoteMessage(remoteMessage: RemoteMessage) {
+        public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
                 setUserWithoutConnectingIfNeeded()
-                notifications.onFirebaseMessage(remoteMessage, pushNotificationReceivedListener)
+                notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
             }
         }
 
