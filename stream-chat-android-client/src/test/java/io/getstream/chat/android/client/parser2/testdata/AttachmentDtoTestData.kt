@@ -10,6 +10,7 @@ internal object AttachmentDtoTestData {
         """{
           "asset_url": "assetUrl",
           "author_name": "authorName",
+          "author_link": "authorLink",
           "fallback": "fallback",
           "file_size": 1,
           "image": "image",
@@ -29,6 +30,7 @@ internal object AttachmentDtoTestData {
     val attachment = AttachmentDto(
         asset_url = "assetUrl",
         author_name = "authorName",
+        author_link = "authorLink",
         fallback = "fallback",
         file_size = 1,
         image = "image",
@@ -54,6 +56,7 @@ internal object AttachmentDtoTestData {
     val attachmentWithoutExtraData = AttachmentDto(
         asset_url = null,
         author_name = null,
+        author_link = null,
         fallback = null,
         file_size = 0,
         image = null,
