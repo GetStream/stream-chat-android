@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.client.models.ChannelInfo
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.ChannelInfoEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
 import java.util.Date
 
@@ -63,7 +63,8 @@ internal data class MessageInnerEntity(
     val shadowed: Boolean = false,
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
-    val channelInfo: ChannelInfo? = null,
+    @Embedded(prefix = "channel_info")
+    val channelInfo: ChannelInfoEntity? = null,
     /** if the message is silent  **/
     val silent: Boolean = false,
     /** all the custom data provided for this message */

@@ -6,6 +6,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.toModel
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.toEntity
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.toModel
 import io.getstream.chat.android.offline.repository.domain.reaction.toEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.toModel
 
@@ -42,7 +44,7 @@ internal suspend fun MessageEntity.toModel(
         threadParticipants = threadParticipantsIds.map { getUser(it) },
         showInChannel = showInChannel,
         silent = silent,
-        channelInfo = channelInfo,
+        channelInfo = channelInfo?.toModel(),
         pinned = pinned,
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
@@ -76,7 +78,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         threadParticipantsIds = threadParticipants.map(User::id),
         showInChannel = showInChannel,
         silent = silent,
-        channelInfo = channelInfo,
+        channelInfo = channelInfo?.toEntity(),
         pinned = pinned,
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
