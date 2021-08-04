@@ -24,6 +24,7 @@ internal data class AttachmentEntity(
     val messageId: String,
     val authorName: String?,
     val titleLink: String?,
+    val authorLink: String?,
     val thumbUrl: String?,
     val imageUrl: String?,
     val assetUrl: String?,

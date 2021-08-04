@@ -830,35 +830,81 @@ public class ChatClient internal constructor(
         return api.updateMessage(message)
     }
 
+    /**
+     * Partially updates specific [Message] fields retaining the fields which were set previously.
+     *
+     * @param messageId the message ID
+     * @param set the key-value data which will be added to the existing message object
+     * @param unset the list of fields which will be removed from the existing message object
+     *
+     * @return executable async [Call] responsible for partially updating the message
+     */
     @CheckResult
-    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
-        return updateMessage(
-            message.apply {
-                pinned = true
-                pinExpires = expirationDate
-            }
+    public fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Message> {
+        return api.partialUpdateMessage(
+            messageId = messageId,
+            set = set,
+            unset = unset,
         )
     }
 
+    /**
+     * Pins the message
+     *
+     * @param message the message object containing the ID of the message to be pinned
+     * @param expirationDate the exact expiration date
+     *
+     * @return executable async [Call] responsible for pinning the message
+     */
+    @CheckResult
+    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
+        val set: MutableMap<String, Any> = LinkedHashMap()
+        set["pinned"] = true
+        expirationDate?.let { set["pin_expires"] = it }
+        return partialUpdateMessage(
+            messageId = message.id,
+            set = set
+        )
+    }
+
+    /**
+     * Pins the message
+     *
+     * @param message the message object containing the ID of the message to be pinned
+     * @param timeout the expiration timeout in seconds
+     *
+     * @return executable async [Call] responsible for pinning the message
+     */
     @CheckResult
     public fun pinMessage(message: Message, timeout: Int): Call<Message> {
         val calendar = Calendar.getInstance().apply {
             add(Calendar.SECOND, timeout)
         }
-        return updateMessage(
-            message.apply {
-                pinned = true
-                pinExpires = calendar.time
-            }
+        return partialUpdateMessage(
+            messageId = message.id,
+            set = mapOf(
+                "pinned" to true,
+                "pin_expires" to calendar.time
+            )
         )
     }
 
+    /**
+     * Unpins the message that was previously pinned
+     *
+     * @param message the message object containing the ID of the message to be unpinned
+     *
+     * @return executable async [Call] responsible for unpinning the message
+     */
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> {
-        return updateMessage(
-            message.apply {
-                pinned = false
-            }
+        return partialUpdateMessage(
+            messageId = message.id,
+            set = mapOf("pinned" to false)
         )
     }
 

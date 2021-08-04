@@ -11,6 +11,7 @@ public data class AttachmentGalleryResultItem(
     val userName: String,
     val isMine: Boolean = false,
     val authorName: String? = null,
+    val authorLink: String? = null,
     val imageUrl: String? = null,
     val assetUrl: String? = null,
     val mimeType: String? = null,
@@ -26,6 +27,7 @@ public data class AttachmentGalleryResultItem(
 internal fun AttachmentGalleryResultItem.toAttachment(): Attachment {
     return Attachment(
         authorName = authorName,
+        authorLink = authorLink,
         imageUrl = imageUrl,
         assetUrl = assetUrl,
         url = url,
@@ -52,6 +54,7 @@ internal fun Attachment.toAttachmentGalleryResultItem(
         isMine = isMine,
         imageUrl = this.imageUrl,
         assetUrl = this.assetUrl,
-        name = this.name
+        name = this.name,
+        authorLink = authorLink
     )
 }

@@ -51,7 +51,6 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.common.UrlSigner
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
@@ -850,25 +849,6 @@ class Android {
             }
 
             ChatUI.navigator = ChatNavigator(navigationHandler)
-        }
-    }
-
-    class UrlSignerCustomization {
-
-        fun customizeUrlSigner() {
-            val urlSigner: UrlSigner = object : UrlSigner {
-                override fun signFileUrl(url: String): String {
-                    // Do some change with url here!
-                    return url + "new added text"
-                }
-
-                override fun signImageUrl(url: String): String {
-                    // Do some change with url here!
-                    return url + "new added text"
-                }
-            }
-
-            ChatUI.urlSigner = urlSigner
         }
     }
 
