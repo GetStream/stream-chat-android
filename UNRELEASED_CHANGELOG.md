@@ -26,9 +26,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved `ChatClient::pinMessage` and `ChatClient::unpinMessage`. Now the methods use partial message updates and the data in other `Message` fields is not lost.
 
 ### ✅ Added
 - Added `Channel::isMutedFor` extension function which might be used to check if the Channel is muted for User
+- Added `ChatClient::partialUpdateMessage` method to update specific `Message` fields retaining the other fields
 
 ### ⚠️ Changed
 

@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
@@ -120,6 +121,14 @@ internal class MoshiChatApi(
             messageId = message.id,
             connectionId = connectionId,
             message = MessageRequest(message.toDto()),
+        ).map { response -> response.message.toDomain() }
+    }
+
+    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
+        return messageApi.partialUpdateMessage(
+            messageId = messageId,
+            connectionId = connectionId,
+            body = PartialUpdateMessageRequest(set, unset)
         ).map { response -> response.message.toDomain() }
     }
 
