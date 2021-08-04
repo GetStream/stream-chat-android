@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_channel_list_empty">Aucune canaux disponible</string>
+    <string name="stream_ui_channel_list_empty">Aucun canal disponible</string>
     <string name="stream_ui_channel_list_you">Toi</string>
     <string name="stream_ui_channel_list_untitled_channel">Le canal sans nom</string>
 
