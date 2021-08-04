@@ -72,7 +72,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
+- Removed `UrlSigner` class
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
