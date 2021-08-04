@@ -80,7 +80,7 @@ import java.util.Date
  * */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun DefaultMessageContainer(
+public fun DefaultMessageContainer(
     messageItem: MessageItem,
     onLongItemClick: (Message) -> Unit,
     currentUser: User?,
