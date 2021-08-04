@@ -77,10 +77,14 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Exposed an `isMine` property on `MessageItem`s, for ease of use.
+- Allowed for customization of `MessageList` (specifically `Messages`) component background, through a `modifier.background()` parameter.
 
 ### ✅ Added
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `currentUser` parameter from `DefaultMessageContainer` and some other components that relied on ID comparison to know which message is ours/theirs.
+- Removed default background color on `Messages` component, so that users can customize it by passing in a `modifier`.
 
