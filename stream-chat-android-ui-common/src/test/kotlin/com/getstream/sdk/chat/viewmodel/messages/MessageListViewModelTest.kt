@@ -49,7 +49,8 @@ private val MESSAGES = createMessageList {
     )
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
-private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_PARENT_MESSAGE =
+    createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_MESSAGES = createMessageList {
     createMessage(
         createdAt = Date.from(Instant.now()),
@@ -121,7 +122,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should display progressbar and messages`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         val stateList = viewModel.state.observeAll()
 
         stateList.first() shouldBeEqualTo MessageListViewModel.State.Loading
@@ -136,7 +142,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should request more messages when end region reached`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
@@ -146,7 +157,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should delete message`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
@@ -156,7 +172,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should flag message`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.FlagMessage(MESSAGE))
@@ -166,7 +187,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should return from thread to normal mode on back click`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         val states = viewModel.state.observeAll()
         viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
 
@@ -205,7 +231,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should navigate up from normal mode on back click`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         val states = viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
@@ -215,7 +246,12 @@ internal class MessageListViewModelTest {
 
     @Test
     fun `Should display thread messages when thread mode entered`() {
-        val viewModel = MessageListViewModel(CID, domain = domain, client = client)
+        val viewModel = MessageListViewModel(
+            cid = CID,
+            domain = domain,
+            client = client,
+            deletedMessageVisibility = DeletedMessageVisibility.VisibleToEveryone,
+        )
         val states = viewModel.state.observeAll()
 
         viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
