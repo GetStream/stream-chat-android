@@ -378,9 +378,17 @@ public class MessageListViewModel(
         }
     }
 
+    /**
+     * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
+     * group, where the positions can be [Top], [Middle], [Bottom] or [None] if the message isn't in a group.
+     *
+     * @param messages - The messages we need to group.
+     * @return - A list of [MessageItem]s, each containing a position.
+     * */
     private fun groupMessages(messages: List<Message>): List<MessageItem> {
         val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
         val items = mutableListOf<MessageItem>()
+        val currentUser = user.value
 
         messages.forEachIndexed { index, message ->
             val user = message.user
@@ -394,7 +402,14 @@ public class MessageListViewModel(
                 else -> None
             }
 
-            items.add(MessageItem(message, position, parentMessageId))
+            items.add(
+                MessageItem(
+                    message,
+                    position,
+                    parentMessageId,
+                    user.id == currentUser?.id
+                )
+            )
         }
 
         return items
