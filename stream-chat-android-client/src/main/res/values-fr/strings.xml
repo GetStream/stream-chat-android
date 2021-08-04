@@ -4,7 +4,7 @@
     <string name="stream_chat_notification_title">Message de discussion</string>
     <string name="stream_chat_notification_content">Vous avez reçu un nouveau message</string>
     <string name="stream_chat_notification_reply">Répondre</string>
-    <string name="stream_chat_notification_type_hint">Tapez le message</string>
+    <string name="stream_chat_notification_type_hint">Tapez votre message</string>
     <string name="stream_chat_notification_read">Marquer comme lu</string>
     <string name="stream_chat_notification_channel_id">stream_GetStreamClient</string>
     <string name="stream_chat_notification_channel_name">Nouveaux messages de discussion</string>
