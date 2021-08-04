@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Message Date-->
+    <string name="stream_ui_yesterday">Hier</string>
+
+    <!-- Media capture -->
+    <string name="stream_ui_message_input_capture_media">Capture d\'image ou vidéo</string>
+
+    <!-- Permissions -->
+    <string name="stream_ui_message_input_permission_camera_title">Caméra et stockage Autorisation d\'accès</string>
+    <string name="stream_ui_message_input_permission_camera_message">Des autorisations d\'accès à l\'appareil photo et au stockage sont nécessaires pour pouvoir prendre des photos et des vidéos</string>
+    <string name="stream_ui_message_input_permission_storage_title">Autorisations d\'accès au stockage</string>
+    <string name="stream_ui_message_input_permission_storage_message">Des autorisations d\'accès au stockage sont nécessaires pour pouvoir envoyer et enregistrer des photos, des vidéos, de la musique et les autres fichiers</string>
+    <string name="stream_ui_message_input_permission_setting_message">Activer les autorisations sur Paramètres de l\'application</string>
+    <string name="stream_ui_message_input_permissions_setting_button">Paramètres</string>
+
+    <!--Attachment View-->
+    <string name="stream_ui_message_list_attachment_load_failed">Le chargement a échoué en raison d\'une erreur inconnue.</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">Le chargement a échoué en raison d\'une URL non valide.</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Quelque chose s\'est mal passé. Impossible d\'ouvrir la pièce jointe: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">Erreur. Le fichier ne peut pas être affiché</string>
+</resources>
