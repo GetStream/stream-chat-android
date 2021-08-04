@@ -74,16 +74,14 @@ import java.util.Date
  * @param messageItem - The message item to show, which holds the message and the group position, if the message is in
  * a group of messages from the same user.
  * @param onLongItemClick - Handler when the user selects a message, on long tap.
- * @param currentUser - Current user info, required for various states.
  * @param modifier - Modifier for styling.
  * @param onThreadClick - Handler for thread clicks, if this message has a thread going.
  * */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun DefaultMessageContainer(
+public fun DefaultMessageContainer(
     messageItem: MessageItem,
     onLongItemClick: (Message) -> Unit,
-    currentUser: User?,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
 ) {
@@ -92,7 +90,7 @@ internal fun DefaultMessageContainer(
     val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
-    val ownsMessage = message.user.id == currentUser?.id
+    val ownsMessage = messageItem.isMine
 
     val messageCardColor =
         if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
