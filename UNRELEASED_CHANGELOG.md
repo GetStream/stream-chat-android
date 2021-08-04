@@ -77,6 +77,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Exposed `DefaultMessageContainer` as a public component so users can use it as a fallback
 
 ### ✅ Added
 
