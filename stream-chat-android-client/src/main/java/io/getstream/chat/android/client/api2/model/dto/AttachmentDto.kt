@@ -10,6 +10,7 @@ import com.squareup.moshi.JsonClass
 internal data class AttachmentDto(
     val asset_url: String?,
     val author_name: String?,
+    val author_link: String?,
     val fallback: String?,
     val file_size: Int = 0,
     val image: String?,
