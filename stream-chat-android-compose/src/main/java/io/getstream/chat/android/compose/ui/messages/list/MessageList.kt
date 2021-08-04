@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -68,8 +67,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageItem = it,
             onThreadClick = onThreadClick,
-            onLongItemClick = onLongItemClick,
-            currentUser = viewModel.currentMessagesState.currentUser
+            onLongItemClick = onLongItemClick
         )
     },
 ) {
@@ -108,8 +106,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageItem = it,
             onThreadClick = onThreadClick,
-            onLongItemClick = onLongItemClick,
-            currentUser = currentState.currentUser
+            onLongItemClick = onLongItemClick
         )
     },
 ) {
@@ -156,7 +153,7 @@ private fun Messages(
 
     val currentListState = if (parentMessageId != null) rememberLazyListState() else state
 
-    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
+    Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = currentListState,
