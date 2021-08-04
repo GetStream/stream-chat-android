@@ -42,6 +42,7 @@
 - Fixed updating `ChannelController::muted` value
 
 ### ⬆️ Improved
+- The following `Message` fields are now persisted to the database: `pinned`, `pinnedAt`, `pinExpires`, `pinnedBy`, `channelInfo`, `replyMessageId`.
 
 ### ✅ Added
 
