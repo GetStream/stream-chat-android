@@ -65,7 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Added a fix for default view for empty state of ChannelListView.
 ### ⬆️ Improved
 
 ### ✅ Added
