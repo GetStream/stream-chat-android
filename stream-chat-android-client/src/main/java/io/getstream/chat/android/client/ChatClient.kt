@@ -862,12 +862,12 @@ public class ChatClient internal constructor(
      */
     @CheckResult
     public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
+        val set: MutableMap<String, Any> = LinkedHashMap()
+        set["pinned"] = true
+        expirationDate?.let { set["pin_expires"] = it }
         return partialUpdateMessage(
             messageId = message.id,
-            set = mapOf(
-                "pinned" to true,
-                "pin_expires" to expirationDate!!
-            )
+            set = set
         )
     }
 
@@ -888,7 +888,7 @@ public class ChatClient internal constructor(
             messageId = message.id,
             set = mapOf(
                 "pinned" to true,
-                "pin_expires" to calendar.time!!
+                "pin_expires" to calendar.time
             )
         )
     }
