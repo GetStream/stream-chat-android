@@ -3,6 +3,7 @@ package io.getstream.chat.ui.sample.application
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.ui.sample.BuildConfig
@@ -17,6 +18,7 @@ class ChatInitializer(private val context: Context) {
                 smallIcon = R.drawable.ic_chat_bubble,
                 loadNotificationDataIcon = R.drawable.ic_chat_bubble,
                 shouldGroupNotifications = true,
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator()),
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
