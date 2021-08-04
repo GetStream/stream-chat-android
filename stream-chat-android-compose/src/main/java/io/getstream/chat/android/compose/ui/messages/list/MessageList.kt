@@ -106,7 +106,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageItem = it,
             onThreadClick = onThreadClick,
-            onLongItemClick = onLongItemClick
+            onLongItemClick = onLongItemClick,
         )
     },
 ) {
