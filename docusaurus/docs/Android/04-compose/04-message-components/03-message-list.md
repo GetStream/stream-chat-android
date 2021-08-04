@@ -81,7 +81,7 @@ You can customize the behavior here by providing your own actions, like so:
 ```kotlin
 MessageList(
     viewModel = listViewModel,
-    modifier = Modifier.fillMaxSize(),
+    modifier = Modifier.fillMaxSize().background(ChatTheme.colors.appBackground),
     // Actions
     onThreadClick = { message -> },
     onLongItemClick = { message -> },
@@ -110,14 +110,13 @@ fun MessageList(
             message = message,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
-            currentUser = viewModel.currentMessagesState.currentUser
         )
     }
 )
 ```
 
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
-* `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `Message` inside the lambda when building your custom UI.
+* `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageItem` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:
 
@@ -126,7 +125,7 @@ Here's an example of customizing the `Message` items in the list:
 fun CustomMessageList() {
     MessageList(
         viewModel = listViewModel,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(ChatTheme.colors.appBackground),
         itemContent = { messageItem ->
 		    val (message, position) = messageItem
             Column(

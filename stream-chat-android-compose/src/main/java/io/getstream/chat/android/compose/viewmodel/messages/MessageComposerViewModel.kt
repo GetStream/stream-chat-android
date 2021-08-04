@@ -144,18 +144,6 @@ public class MessageComposerViewModel(
     }
 
     /**
-     * Sends a message to the API with all the required information.
-     *
-     * @param message - The message to send.
-     * */
-    public fun sendMessage(message: String) {
-        val messageToSend = buildNewMessage(message, selectedAttachments)
-
-        sendMessage(messageToSend)
-        clearData()
-    }
-
-    /**
      * Clears all the data from the input - both the current [input] value and the
      * [selectedAttachments].
      * */
@@ -172,7 +160,7 @@ public class MessageComposerViewModel(
      *
      * @param message - The message to send.
      * */
-    private fun sendMessage(message: Message) {
+    public fun sendMessage(message: Message) {
         viewModelScope.launch {
             val sendMessageCall = if (isInEditMode) {
                 chatDomain.editMessage(message)
@@ -183,6 +171,7 @@ public class MessageComposerViewModel(
             dismissMessageActions()
             sendMessageCall.enqueue()
         }
+        clearData()
     }
 
     /**
@@ -196,7 +185,7 @@ public class MessageComposerViewModel(
      *
      * @return [Message] object, with all the data required to send it to the API.
      * */
-    private fun buildNewMessage(
+    internal fun buildNewMessage(
         message: String,
         attachments: List<Attachment> = emptyList(),
     ): Message {
@@ -204,8 +193,8 @@ public class MessageComposerViewModel(
         val messageMode = messageMode
 
         val actionMessage = activeAction?.message ?: Message()
-        val replyMessageId = if (activeAction is Reply) activeAction.message.id else null
-        val parentMessageId = if (messageMode is Thread) messageMode.parentMessage.id else null
+        val replyMessageId = (activeAction as? Reply)?.message?.id
+        val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
 
         return if (isInEditMode) {
             actionMessage.copy(

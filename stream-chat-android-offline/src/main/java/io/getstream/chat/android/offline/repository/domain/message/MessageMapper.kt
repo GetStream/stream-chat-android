@@ -6,6 +6,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.toModel
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.toEntity
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.toModel
 import io.getstream.chat.android.offline.repository.domain.reaction.toEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.toModel
 
@@ -38,9 +40,15 @@ internal suspend fun MessageEntity.toModel(
         ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
         mentionedUsers = mentionedUsersId.map { getUser(it) }.toMutableList(),
         replyTo = replyToId?.let { getMessage(it) },
+        replyMessageId = replyToId,
         threadParticipants = threadParticipantsIds.map { getUser(it) },
         showInChannel = showInChannel,
         silent = silent,
+        channelInfo = channelInfo?.toModel(),
+        pinned = pinned,
+        pinnedAt = pinnedAt,
+        pinExpires = pinExpires,
+        pinnedBy = pinnedByUserId?.let { getUser(it) }
     )
 }
 
@@ -69,7 +77,12 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         replyToId = replyTo?.id ?: replyMessageId,
         threadParticipantsIds = threadParticipants.map(User::id),
         showInChannel = showInChannel,
-        silent = silent
+        silent = silent,
+        channelInfo = channelInfo?.toEntity(),
+        pinned = pinned,
+        pinnedAt = pinnedAt,
+        pinExpires = pinExpires,
+        pinnedByUserId = pinnedBy?.id,
     ),
     attachments = attachments.map { it.toEntity(id) },
     latestReactions = latestReactions.map(Reaction::toEntity),
