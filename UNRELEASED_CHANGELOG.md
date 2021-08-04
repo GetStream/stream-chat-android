@@ -42,6 +42,7 @@
 - Fixed updating `ChannelController::muted` value
 
 ### ⬆️ Improved
+- The following `Message` fields are now persisted to the database: `pinned`, `pinnedAt`, `pinExpires`, `pinnedBy`, `channelInfo`, `replyMessageId`.
 
 ### ✅ Added
 
@@ -80,13 +81,16 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Exposed `DefaultMessageContainer` as a public component so users can use it as a fallback
 - Exposed an `isMine` property on `MessageItem`s, for ease of use.
 - Allowed for customization of `MessageList` (specifically `Messages`) component background, through a `modifier.background()` parameter.
+- Allowed for better message customization before sending the message.
 
 ### ✅ Added
 
 ### ⚠️ Changed
 - Moved permissions and queries from the compose sample app `AndroidManifest.xml` to the SDK `AndroidManifest.xml` so users don't have to add permissions themselves.
+- Changed the exposed type of the `MessageComposer`'s `onSendMessage` handler. This way people can customize messages before we send them to the API.
 
 ### ❌ Removed
 - Removed `currentUser` parameter from `DefaultMessageContainer` and some other components that relied on ID comparison to know which message is ours/theirs.

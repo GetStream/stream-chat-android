@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.repository.facade
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
+import io.getstream.chat.android.offline.randomChannelInfo
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
@@ -34,6 +35,12 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message When persisting the message Should store required fields`() = runBlocking {
         val message = randomMessage(
             user = randomUser(
+                // ignoring fields that are not persisted on purpose
+                totalUnreadCount = 0,
+                unreadChannels = 0,
+                online = false
+            ),
+            pinnedBy = randomUser(
                 // ignoring fields that are not persisted on purpose
                 totalUnreadCount = 0,
                 unreadChannels = 0,
@@ -103,5 +110,28 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             Truth.assertThat(result).isNotNull()
             Truth.assertThat(result!!.latestReactions).isEmpty()
             Truth.assertThat(result!!.ownReactions).isEmpty()
+        }
+
+    @Test
+    fun `Given a message without channel info When querying message Should return message with null channel info`() =
+        runBlocking {
+            val message = randomMessage(channelInfo = null)
+
+            repositoryFacade.insertMessages(listOf(message), cache = false)
+            val result = repositoryFacade.selectMessage(message.id)
+
+            Truth.assertThat(result?.channelInfo).isNull()
+        }
+
+    @Test
+    fun `Given a message with channel info When querying message Should return message with the same channel info`() =
+        runBlocking {
+            val channelInfo = randomChannelInfo()
+            val message = randomMessage(channelInfo = channelInfo)
+
+            repositoryFacade.insertMessages(listOf(message), cache = false)
+            val result = repositoryFacade.selectMessage(message.id)
+
+            Truth.assertThat(result?.channelInfo).isEqualTo(channelInfo)
         }
 }
