@@ -15,8 +15,8 @@
         <item quantity="other">%1d Membres</item>
     </plurals>
     <plurals name="stream_ui_message_list_header_typing_users">
-        <item quantity="one">%s est en train d'écrire</item>
-        <item quantity="other">%s et %d sont entrain d'écrire</item>
+        <item quantity="one">%s est en train d\'écrire</item>
+        <item quantity="other">%s et %d sont entrain d\'écrire</item>
     </plurals>
 
     <string name="stream_ui_message_list_header_back_button_content_description">Bouton Retour</string>
