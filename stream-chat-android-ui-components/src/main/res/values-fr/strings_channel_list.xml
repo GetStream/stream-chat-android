@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">Aucune canaux disponible</string>
+    <string name="stream_ui_channel_list_you">Toi</string>
+    <string name="stream_ui_channel_list_untitled_channel">Le canal sans nom</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">Voir les informations</string>
+    <string name="stream_ui_channel_list_leave_channel">Quitter le Group</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">Annuler</string>
+    <string name="stream_ui_channel_list_delete_channel">Supprimer la conversation</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="one">%1d Membre, %2d En ligne</item>
+        <item quantity="other">%1d Membres, %2d En ligne</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">Supprimer la canal</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">Êtes-vous sûr de vouloir supprimer définitivement ce\nmessage?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">Supprimer</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">Annuler</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">Échec de la masquer la canal</string>
+    <string name="stream_ui_channel_list_error_delete_channel">Échec de la suppression de la canal</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Échec de la sortie de la canal</string>
+</resources>
