@@ -12,7 +12,7 @@
     <string name="stream_ui_message_list_deleted_message">Message supprimé</string>
     <string name="stream_ui_message_list_attachment_more_count">+%d</string>
     <string name="stream_ui_message_list_attachment_uploading">Téléchargement %d / %d …</string>
-    <string name="stream_ui_message_list_attachment_upload_complete">Téléchargement terminé, traitement…</string>
+    <string name="stream_ui_message_list_attachment_upload_complete">Transfert terminé, traitement…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Réponse au fil de discussion</item>
@@ -30,9 +30,9 @@
     <string name="stream_ui_message_list_copy_message">Copier le message</string>
     <string name="stream_ui_message_list_edit_message">Modifier le message</string>
     <string name="stream_ui_message_list_flag_message">Signaler un message</string>
-    <string name="stream_ui_message_list_mute_user">Utilisateur muter</string>
-    <string name="stream_ui_message_list_unmute_user">Utilisateur unmute</string>
-    <string name="stream_ui_message_list_block_user">Bloquer un utilisateur</string>
+    <string name="stream_ui_message_list_mute_user">Mettre en sourdine l\'utilisateur</string>
+    <string name="stream_ui_message_list_unmute_user">Désactiver la mise en sourdine de l\'utilisateur</string>
+    <string name="stream_ui_message_list_block_user">Bloquer l\'utilisateur</string>
     <string name="stream_ui_message_list_delete_message">Supprimer le message</string>
     <plurals name="stream_ui_message_list_message_reactions">
         <item quantity="one">%d Réaction aux messages</item>
@@ -41,7 +41,7 @@
 
     <!-- Message Action Confirmations -->
     <string name="stream_ui_message_list_delete_confirmation_title">Supprimer le message</string>
-    <string name="stream_ui_message_list_delete_confirmation_message">Voulez-vous vraiment supprimer définitivement ce message ?</string>
+    <string name="stream_ui_message_list_delete_confirmation_message">Êtes-vous sûr de vouloir supprimer définitivement ce message ?</string>
     <string name="stream_ui_message_list_delete_confirmation_positive_button">Supprimer</string>
     <string name="stream_ui_message_list_delete_confirmation_negative_button">Annuler</string>
     <string name="stream_ui_message_list_flag_confirmation_title">Signaler un message</string>
@@ -52,11 +52,11 @@
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">Le chargement a échoué en raison d\'une erreur inconnue.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">Le chargement a échoué en raison d\'une URL non valide.</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">Quelque chose s\'est mal passé. Impossible d\'ouvrir la pièce jointe: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Erreur. Le fichier ne peut pas être affiché</string>
 
     <!-- Errors -->
-    <string name="stream_ui_message_list_error_mute_user">Échec à l\'utilisateur muet</string>
+    <string name="stream_ui_message_list_error_mute_user">Échec de la mise en sourdine de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_unmute_user">Échec à l\'utilisateur unmute</string>
     <string name="stream_ui_message_list_error_block_user">Échec du blocage de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_flag_message">Échec du signalement du message</string>

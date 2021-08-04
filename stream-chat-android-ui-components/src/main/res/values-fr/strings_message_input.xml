@@ -22,11 +22,11 @@
     <string name="stream_ui_message_input_permission_camera_title">Caméra et stockage Autorisation d\'accès</string>
     <string name="stream_ui_message_input_permission_camera_message">Des autorisations d\'accès à l\'appareil photo et au stockage sont nécessaires pour pouvoir prendre des photos et des vidéos</string>
     <string name="stream_ui_message_input_permission_storage_title">Autorisations d\'accès au stockage</string>
-    <string name="stream_ui_message_input_permission_storage_message">Des autorisations d\'accès au stockage sont nécessaires pour pouvoir envoyer et enregistrer des photos, des vidéos, de la musique et les autres fichiers</string>
-    <string name="stream_ui_message_input_permission_setting_message">Activer les autorisations sur Paramètres de l\'application</string>
+    <string name="stream_ui_message_input_permission_storage_message">Des autorisations d\'accès au stockage sont nécessaires pour pouvoir envoyer et sauvegarder des photos, des vidéos, de la musique et d\'autres fichiers.</string>
+    <string name="stream_ui_message_input_permission_setting_message">Activez les autorisations dans les Paramètres de l\'application</string>
     <string name="stream_ui_message_input_permissions_setting_button">Paramètres</string>
 
     <!-- Errors -->
-    <string name="stream_ui_message_input_error_file_size">Fichier trop gros</string>
+    <string name="stream_ui_message_input_error_file_size">Fichier trop volumineux</string>
     <string name="stream_ui_message_input_error_max_length">"Longueur maximale du message (%d) dépassée."</string>
 </resources>

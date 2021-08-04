@@ -2,7 +2,7 @@
 <resources>
     <!-- Header Title -->
     <string name="stream_ui_message_list_header_thread_title">Réponse au fil de discussion</string>
-    <string name="stream_ui_message_list_header_untitled_channel">Le canal sans nom</string>
+    <string name="stream_ui_message_list_header_untitled_channel">Canal sans nom</string>
 
     <!-- Header Subtitle -->
     <string name="stream_ui_message_list_header_thread_subtitle">avec %s</string>

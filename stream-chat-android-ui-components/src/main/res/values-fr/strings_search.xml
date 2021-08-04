@@ -12,5 +12,5 @@
     </plurals>
 
     <string name="stream_ui_search_input_search_icon_content_description">Recherche</string>
-    <string name="stream_ui_search_input_clear_icon_content_description">Dégager</string>
+    <string name="stream_ui_search_input_clear_icon_content_description">Effacer</string>
 </resources>
