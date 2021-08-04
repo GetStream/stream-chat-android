@@ -82,14 +82,9 @@ public class ChannelListView : FrameLayout {
 
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
-        emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
+        emptyStateView = streamThemeInflater.inflate(style.emptyStateView, this, false).apply {
             isVisible = true
-            addView(
-                this,
-                LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    gravity = Gravity.CENTER
-                }
-            )
+            addView(this)
         }
 
         loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
