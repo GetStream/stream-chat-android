@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.notifications.handler
 
+import android.content.Context
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.models.Device
 
 public data class NotificationConfig(
     val notificationChannelId: Int = R.string.stream_chat_notification_channel_id,
@@ -17,4 +19,10 @@ public data class NotificationConfig(
     val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
     val shouldGroupNotifications: Boolean = false,
     val pushNotificationsEnabled: Boolean = true,
+    val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
 )
+
+public interface PushDeviceGenerator {
+    public fun isValidForThisDevice(context: Context): Boolean
+    public fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit)
+}

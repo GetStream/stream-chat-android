@@ -2700,14 +2700,15 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
-	public fun <init> (IIIIIZIIIIIIZZ)V
-	public synthetic fun <init> (IIIIIZIIIIIIZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IIIIIZIIIIIIZZLjava/util/List;)V
+	public synthetic fun <init> (IIIIIZIIIIIIZZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()I
 	public final fun component10 ()I
 	public final fun component11 ()I
 	public final fun component12 ()I
 	public final fun component13 ()Z
 	public final fun component14 ()Z
+	public final fun component15 ()Ljava/util/List;
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()I
@@ -2716,8 +2717,8 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (IIIIIZIIIIIIZZ)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;IIIIIZIIIIIIZZILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public final fun copy (IIIIIZIIIIIIZZLjava/util/List;)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;IIIIIZIIIIIIZZLjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getErrorCaseNotificationContent ()I
 	public final fun getErrorCaseNotificationTitle ()I
@@ -2729,12 +2730,18 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public final fun getNotificationChannelId ()I
 	public final fun getNotificationChannelName ()I
 	public final fun getNotificationGroupSummaryContentText ()I
+	public final fun getPushDeviceGenerators ()Ljava/util/List;
 	public final fun getPushNotificationsEnabled ()Z
 	public final fun getShouldGroupNotifications ()Z
 	public final fun getSmallIcon ()I
 	public final fun getUseProvidedFirebaseInstance ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
+	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
 }
 
 public final class io/getstream/chat/android/client/socket/ErrorResponse {

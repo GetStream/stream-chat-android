@@ -10,6 +10,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
@@ -18,6 +19,7 @@ import io.getstream.chat.android.client.models.PushMessage;
 import io.getstream.chat.android.client.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
+import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
 import io.getstream.chat.docs.R;
 
@@ -66,6 +68,7 @@ public class Push {
             int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
             boolean shouldGroupNotifications = true;
             boolean pushNotificationsEnabled = true;
+            List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>();
 
             NotificationConfig notificationsConfig = new NotificationConfig(
                     notificationChannelId,
@@ -81,7 +84,8 @@ public class Push {
                     errorNotificationGroupSummaryTitle,
                     errorNotificationGroupSummaryContentText,
                     shouldGroupNotifications,
-                    pushNotificationsEnabled
+                    pushNotificationsEnabled,
+                    pushDeviceGenerators
             );
 
             MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
