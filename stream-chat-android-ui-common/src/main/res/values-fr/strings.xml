@@ -4,7 +4,7 @@
     <string name="stream_ui_yesterday">Hier</string>
 
     <!-- Media capture -->
-    <string name="stream_ui_message_input_capture_media">Capture d\'image ou vidéo</string>
+    <string name="stream_ui_message_input_capture_media">Capture d\'image ou de vidéo</string>
 
     <!-- Permissions -->
     <string name="stream_ui_message_input_permission_camera_title">Caméra et stockage Autorisation d\'accès</string>
