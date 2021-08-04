@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.messages
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,7 @@ import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -133,6 +135,7 @@ public fun MessagesScreen(
             MessageList(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
                 onThreadClick = { message ->

@@ -94,7 +94,7 @@ public fun AttachmentsPicker(
         attachmentsPickerViewModel.start()
     }
 
-    Box( // TODO we need a nicer way of allowing dismissing, where we don't intercept clicks on the parent and the child
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent)

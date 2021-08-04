@@ -3,10 +3,6 @@
     package="io.getstream.chat.android.compose.sample"
     >
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
     <application
         android:name="io.getstream.chat.android.compose.sample.ChatApp"
         android:allowBackup="true"
@@ -32,15 +28,5 @@
             android:windowSoftInputMode="adjustResize"
             />
     </application>
-
-    <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-
-        <intent>
-            <action android:name="android.media.action.VIDEO_CAPTURE" />
-        </intent>
-    </queries>
 
 </manifest>
