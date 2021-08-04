@@ -109,7 +109,7 @@ fun MessageList(
         DefaultMessageContainer(
             message = message,
             onThreadClick = onThreadClick,
-            onLongItemClick = onLongItemClick
+            onLongItemClick = onLongItemClick,
         )
     }
 )
