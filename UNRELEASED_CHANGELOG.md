@@ -56,6 +56,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `DeletedMessageVisibility` class. It's used by `ChatUI.deletedMessageVisibility` for customizing visibility of the deleted messages.
 
 ### ⚠️ Changed
 
@@ -70,6 +71,12 @@
 ### ✅ Added
 - Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
 - Added `authorLink` to `Attachment` - the link to the website
+- Added `ChatUI.deletedMessageVisibility: DeletedMessageVisibility` property. It's responsible for deciding if Deleted Message item should be displayed on the `MessageListView`.
+`ChatUI.deletedMessageVisibility` can be set to one of predefined objects:
+    * `DeletedMessageVisibility.VisibleToEveryone`
+    * `DeletedMessageVisibility.VisibleToAuthor`
+    * `DeletedMessageVisibility.NotVisibleToAnyone`
+Alternatively, it can be set to a custom implementation of the `DeletedMessageVisibility` class.
 
 ### ⚠️ Changed
 
