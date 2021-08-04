@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
@@ -82,8 +83,12 @@ public class ChannelListView : FrameLayout {
         addView(simpleChannelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
         emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
-            isVisible = false
-            addView(this)
+            isVisible = true
+            addView(this,
+                LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                    gravity = Gravity.CENTER
+                }
+            )
         }
 
         loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
