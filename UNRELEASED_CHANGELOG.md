@@ -81,6 +81,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Exposed `DefaultMessageContainer` as a public component so users can use it as a fallback
 - Exposed an `isMine` property on `MessageItem`s, for ease of use.
 - Allowed for customization of `MessageList` (specifically `Messages`) component background, through a `modifier.background()` parameter.
 
