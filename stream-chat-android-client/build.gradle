@@ -76,6 +76,7 @@ dependencies {
     implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
+    implementation Dependencies.googlePlayServicesBase
     kapt Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
