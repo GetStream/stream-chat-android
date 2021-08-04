@@ -10,6 +10,8 @@ public data class Attachment(
 
     @SerializedName("author_name")
     var authorName: String? = null,
+    @SerializedName("author_link")
+    var authorLink: String? = null,
     @SerializedName("title_link")
     var titleLink: String? = null,
     @SerializedName("thumb_url")
