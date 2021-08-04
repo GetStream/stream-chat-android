@@ -115,7 +115,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                     messages.filter { message ->
                         val isDeleted = message.deletedAt != null
                         if (isDeleted) {
-                            deletedMessageVisibility.deletedMessageVisibilityCondition(message)
+                            deletedMessageVisibility.shouldDisplayMessage(message)
                         } else {
                             true
                         }

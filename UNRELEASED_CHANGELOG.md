@@ -56,7 +56,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `DeletedMessageVisibility` class. It's used by `ChatUI.deletedMessageVisibility` for customizing visibility of the deleted messages.
+- Added `DeletedMessageVisibility` interface. It's used by `ChatUI.deletedMessageVisibility` for customizing visibility of the deleted messages.
 
 ### ⚠️ Changed
 
