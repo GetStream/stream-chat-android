@@ -17,6 +17,6 @@
     <!--Attachment View-->
     <string name="stream_ui_message_list_attachment_load_failed">Le chargement a échoué en raison d\'une erreur inconnue.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">Le chargement a échoué en raison d\'une URL non valide.</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">Quelque chose s\'est mal passé. Impossible d\'ouvrir la pièce jointe: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Erreur. Le fichier ne peut pas être affiché</string>
 </resources>
