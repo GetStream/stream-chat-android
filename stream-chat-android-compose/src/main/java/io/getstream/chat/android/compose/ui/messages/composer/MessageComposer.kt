@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
@@ -48,7 +49,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
-    onSendMessage: (String) -> Unit = { viewModel.sendMessage(it) },
+    onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
@@ -73,7 +74,11 @@ public fun MessageComposer(
 ) {
     MessageComposer(
         modifier = modifier,
-        onSendMessage = onSendMessage,
+        onSendMessage = { text, attachments ->
+            val messageWithData = viewModel.buildNewMessage(text, attachments)
+
+            onSendMessage(messageWithData)
+        },
         integrations = integrations,
         input = input,
         value = viewModel.input,
@@ -103,7 +108,7 @@ public fun MessageComposer(
     value: String,
     attachments: List<Attachment>,
     activeAction: MessageAction?,
-    onSendMessage: (String) -> Unit,
+    onSendMessage: (String, List<Attachment>) -> Unit,
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
@@ -154,7 +159,7 @@ public fun MessageComposer(
                     },
                     onClick = {
                         if (isInputValid) {
-                            onSendMessage(value)
+                            onSendMessage(value, attachments)
                         }
                     }
                 )
