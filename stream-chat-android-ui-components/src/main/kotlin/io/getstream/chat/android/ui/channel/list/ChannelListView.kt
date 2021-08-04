@@ -84,7 +84,8 @@ public class ChannelListView : FrameLayout {
 
         emptyStateView = streamThemeInflater.inflate(style.emptyStateView, null).apply {
             isVisible = true
-            addView(this,
+            addView(
+                this,
                 LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                     gravity = Gravity.CENTER
                 }
