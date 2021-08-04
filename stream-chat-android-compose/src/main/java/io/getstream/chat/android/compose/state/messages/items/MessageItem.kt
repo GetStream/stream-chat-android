@@ -6,4 +6,5 @@ public data class MessageItem(
     val message: Message,
     val position: MessageItemGroupPosition,
     val parentMessageId: String? = null,
+    val isMine: Boolean = false,
 )

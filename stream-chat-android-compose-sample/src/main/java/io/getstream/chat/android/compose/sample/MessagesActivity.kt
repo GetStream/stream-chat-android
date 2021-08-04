@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -105,6 +106,7 @@ class MessagesActivity : AppCompatActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
+                        .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
                     onThreadClick = { message ->
