@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/stream_color_primary</item>
         <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
         <item name="streamUiTheme">@style/StreamTheme</item>

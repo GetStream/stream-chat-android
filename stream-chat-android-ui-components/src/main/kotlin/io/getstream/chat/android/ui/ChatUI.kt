@@ -75,4 +75,6 @@ public object ChatUI {
         set(value) {
             mimeTypeIconProviderOverride = value
         }
+
+    public var uiMode: UiMode = UiMode.LIGHT //Change it to SYSTEM in the PR.
 }

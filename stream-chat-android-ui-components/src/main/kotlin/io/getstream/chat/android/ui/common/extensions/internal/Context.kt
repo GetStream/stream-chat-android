@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
@@ -17,7 +18,9 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.UiMode
 
 @Px
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
@@ -54,11 +57,28 @@ internal fun Context.copyToClipboard(text: String) {
     clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
 }
 
-internal fun Context.createStreamThemeWrapper(): Context {
+internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): Context {
     val typedValue = TypedValue()
+    
     return when {
-        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
-        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
+        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) ->
+            ContextThemeWrapper(this, R.style.StreamUiEmptyTheme)
+        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
+            ContextThemeWrapper(this, typedValue.resourceId)
         else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
+    }.apply {
+        applyOverrideConfiguration(Configuration().apply {
+            setUiMode(uiMode)
+        })
+    }
+}
+
+private fun Configuration.setUiMode(uiMode: UiMode) {
+    when (uiMode) {
+        UiMode.LIGHT -> Configuration.UI_MODE_NIGHT_NO
+        UiMode.DARK -> Configuration.UI_MODE_NIGHT_YES
+        UiMode.SYSTEM -> null
+    }?.let { modeInt ->
+        this.uiMode = modeInt
     }
 }

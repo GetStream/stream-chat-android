@@ -49,6 +49,7 @@ public data class ChannelListViewStyle(
     public val optionsEnabled: Boolean,
     public val deleteEnabled: Boolean,
     public val swipeEnabled: Boolean,
+    @ColorInt public val backgroundColor: Int,
     @ColorInt public val backgroundLayoutColor: Int,
     public val channelTitleText: TextStyle,
     public val lastMessageText: TextStyle,
@@ -96,6 +97,11 @@ public data class ChannelListViewStyle(
                 val swipeEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiSwipeEnabled,
                     true
+                )
+
+                val backgroundColor = a.getColor(
+                    R.styleable.ChannelListView_streamUiChannelListBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_white)
                 )
 
                 val backgroundLayoutColor = a.getColor(
@@ -234,6 +240,7 @@ public data class ChannelListViewStyle(
                     optionsEnabled = moreOptionsEnabled,
                     deleteEnabled = deleteEnabled,
                     swipeEnabled = swipeEnabled,
+                    backgroundColor = backgroundColor,
                     backgroundLayoutColor = backgroundLayoutColor,
                     channelTitleText = channelTitleText,
                     lastMessageText = lastMessageText,

@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
@@ -74,7 +72,7 @@ class ChannelListFragment : Fragment() {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(HomeFragmentDirections.actionHomeFragmentToAddChannelFragment())
             }
-            setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            // setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             setChannelItemClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)

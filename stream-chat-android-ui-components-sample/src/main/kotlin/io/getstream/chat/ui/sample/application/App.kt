@@ -2,6 +2,7 @@ package io.getstream.chat.ui.sample.application
 
 import android.app.Application
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
@@ -30,6 +31,7 @@ class App : Application() {
             }.build()
         )
         ApplicationConfigurator.configureApp(this)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     private fun getApiKey(): String {
