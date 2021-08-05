@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
@@ -247,6 +248,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
+    private var deletedMessageListItemPredicate: MessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -758,6 +760,17 @@ public class MessageListView : ConstraintLayout {
         this.messageListItemPredicate = messageListItemPredicate
     }
 
+    /**
+     * Used to specify visibility of the deleted
+     * @param deletedMessageListItemPredicate An instance of [MessageListItemPredicate]. You can pass one of the following objects:
+     * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
+     * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
+     */
+    public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
+        this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
+    }
+
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
         this.attachmentViewFactory = attachmentViewFactory
@@ -782,7 +795,16 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = listItem.items.filter(messageListItemPredicate::predicate)
+            val filteredList = listItem.items
+                .filter(messageListItemPredicate::predicate)
+                .filter { item ->
+                    if (item is MessageListItem.MessageItem && item.message.isDeleted()) {
+                        deletedMessageListItemPredicate.predicate(item)
+                    } else {
+                        true
+                    }
+                }
+
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
@@ -1178,6 +1200,38 @@ public class MessageListView : ConstraintLayout {
                 return values().find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
             }
+        }
+    }
+}
+
+/**
+ * Predicate class used to filter [MessageListItem.MessageItem] items which are deleted.
+ */
+public sealed class DeletedMessageListItemPredicate : MessageListView.MessageListItemPredicate {
+    /**
+     * Predicate object used to hide deleted [MessageListItem.MessageItem] items from everyone.
+     */
+    public object NotVisibleToAnyone : DeletedMessageListItemPredicate() {
+        override fun predicate(item: MessageListItem): Boolean {
+            return false
+        }
+    }
+
+    /**
+     * Predicate object used to show deleted [MessageListItem.MessageItem] items to everyone.
+     */
+    public object VisibleToEveryone : DeletedMessageListItemPredicate() {
+        override fun predicate(item: MessageListItem): Boolean {
+            return true
+        }
+    }
+
+    /**
+     * Predicate object used to hide deleted [MessageListItem.MessageItem] items from everyone except for the author of the message.
+     */
+    public object VisibleToAuthorOnly : DeletedMessageListItemPredicate() {
+        override fun predicate(item: MessageListItem): Boolean {
+            return true
         }
     }
 }
