@@ -2,7 +2,9 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
@@ -51,6 +53,26 @@ internal class MessageListItemAdapter(
     override fun onViewRecycled(holder: BaseMessageItemViewHolder<out MessageListItem>) {
         super.onViewRecycled(holder)
         holder.unbind()
+    }
+
+    override fun onViewAttachedToWindow(holder: BaseMessageItemViewHolder<out MessageListItem>) {
+        super.onViewAttachedToWindow(holder)
+        holder.onAttachedToWindow()
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseMessageItemViewHolder<out MessageListItem>) {
+        holder.onDetachedFromWindow()
+        super.onViewDetachedFromWindow(holder)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        doForAllViewHolders(recyclerView) { it.onAttachedToWindow() }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        doForAllViewHolders(recyclerView) { it.onDetachedFromWindow() }
+        super.onDetachedFromRecyclerView(recyclerView)
     }
 
     companion object {

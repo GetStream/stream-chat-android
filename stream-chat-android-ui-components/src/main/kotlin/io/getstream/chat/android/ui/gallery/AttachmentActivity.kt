@@ -14,9 +14,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.UrlSigner
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -27,9 +25,6 @@ public class AttachmentActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     private val logger = ChatLogger.get("AttachmentActivity")
-
-    private val urlSigner: UrlSigner
-        get() = ChatUI.urlSigner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +81,7 @@ public class AttachmentActivity : AppCompatActivity() {
         progressBar.isVisible = true
 
         url?.let {
-            webView.loadUrl(urlSigner.signFileUrl(it))
+            webView.loadUrl(it)
         }
     }
 
@@ -104,19 +99,19 @@ public class AttachmentActivity : AppCompatActivity() {
         webView.isVisible = false
 
         iv_image.load(
-            data = urlSigner.signImageUrl(url),
+            data = url,
             placeholderResId = R.drawable.stream_ui_placeholder,
         )
     }
 
     private inner class AppWebViewClients : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            view.loadUrl(urlSigner.signFileUrl(url))
+            view.loadUrl(url)
             return true
         }
 
         override fun onPageFinished(view: WebView, url: String) {
-            super.onPageFinished(view, urlSigner.signFileUrl(url))
+            super.onPageFinished(view, url)
             progressBar.isVisible = false
         }
 

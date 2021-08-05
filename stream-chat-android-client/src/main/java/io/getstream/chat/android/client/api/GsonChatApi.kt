@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api.models.PartialUpdateUser
 import io.getstream.chat.android.client.api.models.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
@@ -299,6 +300,18 @@ internal class GsonChatApi(
             messageId = message.id,
             connectionId = connectionId,
             message = MessageRequest(message)
+        ).map { it.message }
+    }
+
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>
+    ): Call<Message> {
+        return retrofitApi.partialUpdateMessage(
+            messageId = messageId,
+            connectionId = connectionId,
+            body = PartialUpdateMessageRequest(set, unset)
         ).map { it.message }
     }
 

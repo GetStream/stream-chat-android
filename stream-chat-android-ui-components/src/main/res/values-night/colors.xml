@@ -22,4 +22,7 @@
     <color name="stream_ui_button_text_color">#005AFF</color>
     <color name="stream_ui_border">#141924</color>
     <color name="stream_ui_highlight">#302D22</color>
+
+    <!-- Message replies -->
+    <color name="stream_ui_bars_background">#121416</color>
 </resources>

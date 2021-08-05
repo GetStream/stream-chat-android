@@ -28,7 +28,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `Channel::isMutedFor` extension function which might be used to check if the Channel is muted for User
 
 ### ⚠️ Changed
 
@@ -37,7 +36,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed updating `ChannelController::muted` value
 
 ### ⬆️ Improved
 
@@ -66,7 +64,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
 
 ### ⚠️ Changed
 
@@ -83,4 +80,3 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-

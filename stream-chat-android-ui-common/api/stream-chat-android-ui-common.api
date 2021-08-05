@@ -6,17 +6,6 @@ public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/con
 	public fun <init> ()V
 }
 
-public abstract interface class com/getstream/sdk/chat/UrlSigner {
-	public abstract fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
-}
-
-public class com/getstream/sdk/chat/UrlSigner$DefaultUrlSigner : com/getstream/sdk/chat/UrlSigner {
-	public fun <init> ()V
-	public fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
-}
-
 public abstract class com/getstream/sdk/chat/adapter/MessageListItem {
 	public final fun getStableId ()J
 }

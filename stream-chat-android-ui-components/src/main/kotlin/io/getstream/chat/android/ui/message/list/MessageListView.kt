@@ -387,7 +387,7 @@ public class MessageListView : ConstraintLayout {
             giphySendHandler.onSendGiphy(message, action)
         }
     private val DEFAULT_LINK_CLICK_LISTENER = LinkClickListener { url ->
-        ChatUI.navigator.navigate(WebLinkDestination(url, context, ChatUI.urlSigner))
+        ChatUI.navigator.navigate(WebLinkDestination(context, url))
     }
     private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
         // Empty
@@ -522,8 +522,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
+        adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         attachmentGalleryDestination.unregister()
+        super.onDetachedFromWindow()
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {
