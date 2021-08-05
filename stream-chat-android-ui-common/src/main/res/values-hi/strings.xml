@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Message Date-->
+    <string name="stream_ui_yesterday">कल</string>
+
+    <!-- Media capture -->
+    <string name="stream_ui_message_input_capture_media">फोटो या वीडियो खींचे</string>
+
+    <!-- Permissions -->
+    <string name="stream_ui_message_input_permission_camera_title">कैमरा इस्तेमाल करने की अनुमति</string>
+    <string name="stream_ui_message_input_permission_camera_message">फोटो और वीडियो खींचने के लिए डिवाइस के कैमरा का इस्तेमाल करने की अनुमति दें।</string>
+    <string name="stream_ui_message_input_permission_storage_title">स्टोरेज इस्तेमाल करने की अनुमति</string>
+    <string name="stream_ui_message_input_permission_storage_message">फ़ोटो, वीडियो, संगीत और अन्य फ़ाइलें सहेजने के लिए डिवाइस के फोटो, मीडिया और फ़ाइल का इस्तेमाल करने दें।</string>
+    <string name="stream_ui_message_input_permission_setting_message">एप्लीकेशन सेटिंग्स में अनुमतियां दे</string>
+    <string name="stream_ui_message_input_permissions_setting_button">सेटिंग्स</string>
+
+    <!--Attachment View-->
+    <string name="stream_ui_message_list_attachment_load_failed">अज्ञात त्रुटि के कारण लोड विफल हो गया।</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">अमान्य यूआरएल के कारण लोड विफल रहा।</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">कुछ गलत हो गया। अटैचमेंट खोलने में असमर्थ: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">त्रुटि। फ़ाइल प्रदर्शित नहीं की जा सकती</string>
+</resources>
