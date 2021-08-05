@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_list_empty">कोई मैसेज नहीं</string>
+    <string name="stream_ui_message_list_download_started">डाउनलोड शुरू हुआ</string>
+
+    <!-- Message List Item -->
+    <string name="stream_ui_message_list_giphy_title">Giphy</string>
+    <string name="stream_ui_message_list_giphy_send">भेजें</string>
+    <string name="stream_ui_message_list_giphy_cancel">रद्द करें</string>
+    <string name="stream_ui_message_list_giphy_shuffle">बदलें</string>
+    <string name="stream_ui_message_list_ephemeral_message">केवल आपको दिखाई दे रहा है</string>
+    <string name="stream_ui_message_list_deleted_message">मैसेज मिटाए गए</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
+    <string name="stream_ui_message_list_attachment_uploading">अपलोडिंग %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_upload_complete">अपलोड पूरा हुआ, प्रोसेसिंग जारी है…</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <plurals name="stream_ui_message_list_thread_reply">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_thread_separator">
+        <item quantity="one">%d जवाब</item>
+        <item quantity="other">%d जवाब</item>
+    </plurals>
+
+    <!-- Message Actions Dialog -->
+    <string name="stream_ui_message_list_reply">जवाब दें</string>
+    <string name="stream_ui_message_list_thread_reply">चर्चा पर जवाब दें</string>
+    <string name="stream_ui_message_list_resend_message">दोबारा भेजें</string>
+    <string name="stream_ui_message_list_copy_message">मैसेज कॉपी करें</string>
+    <string name="stream_ui_message_list_edit_message">मैसेज एडिट करें</string>
+    <string name="stream_ui_message_list_flag_message">मैसेज चिह्नित करें</string>
+    <string name="stream_ui_message_list_mute_user">यूजर को म्यूट करें</string>
+    <string name="stream_ui_message_list_unmute_user">यूजर को म्यूट से हटायें</string>
+    <string name="stream_ui_message_list_block_user">यूजर को ब्लॉक करें</string>
+    <string name="stream_ui_message_list_delete_message">मैसेज मिटायें</string>
+    <plurals name="stream_ui_message_list_message_reactions">
+        <item quantity="one">%d प्रतिक्रिया</item>
+        <item quantity="other">%d प्रतिक्रियायें</item>
+    </plurals>
+
+    <!-- Message Action Confirmations -->
+    <string name="stream_ui_message_list_delete_confirmation_title">मैसेज मिटायें</string>
+    <string name="stream_ui_message_list_delete_confirmation_message">क्या आप वाकई इस मैसेज को स्थायी रूप से मिटाना चाहते हैं?</string>
+    <string name="stream_ui_message_list_delete_confirmation_positive_button">मिटायें</string>
+    <string name="stream_ui_message_list_delete_confirmation_negative_button">रद्द करें</string>
+    <string name="stream_ui_message_list_flag_confirmation_title">मैसेज चिह्नित करें</string>
+    <string name="stream_ui_message_list_flag_confirmation_message">क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?</string>
+    <string name="stream_ui_message_list_flag_confirmation_positive_button">चिह्नित करें</string>
+    <string name="stream_ui_message_list_flag_confirmation_negative_button">रद्द करें</string>
+
+    <!-- Attachment Viewer -->
+    <string name="stream_ui_message_list_attachment_load_failed">अज्ञात त्रुटि के कारण लोड विफल हो गया।</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">अमान्य यूआरएल के कारण लोड विफल रहा।</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">कुछ गलत हो गया। अटैचमेंट खोलने में असमर्थ: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">त्रुटि। फ़ाइल प्रदर्शित नहीं की जा सकती</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_list_error_mute_user">यूजर को म्यूट नहीं किया जा सका</string>
+    <string name="stream_ui_message_list_error_unmute_user">यूजर को म्यूट से नहीं हटाया जा सका</string>
+    <string name="stream_ui_message_list_error_block_user">यूजर को ब्लॉक नहीं किया जा सका</string>
+    <string name="stream_ui_message_list_error_flag_message">मैसेज को चिह्नित नहीं किया जा सका</string>
+</resources>
