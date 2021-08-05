@@ -50,4 +50,14 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     }
 
     protected val context: Context = itemView.context
+
+    /**
+     * Called when this view holder and its' view were detached from window.
+     */
+    public open fun onDetachedFromWindow() { }
+
+    /**
+     * Called when this view holder and its' view were attached to window.
+     */
+    public open fun onAttachedToWindow() { }
 }
