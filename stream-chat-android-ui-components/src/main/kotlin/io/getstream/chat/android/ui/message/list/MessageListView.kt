@@ -522,8 +522,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
+        adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         attachmentGalleryDestination.unregister()
+        super.onDetachedFromWindow()
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {
