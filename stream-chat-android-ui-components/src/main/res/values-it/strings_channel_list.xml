@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">Nessun canale disponibile</string>
+    <string name="stream_ui_channel_list_you">Te</string>
+    <string name="stream_ui_channel_list_untitled_channel">Canale senza nome</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">Vedi info</string>
+    <string name="stream_ui_channel_list_leave_channel">Esci dal gruppo</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">Annulla</string>
+    <string name="stream_ui_channel_list_delete_channel">Elimina conversazione</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="one">%1d Membro, %2d Online</item>
+        <item quantity="other">%1d Membri, %2d Online</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">Elimina canale</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">Sei sicuro di voler eliminare questa conversazione?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">Cancella</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">Annulla</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">Impossibile nascondere il canale</string>
+    <string name="stream_ui_channel_list_error_delete_channel">Impossibile eliminare il canale</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Impossibile lasciare il canale</string>
+</resources>
