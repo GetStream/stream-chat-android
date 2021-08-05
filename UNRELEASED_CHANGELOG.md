@@ -66,6 +66,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Added a fix for default view for empty state of ChannelListView.
+- Fixed memory leaks for FileAttachmentsView.
 ### ⬆️ Improved
 
 ### ✅ Added
