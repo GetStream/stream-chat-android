@@ -58,10 +58,14 @@ public class AttachmentsPickerViewModel(
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
 
+    init {
+        loadData()
+    }
+
     /**
-     * Starts the ViewModel, by loading all the items based on the current type.
+     * Loads all the items based on the current type.
      * */
-    public fun start() {
+    public fun loadData() {
         loadAttachmentsData(attachmentsPickerMode)
     }
 

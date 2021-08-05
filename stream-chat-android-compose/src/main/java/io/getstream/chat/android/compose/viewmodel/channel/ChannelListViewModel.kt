@@ -92,7 +92,7 @@ public class ChannelListViewModel(
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      * */
-    public fun start() {
+    init {
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
