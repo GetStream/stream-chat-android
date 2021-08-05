@@ -148,3 +148,12 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
     <item name="android:src">@drawable/stream_ui_ic_audio</item>
 </style>
 ```
+
+####Forcing ligtht mode
+If you prefer to light mode and ignore the dark theme colors of the SDK. Just use:
+
+```
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+```
+
+Otherwise the SDK will follow the system UI mode.
