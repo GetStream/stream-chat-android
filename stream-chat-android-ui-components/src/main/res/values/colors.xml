@@ -56,4 +56,7 @@
     <color name="stream_ui_literal_transparent">#00000000</color>
     <color name="stream_ui_literal_white">#FFFFFF</color>
     <color name="stream_ui_literal_black">#000000</color>
+
+    <!-- Message replies -->
+    <color name="stream_ui_bars_background">#FFFFFF</color>
 </resources>
