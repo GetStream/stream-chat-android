@@ -62,7 +62,7 @@ public object StreamAttachmentFactories {
     public val defaultFactories: List<AttachmentFactory> = listOf(
         AttachmentFactory(
             { state -> LinkAttachmentFactory(state) },
-            { message -> message.attachments.any { it.ogUrl != null } }
+            { message -> message.attachments.any { it.titleLink != null || it.ogUrl != null } }
         ),
         AttachmentFactory(
             { state -> ImageAttachmentFactory(state) },
@@ -92,8 +92,13 @@ public object StreamAttachmentFactories {
         val (message, _) = messageItem
 
         val context = LocalContext.current
-        val attachment = message.attachments.firstOrNull { it.ogUrl != null }
-        val previewUrl = attachment?.ogUrl
+        val attachment = message.attachments.firstOrNull { it.titleLink != null || it.ogUrl != null }
+
+        requireNotNull(attachment) {
+            IllegalStateException("Missing link attachment.")
+        }
+
+        val previewUrl = attachment.titleLink ?: attachment.ogUrl
 
         requireNotNull(previewUrl) {
             IllegalStateException("Missing preview URL.")
