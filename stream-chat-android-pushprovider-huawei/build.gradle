@@ -64,6 +64,7 @@ dependencies {
     api project(':stream-chat-android-client')
 
     implementation Dependencies.huaweiPush
+    implementation Dependencies.coroutinesCore
 
     // Tests
     testImplementation project(':stream-chat-android-test')
