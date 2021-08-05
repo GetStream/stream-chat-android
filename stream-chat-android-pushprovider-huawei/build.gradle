@@ -1,0 +1,88 @@
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Configuration
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: "de.mannodermaus.android-junit5"
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-pushprovider-huawei'
+    PUBLISH_VERSION = rootVersionName
+}
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
+
+
+android {
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'STREAM_CHAT_VERSION', "\"$version\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'consumer-proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+            consumerProguardFiles 'consumer-proguard-rules.pro'
+        }
+    }
+
+    resourcePrefix 'stream_'
+
+    lintOptions {
+        xmlReport false
+    }
+
+    testOptions.unitTests {
+        returnDefaultValues = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+        ]
+    }
+}
+
+repositories {
+    maven { url 'https://developer.huawei.com/repo/' }
+}
+
+dependencies {
+    api project(':stream-chat-android-client')
+
+    implementation Dependencies.huaweiPush
+
+    // Tests
+    testImplementation project(':stream-chat-android-test')
+    testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.json
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.kfixture
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.okhttpMockWebserver
+    testImplementation Dependencies.robolectric
+
+    // Instrumentation tests
+    androidTestImplementation Dependencies.junit4
+    androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.androidxTestJunit
+}
