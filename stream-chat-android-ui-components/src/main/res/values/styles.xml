@@ -431,7 +431,6 @@
         <item name="streamUiThreadMessagesStart">bottom</item>
     </style>
 
-    <!--  There's no use for this o.O  -->
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
         <item name="streamUiMediaAttachmentProgressIcon">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
         <item name="streamUiMediaAttachmentGiphyIcon">@drawable/stream_ui_giphy_label</item>
