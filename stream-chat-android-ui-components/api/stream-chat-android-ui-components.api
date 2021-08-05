@@ -1675,6 +1675,8 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/BaseMess
 	public abstract fun bindData (Lcom/getstream/sdk/chat/adapter/MessageListItem;Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;)V
 	protected final fun getContext ()Landroid/content/Context;
 	protected final fun getData ()Lcom/getstream/sdk/chat/adapter/MessageListItem;
+	public fun onAttachedToWindow ()V
+	public fun onDetachedFromWindow ()V
 	public fun unbind ()V
 }
 
