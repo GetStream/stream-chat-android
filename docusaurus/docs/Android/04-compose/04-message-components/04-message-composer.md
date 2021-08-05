@@ -29,7 +29,7 @@ The easiest way to use the `MessageComposer` is by combining it with the rest of
 ```kotlin
 @Composable
 fun MyCustomUi() {
-    val isShowingAttachments = listViewModel.isShowingAttachments
+    val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
     val selectedMessage = listViewModel.currentMessagesState.selectedMessage
     val user by listViewModel.user.collectAsState()
 
@@ -45,13 +45,12 @@ fun MyCustomUi() {
                     viewModel = composerViewModel,
                     // Customize the composer actions
                     onSendMessage = {
-                        composerViewModel.onSendMessage(it)
-                        listViewModel.onMessageSent()
+                        composerViewModel.sendMessage(it)
                     },
-                    onAttachmentsClick = { listViewModel.onShowAttachments(true) },
+                    onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
                     onCancelAction = {
                         listViewModel.dismissAllMessageActions()
-                        composerViewModel.onDismissMessageActions()
+                        composerViewModel.dismissMessageActions()
                     }
                 )
             }
@@ -63,7 +62,7 @@ fun MyCustomUi() {
                 viewModel = listViewModel,
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(Thread(message))
-                    listViewModel.onMessageThreadClick(message)
+                    listViewModel.openMessageThread(message)
                 }
             )
         }
@@ -76,12 +75,12 @@ fun MyCustomUi() {
                     .align(Alignment.BottomCenter)
                     .height(350.dp),
                 onAttachmentsSelected = { attachments ->
-                    listViewModel.onShowAttachments(false)
-                    composerViewModel.onAttachmentsSelected(attachments)
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    composerViewModel.addSelectedAttachments(attachments)
                 },
                 onDismiss = {
-                    listViewModel.onShowAttachments(false)
-                    attachmentsPickerViewModel.onDismiss()
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.dismissAttachments()
                 }
             )
         }
@@ -89,12 +88,11 @@ fun MyCustomUi() {
         // 5 - Show SelectedMessageOverlay if needed
         if (selectedMessage != null) {
             SelectedMessageOverlay(
-                defaultReactionOptions(selectedMessage.ownReactions),
-                defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
-                selectedMessage,
+                messageOptions = defaultMessageOptions(selectedMessage, user, listViewModel.isInThread),
+                message = selectedMessage,
                 onMessageAction = { action ->
-                    composerViewModel.onMessageAction(action)
-                    listViewModel.onMessageAction(action)
+                    composerViewModel.performMessageAction(action)
+                    listViewModel.performMessageAction(action)
                 }, onDismiss = { listViewModel.removeOverlay() })
         }
     }
@@ -130,7 +128,7 @@ The composer offers these actions you can customize, as per the signature:
 ```kotlin
 @Composable
 fun MessageComposer(
-    onSendMessage: (String) -> Unit = { viewModel.onSendMessage(it) },
+    onSendMessage: (Message) -> Unit = { viewModel.onSendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = { viewModel.onInputChange(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
@@ -187,7 +185,7 @@ fun MyCustomComposer() {
                 value = composerViewModel.input,
                 attachments = composerViewModel.selectedAttachments,
                 activeAction = composerViewModel.activeAction,
-                onValueChange = { composerViewModel.onInputChange(it) },
+                onValueChange = { composerViewModel.setMessageInput(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                 label = { // adding custom labels to the input
                     Row(

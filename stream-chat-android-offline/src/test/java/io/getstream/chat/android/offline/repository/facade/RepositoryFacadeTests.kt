@@ -94,11 +94,12 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val channelUser = randomUser()
         val userRead = randomUser()
         val messageUser = randomUser()
+        val pinnedByUser = randomUser()
         val channel = randomChannel(
             createdBy = channelUser,
             members = listOf(Member(memberUser)),
             read = listOf(ChannelUserRead(userRead)),
-            messages = listOf(randomMessage(user = messageUser))
+            messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
         )
 
         sut.insertChannel(channel)
@@ -106,8 +107,8 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         verify(channels).insertChannel(eq(channel))
         verify(users).insertUsers(
             com.nhaarman.mockitokotlin2.check { listUser ->
-                listUser.size `should be equal to` 4
-                listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser)
+                listUser.size `should be equal to` 5
+                listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser)
             }
         )
     }
@@ -122,14 +123,16 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
         val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
         val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
-        val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser
+        val pinnedByUser = randomUser()
+        val expectedListOfUser = latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser
         val message = randomMessage(
             user = messageUser,
-            replyTo = randomMessage(user = replyToUser),
+            replyTo = randomMessage(user = replyToUser, pinnedBy = null),
             latestReactions = latestReactions,
             ownReactions = ownReactions,
             mentionedUsers = mentionedUsers,
             threadParticipants = threadParticipantsUsers,
+            pinnedBy = pinnedByUser,
         )
         val cache = randomBoolean()
         sut.insertMessage(message, cache)
@@ -151,13 +154,14 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     val channelUser = randomUser()
                     val userRead = randomUser()
                     val messageUser = randomUser()
+                    val pinnedByUser = randomUser()
                     val channel = randomChannel(
                         createdBy = channelUser,
                         members = listOf(Member(memberUser)),
                         read = listOf(ChannelUserRead(userRead)),
-                        messages = listOf(randomMessage(user = messageUser))
+                        messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
                     )
-                    acc.first + listOf(memberUser, channelUser, userRead, messageUser) to acc.second + channel
+                    acc.first + listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser) to acc.second + channel
                 }
 
             sut.insertChannels(listOfChannels)
@@ -183,15 +187,17 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
                     val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
                     val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+                    val pinnedByUser = randomUser()
                     val message = randomMessage(
                         user = messageUser,
-                        replyTo = randomMessage(user = replyToUser),
+                        replyTo = randomMessage(user = replyToUser, pinnedBy = null),
                         latestReactions = latestReactions,
                         ownReactions = ownReactions,
                         mentionedUsers = mentionedUsers,
                         threadParticipants = threadParticipantsUsers,
+                        pinnedBy = pinnedByUser,
                     )
-                    (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser) to acc.second + message
+                    (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message
                 }
             val cache = randomBoolean()
 

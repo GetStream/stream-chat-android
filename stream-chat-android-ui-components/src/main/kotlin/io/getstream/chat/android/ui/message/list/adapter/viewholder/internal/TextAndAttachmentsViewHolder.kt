@@ -1,13 +1,16 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.content.Context
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.internal.AttachmentUtils
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
@@ -19,6 +22,9 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 internal class TextAndAttachmentsViewHolder(
@@ -86,8 +92,8 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     override fun unbind() {
-        super.unbind()
         clearScope()
+        super.unbind()
     }
 
     private fun setupUploads(data: MessageListItem.MessageItem) {
@@ -103,10 +109,53 @@ internal class TextAndAttachmentsViewHolder(
             this.scope = scope
 
             scope.launch {
-                AttachmentUtils.trackFilesSent(context, uploadIdList, binding.sentFiles)
+                trackFilesSent(context, uploadIdList, binding.sentFiles)
             }
         } else {
             binding.sentFiles.isVisible = false
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        clearScope()
+    }
+
+    override fun onAttachedToWindow() {
+        setupUploads(data)
+    }
+
+    private companion object {
+        private suspend fun trackFilesSent(
+            context: Context,
+            uploadIdList: List<String>,
+            sentFilesView: TextView,
+        ) {
+            val filesSent = 0
+            val totalFiles = uploadIdList.size
+
+            sentFilesView.isVisible = true
+            sentFilesView.text =
+                context.getString(R.string.stream_ui_message_list_attachment_uploading, filesSent, totalFiles)
+
+            val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
+                ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
+            }
+
+            combine(completionFlows) { isCompleteArray ->
+                isCompleteArray.count { isComplete -> isComplete }
+            }.collect { completedCount ->
+                if (completedCount == totalFiles) {
+                    sentFilesView.text =
+                        context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
+                } else {
+                    sentFilesView.text =
+                        context.getString(
+                            R.string.stream_ui_message_list_attachment_uploading,
+                            completedCount,
+                            totalFiles
+                        )
+                }
+            }
         }
     }
 }

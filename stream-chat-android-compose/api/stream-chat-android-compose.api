@@ -449,7 +449,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/MessageComposerKt {
 	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/compose/state/messages/list/MessageAction;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/components/ComposableSingletons$ComposerIntegrationsKt {
@@ -480,6 +480,10 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/MessageItemKt {
+	public static final fun DefaultMessageContainer (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageListKt {
@@ -687,7 +691,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun leaveThread ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun sendMessage (Ljava/lang/String;)V
+	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/compose/state/messages/MessageMode;)V
 }
