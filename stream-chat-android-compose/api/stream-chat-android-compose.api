@@ -540,6 +540,9 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposableSingleto
 public final class io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories;
+	public final fun FileAttachmentFactory (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
+	public final fun ImageAttachmentFactory (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
+	public final fun LinkAttachmentFactory (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
 	public final fun getDefaultFactories ()Ljava/util/List;
 }
 

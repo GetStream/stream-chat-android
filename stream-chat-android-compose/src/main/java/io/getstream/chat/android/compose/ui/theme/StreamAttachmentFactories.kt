@@ -55,9 +55,9 @@ import io.getstream.chat.android.offline.ChatDomain
 public object StreamAttachmentFactories {
 
     /**
-     * Default attachment factories we provide, which can transform image and file attachments.
+     * Default attachment factories we provide, which can transform image, file and link attachments.
      *
-     * Uses [ImageAttachmentFactory] and [FileAttachmentFactory] to build UI.
+     * Uses the functions below to display the UI.
      * */
     public val defaultFactories: List<AttachmentFactory> = listOf(
         AttachmentFactory(
@@ -85,7 +85,7 @@ public object StreamAttachmentFactories {
      * */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun LinkAttachmentFactory(
+    public fun LinkAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
@@ -174,7 +174,7 @@ public object StreamAttachmentFactories {
      * */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun ImageAttachmentFactory(
+    public fun ImageAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
@@ -294,7 +294,7 @@ public object StreamAttachmentFactories {
      * and the onLongItemClick handler.
      * */
     @Composable
-    private fun FileAttachmentFactory(
+    public fun FileAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, _) = attachmentState
