@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_message_input_send_to_channel">Inviato anche alla conversazione</string>
+    <string name="stream_ui_message_input_send_to_channel">Inviato anche al canale</string>
     <string name="stream_ui_message_input_send_as_direct_message">Inviato anche come messaggio diretto</string>
     <string name="stream_ui_message_input_reply">Rispondi al messaggio</string>
     <string name="stream_ui_message_input_hint">Scrivi qualcosa</string>
