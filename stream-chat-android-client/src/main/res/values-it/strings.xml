@@ -7,7 +7,7 @@
     <string name="stream_chat_notification_type_hint">Digita il messaggio</string>
     <string name="stream_chat_notification_read">Segna come letto</string>
     <string name="stream_chat_notification_channel_id">stream_GetStreamClient</string>
-    <string name="stream_chat_notification_channel_name">Nuovi messaggi di chat</string>
+    <string name="stream_chat_notification_channel_name">Nuovi messaggi</string>
     <string name="stream_chat_load_notification_data_title">Caricamento dati di notifica</string>
     <string name="stream_chat_notification_group_summary_content_text">Hai ricevuto nuovi messaggi</string>
     <string name="stream_chat_error_notification_group_summary_title">Messaggi di chat</string>
