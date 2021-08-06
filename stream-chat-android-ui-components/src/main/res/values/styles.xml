@@ -203,7 +203,7 @@
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
 
-    <style name="StreamUiEmptyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
+    <style name="StreamUiEmptyTheme"/>
 
     <style name="StreamUi">
         <!--Common styles properties-->
