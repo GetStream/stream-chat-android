@@ -337,6 +337,7 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ChannelInfo
 public final class io/getstream/chat/android/compose/ui/channel/list/ChannelListKt {
 	public static final fun ChannelList (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/viewmodel/channel/ChannelListViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ChannelList (Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Channels (Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/list/ComposableSingletons$ChannelListKt {
@@ -489,6 +490,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageListKt {
 	public static final fun MessageList (Lio/getstream/chat/android/compose/state/messages/MessagesState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MessageList (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Messages (Lio/getstream/chat/android/compose/state/messages/MessagesState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/overlay/ComposableSingletons$SelectedMessageOverlayKt {

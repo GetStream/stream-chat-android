@@ -144,7 +144,7 @@ public fun ChannelList(
  * @param modifier - Modifier for styling.
  * */
 @Composable
-private fun Channels(
+public fun Channels(
     channelsState: ChannelsState,
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
