@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_attachment_gallery_count">%d / %d</string>
+    <string name="stream_ui_attachment_gallery_date">%s %s에 보냈습니다</string>
+    <string name="stream_ui_attachment_gallery_reply">답글</string>
+    <string name="stream_ui_attachment_gallery_delete">삭제</string>
+    <string name="stream_ui_attachment_gallery_show_in_chat">채팅에 표시합니다</string>
+    <string name="stream_ui_attachment_gallery_save_image">이미지를 저장합니다</string>
+    <string name="stream_ui_attachment_gallery_share">이미지 공유</string>
+
+    <!-- Gallery Overview Dialog -->
+    <string name="stream_ui_attachment_gallery_overview_title">사진</string>
+</resources>
