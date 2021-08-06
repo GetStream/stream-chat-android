@@ -66,7 +66,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
         val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
 
         if (messageId.isBlank()) {
-            finish()
+            throw IllegalArgumentException("Missing messageId to load images.")
         }
 
         setContent {
