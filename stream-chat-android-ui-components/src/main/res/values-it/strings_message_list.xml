@@ -56,7 +56,7 @@
     <string name="stream_ui_message_list_attachment_display_error">Errore. Impossibile visualizzare il file</string>
 
     <!-- Errors -->
-    <string name="stream_ui_message_list_error_mute_user">Impossibile utente mute</string>
+    <string name="stream_ui_message_list_error_mute_user">Impossibile silenziare l\'utente</string>
     <string name="stream_ui_message_list_error_unmute_user">Impossibile riattivare l\'utente</string>
     <string name="stream_ui_message_list_error_block_user">Impossibile bloccare l\'utente</string>
     <string name="stream_ui_message_list_error_flag_message">Impossibile fissare il messaggio</string>
