@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Message Date-->
+    <string name="stream_ui_yesterday">昨日</string>
+
+    <!-- Media capture -->
+    <string name="stream_ui_message_input_capture_media">画像またはビデオをキャプチャする</string>
+
+    <!-- Permissions -->
+    <string name="stream_ui_message_input_permission_camera_title">カメラとストレージへのアクセス許可</string>
+    <string name="stream_ui_message_input_permission_camera_message">写真やビデオを撮影するには、カメラとストレージへのアクセス許可が必要です</string>
+    <string name="stream_ui_message_input_permission_storage_title">ストレージアクセス許可</string>
+    <string name="stream_ui_message_input_permission_storage_message">写真、ビデオ、音楽、その他のファイルを送信および保存するには、ストレージアクセス許可が必要です</string>
+    <string name="stream_ui_message_input_permission_setting_message">アプリ設定の権限を有効にする</string>
+    <string name="stream_ui_message_input_permissions_setting_button">設定</string>
+
+    <!--Attachment View-->
+    <string name="stream_ui_message_list_attachment_load_failed">不明なエラーが原因でロードに失敗しました</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">URLが無効なため、読み込みに失敗しました</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">何かがうまくいかなかった。 添付ファイルを開くことができません：%s</string>
+    <string name="stream_ui_message_list_attachment_display_error">エラー。 ファイルを表示できません</string>
+</resources>
