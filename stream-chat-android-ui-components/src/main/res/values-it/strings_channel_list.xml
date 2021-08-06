@@ -20,7 +20,7 @@
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">Annulla</string>
 
     <!-- Errors -->
-    <string name="stream_ui_channel_list_error_hide_channel">Impossibile nascondere il conversazione</string>
+    <string name="stream_ui_channel_list_error_hide_channel">Impossibile nascondere il canale</string>
     <string name="stream_ui_channel_list_error_delete_channel">Impossibile eliminare il conversazione</string>
     <string name="stream_ui_channel_list_error_leave_channel">Impossibile lasciare il conversazione</string>
 </resources>
