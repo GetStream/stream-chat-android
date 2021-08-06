@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_input_send_to_channel">また、チャネルに送ります</string>
+    <string name="stream_ui_message_input_send_as_direct_message">ダイレクトメッセージでも送信</string>
+    <string name="stream_ui_message_input_reply">メッセージに返信</string>
+    <string name="stream_ui_message_input_hint">ここに何か書く</string>
+    <string name="stream_ui_message_input_only_attachments_hint">コメントの追加や送信</string>
+
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_input_instant_commands">インスタントコマンド</string>
+    <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_input_camera_access">カメラへのアクセスを許可する</string>
+    <string name="stream_ui_message_input_files_access">ファイルへのアクセスを許可する</string>
+    <string name="stream_ui_message_input_gallery_access">ギャラリーへのアクセスを許可する</string>
+    <string name="stream_ui_message_input_recent_files">最近使用したファイル</string>
+    <string name="stream_ui_message_input_no_files">写真やビデオはありません</string>
+    <string name="stream_ui_message_input_capture_media">画像またはビデオをキャプチャする</string>
+
+    <!-- System Permission Dialog -->
+    <string name="stream_ui_message_input_permission_camera_title">カメラとストレージへのアクセス許可</string>
+    <string name="stream_ui_message_input_permission_camera_message">写真やビデオを撮影するには、カメラとストレージへのアクセス許可が必要です</string>
+    <string name="stream_ui_message_input_permission_storage_title">ストレージアクセス許可</string>
+    <string name="stream_ui_message_input_permission_storage_message">写真、ビデオ、音楽、その他のファイルを送信および保存するには、ストレージアクセス許可が必要です</string>
+    <string name="stream_ui_message_input_permission_setting_message">アプリ設定の権限を有効にする</string>
+    <string name="stream_ui_message_input_permissions_setting_button">設定</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_input_error_file_size">ファイルが大きすぎます</string>
+    <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（％d）を超えました"</string>
+</resources>
