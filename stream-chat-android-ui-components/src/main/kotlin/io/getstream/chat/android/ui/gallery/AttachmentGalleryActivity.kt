@@ -25,7 +25,9 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryPagerAdapter
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryViewModel
@@ -76,7 +78,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = StreamUiActivityAttachmentGalleryBinding.inflate(layoutInflater)
+
+        binding = StreamUiActivityAttachmentGalleryBinding.inflate(streamThemeInflater)
         setContentView(binding.root)
         setupGalleryOverviewButton()
         binding.closeButton.setOnClickListener { onBackPressed() }
