@@ -15,7 +15,7 @@
     <string name="stream_ui_message_list_attachment_upload_complete">Caricamento completato, elaborazione…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
     <plurals name="stream_ui_message_list_thread_reply">
-        <item quantity="one">Rispondi nel thread</item>
+        <item quantity="one">%d Risposta nella Conversazione</item>
         <item quantity="other">%d Risposte al thread</item>
     </plurals>
     <plurals name="stream_ui_message_list_thread_separator">
