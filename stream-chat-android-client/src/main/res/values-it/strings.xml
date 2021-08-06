@@ -1,7 +1,7 @@
 <resources>
 
     <!--Notification-->
-    <string name="stream_chat_notification_title">Messaggio di chat</string>
+    <string name="stream_chat_notification_title">Messaggio</string>
     <string name="stream_chat_notification_content">Hai ricevuto un nuovo messaggio</string>
     <string name="stream_chat_notification_reply">Rispondi</string>
     <string name="stream_chat_notification_type_hint">Digita il messaggio</string>
