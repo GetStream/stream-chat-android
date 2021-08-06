@@ -30,7 +30,7 @@
     <string name="stream_ui_message_list_copy_message">Copia messaggio</string>
     <string name="stream_ui_message_list_edit_message">Modifica messaggio</string>
     <string name="stream_ui_message_list_flag_message">Segnala messaggio</string>
-    <string name="stream_ui_message_list_mute_user">Utente Muto</string>
+    <string name="stream_ui_message_list_mute_user">Silenzia Utente</string>
     <string name="stream_ui_message_list_unmute_user">Utente Attiva</string>
     <string name="stream_ui_message_list_block_user">Blocca Utente</string>
     <string name="stream_ui_message_list_delete_message">Cancella messaggio</string>
