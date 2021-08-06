@@ -21,7 +21,7 @@
     <!-- System Permission Dialog -->
     <string name="stream_ui_message_input_permission_camera_title">Autorizzazione per l\'accesso alla Fotocamera e all\'Archivio</string>
     <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni per l\'accesso alla fotocamera e all\'archivio per poter scattare foto e video</string>
-    <string name="stream_ui_message_input_permission_storage_title">Autorizzazione per l\'accesso alla Memoria</string>
+    <string name="stream_ui_message_input_permission_storage_title">Autorizzazione per l\'accesso all\'Archivio</string>
     <string name="stream_ui_message_input_permission_storage_message">Le autorizzazioni di accesso alla memoria sono necessarie per poter inviare e salvare foto, video, musica e altri file</string>
     <string name="stream_ui_message_input_permission_setting_message">Abilita le autorizzazioni nelle Impostazioni della App</string>
     <string name="stream_ui_message_input_permissions_setting_button">Impostazioni</string>
