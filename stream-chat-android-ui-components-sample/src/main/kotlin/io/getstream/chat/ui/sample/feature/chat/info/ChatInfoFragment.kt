@@ -122,7 +122,7 @@ class ChatInfoFragment : Fragment() {
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid)
                 )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)

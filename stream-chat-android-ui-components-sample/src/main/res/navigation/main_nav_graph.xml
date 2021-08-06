@@ -238,6 +238,12 @@
             app:destination="@id/chatInfoSharedFilesFragment"
             app:launchSingleTop="true"
             />
+
+        <action
+            android:id="@+id/action_chatInfoFragment_to_pinnedMessageListFragment"
+            app:destination="@id/pinnedMessageListFragment"
+            app:launchSingleTop="true"
+            />
     </fragment>
 
     <fragment
@@ -284,6 +290,19 @@
     </fragment>
 
     <fragment
+        android:id="@+id/pinnedMessageListFragment"
+        android:name="io.getstream.chat.ui.sample.feature.pinned.PinnedMessageListFragment"
+        android:label="PinnedMessageListFragment"
+        >
+        <argument
+            android:name="cid"
+            app:argType="string"
+            app:nullable="true"
+            />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/chatInfoSharedFilesFragment"
         android:name="io.getstream.chat.ui.sample.feature.chat.info.shared.files.ChatInfoSharedFilesFragment"
         android:label="ChatInfoSharedFilesFragment"
@@ -315,6 +334,12 @@
         <action
             android:id="@+id/action_groupChatInfoFragment_to_chatInfoSharedMediaFragment"
             app:destination="@id/chatInfoSharedMediaFragment"
+            app:launchSingleTop="true"
+            />
+
+        <action
+            android:id="@+id/action_groupChatInfoFragment_to_pinnedMessageListFragment"
+            app:destination="@id/pinnedMessageListFragment"
             app:launchSingleTop="true"
             />
 
