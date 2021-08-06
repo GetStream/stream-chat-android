@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Message Date-->
+    <string name="stream_ui_yesterday">Ieri</string>
+
+    <!-- Media capture -->
+    <string name="stream_ui_message_input_capture_media">Cattura Foto o Video</string>
+
+    <!-- Permissions -->
+    <string name="stream_ui_message_input_permission_camera_title">Autorizzazione per l\'accesso alla fotocamera e all\'archivio</string>
+    <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni di accesso alla fotocamera e all\'archivio per poter scattare foto e video</string>
+    <string name="stream_ui_message_input_permission_storage_title">Autorizzazioni di accesso allo spazio di archiviazione</string>
+    <string name="stream_ui_message_input_permission_storage_message">Le autorizzazioni di accesso all\'archivio sono necessarie per poter inviare e salvare foto, video, musica e altri file</string>
+    <string name="stream_ui_message_input_permission_setting_message">Abilita le autorizzazioni nella app Impostazioni</string>
+    <string name="stream_ui_message_input_permissions_setting_button">Impostazioni</string>
+
+    <!--Attachment View-->
+    <string name="stream_ui_message_list_attachment_load_failed">Caricamento non riuscito a causa di un errore sconosciuto.</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">Caricamento non riuscito a causa di un URL non valido.</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Qualcosa è andato storto. Impossibile aprire l\'allegato: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">Errore. Impossibile visualizzare il file</string>
+</resources>
