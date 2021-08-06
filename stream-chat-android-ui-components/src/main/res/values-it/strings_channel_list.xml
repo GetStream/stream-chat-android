@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_channel_list_empty">Nessun conversazione disponibile</string>
+    <string name="stream_ui_channel_list_empty">Nessun canale disponibile</string>
     <string name="stream_ui_channel_list_you">Tu</string>
     <string name="stream_ui_channel_list_untitled_channel">Conversazione senza nome</string>
 
