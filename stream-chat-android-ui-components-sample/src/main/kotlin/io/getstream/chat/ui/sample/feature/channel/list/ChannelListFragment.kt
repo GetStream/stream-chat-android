@@ -72,7 +72,7 @@ class ChannelListFragment : Fragment() {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
                     .navigateSafely(HomeFragmentDirections.actionHomeFragmentToAddChannelFragment())
             }
-            // setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            setEmptyStateView(emptyView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             setChannelItemClickListener {
                 requireActivity().findNavController(R.id.hostFragmentContainer)
