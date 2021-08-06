@@ -8,12 +8,24 @@
     android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
+    <TextView
+        android:id="@+id/pinnedByTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:drawableStart="@drawable/stream_ui_ic_pin"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pinnedByTextView"
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView

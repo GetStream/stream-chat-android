@@ -37,15 +37,22 @@ internal class MessageOptionsView : FrameLayout {
         isMessageTheirs: Boolean,
         syncStatus: SyncStatus,
         isMessageAuthorMuted: Boolean,
+        isMessagePinned: Boolean,
     ) {
         if (isMessageTheirs) {
             configureTheirsMessage(
                 configuration = configuration,
                 style = style,
                 isMessageAuthorMuted = isMessageAuthorMuted,
+                isMessagePinned = isMessagePinned,
             )
         } else {
-            configureMineMessage(configuration = configuration, style = style, syncStatus = syncStatus)
+            configureMineMessage(
+                configuration = configuration,
+                style = style,
+                syncStatus = syncStatus,
+                isMessagePinned = isMessagePinned,
+            )
         }
         binding.blockTV.isVisible = false
         binding.messageOptionsContainer.setCardBackgroundColor(style.messageOptionsBackgroundColor)
@@ -55,6 +62,7 @@ internal class MessageOptionsView : FrameLayout {
         configuration: Configuration,
         style: MessageListViewStyle,
         isMessageAuthorMuted: Boolean,
+        isMessagePinned: Boolean,
     ) {
         @Suppress("DEPRECATION_ERROR")
         val iconsTint = style.iconsTint
@@ -83,12 +91,19 @@ internal class MessageOptionsView : FrameLayout {
             isMessageAuthorMuted = isMessageAuthorMuted,
         )
         configureFlag(configuration = configuration, style = style, iconTint = iconsTint)
+        configurePin(
+            configuration = configuration,
+            style = style,
+            iconTint = iconsTint,
+            isMessagePinned = isMessagePinned
+        )
     }
 
     private fun configureMineMessage(
         configuration: Configuration,
         style: MessageListViewStyle,
         syncStatus: SyncStatus,
+        isMessagePinned: Boolean,
     ) {
         @Suppress("DEPRECATION_ERROR")
         val iconsTint = style.iconsTint
@@ -127,6 +142,12 @@ internal class MessageOptionsView : FrameLayout {
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
         configureDeleteMessage(configuration, style)
+        configurePin(
+            configuration = configuration,
+            style = style,
+            iconTint = iconsTint,
+            isMessagePinned = isMessagePinned
+        )
     }
 
     private fun configureEditMessage(configuration: Configuration, style: MessageListViewStyle) {
@@ -154,6 +175,25 @@ internal class MessageOptionsView : FrameLayout {
             binding.flagTV.configureListItem(style.messageOptionsText, style.flagIcon, iconTint)
         } else {
             binding.flagTV.isVisible = false
+        }
+    }
+
+    private fun configurePin(
+        configuration: Configuration,
+        style: MessageListViewStyle,
+        iconTint: Int?,
+        isMessagePinned: Boolean,
+    ) {
+        if (configuration.pinEnabled) {
+            if (isMessagePinned) {
+                binding.pinTV.configureListItem(style.messageOptionsText, style.unpinIcon, iconTint)
+                binding.pinTV.text = context.getString(R.string.stream_ui_message_list_unpin_message)
+            } else {
+                binding.pinTV.configureListItem(style.messageOptionsText, style.pinIcon, iconTint)
+                binding.pinTV.text = context.getString(R.string.stream_ui_message_list_pin_message)
+            }
+        } else {
+            binding.pinTV.isVisible = false
         }
     }
 
@@ -215,6 +255,7 @@ internal class MessageOptionsView : FrameLayout {
         val flagEnabled: Boolean,
         val muteEnabled: Boolean,
         val blockEnabled: Boolean,
+        val pinEnabled: Boolean,
     ) : Serializable {
         internal companion object {
             operator fun invoke(
@@ -234,6 +275,7 @@ internal class MessageOptionsView : FrameLayout {
                     flagEnabled = viewStyle.flagEnabled,
                     muteEnabled = viewStyle.muteEnabled,
                     blockEnabled = viewStyle.blockEnabled,
+                    pinEnabled = viewStyle.pinEnabled,
                 )
         }
     }
@@ -271,6 +313,12 @@ internal class MessageOptionsView : FrameLayout {
     fun setFlagMessageListener(onFlag: () -> Unit) {
         binding.flagTV.setOnClickListener {
             onFlag()
+        }
+    }
+
+    fun setPinMessageListener(onPin: () -> Unit) {
+        binding.pinTV.setOnClickListener {
+            onPin()
         }
     }
 

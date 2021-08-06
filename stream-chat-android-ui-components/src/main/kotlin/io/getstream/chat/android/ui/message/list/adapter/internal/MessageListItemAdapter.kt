@@ -84,6 +84,7 @@ internal class MessageListItemAdapter(
             syncStatus = true,
             deleted = true,
             positions = true,
+            pinned = true,
         )
         private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = false,
@@ -93,6 +94,7 @@ internal class MessageListItemAdapter(
             syncStatus = false,
             deleted = false,
             positions = false,
+            pinned = false,
         )
     }
 }

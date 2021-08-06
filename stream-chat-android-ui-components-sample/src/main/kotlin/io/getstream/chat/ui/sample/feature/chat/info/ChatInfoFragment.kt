@@ -94,6 +94,7 @@ class ChatInfoFragment : Fragment() {
                 add(ChatInfoItem.Option.Stateful.MuteDistinctChannel(isChecked = state.channelMuted))
             }
 
+            add(ChatInfoItem.Option.PinnedMessages)
             add(ChatInfoItem.Option.SharedMedia)
             add(ChatInfoItem.Option.SharedFiles)
 
@@ -120,6 +121,9 @@ class ChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
+                ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
                 )
