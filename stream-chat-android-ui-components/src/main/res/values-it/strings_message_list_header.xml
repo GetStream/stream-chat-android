@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Header Title -->
+    <string name="stream_ui_message_list_header_thread_title">Rispondi nella conversazione</string>
+    <string name="stream_ui_message_list_header_untitled_channel">Canale senza nome</string>
+
+    <!-- Header Subtitle -->
+    <string name="stream_ui_message_list_header_thread_subtitle">con %s</string>
+    <string name="stream_ui_message_list_header_disconnected">Attendo la rete</string>
+    <string name="stream_ui_message_list_header_offline">Disconnesso…</string>
+    <string name="stream_ui_message_list_header_retry">Riprova</string>
+    <string name="stream_ui_message_list_header_member_count_online">%s, %d Online</string>
+    <plurals name="stream_ui_message_list_header_member_count">
+        <item quantity="one">%1d Membro</item>
+        <item quantity="other">%1d Membri</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_header_typing_users">
+        <item quantity="one">%s sta scrivendo</item>
+        <item quantity="other">%s e altri %d stanno scrivendo</item>
+    </plurals>
+
+    <string name="stream_ui_message_list_header_back_button_content_description">Tasto indietro</string>
+</resources>
