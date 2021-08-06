@@ -7,7 +7,7 @@
     <!-- Header Subtitle -->
     <string name="stream_ui_message_list_header_thread_subtitle">con %s</string>
     <string name="stream_ui_message_list_header_disconnected">Cercando una connessione</string>
-    <string name="stream_ui_message_list_header_offline">Offline…</string>
+    <string name="stream_ui_message_list_header_offline">Disconnesso…</string>
     <string name="stream_ui_message_list_header_retry">Riprova</string>
     <string name="stream_ui_message_list_header_member_count_online">%s, %d Online</string>
     <plurals name="stream_ui_message_list_header_member_count">
