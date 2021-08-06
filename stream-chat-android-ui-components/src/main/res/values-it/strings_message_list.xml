@@ -19,7 +19,7 @@
         <item quantity="other">%d Risposte nella Conversazione</item>
     </plurals>
     <plurals name="stream_ui_message_list_thread_separator">
-        <item quantity="one">%d Rispondi</item>
+        <item quantity="one">%d Risposta</item>
         <item quantity="other">%d Risposte</item>
     </plurals>
 
