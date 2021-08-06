@@ -25,7 +25,7 @@
 
     <!-- Message Actions Dialog -->
     <string name="stream_ui_message_list_reply">Rispondi</string>
-    <string name="stream_ui_message_list_thread_reply">Rispondi nel thread</string>
+    <string name="stream_ui_message_list_thread_reply">Rispondi nella conversazione</string>
     <string name="stream_ui_message_list_resend_message">Riprova</string>
     <string name="stream_ui_message_list_copy_message">Copia messaggio</string>
     <string name="stream_ui_message_list_edit_message">Modifica messaggio</string>
