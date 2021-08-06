@@ -1,7 +1,5 @@
 package io.getstream.chat.android.ui.gallery
 
-import android.app.UiModeManager
-import android.app.UiModeManager.MODE_NIGHT_NO
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,7 +8,6 @@ import android.os.Parcelable
 import android.text.format.DateUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -25,7 +22,6 @@ import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding

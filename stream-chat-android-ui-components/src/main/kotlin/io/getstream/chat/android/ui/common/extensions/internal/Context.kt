@@ -60,7 +60,7 @@ internal fun Context.copyToClipboard(text: String) {
 
 internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): Context {
     val typedValue = TypedValue()
-    
+
     return when {
         theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) ->
             ContextThemeWrapper(this, R.style.StreamUiEmptyTheme)
@@ -68,9 +68,9 @@ internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): C
             ContextThemeWrapper(this, typedValue.resourceId)
         else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
     }.apply {
-        applyOverrideConfiguration(Configuration().apply {
-            setUiMode(uiMode)
-        })
+        applyOverrideConfiguration(
+            Configuration().apply { setUiMode(uiMode) }
+        )
     }
 }
 
