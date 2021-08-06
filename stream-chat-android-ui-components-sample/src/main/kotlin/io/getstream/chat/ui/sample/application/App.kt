@@ -31,7 +31,6 @@ class App : Application() {
             }.build()
         )
         ApplicationConfigurator.configureApp(this)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     private fun getApiKey(): String {

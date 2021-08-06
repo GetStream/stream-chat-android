@@ -203,7 +203,7 @@
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
 
-    <style name="StreamUiEmptyTheme" parent="Theme.MaterialComponents.Light.NoActionBar"/>
+    <style name="StreamUiEmptyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
 
     <style name="StreamUi">
         <!--Common styles properties-->
@@ -721,7 +721,7 @@
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
         <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
