@@ -2,7 +2,7 @@
 <resources>
     <string name="stream_ui_channel_list_empty">Nessun canale disponibile</string>
     <string name="stream_ui_channel_list_you">Tu</string>
-    <string name="stream_ui_channel_list_untitled_channel">Conversazione senza nome</string>
+    <string name="stream_ui_channel_list_untitled_channel">Canale senza nome</string>
 
     <!-- Channel Actions Dialog -->
     <string name="stream_ui_channel_list_view_info">Vedi info</string>
