@@ -761,7 +761,8 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Used to specify visibility of the deleted
+     * Used to specify visibility of the deleted [MessageListItem.MessageItem] elements.
+     *
      * @param deletedMessageListItemPredicate An instance of [MessageListItemPredicate]. You can pass one of the following objects:
      * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
