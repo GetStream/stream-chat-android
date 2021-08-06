@@ -795,7 +795,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = listItem.items
+            val filteredList = listItem.items.asSequence()
                 .filter(messageListItemPredicate::predicate)
                 .filter { item ->
                     if (item is MessageListItem.MessageItem && item.message.isDeleted()) {
@@ -804,6 +804,7 @@ public class MessageListView : ConstraintLayout {
                         true
                     }
                 }
+                .toList()
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
@@ -1200,38 +1201,6 @@ public class MessageListView : ConstraintLayout {
                 return values().find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
             }
-        }
-    }
-}
-
-/**
- * Predicate class used to filter [MessageListItem.MessageItem] items which are deleted.
- */
-public sealed class DeletedMessageListItemPredicate : MessageListView.MessageListItemPredicate {
-    /**
-     * Predicate object used to hide deleted [MessageListItem.MessageItem] items from everyone.
-     */
-    public object NotVisibleToAnyone : DeletedMessageListItemPredicate() {
-        override fun predicate(item: MessageListItem): Boolean {
-            return false
-        }
-    }
-
-    /**
-     * Predicate object used to show deleted [MessageListItem.MessageItem] items to everyone.
-     */
-    public object VisibleToEveryone : DeletedMessageListItemPredicate() {
-        override fun predicate(item: MessageListItem): Boolean {
-            return true
-        }
-    }
-
-    /**
-     * Predicate object used to hide deleted [MessageListItem.MessageItem] items from everyone except for the author of the message.
-     */
-    public object VisibleToAuthorOnly : DeletedMessageListItemPredicate() {
-        override fun predicate(item: MessageListItem): Boolean {
-            return true
         }
     }
 }
