@@ -7,7 +7,7 @@
     <string name="stream_ui_message_list_giphy_title">Giphy</string>
     <string name="stream_ui_message_list_giphy_send">Invia</string>
     <string name="stream_ui_message_list_giphy_cancel">Annulla</string>
-    <string name="stream_ui_message_list_giphy_shuffle">Shuffle</string>
+    <string name="stream_ui_message_list_giphy_shuffle">Casuale</string>
     <string name="stream_ui_message_list_ephemeral_message">Visible solo a te</string>
     <string name="stream_ui_message_list_deleted_message">Messaggio cancellato</string>
     <string name="stream_ui_message_list_attachment_more_count">+%d</string>
