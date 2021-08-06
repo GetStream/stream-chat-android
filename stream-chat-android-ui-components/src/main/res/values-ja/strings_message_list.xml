@@ -11,8 +11,8 @@
     <string name="stream_ui_message_list_ephemeral_message">自分しか見れません</string>
     <string name="stream_ui_message_list_deleted_message">メッセージ削除</string>
     <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">%d / %dmbのアップロード中…</string>
-    <string name="stream_ui_message_list_attachment_upload_complete">アップロードが完了し、処理中…</string>
+    <string name="stream_ui_message_list_attachment_uploading">%d / %dmbのアップロード中。。。</string>
+    <string name="stream_ui_message_list_attachment_upload_complete">アップロードが完了し、処理中。。。</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="other">%dスレッド返信</item>
