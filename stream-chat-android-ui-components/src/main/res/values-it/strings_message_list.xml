@@ -35,7 +35,7 @@
     <string name="stream_ui_message_list_block_user">Blocca Utente</string>
     <string name="stream_ui_message_list_delete_message">Cancella messaggio</string>
     <plurals name="stream_ui_message_list_message_reactions">
-        <item quantity="one">%d Reazioni al messaggio</item>
+        <item quantity="one">%d Reazione al messaggio</item>
         <item quantity="other">%d Reazioni ai messaggi</item>
     </plurals>
 
