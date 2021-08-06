@@ -22,5 +22,5 @@
     <!-- Errors -->
     <string name="stream_ui_channel_list_error_hide_channel">Impossibile nascondere il canale</string>
     <string name="stream_ui_channel_list_error_delete_channel">Impossibile eliminare il canale</string>
-    <string name="stream_ui_channel_list_error_leave_channel">Impossibile lasciare il conversazione</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Impossibile lasciare il canale</string>
 </resources>
