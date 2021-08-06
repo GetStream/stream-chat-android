@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_mention">\@%s</string>
+    <string name="stream_ui_yesterday">昨日</string>
+
+    <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
+    <string name="stream_ui_user_status_online">オンライン</string>
+    <string name="stream_ui_user_status_last_seen">最後に見た%s</string>
+    <string name="stream_ui_user_status_last_seen_just_now">Last seen just now</string>
+
+    <!-- Message Preview (User in Mention List and Search Result List) -->
+    <string name="stream_ui_message_preview_file">ファイル: %s</string>
+    <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt;に&lt;b&gt;%2$s&lt;/b&gt;</string>
+</resources>
