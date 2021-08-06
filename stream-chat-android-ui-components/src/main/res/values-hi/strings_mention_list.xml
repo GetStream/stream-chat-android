@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_mention_list_empty">अभी तक कोई उल्लेख मौजूद नहीं है…</string>
+    <string name="stream_ui_mention_list_error">एक त्रुटि पाई गई</string>
+</resources>

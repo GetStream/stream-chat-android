@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_input_send_to_channel">चैनल पर भी भेजें</string>
+    <string name="stream_ui_message_input_send_as_direct_message">सीधे मैसेज के रूप में भी भेजें</string>
+    <string name="stream_ui_message_input_reply">मैसेज का जवाब दें</string>
+    <string name="stream_ui_message_input_hint">यहाँ कुछ लिखें</string>
+    <string name="stream_ui_message_input_only_attachments_hint">एक टिप्पणी जोड़ें या भेजें</string>
+
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_input_instant_commands">इंस्टेंट कमांड</string>
+    <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_input_camera_access">कैमरा एक्सेस करने की अनुमति दें</string>
+    <string name="stream_ui_message_input_files_access">फाइल्स एक्सेस करने की अनुमति दें</string>
+    <string name="stream_ui_message_input_gallery_access">गैलरी एक्सेस करने की अनुमति दें</string>
+    <string name="stream_ui_message_input_recent_files">हाल हीं के फाइल</string>
+    <string name="stream_ui_message_input_no_files">कोई फोटो या वीडियो नहीं है।</string>
+    <string name="stream_ui_message_input_capture_media">फोटो या वीडियो खींच</string>
+
+    <!-- System Permission Dialog -->
+    <string name="stream_ui_message_input_permission_camera_title">कैमरा इस्तेमाल करने की अनुमति</string>
+    <string name="stream_ui_message_input_permission_camera_message">फोटो और वीडियो खींचने के लिए डिवाइस के कैमरा का इस्तेमाल करने की अनुमति दें।</string>
+    <string name="stream_ui_message_input_permission_storage_title">स्टोरेज इस्तेमाल करने की अनुमति</string>
+    <string name="stream_ui_message_input_permission_storage_message">फ़ोटो, वीडियो, संगीत और अन्य फ़ाइलें सहेजने के लिए डिवाइस के फोटो, मीडिया और फ़ाइल का इस्तेमाल करने दें।</string>
+    <string name="stream_ui_message_input_permission_setting_message">एप्लीकेशन सेटिंग्स में अनुमतियां दे</string>
+    <string name="stream_ui_message_input_permissions_setting_button">सेटिंग्स</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_input_error_file_size">फ़ाइल अपलोड करने के लिए बहुत बड़ी है।</string>
+    <string name="stream_ui_message_input_error_max_length">"मैसेज की वर्ण सीमा (%d) पार हो गई है।"</string>
+</resources>

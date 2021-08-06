@@ -13,7 +13,6 @@ public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
         and(
             eq("type", "messaging"),
             `in`("members", listOf(user.id)),
-            or(notExists("draft"), eq("draft", false)),
         )
     }
 }
