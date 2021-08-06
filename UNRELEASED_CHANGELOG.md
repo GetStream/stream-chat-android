@@ -60,7 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera. 
 ### ⬆️ Improved
 
 ### ✅ Added
