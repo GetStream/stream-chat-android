@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_message_input_send_to_channel">Manda anche al canale</string>
-    <string name="stream_ui_message_input_send_as_direct_message">Manda anche come messaggio diretto</string>
+    <string name="stream_ui_message_input_send_to_channel">Inviato anche alla conversazione</string>
+    <string name="stream_ui_message_input_send_as_direct_message">Inviato anche come messaggio diretto</string>
     <string name="stream_ui_message_input_reply">Rispondi al messaggio</string>
-    <string name="stream_ui_message_input_hint">Scrivi qualcosa qui</string>
+    <string name="stream_ui_message_input_hint">Scrivi qualcosa</string>
     <string name="stream_ui_message_input_only_attachments_hint">Aggiungi un commento o invia</string>
 
     <!-- Commands Popup -->
@@ -11,22 +11,22 @@
     <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
 
     <!-- File Picker Dialog -->
-    <string name="stream_ui_message_input_camera_access">Permetti l\'accesso alla fotocamera</string>
-    <string name="stream_ui_message_input_files_access">Permetti l\'accesso ai file</string>
-    <string name="stream_ui_message_input_gallery_access">Permetti l\'accesso alla galleria</string>
+    <string name="stream_ui_message_input_camera_access">Consenti l\'accesso alla tua Fotocamera</string>
+    <string name="stream_ui_message_input_files_access">Consenti l\'accesso ai tuoi File</string>
+    <string name="stream_ui_message_input_gallery_access">Consenti l\'accesso alla tua Galleria</string>
     <string name="stream_ui_message_input_recent_files">File Recenti</string>
     <string name="stream_ui_message_input_no_files">Non ci sono foto o video.</string>
     <string name="stream_ui_message_input_capture_media">Cattura Foto o Video</string>
 
     <!-- System Permission Dialog -->
-    <string name="stream_ui_message_input_permission_camera_title">Autorizzazione per l\'accesso alla fotocamera e all\'archiviazione</string>
-    <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni di accesso alla fotocamera e all\'archiviazione per poter scattare foto e video</string>
-    <string name="stream_ui_message_input_permission_storage_title">Autorizzazioni di accesso allo spazio di archiviazione</string>
-    <string name="stream_ui_message_input_permission_storage_message">Le autorizzazioni di accesso all\'archiviazione sono necessarie per poter inviare e salvare foto, video, musica e altri file</string>
-    <string name="stream_ui_message_input_permission_setting_message">Abilita le autorizzazioni su Impostazioni app</string>
+    <string name="stream_ui_message_input_permission_camera_title">Autorizzazione per l\'accesso alla Fotocamera e alla Memoria</string>
+    <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni per l\'accesso alla fotocamera e alla memoria per poter scattare foto e video</string>
+    <string name="stream_ui_message_input_permission_storage_title">Autorizzazione per l\'accesso alla Memoria</string>
+    <string name="stream_ui_message_input_permission_storage_message">Le autorizzazioni di accesso alla memoria sono necessarie per poter inviare e salvare foto, video, musica e altri file</string>
+    <string name="stream_ui_message_input_permission_setting_message">Abilita le autorizzazioni nelle Impostazioni della App</string>
     <string name="stream_ui_message_input_permissions_setting_button">Impostazioni</string>
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">File troppo grande</string>
-    <string name="stream_ui_message_input_error_max_length">"Lunghezza massima del messaggio (%d) superata."</string>
+    <string name="stream_ui_message_input_error_max_length">"La lunghezza massima del messaggio (%d) è stata superata."</string>
 </resources>
