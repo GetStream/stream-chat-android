@@ -2,7 +2,6 @@ package io.getstream.chat.ui.sample.application
 
 import android.app.Application
 import android.os.Build
-import androidx.appcompat.app.AppCompatDelegate
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
