@@ -6,6 +6,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Firebase dependecies have been extract from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
 
 ### ❌ Removed
 
@@ -90,6 +91,26 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 ### ⬆️ Improved
 
 ### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Create this new artifact. To use Firebase Push Notification you need do the following steps:
+  1. Add the artifact to your `build.gradle` file -> `implementation "io.getstream:stream-chat-android-pushprovider-firebase:$streamVersion"`
+  2. Add `FirebaseDeviceGenerator` to your `NotificationConfig`
+        ```
+            val notificationConfig = NotificationConfig(   
+                [...]
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())           
+                )       
+        ```
 
 ### ⚠️ Changed
 
