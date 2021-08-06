@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -82,3 +83,6 @@ private fun Configuration.setUiMode(uiMode: UiMode) {
         this.uiMode = modeInt
     }
 }
+
+internal val Context.streamThemeInflater: LayoutInflater
+    get() = LayoutInflater.from(this.createStreamThemeWrapper())
