@@ -6,6 +6,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'com.huawei.agconnect'
 
 apply from: "${rootDir}/scripts/android.gradle"
 
@@ -111,9 +112,15 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
+repositories {
+    // huawei maven
+    maven { url 'https://developer.huawei.com/repo/' }
+}
+
 dependencies {
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-pushprovider-firebase")
+    implementation project(":stream-chat-android-pushprovider-huawei")
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
