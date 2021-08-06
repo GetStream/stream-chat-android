@@ -67,12 +67,18 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera. 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
 
 ### ⚠️ Changed
+- 🚨 Breaking change: the deleted `MessageListItem.MessageItem` elements are now displayed by default to all the users. This default behavior can be customized using `MessageListView::setDeletedMessageListItemPredicate` function. This function takes an instance of `MessageListItemPredicate`. You can pass one of the following objects:
+    * `DeletedMessageListItemPredicate.VisibleToEveryone`
+    * `DeletedMessageListItemPredicate.NotVisibleToAnyone`
+    * or `DeletedMessageListItemPredicate.VisibleToAuthorOnly`
+    Alternatively you can pass your custom implementation by implementing the `MessageListItemPredicate` interface if you need to customize it more deeply.
 
 ### ❌ Removed
 
