@@ -148,3 +148,10 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
     <item name="android:src">@drawable/stream_ui_ic_audio</item>
 </style>
 ```
+
+### Choose Light/Dark Theme
+If is possible to choose between LIGHT, DARK and SYSTEM (default) ui mode. LIGHT forces the colors to be in light mode, DARK to dark colors and SYSTEM uses the colors accondingly to what which theme is selected in the system. You can chose the theme using ChatUI:
+
+```
+ChatUI.uiMode = UiMode.DARK
+```
