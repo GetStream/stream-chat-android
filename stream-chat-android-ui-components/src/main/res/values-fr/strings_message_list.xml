@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_list_empty">Pas de messages</string>
+    <string name="stream_ui_message_list_download_started">Téléchargement commencé</string>
+
+    <!-- Message List Item -->
+    <string name="stream_ui_message_list_giphy_title">Giphy</string>
+    <string name="stream_ui_message_list_giphy_send">Envoyer</string>
+    <string name="stream_ui_message_list_giphy_cancel">Annuler</string>
+    <string name="stream_ui_message_list_giphy_shuffle">Mélanger</string>
+    <string name="stream_ui_message_list_ephemeral_message">Seulement visible par vous</string>
+    <string name="stream_ui_message_list_deleted_message">Message supprimé</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
+    <string name="stream_ui_message_list_attachment_uploading">Téléchargement %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_upload_complete">Transfert terminé, traitement…</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <plurals name="stream_ui_message_list_thread_reply">
+        <item quantity="one">%d Réponse au fil de discussion</item>
+        <item quantity="other">%d Réponses au fil de discussion</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_thread_separator">
+        <item quantity="one">%d Réponse</item>
+        <item quantity="other">%d Réponses</item>
+    </plurals>
+
+    <!-- Message Actions Dialog -->
+    <string name="stream_ui_message_list_reply">Réponse</string>
+    <string name="stream_ui_message_list_thread_reply">Réponse au fil de discussion</string>
+    <string name="stream_ui_message_list_resend_message">Renvoyer</string>
+    <string name="stream_ui_message_list_copy_message">Copier le message</string>
+    <string name="stream_ui_message_list_edit_message">Modifier le message</string>
+    <string name="stream_ui_message_list_flag_message">Signaler un message</string>
+    <string name="stream_ui_message_list_mute_user">Mettre en sourdine l\'utilisateur</string>
+    <string name="stream_ui_message_list_unmute_user">Désactiver la mise en sourdine de l\'utilisateur</string>
+    <string name="stream_ui_message_list_block_user">Bloquer l\'utilisateur</string>
+    <string name="stream_ui_message_list_delete_message">Supprimer le message</string>
+    <plurals name="stream_ui_message_list_message_reactions">
+        <item quantity="one">%d Réaction aux messages</item>
+        <item quantity="other">%d Réactions aux messages</item>
+    </plurals>
+
+    <!-- Message Action Confirmations -->
+    <string name="stream_ui_message_list_delete_confirmation_title">Supprimer le message</string>
+    <string name="stream_ui_message_list_delete_confirmation_message">Êtes-vous sûr de vouloir supprimer définitivement ce message ?</string>
+    <string name="stream_ui_message_list_delete_confirmation_positive_button">Supprimer</string>
+    <string name="stream_ui_message_list_delete_confirmation_negative_button">Annuler</string>
+    <string name="stream_ui_message_list_flag_confirmation_title">Signaler un message</string>
+    <string name="stream_ui_message_list_flag_confirmation_message">Voulez-vous envoyer une copie de ce message à un nmodérateur pour une enquête plus approfondie?</string>
+    <string name="stream_ui_message_list_flag_confirmation_positive_button">Signaler</string>
+    <string name="stream_ui_message_list_flag_confirmation_negative_button">Annuler</string>
+
+    <!-- Attachment Viewer -->
+    <string name="stream_ui_message_list_attachment_load_failed">Le chargement a échoué en raison d\'une erreur inconnue.</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">Le chargement a échoué en raison d\'une URL non valide.</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s</string>
+    <string name="stream_ui_message_list_attachment_display_error">Erreur. Le fichier ne peut pas être affiché</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_list_error_mute_user">Échec de la mise en sourdine de l\'utilisateur</string>
+    <string name="stream_ui_message_list_error_unmute_user">Échec à l\'utilisateur unmute</string>
+    <string name="stream_ui_message_list_error_block_user">Échec du blocage de l\'utilisateur</string>
+    <string name="stream_ui_message_list_error_flag_message">Échec du signalement du message</string>
+</resources>
