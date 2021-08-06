@@ -8,7 +8,7 @@
 
     <!-- Permissions -->
     <string name="stream_ui_message_input_permission_camera_title">Autorizzazione per l\'accesso alla fotocamera e all\'archivio</string>
-    <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni di accesso alla fotocamera e all\'archiviazione per poter scattare foto e video</string>
+    <string name="stream_ui_message_input_permission_camera_message">Sono necessarie le autorizzazioni di accesso alla fotocamera e all\'archivio per poter scattare foto e video</string>
     <string name="stream_ui_message_input_permission_storage_title">Autorizzazioni di accesso allo spazio di archiviazione</string>
     <string name="stream_ui_message_input_permission_storage_message">Le autorizzazioni di accesso all\'archiviazione sono necessarie per poter inviare e salvare foto, video, musica e altri file</string>
     <string name="stream_ui_message_input_permission_setting_message">Abilita le autorizzazioni su Impostazioni app</string>
