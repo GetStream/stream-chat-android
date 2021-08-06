@@ -38,7 +38,7 @@
 
 ### ❌ Removed
 - Remove `ChatClient.isValidRemoteMessage()` method. It needs to be handled outside
-- Remove `ChatClient.handleRemoteMessage(RemoteMessage)`. Now it needs to be used `ChatClient.handlePushMessage(PushMessage)`
+- 🚨 Breaking change: Remove `ChatClient.handleRemoteMessage(RemoteMessage)`. Now it needs to be used `ChatClient.handlePushMessage(PushMessage)`
 
 
 ## stream-chat-android-offline
