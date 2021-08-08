@@ -1,10 +1,11 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import android.graphics.Color
-import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getPinnedText
@@ -36,19 +37,22 @@ internal class PinnedIndicatorDecorator : BaseDecorator() {
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        setupPinnedIndicator(viewHolder.binding.root, viewHolder.binding.pinnedByTextView, data)
-    }
+    ) = Unit
 
     private fun setupPinnedIndicator(
-        rootView: View,
+        rootView: ConstraintLayout,
         pinnedByTextView: TextView,
         data: MessageListItem.MessageItem,
     ) {
         if (data.message.pinned) {
             pinnedByTextView.isVisible = true
-            pinnedByTextView.text = data.message.getPinnedText(pinnedByTextView.context)
-            rootView.setBackgroundColor(pinnedByTextView.context.getColorCompat(R.color.stream_ui_highlight))
+            pinnedByTextView.text = data.message.getPinnedText(rootView.context)
+            rootView.setBackgroundColor(rootView.context.getColorCompat(R.color.stream_ui_highlight))
+
+            val bias = if (data.isMine) 1f else 0f
+            rootView.updateConstraints {
+                setHorizontalBias(pinnedByTextView.id, bias)
+            }
         } else {
             pinnedByTextView.isVisible = false
             rootView.setBackgroundColor(Color.TRANSPARENT)
