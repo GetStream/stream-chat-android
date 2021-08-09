@@ -61,7 +61,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera.
-- Added the possibility to forceLightTheme. Set it in inside ChatUI to make all views, fragments and activity of the SDK light.
+- Added the possibility to force light and dark theme. Set it in inside ChatUI to make all views, fragments and activity of the SDK light.
 ### ⬆️ Improved
 
 ### ✅ Added
