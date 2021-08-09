@@ -74,6 +74,9 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated Jetpack Compose to `1.0.1` and Kotlin to `1.5.21`
+- Updated Accompanist libraries to `0.16.0`
+- Updated KTX Activity to `1.3.1`
 
 ### ✅ Added
 
