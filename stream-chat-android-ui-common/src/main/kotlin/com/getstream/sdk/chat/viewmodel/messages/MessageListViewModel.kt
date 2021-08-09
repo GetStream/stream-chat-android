@@ -214,7 +214,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
             }
             is Event.PinMessage -> {
-                client.pinMessage(Message(id = event.message.id), null).enqueue(
+                client.pinMessage(Message(id = event.message.id)).enqueue(
                     onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(it))) }
                 )
             }

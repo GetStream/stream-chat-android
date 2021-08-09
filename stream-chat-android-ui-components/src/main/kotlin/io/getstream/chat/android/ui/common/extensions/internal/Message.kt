@@ -13,9 +13,9 @@ internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: B
     }
 
 internal fun Message.getPinnedText(context: Context): String {
-    val name = when {
+    val pinnedByUserName = when {
         user.isCurrentUser() -> context.getString(R.string.stream_ui_message_list_pinned_message_you)
         else -> pinnedBy?.name ?: ""
     }
-    return context.getString(R.string.stream_ui_message_list_pinned_message, name)
+    return context.getString(R.string.stream_ui_message_list_pinned_message, pinnedByUserName)
 }

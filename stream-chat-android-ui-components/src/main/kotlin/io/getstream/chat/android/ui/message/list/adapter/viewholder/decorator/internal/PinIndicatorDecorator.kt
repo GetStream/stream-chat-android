@@ -14,6 +14,10 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
+/**
+ * Decorator responsible for highlighting pinned messages in the message list. Apart from that,
+ * shows a caption indicating that the message was pinned by a particular user.
+ */
 internal class PinIndicatorDecorator : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,

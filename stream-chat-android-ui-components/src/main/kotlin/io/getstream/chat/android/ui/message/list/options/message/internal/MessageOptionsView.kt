@@ -173,12 +173,14 @@ internal class MessageOptionsView : FrameLayout {
         iconTint: Int?,
         isMessagePinned: Boolean,
     ) {
-        if (isMessagePinned) {
-            binding.pinTV.configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_unpin, iconTint)
-            binding.pinTV.text = context.getString(R.string.stream_ui_message_list_unpin_message)
-        } else {
-            binding.pinTV.configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_pin, iconTint)
-            binding.pinTV.text = context.getString(R.string.stream_ui_message_list_pin_message)
+        with(binding.pinTV) {
+            text = if (isMessagePinned) {
+                configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_unpin, iconTint)
+                context.getString(R.string.stream_ui_message_list_unpin_message)
+            } else {
+                configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_pin, iconTint)
+                context.getString(R.string.stream_ui_message_list_pin_message)
+            }
         }
     }
 
