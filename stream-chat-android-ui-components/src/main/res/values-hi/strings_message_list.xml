@@ -14,6 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">अपलोडिंग %d / %d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">अपलोड पूरा हुआ, प्रोसेसिंग जारी है…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <string name="stream_ui_message_list_pinned_message">द्वारा पिन किया गया %s</string>
+    <string name="stream_ui_message_list_pinned_message_you">आप</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d जवाब</item>
         <item quantity="other">%d जवाब</item>

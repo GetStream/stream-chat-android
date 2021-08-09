@@ -15,7 +15,7 @@
     <string name="stream_ui_message_list_attachment_upload_complete">Upload complete, processing…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
     <string name="stream_ui_message_list_pinned_message">Pinned by %s</string>
-    <string name="stream_ui_message_list_pinned_message_by_you">You</string>
+    <string name="stream_ui_message_list_pinned_message_you">You</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
