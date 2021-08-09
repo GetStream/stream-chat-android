@@ -74,6 +74,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
 
