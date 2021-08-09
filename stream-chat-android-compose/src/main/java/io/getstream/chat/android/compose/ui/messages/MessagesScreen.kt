@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -78,10 +77,6 @@ public fun MessagesScreen(
 
     val isNetworkAvailable by listViewModel.isOnline.collectAsState()
     val user by listViewModel.user.collectAsState()
-
-    LaunchedEffect(Unit) {
-        listViewModel.start()
-    }
 
     val backAction = {
         val isInThread = listViewModel.isInThread
