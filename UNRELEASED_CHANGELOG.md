@@ -90,6 +90,7 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 
 ### ⬆️ Improved
 - Exposed functionality for getting the `displayName` of `Channel`s.
+- Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
 
