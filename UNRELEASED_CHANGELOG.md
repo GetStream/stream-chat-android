@@ -94,9 +94,11 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 - Updated Accompanist libraries to `0.16.0`
 - Updated KTX Activity to `1.3.1`
 - Exposed functionality for getting the `displayName` of `Channel`s.
+- Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
 
 ### ❌ Removed
