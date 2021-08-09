@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Header Title -->
+    <string name="stream_ui_message_list_header_thread_title">Réponse au fil de discussion</string>
+    <string name="stream_ui_message_list_header_untitled_channel">Canal sans nom</string>
+
+    <!-- Header Subtitle -->
+    <string name="stream_ui_message_list_header_thread_subtitle">avec %s</string>
+    <string name="stream_ui_message_list_header_disconnected">Recherche de réseau</string>
+    <string name="stream_ui_message_list_header_offline">Hors ligne…</string>
+    <string name="stream_ui_message_list_header_retry">Essayer à nouveau</string>
+    <string name="stream_ui_message_list_header_member_count_online">%s, %d En ligne</string>
+    <plurals name="stream_ui_message_list_header_member_count">
+        <item quantity="one">%1d Membre</item>
+        <item quantity="other">%1d Membres</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_header_typing_users">
+        <item quantity="one">%s est en train d\'écrire</item>
+        <item quantity="other">%s et %d sont entrain d\'écrire</item>
+    </plurals>
+
+    <string name="stream_ui_message_list_header_back_button_content_description">Bouton Retour</string>
+</resources>

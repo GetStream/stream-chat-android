@@ -1,5 +1,9 @@
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.models.Device
+import com.google.gson.annotations.SerializedName
 
-internal data class GetDevicesResponse(val devices: List<Device> = emptyList())
+internal data class GetDevicesResponse(val devices: List<DeviceReponse> = emptyList())
+internal data class DeviceReponse(
+    @SerializedName("id") val token: String,
+    @SerializedName("push_provider") var pushProvider: String,
+)

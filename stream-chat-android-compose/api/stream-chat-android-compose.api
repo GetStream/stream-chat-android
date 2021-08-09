@@ -605,6 +605,10 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamTypography$C
 	public final fun getDefault ()Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
 }
 
+public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
+	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionTypes {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/DefaultReactionTypes;
