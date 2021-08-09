@@ -6,6 +6,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated the Kotlin version to latest supported - `1.5.21`.
 
 ### ❌ Removed
 
@@ -89,7 +90,7 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 - Fixed a bug where we didn't use the `Channel.getDisplayName()` logic for the `MessageListHeader`.
 
 ### ⬆️ Improved
-- Updated Jetpack Compose to `1.0.1` and Kotlin to `1.5.21`
+- Updated Jetpack Compose to `1.0.1`
 - Updated Accompanist libraries to `0.16.0`
 - Updated KTX Activity to `1.3.1`
 - Exposed functionality for getting the `displayName` of `Channel`s.
