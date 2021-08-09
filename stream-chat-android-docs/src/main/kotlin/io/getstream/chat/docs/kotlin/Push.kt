@@ -6,6 +6,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushMessage
+import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.docs.MainActivity
@@ -21,7 +24,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
          */
         fun registeringDevice() {
-            client.addDevice("firebase-token").enqueue { result ->
+            client.addDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
@@ -35,9 +43,7 @@ class Push(val context: Context, val client: ChatClient) {
          */
         fun setupNotifications() {
             val notificationsConfig = NotificationConfig(
-                firebaseMessageIdKey = "message_id",
-                firebaseChannelIdKey = "channel_id",
-                firebaseChannelTypeKey = "channel_type",
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
             )
 
             val notificationHandler = MyNotificationHandler(context, notificationsConfig)
@@ -54,7 +60,7 @@ class Push(val context: Context, val client: ChatClient) {
         inner class CustomChatNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
             ChatNotificationHandler(context, notificationConfig) {
 
-            override fun onFirebaseMessage(message: RemoteMessage): Boolean {
+            override fun onPushMessage(message: PushMessage): Boolean {
                 // Handle remote message and return true if message should not be handled by SDK
                 return true
             }
@@ -68,7 +74,12 @@ class Push(val context: Context, val client: ChatClient) {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setFirebaseToken(token)
+                    ChatClient.setDevice(
+                        Device(
+                            token = token,
+                            pushProvider = PushProvider.FIREBASE,
+                        )
+                    )
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -76,8 +87,13 @@ class Push(val context: Context, val client: ChatClient) {
 
             override fun onMessageReceived(message: RemoteMessage) {
                 try {
-                    // Handle RemoteMessage sent from Stream backend
-                    ChatClient.handleRemoteMessage(message)
+                    // Handle RemoteMessage and convert it to a PushMessage to sent back to Stream
+                    val pushMessage = PushMessage(
+                        channelId = message.data["channel_id"]!!,
+                        messageId = message.data["message_id"]!!,
+                        channelType = message.data["channel_type"]!!,
+                    )
+                    ChatClient.handlePushMessage(pushMessage)
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -117,7 +133,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
          */
         fun registerADevice() {
-            client.addDevice("firebase-token").enqueue { result ->
+            client.addDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully registered
                 } else {
@@ -130,7 +151,12 @@ class Push(val context: Context, val client: ChatClient) {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#unregister-a-device">Unregister a Device</a>
          */
         fun unregisterADevice() {
-            client.deleteDevice("firebase-token").enqueue { result ->
+            client.deleteDevice(
+                Device(
+                    token = "push-provider-token",
+                    pushProvider = PushProvider.FIREBASE,
+                )
+            ).enqueue { result ->
                 if (result.isSuccess) {
                     // Device was successfully unregistered
                 } else {

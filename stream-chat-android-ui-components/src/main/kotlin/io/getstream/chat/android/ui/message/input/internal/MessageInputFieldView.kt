@@ -266,7 +266,7 @@ internal class MessageInputFieldView : FrameLayout {
     private fun switchToMediaAttachmentMode(mode: Mode.MediaAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
 
-        selectedAttachments = mode.attachments.toList()
+        selectedAttachments += mode.attachments.toList()
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = true
