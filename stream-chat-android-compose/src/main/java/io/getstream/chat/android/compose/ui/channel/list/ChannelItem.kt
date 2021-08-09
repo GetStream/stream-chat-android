@@ -17,25 +17,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -149,14 +146,4 @@ internal fun DefaultChannelItem(
             }
         }
     }
-}
-
-@Composable
-@ReadOnlyComposable
-private fun Channel.getDisplayName(): String {
-    return name.takeIf { it.isNotEmpty() }
-        ?: getUsers()
-            .joinToString { it.name }
-            .takeIf { it.isNotEmpty() }
-        ?: stringResource(id = R.string.stream_compose_channel_list_untitled_channel)
 }

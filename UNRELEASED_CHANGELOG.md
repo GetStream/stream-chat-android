@@ -60,8 +60,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed a bug where we didn't use the `Channel.getDisplayName()` logic for the `MessageListHeader`.
 
 ### ⬆️ Improved
+- Exposed functionality for getting the `displayName` of `Channel`s.
 
 ### ✅ Added
 
