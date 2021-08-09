@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class PinnedIndicatorDecorator : BaseDecorator() {
+internal class PinIndicatorDecorator : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
