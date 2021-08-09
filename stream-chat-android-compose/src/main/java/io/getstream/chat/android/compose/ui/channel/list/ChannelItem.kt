@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
+import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -94,6 +96,7 @@ internal fun DefaultChannelItem(
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = channel.getDisplayName(),
@@ -104,8 +107,9 @@ internal fun DefaultChannelItem(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            val lastMessageText = lastMessage?.text?.takeIf { it.isNotBlank() }
-            if (lastMessageText != null) {
+            val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+
+            if (lastMessageText.isNotEmpty()) {
                 Text(
                     text = lastMessageText,
                     maxLines = 1,

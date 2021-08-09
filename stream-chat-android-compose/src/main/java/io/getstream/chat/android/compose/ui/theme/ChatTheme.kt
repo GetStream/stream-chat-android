@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
 
@@ -65,21 +66,26 @@ public object ChatTheme {
      * */
     public val colors: StreamColors
         @Composable
+        @ReadOnlyComposable
         get() = LocalColors.current
 
     public val typography: StreamTypography
         @Composable
+        @ReadOnlyComposable
         get() = LocalTypography.current
 
     public val shapes: StreamShapes
         @Composable
+        @ReadOnlyComposable
         get() = LocalShapes.current
 
     public val attachmentFactories: List<AttachmentFactory>
         @Composable
+        @ReadOnlyComposable
         get() = LocalAttachmentFactories.current
 
     public val reactionTypes: Map<String, Int>
         @Composable
+        @ReadOnlyComposable
         get() = LocalReactionTypes.current
 }
