@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -157,16 +158,19 @@ internal class GsonChatApi(
         }
     }
 
-    override fun addDevice(firebaseToken: String): Call<Unit> {
+    override fun addDevice(device: Device): Call<Unit> {
         return retrofitApi.addDevices(
             connectionId = connectionId,
-            request = AddDeviceRequest(firebaseToken)
+            request = AddDeviceRequest(
+                device.token,
+                device.pushProvider.key,
+            )
         ).toUnitCall()
     }
 
-    override fun deleteDevice(firebaseToken: String): Call<Unit> {
+    override fun deleteDevice(device: Device): Call<Unit> {
         return retrofitApi.deleteDevice(
-            deviceId = firebaseToken,
+            deviceId = device.token,
             connectionId = connectionId
         ).toUnitCall()
     }
@@ -174,7 +178,14 @@ internal class GsonChatApi(
     override fun getDevices(): Call<List<Device>> {
         return retrofitApi.getDevices(
             connectionId = connectionId
-        ).map { it.devices }
+        ).map {
+            it.devices.map { deviceReponse ->
+                Device(
+                    token = deviceReponse.token,
+                    pushProvider = PushProvider.fromKey(deviceReponse.pushProvider)
+                )
+            }
+        }
     }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {

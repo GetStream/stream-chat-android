@@ -42,10 +42,10 @@ internal interface ChatApi {
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
     @CheckResult
-    fun addDevice(firebaseToken: String): Call<Unit>
+    fun addDevice(device: Device): Call<Unit>
 
     @CheckResult
-    fun deleteDevice(firebaseToken: String): Call<Unit>
+    fun deleteDevice(device: Device): Call<Unit>
 
     @CheckResult
     fun getDevices(): Call<List<Device>>

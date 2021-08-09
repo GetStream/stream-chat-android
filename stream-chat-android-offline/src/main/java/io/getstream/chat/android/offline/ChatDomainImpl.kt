@@ -352,7 +352,7 @@ internal class ChatDomainImpl internal constructor(
     internal suspend fun storeSyncState(): SyncState? {
         syncStateFlow.value?.let { _syncState ->
             val newSyncState = _syncState.copy(
-                activeChannelIds = activeChannelMapImpl.keys().toList(),
+                activeChannelIds = getActiveChannelCids(),
                 activeQueryIds = activeQueryMapImpl.values.map { it.queryChannelsSpec.id }
             )
             repos.insertSyncState(newSyncState)
@@ -452,6 +452,10 @@ internal class ChatDomainImpl internal constructor(
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
+    }
+
+    fun getActiveChannelCids(): List<String> {
+        return activeChannelMapImpl.keys().toList()
     }
 
     fun setChannelUnreadCount(newCount: Int) {
@@ -603,7 +607,7 @@ internal class ChatDomainImpl internal constructor(
         return if (cids.isNotEmpty()) {
             queryEvents(cids).also { resultChatEvent ->
                 if (resultChatEvent.isSuccess) {
-                    eventHandler.updateOfflineStorageFromEvents(resultChatEvent.data())
+                    eventHandler.handleEventsInternal(resultChatEvent.data())
                     syncStateFlow.value?.let { syncStateFlow.value = it.copy(lastSyncedAt = now) }
                 }
             }
@@ -691,8 +695,11 @@ internal class ChatDomainImpl internal constructor(
                 val channelController = this.channel(c)
                 channelController.watch()
             }
-            // 4. recover events (async)
-            replayEventsForChannels(cids)
+        }
+        // 4. recover missing events
+        val activeChannelCids = getActiveChannelCids()
+        if (activeChannelCids.isNotEmpty()) {
+            replayEventsForChannels(activeChannelCids)
         }
     }
 

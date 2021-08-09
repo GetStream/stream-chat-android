@@ -1195,6 +1195,24 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
+public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
+}
+
+public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$NotVisibleToAnyone : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$NotVisibleToAnyone;
+	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
+}
+
+public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToAuthorOnly : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToAuthorOnly;
+	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
+}
+
+public final class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToEveryone : io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate$VisibleToEveryone;
+	public fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
+}
+
 public final class io/getstream/chat/android/ui/message/list/FileAttachmentViewStyle {
 	public fun <init> (IIIILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()I
@@ -1348,6 +1366,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setCopyMessageEnabled (Z)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
+	public final fun setDeletedMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
 	public final fun setEditMessageEnabled (Z)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
