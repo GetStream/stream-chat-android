@@ -56,7 +56,7 @@ import java.util.Date
 public class ImagePreviewActivity : AppCompatActivity() {
 
     private val factory by lazy {
-        ImagePreviewViewModelFactory(ChatClient.instance())
+        ImagePreviewViewModelFactory(ChatClient.instance(), intent?.getStringExtra(KEY_MESSAGE_ID) ?: "")
     }
 
     private val imagePreviewViewModel by viewModels<ImagePreviewViewModel>(factoryProducer = { factory })
@@ -66,10 +66,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
         val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
 
         if (messageId.isBlank()) {
-            finish()
+            throw IllegalArgumentException("Missing messageId to load images.")
         }
-
-        imagePreviewViewModel.start(messageId)
 
         setContent {
             ChatTheme {

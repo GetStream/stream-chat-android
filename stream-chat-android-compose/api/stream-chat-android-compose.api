@@ -642,7 +642,6 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun setFilters (Lio/getstream/chat/android/client/api/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public final fun setSearchQuery (Ljava/lang/String;)V
-	public final fun start ()V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
@@ -653,14 +652,13 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelVi
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
-	public final fun start (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -680,9 +678,9 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getImages ()Ljava/util/List;
 	public final fun getSelectedAttachments ()Ljava/util/List;
 	public final fun isShowingAttachments ()Z
+	public final fun loadData ()V
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setImages (Ljava/util/List;)V
-	public final fun start ()V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
@@ -727,7 +725,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun removeOverlay ()V
 	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun start ()V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
