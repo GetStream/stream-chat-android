@@ -1,6 +1,10 @@
 # Overview
 
-The UI components library includes pre-built Android Views to easily load and display data from the Stream Chat API.
+The **UI Components** library includes pre-built Android Views to easily load and display data from the Stream Chat API.
+
+:::info
+Already using Jetpack Compose? Check out our [Compose UI Components](../04-compose/01-overview.md)!
+:::
 
 |||
 | --- | --- |

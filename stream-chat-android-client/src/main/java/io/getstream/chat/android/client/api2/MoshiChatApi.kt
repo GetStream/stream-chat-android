@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
@@ -123,6 +124,14 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
+    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
+        return messageApi.partialUpdateMessage(
+            messageId = messageId,
+            connectionId = connectionId,
+            body = PartialUpdateMessageRequest(set, unset)
+        ).map { response -> response.message.toDomain() }
+    }
+
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
@@ -172,16 +181,19 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun addDevice(firebaseToken: String): Call<Unit> {
+    override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
             connectionId = connectionId,
-            request = AddDeviceRequest(id = firebaseToken),
+            request = AddDeviceRequest(
+                device.token,
+                device.pushProvider.key
+            ),
         ).toUnitCall()
     }
 
-    override fun deleteDevice(firebaseToken: String): Call<Unit> {
+    override fun deleteDevice(device: Device): Call<Unit> {
         return deviceApi.deleteDevice(
-            deviceId = firebaseToken,
+            deviceId = device.token,
             connectionId = connectionId,
         ).toUnitCall()
     }

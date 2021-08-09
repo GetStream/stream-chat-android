@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api.models.PartialUpdateUser
 import io.getstream.chat.android.client.api.models.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api.models.QueryBannedUsersRequest
@@ -50,6 +51,7 @@ import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -156,16 +158,19 @@ internal class GsonChatApi(
         }
     }
 
-    override fun addDevice(firebaseToken: String): Call<Unit> {
+    override fun addDevice(device: Device): Call<Unit> {
         return retrofitApi.addDevices(
             connectionId = connectionId,
-            request = AddDeviceRequest(firebaseToken)
+            request = AddDeviceRequest(
+                device.token,
+                device.pushProvider.key,
+            )
         ).toUnitCall()
     }
 
-    override fun deleteDevice(firebaseToken: String): Call<Unit> {
+    override fun deleteDevice(device: Device): Call<Unit> {
         return retrofitApi.deleteDevice(
-            deviceId = firebaseToken,
+            deviceId = device.token,
             connectionId = connectionId
         ).toUnitCall()
     }
@@ -173,7 +178,14 @@ internal class GsonChatApi(
     override fun getDevices(): Call<List<Device>> {
         return retrofitApi.getDevices(
             connectionId = connectionId
-        ).map { it.devices }
+        ).map {
+            it.devices.map { deviceReponse ->
+                Device(
+                    token = deviceReponse.token,
+                    pushProvider = PushProvider.fromKey(deviceReponse.pushProvider)
+                )
+            }
+        }
     }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
@@ -299,6 +311,18 @@ internal class GsonChatApi(
             messageId = message.id,
             connectionId = connectionId,
             message = MessageRequest(message)
+        ).map { it.message }
+    }
+
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>
+    ): Call<Message> {
+        return retrofitApi.partialUpdateMessage(
+            messageId = messageId,
+            connectionId = connectionId,
+            body = PartialUpdateMessageRequest(set, unset)
         ).map { it.message }
     }
 

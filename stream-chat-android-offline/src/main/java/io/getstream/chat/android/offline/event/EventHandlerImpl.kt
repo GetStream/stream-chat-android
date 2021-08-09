@@ -410,6 +410,13 @@ internal class EventHandlerImpl(
             }
         }
 
+        // mutes are user related, so they have to be propagated to all channels
+        sortedEvents.filterIsInstance<NotificationChannelMutesUpdatedEvent>().lastOrNull()?.let { event ->
+            domainImpl.allActiveChannels().forEach { channelController ->
+                channelController.handleEvent(event)
+            }
+        }
+
         // User presence change applies to all active channels with that user
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent

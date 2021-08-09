@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TEXT_AND_ATTACHMENTS
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
@@ -96,6 +97,7 @@ public open class MessageListItemViewHolderFactory {
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
             SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
+            THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -137,7 +139,7 @@ public open class MessageListItemViewHolderFactory {
     protected fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
-        return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators)
+        return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
     protected fun createGiphyMessageItemViewHolder(

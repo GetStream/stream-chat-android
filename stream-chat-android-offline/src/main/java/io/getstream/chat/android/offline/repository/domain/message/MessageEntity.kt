@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.channelinfo.ChannelInfoEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.ReactionEntity
 import java.util.Date
 
@@ -62,11 +63,22 @@ internal data class MessageInnerEntity(
     val shadowed: Boolean = false,
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
-    /** if the message  **/
+    @Embedded(prefix = "channel_info")
+    val channelInfo: ChannelInfoEntity? = null,
+    /** if the message is silent  **/
     val silent: Boolean = false,
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap(),
+    /** the ID of the quoted message **/
     val replyToId: String?,
+    /** whether message is pinned or not **/
+    val pinned: Boolean,
+    /** date when the message got pinned **/
+    val pinnedAt: Date? = null,
+    /** date when pinned message expires **/
+    val pinExpires: Date? = null,
+    /** the ID of the user who pinned the message **/
+    val pinnedByUserId: String?,
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
 )

@@ -1,12 +1,12 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- Fixed adding `MessageListItem.TypingItem` to message list
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Updated the Kotlin version to latest supported - `1.5.21`.
 
 ### ❌ Removed
 
@@ -29,10 +29,18 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- `PushMessage` class created to store Push Notification data
+- `PushDeviceGenerator` interface to obtain the Push Token and create the `Device`
 
 ### ⚠️ Changed
+- `Device` class has an extra attribute with the `PushProvider` used on this device
+- Breaking change: `ChatClient.setDevice()` and `ChatClient.addDevice()` now receive a `device` instance, instead of only receive the push provider token
+- `RemoteMessage` from Firebase is not used anymore inside of our SDK, now it needs to be used with `PushMessage` class
+- `NotificationConfig` has a new list of `PushDeviceGenerator` instance to be used for generating the Push Notification Token. If you were using `Firebase` as your Push Notification Provider, you need to add `FirebasePushDeviceGenerator` to your `NotificationConfig` object to continue working as before. `FirebasePushDeviceGenerator` receive by constructor the default `FirebaseMessaging` instance to be used, if you would like to use your own instance and no the default one, you can inject it by constructor. Unneeded Firebase properties have been removed from this class.
 
 ### ❌ Removed
+- 🚨 Breaking change: Remove `ChatClient.isValidRemoteMessage()` method. It needs to be handled outside
+- 🚨 Breaking change: Remove `ChatClient.handleRemoteMessage(RemoteMessage)`. Now it needs to be used `ChatClient.handlePushMessage(PushMessage)`
 
 
 ## stream-chat-android-offline
@@ -54,45 +62,44 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-Now it is possible to style the AttachmentActivity. Just replace the activity's theme
-in your Manifest file:
 
-```
-<activity
-    android:name="io.getstream.chat.android.ui.gallery.AttachmentActivity"
-    android:theme="@style/yourTheme"
-    tools:replace="android:theme"
-    />
-```
 ### ⚠️ Changed
+
+### ❌ Removed
+- Removed unnecessary "draft" filter from the default channel list filter as it is only relevant to the sample app
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera. 
+### ⬆️ Improved
+
+### ✅ Added
+- Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
+
+### ⚠️ Changed
+- 🚨 Breaking change: the deleted `MessageListItem.MessageItem` elements are now displayed by default to all the users. This default behavior can be customized using `MessageListView::setDeletedMessageListItemPredicate` function. This function takes an instance of `MessageListItemPredicate`. You can pass one of the following objects:
+    * `DeletedMessageListItemPredicate.VisibleToEveryone`
+    * `DeletedMessageListItemPredicate.NotVisibleToAnyone`
+    * or `DeletedMessageListItemPredicate.VisibleToAuthorOnly`
+    Alternatively you can pass your custom implementation by implementing the `MessageListItemPredicate` interface if you need to customize it more deeply.
 
 ### ❌ Removed
 
 
-## stream-chat-android-ui-components
+## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed "operator $ne is not supported for custom fields" error when querying channels
+- Fixed a bug where we didn't use the `Channel.getDisplayName()` logic for the `MessageListHeader`.
 
 ### ⬆️ Improved
+- Updated Jetpack Compose to `1.0.1`
+- Updated Accompanist libraries to `0.16.0`
+- Updated KTX Activity to `1.3.1`
+- Exposed functionality for getting the `displayName` of `Channel`s.
+- Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
-- Now you can configure the style of `AttachmentMediaActivity`
-- Added `streamUiLoadingView`, `streamUiEmptyStateView` and `streamUiLoadingMoreView` attributes to `ChannelListView` and `ChannelListViewStyle`
-- Added possibility to customize `ChannelListView` using `streamUiChannelListViewStyle`. Check `StreamUi.ChannelListView` style
-- Added `edgeEffectColor` attribute to `ChannelListView` and `ChannelListViewStyle` to allow configuring edge effect color
-- Added possibility to customize `MentionListView` style via `TransformStyle.mentionListViewStyleTransformer`
-- Added `streamUiSearchResultListViewStyle` attribute to application to customize `SearchResultListView`. The attribute references a style with the following attributes:
-  - `streamUiSearchResultListSearchInfoBarBackground` - background for search info bar
-  - `streamUiSearchResultListSearchInfoBarTextSize`, `streamUiSearchResultListSearchInfoBarTextColor`, `streamUiSearchResultListSearchInfoBarTextFont`, `streamUiSearchResultListSearchInfoBarTextFontAssets`, `streamUiSearchResultListSearchInfoBarTextStyle` attributes to customize text displayed in search info bar
-  - `streamUiSearchResultListEmptyStateIcon` - icon for empty state view
-  - `streamUiSearchResultListEmptyStateTextSize`, `streamUiSearchResultListEmptyStateTextColor`, `streamUiSearchResultListEmptyStateTextFont`, `streamUiSearchResultListEmptyStateTextFontAssets`, `streamUiSearchResultListEmptyStateTextStyle` attributes to customize empty state text
-  - `streamUiSearchResultListProgressBarIcon` - animated progress drawable
-  - `streamUiSearchResultListSenderNameTextSize`, `streamUiSearchResultListSenderNameTextColor`, `streamUiSearchResultListSenderNameTextFont`, `streamUiSearchResultListSenderNameTextFontAssets`, `streamUiSearchResultListSenderNameTextStyle` attributes to customize message sender text
-  - `streamUiSearchResultListMessageTextSize`, `streamUiSearchResultListMessageTextColor`, `streamUiSearchResultListMessageTextFont`, `streamUiSearchResultListMessageTextFontAssets`, `streamUiSearchResultListMessageTextStyle` attributes to customize message text
-  - `streamUiSearchResultListMessageTimeTextSize`, `streamUiSearchResultListMessageTimeTextColor`, `streamUiSearchResultListMessageTimeTextFont`, `streamUiSearchResultListMessageTimeTextFontAssets`, `streamUiSearchResultListMessageTimeTextStyle` attributes to customize message time text
-- Added possibility to customize `SearchResultListView` style via `TransformStyle.searchResultListViewStyleTransformer`
 
 ### ⚠️ Changed
-- Made `Channel::getLastMessage` function public
+- `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
 
 ### ❌ Removed

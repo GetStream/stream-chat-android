@@ -6,17 +6,6 @@ public final class com/getstream/sdk/chat/StreamFileProvider : androidx/core/con
 	public fun <init> ()V
 }
 
-public abstract interface class com/getstream/sdk/chat/UrlSigner {
-	public abstract fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
-}
-
-public class com/getstream/sdk/chat/UrlSigner$DefaultUrlSigner : com/getstream/sdk/chat/UrlSigner {
-	public fun <init> ()V
-	public fun signFileUrl (Ljava/lang/String;)Ljava/lang/String;
-	public fun signImageUrl (Ljava/lang/String;)Ljava/lang/String;
-}
-
 public abstract class com/getstream/sdk/chat/adapter/MessageListItem {
 	public final fun getStableId ()J
 }
@@ -65,6 +54,10 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$Position : jav
 	public static final field TOP Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
 	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
 	public static fun values ()[Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
+}
+
+public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem : com/getstream/sdk/chat/adapter/MessageListItem {
+	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem;
 }
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
@@ -123,6 +116,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$Companion {
 }
 
 public final class com/getstream/sdk/chat/images/StreamImageLoader$DefaultImpls {
+	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun loadAsBitmap$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun loadVideoThumbnail$default (Lcom/getstream/sdk/chat/images/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
@@ -145,6 +139,7 @@ public final class com/getstream/sdk/chat/images/StreamImageLoader$ImageTransfor
 }
 
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
+	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun load$default (Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public static synthetic fun loadVideoThumbnail$default (Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lcom/getstream/sdk/chat/images/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
@@ -275,7 +270,6 @@ public final class com/getstream/sdk/chat/utils/extensions/AttachmentExtensionKt
 public final class com/getstream/sdk/chat/utils/extensions/ChannelKt {
 	public static synthetic fun getUsers$default (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 	public static synthetic fun isDirectMessaging$default (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Z
-	public static final fun isDraft (Lio/getstream/chat/android/client/models/Channel;)Z
 }
 
 public final class com/getstream/sdk/chat/utils/extensions/ConstraintLayoutKt {
@@ -398,7 +392,6 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListItemLive
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
-	public static final field Companion Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Companion;
 	public static final field MESSAGES_LIMIT I
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V

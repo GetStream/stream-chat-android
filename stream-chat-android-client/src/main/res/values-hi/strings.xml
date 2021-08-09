@@ -1,0 +1,15 @@
+<resources>
+
+    <!--Notification-->
+    <string name="stream_chat_notification_title">चैट मैसेज</string>
+    <string name="stream_chat_notification_content">आपको नया मैसेज प्राप्त हुआ है</string>
+    <string name="stream_chat_notification_reply">जवाब दें</string>
+    <string name="stream_chat_notification_type_hint">मैसेज लिखें</string>
+    <string name="stream_chat_notification_read">पढ़ा मार्क करें</string>
+    <string name="stream_chat_notification_channel_id">stream_GetStreamClient</string>
+    <string name="stream_chat_notification_channel_name">नए चैट मैसेज</string>
+    <string name="stream_chat_load_notification_data_title">नोटिफ़िकेशन डेटा लोड हो रहा है</string>
+    <string name="stream_chat_notification_group_summary_content_text">आपको नए मैसेज प्राप्त हुए हैं</string>
+    <string name="stream_chat_error_notification_group_summary_title">चैट मैसेज</string>
+    <string name="stream_chat_error_notification_group_summary_content_text">आपको नए मैसेज प्राप्त हुए हैं</string>
+</resources>

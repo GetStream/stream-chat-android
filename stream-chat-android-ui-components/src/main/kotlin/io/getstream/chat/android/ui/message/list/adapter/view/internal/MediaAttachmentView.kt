@@ -41,7 +41,7 @@ internal class MediaAttachmentView : ConstraintLayout {
 
     constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
@@ -59,7 +59,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.imagePreviewUrl ?: attachment.ogUrl ?: return
+        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
@@ -92,7 +92,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
-            placeholderResId = R.drawable.stream_ui_picture_placeholder,
+            placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)

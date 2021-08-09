@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -22,6 +23,7 @@ import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -29,7 +31,7 @@ import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
-import io.getstream.chat.android.ui.message.list.FileAttachmentsViewStyle
+import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -41,17 +43,13 @@ internal class FileAttachmentsView : RecyclerView {
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
 
-    private lateinit var style: FileAttachmentsViewStyle
+    private lateinit var style: FileAttachmentViewStyle
 
     private lateinit var fileAttachmentsAdapter: FileAttachmentsAdapter
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(null)
-    }
+    constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
@@ -66,8 +64,8 @@ internal class FileAttachmentsView : RecyclerView {
         addItemDecoration(VerticalSpaceItemDecorator(4.dpToPx()))
     }
 
-    fun init(attrs: AttributeSet?) {
-        style = FileAttachmentsViewStyle(context, attrs)
+    private fun init(attrs: AttributeSet?) {
+        style = FileAttachmentViewStyle(context, attrs)
         fileAttachmentsAdapter = FileAttachmentsAdapter(
             attachmentClickListener = { attachmentClickListener?.onAttachmentClick(it) },
             attachmentLongClickListener = { attachmentLongClickListener?.onAttachmentLongClick() },
@@ -79,6 +77,11 @@ internal class FileAttachmentsView : RecyclerView {
 
     fun setAttachments(attachments: List<Attachment>) {
         fileAttachmentsAdapter.setItems(attachments)
+    }
+
+    override fun onDetachedFromWindow() {
+        adapter?.onDetachedFromRecyclerView(this)
+        super.onDetachedFromWindow()
     }
 }
 
@@ -96,7 +99,7 @@ private class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    private val style: FileAttachmentsViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -112,6 +115,21 @@ private class FileAttachmentsAdapter(
                 )
             }
     }
+
+    override fun onViewAttachedToWindow(holder: FileAttachmentViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.restartJob()
+    }
+
+    override fun onViewDetachedFromWindow(holder: FileAttachmentViewHolder) {
+        holder.clearScope()
+        super.onViewDetachedFromWindow(holder)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        doForAllViewHolders(recyclerView) { it.clearScope() }
+        super.onDetachedFromRecyclerView(recyclerView)
+    }
 }
 
 private class FileAttachmentViewHolder(
@@ -119,27 +137,27 @@ private class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    private val style: FileAttachmentsViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
-    private lateinit var attachment: Attachment
+    private var attachment: Attachment? = null
 
     private var scope: CoroutineScope? = null
 
-    private fun clearScope() {
+    fun clearScope() {
         scope?.cancel()
         scope = null
     }
 
     init {
         binding.root.setOnClickListener {
-            attachmentClickListener.onAttachmentClick(attachment)
+            attachment?.let(attachmentClickListener::onAttachmentClick)
         }
         binding.root.setOnLongClickListener {
             attachmentLongClickListener.onAttachmentLongClick()
             true
         }
         binding.actionButton.setOnClickListener {
-            attachmentDownloadClickListener.onAttachmentDownloadClick(attachment)
+            attachment?.let(attachmentDownloadClickListener::onAttachmentDownloadClick)
         }
     }
 
@@ -171,6 +189,16 @@ private class FileAttachmentViewHolder(
             }
     }
 
+    fun restartJob() {
+        attachment?.let(::subscribeForProgressIfNeeded)
+    }
+
+    private fun subscribeForProgressIfNeeded(attachment: Attachment) {
+        if (attachment.uploadState is Attachment.UploadState.InProgress) {
+            handleInProgressAttachment(binding.fileSize)
+        }
+    }
+
     override fun bind(item: Attachment) {
         this.attachment = item
 
@@ -178,80 +206,92 @@ private class FileAttachmentViewHolder(
             fileTitle.setTextStyle(style.titleTextStyle)
             fileSize.setTextStyle(style.fileSizeTextStyle)
 
-            fileTypeIcon.loadAttachmentThumb(attachment)
-            fileTitle.text = attachment.getDisplayableName()
+            fileTypeIcon.loadAttachmentThumb(item)
+            fileTitle.text = item.getDisplayableName()
 
-            if (attachment.uploadState == Attachment.UploadState.InProgress) {
+            if (item.uploadState == Attachment.UploadState.InProgress) {
                 actionButton.setImageDrawable(null)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
-            } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
+            } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else {
                 actionButton.setImageDrawable(style.actionButtonIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
             }
 
             binding.progressBar.indeterminateDrawable = style.progressBarDrawable
-            binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
+            binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
 
-            if (attachment.uploadState is Attachment.UploadState.InProgress) {
-                handleInProgressAttachment(fileSize)
-            }
+            subscribeForProgressIfNeeded(item)
             setupBackground()
         }
     }
 
     private fun handleInProgressAttachment(fileSizeView: TextView) {
-        attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-            val progress = tracker.currentProgress()
-            val completion = tracker.isComplete()
-            val totalValue = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0)
-            val progressCorrection = tracker.maxValue / 100F
+        attachment?.let { attachment ->
+            attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
+                val progress = tracker.currentProgress()
+                val completion = tracker.isComplete()
+                val totalValue = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0)
+                val progressCorrection = tracker.maxValue / 100F
 
-            val fileProgress = progress.combine(completion, ::Pair)
+                val fileProgress = progress.combine(completion, ::Pair)
 
-            clearScope()
-            scope = CoroutineScope(DispatcherProvider.Main)
+                clearScope()
+                scope = CoroutineScope(DispatcherProvider.Main)
 
-            scope!!.launch {
-                fileProgress.collect { (progress, isComplete) ->
-                    updateProgress(context, fileSizeView, progress, isComplete, progressCorrection, totalValue)
+                scope?.launch {
+                    fileProgress.collect { (progress, isComplete) ->
+                        updateProgress(
+                            context,
+                            fileSizeView,
+                            binding.progressBar,
+                            attachment,
+                            progress,
+                            isComplete,
+                            progressCorrection,
+                            totalValue
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun updateProgress(
-        context: Context,
-        fileSizeView: TextView,
-        progress: Int,
-        isComplete: Boolean,
-        progressCorrection: Float,
-        targetValue: String,
-    ) {
-        if (!isComplete) {
-            val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
-
-            fileSizeView.text =
-                context.getString(
-                    R.string.stream_ui_message_list_attachment_upload_progress,
-                    nominalProgress,
-                    targetValue
-                )
-        } else {
-            binding.progressBar.isVisible = false
-            fileSizeView.text = attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
-        }
-    }
-
     override fun unbind() {
-        super.unbind()
         clearScope()
+        super.unbind()
     }
 
-    companion object {
+    private companion object {
         private val CORNER_SIZE_PX = 12.dpToPxPrecise()
         private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
+
+        private fun updateProgress(
+            context: Context,
+            fileSizeView: TextView,
+            progressBar: ProgressBar,
+            attachment: Attachment,
+            progress: Int,
+            isComplete: Boolean,
+            progressCorrection: Float,
+            targetValue: String,
+        ) {
+            if (!isComplete) {
+                val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
+
+                fileSizeView.text =
+                    context.getString(
+                        R.string.stream_ui_message_list_attachment_upload_progress,
+                        nominalProgress,
+                        targetValue
+                    )
+            } else {
+                progressBar.isVisible = false
+                fileSizeView.text =
+                    attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
+            }
+        }
     }
 }

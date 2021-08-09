@@ -7,6 +7,9 @@
     <declare-styleable name="StreamUiStyleable">
         <attr name="streamUiValidTheme" format="boolean" />
         <attr name="streamUiTheme" format="reference" />
+        <attr name="streamUiMessageListStyle" format="reference" />
+        <attr name="streamUiMessageListMediaAttachmentStyle" format="reference" />
+        <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
         <attr name="streamUiMessageListHeaderAvatarStyle" format="reference" />
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
@@ -30,5 +33,7 @@
         <attr name="streamUiSearchResultListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
+        <attr name="streamUiTypingIndicatorView" format="reference" />
+        <attr name="streamUiMessageInputViewStyle" format="reference" />
     </declare-styleable>
 </resources>

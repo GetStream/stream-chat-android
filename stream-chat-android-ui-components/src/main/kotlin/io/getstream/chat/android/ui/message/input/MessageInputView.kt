@@ -360,7 +360,7 @@ public class MessageInputView : ConstraintLayout {
             messageInputViewStyle.attachButtonIcon.let(this::setImageDrawable)
             setOnClickListener {
                 context.getFragmentManager()?.let {
-                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle.attachmentSelectionDialogStyle)
+                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
                         .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
                         .show(it, AttachmentSelectionDialogFragment.TAG)
                 }
@@ -449,9 +449,9 @@ public class MessageInputView : ConstraintLayout {
             }
 
         binding.messageInputFieldView.run {
-            setTextColor(messageInputViewStyle.messageInputTextColor)
-            setHintTextColor(messageInputViewStyle.messageInputHintTextColor)
-            setTextSizePx(messageInputViewStyle.messageInputTextSize)
+            setTextColor(messageInputViewStyle.messageInputTextStyle.color)
+            setHintTextColor(messageInputViewStyle.messageInputTextStyle.hintColor)
+            setTextSizePx(messageInputViewStyle.messageInputTextStyle.size.toFloat())
             setInputFieldScrollBarEnabled(messageInputViewStyle.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(messageInputViewStyle.messageInputScrollbarFadingEnabled)
             setCustomBackgroundDrawable(messageInputViewStyle.editTextBackgroundDrawable)
@@ -469,6 +469,7 @@ public class MessageInputView : ConstraintLayout {
         }
 
         binding.separator.background = messageInputViewStyle.dividerBackground
+        binding.dismissInputMode.setImageDrawable(messageInputViewStyle.dismissIconDrawable)
     }
 
     /**

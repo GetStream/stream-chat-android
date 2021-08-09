@@ -6,10 +6,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 
 @InternalStreamChatApi
-public val Channel.isDraft: Boolean
-    get() = getExtraValue("draft", false)
-
-@InternalStreamChatApi
 public fun Channel.isDirectMessaging(currentUserId: String = currentUserId()): Boolean = getUsers(currentUserId).size == 1
 
 @InternalStreamChatApi

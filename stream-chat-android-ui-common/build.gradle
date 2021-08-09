@@ -1,5 +1,5 @@
-import com.getstream.sdk.chat.Dependencies
-import com.getstream.sdk.chat.Configuration
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'

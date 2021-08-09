@@ -1,9 +1,10 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.Mother.randomDevice
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.DeviceReponse
 import io.getstream.chat.android.client.api.models.GetDevicesResponse
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -34,17 +35,23 @@ internal class DevicesApiCallsTests {
     @Test
     fun getDevicesSuccess() {
 
-        val device = Device("device-id")
+        val devices = List(10) { randomDevice() }
 
         Mockito.`when`(
             mock.retrofitApi.getDevices(
                 mock.connectionId
             )
-        ).thenReturn(RetroSuccess(GetDevicesResponse(listOf(device))).toRetrofitCall())
+        ).thenReturn(
+            RetroSuccess(
+                GetDevicesResponse(
+                    devices.map { DeviceReponse(it.token, it.pushProvider.key) }
+                )
+            ).toRetrofitCall()
+        )
 
         val result = client.getDevices().execute()
 
-        verifySuccess(result, listOf(device))
+        verifySuccess(result, devices)
     }
 
     @Test
@@ -63,9 +70,11 @@ internal class DevicesApiCallsTests {
 
     @Test
     fun addDevicesSuccess() {
-
-        val device = Device("device-id")
-        val request = AddDeviceRequest(device.id)
+        val device = randomDevice()
+        val request = AddDeviceRequest(
+            token = device.token,
+            pushProvider = device.pushProvider.key
+        )
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
@@ -74,16 +83,18 @@ internal class DevicesApiCallsTests {
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
-        val result = client.addDevice(device.id).execute()
+        val result = client.addDevice(device).execute()
 
         verifySuccess(result, Unit)
     }
 
     @Test
     fun addDevicesError() {
-
-        val device = Device("device-id")
-        val request = AddDeviceRequest(device.id)
+        val device = randomDevice()
+        val request = AddDeviceRequest(
+            token = device.token,
+            pushProvider = device.pushProvider.key
+        )
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
@@ -92,7 +103,7 @@ internal class DevicesApiCallsTests {
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.addDevice(device.id).execute()
+        val result = client.addDevice(device).execute()
 
         verifyError(result, mock.serverErrorCode)
     }
@@ -100,33 +111,32 @@ internal class DevicesApiCallsTests {
     @Test
     fun deleteDeviceSuccess() {
 
-        val device = Device("device-id")
+        val device = randomDevice()
 
         Mockito.`when`(
             mock.retrofitApi.deleteDevice(
-                device.id,
+                device.token,
                 mock.connectionId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
-        val result = client.deleteDevice(device.id).execute()
+        val result = client.deleteDevice(device).execute()
 
         verifySuccess(result, Unit)
     }
 
     @Test
     fun deleteDeviceError() {
-
-        val device = Device("device-id")
+        val device = randomDevice()
 
         Mockito.`when`(
             mock.retrofitApi.deleteDevice(
-                device.id,
+                device.token,
                 mock.connectionId
             )
         ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.deleteDevice(device.id).execute()
+        val result = client.deleteDevice(device).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

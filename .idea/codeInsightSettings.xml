@@ -2,8 +2,8 @@
 <project version="4">
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
-      <name>coil.load</name>
       <name>coil.ImageLoader</name>
+      <name>coil.load</name>
     </excluded-names>
   </component>
 </project>

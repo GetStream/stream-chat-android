@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.images
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import coil.fetch.VideoFrameUriFetcher
@@ -49,6 +50,28 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         target.loadAny(data, context.streamImageLoader) {
             headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
             placeholderResId?.let(::placeholder)
+            listener(
+                onStart = { onStart() },
+                onCancel = { onComplete() },
+                onError = { _, _ -> onComplete() },
+                onSuccess = { _, _ -> onComplete() },
+            )
+            applyTransformation(transformation)
+        }
+    }
+
+    override fun load(
+        target: ImageView,
+        data: Any?,
+        placeholderDrawable: Drawable?,
+        transformation: StreamImageLoader.ImageTransformation,
+        onStart: () -> Unit,
+        onComplete: () -> Unit,
+    ) {
+        val context = target.context
+        target.loadAny(data, context.streamImageLoader) {
+            headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+            placeholderDrawable?.let(::placeholder)
             listener(
                 onStart = { onStart() },
                 onCancel = { onComplete() },

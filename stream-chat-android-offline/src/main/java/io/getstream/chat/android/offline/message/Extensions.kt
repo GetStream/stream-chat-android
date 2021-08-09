@@ -30,7 +30,8 @@ internal fun Message.users(): List<User> {
         (replyTo?.users().orEmpty()) +
         mentionedUsers +
         ownReactions.mapNotNull(Reaction::user) +
-        threadParticipants
+        threadParticipants +
+        (pinnedBy?.let { listOf(it) } ?: emptyList())
 }
 
 internal fun Message.shouldIncrementUnreadCount(currentUserId: String): Boolean {

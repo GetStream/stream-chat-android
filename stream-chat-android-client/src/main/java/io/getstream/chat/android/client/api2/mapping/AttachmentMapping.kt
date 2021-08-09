@@ -18,6 +18,7 @@ internal fun Attachment.toDto(): AttachmentDto =
         thumb_url = thumbUrl,
         title = title,
         title_link = titleLink,
+        author_link = authorLink,
         type = type,
         url = url,
         extraData = extraData,
@@ -27,6 +28,7 @@ internal fun AttachmentDto.toDomain(): Attachment =
     Attachment(
         assetUrl = asset_url,
         authorName = author_name,
+        authorLink = author_link,
         fallback = fallback,
         fileSize = file_size,
         image = image,

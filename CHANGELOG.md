@@ -1,3 +1,239 @@
+# August 5th, 2021 - 4.15.1
+## stream-chat-android-client
+### ⬆️ Improved
+- Improved `ChatClient::pinMessage` and `ChatClient::unpinMessage`. Now the methods use partial message updates and the data in other `Message` fields is not lost.
+
+### ✅ Added
+- Added `Channel::isMutedFor` extension function which might be used to check if the Channel is muted for User
+- Added `ChatClient::partialUpdateMessage` method to update specific `Message` fields retaining the other fields
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed updating `ChannelController::muted` value
+
+### ⬆️ Improved
+- The following `Message` fields are now persisted to the database: `pinned`, `pinnedAt`, `pinExpires`, `pinnedBy`, `channelInfo`, `replyMessageId`.
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Added a fix for default view for empty state of ChannelListView.
+- Fixed memory leaks for FileAttachmentsView.
+
+### ✅ Added
+- Added `MessageListItem.ThreadPlaceholderItem` and corresponding `THREAD_PLACEHOLDER` view type which can be used to implement an empty thread placeholder.
+- Added `authorLink` to `Attachment` - the link to the website
+
+### ❌ Removed
+- Removed `UrlSigner` class
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Exposed `DefaultMessageContainer` as a public component so users can use it as a fallback
+- Exposed an `isMine` property on `MessageItem`s, for ease of use.
+- Allowed for customization of `MessageList` (specifically `Messages`) component background, through a `modifier.background()` parameter.
+- Allowed for better message customization before sending the message.
+
+### ⚠️ Changed
+- Moved permissions and queries from the compose sample app `AndroidManifest.xml` to the SDK `AndroidManifest.xml` so users don't have to add permissions themselves.
+- Changed the exposed type of the `MessageComposer`'s `onSendMessage` handler. This way people can customize messages before we send them to the API.
+
+### ❌ Removed
+- Removed `currentUser` parameter from `DefaultMessageContainer` and some other components that relied on ID comparison to know which message is ours/theirs.
+- Removed default background color on `Messages` component, so that users can customize it by passing in a `modifier`.
+
+
+# July 29th, 2021 - 4.15.0
+## New Jetpack Compose UI Components 🎉
+
+Starting from this release, we have a new `stream-chat-android-compose` artifact that contains a UI implementation for Chat built in Jetpack Compose.
+
+The new artifact is available as a beta for now (note the postfix in the version number):
+
+```groovy
+implementation "io.getstream:stream-chat-android-compose:4.15.0-beta"
+```
+
+Learn more in the [announcement blog post](https://getstream.io/blog/jetpack-compose-sdk/), check out the [documentation of the Compose UI Components](https://getstream.io/chat/docs/sdk/android/compose/overview/), and try them today with the [Compose Chat tutorial](https://getstream.io/chat/compose/tutorial/)!
+
+## Common changes for all artifacts
+
+### 🐞 Fixed
+- Fixed adding `MessageListItem.TypingItem` to message list
+
+### ⬆️ Improved
+- ⚠ Downgraded Kotlin version to 1.5.10 to support Jetpack Compose
+- Removed AndroidX Media dependency
+- Updated dependency versions
+  - Coil 1.3.0
+  - AndroidX Activity 1.3.0
+  - AndroidX AppCompat 1.3.1
+  - Android Ktx 1.6.0
+  - AndroidX RecyclerView 1.2.1
+  - Kotlin Coroutines 1.5.1
+  - Dexter 6.2.3
+  - Lottie 3.7.2
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Improved the names of properties in the `Config` class
+
+## stream-chat-android-ui-common
+### ✅ Added
+Now it is possible to style the AttachmentActivity. Just replace the activity's theme
+in your Manifest file:
+
+```
+<activity
+    android:name="io.getstream.chat.android.ui.gallery.AttachmentActivity"
+    android:theme="@style/yourTheme"
+    tools:replace="android:theme"
+    />
+```
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed "operator $ne is not supported for custom fields" error when querying channels
+
+### ✅ Added
+- Now you can configure the style of `MessageListItem`. Added:
+  - streamUiMessageTextColorThreadSeparator
+  - streamUiMessageTextFontThreadSeparator
+  - streamUiMessageTextFontAssetsThreadSeparator
+  - streamUiMessageTextStyleThreadSeparator
+  - streamUiMessageTextSizeLinkLabel
+  - streamUiMessageTextColorLinkLabel
+  - streamUiMessageTextFontLinkLabel
+  - streamUiMessageTextFontAssetsLinkLabel
+  - streamUiMessageTextStyleLinkLabel
+  - streamUiMessageListLoadingView
+  - streamUiEmptyStateTextSize
+  - streamUiEmptyStateTextColor
+  - streamUiEmptyStateTextFont
+  - streamUiEmptyStateTextFontAssets
+  - streamUiEmptyStateTextStyle
+
+- Now you can configure the style of `AttachmentMediaActivity`
+- Added `streamUiLoadingView`, `streamUiEmptyStateView` and `streamUiLoadingMoreView` attributes to `ChannelListView` and `ChannelListViewStyle`
+- Added possibility to customize `ChannelListView` using `streamUiChannelListViewStyle`. Check `StreamUi.ChannelListView` style
+- Added `edgeEffectColor` attribute to `ChannelListView` and `ChannelListViewStyle` to allow configuring edge effect color
+- Added possibility to customize `MentionListView` style via `TransformStyle.mentionListViewStyleTransformer`
+- Added `streamUiSearchResultListViewStyle` attribute to application to customize `SearchResultListView`. The attribute references a style with the following attributes:
+  - `streamUiSearchResultListSearchInfoBarBackground` - background for search info bar
+  - `streamUiSearchResultListSearchInfoBarTextSize`, `streamUiSearchResultListSearchInfoBarTextColor`, `streamUiSearchResultListSearchInfoBarTextFont`, `streamUiSearchResultListSearchInfoBarTextFontAssets`, `streamUiSearchResultListSearchInfoBarTextStyle` attributes to customize text displayed in search info bar
+  - `streamUiSearchResultListEmptyStateIcon` - icon for empty state view
+  - `streamUiSearchResultListEmptyStateTextSize`, `streamUiSearchResultListEmptyStateTextColor`, `streamUiSearchResultListEmptyStateTextFont`, `streamUiSearchResultListEmptyStateTextFontAssets`, `streamUiSearchResultListEmptyStateTextStyle` attributes to customize empty state text
+  - `streamUiSearchResultListProgressBarIcon` - animated progress drawable
+  - `streamUiSearchResultListSenderNameTextSize`, `streamUiSearchResultListSenderNameTextColor`, `streamUiSearchResultListSenderNameTextFont`, `streamUiSearchResultListSenderNameTextFontAssets`, `streamUiSearchResultListSenderNameTextStyle` attributes to customize message sender text
+  - `streamUiSearchResultListMessageTextSize`, `streamUiSearchResultListMessageTextColor`, `streamUiSearchResultListMessageTextFont`, `streamUiSearchResultListMessageTextFontAssets`, `streamUiSearchResultListMessageTextStyle` attributes to customize message text
+  - `streamUiSearchResultListMessageTimeTextSize`, `streamUiSearchResultListMessageTimeTextColor`, `streamUiSearchResultListMessageTimeTextFont`, `streamUiSearchResultListMessageTimeTextFontAssets`, `streamUiSearchResultListMessageTimeTextStyle` attributes to customize message time text
+- Added possibility to customize `SearchResultListView` style via `TransformStyle.searchResultListViewStyleTransformer`
+- Added `streamUiTypingIndicatorViewStyle` attribute to application to customize `TypingIndicatorView`. The attribute references a style with the following attributes:
+  - `streamUiTypingIndicatorAnimationView` - typing view
+  - `streamUiTypingIndicatorUsersTextSize`, `streamUiTypingIndicatorUsersTextColor`, `streamUiTypingIndicatorUsersTextFont`, `streamUiTypingIndicatorUsersTextFontAssets`, `streamUiTypingIndicatorUsersTextStyle` attributes to customize typing users text
+- Added possibility to customize `TypingIndicatorView` style via `TransformStyle.typingIndicatorViewStyleTransformer`
+- Added new properties allowing customizing `MessageInputView` using `MessageInputViewStyle` and `AttachmentSelectionDialogStyle`:
+    - `MessageInputViewStyle.fileNameTextStyle`
+    - `MessageInputViewStyle.fileSizeTextStyle`
+    - `MessageInputViewStyle.fileCheckboxSelectorDrawable`
+    - `MessageInputViewStyle.fileCheckboxTextColor`
+    - `MessageInputViewStyle.fileAttachmentEmptyStateTextStyle`
+    - `MessageInputViewStyle.mediaAttachmentEmptyStateTextStyle`
+    - `MessageInputViewStyle.fileAttachmentEmptyStateText`
+    - `MessageInputViewStyle.mediaAttachmentEmptyStateText`
+    - `MessageInputViewStyle.dismissIconDrawable`
+    - `AttachmentSelectionDialogStyle.allowAccessToGalleryText`
+    - `AttachmentSelectionDialogStyle.allowAccessToFilesText`
+    - `AttachmentSelectionDialogStyle.allowAccessToCameraText`
+    - `AttachmentSelectionDialogStyle.allowAccessToGalleryIcon`
+    - `AttachmentSelectionDialogStyle.allowAccessToFilesIcon`
+    - `AttachmentSelectionDialogStyle.allowAccessToCameraIcon`
+    - `AttachmentSelectionDialogStyle.grantPermissionsTextStyle`
+    - `AttachmentSelectionDialogStyle.recentFilesTextStyle`
+    - `AttachmentSelectionDialogStyle.recentFilesText`
+    - `AttachmentSelectionDialogStyle.fileManagerIcon`
+    - `AttachmentSelectionDialogStyle.videoDurationTextStyle`
+    - `AttachmentSelectionDialogStyle.videoIconDrawable`
+    - `AttachmentSelectionDialogStyle.videoIconVisible`
+    - `AttachmentSelectionDialogStyle.videoLengthLabelVisible`
+- Added `StreamUi.MessageInputView` theme allowing to customize all of the `MessageInputViewStyle` properties:
+    - streamUiAttachButtonEnabled
+    - streamUiAttachButtonIcon
+    - streamUiLightningButtonEnabled
+    - streamUiLightningButtonIcon
+    - streamUiMessageInputTextSize
+    - streamUiMessageInputTextColor
+    - streamUiMessageInputHintTextColor
+    - streamUiMessageInputScrollbarEnabled
+    - streamUiMessageInputScrollbarFadingEnabled
+    - streamUiSendButtonEnabled
+    - streamUiSendButtonEnabledIcon
+    - streamUiSendButtonDisabledIcon
+    - streamUiShowSendAlsoToChannelCheckbox
+    - streamUiSendAlsoToChannelCheckboxGroupChatText
+    - streamUiSendAlsoToChannelCheckboxDirectChatText
+    - streamUiSendAlsoToChannelCheckboxTextSize
+    - streamUiSendAlsoToChannelCheckboxTextColor
+    - streamUiSendAlsoToChannelCheckboxTextStyle
+    - streamUiMentionsEnabled
+    - streamUiMessageInputTextStyle
+    - streamUiMessageInputHintText
+    - streamUiCommandsEnabled
+    - streamUiMessageInputEditTextBackgroundDrawable
+    - streamUiMessageInputDividerBackgroundDrawable
+    - streamUiPictureAttachmentIcon
+    - streamUiFileAttachmentIcon
+    - streamUiCameraAttachmentIcon
+    - streamUiAllowAccessToCameraIcon
+    - streamUiAllowAccessToFilesIcon
+    - streamUiAllowAccessToGalleryIcon
+    - streamUiAllowAccessToGalleryText
+    - streamUiAllowAccessToFilesText
+    - streamUiAllowAccessToCameraText
+    - streamUiGrantPermissionsTextSize
+    - streamUiGrantPermissionsTextColor
+    - streamUiGrantPermissionsTextStyle
+    - streamUiAttachmentsRecentFilesTextSize
+    - streamUiAttachmentsRecentFilesTextColor
+    - streamUiAttachmentsRecentFilesTextStyle
+    - streamUiAttachmentsRecentFilesText
+    - streamUiAttachmentsFileManagerIcon
+    - streamUiAttachmentVideoLogoIcon
+    - streamUiAttachmentVideoLengthVisible
+    - streamUiAttachmentVideoIconVisible
+    - streamUiCommandInputCancelIcon
+    - streamUiCommandInputBadgeBackgroundDrawable
+    - streamUiCommandInputBadgeIcon
+    - streamUiCommandInputBadgeTextSize
+    - streamUiCommandInputBadgeTextColor
+    - streamUiCommandInputBadgeStyle
+    - streamUiAttachmentsFileNameTextSize
+    - streamUiAttachmentsFileNameTextColor
+    - streamUiAttachmentsFileNameTextStyle
+    - streamUiAttachmentsFileSizeTextSize
+    - streamUiAttachmentsFileSizeTextColor
+    - streamUiAttachmentsFileSizeTextStyle
+    - streamUiFileCheckBoxSelectorTextColor
+    - streamUiFileCheckBoxSelectorDrawable
+    - streamUiAttachmentsFilesEmptyStateTextSize
+    - streamUiAttachmentsFilesEmptyStateTextColor
+    - streamUiAttachmentsFilesEmptyStateStyle
+    - streamUiAttachmentsMediaEmptyStateTextSize
+    - streamUiAttachmentsMediaEmptyStateTextColor
+    - streamUiAttachmentsMediaEmptyStateStyle
+    - streamUiAttachmentsFilesEmptyStateText
+    - streamUiAttachmentsMediaEmptyStateText
+    - streamUiMessageInputCloseButtonIconDrawable
+- Added `streamUiMessageListFileAttachmentStyle` theme attribute to customize the appearance of file attachments within messages.
+
+### ⚠️ Changed
+- Made `Channel::getLastMessage` function public
+- `AttachmentSelectionDialogFragment::newInstance` requires instance of `MessageInputViewStyle` as a parameter. You can obtain a default implementation of `MessageInputViewStyle` with `MessageInputViewStyle::createDefault` method.
+- Renamed `FileAttachmentsViewStyle` class to `FileAttachmentViewStyle`
+
+### ❌ Removed
+- 🚨 Breaking change: `MessageListItemStyle::reactionsEnabled` was deleted as doubling of the same flag from `MessageListViewStyle`
+
+
 # July 19th, 2021 - 4.14.2
 ## stream-chat-android-client
 ### ❌ Removed
@@ -40,6 +276,8 @@
 - Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ✅ Added
+- Added `streamUiMessagesStart` that allows to controll if the stack of messages starts at the bottom or the top.
+- Added `streamUiThreadMessagesStart` that allows to controll if the stack of thread messages starts at the bottom or the top. 
 - Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
 - Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
 - `MentionListView` can be customisable with XML parameters and with a theme.
@@ -900,7 +1138,7 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
     - Add `parentId` to `Keystroke` and `StopTyping` use cases
 
 ## stream-chat-android-ui-common
-- Add a new `isMessageRead` flag to the `MessageListItem.MessageItem` class, which indicates 
+- Add a new `isMessageRead` flag to the `MessageListItem.MessageItem` class, which indicates
   that a particular message is read by other members in this channel.
 - Add handling threads typing in `MessageInputViewModel`
 

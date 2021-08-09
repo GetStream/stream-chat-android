@@ -41,7 +41,7 @@ This also adds the client library automatically.
 
 ### UI Components
 
-To use UI components in your application, add the following dependency:
+To use the [UI Components](../03-ui/01-overview.md) in your application, add the following dependency:
 
 ```groovy
 dependencies {
@@ -50,3 +50,17 @@ dependencies {
 ```
 
 Adding the UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+### Compose UI Components
+
+To use the [Compose UI Components](../04-compose/01-overview.md) instead, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-compose:$stream_version-beta"
+}
+```
+
+Note that the Compose SDK's version still has a `-beta` postfix in it.
+
+Adding the Compose UI Components library as a dependency will automatically include the client and offline libraries as well.
