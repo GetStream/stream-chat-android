@@ -95,5 +95,6 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 ### ✅ Added
 
 ### ⚠️ Changed
+- `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
 
 ### ❌ Removed
