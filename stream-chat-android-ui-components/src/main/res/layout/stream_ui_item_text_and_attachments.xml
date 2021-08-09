@@ -18,7 +18,8 @@
         />
 
     <TextView
-        android:id="@+id/pinnedByTextView"
+        android:id="@+id/pinIndicatorTextView"
+        style="@style/StreamUiTextAppearance.Footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
@@ -27,7 +28,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gapView"
-        tools:text="Pinned by You"
         tools:visibility="visible"
         />
 
@@ -40,7 +40,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/messageContainer"
         app:layout_constraintStart_toStartOf="@id/messageContainer"
-        app:layout_constraintTop_toBottomOf="@id/pinnedByTextView"
+        app:layout_constraintTop_toBottomOf="@id/pinIndicatorTextView"
         />
 
     <LinearLayout
@@ -54,8 +54,6 @@
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         app:layout_goneMarginEnd="0dp"
-
-
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
 

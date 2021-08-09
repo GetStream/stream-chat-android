@@ -18,15 +18,15 @@ internal class PinnedIndicatorDecorator : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        setupPinnedIndicator(viewHolder.binding.root, viewHolder.binding.pinnedByTextView, data)
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
     }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        setupPinnedIndicator(viewHolder.binding.root, viewHolder.binding.pinnedByTextView, data)
+    ) = with(viewHolder.binding) {
+        setupPinIndicator(root, pinIndicatorTextView, data)
     }
 
     override fun decorateDeletedMessage(
@@ -39,23 +39,25 @@ internal class PinnedIndicatorDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
-    private fun setupPinnedIndicator(
-        rootView: ConstraintLayout,
-        pinnedByTextView: TextView,
+    private fun setupPinIndicator(
+        root: ConstraintLayout,
+        pinIndicatorTextView: TextView,
         data: MessageListItem.MessageItem,
     ) {
+        val context = root.context
         if (data.message.pinned) {
-            pinnedByTextView.isVisible = true
-            pinnedByTextView.text = data.message.getPinnedText(rootView.context)
-            rootView.setBackgroundColor(rootView.context.getColorCompat(R.color.stream_ui_highlight))
+            pinIndicatorTextView.isVisible = true
+            pinIndicatorTextView.text = data.message.getPinnedText(context)
 
-            val bias = if (data.isMine) 1f else 0f
-            rootView.updateConstraints {
-                setHorizontalBias(pinnedByTextView.id, bias)
+            root.setBackgroundColor(context.getColorCompat(R.color.stream_ui_highlight))
+            root.updateConstraints {
+                val bias = if (data.isMine) 1f else 0f
+                setHorizontalBias(pinIndicatorTextView.id, bias)
             }
         } else {
-            pinnedByTextView.isVisible = false
-            rootView.setBackgroundColor(Color.TRANSPARENT)
+            pinIndicatorTextView.isVisible = false
+
+            root.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 }
