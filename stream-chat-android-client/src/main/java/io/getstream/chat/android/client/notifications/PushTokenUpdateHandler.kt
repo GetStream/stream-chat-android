@@ -3,8 +3,11 @@ package io.getstream.chat.android.client.notifications
 import android.content.Context
 import android.content.SharedPreferences
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
 internal class PushTokenUpdateHandler(
@@ -18,17 +21,19 @@ internal class PushTokenUpdateHandler(
         Context.MODE_PRIVATE
     )
 
-    private var userFirebaseToken: UserFirebaseToken
+    private var userPushToken: UserPushToken
         set(value) {
             prefs.edit()
                 .putString(KEY_USER_ID, value.userId)
-                .putString(KEY_FIREBASE_TOKEN, value.firebaseToken)
+                .putString(KEY_TOKEN, value.token)
+                .putString(KEY_PUSH_PROVIDER, value.pushProvider)
                 .apply()
         }
         get() {
-            return UserFirebaseToken(
+            return UserPushToken(
                 userId = prefs.getNonNullString(KEY_USER_ID, ""),
-                firebaseToken = prefs.getNonNullString(KEY_FIREBASE_TOKEN, "")
+                token = prefs.getNonNullString(KEY_TOKEN, ""),
+                pushProvider = prefs.getNonNullString(KEY_PUSH_PROVIDER, ""),
             )
         }
 
@@ -36,33 +41,39 @@ internal class PushTokenUpdateHandler(
      * Registers the current device on the server if necessary. Does no do
      * anything if the token has already been sent to the server previously.
      */
-    fun updateTokenIfNecessary(firebaseToken: String) {
-        val userFirebaseToken = UserFirebaseToken(
-            userId = ChatClient.instance().getCurrentUser()?.id ?: "",
-            firebaseToken = firebaseToken
-        )
-        if (this.userFirebaseToken != userFirebaseToken) {
-            ChatClient.instance().addDevice(firebaseToken).enqueue { result ->
-                if (result.isSuccess) {
-                    this.userFirebaseToken = userFirebaseToken
-                    handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
-                    logger.logI("Device registered with token $firebaseToken")
-                } else {
-                    handler.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
-                    logger.logE("Error registering device ${result.error().message}")
-                }
+    suspend fun updateDeviceIfNecessary(device: Device) {
+        val userPushToken = device.toUserPushToken()
+        if (device.isValid() && this.userPushToken != userPushToken) {
+            val result = ChatClient.instance().addDevice(device).await()
+            if (result.isSuccess) {
+                this.userPushToken = userPushToken
+                handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
+                logger.logI("Device registered with token ${device.token} (${device.pushProvider.key})")
+            } else {
+                handler.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
+                logger.logE("Error registering device ${result.error().message}")
             }
         }
     }
 
-    private data class UserFirebaseToken(
+    private data class UserPushToken(
         val userId: String,
-        val firebaseToken: String,
+        val token: String,
+        val pushProvider: String,
     )
 
     companion object {
         private const val PREFS_NAME = "stream_firebase_token_store"
         private const val KEY_USER_ID = "user_id"
-        private const val KEY_FIREBASE_TOKEN = "firebase_token"
+        private const val KEY_TOKEN = "token"
+        private const val KEY_PUSH_PROVIDER = "push_provider"
     }
+
+    private fun Device.toUserPushToken() = UserPushToken(
+        userId = ChatClient.instance().getCurrentUser()?.id ?: "",
+        token = token,
+        pushProvider = pushProvider.key
+    )
+
+    private fun Device.isValid() = pushProvider != PushProvider.UNKNOWN
 }
