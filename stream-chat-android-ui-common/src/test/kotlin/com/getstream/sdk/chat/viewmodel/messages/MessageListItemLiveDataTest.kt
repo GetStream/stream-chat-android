@@ -170,7 +170,7 @@ internal class MessageListItemLiveDataTest {
         }
         // there are 3 users, so we should have 3 top sections
         val correctPositions =
-            listOf(MessageListItem.Position.TOP, MessageListItem.Position.MIDDLE, MessageListItem.Position.BOTTOM)
+            mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.MIDDLE, MessageListItem.Position.BOTTOM)
         Truth.assertThat(topMessages).isEqualTo(correctPositions + correctPositions + correctPositions)
     }
 

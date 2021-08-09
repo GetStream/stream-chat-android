@@ -23,7 +23,7 @@ class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragmen
                         )
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             )
         )

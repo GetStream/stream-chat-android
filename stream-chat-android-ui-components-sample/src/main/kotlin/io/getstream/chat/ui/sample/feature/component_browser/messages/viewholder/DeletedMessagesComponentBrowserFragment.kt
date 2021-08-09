@@ -10,27 +10,27 @@ class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = mutableListOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = mutableListOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             )
         )

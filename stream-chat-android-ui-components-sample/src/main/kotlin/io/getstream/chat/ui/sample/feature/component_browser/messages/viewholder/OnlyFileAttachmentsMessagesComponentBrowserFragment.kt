@@ -17,31 +17,31 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf)),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = mutableListOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
                     attachments = mutableListOf(attachment7z, attachmentPdf)
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = mutableListOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
                     attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt)
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls)),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = mutableListOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z)),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = mutableListOf(MessageListItem.Position.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -53,7 +53,7 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachmentDoc
                     )
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -67,7 +67,7 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachmentXls,
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             )
         )

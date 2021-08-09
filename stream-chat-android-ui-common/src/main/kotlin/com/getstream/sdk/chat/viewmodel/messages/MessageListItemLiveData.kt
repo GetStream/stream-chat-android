@@ -329,7 +329,7 @@ internal class MessageListItemLiveData(
 
     private fun usersAsTypingItems(users: List<User>): List<MessageListItem> {
         return if (users.isNotEmpty()) {
-            listOf(MessageListItem.TypingItem(users))
+            mutableListOf(MessageListItem.TypingItem(users))
         } else {
             emptyList()
         }

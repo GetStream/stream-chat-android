@@ -52,7 +52,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
             message,
-            positions = listOf(MessageListItem.Position.BOTTOM),
+            positions = mutableListOf(MessageListItem.Position.BOTTOM),
             isMine = message.user.id == currentUser.value?.id
         )
     }

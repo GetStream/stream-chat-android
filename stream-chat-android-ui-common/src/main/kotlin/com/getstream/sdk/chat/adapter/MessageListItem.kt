@@ -38,7 +38,7 @@ public sealed class MessageListItem {
 
     public data class MessageItem(
         val message: Message,
-        val positions: List<Position> = listOf(),
+        val positions: MutableList<Position> = mutableListOf(),
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf(),
         val isThreadMode: Boolean = false,

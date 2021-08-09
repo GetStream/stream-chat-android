@@ -807,6 +807,10 @@ public class MessageListView : ConstraintLayout {
                 }
                 .toList()
 
+            messageListViewStyle?.itemStyle?.messageItemTransformer?.invoke(
+                filteredList.filterIsInstance(MessageListItem.MessageItem::class.java)
+            )
+
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 

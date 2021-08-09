@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
+import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
@@ -92,6 +93,7 @@ public data class MessageListItemStyle(
     @Px public val messageStrokeWidthTheirs: Float,
     public val textStyleSystemMessage: TextStyle,
     public val textStyleErrorMessage: TextStyle,
+    public val messageItemTransformer: (List<MessageListItem.MessageItem>) -> Unit,
 ) {
 
     @ColorInt
@@ -480,6 +482,8 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiErrorMessageTextStyle, Typeface.BOLD)
                 .build()
 
+            val noOpPositionTransformer: (List<MessageListItem.MessageItem>) -> Unit = { list -> }
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -512,7 +516,8 @@ public data class MessageListItemStyle(
                 messageStrokeColorTheirs = messageStrokeColorTheirs,
                 messageStrokeWidthTheirs = messageStrokeWidthTheirs,
                 textStyleSystemMessage = textStyleSystemMessage,
-                textStyleErrorMessage = textStyleErrorMessage
+                textStyleErrorMessage = textStyleErrorMessage,
+                messageItemTransformer = noOpPositionTransformer,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
