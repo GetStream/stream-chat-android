@@ -4,6 +4,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add Spanish translations
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Firebase dependencies have been extracted from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
