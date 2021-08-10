@@ -10,10 +10,10 @@
     <string name="stream_ui_message_list_giphy_shuffle">Shuffle</string>
     <string name="stream_ui_message_list_ephemeral_message">Only visible to you</string>
     <string name="stream_ui_message_list_deleted_message">Message deleted</string>
-    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">Uploading %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%1$d</string>
+    <string name="stream_ui_message_list_attachment_uploading">Uploading %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Upload complete, processing…</string>
-    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
@@ -52,7 +52,7 @@
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %1$s</string>
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
 
     <!-- Errors -->

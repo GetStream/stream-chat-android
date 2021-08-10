@@ -3,9 +3,9 @@ package io.getstream.chat.ui.sample.application
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
 

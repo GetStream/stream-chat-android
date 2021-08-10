@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 
@@ -42,7 +43,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiFragmentChannelActionsBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentChannelActionsBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
 

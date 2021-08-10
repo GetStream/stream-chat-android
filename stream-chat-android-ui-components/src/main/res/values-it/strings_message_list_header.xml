@@ -5,11 +5,11 @@
     <string name="stream_ui_message_list_header_untitled_channel">Canale senza nome</string>
 
     <!-- Header Subtitle -->
-    <string name="stream_ui_message_list_header_thread_subtitle">con %s</string>
+    <string name="stream_ui_message_list_header_thread_subtitle">con %1$s</string>
     <string name="stream_ui_message_list_header_disconnected">Attendo la rete</string>
     <string name="stream_ui_message_list_header_offline">Disconnesso…</string>
     <string name="stream_ui_message_list_header_retry">Riprova</string>
-    <string name="stream_ui_message_list_header_member_count_online">%s, %d Online</string>
+    <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d Online</string>
     <plurals name="stream_ui_message_list_header_member_count">
         <item quantity="one">%1d Membro</item>
         <item quantity="other">%1d Membri</item>

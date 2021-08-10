@@ -28,5 +28,5 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">File too large</string>
-    <string name="stream_ui_message_input_error_max_length">"Max message length (%d) exceeded."</string>
+    <string name="stream_ui_message_input_error_max_length">Max message length (%1$d) exceeded.</string>
 </resources>

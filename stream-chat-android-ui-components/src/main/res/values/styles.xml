@@ -202,7 +202,7 @@
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
-
+    
     <style name="StreamUi">
         <!--Common styles properties-->
     </style>

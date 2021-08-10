@@ -131,12 +131,17 @@ public class MessageListHeaderView : FrameLayout {
     private fun init(attrs: AttributeSet?) {
         style = MessageListHeaderViewStyle(context, attrs)
 
+        configBackground()
         configUserAvatar()
         configTitle()
         configBackButton()
         configOfflineLabel()
         configSearchingForNetworkLabel()
         configOnlineLabel()
+    }
+
+    private fun configBackground() {
+        setBackgroundColor(style.background)
     }
 
     private fun configUserAvatar() {

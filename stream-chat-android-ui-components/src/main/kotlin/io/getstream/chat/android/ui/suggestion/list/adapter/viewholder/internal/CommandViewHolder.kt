@@ -11,17 +11,17 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSugge
 
 internal class CommandViewHolder(
     parent: ViewGroup,
-    commandsNameStyle: TextStyle? = null,
-    commandsDescriptionStyle: TextStyle? = null,
-    commandIcon: Drawable? = null,
+    commandsNameStyle: TextStyle,
+    commandsDescriptionStyle: TextStyle,
+    commandIcon: Drawable,
     private val binding: StreamUiItemCommandBinding = StreamUiItemCommandBinding
         .inflate(parent.streamThemeInflater, parent, false),
 ) : BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem>(binding.root) {
 
     init {
-        commandsNameStyle?.apply(binding.commandNameTextView)
-        commandsDescriptionStyle?.apply(binding.commandQueryTextView)
-        commandIcon?.let(binding.instantCommandImageView::setImageDrawable)
+        commandsNameStyle.apply(binding.commandNameTextView)
+        commandsDescriptionStyle.apply(binding.commandQueryTextView)
+        binding.instantCommandImageView.setImageDrawable(commandIcon)
     }
 
     override fun bindItem(item: SuggestionListItem.CommandItem) {
