@@ -12,19 +12,17 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSugge
 
 internal class MentionViewHolder(
     parent: ViewGroup,
-    usernameStyle: TextStyle? = null,
-    mentionNameStyle: TextStyle? = null,
-    mentionIcon: Drawable? = null,
+    usernameStyle: TextStyle,
+    mentionNameStyle: TextStyle,
+    mentionIcon: Drawable,
     private val binding: StreamUiItemMentionBinding = StreamUiItemMentionBinding
         .inflate(parent.streamThemeInflater, parent, false),
 ) : BaseSuggestionItemViewHolder<SuggestionListItem.MentionItem>(binding.root) {
 
     init {
-        usernameStyle?.apply(binding.usernameTextView)
-        mentionNameStyle?.apply(binding.mentionNameTextView)
-        mentionIcon?.let { icon ->
-            binding.mentionsIcon.setImageDrawable(icon)
-        }
+        usernameStyle.apply(binding.usernameTextView)
+        mentionNameStyle.apply(binding.mentionNameTextView)
+        binding.mentionsIcon.setImageDrawable(mentionIcon)
     }
 
     override fun bindItem(item: SuggestionListItem.MentionItem) {
