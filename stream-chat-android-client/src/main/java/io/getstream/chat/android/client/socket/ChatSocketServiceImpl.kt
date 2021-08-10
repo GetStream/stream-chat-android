@@ -18,8 +18,10 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.pow
 import kotlin.properties.Delegates
 
 internal class ChatSocketServiceImpl constructor(
@@ -59,6 +61,8 @@ internal class ChatSocketServiceImpl constructor(
         }
     }
 
+    private var reconnectionAttempts = 0
+
     @VisibleForTesting
     internal var state: State by Delegates.observable(
         State.DisconnectedTemporarily(null) as State,
@@ -72,6 +76,7 @@ internal class ChatSocketServiceImpl constructor(
                     }
                     is State.Connected -> {
                         healthMonitor.start()
+                        reconnectionAttempts = 0
                         callListeners { it.onConnected(newState.event) }
                     }
                     is State.NetworkDisconnected -> {
@@ -122,7 +127,13 @@ internal class ChatSocketServiceImpl constructor(
             ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code,
             ChatErrorCode.NO_ERROR_BODY.code,
             -> {
-                // Nothing to do on that case
+                if (!networkStateProvider.isConnected() && reconnectionAttempts < 3) {
+                    coroutineScope.launch {
+                        delay(500 * reconnectionAttempts.toDouble().pow(2.0).toLong())
+                        reconnect(connectionConf)
+                        reconnectionAttempts += 1
+                    }
+                }
             }
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
