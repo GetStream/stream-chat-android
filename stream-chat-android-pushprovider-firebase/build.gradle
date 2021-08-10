@@ -10,7 +10,7 @@ apply plugin: "de.mannodermaus.android-junit5"
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
     PUBLISH_VERSION = Configuration.versionName
-    PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-pushprovider-firebase'
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
@@ -57,30 +57,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    api project(':stream-chat-android-core')
+    api project(':stream-chat-android-client')
 
     implementation Dependencies.kotlinStdLib
-    implementation Dependencies.kotlinReflect
-
-    implementation Dependencies.androidxAppCompat
-    implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.androidxLifecycleExtensions
-    implementation Dependencies.androidxSecurityCrypto
-    implementation Dependencies.workRuntimeKtx
-    implementation Dependencies.constraintLayout
-    implementation Dependencies.coroutinesCore
-    implementation Dependencies.coroutinesAndroid
-    implementation Dependencies.retrofit
-    implementation Dependencies.gson
-    implementation Dependencies.retrofitGsonConverter
-    implementation Dependencies.moshi
-    implementation Dependencies.retrofitMoshiConverter
-    kapt Dependencies.moshiCodegen
-    implementation Dependencies.okhttpLoggingInterceptor
-    implementation Dependencies.ok2curl
-    debugImplementation Dependencies.flipper
-    debugImplementation Dependencies.flipperNetwork
-    debugImplementation Dependencies.flipperLoader
+    api Dependencies.firebaseMessaging
+    implementation Dependencies.googlePlayServicesBase
 
     // Tests
     testImplementation project(':stream-chat-android-test')

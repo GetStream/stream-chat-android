@@ -17,10 +17,10 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
 import io.getstream.chat.android.client.models.PushMessage;
 import io.getstream.chat.android.client.models.PushProvider;
-import io.getstream.chat.android.client.notifications.FirebasePushDeviceGenerator;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
+import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
 import io.getstream.chat.docs.R;
 
