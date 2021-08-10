@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_pinned_message_list_empty_title">Aucun message épinglé</string>
+    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Appuyez longuement comme message important et choisissez <b>Épingler à la conversation</b>]]></string>
+    <string name="stream_ui_pinned_message_list_results_error">Une erreur est survenue</string>
+</resources>
