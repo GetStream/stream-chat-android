@@ -12,6 +12,7 @@ import androidx.fragment.app.setFragmentResult
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
@@ -32,7 +33,8 @@ internal class CameraAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiFragmentAttachmentCameraBinding.inflate(inflater, container, false)
+        _binding =
+            StreamUiFragmentAttachmentCameraBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
 
