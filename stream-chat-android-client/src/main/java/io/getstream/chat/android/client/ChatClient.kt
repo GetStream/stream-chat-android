@@ -103,7 +103,7 @@ public class ChatClient internal constructor(
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
-    internal val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
+    private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
