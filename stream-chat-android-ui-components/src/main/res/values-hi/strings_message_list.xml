@@ -10,10 +10,10 @@
     <string name="stream_ui_message_list_giphy_shuffle">बदलें</string>
     <string name="stream_ui_message_list_ephemeral_message">केवल आपको दिखाई दे रहा है</string>
     <string name="stream_ui_message_list_deleted_message">मैसेज मिटाए गए</string>
-    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">अपलोडिंग %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%1$d</string>
+    <string name="stream_ui_message_list_attachment_uploading">अपलोडिंग %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">अपलोड पूरा हुआ, प्रोसेसिंग जारी है…</string>
-    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <string name="stream_ui_message_list_pinned_message">द्वारा पिन किया गया %s</string>
     <string name="stream_ui_message_list_pinned_message_you">आप</string>
     <plurals name="stream_ui_message_list_thread_reply">
@@ -56,7 +56,7 @@
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">अज्ञात त्रुटि के कारण लोड विफल हो गया।</string>
     <string name="stream_ui_message_list_attachment_invalid_url">अमान्य यूआरएल के कारण लोड विफल रहा।</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">कुछ गलत हो गया। अटैचमेंट खोलने में असमर्थ: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">कुछ गलत हो गया। अटैचमेंट खोलने में असमर्थ: %1$s</string>
     <string name="stream_ui_message_list_attachment_display_error">त्रुटि। फ़ाइल प्रदर्शित नहीं की जा सकती</string>
 
     <!-- Errors -->

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.notifications
+package io.getstream.chat.android.pushprovider.firebase
 
 import android.content.Context
 import com.google.android.gms.common.ConnectionResult

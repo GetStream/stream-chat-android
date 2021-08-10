@@ -2666,14 +2666,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/D
 	public abstract fun onDeviceRegisteredSuccess ()V
 }
 
-public final class io/getstream/chat/android/client/notifications/FirebasePushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
-	public fun <init> ()V
-	public fun <init> (Lcom/google/firebase/messaging/FirebaseMessaging;)V
-	public synthetic fun <init> (Lcom/google/firebase/messaging/FirebaseMessaging;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
-	public fun isValidForThisDevice (Landroid/content/Context;)Z
-}
-
 public abstract interface class io/getstream/chat/android/client/notifications/NotificationLoadDataListener {
 	public abstract fun onLoadFail (Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onLoadSuccess (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
