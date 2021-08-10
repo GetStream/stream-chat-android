@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_input_send_to_channel">También enviar al canal</string>
+    <string name="stream_ui_message_input_send_as_direct_message">También enviar cómo mensaje directo</string>
+    <string name="stream_ui_message_input_reply">Contestar al mensje</string>
+    <string name="stream_ui_message_input_hint">Escribe algo aquí</string>
+    <string name="stream_ui_message_input_only_attachments_hint">Añadir un comentario o enviar</string>
+
+    <!-- Commands Popup -->
+    <string name="stream_ui_message_input_instant_commands">Comandos instantáneos</string>
+    <string name="stream_ui_message_input_command_template">/%1$s %2$s</string>
+
+    <!-- File Picker Dialog -->
+    <string name="stream_ui_message_input_camera_access">Permitir acceso a la cámara</string>
+    <string name="stream_ui_message_input_files_access">Permitir acceso a tus ficheros</string>
+    <string name="stream_ui_message_input_gallery_access">Permitir acceso a tu galería</string>
+    <string name="stream_ui_message_input_recent_files">Ficheros recientes</string>
+    <string name="stream_ui_message_input_no_files">No hay fotos ni vídeos</string>
+    <string name="stream_ui_message_input_capture_media">Tomar foto o vídeo</string>
+
+    <!-- System Permission Dialog -->
+    <string name="stream_ui_message_input_permission_camera_title">Permiso de Cámara y acceso a almacenamiento</string>
+    <string name="stream_ui_message_input_permission_camera_message">Los permisos de Cámar y acceso a almacenamiento son necesarios para tomar fotos y vídeos</string>
+    <string name="stream_ui_message_input_permission_storage_title">Permiso de acceso a almacenamiento</string>
+    <string name="stream_ui_message_input_permission_storage_message">El permiso de acceso al almacenamiento es necesario para poderenviar y guardar fotos, vídeos, música y otros ficheros</string>
+    <string name="stream_ui_message_input_permission_setting_message">Habilitar los permisos en los ajustes de la aplicación</string>
+    <string name="stream_ui_message_input_permissions_setting_button">Ajustes</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_input_error_file_size">Fichero demasiado grande</string>
+    <string name="stream_ui_message_input_error_max_length">Tamaño máximo de mensaje (%1$d) excedido.</string>
+</resources>

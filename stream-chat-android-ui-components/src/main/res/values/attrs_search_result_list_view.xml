@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="SearchResultListView">
         <!-- Search Info Bar -->
+        <attr name="streamUiSearchResultListBackground" format="reference" />
         <attr name="streamUiSearchResultListSearchInfoBarBackground" format="reference" />
         <attr name="streamUiSearchResultListSearchInfoBarTextColor" format="color|reference"/>
         <attr name="streamUiSearchResultListSearchInfoBarTextSize" format="dimension"/>

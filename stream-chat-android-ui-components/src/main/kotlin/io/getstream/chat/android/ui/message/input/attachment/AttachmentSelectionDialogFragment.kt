@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.internal.AttachmentDialogPagerAdapter
@@ -37,7 +38,7 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiDialogAttachmentBinding.inflate(inflater, container, false)
+        _binding = StreamUiDialogAttachmentBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
 

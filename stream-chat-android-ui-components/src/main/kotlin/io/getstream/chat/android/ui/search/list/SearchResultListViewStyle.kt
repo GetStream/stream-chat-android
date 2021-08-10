@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -25,6 +26,7 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
  * @property messagePreviewStyle - style for single search result item
  */
 public data class SearchResultListViewStyle(
+    @ColorInt public val backgroundColor: Int,
     public val searchInfoBarBackground: Drawable,
     public val searchInfoBarTextStyle: TextStyle,
     public val emptyStateIcon: Drawable,
@@ -40,6 +42,12 @@ public data class SearchResultListViewStyle(
                 R.attr.streamUiSearchResultListViewStyle,
                 R.style.StreamUi_SearchResultListView,
             ).use { a ->
+                val backgroundColor =
+                    a.getColor(
+                        R.styleable.SearchResultListView_streamUiSearchResultListBackground,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+
                 val searchInfoBarBackground =
                     a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarBackground)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_bg_gradient)!!
@@ -62,8 +70,9 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
-                val emptyStateIcon = a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateIcon)
-                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_search_empty)!!
+                val emptyStateIcon =
+                    a.getDrawable(R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_search_empty)!!
                 val emptyStateTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextSize,
@@ -145,6 +154,7 @@ public data class SearchResultListViewStyle(
                     .build()
 
                 return SearchResultListViewStyle(
+                    backgroundColor = backgroundColor,
                     searchInfoBarBackground = searchInfoBarBackground,
                     searchInfoBarTextStyle = searchInfoBarTextStyle,
                     emptyStateIcon = emptyStateIcon,
