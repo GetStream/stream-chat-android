@@ -63,6 +63,10 @@ android {
         kotlinCompilerVersion Versions.KOTLIN
         kotlinCompilerExtensionVersion Versions.COMPOSE
     }
+
+    lintOptions {
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
