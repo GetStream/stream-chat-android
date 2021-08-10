@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stream_ui_attachment_gallery_count">%2$d के %1$d</string>
-    <string name="stream_ui_attachment_gallery_date">%s भेजा गया at %s</string>
+    <string name="stream_ui_attachment_gallery_date">%1$s भेजा गया at %2$s</string>
     <string name="stream_ui_attachment_gallery_reply">जवाब दें</string>
     <string name="stream_ui_attachment_gallery_delete">मिटाएं</string>
     <string name="stream_ui_attachment_gallery_show_in_chat">चैट में देखें</string>

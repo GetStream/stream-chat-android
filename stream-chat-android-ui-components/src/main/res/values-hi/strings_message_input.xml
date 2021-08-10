@@ -28,5 +28,5 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">फ़ाइल अपलोड करने के लिए बहुत बड़ी है।</string>
-    <string name="stream_ui_message_input_error_max_length">"मैसेज की वर्ण सीमा (%d) पार हो गई है।"</string>
+    <string name="stream_ui_message_input_error_max_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>
 </resources>

@@ -31,7 +31,7 @@ internal class QueryChannelsImplRepositoryTest {
     fun `When insert Should insert to DB`() = runBlockingTest {
         sut.insertQueryChannels(
             randomQueryChannelsSpec(
-                cids = listOf("cid1", "cid2"),
+                cids = setOf("cid1", "cid2"),
             )
         )
 
@@ -56,7 +56,7 @@ internal class QueryChannelsImplRepositoryTest {
         Truth.assertThat(result!!.filter).isInstanceOf(ContainsFilterObject::class.java)
         Truth.assertThat((result.filter as ContainsFilterObject).fieldName).isEqualTo("cid")
         Truth.assertThat(result.filter.value).isEqualTo("cid1")
-        Truth.assertThat(result.cids).isEqualTo(listOf("cid1"))
+        Truth.assertThat(result.cids).isEqualTo(setOf("cid1"))
     }
 
     @Test

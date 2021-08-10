@@ -32,7 +32,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
         suggestionClickListener?.onCommandClick(it)
     }
 
-    private var style: SuggestionListViewStyle? = null
+    private lateinit var style: SuggestionListViewStyle
     private var suggestionClickListener: OnSuggestionClickListener? = null
 
     public constructor(context: Context) : this(context, null, 0)
@@ -46,6 +46,7 @@ public class SuggestionListView : FrameLayout, SuggestionListUi {
     )
 
     init {
+        setSuggestionListViewStyle(SuggestionListViewStyle.createDefault(context))
         binding.suggestionsRecyclerView.apply {
             itemAnimator = null
             adapter = ConcatAdapter(mentionListAdapter, commandListAdapter)

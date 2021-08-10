@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_attachment_gallery_count">%d di %d</string>
-    <string name="stream_ui_attachment_gallery_date">Inviata %s alle %s</string>
+    <string name="stream_ui_attachment_gallery_count">%1$d di %2$d</string>
+    <string name="stream_ui_attachment_gallery_date">Inviata %1$s alle %2$s</string>
     <string name="stream_ui_attachment_gallery_reply">Rispondi</string>
     <string name="stream_ui_attachment_gallery_delete">Cancella</string>
     <string name="stream_ui_attachment_gallery_show_in_chat">Mostra nella chat</string>
