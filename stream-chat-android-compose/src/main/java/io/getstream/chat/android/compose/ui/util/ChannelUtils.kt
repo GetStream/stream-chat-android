@@ -84,7 +84,7 @@ public fun Channel.getLastMessagePreviewText(
 
                 if (messageText.isNotEmpty()) {
                     val startIndex = this.length
-                    append(messageText)
+                    append("$messageText ")
 
                     addStyle(
                         SpanStyle(
