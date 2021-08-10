@@ -9,7 +9,7 @@
     <!-- Permissions -->
     <string name="stream_ui_message_input_permission_camera_title">카메라 및 스토리지 접근 권한</string>
     <string name="stream_ui_message_input_permission_camera_message">사진 및 동영상 촬영을 위해 카메라 및 스토리지 접근 권한이 필요합니다</string>
-    <string name="stream_ui_message_input_permission_storage_title">저장소 액세스 권한</string>
+    <string name="stream_ui_message_input_permission_storage_title">스토리지 액세스 권한</string>
     <string name="stream_ui_message_input_permission_storage_message">사진, 동영상, 음악 및 기타 파일을 전송 및 저장하려면 저장소 접근 권한이 필요합니다.</string>
     <string name="stream_ui_message_input_permission_setting_message">앱 설정에 대한 권한 활성화</string>
     <string name="stream_ui_message_input_permissions_setting_button">설정</string>

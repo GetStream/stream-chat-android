@@ -9,7 +9,7 @@
     <string name="stream_chat_notification_channel_id">stream_GetStreamClient</string>
     <string name="stream_chat_notification_channel_name">새 채팅 메시지</string>
     <string name="stream_chat_load_notification_data_title">알림 데이터 로드 중</string>
-    <string name="stream_chat_notification_group_summary_content_text">새 메시지를 받았습니다.</string>
+    <string name="stream_chat_notification_group_summary_content_text">새 메시지를 받았습니다</string>
     <string name="stream_chat_error_notification_group_summary_title">채팅 메시지</string>
-    <string name="stream_chat_error_notification_group_summary_content_text">새 메시지를 받았습니다.</string>
+    <string name="stream_chat_error_notification_group_summary_content_text">새 메시지를 받았습니다</string>
 </resources>
