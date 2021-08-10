@@ -118,7 +118,7 @@ internal class MessageListItemDiffCallbackTest {
                 Arguments.of(mi, mi.copy(message = mi.message.copy(deletedAt = createDate())), EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF.copy(deleted = true))
             },
             createMessageItem().let { mi: MessageListItem.MessageItem ->
-                Arguments.of(mi, mi.copy(positions = createPositions(10)), EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF.copy(positions = true))
+                Arguments.of(mi, mi.copy(positions = createPositions(10).toMutableList()), EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF.copy(positions = true))
             },
             createMessageItem().let { mi: MessageListItem.MessageItem ->
                 Arguments.of(mi, mi.copy(messageReadBy = createChannelUserReads()), EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF.copy(readBy = true))

@@ -237,7 +237,7 @@ internal fun createCommands(size: Int = 10): List<Command> = List(size) { create
 
 internal fun createMessageItem(
     message: Message = createMessage(),
-    positions: List<MessageListItem.Position> = createPositions(),
+    positions: MutableList<MessageListItem.Position> = createPositions().toMutableList(),
     isMine: Boolean = randomBoolean(),
     messageReadBy: List<ChannelUserRead> = createChannelUserReads()
 ): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)
