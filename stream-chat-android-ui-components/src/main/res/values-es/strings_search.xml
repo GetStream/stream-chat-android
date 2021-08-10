@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Search Input -->
+    <string name="stream_ui_search_input_hint">Buscar</string>
+
+    <!-- Search Result List -->
+    <string name="stream_ui_search_results_empty">No se encontraron resultados para \"%1$s\"</string>
+    <string name="stream_ui_search_results_error">Ocurrió un error</string>
+    <plurals name="stream_ui_search_results_count">
+        <item quantity="one">1 resultado</item>
+        <item quantity="other">%d resultados</item>
+    </plurals>
+
+    <string name="stream_ui_search_input_search_icon_content_description">Buscar</string>
+    <string name="stream_ui_search_input_clear_icon_content_description">Limpiar</string>
+</resources>
