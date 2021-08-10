@@ -5,11 +5,11 @@
     <string name="stream_ui_message_list_header_untitled_channel">बिना नाम वाला चैनल</string>
 
     <!-- Header Subtitle -->
-    <string name="stream_ui_message_list_header_thread_subtitle">%s के साथ</string>
+    <string name="stream_ui_message_list_header_thread_subtitle">%1$s के साथ</string>
     <string name="stream_ui_message_list_header_disconnected">नेटवर्क खोजा जा रहा है</string>
     <string name="stream_ui_message_list_header_offline">ऑफलाइन…</string>
     <string name="stream_ui_message_list_header_retry">पुनः प्रयास करें</string>
-    <string name="stream_ui_message_list_header_member_count_online">%s, %d ऑनलाइन</string>
+    <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d ऑनलाइन</string>
     <plurals name="stream_ui_message_list_header_member_count">
         <item quantity="one">%1d सदस्य</item>
         <item quantity="other">%1d सदस्य</item>
