@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_message_input_send_to_channel">また、チャネルに送ります</string>
+    <string name="stream_ui_message_input_send_to_channel">チャネルにも送ります</string>
     <string name="stream_ui_message_input_send_as_direct_message">ダイレクトメッセージでも送信</string>
     <string name="stream_ui_message_input_reply">メッセージに返信</string>
     <string name="stream_ui_message_input_hint">ここに何か書く</string>
@@ -28,5 +28,5 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">ファイルが大きすぎます</string>
-    <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（％d）を超えました"</string>
+    <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（％d)字を超えました"</string>
 </resources>

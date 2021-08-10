@@ -4,7 +4,7 @@
     <string name="stream_chat_notification_title">チャットメッセージ</string>
     <string name="stream_chat_notification_content">新しいメッセージを受け取りました</string>
     <string name="stream_chat_notification_reply">返信</string>
-    <string name="stream_chat_notification_type_hint">タイプのメッセージ</string>
+    <string name="stream_chat_notification_type_hint">メッセージを入力する</string>
     <string name="stream_chat_notification_read">既読にする</string>
     <string name="stream_chat_notification_channel_id">stream_GetStreamClient</string>
     <string name="stream_chat_notification_channel_name">新しいチャットメッセージ</string>

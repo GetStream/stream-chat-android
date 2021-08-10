@@ -14,7 +14,7 @@
     </plurals>
 
     <string name="stream_ui_channel_list_delete_confirmation_title">チャネルを削除する</string>
-    <string name="stream_ui_channel_list_delete_confirmation_message">あなたは永久にこの会話を削除してもよろしいですか？</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">本当にこの会話を削除してもよろしいですか？</string>
     <string name="stream_ui_channel_list_delete_confirmation_positive_button">削除</string>
     <string name="stream_ui_channel_list_delete_confirmation_negative_button">キャンセル</string>
 

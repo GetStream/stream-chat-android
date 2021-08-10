@@ -17,6 +17,6 @@
     <!--Attachment View-->
     <string name="stream_ui_message_list_attachment_load_failed">不明なエラーが原因でロードに失敗しました</string>
     <string name="stream_ui_message_list_attachment_invalid_url">URLが無効なため、読み込みに失敗しました</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">何かがうまくいかなかった。 添付ファイルを開くことができません：%s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">何かがうまくいかなかったです。 添付ファイルを開くことができません：%s</string>
     <string name="stream_ui_message_list_attachment_display_error">エラー。 ファイルを表示できません</string>
 </resources>
