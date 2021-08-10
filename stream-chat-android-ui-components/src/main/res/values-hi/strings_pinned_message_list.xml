@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_pinned_message_list_empty_title">कोई पिन किए गए संदेश नहीं</string>
+    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[एक महत्वपूर्ण संदेश को देर तक दबाकर रखें और <b>बातचीत पर पिन करें</b>]]> चुनें</string>
+    <string name="stream_ui_pinned_message_list_results_error">एक त्रुटि पाई गई</string>
+</resources>

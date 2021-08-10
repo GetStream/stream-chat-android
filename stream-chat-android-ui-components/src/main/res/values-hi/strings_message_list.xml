@@ -14,6 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">अपलोडिंग %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">अपलोड पूरा हुआ, प्रोसेसिंग जारी है…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
+    <string name="stream_ui_message_list_pinned_message">द्वारा पिन किया गया %s</string>
+    <string name="stream_ui_message_list_pinned_message_you">आप</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d जवाब</item>
         <item quantity="other">%d जवाब</item>
@@ -30,6 +32,8 @@
     <string name="stream_ui_message_list_copy_message">मैसेज कॉपी करें</string>
     <string name="stream_ui_message_list_edit_message">मैसेज एडिट करें</string>
     <string name="stream_ui_message_list_flag_message">मैसेज चिह्नित करें</string>
+    <string name="stream_ui_message_list_pin_message">बातचीत के लिए पिन करें</string>
+    <string name="stream_ui_message_list_unpin_message">बातचीत से अनपिन करें</string>
     <string name="stream_ui_message_list_mute_user">यूजर को म्यूट करें</string>
     <string name="stream_ui_message_list_unmute_user">यूजर को म्यूट से हटायें</string>
     <string name="stream_ui_message_list_block_user">यूजर को ब्लॉक करें</string>
@@ -60,4 +64,6 @@
     <string name="stream_ui_message_list_error_unmute_user">यूजर को म्यूट से नहीं हटाया जा सका</string>
     <string name="stream_ui_message_list_error_block_user">यूजर को ब्लॉक नहीं किया जा सका</string>
     <string name="stream_ui_message_list_error_flag_message">मैसेज को चिह्नित नहीं किया जा सका</string>
+    <string name="stream_ui_message_list_error_pin_message">संदेश पिन करने में विफल</string>
+    <string name="stream_ui_message_list_error_unpin_message">संदेश अनपिन करने में विफल</string>
 </resources>
