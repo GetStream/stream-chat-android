@@ -659,7 +659,7 @@ internal fun randomChannelConfig(type: String = randomString(), config: Config =
 
 internal fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
-    cids: List<String> = emptyList(),
+    cids: Set<String> = emptySet(),
 ): QueryChannelsSpec = QueryChannelsSpec(filter, cids)
 
 internal fun randomQueryChannelsEntity(

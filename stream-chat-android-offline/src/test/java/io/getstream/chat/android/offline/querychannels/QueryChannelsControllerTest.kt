@@ -182,7 +182,7 @@ internal class QueryChannelsControllerTest {
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
-            queryController.queryChannelsSpec.cids = listOf(cid)
+            queryController.queryChannelsSpec.cids = setOf(cid)
 
             queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
 
