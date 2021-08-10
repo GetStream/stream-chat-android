@@ -71,7 +71,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera. 
+- Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera.
+- Fixed applying style to `SuggestionListView` when using it as a standalone component. You can modify the style using `suggestionListViewTheme` or `TransformStyle::suggestionListStyleTransformer`
 ### ⬆️ Improved
 
 ### ✅ Added

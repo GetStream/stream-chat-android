@@ -173,5 +173,7 @@ public data class SuggestionListViewStyle(
                 ).let(TransformStyle.suggestionListStyleTransformer::transform)
             }
         }
+
+        fun createDefault(context: Context) = invoke(context, null)
     }
 }
