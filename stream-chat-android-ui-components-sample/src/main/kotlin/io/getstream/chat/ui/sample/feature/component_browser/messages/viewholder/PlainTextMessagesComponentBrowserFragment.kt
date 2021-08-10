@@ -21,37 +21,37 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor"),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ut enim ad minim veniam", createdAt = date),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit", createdAt = date),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Whaaat?", createdAt = date),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, type = "ephemeral"),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, syncStatus = SyncStatus.FAILED_PERMANENTLY),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -60,7 +60,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink, attachmentLink)
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -69,7 +69,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink)
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
         )

@@ -182,16 +182,16 @@ internal class MessageListViewModelTest {
                     val messages = items.run {
                         get(1).apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo mutableListOf(MessageListItem.Position.TOP)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.TOP)
                         }
                         last().apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo mutableListOf(MessageListItem.Position.BOTTOM)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.BOTTOM)
                         }
                         (2 until size - 1).forEach {
                             get(it).apply {
                                 this as MessageListItem.MessageItem
-                                positions shouldBeEqualTo mutableListOf(MessageListItem.Position.MIDDLE)
+                                positions shouldBeEqualTo listOf(MessageListItem.Position.MIDDLE)
                             }
                         }
                         filterIsInstance<MessageListItem.MessageItem>().map {

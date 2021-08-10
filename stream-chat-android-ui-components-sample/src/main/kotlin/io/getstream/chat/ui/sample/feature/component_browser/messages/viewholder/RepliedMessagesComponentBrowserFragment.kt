@@ -50,7 +50,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     )
                 ),
                 isMine = true,
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM)
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM)
             ),
             MessageListItem.MessageItem(
                 message = Message(
@@ -59,7 +59,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     user = me,
                     replyTo = Message(text = "Text from reply message", user = other)
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -75,7 +75,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other
                     )
                 ),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -93,7 +93,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other
                     )
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -108,12 +108,12 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = me
                     )
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = theirMessage,
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -130,7 +130,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     text = "Bye!!!",
                     replyTo = theirMessage
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
         )

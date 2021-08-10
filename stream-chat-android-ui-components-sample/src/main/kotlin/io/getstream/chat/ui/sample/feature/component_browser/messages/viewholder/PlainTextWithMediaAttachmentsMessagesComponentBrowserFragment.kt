@@ -27,7 +27,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1)),
                     text = "Some text"
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -38,7 +38,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 ),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -50,7 +50,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -61,7 +61,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Lorem ipsum dolor sit amet"
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -73,7 +73,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Another message"
                 ),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -86,7 +86,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Bye!!!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -101,7 +101,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Bye!!!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -114,7 +114,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     text = "Hi!",
                     syncStatus = SyncStatus.FAILED_PERMANENTLY,
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -127,7 +127,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi! https://www.google.com/"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -140,7 +140,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
                     ),
                     text = "Hi! https://www.google.com/"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
         )

@@ -22,7 +22,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -30,7 +30,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachment7z, attachmentPdf),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 ),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -38,7 +38,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
                     text = "Hi!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -46,7 +46,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentDoc, attachmentXls),
                     text = "Lorem ipsum dolor sit amet"
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -54,7 +54,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z),
                     text = "Another message"
                 ),
-                positions = mutableListOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessageListItem.Position.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -67,7 +67,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Bye!!!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -82,7 +82,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Bye!!!"
                 ),
-                positions = mutableListOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -91,7 +91,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     text = "Lorem ipsum dolor sit amet",
                     syncStatus = SyncStatus.FAILED_PERMANENTLY,
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -103,7 +103,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Lorem ipsum dolor sit amet https://www.google.com/",
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -115,7 +115,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Lorem ipsum dolor sit amet https://www.google.com/",
                 ),
-                positions = mutableListOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessageListItem.Position.BOTTOM),
                 isMine = false
             ),
         )

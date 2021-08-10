@@ -512,7 +512,7 @@ class Android {
         fun displayNewMessage() {
             val messageItem = MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor"),
-                positions = mutableListOf(MessageListItem.Position.TOP),
+                positions = listOf(MessageListItem.Position.TOP),
                 isMine = true
             )
 

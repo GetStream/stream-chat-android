@@ -248,7 +248,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
-    private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { }
+    private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
     private lateinit var loadMoreListener: EndlessScrollListener
@@ -804,7 +804,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val filteredList = listItem.items.asSequence()
+            val filteredList = listItem.items
                 .filter(messageListItemPredicate::predicate)
                 .filter { item ->
                     if (item is MessageListItem.MessageItem && item.message.isDeleted()) {
@@ -812,10 +812,8 @@ public class MessageListView : ConstraintLayout {
                     } else {
                         true
                     }
-                }
-                .toList()
+                }.let(messageListItemTransformer::transform)
 
-            messageListItemTransformer.transform(filteredList.filterIsInstance(MessageListItem.MessageItem::class.java))
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
@@ -1194,7 +1192,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface MessageListItemTransformer {
-        public fun transform(itemList: List<MessageListItem.MessageItem>)
+        public fun transform(itemList: List<MessageListItem>): List<MessageListItem>
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {
