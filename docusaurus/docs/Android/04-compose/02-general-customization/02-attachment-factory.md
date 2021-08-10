@@ -23,7 +23,7 @@ There are three examples of default attachment factory implementations, in the [
 public val defaultFactories: List<AttachmentFactory> = listOf(
     AttachmentFactory(
         { state -> LinkAttachmentFactory(state) },
-        { message -> message.attachments.any { it.ogUrl != null } }
+        { message -> message.attachments.any { it.titleLink != null } }
     ),
     AttachmentFactory(
         { state -> ImageAttachmentFactory(state) },

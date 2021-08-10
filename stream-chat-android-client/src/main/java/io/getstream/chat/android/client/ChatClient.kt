@@ -1377,6 +1377,15 @@ public class ChatClient internal constructor(
             QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
         )
 
+    /**
+     * Returns all events that happened for a list of channels since last sync (while the user was not
+     * connected to the web-socket).
+     *
+     * @param channelsIds the list of channel CIDs
+     * @param lastSyncAt the last time the user was online and in sync
+     *
+     * @return executable async [Call] responsible for obtaining missing events.
+     */
     @CheckResult
     public fun getSyncHistory(
         channelsIds: List<String>,
