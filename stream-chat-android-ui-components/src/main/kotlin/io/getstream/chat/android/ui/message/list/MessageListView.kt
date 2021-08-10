@@ -248,7 +248,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
-    private var deletedMessageListItemPredicate: MessageListItemPredicate = DeletedMessageListItemPredicate.VisibleToEveryone
+    private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { }
+    private var deletedMessageListItemPredicate: MessageListItemPredicate =
+        DeletedMessageListItemPredicate.VisibleToEveryone
     private lateinit var loadMoreListener: EndlessScrollListener
 
     private lateinit var channel: Channel
@@ -760,6 +762,10 @@ public class MessageListView : ConstraintLayout {
         this.messageListItemPredicate = messageListItemPredicate
     }
 
+    public fun setMessageItemTransformer(messageListItemTransformer: MessageListItemTransformer) {
+        this.messageListItemTransformer = messageListItemTransformer
+    }
+
     /**
      * Used to specify visibility of the deleted [MessageListItem.MessageItem] elements.
      *
@@ -807,9 +813,7 @@ public class MessageListView : ConstraintLayout {
                 }
                 .toList()
 
-            messageListViewStyle?.itemStyle?.messageItemTransformer?.invoke(
-                filteredList.filterIsInstance(MessageListItem.MessageItem::class.java)
-            )
+            messageListItemTransformer.transform(filteredList.filterIsInstance(MessageListItem.MessageItem::class.java))
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
@@ -1185,6 +1189,10 @@ public class MessageListView : ConstraintLayout {
      */
     public fun interface MessageListItemPredicate {
         public fun predicate(item: MessageListItem): Boolean
+    }
+
+    public fun interface MessageListItemTransformer {
+        public fun transform(itemList: List<MessageListItem.MessageItem>)
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {
