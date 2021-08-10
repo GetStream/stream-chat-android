@@ -421,12 +421,12 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
-	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
+public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
+	public static final fun asReferenced (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/adapter/ChatClientReferenceAdapter;
 }
 
-public final class io/getstream/chat/android/offline/extensions/QueryReferenceKt {
-	public static final fun asState (Lio/getstream/chat/android/client/QueryChannelsReference;Lkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/querychannels/state/QueryChannelsState;
+public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
+	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
 public final class io/getstream/chat/android/offline/plugin/Config {
@@ -462,6 +462,16 @@ public final class io/getstream/chat/android/offline/plugin/OfflinePlugin : io/g
 }
 
 public final class io/getstream/chat/android/offline/plugin/OfflinePlugin$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/offline/plugin/QueryReference {
+	public abstract fun asState (Lkotlinx/coroutines/CoroutineScope;)Ljava/lang/Object;
+	public abstract fun get ()Lio/getstream/chat/android/client/call/Call;
+}
+
+public final class io/getstream/chat/android/offline/plugin/adapter/ChatClientReferenceAdapter {
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/offline/querychannels/QueryChannelsReference;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/StateRegistry {
@@ -509,6 +519,14 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun getChannels ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/QueryChannelsReference : io/getstream/chat/android/offline/plugin/QueryReference {
+	public fun <init> (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/client/ChatClient;)V
+	public fun asState (Lkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/offline/querychannels/state/QueryChannelsState;
+	public synthetic fun asState (Lkotlinx/coroutines/CoroutineScope;)Ljava/lang/Object;
+	public fun get ()Lio/getstream/chat/android/client/call/Call;
+	public final fun getRequest ()Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 }
 
 public abstract class io/getstream/chat/android/offline/querychannels/state/ChannelsState {
