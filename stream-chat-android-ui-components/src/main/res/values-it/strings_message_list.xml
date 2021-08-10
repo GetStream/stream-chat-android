@@ -14,6 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">Caricamento %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Caricamento completato, elaborazione…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
+    <string name="stream_ui_message_list_pinned_message">Appuntato da %s</string>
+    <string name="stream_ui_message_list_pinned_message_you">Voi</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Risposta nella Conversazione</item>
         <item quantity="other">%d Risposte nella Conversazione</item>
@@ -30,6 +32,8 @@
     <string name="stream_ui_message_list_copy_message">Copia messaggio</string>
     <string name="stream_ui_message_list_edit_message">Modifica messaggio</string>
     <string name="stream_ui_message_list_flag_message">Segnala messaggio</string>
+    <string name="stream_ui_message_list_pin_message">Aggiungi alla conversazione</string>
+    <string name="stream_ui_message_list_unpin_message">Rimuovi dalla conversazione</string>
     <string name="stream_ui_message_list_mute_user">Silenzia Utente</string>
     <string name="stream_ui_message_list_unmute_user">Riattiva Utente</string>
     <string name="stream_ui_message_list_block_user">Blocca Utente</string>
@@ -60,4 +64,6 @@
     <string name="stream_ui_message_list_error_unmute_user">Impossibile riattivare l\'utente</string>
     <string name="stream_ui_message_list_error_block_user">Impossibile bloccare l\'utente</string>
     <string name="stream_ui_message_list_error_flag_message">Impossibile fissare il messaggio</string>
+    <string name="stream_ui_message_list_error_pin_message">Impossibile appuntare il messaggio</string>
+    <string name="stream_ui_message_list_error_unpin_message">Impossibile sbloccare il messaggio</string>
 </resources>
