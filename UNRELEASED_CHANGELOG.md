@@ -78,24 +78,22 @@ Fixed attachments of camera. Now multiple videos and pictures can be taken from 
 
 - Positions of messages are now a mutableList.
 - Possibility to transform MessageItems before the are displayed in the screen.
-Use the `TransformStyle.messageListItemStyleTransformer` for make a necessary transformation. This example makes groups of messages if they were create less then an hours apart:
+Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less then an hours apart:
 ```
-TransformStyle.messageListItemStyleTransformer = StyleTransformer { style ->
-    style.copy { list ->
-        list.forEachIndexed { i, messageItem ->
-            if (i == list.lastIndex) {
+binding.messageListView.setMessageItemTransformer { list ->
+    list.forEachIndexed { i, messageItem ->
+        if (i == list.lastIndex) {
+            messageItem.positions.clear()
+            messageItem.positions.add(MessageListItem.Position.BOTTOM)
+        } else if (i < list.lastIndex - 1) {
+            val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+            val nextInstant = list[i + 1].message.createdAt?.time?.let(Instant::ofEpochMilli)
+
+            if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
                 messageItem.positions.clear()
                 messageItem.positions.add(MessageListItem.Position.BOTTOM)
-            } else if (i < list.lastIndex - 1) {
-                val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
-                val nextInstant = list[i + 1].message.createdAt?.time?.let(Instant::ofEpochMilli)
-
-                if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
-                    messageItem.positions.clear()
-                    messageItem.positions.add(MessageListItem.Position.BOTTOM)
-                } else {
-                    messageItem.positions.remove(MessageListItem.Position.BOTTOM)
-                }
+            } else {
+                messageItem.positions.remove(MessageListItem.Position.BOTTOM)
             }
         }
     }
