@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 
 /**
@@ -60,7 +61,7 @@ public fun MessageListHeader(
     val memberCount = channel.memberCount
     val onlineCount = channel.members.count { it.user.online }
 
-    val channelName = if (channel.name.isNotEmpty()) channel.name else channel.id
+    val channelName = channel.getDisplayName()
 
     val title = if (messageMode == Normal) {
         channelName

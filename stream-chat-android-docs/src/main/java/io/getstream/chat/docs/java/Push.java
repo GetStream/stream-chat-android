@@ -3,17 +3,24 @@ package io.getstream.chat.docs.java;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Device;
+import io.getstream.chat.android.client.models.PushMessage;
+import io.getstream.chat.android.client.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
+import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
+import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
 import io.getstream.chat.docs.R;
 
@@ -30,7 +37,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_android/?language=java#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
          */
         public void registeringDevice() {
-            client.addDevice("firebase-token").enqueue(result -> {
+            client.addDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
@@ -46,14 +58,8 @@ public class Push {
             int notificationChannelId = R.string.stream_chat_notification_channel_id;
             int notificationChannelName = R.string.stream_chat_notification_channel_name;
             int smallIcon = R.drawable.stream_ic_notification;
-            String firebaseMessageIdKey = "message_id";
-            String firebaseMessageTextKey = "message_text";
-            String firebaseChannelIdKey = "channel_id";
-            String firebaseChannelTypeKey = "channel_type";
-            String firebaseChannelNameKey = "channel_name";
             int errorCaseNotificationTitle = R.string.stream_chat_notification_title;
             int errorCaseNotificationContent = R.string.stream_chat_notification_content;
-            boolean useProvidedFirebaseInstance = true;
             int loadNotificationDataChannelName = R.string.stream_chat_load_notification_data_title;
             int loadNotificationDataIcon = R.drawable.stream_ic_notification;
             int loadNotificationDataTitle = R.string.stream_chat_load_notification_data_title;
@@ -62,19 +68,17 @@ public class Push {
             int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
             boolean shouldGroupNotifications = true;
             boolean pushNotificationsEnabled = true;
+            List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>() {{
+                    add(new FirebasePushDeviceGenerator());
+                }};
+
 
             NotificationConfig notificationsConfig = new NotificationConfig(
                     notificationChannelId,
                     notificationChannelName,
                     smallIcon,
-                    firebaseMessageIdKey,
-                    firebaseMessageTextKey,
-                    firebaseChannelIdKey,
-                    firebaseChannelTypeKey,
-                    firebaseChannelNameKey,
                     errorCaseNotificationTitle,
                     errorCaseNotificationContent,
-                    useProvidedFirebaseInstance,
                     loadNotificationDataChannelName,
                     loadNotificationDataIcon,
                     loadNotificationDataTitle,
@@ -82,7 +86,8 @@ public class Push {
                     errorNotificationGroupSummaryTitle,
                     errorNotificationGroupSummaryContentText,
                     shouldGroupNotifications,
-                    pushNotificationsEnabled
+                    pushNotificationsEnabled,
+                    pushDeviceGenerators
             );
 
             MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
@@ -102,8 +107,8 @@ public class Push {
             }
 
             @Override
-            public boolean onFirebaseMessage(@NotNull RemoteMessage message) {
-                // Handle remote message and return true if message should not be handled by SDK
+            public boolean onPushMessage(@NonNull PushMessage message) {
+                // Handle push message and return true if message should not be handled by SDK
                 return true;
             }
         }
@@ -117,7 +122,12 @@ public class Push {
             public void onNewToken(@NotNull String token) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setFirebaseToken(token);
+                    ChatClient.setDevice(
+                            new Device(
+                                    "push-provider-token",
+                                    PushProvider.FIREBASE
+                            )
+                    );
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -126,8 +136,13 @@ public class Push {
             @Override
             public void onMessageReceived(@NotNull  RemoteMessage message) {
                 try {
-                    // Handle RemoteMessage sent from Stream backend
-                    ChatClient.handleRemoteMessage(message);
+                    // Handle RemoteMessage and convert it to a PushMessage to sent back to Stream
+                    PushMessage pushMessage = new PushMessage(
+                            message.getData().get("message_id"),
+                            message.getData().get("channel_id"),
+                            message.getData().get("channel_type")
+                    );
+                    ChatClient.handlePushMessage(pushMessage);
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -198,7 +213,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#register-a-device">Register a Device</a>
          */
         public void registerADevice() {
-            client.addDevice("firebase-token").enqueue(result -> {
+            client.addDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully registered
                 } else {
@@ -211,7 +231,12 @@ public class Push {
          * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java#unregister-a-device">Unregister a Device</a>
          */
         public void unregisterADevice() {
-            client.deleteDevice("firebase-token").enqueue(result -> {
+            client.deleteDevice(
+                    new Device(
+                            "push-provider-token",
+                            PushProvider.FIREBASE
+                    )
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Device was successfully unregistered
                 } else {

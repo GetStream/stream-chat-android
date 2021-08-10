@@ -108,6 +108,7 @@ android {
 
 dependencies {
     implementation project(":stream-chat-android")
+    implementation project(":stream-chat-android-pushprovider-firebase")
 
     implementation Dependencies.kotlinStdLib
 

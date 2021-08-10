@@ -181,16 +181,19 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun addDevice(firebaseToken: String): Call<Unit> {
+    override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
             connectionId = connectionId,
-            request = AddDeviceRequest(id = firebaseToken),
+            request = AddDeviceRequest(
+                device.token,
+                device.pushProvider.key
+            ),
         ).toUnitCall()
     }
 
-    override fun deleteDevice(firebaseToken: String): Call<Unit> {
+    override fun deleteDevice(device: Device): Call<Unit> {
         return deviceApi.deleteDevice(
-            deviceId = firebaseToken,
+            deviceId = device.token,
             connectionId = connectionId,
         ).toUnitCall()
     }
