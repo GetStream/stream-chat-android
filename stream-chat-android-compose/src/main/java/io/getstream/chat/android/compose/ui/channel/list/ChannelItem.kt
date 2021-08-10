@@ -31,11 +31,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
-import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -70,8 +69,6 @@ internal fun DefaultChannelItem(
             ),
         verticalAlignment = CenterVertically,
     ) {
-        val imagePainter = rememberChannelImagePainter(channel = channel, currentUser = currentUser)
-
         Box(
             Modifier
                 .padding(start = 8.dp)
@@ -82,10 +79,7 @@ internal fun DefaultChannelItem(
                     .background(ChatTheme.colors.borders)
                     .size(36.dp)
             )
-            Avatar(
-                modifier = Modifier.size(36.dp),
-                painter = imagePainter,
-            )
+            ChannelAvatar(modifier = Modifier.size(36.dp), channel = channel, currentUser = currentUser)
         }
 
         Spacer(Modifier.width(8.dp))

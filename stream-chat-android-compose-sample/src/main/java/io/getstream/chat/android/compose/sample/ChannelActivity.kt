@@ -93,7 +93,7 @@ class ChannelActivity : AppCompatActivity() {
         Column(modifier = Modifier.fillMaxSize()) {
             ChannelListHeader(
                 title = stringResource(id = R.string.app_name),
-                currentUser = user
+                currentUser = user ?: User()
             )
 
             ChannelList()

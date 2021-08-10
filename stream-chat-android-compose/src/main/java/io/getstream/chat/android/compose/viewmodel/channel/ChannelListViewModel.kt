@@ -195,10 +195,13 @@ public class ChannelListViewModel(
         val currentConfig = queryConfig.value
         val query = searchQuery.value
 
-        chatDomain.queryChannelsLoadMore(
-            Filters.and(currentConfig.filters, Filters.greaterThanEquals("id", query)),
-            currentConfig.querySort
-        ).enqueue()
+        val filter = if (query.isNotEmpty()) {
+            Filters.and(currentConfig.filters, Filters.autocomplete("name", query))
+        } else {
+            currentConfig.filters
+        }
+
+        chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
     }
 
     /**

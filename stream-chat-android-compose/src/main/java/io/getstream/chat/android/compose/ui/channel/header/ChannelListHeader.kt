@@ -23,14 +23,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -52,7 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
-    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    currentUser: User = User(),
     isNetworkAvailable: Boolean = true,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
@@ -71,13 +68,10 @@ public fun ChannelListHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
-            val painter = rememberImagePainter(currentUser?.image)
-
-            Avatar(
-                modifier = Modifier
-                    .size(36.dp),
-                painter = painter,
-                contentDescription = currentUser?.name,
+            UserAvatar(
+                modifier = Modifier.size(36.dp),
+                user = currentUser,
+                contentDescription = currentUser.name,
                 onClick = { onAvatarClick(currentUser) }
             )
 
