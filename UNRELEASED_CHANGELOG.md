@@ -85,22 +85,24 @@
 Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less then an hours apart:
 ```
 binding.messageListView.setMessageItemTransformer { list ->
-    list.forEachIndexed { i, messageItem ->
-        if (i == list.lastIndex) {
-            messageItem.positions.clear()
-            messageItem.positions.add(MessageListItem.Position.BOTTOM)
-        } else if (i < list.lastIndex - 1) {
-            val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
-            val nextInstant = list[i + 1].message.createdAt?.time?.let(Instant::ofEpochMilli)
+  list.mapIndexed { i, messageItem ->
+      if (messageItem is MessageListItem.MessageItem) {
+          if (i == list.lastIndex) {
+              messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
+          } else {
+              val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+              val nextInstant = list[i + 1].message.createdAt?.time?.let(Instant::ofEpochMilli)
 
-            if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
-                messageItem.positions.clear()
-                messageItem.positions.add(MessageListItem.Position.BOTTOM)
-            } else {
-                messageItem.positions.remove(MessageListItem.Position.BOTTOM)
-            }
-        }
-    }
+              if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
+                  messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
+              } else {
+                  messageItem.copy(positions = messageItem.positions - MessageListItem.Position.BOTTOM)
+              }
+          }
+      } else {
+          messageItem
+      }
+  }
 }
 ```
 
