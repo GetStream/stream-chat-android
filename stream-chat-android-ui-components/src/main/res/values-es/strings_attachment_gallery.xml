@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_attachment_gallery_count">%1$d de %2$d</string>
+    <string name="stream_ui_attachment_gallery_date">Enviado el %1$s a las %2$s</string>
+    <string name="stream_ui_attachment_gallery_reply">Responder</string>
+    <string name="stream_ui_attachment_gallery_delete">Eliminar</string>
+    <string name="stream_ui_attachment_gallery_show_in_chat">Mostrar en el chat</string>
+    <string name="stream_ui_attachment_gallery_save_image">Guardar imagen</string>
+    <string name="stream_ui_attachment_gallery_share">Compartir Imagen</string>
+
+    <!-- Gallery Overview Dialog -->
+    <string name="stream_ui_attachment_gallery_overview_title">Fotos</string>
+</resources>

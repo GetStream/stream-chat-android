@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_mention">\@%1$s</string>
+    <string name="stream_ui_yesterday">Ayer</string>
+
+    <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
+    <string name="stream_ui_user_status_online">Conectado</string>
+    <string name="stream_ui_user_status_last_seen">Ultima vez visto %1$s</string>
+    <string name="stream_ui_user_status_last_seen_just_now">Última vez visto justo ahora</string>
+
+    <!-- Message Preview (User in Mention List and Search Result List) -->
+    <string name="stream_ui_message_preview_file">Fichero: %1$s</string>
+    <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt;</string>
+</resources>
