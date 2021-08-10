@@ -10,6 +10,7 @@
         <attr name="streamUiChannelOptionsEnabled" format="boolean" />
         <attr name="streamUiChannelDeleteEnabled" format="boolean" />
         <attr name="streamUiSwipeEnabled" format="boolean" />
+        <attr name="streamUiChannelListBackgroundColor" format="color|reference" />
         <attr name="streamUiBackgroundLayoutColor" format="color|reference" />
 
         <!--Foreground layout-->

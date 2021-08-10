@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_mention_list_empty">No hay menciones todavía…</string>
+    <string name="stream_ui_mention_list_error">Ocurrió un error</string>
+</resources>

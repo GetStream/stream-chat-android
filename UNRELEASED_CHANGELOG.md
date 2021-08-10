@@ -4,6 +4,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add Spanish translations
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Firebase dependencies have been extracted from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
@@ -72,6 +73,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera.
+- Added the possibility to force light and dark theme. Set it in inside ChatUI to make all views, fragments and activity of the SDK light.
 - Fixed applying style to `SuggestionListView` when using it as a standalone component. You can modify the style using `suggestionListViewTheme` or `TransformStyle::suggestionListStyleTransformer`
 ### ⬆️ Improved
 
