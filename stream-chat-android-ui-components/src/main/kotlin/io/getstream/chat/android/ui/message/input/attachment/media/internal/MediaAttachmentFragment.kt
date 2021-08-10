@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
@@ -51,7 +52,7 @@ internal class MediaAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiFragmentAttachmentMediaBinding.inflate(inflater, container, false)
+        _binding = StreamUiFragmentAttachmentMediaBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
 
