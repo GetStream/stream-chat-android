@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stream_ui_pinned_message_list_empty_title">No pinned messages</string>
-    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Long-press as important message and choose <b>Pin to conversation</b>]]></string>
+    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Long-press an important message and choose <b>Pin to conversation</b>]]></string>
     <string name="stream_ui_pinned_message_list_results_error">An error occurred</string>
 </resources>
