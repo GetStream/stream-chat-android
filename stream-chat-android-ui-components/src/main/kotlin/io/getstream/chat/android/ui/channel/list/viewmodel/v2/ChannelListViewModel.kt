@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.extensions.asState
+import io.getstream.chat.android.offline.extensions.asReferenced
 import io.getstream.chat.android.offline.querychannels.state.ChannelsState
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
@@ -79,43 +79,37 @@ public class ChannelListViewModel(
         val queryChannelsRequest =
             QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit).withMessages(messageLimit)
 
-        queryChannelsState = chatClient.queryChannelsNew(queryChannelsRequest).asState(scope = viewModelScope).also { queryChannelsState ->
-            val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
-                queryChannelsState.channelsState.map { channelState ->
-                    channelState to currentUser
+        queryChannelsState = chatClient.asReferenced()
+            .queryChannels(queryChannelsRequest)
+            .asState(scope = viewModelScope)
+            .also { queryChannelsState ->
+                val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
+                    queryChannelsState.channelsState.map { channelState ->
+                        channelState to currentUser
+                    }
+                }.map { (channelState, currentUser) ->
+                    handleChannelState(channelState, currentUser)
+                }.asLiveData()
+
+                stateMerger.addSource(channelState) { state -> stateMerger.value = state }
+
+                stateMerger.addSource(queryChannelsState.mutedChannelIds.asLiveData()) { mutedChannels ->
+                    val state = stateMerger.value
+
+                    if (state?.channels?.isNotEmpty() == true) {
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                    } else {
+                        stateMerger.value = state?.copy()
+                    }
                 }
-            }.map { (channelState, currentUser) ->
-                handleChannelState(channelState, currentUser)
-            }.asLiveData()
 
-            stateMerger.addSource(channelState) { state -> stateMerger.value = state }
-
-            stateMerger.addSource(queryChannelsState.mutedChannelIds.asLiveData()) { mutedChannels ->
-                val state = stateMerger.value
-
-                if (state?.channels?.isNotEmpty() == true) {
-                    stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
-                } else {
-                    stateMerger.value = state?.copy()
+                paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
+                    setPaginationState { copy(loadingMore = loadingMore) }
+                }
+                paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
+                    setPaginationState { copy(endOfChannels = endOfChannels) }
                 }
             }
-
-            paginationStateMerger.addSource(queryChannelsState.loadingMore.asLiveData()) { loadingMore ->
-                setPaginationState { copy(loadingMore = loadingMore) }
-            }
-            paginationStateMerger.addSource(queryChannelsState.endOfChannels.asLiveData()) { endOfChannels ->
-                setPaginationState { copy(endOfChannels = endOfChannels) }
-            }
-        }
-
-        // Called internally in .asState()
-        // queryChannels(filterObject)
-    }
-
-    private fun queryChannels(filterObject: FilterObject) {
-        val queryChannelsRequest =
-            QueryChannelsRequest(filter = filterObject, querySort = sort, limit = limit).withMessages(messageLimit)
-        chatClient.queryChannels(queryChannelsRequest).enqueue(::consumeChannelListResult)
     }
 
     private fun consumeChannelListResult(result: Result<List<Channel>>) {

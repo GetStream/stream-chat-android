@@ -981,9 +981,6 @@ public class ChatClient internal constructor(
                 plugins.forEach { it.onQueryChannelsResult(result, request) }
             }
 
-    public fun queryChannelsNew(request: QueryChannelsRequest): QueryChannelsReference =
-        QueryChannelsReference(request = request, chatClient = this, scope = scope)
-
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
