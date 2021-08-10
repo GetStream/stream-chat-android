@@ -21,29 +21,38 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingTop="40dp"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
         >
 
         <ImageView
             android:id="@+id/emptyImage"
             android:layout_width="112dp"
             android:layout_height="112dp"
-            android:src="@drawable/stream_ui_ic_mentions_empty"
+            android:src="@drawable/stream_ui_ic_pinned_messages_empty"
             tools:ignore="ContentDescription"
             />
 
         <TextView
-            android:id="@+id/emptyLabel"
+            android:id="@+id/emptyTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="@string/stream_ui_pinned_message_list_empty"
-            android:textAppearance="@style/StreamUiTextAppearance.Body"
+            android:text="@string/stream_ui_pinned_message_list_empty_title"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            />
+
+        <TextView
+            android:id="@+id/emptyDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stream_ui_spacing_small"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
+            android:textAppearance="@style/StreamUiTextAppearance.Headline"
             android:textColor="@color/stream_ui_text_color_secondary"
             />
 

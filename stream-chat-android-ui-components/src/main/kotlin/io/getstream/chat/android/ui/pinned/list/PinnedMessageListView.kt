@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.pinned.list
 
 import android.content.Context
+import android.text.Html
 import android.util.AttributeSet
 import android.widget.Toast
 import android.widget.ViewFlipper
@@ -12,6 +13,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListViewBinding
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
@@ -51,8 +54,8 @@ public class PinnedMessageListView : ViewFlipper {
 
     private fun init(attrs: AttributeSet?) {
         style = MentionListViewStyle(context, attrs).also { style ->
-            setBackgroundColor(style.backgroundColor)
-            binding.emptyImage.setImageDrawable(style.emptyStateDrawable)
+            setBackgroundColor(context.getColorCompat(R.color.stream_ui_white_snow))
+            binding.emptyImage.setImageDrawable(context.getDrawableCompat(R.drawable.stream_ui_ic_pinned_messages_empty))
             adapter.messagePreviewStyle = style.messagePreviewStyle
         }
 
@@ -69,6 +72,10 @@ public class PinnedMessageListView : ViewFlipper {
             )
             addOnScrollListener(scrollListener)
         }
+
+        binding.emptyDescriptionTextView.text = Html.fromHtml(
+            context.getString(R.string.stream_ui_pinned_message_list_empty_description)
+        )
     }
 
     public fun showMessages(messages: List<Message>) {
