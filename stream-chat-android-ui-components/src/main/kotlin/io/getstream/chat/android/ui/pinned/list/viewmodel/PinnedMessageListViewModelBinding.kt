@@ -1,20 +1,20 @@
 @file:JvmName("PinnedMessageListViewModelBinding")
 
-package io.getstream.chat.android.ui.pinned.viewmodel
+package io.getstream.chat.android.ui.pinned.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.mention.list.MentionListView
+import io.getstream.chat.android.ui.pinned.list.PinnedMessageListView
 
 /**
- * Binds [MentionListView] with [PinnedMessageListViewModel], updating the view's state based on
+ * Binds [PinnedMessageListView] with [PinnedMessageListViewModel], updating the view's state based on
  * data provided by the ViewModel and propagating view events to the ViewModel as needed.
  *
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
-public fun PinnedMessageListViewModel.bindView(view: MentionListView, lifecycleOwner: LifecycleOwner) {
+public fun PinnedMessageListViewModel.bindView(view: PinnedMessageListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
         when {
             state.isLoading -> {

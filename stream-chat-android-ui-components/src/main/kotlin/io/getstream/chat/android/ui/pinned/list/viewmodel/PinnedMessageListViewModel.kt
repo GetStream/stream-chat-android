@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.pinned.viewmodel
+package io.getstream.chat.android.ui.pinned.list.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
