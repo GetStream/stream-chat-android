@@ -103,6 +103,9 @@
     <!-- Chat fragment -->
     <string name="chat_fragment_big_attachment_subtitle">File too big - max %d mb</string>
 
+    <!-- Pinned message list screen -->
+    <string name="pinned_message_list_title">Pinned Messages</string>
+
     <!-- Flag message -->
     <string name="message_flagged_title">Message Flagged</string>
     <string name="message_flagged_description">The message has been reported to a moderator.</string>
