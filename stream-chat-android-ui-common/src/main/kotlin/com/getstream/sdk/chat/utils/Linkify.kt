@@ -9,8 +9,7 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
-import java.util.ArrayList
-import java.util.Collections
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -20,22 +19,18 @@ import java.util.regex.Pattern
  * This class is a simplified version of [Linkify] and differs only in one following way
  * It doesn't remove any existing URLSpan from the Spannable.
  */
-internal object Linkify {
+@InternalStreamChatApi
+public object Linkify {
 
     private val COMPARATOR: Comparator<LinkSpec> = object : Comparator<LinkSpec> {
         override fun compare(a: LinkSpec, b: LinkSpec): Int {
-            if (a.start < b.start) {
-                return -1
+            return when {
+                a.start < b.start -> -1
+                a.end > b.end -> -1
+                a.start > b.start -> 1
+                a.end < b.end -> 1
+                else -> 0
             }
-            if (a.start > b.start) {
-                return 1
-            }
-            if (a.end < b.end) {
-                return 1
-            }
-            return if (a.end > b.end) {
-                -1
-            } else 0
         }
     }
 
@@ -50,7 +45,7 @@ internal object Linkify {
      *
      * @param textView TextView whose text is to be marked-up with links.
      */
-    internal fun addLinks(textView: TextView) {
+    public fun addLinks(textView: TextView) {
         val t: CharSequence = textView.text
 
         if (t is Spannable) {
@@ -75,7 +70,7 @@ internal object Linkify {
      */
     @SuppressLint("RestrictedApi")
     private fun addLinks(text: Spannable): Boolean {
-        val links: ArrayList<LinkSpec> = ArrayList<LinkSpec>()
+        val links = mutableListOf<LinkSpec>()
         gatherLinks(
             links, text, PatternsCompat.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
             Linkify.sUrlMatchFilter, null
@@ -85,11 +80,12 @@ internal object Linkify {
 
         if (links.isEmpty()) return false
 
-        for (link in links) {
+        links.forEach { link ->
             if (link.markwonAddedSpan == null) {
                 applyLink(link.url!!, link.start, link.end, text)
             }
         }
+
         return true
     }
 
@@ -142,7 +138,7 @@ internal object Linkify {
     }
 
     private fun gatherLinks(
-        links: ArrayList<LinkSpec>,
+        links: MutableList<LinkSpec>,
         s: Spannable,
         pattern: Pattern,
         schemes: Array<String>,
@@ -161,18 +157,20 @@ internal object Linkify {
         }
     }
 
-    private fun pruneOverlaps(links: ArrayList<LinkSpec>, text: Spannable) {
+    private fun pruneOverlaps(links: MutableList<LinkSpec>, text: Spannable) {
         // Append spans added by Markwon to remove any overlap.
         val urlSpans: Array<URLSpan> = text.getSpans(0, text.length, URLSpan::class.java)
-        for (i in urlSpans.indices) {
+        urlSpans.forEach { span ->
             val spec = LinkSpec(
-                markwonAddedSpan = urlSpans[i],
-                start = text.getSpanStart(urlSpans[i]),
-                end = text.getSpanEnd(urlSpans[i])
+                markwonAddedSpan = span,
+                start = text.getSpanStart(span),
+                end = text.getSpanEnd(span)
             )
             links.add(spec)
         }
-        Collections.sort(links, COMPARATOR)
+
+        links.sortWith(COMPARATOR)
+
         var len = links.size
         var i = 0
         while (i < len - 1) {
@@ -180,12 +178,16 @@ internal object Linkify {
             val b: LinkSpec = links[i + 1]
             var remove = -1
             if (a.start <= b.start && a.end > b.start) {
-                if (b.end <= a.end) {
-                    remove = i + 1
-                } else if (a.end - a.start > b.end - b.start) {
-                    remove = i + 1
-                } else if (a.end - a.start < b.end - b.start) {
-                    remove = i
+                when {
+                    b.end <= a.end -> {
+                        remove = i + 1
+                    }
+                    a.end - a.start > b.end - b.start -> {
+                        remove = i + 1
+                    }
+                    a.end - a.start < b.end - b.start -> {
+                        remove = i
+                    }
                 }
                 if (remove != -1) {
                     val span: URLSpan? = links[remove].markwonAddedSpan
