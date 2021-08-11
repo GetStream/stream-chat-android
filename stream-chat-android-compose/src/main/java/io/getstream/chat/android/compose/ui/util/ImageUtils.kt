@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +26,7 @@ internal fun adjustColorBrightness(color: Int, factor: Float): Int {
 }
 
 @Composable
+@ReadOnlyComposable
 internal fun initialsGradient(initials: String): Brush {
     val gradientBaseColors = LocalContext.current.resources.getIntArray(R.array.stream_compose_avatar_gradient_colors)
 

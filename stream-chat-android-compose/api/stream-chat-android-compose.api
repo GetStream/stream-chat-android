@@ -320,7 +320,7 @@ public final class io/getstream/chat/android/compose/ui/channel/ChannelsScreenKt
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ChannelListHeaderKt {
-	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ComposableSingletons$ChannelListHeaderKt {
@@ -628,11 +628,6 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionTypes {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/util/DefaultReactionTypes;
-}
-
-public final class io/getstream/chat/android/compose/ui/util/MessageUtilsKt {
-	public static final fun isRegular (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isSystem (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {

@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.channel.header
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,7 +42,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param isNetworkAvailable - A flag that governs if we show the title or the network loading view.
  * @param onAvatarClick - Action handler when the user taps on an avatar.
  * @param onHeaderActionClick - Action handler when the user taps on the header action.
- * @param action - Custom composable that allows the user to completely replace the default header
+ * @param leadingContent - Custom composable that allows the user to replace the default header leading content.
+ * By default it shows a [UserAvatar].
+ * @param trailingContent - Custom composable that allows the user to completely replace the default header
  * action. If nothing is passed in, the default element will be built, using the [onHeaderActionClick]
  * parameter as its handler, and it will represent [DefaultChannelListHeaderAction].
  * */
@@ -49,11 +52,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
-    currentUser: User = User(),
+    currentUser: User? = null,
     isNetworkAvailable: Boolean = true,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
-    action: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
+    leadingContent: (@Composable () -> Unit)? = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
+    trailingContent: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
 ) {
     Surface(
         modifier = modifier
@@ -68,12 +72,7 @@ public fun ChannelListHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
-            UserAvatar(
-                modifier = Modifier.size(36.dp),
-                user = currentUser,
-                contentDescription = currentUser.name,
-                onClick = { onAvatarClick(currentUser) }
-            )
+            leadingContent?.invoke()
 
             ChannelHeaderTitle(
                 modifier = Modifier.weight(6f),
@@ -81,8 +80,32 @@ public fun ChannelListHeader(
                 title = title
             )
 
-            action?.invoke()
+            trailingContent?.invoke()
         }
+    }
+}
+
+/**
+ * Represents the default leading content for the [ChannelListHeader], which is a [UserAvatar].
+ *
+ * We show the avatar if the user is available, otherwise we add a spacer to make sure the alignment is correct.
+ * */
+@Composable
+internal fun DefaultChannelHeaderLeadingContent(
+    currentUser: User?,
+    onAvatarClick: (User?) -> Unit,
+) {
+    val size = Modifier.size(36.dp)
+
+    if (currentUser != null) {
+        UserAvatar(
+            modifier = size,
+            user = currentUser,
+            contentDescription = currentUser.name,
+            onClick = { onAvatarClick(currentUser) }
+        )
+    } else {
+        Spacer(modifier = size)
     }
 }
 

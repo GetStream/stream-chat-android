@@ -23,9 +23,9 @@ internal fun Message.getSenderDisplayName(
 /**
  * @return - If the message type is regular.
  * */
-public fun Message.isRegular(): Boolean = type == ModelType.message_regular
+internal fun Message.isRegular(): Boolean = type == ModelType.message_regular
 
 /**
  * @return - If the message type is system.
  * */
-public fun Message.isSystem(): Boolean = type == ModelType.message_system
+internal fun Message.isSystem(): Boolean = type == ModelType.message_system
