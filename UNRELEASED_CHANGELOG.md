@@ -80,11 +80,12 @@
 
 ### ✅ Added
 - Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
+- Added `streamUiAttachmentSelectionBackgroundColor` for configuring attachment's icon background in `AttachmentSelectionDialogFragment`
+- Added `streamUiAttachmentSelectionAttachIcon` for configuring attach icon in `AttachmentSelectionDialogFragment`
 - Added support for pinned messages:
   - Added a button to pin/unpin a message to the message options overlay
   - Added `MessageListView::setMessagePinHandler` and `MessageListView::setMessageUnpinHandler` methods to provide custom handlers for aforementioned button
   - Added `PinnedMessageListView` to display a list of pinned messages. The view is supposed to be used with `PinnedMessageListViewModel` and `PinnedMessageListViewModelFactory`
-
 - Possibility to transform MessageItems before the are displayed in the screen.
 Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
 ```
@@ -114,6 +115,7 @@ binding.messageListView.setMessageItemTransformer { list ->
     }
 }
 ```
+
 
 ### ⚠️ Changed
 - 🚨 Breaking change: the deleted `MessageListItem.MessageItem` elements are now displayed by default to all the users. This default behavior can be customized using `MessageListView::setDeletedMessageListItemPredicate` function. This function takes an instance of `MessageListItemPredicate`. You can pass one of the following objects:
