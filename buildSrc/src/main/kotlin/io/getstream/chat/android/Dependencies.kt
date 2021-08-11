@@ -24,7 +24,7 @@ object Versions {
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
     internal const val ASSERTJ = "3.20.2"
     internal const val COIL = "1.3.0"
-    internal const val COMPOSE_ACCOMPANIST = "0.16.0"
+    internal const val COMPOSE_ACCOMPANIST = "0.16.1"
     internal const val COMPOSE_ACTIVITY = "1.3.1"
     internal const val COMPOSE_VIEW_MODEL = "1.0.0-alpha07"
     public const val COMPOSE = "1.0.1"

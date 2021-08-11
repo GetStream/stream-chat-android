@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">사용 가능한 채널이 없습니다</string>
+    <string name="stream_ui_channel_list_you">당신</string>
+    <string name="stream_ui_channel_list_untitled_channel">이름 없는 채널</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">정보를 보기</string>
+    <string name="stream_ui_channel_list_leave_channel">그룹을 떠나기</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">취소</string>
+    <string name="stream_ui_channel_list_delete_channel">대화를 삭제하기</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="other">%1d명, %2d명이 온라인</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">채널 삭제</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">대화를 삭제하시겠습니까?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">삭제</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">취소</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">채널을 숨기지 못했습니다</string>
+    <string name="stream_ui_channel_list_error_delete_channel">채널 삭제 실패</string>
+    <string name="stream_ui_channel_list_error_leave_channel">채널을 나가지 못했습니다</string>
+</resources>

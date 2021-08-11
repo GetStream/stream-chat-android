@@ -101,7 +101,7 @@
 
 ### ⬆️ Improved
 - Updated Jetpack Compose to `1.0.1`
-- Updated Accompanist libraries to `0.16.0`
+- Updated Accompanist libraries to `0.16.1`
 - Updated KTX Activity to `1.3.1`
 - Exposed functionality for getting the `displayName` of `Channel`s.
 - Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
