@@ -15,7 +15,6 @@ import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentPinnedMessageListBinding
-import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class PinnedMessageListFragment : Fragment() {
 
@@ -46,7 +45,7 @@ class PinnedMessageListFragment : Fragment() {
         viewModel.bindView(binding.pinnedMessageListView, viewLifecycleOwner)
         binding.pinnedMessageListView.setPinnedMessageSelectedListener { message ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
-                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
+                .navigateSafely(PinnedMessageListFragmentDirections.actionOpenChat(message.cid, message.id))
         }
     }
 }

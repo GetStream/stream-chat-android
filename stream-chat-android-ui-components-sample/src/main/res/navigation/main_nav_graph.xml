@@ -300,6 +300,20 @@
             app:nullable="true"
             />
 
+        <action
+            android:id="@+id/action_open_chat"
+            app:destination="@id/chatFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/bottom_navigation"
+            app:popUpToInclusive="true"
+            >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
+
     </fragment>
 
     <fragment
