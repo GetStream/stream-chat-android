@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,10 +10,28 @@
 
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/pinIndicatorTextView"
+        style="@style/StreamUiTextAppearance.Footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:drawablePadding="@dimen/stream_ui_spacing_tiny"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:paddingTop="@dimen/stream_ui_spacing_tiny"
+        android:paddingBottom="@dimen/stream_ui_spacing_small"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        tools:visibility="visible"
         />
 
     <Space
@@ -26,16 +43,16 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/messageContainer"
         app:layout_constraintStart_toStartOf="@id/messageContainer"
-        app:layout_constraintTop_toBottomOf="@id/gapView"
+        app:layout_constraintTop_toBottomOf="@id/pinIndicatorTextView"
         />
 
     <LinearLayout
         android:id="@+id/messageContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
@@ -72,7 +89,8 @@
             android:paddingBottom="@dimen/stream_ui_spacing_small"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColor="@color/stream_ui_text_color_primary"
-            android:textColorLink="@color/stream_ui_accent_blue"/>
+            android:textColorLink="@color/stream_ui_accent_blue"
+            />
 
     </LinearLayout>
 

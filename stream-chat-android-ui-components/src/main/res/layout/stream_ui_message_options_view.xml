@@ -67,6 +67,15 @@
             />
 
         <TextView
+            android:id="@+id/pinTV"
+            style="@style/StreamUiMessageOptionItem"
+            android:text="@string/stream_ui_message_list_pin_message"
+            android:visibility="visible"
+            tools:drawableStart="@drawable/stream_ui_ic_pin"
+            tools:visibility="visible"
+            />
+
+        <TextView
             android:id="@+id/muteTV"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_message_list_mute_user"

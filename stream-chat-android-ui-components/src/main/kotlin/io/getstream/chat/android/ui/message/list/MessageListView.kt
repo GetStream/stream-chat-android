@@ -151,6 +151,12 @@ public class MessageListView : ConstraintLayout {
     private var flagMessageResultHandler = FlagMessageResultHandler {
         // no-op
     }
+    private var messagePinHandler = MessagePinHandler {
+        throw IllegalStateException("onMessagePinHandler must be set.")
+    }
+    private var messageUnpinHandler = MessageUnpinHandler {
+        throw IllegalStateException("onMessageUnpinHandler must be set.")
+    }
     private var giphySendHandler = GiphySendHandler { _, _ ->
         throw IllegalStateException("onSendGiphyHandler must be set.")
     }
@@ -244,6 +250,8 @@ public class MessageListView : ConstraintLayout {
             is MessageListViewModel.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
             is MessageListViewModel.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
             is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
+            is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
+            is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
         }.let(::showToast)
     }
 
@@ -297,6 +305,8 @@ public class MessageListView : ConstraintLayout {
                                 retryHandler = messageRetryHandler,
                                 editClickHandler = messageEditHandler,
                                 flagClickHandler = messageFlagHandler,
+                                pinClickHandler = messagePinHandler,
+                                unpinClickHandler = messageUnpinHandler,
                                 muteClickHandler = userMuteHandler,
                                 unmuteClickHandler = userUnmuteHandler,
                                 blockClickHandler = userBlockHandler,
@@ -993,6 +1003,14 @@ public class MessageListView : ConstraintLayout {
         this.flagMessageResultHandler = flagMessageResultHandler
     }
 
+    public fun setMessagePinHandler(messagePinHandler: MessagePinHandler) {
+        this.messagePinHandler = messagePinHandler
+    }
+
+    public fun setMessageUnpinHandler(messageUnpinHandler: MessageUnpinHandler) {
+        this.messageUnpinHandler = messageUnpinHandler
+    }
+
     public fun setGiphySendHandler(giphySendHandler: GiphySendHandler) {
         this.giphySendHandler = giphySendHandler
     }
@@ -1126,6 +1144,14 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageFlagHandler {
         public fun onMessageFlag(message: Message)
+    }
+
+    public fun interface MessagePinHandler {
+        public fun onMessagePin(message: Message)
+    }
+
+    public fun interface MessageUnpinHandler {
+        public fun onMessageUnpin(message: Message)
     }
 
     public fun interface FlagMessageResultHandler {
