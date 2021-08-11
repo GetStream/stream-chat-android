@@ -27,12 +27,11 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessageMode
 import io.getstream.chat.android.compose.state.messages.Normal
-import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
+import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
-import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -108,12 +107,10 @@ public fun MessageListHeader(
                 isNetworkAvailable = isNetworkAvailable
             )
 
-            val painter = rememberChannelImagePainter(channel = channel, currentUser = currentUser)
-
-            Avatar(
-                modifier = Modifier
-                    .size(36.dp),
-                painter = painter,
+            ChannelAvatar(
+                modifier = Modifier.size(36.dp),
+                channel = channel,
+                currentUser = currentUser,
                 contentDescription = channel.name
             )
         }
