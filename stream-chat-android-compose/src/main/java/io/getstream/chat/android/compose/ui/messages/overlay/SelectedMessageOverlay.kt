@@ -58,8 +58,8 @@ import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
-import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
+import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.DeletedMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
