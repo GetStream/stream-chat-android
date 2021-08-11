@@ -64,7 +64,7 @@ ChatClient.Builder("apiKey", context)
 
 ## Companion Artifacts
 The push notification integration process is not complicated, but some jobs that we can provide to you from our SDK.  
-We are not adding this implementation into our main SDK for multiple reason, the main one is adding this default implementation increase the size of our SDK because new dependencies are needed, and could be some customers that doesn't want push notification at all on their chat implementation.  
+We are not adding this implementation into our main SDK for multiple reasons. The main one is adding this default implementation increases the size of our SDK because new dependencies are needed and some customers don't want push notifications on their chat implementation.  
 From time to time we will provide implementation for different provider.
 
 ### Stream Firebase PushProvider implementation
