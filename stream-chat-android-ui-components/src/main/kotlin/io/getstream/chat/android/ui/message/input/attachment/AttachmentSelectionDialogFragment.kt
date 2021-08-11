@@ -46,12 +46,17 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+            val attachmentSelectionDialogStyle = style.attachmentSelectionDialogStyle
+
+            container.setBackgroundColor(attachmentSelectionDialogStyle.backgroundColor)
+
+            attachButton.setImageDrawable(attachmentSelectionDialogStyle.attachButtonIcon)
             attachButton.isEnabled = false
             attachButton.setOnClickListener {
                 attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
                 dismiss()
             }
-            val attachmentSelectionDialogStyle = style.attachmentSelectionDialogStyle
+
             mediaAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.pictureAttachmentIcon
                 if (attachmentSelectionDialogStyle.pictureAttachmentIconTint != null) {
