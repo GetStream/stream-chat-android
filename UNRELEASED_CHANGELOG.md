@@ -86,6 +86,35 @@
   - Added a button to pin/unpin a message to the message options overlay
   - Added `MessageListView::setMessagePinHandler` and `MessageListView::setMessageUnpinHandler` methods to provide custom handlers for aforementioned button
   - Added `PinnedMessageListView` to display a list of pinned messages. The view is supposed to be used with `PinnedMessageListViewModel` and `PinnedMessageListViewModelFactory`
+- Possibility to transform MessageItems before the are displayed in the screen.
+Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
+```
+binding.messageListView.setMessageItemTransformer { list ->
+  list.mapIndexed { i, messageItem ->
+        var newMessageItem = messageItem
+
+        if (i < list.lastIndex) {
+            val nextMessageItem = list[i + 1]
+
+            if (messageItem is MessageListItem.MessageItem &&
+                nextMessageItem is MessageListItem.MessageItem
+            ) {
+                val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+                val nextInstant = nextMessageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+
+                if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
+                    newMessageItem = messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
+                } else {
+                    newMessageItem =
+                        messageItem.copy(positions = messageItem.positions - MessageListItem.Position.BOTTOM)
+                }
+            }
+        }
+
+        newMessageItem
+    }
+}
+```
 
 
 ### ⚠️ Changed
