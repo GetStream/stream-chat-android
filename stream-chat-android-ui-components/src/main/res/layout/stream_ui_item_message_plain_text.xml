@@ -81,7 +81,6 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
             android:hyphenationFrequency="normal"
             android:lineHeight="16sp"
             android:paddingLeft="@dimen/stream_ui_spacing_medium"

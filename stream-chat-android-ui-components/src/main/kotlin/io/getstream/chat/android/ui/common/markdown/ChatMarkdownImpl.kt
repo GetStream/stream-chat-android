@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.common.markdown
 
 import android.content.Context
 import android.widget.TextView
+import io.getstream.chat.android.ui.common.internal.Linkify
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
@@ -20,5 +21,6 @@ internal class ChatMarkdownImpl(context: Context) : ChatMarkdown {
 
     override fun setText(textView: TextView, text: String) {
         markwon.setMarkdown(textView, text)
+        Linkify.addLinks(textView)
     }
 }
