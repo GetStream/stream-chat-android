@@ -140,14 +140,16 @@ binding.messageListView.setMessageItemTransformer { list ->
 - Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
+- Added the `emptyContent` and `loadingContent` parameters to `ChannelList` and `MessageList` components. Now you can customize the UI of those two states.
 - Added lots of improvements to Avatars - added a `UserAvatar`, `ChannelAvatar` and an `InitialsAvatar` to load different types of data.
 - We now show a matrix of user images in case we're in a group DM.
 - We also show initials in case the user doesn't have an image.
+- Added a way to customize the leading content in the `ChannelListHeader`.
 
 ### ⚠️ Changed
 - `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
 - Added a `Shape` parameter to `Avatar` to customize the shape.
-- The `User` parameter in the `ChannelListHeader` is now non-nullable.
+- The `User` parameter in the `ChannelListHeader` is nullable and used to display the default leading content.
 
 ### ❌ Removed
 
