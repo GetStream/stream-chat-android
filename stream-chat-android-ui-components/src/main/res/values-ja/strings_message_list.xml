@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_message_list_empty">メッセージはありません</string>
+    <string name="stream_ui_message_list_download_started">ダウンロード開始</string>
+
+    <!-- Message List Item -->
+    <string name="stream_ui_message_list_giphy_title">ギフィー</string>
+    <string name="stream_ui_message_list_giphy_send">送信</string>
+    <string name="stream_ui_message_list_giphy_cancel">キャンセル</string>
+    <string name="stream_ui_message_list_giphy_shuffle">ミックス</string>
+    <string name="stream_ui_message_list_ephemeral_message">自分しか見れません</string>
+    <string name="stream_ui_message_list_deleted_message">メッセージ削除</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
+    <string name="stream_ui_message_list_attachment_uploading">%d / %dmbのアップロード中。。。</string>
+    <string name="stream_ui_message_list_attachment_upload_complete">アップロードが完了し、処理中。。。</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <plurals name="stream_ui_message_list_thread_reply">
+        <item quantity="other">%dスレッド返信</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_thread_separator">
+        <item quantity="other">%dスレッド返信</item>
+    </plurals>
+
+    <!-- Message Actions Dialog -->
+    <string name="stream_ui_message_list_reply">返信</string>
+    <string name="stream_ui_message_list_thread_reply">スレッド返信</string>
+    <string name="stream_ui_message_list_resend_message">再送</string>
+    <string name="stream_ui_message_list_copy_message">メッセージをコピーする</string>
+    <string name="stream_ui_message_list_edit_message">メッセージを編集する</string>
+    <string name="stream_ui_message_list_flag_message">メッセージをフラグする</string>
+    <string name="stream_ui_message_list_mute_user">ユーザーをミュートする</string>
+    <string name="stream_ui_message_list_unmute_user">ユーザーのミュートを解除する</string>
+    <string name="stream_ui_message_list_block_user">ユーザをブロックする</string>
+    <string name="stream_ui_message_list_delete_message">メッセージを削除する</string>
+    <plurals name="stream_ui_message_list_message_reactions">
+        <item quantity="other">%dメッセージのリアクション</item>
+    </plurals>
+
+    <!-- Message Action Confirmations -->
+    <string name="stream_ui_message_list_delete_confirmation_title">メッセージを削除する</string>
+    <string name="stream_ui_message_list_delete_confirmation_message">このメッセージを完全に削除してもよろしいですか？</string>
+    <string name="stream_ui_message_list_delete_confirmation_positive_button">削除</string>
+    <string name="stream_ui_message_list_delete_confirmation_negative_button">キャンセル</string>
+    <string name="stream_ui_message_list_flag_confirmation_title">メッセージをフラグする</string>
+    <string name="stream_ui_message_list_flag_confirmation_message">このメッセージのコピーをモデレーターに送って、さらに調査してもらいますか？</string>
+    <string name="stream_ui_message_list_flag_confirmation_positive_button">フラグする</string>
+    <string name="stream_ui_message_list_flag_confirmation_negative_button">キャンセル</string>
+
+    <!-- Attachment Viewer -->
+    <string name="stream_ui_message_list_attachment_load_failed">不明なエラーが原因でロードに失敗しました</string>
+    <string name="stream_ui_message_list_attachment_invalid_url">URLが無効なため、読み込みに失敗しました</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">何かがうまくいかなかったです。 添付ファイルを開くことができません：%s</string>
+    <string name="stream_ui_message_list_attachment_display_error">エラー。 ファイルを表示できません</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_message_list_error_mute_user">ユーザーのミュートに失敗しました</string>
+    <string name="stream_ui_message_list_error_unmute_user">ユーザーのミュートを解除できませんでした</string>
+    <string name="stream_ui_message_list_error_block_user">ユーザーのブロックに失敗しました</string>
+    <string name="stream_ui_message_list_error_flag_message">メッセージのフラグ付けに失敗しました</string>
+</resources>
