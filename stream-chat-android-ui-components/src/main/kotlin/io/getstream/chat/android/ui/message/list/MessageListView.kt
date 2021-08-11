@@ -824,7 +824,6 @@ public class MessageListView : ConstraintLayout {
                     }
                 }.let(messageListItemTransformer::transform)
 
-
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
