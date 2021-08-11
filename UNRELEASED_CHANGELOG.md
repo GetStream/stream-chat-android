@@ -80,29 +80,33 @@
 ### ✅ Added
 - Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
 
-- Positions of messages are now a mutableList.
 - Possibility to transform MessageItems before the are displayed in the screen.
-Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less then an hours apart:
+Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
 ```
 binding.messageListView.setMessageItemTransformer { list ->
   list.mapIndexed { i, messageItem ->
-      if (messageItem is MessageListItem.MessageItem) {
-          if (i == list.lastIndex) {
-              messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
-          } else {
-              val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
-              val nextInstant = list[i + 1].message.createdAt?.time?.let(Instant::ofEpochMilli)
+        var newMessageItem = messageItem
 
-              if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
-                  messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
-              } else {
-                  messageItem.copy(positions = messageItem.positions - MessageListItem.Position.BOTTOM)
-              }
-          }
-      } else {
-          messageItem
-      }
-  }
+        if (i < list.lastIndex) {
+            val nextMessageItem = list[i + 1]
+
+            if (messageItem is MessageListItem.MessageItem &&
+                nextMessageItem is MessageListItem.MessageItem
+            ) {
+                val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+                val nextInstant = nextMessageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+
+                if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
+                    newMessageItem = messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
+                } else {
+                    newMessageItem =
+                        messageItem.copy(positions = messageItem.positions - MessageListItem.Position.BOTTOM)
+                }
+            }
+        }
+
+        newMessageItem
+    }
 }
 ```
 
