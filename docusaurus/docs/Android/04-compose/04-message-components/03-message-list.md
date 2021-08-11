@@ -98,13 +98,15 @@ We recommend using the **bound** version for ease of use. Alternatively, you can
 
 ##  Customization
 
-We allow for two ways of customizing the `MessageList` component, as per the signature:
+We allow for a few ways of customizing the `MessageList` component, as per the signature:
 
 ```kotlin
 @Composable
 fun MessageList(
 	..., // State
     modifier: Modifier = Modifier,
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (Message) -> Unit = { message ->
         DefaultMessageContainer(
             message = message,
@@ -116,6 +118,8 @@ fun MessageList(
 ```
 
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
+* `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
+* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no messages available.
 * `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageItem` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:
@@ -178,3 +182,5 @@ These components also use modifiers and other properties to style them and make 
 As per our description, the `Avatar` and the user name `Text` are shown in a `Row`, after which we see the `MessageBubble`. Note that this approach doesn't automatically display attachments, so you'll have to show attachment UI based on the provided `attachmentFactories` within the `ChatTheme`.
 
 Using this approach, you can completely customize the items to your needs and you can use click, touch and combined modifiers to customize the touch event behavior.
+
+And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.

@@ -860,7 +860,9 @@ public class Android {
                     textStyleGeneric,
                     genericDrawable,
                     true,
-                    true
+                    true,
+                    colorBlack,
+                    genericDrawable
             );
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
