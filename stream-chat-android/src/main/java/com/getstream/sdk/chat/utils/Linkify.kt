@@ -1,0 +1,209 @@
+package com.getstream.sdk.chat.utils
+
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
+import android.text.util.Linkify
+import android.widget.TextView
+import java.util.ArrayList
+import java.util.Collections
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+/**
+ * Linkify links the part of the text based on matching pattern.
+ *
+ * This class is a simplified version of [Linkify] and differs only in one following way
+ * It doesn't remove any existing URLSpan from the Spannable.
+ */
+internal object Linkify {
+
+    private val COMPARATOR: Comparator<LinkSpec> = object : Comparator<LinkSpec> {
+        override fun compare(a: LinkSpec, b: LinkSpec): Int {
+            if (a.start < b.start) {
+                return -1
+            }
+            if (a.start > b.start) {
+                return 1
+            }
+            if (a.end < b.end) {
+                return 1
+            }
+            return if (a.end > b.end) {
+                -1
+            } else 0
+        }
+    }
+
+    /**
+     * Scans the provided TextView and turns all occurrences
+     * of the link types into clickable links (Currently only support web urls).
+     * If matches are found the movement method for the TextView is set to
+     * LinkMovementMethod.
+     *
+     * NOTE: Because this implementation doesn't remove existing URLSpan,
+     * make sure it is not repeatedly called on same text.
+     *
+     * @param textView TextView whose text is to be marked-up with links.
+     */
+    internal fun addLinks(textView: TextView) {
+        val t: CharSequence = textView.text
+
+        if (t is Spannable) {
+            if (addLinks(t)) {
+                addLinkMovementMethod(textView)
+            }
+        } else {
+            val s = SpannableString.valueOf(t)
+            if (addLinks(s)) {
+                addLinkMovementMethod(textView)
+                textView.text = s
+            }
+        }
+    }
+
+    /**
+     * Scans the provided spannable text and turns all occurrences
+     * of the link types into clickable links (Currently only support web urls).
+     *
+     * @param text Spannable whose text is to be marked-up with links.
+     * @return True if at least one link is found and applied.
+     */
+    private fun addLinks(text: Spannable): Boolean {
+        val links: ArrayList<LinkSpec> = ArrayList<LinkSpec>()
+        gatherLinks(
+            links, text, AutoLinkPatterns.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
+            Linkify.sUrlMatchFilter, null
+        )
+
+        pruneOverlaps(links, text)
+
+        if (links.isEmpty()) return false
+
+        for (link in links) {
+            if (link.markwonAddedSpan == null) {
+                applyLink(link.url!!, link.start, link.end, text)
+            }
+        }
+        return true
+    }
+
+    private fun addLinkMovementMethod(t: TextView) {
+        val m = t.movementMethod
+        if (m !is LinkMovementMethod) {
+            if (t.linksClickable) {
+                t.movementMethod = LinkMovementMethod.getInstance()
+            }
+        }
+    }
+
+    private fun applyLink(
+        url: String,
+        start: Int,
+        end: Int,
+        text: Spannable,
+    ) {
+        val urlSpanFactory = DEFAULT_SPAN_FACTORY
+        val span = urlSpanFactory(url)
+        text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+
+    private fun makeUrl(
+        url: String,
+        prefixes: Array<String>,
+        matcher: Matcher,
+        filter: Linkify.TransformFilter?,
+    ): String {
+        var url = url
+        if (filter != null) {
+            url = filter.transformUrl(matcher, url)
+        }
+        var hasPrefix = false
+        for (i in prefixes.indices) {
+            if (url.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = true)) {
+                hasPrefix = true
+
+                // Fix capitalization if necessary
+                if (!url.regionMatches(0, prefixes[i], 0, prefixes[i].length, ignoreCase = false)) {
+                    url = prefixes[i] + url.substring(prefixes[i].length)
+                }
+                break
+            }
+        }
+        if (!hasPrefix && prefixes.isNotEmpty()) {
+            url = prefixes[0] + url
+        }
+        return url
+    }
+
+    private fun gatherLinks(
+        links: ArrayList<LinkSpec>,
+        s: Spannable,
+        pattern: Pattern,
+        schemes: Array<String>,
+        matchFilter: Linkify.MatchFilter?,
+        transformFilter: Linkify.TransformFilter?,
+    ) {
+        val m = pattern.matcher(s)
+        while (m.find()) {
+            val start = m.start()
+            val end = m.end()
+            if (matchFilter == null || matchFilter.acceptMatch(s, start, end)) {
+                val url: String = makeUrl(m.group(0), schemes, m, transformFilter)
+                val spec = LinkSpec(url = url, start = start, end = end)
+                links.add(spec)
+            }
+        }
+    }
+
+    private fun pruneOverlaps(links: ArrayList<LinkSpec>, text: Spannable) {
+        // Append spans added by Markwon to remove any overlap.
+        val urlSpans: Array<URLSpan> = text.getSpans(0, text.length, URLSpan::class.java)
+        for (i in urlSpans.indices) {
+            val spec = LinkSpec(
+                markwonAddedSpan = urlSpans[i],
+                start = text.getSpanStart(urlSpans[i]),
+                end = text.getSpanEnd(urlSpans[i])
+            )
+            links.add(spec)
+        }
+        Collections.sort(links, COMPARATOR)
+        var len = links.size
+        var i = 0
+        while (i < len - 1) {
+            val a: LinkSpec = links[i]
+            val b: LinkSpec = links[i + 1]
+            var remove = -1
+            if (a.start <= b.start && a.end > b.start) {
+                if (b.end <= a.end) {
+                    remove = i + 1
+                } else if (a.end - a.start > b.end - b.start) {
+                    remove = i + 1
+                } else if (a.end - a.start < b.end - b.start) {
+                    remove = i
+                }
+                if (remove != -1) {
+                    val span: URLSpan? = links[remove].markwonAddedSpan
+                    if (span != null) {
+                        text.removeSpan(span)
+                    }
+                    links.removeAt(remove)
+                    len--
+                    continue
+                }
+            }
+            i++
+        }
+    }
+
+    private data class LinkSpec(
+        val markwonAddedSpan: URLSpan? = null,
+        val url: String? = null,
+        val start: Int,
+        val end: Int,
+    )
+
+    private val DEFAULT_SPAN_FACTORY: (string: String?) -> URLSpan = { string: String? -> URLSpan(string) }
+}
