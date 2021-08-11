@@ -71,7 +71,7 @@ public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val storagePermissionState =
@@ -89,10 +89,6 @@ public fun AttachmentsPicker(
 
             onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(attachments))
         }
-
-    LaunchedEffect(Unit) {
-        attachmentsPickerViewModel.start()
-    }
 
     Box(
         modifier = Modifier
@@ -179,7 +175,7 @@ public fun AttachmentsPicker(
 
                     LaunchedEffect(permissionState.hasPermission) {
                         if (permissionState.permissionRequested && permissionState.hasPermission) {
-                            attachmentsPickerViewModel.start()
+                            attachmentsPickerViewModel.loadData()
                         }
                     }
 

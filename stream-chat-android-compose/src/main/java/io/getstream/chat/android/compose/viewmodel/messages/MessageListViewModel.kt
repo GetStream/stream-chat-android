@@ -129,7 +129,7 @@ public class MessageListViewModel(
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
      * */
-    public fun start() {
+    init {
         viewModelScope.launch {
             val result =
                 chatDomain.watchChannel(channelId, messageLimit)

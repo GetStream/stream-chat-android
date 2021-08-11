@@ -11,6 +11,7 @@ include (
 		':stream-chat-android-docs',
 		':stream-chat-android-compose',
 		':stream-chat-android-compose-sample',
+		':stream-chat-android-pushprovider-firebase',
 )
 
 buildCache {

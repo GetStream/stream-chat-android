@@ -10,8 +10,8 @@
     <string name="stream_ui_channel_list_dismiss_dialog">Cancel</string>
     <string name="stream_ui_channel_list_delete_channel">Delete conversation</string>
     <plurals name="stream_ui_channel_list_member_info">
-        <item quantity="one">%1d Member, %2d Online</item>
-        <item quantity="other">%1d Members, %2d Online</item>
+        <item quantity="one">%1$d Member, %2$d Online</item>
+        <item quantity="other">%1$d Members, %2$d Online</item>
     </plurals>
 
     <string name="stream_ui_channel_list_delete_confirmation_title">Delete Channel</string>

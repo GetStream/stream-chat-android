@@ -4,7 +4,7 @@
     <string name="stream_ui_search_input_hint">खोजें</string>
 
     <!-- Search Result List -->
-    <string name="stream_ui_search_results_empty">\"%s\" के लिए कोई परिणाम नहीं</string>
+    <string name="stream_ui_search_results_empty">%1$s के लिए कोई परिणाम नहीं</string>
     <string name="stream_ui_search_results_error">एक त्रुटि पाई गई</string>
     <plurals name="stream_ui_search_results_count">
         <item quantity="one">%d परिणाम</item>

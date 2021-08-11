@@ -4,7 +4,7 @@
     <string name="stream_ui_search_input_hint">Recherche</string>
 
     <!-- Search Result List -->
-    <string name="stream_ui_search_results_empty">Aucun résultat pour \"%s\"</string>
+    <string name="stream_ui_search_results_empty">Aucun résultat pour %1$s</string>
     <string name="stream_ui_search_results_error">Une erreur s\'est produite</string>
     <plurals name="stream_ui_search_results_count">
         <item quantity="one">1 résultat</item>

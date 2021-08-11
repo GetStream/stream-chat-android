@@ -55,14 +55,14 @@ import io.getstream.chat.android.offline.ChatDomain
 public object StreamAttachmentFactories {
 
     /**
-     * Default attachment factories we provide, which can transform image and file attachments.
+     * Default attachment factories we provide, which can transform image, file and link attachments.
      *
-     * Uses [ImageAttachmentFactory] and [FileAttachmentFactory] to build UI.
+     * Uses the functions below to display the UI.
      * */
     public val defaultFactories: List<AttachmentFactory> = listOf(
         AttachmentFactory(
             { state -> LinkAttachmentFactory(state) },
-            { message -> message.attachments.any { it.ogUrl != null } }
+            { message -> message.attachments.any { it.titleLink != null || it.ogUrl != null } }
         ),
         AttachmentFactory(
             { state -> ImageAttachmentFactory(state) },
@@ -85,15 +85,20 @@ public object StreamAttachmentFactories {
      * */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun LinkAttachmentFactory(
+    public fun LinkAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
         val (message, _) = messageItem
 
         val context = LocalContext.current
-        val attachment = message.attachments.firstOrNull { it.ogUrl != null }
-        val previewUrl = attachment?.ogUrl
+        val attachment = message.attachments.firstOrNull { it.titleLink != null || it.ogUrl != null }
+
+        requireNotNull(attachment) {
+            IllegalStateException("Missing link attachment.")
+        }
+
+        val previewUrl = attachment.titleLink ?: attachment.ogUrl
 
         requireNotNull(previewUrl) {
             IllegalStateException("Missing preview URL.")
@@ -169,7 +174,7 @@ public object StreamAttachmentFactories {
      * */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun ImageAttachmentFactory(
+    public fun ImageAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, onLongItemClick) = attachmentState
@@ -289,7 +294,7 @@ public object StreamAttachmentFactories {
      * and the onLongItemClick handler.
      * */
     @Composable
-    private fun FileAttachmentFactory(
+    public fun FileAttachmentFactory(
         attachmentState: AttachmentState,
     ) {
         val (modifier, messageItem, _) = attachmentState
