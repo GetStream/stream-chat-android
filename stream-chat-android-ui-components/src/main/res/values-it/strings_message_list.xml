@@ -33,7 +33,7 @@
     <string name="stream_ui_message_list_edit_message">Modifica messaggio</string>
     <string name="stream_ui_message_list_flag_message">Segnala messaggio</string>
     <string name="stream_ui_message_list_pin_message">Aggiungi alla conversazione</string>
-    <string name="stream_ui_message_list_unpin_message">Rimuovi dalla conversazione</string>
+    <string name="stream_ui_message_list_unpin_message">Non fissare più</string>
     <string name="stream_ui_message_list_mute_user">Silenzia Utente</string>
     <string name="stream_ui_message_list_unmute_user">Riattiva Utente</string>
     <string name="stream_ui_message_list_block_user">Blocca Utente</string>
