@@ -66,7 +66,7 @@ In order to do it, we need to add the following string translation to the target
 As the result, your app will display _Oczekiwanie na połączenie_ text for Polish (PL).
 
 ### Overriding existing languages
-To override an existing language, create a new string resources by overriding them in the locale-specific `/res/values-XX` directories of your project.
+To override an existing language, create new string resources by overriding them in the locale-specific `/res/values-XX` directories of your project.
 [Here](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components/src/main/res/values) you can find a list of available text resources grouped by component.
 
 ### Changing the default language
