@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -34,6 +35,8 @@ public data class AttachmentSelectionDialogStyle(
     val videoIconDrawable: Drawable,
     val videoIconVisible: Boolean,
     val videoLengthLabelVisible: Boolean,
+    @ColorInt val backgroundColor: Int,
+    val attachButtonIcon: Drawable,
 ) {
     public companion object {
         /**
@@ -72,6 +75,8 @@ public data class AttachmentSelectionDialogStyle(
                 videoIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!,
                 videoIconVisible = true,
                 videoLengthLabelVisible = true,
+                backgroundColor = context.getColorCompat(R.color.stream_ui_white_smoke),
+                attachButtonIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!,
             )
         }
     }
