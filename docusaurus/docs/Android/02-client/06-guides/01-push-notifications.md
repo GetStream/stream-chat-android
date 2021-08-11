@@ -33,7 +33,7 @@ We also provide some [Companion Artifacts](#companion-artifacts) that help you w
 
 ## PushDeviceGenerator
 Our SDK allows you to provide an implementation of `PushDeviceGenerator` and handle all the needed process to obtain and register a device into Stream.
-The `PushDeviceGenerator` is an interface that asks you to implement two method. After you implement it you need inject it into our `ChatClient`, let me show you an example:
+The `PushDeviceGenerator` is an interface that asks you to implement two methods. After you implement it, you need inject it into `ChatClient`, let me show you an example:
 ```kotlin
 class MyPushDeviceGenerator : PushDeviceGenerator {
     override fun isValidForThisDevice(context: Context): Boolean {
@@ -236,5 +236,4 @@ Save the push notification settings changes:
 :::note
 Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
 :::
-
 
