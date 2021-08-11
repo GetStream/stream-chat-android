@@ -254,7 +254,7 @@
         <attr name="streamUiFlagMessageConfirmationEnabled" format="boolean" />
         <attr name="streamUiPinOptionIcon" format="reference" />
         <attr name="streamUiUnpinOptionIcon" format="reference" />
-        <attr name="streamUiPinMessageEnabled" format="reference" />
+        <attr name="streamUiPinMessageEnabled" format="boolean" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
         <attr name="streamUiUnmuteOptionIcon" format="reference" />
         <attr name="streamUiMuteUserEnabled" format="boolean" />
