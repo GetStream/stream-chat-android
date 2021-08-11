@@ -128,7 +128,7 @@ internal class ChatSocketServiceImplTest {
         whenever(networkStateProvider.isConnected()) doReturn false
         socketService.onSocketError(networkError)
 
-        //Socket was recreated
+        // Socket was recreated
         verify(socketFactory, times(2)).createAnonymousSocket(any(), any(), any())
     }
 }
