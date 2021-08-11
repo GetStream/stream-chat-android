@@ -65,5 +65,5 @@
     <string name="stream_ui_message_list_error_block_user">Impossibile bloccare l\'utente</string>
     <string name="stream_ui_message_list_error_flag_message">Impossibile segnalare il messaggio</string>
     <string name="stream_ui_message_list_error_pin_message">Impossibile appuntare il messaggio</string>
-    <string name="stream_ui_message_list_error_unpin_message">Impossibile sbloccare il messaggio</string>
+    <string name="stream_ui_message_list_error_unpin_message">Impossibile rimuovere il messaggio dagli elementi fissati</string>
 </resources>
