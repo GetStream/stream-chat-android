@@ -35,6 +35,13 @@ sealed class ChatInfoItem {
 
         open val showRightArrow: Boolean = true
 
+        object PinnedMessages : Option() {
+            override val iconResId: Int
+                get() = R.drawable.stream_ui_ic_pin
+            override val textResId: Int
+                get() = R.string.chat_info_option_pinned_messages
+        }
+
         object SharedMedia : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_media
