@@ -117,6 +117,7 @@ class GroupChatInfoFragment : Fragment() {
                         ChatInfoItem.Separator,
                         ChatInfoItem.ChannelName(state.channelName),
                         ChatInfoItem.Option.Stateful.MuteChannel(isChecked = state.channelMuted),
+                        ChatInfoItem.Option.PinnedMessages,
                         ChatInfoItem.Option.SharedMedia,
                         ChatInfoItem.Option.SharedFiles,
                         ChatInfoItem.Option.LeaveGroup,
@@ -148,6 +149,9 @@ class GroupChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
+                ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid)
+                )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
                 )

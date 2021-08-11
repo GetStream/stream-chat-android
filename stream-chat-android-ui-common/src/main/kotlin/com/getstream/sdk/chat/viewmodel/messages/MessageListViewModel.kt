@@ -213,6 +213,16 @@ public class MessageListViewModel @JvmOverloads constructor(
                     }
                 }
             }
+            is Event.PinMessage -> {
+                client.pinMessage(Message(id = event.message.id)).enqueue(
+                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(it))) }
+                )
+            }
+            is Event.UnpinMessage -> {
+                client.unpinMessage(Message(id = event.message.id)).enqueue(
+                    onError = { _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(it))) }
+                )
+            }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
             }
@@ -409,6 +419,8 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
         public data class DeleteMessage(val message: Message) : Event()
         public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
+        public data class PinMessage(val message: Message) : Event()
+        public data class UnpinMessage(val message: Message) : Event()
         public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
         public data class RetryMessage(val message: Message) : Event()
         public data class MessageReaction(
@@ -437,6 +449,8 @@ public class MessageListViewModel @JvmOverloads constructor(
         public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
         public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
     public fun interface DateSeparatorHandler {

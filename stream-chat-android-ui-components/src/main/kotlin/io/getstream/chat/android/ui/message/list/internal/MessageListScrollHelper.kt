@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
@@ -79,13 +80,18 @@ internal class MessageListScrollHelper(
                 currentList.indexOfFirst { it is MessageListItem.MessageItem && it.message.id == message.id }
                     .takeIf { it >= 0 }
                     ?.let {
-                        with(recyclerView) {
+                        if (message.pinned) {
                             this@MessageListScrollHelper.layoutManager
-                                ?.scrollToPositionWithOffset(it, height / 3)
-                            recyclerView.post {
-                                findViewHolderForAdapterPosition(it)
-                                    ?.safeCast<BaseMessageItemViewHolder<*>>()
-                                    ?.startHighlightAnimation()
+                                ?.scrollToPositionWithOffset(it, 8.dpToPx())
+                        } else {
+                            with(recyclerView) {
+                                this@MessageListScrollHelper.layoutManager
+                                    ?.scrollToPositionWithOffset(it, height / 3)
+                                post {
+                                    findViewHolderForAdapterPosition(it)
+                                        ?.safeCast<BaseMessageItemViewHolder<*>>()
+                                        ?.startHighlightAnimation()
+                                }
                             }
                         }
                     }

@@ -8,7 +8,7 @@
 
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@+id/marginStart"
         app:layout_constraintTop_toTopOf="parent"

@@ -130,6 +130,7 @@
     <dimen name="stream_ui_message_thread_reply_avatar_size">18dp</dimen>
     <dimen name="stream_ui_message_thread_reply_avatar_half_size">9dp</dimen>
     <dimen name="stream_ui_message_media_attachment_more_count_text_size">26sp</dimen>
+    <dimen name="stream_ui_message_pin_indicator_icon_size">12dp</dimen>
 
     <!-- Attachment Gallery -->
     <dimen name="stream_ui_options_menu_corner_radius">16dp</dimen>
