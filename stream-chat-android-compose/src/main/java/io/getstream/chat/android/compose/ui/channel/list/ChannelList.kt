@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.channel.list
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,6 +32,8 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onLastItemReached - Handler for pagination, when the user reaches the last item in the list.
  * @param onChannelClick - Handler for a single item tap.
  * @param onChannelLongClick - Handler for a long item tap.
+ * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent - Composable that represents the empty content if there are no channels.
  * @param itemContent - UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -55,6 +56,8 @@ public fun ChannelList(
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,
@@ -72,6 +75,8 @@ public fun ChannelList(
         onLastItemReached = onLastItemReached,
         onChannelClick = onChannelClick,
         onChannelLongClick = onChannelLongClick,
+        loadingContent = loadingContent,
+        emptyContent = emptyContent,
         itemContent = itemContent
     )
 }
@@ -94,6 +99,8 @@ public fun ChannelList(
  * @param onLastItemReached - Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick - Handler for a single item tap.
  * @param onChannelLongClick - Handler for a long item tap.
+ * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent - Composable that represents the empty content if there are no channels.
  * @param itemContent - UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -106,6 +113,8 @@ public fun ChannelList(
     onLastItemReached: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,
@@ -118,14 +127,14 @@ public fun ChannelList(
     val (isLoading, _, _, channels) = channelsState
 
     when {
-        isLoading -> LoadingView(Modifier.fillMaxSize())
+        isLoading -> loadingContent()
         !isLoading && channels.isNotEmpty() -> Channels(
             modifier = modifier,
             channelsState = channelsState,
             onLastItemReached = onLastItemReached,
             itemContent = itemContent
         )
-        else -> EmptyView(modifier = Modifier.fillMaxSize())
+        else -> emptyContent()
     }
 }
 
