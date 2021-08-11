@@ -210,5 +210,5 @@ public object Linkify {
         val end: Int,
     )
 
-    private val DEFAULT_SPAN_FACTORY: (string: String?) -> URLSpan = { string: String? -> URLSpan(string) }
+    private val DEFAULT_SPAN_FACTORY: (string: String?) -> URLSpan = ::URLSpan
 }
