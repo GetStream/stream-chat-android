@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property searchingForNetworkProgressBarTint - progress bar tint color. Default - [R.color.stream_ui_accent_blue]
  */
 public data class MessageListHeaderViewStyle(
+    @ColorInt public val background: Int,
     public val titleTextStyle: TextStyle,
     public val offlineTextStyle: TextStyle,
     public val searchingForNetworkTextStyle: TextStyle,
@@ -53,6 +54,11 @@ public data class MessageListHeaderViewStyle(
                 R.attr.streamUiMessageListHeaderStyle,
                 R.style.StreamUi_MessageListHeader,
             ).use { a ->
+                val background = a.getColor(
+                    R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackground,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
+
                 val showUserAvatar =
                     a.getBoolean(R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowUserAvatar, true)
 
@@ -156,6 +162,7 @@ public data class MessageListHeaderViewStyle(
                     .build()
 
                 return MessageListHeaderViewStyle(
+                    background = background,
                     titleTextStyle = titleTextStyle,
                     offlineTextStyle = offlineTextStyle,
                     searchingForNetworkTextStyle = searchingForNetworkTextStyle,

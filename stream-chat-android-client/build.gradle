@@ -70,7 +70,6 @@ dependencies {
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
-    implementation Dependencies.firebaseMessaging
     implementation Dependencies.retrofit
     implementation Dependencies.gson
     implementation Dependencies.retrofitGsonConverter

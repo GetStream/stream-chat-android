@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentOptionsBinding
 
@@ -18,7 +19,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
     private var isMine: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiFragmentAttachmentOptionsBinding.inflate(inflater, container, false)
+        return StreamUiFragmentAttachmentOptionsBinding.inflate(requireContext().streamThemeInflater, container, false)
             .apply { _binding = this }
             .root
     }

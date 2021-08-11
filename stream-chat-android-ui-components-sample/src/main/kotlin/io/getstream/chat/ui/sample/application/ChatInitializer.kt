@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
 
@@ -14,12 +15,10 @@ class ChatInitializer(private val context: Context) {
     fun init(apiKey: String) {
         val notificationConfig =
             NotificationConfig(
-                firebaseMessageIdKey = "message_id",
-                firebaseChannelIdKey = "channel_id",
-                firebaseChannelTypeKey = "channel_type",
                 smallIcon = R.drawable.ic_chat_bubble,
                 loadNotificationDataIcon = R.drawable.ic_chat_bubble,
                 shouldGroupNotifications = true,
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator()),
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING

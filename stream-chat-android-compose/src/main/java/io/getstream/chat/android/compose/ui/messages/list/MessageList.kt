@@ -140,7 +140,7 @@ public fun MessageList(
  * @param modifier - Modifier for styling.
  * */
 @Composable
-private fun Messages(
+public fun Messages(
     messagesState: MessagesState,
     onMessagesStartReached: () -> Unit,
     onScrollToBottom: () -> Unit,

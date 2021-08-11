@@ -10,10 +10,10 @@
     <string name="stream_ui_message_list_giphy_shuffle">Casuale</string>
     <string name="stream_ui_message_list_ephemeral_message">Visible solo a te</string>
     <string name="stream_ui_message_list_deleted_message">Messaggio cancellato</string>
-    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">Caricamento %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%1$d</string>
+    <string name="stream_ui_message_list_attachment_uploading">Caricamento %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Caricamento completato, elaborazione…</string>
-    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Risposta nella Conversazione</item>
         <item quantity="other">%d Risposte nella Conversazione</item>
@@ -52,7 +52,7 @@
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">Caricamento non riuscito a causa di un errore sconosciuto.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">Caricamento non riuscito a causa di un URL non valido.</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">Qualcosa è andato storto. Impossibile aprire l\'allegato: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Qualcosa è andato storto. Impossibile aprire l\'allegato: %1$s</string>
     <string name="stream_ui_message_list_attachment_display_error">Errore. Impossibile visualizzare il file</string>
 
     <!-- Errors -->

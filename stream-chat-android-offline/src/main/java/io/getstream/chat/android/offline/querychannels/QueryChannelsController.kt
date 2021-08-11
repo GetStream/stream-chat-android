@@ -211,7 +211,7 @@ public class QueryChannelsController internal constructor(
      * @param cIds the channels to refresh
      * @see ChannelController
      */
-    internal fun refreshChannels(cIds: List<String>) {
+    internal fun refreshChannels(cIds: Collection<String>) {
         _channels.value += queryChannelsSpec.cids
             .intersect(cIds)
             .map { it to domainImpl.channel(it).toChannel() }

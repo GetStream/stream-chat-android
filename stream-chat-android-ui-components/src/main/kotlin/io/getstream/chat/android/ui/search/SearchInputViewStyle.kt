@@ -25,6 +25,7 @@ public data class SearchInputViewStyle(
     val searchIconDrawable: Drawable,
     val clearInputDrawable: Drawable,
     val backgroundDrawable: Drawable,
+    @ColorInt val containerBackgroundColor: Int,
     val hintText: String,
     val textSize: Int,
 ) {
@@ -44,6 +45,11 @@ public data class SearchInputViewStyle(
 
                 val backgroundDrawable = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewBackground)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_shape_search_view_background)!!
+
+                val containerBackground = a.getColor(
+                    R.styleable.SearchInputView_streamUiSearchInputViewContainerBackground,
+                    context.getColorCompat(R.color.stream_ui_white)
+                )
 
                 val textColor = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewTextColor,
@@ -66,6 +72,7 @@ public data class SearchInputViewStyle(
                     searchIconDrawable = searchIcon,
                     clearInputDrawable = clearIcon,
                     backgroundDrawable = backgroundDrawable,
+                    containerBackgroundColor = containerBackground,
                     textColor = textColor,
                     hintColor = hintColor,
                     hintText = hintText,

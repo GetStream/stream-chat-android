@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_mention">\@%s</string>
+    <string name="stream_ui_mention">\@%1$s</string>
     <string name="stream_ui_yesterday">Yesterday</string>
 
     <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
     <string name="stream_ui_user_status_online">Online</string>
-    <string name="stream_ui_user_status_last_seen">Last seen %s</string>
+    <string name="stream_ui_user_status_last_seen">Last seen %1$s</string>
     <string name="stream_ui_user_status_last_seen_just_now">Last seen just now</string>
 
     <!-- Message Preview (User in Mention List and Search Result List) -->
-    <string name="stream_ui_message_preview_file">File: %s</string>
+    <string name="stream_ui_message_preview_file">File: %1$s</string>
     <string name="stream_ui_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
 </resources>

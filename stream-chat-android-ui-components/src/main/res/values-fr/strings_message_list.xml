@@ -10,10 +10,10 @@
     <string name="stream_ui_message_list_giphy_shuffle">Mélanger</string>
     <string name="stream_ui_message_list_ephemeral_message">Seulement visible par vous</string>
     <string name="stream_ui_message_list_deleted_message">Message supprimé</string>
-    <string name="stream_ui_message_list_attachment_more_count">+%d</string>
-    <string name="stream_ui_message_list_attachment_uploading">Téléchargement %d / %d …</string>
+    <string name="stream_ui_message_list_attachment_more_count">+%1$d</string>
+    <string name="stream_ui_message_list_attachment_uploading">Téléchargement %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Transfert terminé, traitement…</string>
-    <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
+    <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Réponse au fil de discussion</item>
         <item quantity="other">%d Réponses au fil de discussion</item>
@@ -52,7 +52,7 @@
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">Le chargement a échoué en raison d\'une erreur inconnue.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">Le chargement a échoué en raison d\'une URL non valide.</string>
-    <string name="stream_ui_message_list_attachment_invalid_mime_type">Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s</string>
+    <string name="stream_ui_message_list_attachment_invalid_mime_type">Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %1$s</string>
     <string name="stream_ui_message_list_attachment_display_error">Erreur. Le fichier ne peut pas être affiché</string>
 
     <!-- Errors -->

@@ -58,7 +58,7 @@ internal class WhenQuery {
             .givenQueryChannelsSpec(
                 QueryChannelsSpec(
                     Filters.neutral(),
-                    cids = listOf("cid1", "cid2")
+                    cids = setOf("cid1", "cid2")
                 )
             )
             .get()
@@ -133,7 +133,7 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        cids = listOf("cid1", "cid2")
+                        cids = setOf("cid1", "cid2")
                     )
                 )
                 .givenDBChannels(listOf(dbChannel1, dbChannel2))
@@ -156,7 +156,7 @@ internal class WhenQuery {
                 .givenQueryChannelsSpec(
                     QueryChannelsSpec(
                         Filters.neutral(),
-                        cids = listOf("cid1", "cid2")
+                        cids = setOf("cid1", "cid2")
                     )
                 )
                 .givenDBChannels(listOf(dbChannel))

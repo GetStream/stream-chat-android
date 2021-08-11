@@ -71,8 +71,6 @@ class MessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
-        listViewModel.start()
-
         setContent {
             ChatTheme {
                 MessagesScreen(
