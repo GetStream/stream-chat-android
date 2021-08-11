@@ -14,7 +14,7 @@
     <string name="stream_ui_message_list_attachment_uploading">Caricamento %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Caricamento completato, elaborazione…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
-    <string name="stream_ui_message_list_pinned_message">Appuntato da %s</string>
+    <string name="stream_ui_message_list_pinned_message">Fissato da %s</string>
     <string name="stream_ui_message_list_pinned_message_you">Voi</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Risposta nella Conversazione</item>
