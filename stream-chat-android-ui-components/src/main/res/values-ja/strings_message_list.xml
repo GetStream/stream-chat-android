@@ -14,8 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">%d / %dmbのアップロード中。。。</string>
     <string name="stream_ui_message_list_attachment_upload_complete">アップロードが完了し、処理中。。。</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
-    <string name="stream_ui_message_list_pinned_message">％sによって固定されています</string>
-    <string name="stream_ui_message_list_pinned_message_you">君</string>
+    <string name="stream_ui_message_list_pinned_message">%sのピン</string>
+    <string name="stream_ui_message_list_pinned_message_you">あなた</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="other">%dスレッド返信</item>
     </plurals>
@@ -30,8 +30,8 @@
     <string name="stream_ui_message_list_copy_message">メッセージをコピーする</string>
     <string name="stream_ui_message_list_edit_message">メッセージを編集する</string>
     <string name="stream_ui_message_list_flag_message">メッセージをフラグする</string>
-    <string name="stream_ui_message_list_pin_message">会話にピン留め</string>
-    <string name="stream_ui_message_list_unpin_message">会話から固定を解除する</string>
+    <string name="stream_ui_message_list_pin_message">会話にピン留める</string>
+    <string name="stream_ui_message_list_unpin_message">会話からピンを解除する</string>
     <string name="stream_ui_message_list_mute_user">ユーザーをミュートする</string>
     <string name="stream_ui_message_list_unmute_user">ユーザーのミュートを解除する</string>
     <string name="stream_ui_message_list_block_user">ユーザをブロックする</string>
@@ -61,6 +61,6 @@
     <string name="stream_ui_message_list_error_unmute_user">ユーザーのミュートを解除できませんでした</string>
     <string name="stream_ui_message_list_error_block_user">ユーザーのブロックに失敗しました</string>
     <string name="stream_ui_message_list_error_flag_message">メッセージのフラグ付けに失敗しました</string>
-    <string name="stream_ui_message_list_error_pin_message">メッセージの固定に失敗しました</string>
-    <string name="stream_ui_message_list_error_unpin_message">メッセージの固定を解除できませんでした</string>
+    <string name="stream_ui_message_list_error_pin_message">メッセージにピンを留めれませんでした</string>
+    <string name="stream_ui_message_list_error_unpin_message">メッセージのピンを解除できませんでした</string>
 </resources>
