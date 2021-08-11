@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.common.markdown
 
 import android.content.Context
 import android.widget.TextView
-import io.getstream.chat.android.ui.common.internal.Linkify
+import com.getstream.sdk.chat.utils.Linkify
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.CorePlugin
