@@ -4,8 +4,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add Spanish translations
-
+- Added support for several languages:
+  - French
+  - Hindi
+  - Italian
+  - Japanese
+  - Korean
+  - Spanish
+ You can disable them by explicitly setting `resConfigs` inside `build.gradle` file
 ### ⚠️ Changed
 - 🚨 Breaking change: Firebase dependencies have been extracted from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
 - Updated the Kotlin version to latest supported - `1.5.21`.
