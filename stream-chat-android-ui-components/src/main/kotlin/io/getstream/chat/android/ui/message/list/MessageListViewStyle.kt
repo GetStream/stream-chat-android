@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property editIcon - icon for edit message option. Default - [R.drawable.stream_ui_ic_edit]
  * @property flagIcon - icon for flag message option. Default - [R.drawable.stream_ui_ic_flag]
  * @property flagEnabled - enables/disables "flag message" option
+ * @property pinMessageEnabled - enables/disables pin message feature. Disabled by default
  * @property muteIcon - icon for mute option. Default - [R.drawable.stream_ui_ic_mute]
  * @property muteEnabled - enables/disables "mute user" option
  * @property blockIcon - icon for block option. Default - [R.drawable.stream_ui_ic_user_block]
@@ -75,6 +76,7 @@ public data class MessageListViewStyle(
     val editIcon: Int,
     val flagIcon: Int,
     val flagEnabled: Boolean,
+    val pinMessageEnabled: Boolean,
     val muteIcon: Int,
     val unmuteIcon: Int,
     val muteEnabled: Boolean,
@@ -234,6 +236,8 @@ public data class MessageListViewStyle(
 
                 val flagEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiFlagMessageEnabled, true)
 
+                val pinMessageEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiPinMessageEnabled, false)
+
                 val muteEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiMuteUserEnabled, true)
 
                 val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserEnabled, true)
@@ -362,6 +366,7 @@ public data class MessageListViewStyle(
                     editIcon = editIcon,
                     flagIcon = flagIcon,
                     flagEnabled = flagEnabled,
+                    pinMessageEnabled = pinMessageEnabled,
                     muteIcon = muteIcon,
                     unmuteIcon = unmuteIcon,
                     muteEnabled = muteEnabled,

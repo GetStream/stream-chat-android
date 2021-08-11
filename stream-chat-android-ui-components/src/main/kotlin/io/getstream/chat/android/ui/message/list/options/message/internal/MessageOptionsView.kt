@@ -91,7 +91,12 @@ internal class MessageOptionsView : FrameLayout {
             isMessageAuthorMuted = isMessageAuthorMuted,
         )
         configureFlag(configuration = configuration, style = style, iconTint = iconsTint)
-        configurePin(style = style, iconTint = iconsTint, isMessagePinned = isMessagePinned)
+        configurePin(
+            configuration = configuration,
+            style = style,
+            iconTint = iconsTint,
+            isMessagePinned = isMessagePinned
+        )
     }
 
     private fun configureMineMessage(
@@ -137,7 +142,12 @@ internal class MessageOptionsView : FrameLayout {
         binding.muteTV.isVisible = false
         binding.blockTV.isVisible = false
         configureDeleteMessage(configuration, style)
-        configurePin(style = style, iconTint = iconsTint, isMessagePinned = isMessagePinned)
+        configurePin(
+            configuration = configuration,
+            style = style,
+            iconTint = iconsTint,
+            isMessagePinned = isMessagePinned
+        )
     }
 
     private fun configureEditMessage(configuration: Configuration, style: MessageListViewStyle) {
@@ -169,18 +179,21 @@ internal class MessageOptionsView : FrameLayout {
     }
 
     private fun configurePin(
+        configuration: Configuration,
         style: MessageListViewStyle,
         iconTint: Int?,
         isMessagePinned: Boolean,
     ) {
-        with(binding.pinTV) {
-            text = if (isMessagePinned) {
-                configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_unpin, iconTint)
-                context.getString(R.string.stream_ui_message_list_unpin_message)
+        if (configuration.pinMessageEnabled) {
+            if (isMessagePinned) {
+                binding.pinTV.text = context.getString(R.string.stream_ui_message_list_unpin_message)
+                binding.pinTV.configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_unpin, iconTint)
             } else {
-                configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_pin, iconTint)
-                context.getString(R.string.stream_ui_message_list_pin_message)
+                binding.pinTV.text = context.getString(R.string.stream_ui_message_list_pin_message)
+                binding.pinTV.configureListItem(style.messageOptionsText, R.drawable.stream_ui_ic_pin, iconTint)
             }
+        } else {
+            binding.pinTV.isVisible = false
         }
     }
 
@@ -240,6 +253,7 @@ internal class MessageOptionsView : FrameLayout {
         val deleteConfirmationEnabled: Boolean,
         val reactionsEnabled: Boolean,
         val flagEnabled: Boolean,
+        val pinMessageEnabled: Boolean,
         val muteEnabled: Boolean,
         val blockEnabled: Boolean,
     ) : Serializable {
@@ -259,6 +273,7 @@ internal class MessageOptionsView : FrameLayout {
                     deleteConfirmationEnabled = viewStyle.deleteConfirmationEnabled,
                     reactionsEnabled = viewStyle.reactionsEnabled && channelConfig.isReactionsEnabled,
                     flagEnabled = viewStyle.flagEnabled,
+                    pinMessageEnabled = viewStyle.pinMessageEnabled,
                     muteEnabled = viewStyle.muteEnabled,
                     blockEnabled = viewStyle.blockEnabled,
                 )
