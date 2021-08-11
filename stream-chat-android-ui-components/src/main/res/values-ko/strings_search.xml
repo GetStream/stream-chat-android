@@ -11,5 +11,5 @@
     </plurals>
 
     <string name="stream_ui_search_input_search_icon_content_description">검색</string>
-    <string name="stream_ui_search_input_clear_icon_content_description">명확한</string>
+    <string name="stream_ui_search_input_clear_icon_content_description">지우기</string>
 </resources>

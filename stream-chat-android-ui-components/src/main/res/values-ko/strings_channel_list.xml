@@ -6,9 +6,9 @@
 
     <!-- Channel Actions Dialog -->
     <string name="stream_ui_channel_list_view_info">정보를 보기</string>
-    <string name="stream_ui_channel_list_leave_channel">그룹을 떠납니다</string>
+    <string name="stream_ui_channel_list_leave_channel">그룹을 떠나기</string>
     <string name="stream_ui_channel_list_dismiss_dialog">취소</string>
-    <string name="stream_ui_channel_list_delete_channel">대화를 삭제합니다</string>
+    <string name="stream_ui_channel_list_delete_channel">대화를 삭제하기</string>
     <plurals name="stream_ui_channel_list_member_info">
         <item quantity="other">%1d명, %2d명이 온라인</item>
     </plurals>
