@@ -904,5 +904,7 @@
         <item name="streamUiAttachmentsFilesEmptyStateText">@string/stream_ui_message_input_no_files</item>
         <item name="streamUiAttachmentsMediaEmptyStateText">@string/stream_ui_message_input_no_files</item>
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
+        <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
     </style>
 </resources>
