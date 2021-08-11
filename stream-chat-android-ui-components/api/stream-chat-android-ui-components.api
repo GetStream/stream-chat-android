@@ -1502,7 +1502,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer {
-	public abstract fun transform (Ljava/util/List;)V
+	public abstract fun transform (Ljava/util/List;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener {
