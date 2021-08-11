@@ -36,7 +36,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Text size of the last message text size -->
+        <!-- Text size of the last message text -->
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
         <!-- A color of the last message text -->
         <attr name="streamUiLastMessageTextColor" format="color|reference" />
@@ -51,7 +51,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Text size of the date text size -->
+        <!-- Text size of the date text -->
         <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
         <!-- A color of the date text -->
         <attr name="streamUiLastMessageDateTextColor" format="color|reference" />
@@ -75,7 +75,7 @@
         <!-- Foreground color of channel list item  -->
         <attr name="streamUiForegroundLayoutColor" format="color|reference" />
 
-        <!-- Text size of the unread message count text size -->
+        <!-- Text size of the unread message count text -->
         <attr name="streamUiUnreadMessageCounterTextSize" format="dimension|reference" />
         <!-- A color of the unread message count text -->
         <attr name="streamUiUnreadMessageCounterTextColor" format="color|reference" />
