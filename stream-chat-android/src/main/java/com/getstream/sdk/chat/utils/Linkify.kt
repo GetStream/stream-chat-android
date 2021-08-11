@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils
 
+import android.annotation.SuppressLint
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -7,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
+import androidx.core.util.PatternsCompat
 import java.util.ArrayList
 import java.util.Collections
 import java.util.regex.Matcher
@@ -71,10 +73,11 @@ internal object Linkify {
      * @param text Spannable whose text is to be marked-up with links.
      * @return True if at least one link is found and applied.
      */
+    @SuppressLint("RestrictedApi")
     private fun addLinks(text: Spannable): Boolean {
         val links: ArrayList<LinkSpec> = ArrayList<LinkSpec>()
         gatherLinks(
-            links, text, AutoLinkPatterns.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
+            links, text, PatternsCompat.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
             Linkify.sUrlMatchFilter, null
         )
 
