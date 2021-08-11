@@ -37,6 +37,8 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
     view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
+    view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }
+    view.setMessageUnpinHandler { onEvent(MessageListViewModel.Event.UnpinMessage(it)) }
     view.setGiphySendHandler { message, giphyAction ->
         onEvent(GiphyActionSelected(message, giphyAction))
     }

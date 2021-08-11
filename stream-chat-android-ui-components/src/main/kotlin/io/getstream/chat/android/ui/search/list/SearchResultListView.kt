@@ -49,6 +49,8 @@ public class SearchResultListView : ViewFlipper {
 
     private fun init(attrs: AttributeSet?) {
         style = SearchResultListViewStyle(context, attrs).also { style ->
+            setBackgroundColor(style.backgroundColor)
+
             binding.searchInfoBar.background = style.searchInfoBarBackground
             style.searchInfoBarTextStyle.apply(binding.searchInfoBar)
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_mention_list_empty">言及はまだありません。。。</string>
+    <string name="stream_ui_mention_list_error">エラーが発生しました</string>
+</resources>

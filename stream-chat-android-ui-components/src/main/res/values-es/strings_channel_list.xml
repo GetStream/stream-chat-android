@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_channel_list_empty">No hay canales disponibles</string>
+    <string name="stream_ui_channel_list_you">Tú</string>
+    <string name="stream_ui_channel_list_untitled_channel">Canal sin nombre</string>
+
+    <!-- Channel Actions Dialog -->
+    <string name="stream_ui_channel_list_view_info">Ver información</string>
+    <string name="stream_ui_channel_list_leave_channel">Salir del grupo</string>
+    <string name="stream_ui_channel_list_dismiss_dialog">Cancelar</string>
+    <string name="stream_ui_channel_list_delete_channel">Eliminar conversación</string>
+    <plurals name="stream_ui_channel_list_member_info">
+        <item quantity="one">%1d Miembro, %2d Conectados</item>
+        <item quantity="other">%1d Miembros, %2d Conectados</item>
+    </plurals>
+
+    <string name="stream_ui_channel_list_delete_confirmation_title">Eliminar Canal</string>
+    <string name="stream_ui_channel_list_delete_confirmation_message">¿Estás seguro de que quieres eliminar permanentemente esta conversación?</string>
+    <string name="stream_ui_channel_list_delete_confirmation_positive_button">Eliminar</string>
+    <string name="stream_ui_channel_list_delete_confirmation_negative_button">Cancelar</string>
+
+    <!-- Errors -->
+    <string name="stream_ui_channel_list_error_hide_channel">Fallo al ocultar el canal</string>
+    <string name="stream_ui_channel_list_error_delete_channel">Fallo al eliminar el canal</string>
+    <string name="stream_ui_channel_list_error_leave_channel">Fallo al salir del canal</string>
+</resources>

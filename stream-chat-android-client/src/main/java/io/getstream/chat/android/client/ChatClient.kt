@@ -859,7 +859,7 @@ public class ChatClient internal constructor(
      * @return executable async [Call] responsible for pinning the message
      */
     @CheckResult
-    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
+    public fun pinMessage(message: Message, expirationDate: Date? = null): Call<Message> {
         val set: MutableMap<String, Any> = LinkedHashMap()
         set["pinned"] = true
         expirationDate?.let { set["pin_expires"] = it }

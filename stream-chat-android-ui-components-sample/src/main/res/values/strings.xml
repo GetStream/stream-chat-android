@@ -67,6 +67,7 @@
     <string name="chat_info_user_name">Username</string>
     <string name="chat_info_option_mute_user">Mute User</string>
     <string name="chat_info_option_block_user">Block User</string>
+    <string name="chat_info_option_pinned_messages">Pinned Messages</string>
     <string name="chat_info_option_media">Photos &amp; Videos</string>
     <string name="chat_info_option_shared_media_empty_title">No media</string>
     <string name="chat_info_option_shared_media_empty_description">Photos or video sent in this chat will appear here. </string>
@@ -101,6 +102,9 @@
 
     <!-- Chat fragment -->
     <string name="chat_fragment_big_attachment_subtitle">File too big - max %d mb</string>
+
+    <!-- Pinned message list screen -->
+    <string name="pinned_message_list_title">Pinned Messages</string>
 
     <!-- Flag message -->
     <string name="message_flagged_title">Message Flagged</string>

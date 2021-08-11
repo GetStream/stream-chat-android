@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Header Title -->
+    <string name="stream_ui_message_list_header_thread_title">スレッド返信</string>
+    <string name="stream_ui_message_list_header_untitled_channel">名前のないチャンネル</string>
+
+    <!-- Header Subtitle -->
+    <string name="stream_ui_message_list_header_thread_subtitle">と%s</string>
+    <string name="stream_ui_message_list_header_disconnected">ネットワークを検索中</string>
+    <string name="stream_ui_message_list_header_offline">オフライン。。。</string>
+    <string name="stream_ui_message_list_header_retry">再試行する</string>
+    <string name="stream_ui_message_list_header_member_count_online">%s, %d人がオンライン</string>
+    <plurals name="stream_ui_message_list_header_member_count">
+        <item quantity="other">%1d人のメンバー</item>
+    </plurals>
+    <plurals name="stream_ui_message_list_header_typing_users" tools:ignore="UnusedQuantity">
+        <item quantity="one">%sが入力しています</item>
+        <item quantity="other">%sと%d人が入力しています</item>
+    </plurals>
+
+    <string name="stream_ui_message_list_header_back_button_content_description">戻るボタン</string>
+</resources>

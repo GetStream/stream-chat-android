@@ -202,6 +202,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 isMessageTheirs = messageItem.isTheirs,
                 syncStatus = messageItem.message.syncStatus,
                 isMessageAuthorMuted = isMessageAuthorMuted,
+                isMessagePinned = message.pinned
             )
             updateLayoutParams<LinearLayout.LayoutParams> {
                 gravity = if (messageItem.isMine) Gravity.END else Gravity.START
@@ -210,6 +211,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 setupOptionsClickListeners(
                     messageOptionsHandlers = messageOptionsHandlers,
                     isMessageAuthorMuted = isMessageAuthorMuted,
+                    isMessagePinned = message.pinned
                 )
             }
         }
@@ -218,6 +220,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupOptionsClickListeners(
         messageOptionsHandlers: MessageOptionsHandlers,
         isMessageAuthorMuted: Boolean,
+        isMessagePinned: Boolean,
     ) {
         binding.messageOptionsView.run {
             setThreadListener {
@@ -243,6 +246,14 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     }
                 } else {
                     messageOptionsHandlers.flagClickHandler.onMessageFlag(message)
+                }
+                dismiss()
+            }
+            setPinMessageListener {
+                if (isMessagePinned) {
+                    messageOptionsHandlers.unpinClickHandler.onMessageUnpin(message)
+                } else {
+                    messageOptionsHandlers.pinClickHandler.onMessagePin(message)
                 }
                 dismiss()
             }
@@ -319,6 +330,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         val retryHandler: MessageListView.MessageRetryHandler,
         val editClickHandler: MessageListView.MessageEditHandler,
         val flagClickHandler: MessageListView.MessageFlagHandler,
+        val pinClickHandler: MessageListView.MessagePinHandler,
+        val unpinClickHandler: MessageListView.MessageUnpinHandler,
         val muteClickHandler: MessageListView.UserMuteHandler,
         val unmuteClickHandler: MessageListView.UserUnmuteHandler,
         val blockClickHandler: MessageListView.UserBlockHandler,

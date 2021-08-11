@@ -5,9 +5,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import androidx.annotation.ArrayRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -17,7 +19,9 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.UiMode
 
 @Px
 internal fun Context.getDimension(@DimenRes dimen: Int): Int {
@@ -54,11 +58,23 @@ internal fun Context.copyToClipboard(text: String) {
     clipboard.setPrimaryClip(ClipData.newPlainText(null, text))
 }
 
-internal fun Context.createStreamThemeWrapper(): Context {
+internal val Context.streamThemeInflater: LayoutInflater
+    get() = LayoutInflater.from(this.createStreamThemeWrapper())
+
+internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): Context {
     val typedValue = TypedValue()
+    val configuredContext = configureUiMode(uiMode)
+
     return when {
-        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
-        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
-        else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
+        configuredContext.theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> configuredContext
+        configuredContext.theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
+            ContextThemeWrapper(configuredContext, typedValue.resourceId)
+        else -> ContextThemeWrapper(configuredContext, R.style.StreamUiTheme)
     }
+}
+
+private fun Context.configureUiMode(uiMode: UiMode): Context = when (uiMode) {
+    UiMode.LIGHT -> createConfigurationContext(resources.configuration.apply { this.uiMode = Configuration.UI_MODE_NIGHT_NO })
+    UiMode.DARK -> createConfigurationContext(resources.configuration.apply { this.uiMode = Configuration.UI_MODE_NIGHT_YES })
+    UiMode.SYSTEM -> this
 }

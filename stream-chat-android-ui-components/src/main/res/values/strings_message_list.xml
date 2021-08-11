@@ -14,6 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">Uploading %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Upload complete, processing…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
+    <string name="stream_ui_message_list_pinned_message">Pinned by %s</string>
+    <string name="stream_ui_message_list_pinned_message_you">You</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
@@ -30,6 +32,8 @@
     <string name="stream_ui_message_list_copy_message">Copy Message</string>
     <string name="stream_ui_message_list_edit_message">Edit Message</string>
     <string name="stream_ui_message_list_flag_message">Flag Message</string>
+    <string name="stream_ui_message_list_pin_message">Pin to Conversation</string>
+    <string name="stream_ui_message_list_unpin_message">Unpin from Conversation</string>
     <string name="stream_ui_message_list_mute_user">Mute User</string>
     <string name="stream_ui_message_list_unmute_user">Unmute User</string>
     <string name="stream_ui_message_list_block_user">Block user</string>
@@ -60,4 +64,6 @@
     <string name="stream_ui_message_list_error_unmute_user">Failed to unmute user</string>
     <string name="stream_ui_message_list_error_block_user">Failed to block user</string>
     <string name="stream_ui_message_list_error_flag_message">Failed to flag message</string>
+    <string name="stream_ui_message_list_error_pin_message">Failed to pin message</string>
+    <string name="stream_ui_message_list_error_unpin_message">Failed to unpin message</string>
 </resources>

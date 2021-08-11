@@ -5,6 +5,7 @@
         <attr name="streamUiSearchInputViewSearchIcon" format="reference" />
         <attr name="streamUiSearchInputViewClearInputIcon" format="reference" />
         <attr name="streamUiSearchInputViewBackground" format="reference" />
+        <attr name="streamUiSearchInputViewContainerBackground" format="reference" />
         <attr name="streamUiSearchInputViewTextColor" format="color|reference" />
         <attr name="streamUiSearchInputViewHintColor" format="color|reference" />
         <attr name="streamUiSearchInputViewTextSize" format="dimension|reference" />
