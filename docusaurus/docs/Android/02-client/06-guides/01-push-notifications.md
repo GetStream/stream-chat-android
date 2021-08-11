@@ -208,7 +208,7 @@ All you need to do is override the `buildNotification()` method as shown on the 
 
 ## Configuring Push Notifications on Stream Dashboard
 To be able to receive PushNotifications from Stream Server, you need to provide the PushProvider Credential to Stream.
-It needs to be done in our Dashboard
+It needs to be done in your Stream's Dashboard
 
 ### Configuring Firebase Push Notification on Stream Dashboard
 In order to configure Firebase push notifications on Android devices, you need to:
