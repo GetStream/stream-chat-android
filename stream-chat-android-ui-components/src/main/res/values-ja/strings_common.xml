@@ -5,7 +5,7 @@
 
     <!-- User Status (Used in Channel Actions Dialog and Message List Header) -->
     <string name="stream_ui_user_status_online">オンライン</string>
-    <string name="stream_ui_user_status_last_seen">最後に見た%s</string>
+    <string name="stream_ui_user_status_last_seen">%s見ました</string>
     <string name="stream_ui_user_status_last_seen_just_now">今見ました</string>
 
     <!-- Message Preview (User in Mention List and Search Result List) -->

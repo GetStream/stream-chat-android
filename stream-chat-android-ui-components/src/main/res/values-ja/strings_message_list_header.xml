@@ -14,7 +14,7 @@
         <item quantity="other">%1d人のメンバー</item>
     </plurals>
     <plurals name="stream_ui_message_list_header_typing_users" tools:ignore="UnusedQuantity">
-        <item quantity="one">%s is が入力しています</item>
+        <item quantity="one">%sが入力しています</item>
         <item quantity="other">%sと%d人が入力しています</item>
     </plurals>
 
