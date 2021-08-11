@@ -180,7 +180,7 @@ Consider overriding _ChatNotificationHandler#getErrorCaseIntent_ for error case 
 :::
 
 ### Create a custom notification
-The SDK allow you to generate the notification that will be shown after a push notification is received.
+The SDK allows you to generate the notification that will be shown after a push notification is received.
 All you need to do is override the `buildNotification()` method as shown on the following example:
 
 ```kotlin
@@ -236,4 +236,3 @@ Save the push notification settings changes:
 :::note
 Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
 :::
-
