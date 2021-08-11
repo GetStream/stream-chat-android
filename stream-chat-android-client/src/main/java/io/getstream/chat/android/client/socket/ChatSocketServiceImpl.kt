@@ -24,6 +24,8 @@ import kotlinx.coroutines.withContext
 import kotlin.math.pow
 import kotlin.properties.Delegates
 
+private const val RETRY_LIMIT = 3
+
 internal class ChatSocketServiceImpl constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
@@ -127,7 +129,7 @@ internal class ChatSocketServiceImpl constructor(
             ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code,
             ChatErrorCode.NO_ERROR_BODY.code,
             -> {
-                if (!networkStateProvider.isConnected() && reconnectionAttempts < 3) {
+                if (reconnectionAttempts < RETRY_LIMIT) {
                     coroutineScope.launch {
                         delay(500 * reconnectionAttempts.toDouble().pow(2.0).toLong())
                         reconnect(connectionConf)
