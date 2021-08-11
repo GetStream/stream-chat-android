@@ -102,6 +102,7 @@
 - Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
+- Added the `emptyContent` and `loadingContent` parameters to `ChannelList` and `MessageList` components. Now you can customize the UI of those two states.
 
 ### ⚠️ Changed
 - `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
