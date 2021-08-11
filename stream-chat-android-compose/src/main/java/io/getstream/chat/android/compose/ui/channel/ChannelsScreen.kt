@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.channel.list.DeleteConversation
@@ -96,7 +95,7 @@ public fun ChannelsScreen(
             if (isShowingHeader) {
                 ChannelListHeader(
                     onHeaderActionClick = onHeaderClickAction,
-                    currentUser = user ?: User(),
+                    currentUser = user,
                     title = title,
                     isNetworkAvailable = isNetworkAvailable
                 )

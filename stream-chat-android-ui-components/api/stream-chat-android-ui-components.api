@@ -1401,12 +1401,15 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageEditHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageEditHandler;)V
 	public final fun setMessageFlagEnabled (Z)V
 	public final fun setMessageFlagHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageFlagHandler;)V
+	public final fun setMessageItemTransformer (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer;)V
 	public final fun setMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener;)V
+	public final fun setMessagePinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessagePinHandler;)V
 	public final fun setMessageReactionHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageReactionHandler;)V
 	public final fun setMessageReplyHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageReplyHandler;)V
 	public final fun setMessageRetryHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryHandler;)V
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener;)V
+	public final fun setMessageUnpinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageUnpinHandler;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setMuteUserEnabled (Z)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;)V
@@ -1498,8 +1501,16 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 	public abstract fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer {
+	public abstract fun transform (Ljava/util/List;)Ljava/util/List;
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener {
 	public abstract fun onMessageLongClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessagePinHandler {
+	public abstract fun onMessagePin (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageReactionHandler {
@@ -1516,6 +1527,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageRetryListener {
 	public abstract fun onRetryMessage (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageUnpinHandler {
+	public abstract fun onMessageUnpin (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListView$MessagesStart : java/lang/Enum {
@@ -1712,7 +1727,7 @@ public abstract class io/getstream/chat/android/ui/message/list/adapter/BaseMess
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff {
-	public fun <init> (ZZZZZZZ)V
+	public fun <init> (ZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
@@ -1720,11 +1735,13 @@ public final class io/getstream/chat/android/ui/message/list/adapter/MessageList
 	public final fun component5 ()Z
 	public final fun component6 ()Z
 	public final fun component7 ()Z
-	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public final fun component8 ()Z
+	public final fun copy (ZZZZZZZZ)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
+	public final fun getPinned ()Z
 	public final fun getPositions ()Z
 	public final fun getReactions ()Z
 	public final fun getReplies ()Z
@@ -1985,6 +2002,56 @@ public final class io/getstream/chat/android/ui/message/preview/MessagePreviewSt
 	public final fun getMessageTimeTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/PinnedMessageListView : android/widget/ViewFlipper {
+	public static final field LOAD_MORE_THRESHOLD I
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/pinned/list/PinnedMessageListView$LoadMoreListener;)V
+	public final fun setPinnedMessageSelectedListener (Lio/getstream/chat/android/ui/pinned/list/PinnedMessageListView$PinnedMessageSelectedListener;)V
+	public final fun showError ()V
+	public final fun showLoading ()V
+	public final fun showMessages (Ljava/util/List;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/pinned/list/PinnedMessageListView$LoadMoreListener {
+	public abstract fun onLoadMoreRequested ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/pinned/list/PinnedMessageListView$PinnedMessageSelectedListener {
+	public abstract fun onPinnedMessageSelected (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getState ()Landroidx/lifecycle/LiveData;
+	public final fun loadMore ()V
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel$State {
+	public fun <init> (ZLjava/util/List;Z)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Z
+	public final fun copy (ZLjava/util/List;Z)Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel$State;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel$State;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCanLoadMore ()Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isLoading ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModel;Lio/getstream/chat/android/ui/pinned/list/PinnedMessageListView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public final class io/getstream/chat/android/ui/pinned/list/viewmodel/PinnedMessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Ljava/lang/String;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/search/SearchInputView : android/widget/FrameLayout {

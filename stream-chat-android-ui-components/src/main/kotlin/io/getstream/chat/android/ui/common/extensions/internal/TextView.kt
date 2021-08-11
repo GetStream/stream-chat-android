@@ -32,7 +32,7 @@ internal fun TextView.setLeftDrawableWithSize(@DrawableRes id: Int, @DimenRes si
 internal fun TextView.setLeftDrawableWithSize(drawable: Drawable?, @DimenRes sizeRes: Int) {
     val size = resources.getDimensionPixelSize(sizeRes)
     drawable?.setBounds(0, 0, size, size)
-    setLeftDrawable(drawable)
+    setCompoundDrawables(drawable, null, null, null)
 }
 
 /**
@@ -40,5 +40,5 @@ internal fun TextView.setLeftDrawableWithSize(drawable: Drawable?, @DimenRes siz
  * nothing will be drawn on the left side of the text.
  */
 internal fun TextView.setLeftDrawable(drawable: Drawable?) {
-    this.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
 }

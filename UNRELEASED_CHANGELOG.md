@@ -81,10 +81,45 @@
 - Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera.
 - Added the possibility to force light and dark theme. Set it in inside ChatUI to make all views, fragments and activity of the SDK light.
 - Fixed applying style to `SuggestionListView` when using it as a standalone component. You can modify the style using `suggestionListViewTheme` or `TransformStyle::suggestionListStyleTransformer`
+
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
+- Added support for pinned messages:
+  - Added a button to pin/unpin a message to the message options overlay
+  - Added `MessageListView::setMessagePinHandler` and `MessageListView::setMessageUnpinHandler` methods to provide custom handlers for aforementioned button
+  - Added `PinnedMessageListView` to display a list of pinned messages. The view is supposed to be used with `PinnedMessageListViewModel` and `PinnedMessageListViewModelFactory`
+
+- Possibility to transform MessageItems before the are displayed in the screen.
+Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
+```
+binding.messageListView.setMessageItemTransformer { list ->
+  list.mapIndexed { i, messageItem ->
+        var newMessageItem = messageItem
+
+        if (i < list.lastIndex) {
+            val nextMessageItem = list[i + 1]
+
+            if (messageItem is MessageListItem.MessageItem &&
+                nextMessageItem is MessageListItem.MessageItem
+            ) {
+                val thisInstant = messageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+                val nextInstant = nextMessageItem.message.createdAt?.time?.let(Instant::ofEpochMilli)
+
+                if (nextInstant?.isAfter(thisInstant?.plus(1, ChronoUnit.HOURS)) == true) {
+                    newMessageItem = messageItem.copy(positions = listOf(MessageListItem.Position.BOTTOM))
+                } else {
+                    newMessageItem =
+                        messageItem.copy(positions = messageItem.positions - MessageListItem.Position.BOTTOM)
+                }
+            }
+        }
+
+        newMessageItem
+    }
+}
+```
 
 ### ⚠️ Changed
 - 🚨 Breaking change: the deleted `MessageListItem.MessageItem` elements are now displayed by default to all the users. This default behavior can be customized using `MessageListView::setDeletedMessageListItemPredicate` function. This function takes an instance of `MessageListItemPredicate`. You can pass one of the following objects:
@@ -99,6 +134,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed a bug where we didn't use the `Channel.getDisplayName()` logic for the `MessageListHeader`.
+- Fixed a bug where lazy loading for `Channel`s wasn't working consistently 
 
 ### ⬆️ Improved
 - Updated Jetpack Compose to `1.0.1`
@@ -108,9 +144,14 @@
 - Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .
 
 ### ✅ Added
+- Added lots of improvements to Avatars - added a `UserAvatar`, `ChannelAvatar` and an `InitialsAvatar` to load different types of data.
+- We now show a matrix of user images in case we're in a group DM.
+- We also show initials in case the user doesn't have an image.
 
 ### ⚠️ Changed
 - `ViewModel`s now initialize automatically, so you no longer have to call `start()` on them. This is aimed to improve the consistency between our SDKs.
+- Added a `Shape` parameter to `Avatar` to customize the shape.
+- The `User` parameter in the `ChannelListHeader` is now non-nullable.
 
 ### ❌ Removed
 

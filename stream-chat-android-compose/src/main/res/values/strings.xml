@@ -48,4 +48,5 @@
     <string name="stream_compose_empty_state_message">How about sending your first message to a friend?</string>
     <string name="stream_compose_attachment_gallery_share">Share Image</string>
     <string name="stream_compose_channel_list_untitled_channel">Channel without name</string>
+    <string name="stream_compose_channel_list_you">You</string>
 </resources>
