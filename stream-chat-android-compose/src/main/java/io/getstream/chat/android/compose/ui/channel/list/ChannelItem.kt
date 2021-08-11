@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,10 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.Avatar
+import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
-import io.getstream.chat.android.compose.ui.util.rememberChannelImagePainter
+import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -68,8 +69,6 @@ internal fun DefaultChannelItem(
             ),
         verticalAlignment = CenterVertically,
     ) {
-        val imagePainter = rememberChannelImagePainter(channel = channel, currentUser = currentUser)
-
         Box(
             Modifier
                 .padding(start = 8.dp)
@@ -80,10 +79,7 @@ internal fun DefaultChannelItem(
                     .background(ChatTheme.colors.borders)
                     .size(36.dp)
             )
-            Avatar(
-                modifier = Modifier.size(36.dp),
-                painter = imagePainter,
-            )
+            ChannelAvatar(modifier = Modifier.size(36.dp), channel = channel, currentUser = currentUser)
         }
 
         Spacer(Modifier.width(8.dp))
@@ -94,6 +90,7 @@ internal fun DefaultChannelItem(
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = channel.getDisplayName(),
@@ -104,8 +101,9 @@ internal fun DefaultChannelItem(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            val lastMessageText = lastMessage?.text?.takeIf { it.isNotBlank() }
-            if (lastMessageText != null) {
+            val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+
+            if (lastMessageText.isNotEmpty()) {
                 Text(
                     text = lastMessageText,
                     maxLines = 1,

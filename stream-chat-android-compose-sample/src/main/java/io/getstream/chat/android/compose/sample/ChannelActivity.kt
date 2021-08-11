@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.channel.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channel.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
@@ -122,7 +121,7 @@ class ChannelActivity : AppCompatActivity() {
             Column {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
-                    currentUser = user ?: User(),
+                    currentUser = user,
                     isNetworkAvailable = isNetworkAvailable
                 )
 
