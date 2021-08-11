@@ -1401,6 +1401,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setMessageEditHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageEditHandler;)V
 	public final fun setMessageFlagEnabled (Z)V
 	public final fun setMessageFlagHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageFlagHandler;)V
+	public final fun setMessageItemTransformer (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer;)V
 	public final fun setMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener;)V
 	public final fun setMessagePinHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$MessagePinHandler;)V
@@ -1498,6 +1499,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
 	public abstract fun predicate (Lcom/getstream/sdk/chat/adapter/MessageListItem;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemTransformer {
+	public abstract fun transform (Ljava/util/List;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$MessageLongClickListener {
