@@ -71,6 +71,9 @@ public class ChannelListView : FrameLayout {
 
     private fun init(attrs: AttributeSet?, defStyleAttr: Int) {
         style = ChannelListViewStyle(context, attrs)
+
+        setBackgroundColor(style.backgroundColor)
+
         actionDialogStyle = ChannelActionsDialogViewStyle(context, attrs)
 
         simpleChannelListView = SimpleChannelListView(context, attrs, defStyleAttr)

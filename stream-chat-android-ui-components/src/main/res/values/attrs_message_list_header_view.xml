@@ -2,6 +2,8 @@
 <resources>
     <!--MessageListHeaderView-->
     <declare-styleable name="MessageListHeaderView" parent="AvatarView">
+        <attr name="streamUiMessageListHeaderBackground" format="color" />
+
         <attr name="streamUiMessageListHeaderShowUserAvatar" format="boolean" />
 
         <attr name="streamUiMessageListHeaderTitleTextSize" format="dimension|reference" />

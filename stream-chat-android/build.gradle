@@ -44,6 +44,10 @@ android {
             it.java.srcDir "src/$it.name/kotlin"
         }
     }
+
+    lintOptions {
+        disable 'MissingTranslation'
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

@@ -72,6 +72,7 @@ android {
 
 dependencies {
     implementation project(":stream-chat-android-ui-components")
+    implementation project(":stream-chat-android-pushprovider-firebase")
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.kotlinStdLib
