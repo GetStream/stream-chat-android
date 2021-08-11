@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stream_ui_pinned_message_list_empty_title">고정된 메시지 없음</string>
-    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[중요한 메시지를 길게 누르고 <b>대화에 고정</b>을 선택합니다.]]></string>
+    <string name="stream_ui_pinned_message_list_empty_title">핀된 메시지 없음</string>
+    <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[중요한 메시지를 길게 누르고 <b>대화에 핀하기</b>을 선택합니다.]]></string>
     <string name="stream_ui_pinned_message_list_results_error">오류가 발생하였습니다</string>
 </resources>

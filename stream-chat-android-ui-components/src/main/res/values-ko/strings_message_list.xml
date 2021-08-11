@@ -14,8 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">%d/%dmb를 업로드중…</string>
     <string name="stream_ui_message_list_attachment_upload_complete">업로드 완료, 처리 중…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%s / %s</string>
-    <string name="stream_ui_message_list_pinned_message">%s에 의해 고정됨</string>
-    <string name="stream_ui_message_list_pinned_message_you">너</string>
+    <string name="stream_ui_message_list_pinned_message">%s의 핀</string>
+    <string name="stream_ui_message_list_pinned_message_you">당신</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="other">%d스레드 답장</item>
     </plurals>
@@ -30,8 +30,8 @@
     <string name="stream_ui_message_list_copy_message">메시지를 복사하기</string>
     <string name="stream_ui_message_list_edit_message">메시지를 편집하기</string>
     <string name="stream_ui_message_list_flag_message">메시지를 플래그하기</string>
-    <string name="stream_ui_message_list_pin_message">대화에 고정</string>
-    <string name="stream_ui_message_list_unpin_message">대화에서 고정 해제</string>
+    <string name="stream_ui_message_list_pin_message">대화에 핀하기</string>
+    <string name="stream_ui_message_list_unpin_message">대화에서 핀 해제</string>
     <string name="stream_ui_message_list_mute_user">사용자 음소거</string>
     <string name="stream_ui_message_list_unmute_user">사용자 음소거 해제</string>
     <string name="stream_ui_message_list_block_user">사용자 차단</string>
@@ -61,6 +61,6 @@
     <string name="stream_ui_message_list_error_unmute_user">사용자의 음소거를 해제하지 못했습니다</string>
     <string name="stream_ui_message_list_error_block_user">사용자 차단 실패했습니다</string>
     <string name="stream_ui_message_list_error_flag_message">메시지에 플래그를 지정하지 못했습니다</string>
-    <string name="stream_ui_message_list_error_pin_message">메시지를 고정하지 못했습니다.</string>
-    <string name="stream_ui_message_list_error_unpin_message">메시지를 고정 해제하지 못했습니다.</string>
+    <string name="stream_ui_message_list_error_pin_message">메시지를 핀하지 못했습니다</string>
+    <string name="stream_ui_message_list_error_unpin_message">메시지를 핀 해제하지 못했습니다</string>
 </resources>
