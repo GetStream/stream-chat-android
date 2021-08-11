@@ -75,10 +75,15 @@
 - Fixed attachments of camera. Now multiple videos and pictures can be taken from the camera.
 - Added the possibility to force light and dark theme. Set it in inside ChatUI to make all views, fragments and activity of the SDK light.
 - Fixed applying style to `SuggestionListView` when using it as a standalone component. You can modify the style using `suggestionListViewTheme` or `TransformStyle::suggestionListStyleTransformer`
+
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added `MessageListView::setDeletedMessageListItemPredicate` function. It's responsible for adjusting visibility of the deleted `MessageListItem.MessageItem` elements.
+- Added support for pinned messages:
+  - Added a button to pin/unpin a message to the message options overlay
+  - Added `MessageListView::setMessagePinHandler` and `MessageListView::setMessageUnpinHandler` methods to provide custom handlers for aforementioned button
+  - Added `PinnedMessageListView` to display a list of pinned messages. The view is supposed to be used with `PinnedMessageListViewModel` and `PinnedMessageListViewModelFactory`
 
 - Possibility to transform MessageItems before the are displayed in the screen.
 Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
@@ -126,7 +131,7 @@ binding.messageListView.setMessageItemTransformer { list ->
 
 ### ⬆️ Improved
 - Updated Jetpack Compose to `1.0.1`
-- Updated Accompanist libraries to `0.16.0`
+- Updated Accompanist libraries to `0.16.1`
 - Updated KTX Activity to `1.3.1`
 - Exposed functionality for getting the `displayName` of `Channel`s.
 - Added updated logic to Link preview attachments, which chooses either the `titleLink` or the `ogUrl` when loading the data, depending on which exists .

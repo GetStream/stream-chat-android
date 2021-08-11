@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_ui_attachment_gallery_count">%d / %d</string>
+    <string name="stream_ui_attachment_gallery_date">%sの%s に送信しました</string>
+    <string name="stream_ui_attachment_gallery_reply">返信</string>
+    <string name="stream_ui_attachment_gallery_delete">削除</string>
+    <string name="stream_ui_attachment_gallery_show_in_chat">チャットで表示</string>
+    <string name="stream_ui_attachment_gallery_save_image">画像を保存</string>
+    <string name="stream_ui_attachment_gallery_share">画像を共有する</string>
+
+    <!-- Gallery Overview Dialog -->
+    <string name="stream_ui_attachment_gallery_overview_title">写真</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Search Input -->
+    <string name="stream_ui_search_input_hint">検索</string>
+
+    <!-- Search Result List -->
+    <string name="stream_ui_search_results_empty">\"%s\"の結果はありません</string>
+    <string name="stream_ui_search_results_error">エラーが発生しました</string>
+    <plurals name="stream_ui_search_results_count">
+        <item quantity="other">%d件の結果</item>
+    </plurals>
+
+    <string name="stream_ui_search_input_search_icon_content_description">検索</string>
+    <string name="stream_ui_search_input_clear_icon_content_description">クリア</string>
+</resources>

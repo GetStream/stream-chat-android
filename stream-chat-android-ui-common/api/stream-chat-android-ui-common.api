@@ -453,11 +453,33 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$PinMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$PinMessageError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$PinMessageError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$PinMessageError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
 	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnmuteUserError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnpinMessageError : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnpinMessageError;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnpinMessageError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent$UnpinMessageError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
 	public fun hashCode ()I
@@ -567,6 +589,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$PinMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$PinMessage;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$PinMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$PinMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$RemoveAttachment : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -646,6 +679,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnmuteUser;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnmuteUser;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnpinMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnpinMessage;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnpinMessage;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$UnpinMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
