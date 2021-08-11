@@ -4,16 +4,18 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.utils.threadLocal
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-internal class DateAdapter : JsonAdapter<Date>() {
+@InternalStreamChatApi
+public class DateAdapter : JsonAdapter<Date>() {
 
-    companion object {
-        private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        private const val DATE_FORMAT_WITHOUT_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    private companion object {
+        const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        const val DATE_FORMAT_WITHOUT_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     }
 
     private val dateFormat: SimpleDateFormat by threadLocal {

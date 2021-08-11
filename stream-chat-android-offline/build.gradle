@@ -56,6 +56,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
+                '-Xopt-in=kotlin.RequiresOptIn',
                 '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
         ]
     }
@@ -78,11 +79,14 @@ dependencies {
     kapt Dependencies.roomCompiler
     implementation Dependencies.workRuntimeKtx
 
-    // Other
-    implementation Dependencies.gson
+    // Serialization
+    implementation Dependencies.moshi
+    kapt Dependencies.moshiCodegen
 
     // Tests
     testImplementation project(":stream-chat-android-test")
+
+    testImplementation Dependencies.gson // TODO remove when possible
 
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
