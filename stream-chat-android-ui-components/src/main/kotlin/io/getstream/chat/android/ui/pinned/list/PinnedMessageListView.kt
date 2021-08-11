@@ -13,11 +13,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListViewBinding
-import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
 import io.getstream.chat.android.ui.pinned.list.internal.PinnedMessageListAdapter
 
 public class PinnedMessageListView : ViewFlipper {
@@ -50,12 +47,12 @@ public class PinnedMessageListView : ViewFlipper {
         loadMoreListener?.onLoadMoreRequested()
     }
 
-    private lateinit var style: MentionListViewStyle
+    private lateinit var style: PinnedMessageListViewStyle
 
     private fun init(attrs: AttributeSet?) {
-        style = MentionListViewStyle(context, attrs).also { style ->
-            setBackgroundColor(context.getColorCompat(R.color.stream_ui_white_snow))
-            binding.emptyImage.setImageDrawable(context.getDrawableCompat(R.drawable.stream_ui_ic_pinned_messages_empty))
+        style = PinnedMessageListViewStyle(context, attrs).also { style ->
+            setBackgroundColor(style.backgroundColor)
+            binding.emptyImage.setImageDrawable(style.emptyStateDrawable)
             adapter.messagePreviewStyle = style.messagePreviewStyle
         }
 

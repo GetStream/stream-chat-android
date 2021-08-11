@@ -35,5 +35,6 @@
         <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
         <attr name="streamUiTypingIndicatorView" format="reference" />
         <attr name="streamUiMessageInputViewStyle" format="reference" />
+        <attr name="streamUiPinnedMessageListStyle" format="reference" />
     </declare-styleable>
 </resources>
