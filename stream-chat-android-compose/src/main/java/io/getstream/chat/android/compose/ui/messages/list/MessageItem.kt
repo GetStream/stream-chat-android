@@ -55,8 +55,9 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
-import io.getstream.chat.android.compose.ui.common.Avatar
 import io.getstream.chat.android.compose.ui.common.MessageBubble
+import io.getstream.chat.android.compose.ui.common.avatar.Avatar
+import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -212,14 +213,12 @@ private fun RowScope.MessageAvatar(
     user: User,
 ) {
     if (position == Bottom || position == None) {
-        val authorImage = rememberImagePainter(data = user.image)
-
-        Avatar(
+        UserAvatar(
             modifier = Modifier
                 .padding(start = 8.dp, end = 8.dp)
                 .size(24.dp)
                 .align(Alignment.Bottom),
-            painter = authorImage
+            user = user
         )
     } else {
         Spacer(modifier = Modifier.width(40.dp))

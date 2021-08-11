@@ -2,9 +2,9 @@
 
 The `ChannelListHeader` component allows you to display a header for the channel screen. It sets up the following:
 
-* `Avatar`: Shows the current user image. The style is applied from the `ChatTheme` wrapper. <!-- TODO WIP PAGE -->
+* `leadingContent`: Shows the current user image. The style is applied from the `ChatTheme` wrapper. <!-- TODO WIP PAGE -->
 * `ChannelHeaderTitle`: A component that shows the title of the header, or a loading view if there's no network available.
-* `action`: A customizable trailing action shown at the end of the header, exposed as a parameter.  `DefaultChannelListHeaderAction` by default.
+* `trailingContent`: A customizable trailing action shown at the end of the header, exposed as a parameter.  `DefaultChannelListHeaderAction` by default.
 
 Let's see how to use the header.
 
@@ -47,8 +47,7 @@ The `ChannelListHeader` exposes two main actions you can override and handle you
 fun ChannelListHeader(
   ..., // State
   onAvatarClick: (User?) -> Unit = {},
-  onHeaderActionClick: () -> Unit = {},
-  action: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) }
+  onHeaderActionClick: () -> Unit = {}
 )
 ```
 
@@ -84,9 +83,8 @@ fun ChannelListHeader(
     title: String = "",
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     isNetworkAvailable: Boolean = true,
-    action: (@Composable () -> Unit)? = { 
-        DefaultChannelListHeaderAction(onHeaderActionClick)
-    },
+    leadingContent: (@Composable () -> Unit)? = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
+    trailingContent: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
     ... // Action handlers
 )
 ```
@@ -95,9 +93,13 @@ fun ChannelListHeader(
 * `title`: The text to show when you're connected to the Internet.
 * `currentUser`: The state of the current user, for displaying the `Avatar`.
 * `isNetworkAvailable`: Whether we should show the title or the `NetworkLoadingView`.
-* `action`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
+* `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
+    * override the default behavior but keep the UI by overriding `onAvatarClick`,
+    * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
+
+* `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
-    * or override both the UI and behavior by changing the `action` parameter from the default to your own.
+    * or override both the UI and behavior by changing the `trailingContent` parameter from the default to your own.
 
 Here's an example of customizing the UI of the header:
 
@@ -108,7 +110,7 @@ ChannelListHeader(
     isNetworkAvailable = false,
     currentUser = user,
     title = "My Chat App",
-    action = { // Customizing the trailing action
+    trailingContent = { // Customizing the trailing action
         Icon(
             modifier = Modifier.clickable {
                 // Click handler for the custom action
@@ -123,7 +125,7 @@ ChannelListHeader(
 
 By passing in various pieces of data, you control which image is loaded for the `Avatar`, what title is shown, if you need to show the `NetworkLoadingView` or not and finally, what action to show at the end of the header. 
 
-By overriding the `action` parameter, you replace the default action UI with your custom UI, and by adding a `clickable {}` modifier, you can add click actions on the custom component. This allows you to customize both the UI and behavior!
+By overriding the `trailingContent` parameter, you replace the default action UI with your custom UI, and by adding a `clickable {}` modifier, you can add click actions on the custom component. This allows you to customize both the UI and behavior!
 
 The snippet above will produce the following UI.
 
