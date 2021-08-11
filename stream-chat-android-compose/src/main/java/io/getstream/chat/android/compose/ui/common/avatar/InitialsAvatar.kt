@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.initialsGradient
@@ -36,7 +37,7 @@ public fun InitialsAvatar(
             modifier = Modifier.align(Alignment.Center),
             text = initials,
             style = ChatTheme.typography.title1,
-            color = ChatTheme.colors.textHighEmphasis
+            color = Color.White
         )
     }
 }
