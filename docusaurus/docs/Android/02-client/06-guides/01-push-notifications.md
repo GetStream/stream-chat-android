@@ -5,7 +5,7 @@ The user will receive a push notification if they're watching a channel but don'
 
 To receive push notifications from the Stream server the first step you need to do is register the device. When you register a device with the Stream server you need to provide two things:
 * The "Push Provider" you want to use.
-*  The token that this Push Provider generated for this device.
+* The token that this Push Provider generated for this device.
 
 To register the device, you can use the following approach:
 
@@ -40,7 +40,7 @@ val pushMessage: PushMessage = PushMessage(
 ChatClient.handlePushMessage(pushMessage)
 ```
 
-It's important that you set the `messageId`, `channelId` and `channelType` properties of the message, before sending it to the `ChatClient`. This is all you need to do client-side to integrate push notification by yourselves!
+It's important that you set the `messageId`, `channelId` and `channelType` properties of the message, before sending it to the `ChatClient`. This is all you need to do client-side to integrate push notifications by yourselves!
 
 We also provide some [Companion Artifacts](#companion-artifacts) that help you with the integration process.
 
@@ -72,7 +72,7 @@ class MyPushDeviceGenerator : PushDeviceGenerator {
 ```
 
 The `PushDeviceGenerator` is an interface that asks you to implement two methods:
-* `isValidForThisDevice(Context): Boolean`: This function lets you decide if your provider is allowed on a particular device. For example, some providers are not allowed on some devices if they doesn't have certain libraries installed. Return `true` if you provider is allowed and `false` if it's not available for this device.
+* `isValidForThisDevice(Context): Boolean`: This function lets you decide if your provider is allowed on a particular device. For example, some providers are not allowed on some devices if they doesn't have certain libraries installed. Return `true` if your provider is allowed and `false` if it's not available for this device.
 * `asyncGenerateDevice((Device) -> Unit)`: This function allows you control how you generate the `Device` that you'll register with the `ChatClient`. Once you create a `Device`, pass it to the `onDeviceGenerated()` callback.
 
 Now that you've implemented your custom `PushDeviceGenerator` you need to inject it into the `ChatClient`:
