@@ -91,7 +91,7 @@ Here you first create a `NotificationConfig` that describes how you want to conf
 Then you use the `ChatClient.Builder` to add `notifications()` configuration to the client, before building it.
 
 ## Companion Artifacts
-The push notification integration process is not complicated, but we're don't want to add it into our main SDK by default.
+The push notification integration process is not complicated, but we don't want to add it into our main SDK by default.
 
 The two main reasons are the following:
 * Adding this default implementation increases the size of our SDK.
