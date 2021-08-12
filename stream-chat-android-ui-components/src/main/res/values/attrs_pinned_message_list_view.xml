@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PinnedMessageListView">
+        <attr name="streamUiPinnedMessageListBackground" format="color|reference"/>
+        <attr name="streamUiPinnedMessageListEmptyStateDrawable" format="reference"/>
+        <attr name="streamUiPinnedMessageListSenderNameTextColor" format="color|reference"/>
+        <attr name="streamUiPinnedMessageListSenderNameTextSize" format="dimension"/>
+        <attr name="streamUiPinnedMessageListSenderNameTextFontAssets" format="string"/>
+        <attr name="streamUiPinnedMessageListSenderNameTextFont" format="reference"/>
+        <attr name="streamUiPinnedMessageListSenderNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiPinnedMessageListMessageTextColor" format="color|reference"/>
+        <attr name="streamUiPinnedMessageListMessageTextSize" format="dimension"/>
+        <attr name="streamUiPinnedMessageListMessageTextFontAssets" format="string"/>
+        <attr name="streamUiPinnedMessageListMessageTextFont" format="reference"/>
+        <attr name="streamUiPinnedMessageListMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiPinnedMessageListMessageTimeTextColor" format="color|reference"/>
+        <attr name="streamUiPinnedMessageListMessageTimeTextSize" format="dimension"/>
+        <attr name="streamUiPinnedMessageListMessageTimeTextFontAssets" format="string"/>
+        <attr name="streamUiPinnedMessageListMessageTimeTextFont" format="reference"/>
+        <attr name="streamUiPinnedMessageListMessageTimeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
