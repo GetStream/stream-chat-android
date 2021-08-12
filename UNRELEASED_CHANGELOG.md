@@ -128,7 +128,6 @@ binding.messageListView.setMessageItemTransformer { list ->
   - `streamUiPinnedMessageIndicatorTextSize`, `streamUiPinnedMessageIndicatorTextColor`, `streamUiPinnedMessageIndicatorTextFontAssets`, `streamUiPinnedMessageIndicatorTextFont`, `streamUiPinnedMessageIndicatorTextStyle` attributes to customize "pinned by" text
   - `streamUiPinnedMessageIndicatorIcon` - icon in the message list indicating that a message was pinned
   - `streamUiPinnedMessageBackgroundColor` - the background color of a pinned message in the message list
-
 - Added possibility to customize `PinnedMessageListView` style using `streamUiPinnedMessageListStyle` theme attribute or `TransformStyle.pinnedMessageListViewStyleTransformer`. The list of available style attributes can be found in `attrs_pinned_message_list_view.xml`. The default style for `PinnedMessageListView` is `StreamUi.PinnedMessageList`.
 
 ### ⚠️ Changed
