@@ -2,11 +2,9 @@ package com.getstream.sdk.chat.style
 
 import android.content.Context
 import android.graphics.Typeface
-import android.util.SparseArray
 import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.util.contains
 import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.HashMap
 
@@ -15,7 +13,7 @@ public class ChatFontsImpl(
     private val context: Context
 ) : ChatFonts {
 
-    private val resourceMap = SparseArray<Typeface>()
+    private val resourceMap: MutableMap<Int, Typeface> = HashMap()
     private val pathMap: MutableMap<String, Typeface> = HashMap()
 
     private val logger = ChatLogger.get(ChatFonts::class.java.simpleName)
