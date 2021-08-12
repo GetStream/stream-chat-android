@@ -1,22 +1,34 @@
 # Push Notifications
 
-Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes to the chat.
+Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes in your chat.
 The user will receive a push notification if they're watching a channel but don't have an open socket connection.
-To receive push notification from Stream server the first step you need to do is register the device. When you register a device on Stream server you need to provide the "Push Provider" you want to use and the token that this Push Provider generated for this device.
+
+To receive push notifications from the Stream server the first step you need to do is register the device. When you register a device with the Stream server you need to provide two things:
+* The "Push Provider" you want to use.
+*  The token that this Push Provider generated for this device.
+
+To register the device, you can use the following approach:
+
 ```kotlin
 val token: String = obtainTokenFromYourPushProvider()
 val device: Device = Device(
   token = token,
-  pushProvider = PushProvider.FIREBASE, // You can check the different Push Provider supported here: https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/Device.kt
+  pushProvider = PushProvider.FIREBASE,
 )
 ChatClient.setDevice(device)
 ```
 
-Now that you have your `device` registered, Stream Server will start to send you push notification. Push Notifications will be received by the implementation your Push Provider SDK provides you, and you will need to generated a `PushMessage` instance with the received data and send it to our `ChatClient`
-
 :::note
 Make sure _ChatClient_ is initialized before handling push notifications. We highly recommend initializing it in the `Application` class.
 :::
+
+Once you have a token that your provider generated, you create a new `Device` that you set in our `ChatClient`. For the provider, you used `PushProvider.FIREBASE`.
+
+Make sure to check out the [list of supported providers](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/Device.kt).
+
+Now that you have your `device` registered, the Stream Server will start to send you push notifications. Your Push Provider SDK implementation will receive the notifications and you will need to generate a `PushMessage` with the received data.
+
+Once you have a `PushMessage`, you need to send it to our `ChatClient`, like so:
 
 ```kotlin
 val data: YourPushProviderContainer
@@ -28,32 +40,44 @@ val pushMessage: PushMessage = PushMessage(
 ChatClient.handlePushMessage(pushMessage)
 ```
 
-It is all you need to do client-side to integrate push notification by yourselves.  
+It's important that you set the `messageId`, `channelId` and `channelType` properties of the message, before sending it to the `ChatClient`. This is all you need to do client-side to integrate push notification by yourselves!
+
 We also provide some [Companion Artifacts](#companion-artifacts) that help you with the integration process.
 
 ## PushDeviceGenerator
-Our SDK allows you to provide an implementation of `PushDeviceGenerator` and handle all the needed process to obtain and register a device into Stream.
-The `PushDeviceGenerator` is an interface that asks you to implement two methods. After you implement it, you need inject it into `ChatClient`, let me show you an example:
+Our SDK allows you to provide an implementation of `PushDeviceGenerator` and handle all the logic to obtain and register a device with Stream. That way, you gain more control of push notifications.
+
+Here's an example of a custom `PushDeviceGenerator`:
+
 ```kotlin
 class MyPushDeviceGenerator : PushDeviceGenerator {
     override fun isValidForThisDevice(context: Context): Boolean {
-        // Some providers are not allowed to be used in some devices if they doesn't have the proper libraries installed on the device
-        // Here you can check if your provider could be used on this device and return true on the case it can be used on this device
+        // return if the device is valid or not
         return true
     }
     
     override fun asyncGenerateDevice(onDeviceGenerated: (device: Device) -> Unit) {
-        // Here you will need to impelemnt the logic to obtain the token from your push provider and then generate the device instance
+        // Generate the device token from your provider
         val token = obtainTokenFromYourPushProvider()
+        
+        // Pass the device to the ChatClient
         onDeviceGenerated(
             Device(
                 token = token,
-                pushProvider = PushProvider.FIREBASE, // You can check the different Push Provider supported here: https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/Device.kt
+                pushProvider = PushProvider.FIREBASE,
             )
         )
     }
 }
+```
 
+The `PushDeviceGenerator` is an interface that asks you to implement two methods:
+* `isValidForThisDevice(Context): Boolean`: This function lets you decide if your provider is allowed on a particular device. For example, some providers are not allowed on some devices if they doesn't have certain libraries installed. Return `true` if you provider is allowed and `false` if it's not available for this device.
+* `asyncGenerateDevice((Device) -> Unit)`: This function allows you control how you generate the `Device` that you'll register with the `ChatClient`. Once you create a `Device`, pass it to the `onDeviceGenerated()` callback.
+
+Now that you've implemented your custom `PushDeviceGenerator` you need to inject it into the `ChatClient`:
+
+```kotlin
 val notificationConfig = NotificationConfig(
   pushDeviceGenerators = listOf(MyPushDeviceGenerator())
 )
@@ -62,20 +86,32 @@ ChatClient.Builder("apiKey", context)
     .build()
 ```
 
+Here you first create a `NotificationConfig` that describes how you want to configure push notifications. In this case, you passed in a custom `PushDeviceGenerator`.
+
+Then you use the `ChatClient.Builder` to add `notifications()` configuration to the client, before building it.
+
 ## Companion Artifacts
-The push notification integration process is not complicated, but some jobs that we can provide to you from our SDK.  
-We are not adding this implementation into our main SDK for multiple reasons. The main one is adding this default implementation increases the size of our SDK because new dependencies are needed and some customers don't want push notifications on their chat implementation.  
-From time to time we will provide implementation for different provider.
+The push notification integration process is not complicated, but we're don't want to add it into our main SDK by default.
+
+The two main reasons are the following:
+* Adding this default implementation increases the size of our SDK.
+* Some customers don't want push notifications in their chat implementation.
+
+With time, we'll dedicate more time to building and exposing more providers for you to use.
+
+Let's see which providers we currently expose and how to use them!
 
 ### Stream Firebase PushProvider implementation
-We provide an artifact with all the implementation needed to work with Firebase. To use it follow the next steps:
+We provide an artifact with all the implementation needed to work with **Firebase**. To use it follow the next steps:
 
 #### Step 1
-Configure your app to use Firebase Cloud Messaging as described on the [Firebase documentation](https://firebase.google.com/docs/cloud-messaging/android/client)
-You only need to setup the dependencies and _google-services.json_ file to your project source directory.
+Configure your app to use Firebase Cloud Messaging as described in the [Firebase documentation](https://firebase.google.com/docs/cloud-messaging/android/client).
+
+You only need to setup the FCM dependencies and add a _google-services.json_ file to your project source directory.
 
 #### Step 2
-Add the new artifact to the build gradle
+Add the Stream Firebase `PushProvider` artifact to your app-level `build.gradle` file:
+
 ```groovy
 dependencies {
     implementation "io.getstream:stream-chat-android-pushprovider-firebase:$stream_version"
@@ -83,18 +119,19 @@ dependencies {
 ```
 
 #### Step 3
-Add the `FirebasePushDeviceGenerator` to your NotificationConfig
+Add the `FirebasePushDeviceGenerator` to your `NotificationConfig` and inject it into the `ChatClient`:
+
 ```kotlin
 val notificationConfig = NotificationConfig(
-  pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
+  pushDeviceGenerators = listOf(FirebasePushDeviceGenerator()) // <--
 )
 ChatClient.Builder("apiKey", context)
-    .notifications(ChatNotificationHandler(context, notificationsConfig))
+    .notifications(ChatNotificationHandler(context, notificationsConfig)) // <--
     .build()
 ```
 
 #### Implement Custom _FirebaseMessagingService_
-If you already are using FCM in your App, you can use your custom `FirebaseMessagingService` to receive push notifications from Stream
+If you're already using FCM in your App, you can use your custom `FirebaseMessagingService` to receive push notifications from Stream, like so:
 
 ```kotlin
 class CustomFirebaseMessagingService : FirebaseMessagingService() {
@@ -122,38 +159,42 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
                 channelType = data["channel_type"]!!,
             )
             ChatClient.handlePushMessage(pushMessage)
-        } catch (exception: IllegalStateException) {
-            // ChatClient was not initialized
+        } catch (exception: Exception) {
+            // ChatClient was not initialized or the data is missing
         }
     }
 }
 ```
 
 :::note
-Make sure that CustomMessageFirebaseService's priority is higher than -1 to override the default service
+Make sure that `CustomMessageFirebaseService`'s priority is higher than `-1` to override the default service.
 :::
 
+That's all you have to do to integrate our Firebase push provider artifact.
 
-### Stream Huawei PushProvider implementation
-It is not ready yet, but we will implement it soon and release on the following releases. Be tuned
+### Stream Huawei PushProvider implementation - WIP
+
+:::note
+The Huawei push provider is still in progress, but we're working hard to build it. Stay tuned for more!
+:::
 
 ## Customizing Push Notifications
 
-Notifications can be customized using:
-* _NotificationsConfig_ - allows to customize notification's resources and meta data
-* _ChatNotificationHandler_ - allows to customize default push notifications handling behaviour
+If you want, you can also customize how the push notifications work.
+
+There are two ways to customize push notifications:
+* `NotificationConfig`: Allows to customize notification resources and meta data.
+* `ChatNotificationHandler`: Allows to customize the default push notifications handling behaviour.
+
+Let's see how to create a custom `ChatNotificationHandler`.
 
 ### Redirecting From Notification To App
 
-In order to redirect from notification to the specific _Activity_ in your app, you need to create custom _ChatNotificationHandler_ and override _ChatNotificationHandler#getNewMessageIntent_:
+In order to redirect the user from notifications to a specific `Activity` in your app, you need to create a custom `ChatNotificationHandler`.
+
+Here's an example of a custom handler:
 
 ```kotlin
-    val notificationHandler = MyNotificationHandler(context, notificationsConfig)
-
-    ChatClient.Builder("{{ api_key }}", context)
-                .notifications(notificationHandler)
-                .build()
-                
     class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
         ChatNotificationHandler(context, notificationConfig) {
 
@@ -175,21 +216,31 @@ In order to redirect from notification to the specific _Activity_ in your app, y
     }
 ```
 
+You extended the `ChatNotificationHandler` to provide a custom implementation. Notice the `getNewMessageIntent()` override.
+
+This function allows you to intercept a notification and build a custom `Intent` that can point to any `Activity` in your app. You can also add custom data to the `Intent` if you need it.
+
+Now that you've created a custom handler, you need to apply it to the `ChatClient`, like so:
+
+```kotlin
+val notificationHandler = MyNotificationHandler(context, notificationsConfig)
+
+ChatClient.Builder("{{ api_key }}", context)
+            .notifications(notificationHandler) <--
+            .build()
+```
+
 :::note
-Consider overriding _ChatNotificationHandler#getErrorCaseIntent_ for error case notifications
+Consider overriding `ChatNotificationHandler.getErrorCaseIntent()` for error case notifications.
 :::
 
 ### Create a custom notification
-The SDK allows you to generate the notification that will be shown after a push notification is received.
-All you need to do is override the `buildNotification()` method as shown on the following example:
+
+The SDK also allows you to generate the notification UI that users see after they receive a push notification.
+
+All you need to do is override `buildNotification()` as shown on the following example:
 
 ```kotlin
-    val notificationHandler = MyNotificationHandler(context, notificationsConfig)
-
-    ChatClient.Builder("{{ api_key }}", context)
-                .notifications(notificationHandler)
-                .build()
-                
     class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
         ChatNotificationHandler(context, notificationConfig) {
 
@@ -198,17 +249,32 @@ All you need to do is override the `buildNotification()` method as shown on the 
             channel: Channel,
             message: Message
         ): NotificationCompat.Builder {
-            // Here you are able to build your own notification and return the builder that generates it
+            // Build your notification
             return NotificationCompact.Builder(context, CHANNEL_NOTIFICATION_ID)
-                .setDefaults(NotificationCompat.DDEFAULT_ALL)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 // Customize your notification builder here
         }
     }
 ```
 
+Within `buildNotification()` you receive the `notificationId` and the `Channel` and `Message` that this notification came from.
+
+You can use the `NotificationCompat.Builder()` to customize the notification appearance and default values and behaviour.
+
+Finally, once you're done, inject the `ChatNotificationHandler` into the `ChatClient`:
+
+```kotlin
+val notificationHandler = MyNotificationHandler(context, notificationsConfig)
+
+ChatClient.Builder("{{ api_key }}", context)
+            .notifications(notificationHandler)
+            .build()
+```
+
 ## Configuring Push Notifications on Stream Dashboard
-To be able to receive PushNotifications from Stream Server, you need to provide the PushProvider Credential to Stream.
-It needs to be done in your Stream's Dashboard
+To be able to receive PushNotifications from Stream Server, you need to provide the `PushProvider` **credential** to Stream.
+
+To do that, you need to use the Stream Dashboard.
 
 ### Configuring Firebase Push Notification on Stream Dashboard
 In order to configure Firebase push notifications on Android devices, you need to:
@@ -225,8 +291,14 @@ Navigate to the _Cloud Messaging_ tab. Under _Project Credentials_, locate the _
 ![notifications step 3](../../assets/notifications_firebase_setup_step_3.png)
 
 #### Step 4
-Enable _Android & Firebase_ push notifications and upload the _Server Key_ to the Chat Dashboard:
+Open the Stream Dashboard.
+
+Navigate to the Chat Dashboard and enable _Android & Firebase_ push notifications switch.
+
 ![notifications step 4.1](../../assets/notifications_firebase_setup_step_4_1.jpeg)
+
+Finally, add the _Server Key_:
+
 ![notifications step 4.2](../../assets/notifications_firebase_setup_step_4_2.jpeg)
 
 #### Step 5
@@ -234,5 +306,5 @@ Save the push notification settings changes:
 ![notifications step 5](../../assets/notifications_firebase_setup_step_5.jpeg)
 
 :::note
-Remember to add _google-services.json_ file to your project source directory. For more information take a look at [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
+Remember to add the `google-services.json` file to your project source directory. For more information take a look at the [Firebase setup tutorial](https://firebase.google.com/docs/android/setup).
 :::
