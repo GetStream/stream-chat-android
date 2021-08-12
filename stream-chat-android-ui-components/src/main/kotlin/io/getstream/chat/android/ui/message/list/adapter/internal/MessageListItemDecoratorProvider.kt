@@ -31,7 +31,7 @@ internal class MessageListItemDecoratorProvider(
         ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
         ReplyDecorator(messageListViewStyle.replyMessageStyle),
         FootnoteDecorator(dateFormatter, isDirectMessage, messageListViewStyle),
-        PinIndicatorDecorator()
+        PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )
 
     override val decorators: List<Decorator> = messageListDecorators

@@ -351,6 +351,11 @@ internal class EventHandlerImpl(
                 is GlobalUserUnbannedEvent -> {
                     batch.addUser(event.user.apply { banned = false })
                 }
+                is UserUpdatedEvent -> {
+                    event.user
+                        .takeIf { it.id == domainImpl.user.value?.id }
+                        ?.let { domainImpl.updateCurrentUser(it) }
+                }
                 is TypingStartEvent,
                 is TypingStopEvent,
                 is HealthEvent,
@@ -360,7 +365,6 @@ internal class EventHandlerImpl(
                 is UnknownEvent,
                 is ChannelUserBannedEvent,
                 is ChannelUserUnbannedEvent,
-                is UserUpdatedEvent,
                 is UserDeletedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,

@@ -90,7 +90,6 @@
         android:id="@+id/tvText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:autoLink="web"
         android:paddingStart="@dimen/stream_message_text_padding_start"
         android:paddingTop="@dimen/stream_message_text_padding_top"
         android:paddingEnd="@dimen/stream_message_text_padding_end"

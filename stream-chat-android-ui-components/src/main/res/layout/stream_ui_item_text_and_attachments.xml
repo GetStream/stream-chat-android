@@ -79,7 +79,6 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
             android:gravity="start"
             android:hyphenationFrequency="normal"
             android:lineHeight="16sp"
