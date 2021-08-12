@@ -8,9 +8,10 @@
   - Japanese
   - Korean
   - Spanish
- You can disable them by explicitly setting `resConfigs` inside `build.gradle` file
+ You can disable them by explicitly setting `resConfigs` inside `build.gradle` file. Check our [docs](https://getstream.io/chat/docs/sdk/android/ui/guides/custom-translations/) for further details.
 ### ⚠️ Changed
 - 🚨 Breaking change: Firebase dependencies have been extracted from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
+  Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/) for further details.
 - Updated the Kotlin version to latest supported - `1.5.21`.
 
 ## stream-chat-android
