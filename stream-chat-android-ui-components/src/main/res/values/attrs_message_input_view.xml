@@ -181,6 +181,9 @@
         </attr>
         <attr name="streamUiAttachmentVideoLengthVisible" format="boolean" />
         <attr name="streamUiAttachmentVideoIconVisible" format="boolean" />
+        <attr name="streamUiAttachmentSelectionBackgroundColor" format="color|reference" />
+        <attr name="streamUiAttachmentSelectionAttachIcon" format="reference" />
+
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />
         <attr name="streamUiAllowAccessToFilesText" format="string" />
