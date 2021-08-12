@@ -27,6 +27,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed markdown links rendering using custom linkify implementation.
 
 ### ⬆️ Improved
 
