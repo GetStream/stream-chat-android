@@ -31,7 +31,7 @@ internal class LinkAttachmentView : FrameLayout {
     )
 
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
-        previewUrl = attachment.titleLink ?: attachment.ogUrl
+        previewUrl = attachment.ogUrl
 
         val title = attachment.title
         if (title != null) {

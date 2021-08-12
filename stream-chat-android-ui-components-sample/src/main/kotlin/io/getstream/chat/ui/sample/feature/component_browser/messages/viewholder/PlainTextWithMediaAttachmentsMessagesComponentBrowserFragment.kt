@@ -15,7 +15,7 @@ class PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment : BaseMessag
         val uri2 = drawableResToUri(context, R.drawable.stream_ui_sample_image_2)
         val uri3 = drawableResToUri(context, R.drawable.stream_ui_sample_image_3)
         val attachmentLink = Attachment(
-            titleLink = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
             title = "Title",
             text = "Some description",
             authorName = "Stream",
