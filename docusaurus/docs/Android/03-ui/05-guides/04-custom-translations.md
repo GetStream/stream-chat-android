@@ -93,3 +93,10 @@ defaultConfig {
 ```
 
 With the configuration here, your app will include only _English_ and _Spanish_ resources.
+
+### Translating User Messages
+
+Stream Chat provide the ability to run users' messages through automatic translation.
+While machine translation is never perfect it can enable two users to communicate with
+each other without speaking the same language. For more information, see the full guide
+to [adding automatic translation](https://getstream.io/chat/docs/android/translation/).
