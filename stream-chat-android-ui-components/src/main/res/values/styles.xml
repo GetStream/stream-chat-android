@@ -910,7 +910,7 @@
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">
         <item name="streamUiPinnedMessageListBackground">@color/stream_ui_white_snow</item>
-        <item name="streamUiPinnedMessageListEmptyStateDrawable">@drawable/stream_ui_ic_mentions_empty</item>
+        <item name="streamUiPinnedMessageListEmptyStateDrawable">@drawable/stream_ui_ic_pinned_messages_empty</item>
         <item name="streamUiPinnedMessageListSenderNameTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiPinnedMessageListSenderNameTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiPinnedMessageListSenderNameTextStyle">normal</item>
