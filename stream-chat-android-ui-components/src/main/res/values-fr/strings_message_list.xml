@@ -61,7 +61,7 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_list_error_mute_user">Échec de la mise en sourdine de l\'utilisateur</string>
-    <string name="stream_ui_message_list_error_unmute_user">Échec à l\'utilisateur unmute</string>
+    <string name="stream_ui_message_list_error_unmute_user">Échec de la désactivation de la mise en sourdine de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_block_user">Échec du blocage de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_flag_message">Échec du signalement du message</string>
     <string name="stream_ui_message_list_error_pin_message">Échec de l\'épinglage du message</string>
