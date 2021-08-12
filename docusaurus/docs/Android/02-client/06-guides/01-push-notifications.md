@@ -26,7 +26,7 @@ Once you have a token that your provider generated, you create a new `Device` th
 
 Make sure to check out the [list of supported providers](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/Device.kt).
 
-Now that you have your `device` registered, the Stream Server will start to send you push notifications. Your Push Provider SDK implementation will receive the notifications and you will need to generate a `PushMessage` with the received data.
+Now that you have your `device` registered, the Stream Server will start sending you push notifications. Your Push Provider SDK implementation will receive the notifications and you will need to generate a `PushMessage` with the received data.
 
 Once you have a `PushMessage`, you need to send it to our `ChatClient`, like so:
 
@@ -107,7 +107,7 @@ We provide an artifact with all the implementation needed to work with **Firebas
 #### Step 1
 Configure your app to use Firebase Cloud Messaging as described in the [Firebase documentation](https://firebase.google.com/docs/cloud-messaging/android/client).
 
-You only need to setup the FCM dependencies and add a _google-services.json_ file to your project source directory.
+You just need to set up the FCM dependencies and add a _google-services.json_ file to your project source directory.
 
 #### Step 2
 Add the Stream Firebase `PushProvider` artifact to your app-level `build.gradle` file:
@@ -238,7 +238,7 @@ Consider overriding `ChatNotificationHandler.getErrorCaseIntent()` for error cas
 
 The SDK also allows you to generate the notification UI that users see after they receive a push notification.
 
-All you need to do is override `buildNotification()` as shown on the following example:
+All you need to do is override `buildNotification()` as shown in the following example:
 
 ```kotlin
     class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
@@ -272,7 +272,7 @@ ChatClient.Builder("{{ api_key }}", context)
 ```
 
 ## Configuring Push Notifications on Stream Dashboard
-To be able to receive PushNotifications from Stream Server, you need to provide the `PushProvider` **credential** to Stream.
+To be able to receive push notifications from the Stream Server, you need to provide the `PushProvider` **credential** to Stream.
 
 To do that, you need to use the Stream Dashboard.
 
