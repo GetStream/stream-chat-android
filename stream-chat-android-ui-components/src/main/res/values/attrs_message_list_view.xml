@@ -254,7 +254,7 @@
         <attr name="streamUiFlagMessageConfirmationEnabled" format="boolean" />
         <attr name="streamUiPinOptionIcon" format="reference" />
         <attr name="streamUiUnpinOptionIcon" format="reference" />
-        <attr name="streamUiPinMessageEnabled" format="reference" />
+        <attr name="streamUiPinMessageEnabled" format="boolean" />
         <attr name="streamUiMuteOptionIcon" format="reference" />
         <attr name="streamUiUnmuteOptionIcon" format="reference" />
         <attr name="streamUiMuteUserEnabled" format="boolean" />
@@ -382,5 +382,20 @@
             <enum name="bottom" value="0" />
             <enum name="top" value="1" />
         </attr>
+
+        <!-- Pinned message -->
+        <attr name="streamUiPinnedMessageIndicatorTextSize" format="dimension|reference" />
+        <attr name="streamUiPinnedMessageIndicatorTextColor" format="color|reference" />
+        <attr name="streamUiPinnedMessageIndicatorTextFont" format="reference" />
+        <attr name="streamUiPinnedMessageIndicatorTextFontAssets" format="string" />
+        <attr name="streamUiPinnedMessageIndicatorTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiPinnedMessageIndicatorIcon" format="reference" />
+
+        <attr name="streamUiPinnedMessageBackgroundColor" format="color" />
     </declare-styleable>
 </resources>

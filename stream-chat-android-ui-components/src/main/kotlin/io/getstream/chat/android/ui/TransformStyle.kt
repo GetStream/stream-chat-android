@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentVie
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
@@ -40,6 +41,7 @@ public object TransformStyle {
     public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()
     public var searchResultListViewStyleTransformer: StyleTransformer<SearchResultListViewStyle> = noopTransformer()
     public var typingIndicatorViewStyleTransformer: StyleTransformer<TypingIndicatorViewStyle> = noopTransformer()
+    public var pinnedMessageListViewStyleTransformer: StyleTransformer<PinnedMessageListViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

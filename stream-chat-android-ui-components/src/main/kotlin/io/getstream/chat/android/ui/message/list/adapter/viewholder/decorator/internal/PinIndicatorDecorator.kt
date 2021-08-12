@@ -7,9 +7,10 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getPinnedText
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithSize
+import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
@@ -19,7 +20,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Tex
  * Decorator responsible for highlighting pinned messages in the message list. Apart from that,
  * shows a caption indicating that the message was pinned by a particular user.
  */
-internal class PinIndicatorDecorator : BaseDecorator() {
+internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -49,16 +50,16 @@ internal class PinIndicatorDecorator : BaseDecorator() {
         pinIndicatorTextView: TextView,
         data: MessageListItem.MessageItem,
     ) {
-        val context = root.context
         if (data.message.pinned) {
             pinIndicatorTextView.isVisible = true
-            pinIndicatorTextView.text = data.message.getPinnedText(context)
+            pinIndicatorTextView.text = data.message.getPinnedText(root.context)
+            pinIndicatorTextView.setTextStyle(style.pinnedMessageIndicatorTextStyle)
             pinIndicatorTextView.setLeftDrawableWithSize(
-                R.drawable.stream_ui_ic_pin,
+                style.pinnedMessageIndicatorIcon,
                 R.dimen.stream_ui_message_pin_indicator_icon_size
             )
 
-            root.setBackgroundColor(context.getColorCompat(R.color.stream_ui_highlight))
+            root.setBackgroundColor(style.pinnedMessageBackgroundColor)
             root.updateConstraints {
                 val bias = if (data.isMine) 1f else 0f
                 setHorizontalBias(pinIndicatorTextView.id, bias)
