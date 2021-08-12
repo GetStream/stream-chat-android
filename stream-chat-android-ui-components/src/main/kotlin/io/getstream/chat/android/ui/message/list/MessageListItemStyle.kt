@@ -92,6 +92,9 @@ public data class MessageListItemStyle(
     @Px public val messageStrokeWidthTheirs: Float,
     public val textStyleSystemMessage: TextStyle,
     public val textStyleErrorMessage: TextStyle,
+    public val pinnedMessageIndicatorTextStyle: TextStyle,
+    public val pinnedMessageIndicatorIcon: Drawable,
+    @ColorInt public val pinnedMessageBackgroundColor: Int,
 ) {
 
     @ColorInt
@@ -480,6 +483,31 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiErrorMessageTextStyle, Typeface.BOLD)
                 .build()
 
+            val pinnedMessageIndicatorTextStyle = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiPinnedMessageIndicatorTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small)
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiPinnedMessageIndicatorTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiPinnedMessageIndicatorTextFontAssets,
+                    R.styleable.MessageListView_streamUiPinnedMessageIndicatorTextFont,
+                )
+                .style(R.styleable.MessageListView_streamUiPinnedMessageIndicatorTextStyle, Typeface.NORMAL)
+                .build()
+
+            val pinnedMessageIndicatorIcon = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiPinnedMessageIndicatorIcon
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_pin)!!
+
+            val pinnedMessageBackgroundColor = attributes.getColor(
+                R.styleable.MessageListView_streamUiPinnedMessageBackgroundColor,
+                context.getColorCompat(R.color.stream_ui_highlight)
+            )
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -513,6 +541,9 @@ public data class MessageListItemStyle(
                 messageStrokeWidthTheirs = messageStrokeWidthTheirs,
                 textStyleSystemMessage = textStyleSystemMessage,
                 textStyleErrorMessage = textStyleErrorMessage,
+                pinnedMessageIndicatorTextStyle = pinnedMessageIndicatorTextStyle,
+                pinnedMessageIndicatorIcon = pinnedMessageIndicatorIcon,
+                pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 
