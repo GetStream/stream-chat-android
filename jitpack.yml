@@ -1,3 +1,6 @@
 jdk: openjdk11
 before_install:
   - echo "signing.key=$SIGNING_KEY" >> local.properties && echo "signing.password=$SIGNING_PASSWORD" >> local.properties && echo "signing.keyId=$SIGNING_KEY_ID" >> local.properties
+install:
+  - echo "Running a custom install command"
+  - ./gradlew clean -Pgroup=$GROUP -Pversion=$VERSION -xtest -xlint assembleRelease -x :stream-chat-android-sample:assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease publishReleasePublicationToMavenLocal
