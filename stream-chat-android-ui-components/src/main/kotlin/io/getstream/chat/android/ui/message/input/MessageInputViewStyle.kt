@@ -99,8 +99,8 @@ public data class MessageInputViewStyle(
     public val dismissIconDrawable: Drawable,
 ) {
 
-    internal companion object {
-        operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle {
+    public companion object {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageInputView,
@@ -591,7 +591,7 @@ public data class MessageInputViewStyle(
             }
         }
 
-        fun createDefault(context: Context) = invoke(context, null)
+        public fun createDefault(context: Context): MessageInputViewStyle = invoke(context, null)
 
         private fun setTintListIfNeeded(
             typedArray: TypedArray,
