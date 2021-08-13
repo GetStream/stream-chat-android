@@ -2,6 +2,11 @@ name: Pull request CI checks
 
 on: [pull_request]
 
+env:
+  BUILD_CACHE_URL: ${{ secrets.BUILD_CACHE_URL }}
+  BUILD_CACHE_USER: ${{ secrets.BUILD_CACHE_USER }}
+  BUILD_CACHE_PASSWORD: ${{ secrets.BUILD_CACHE_PASSWORD }}
+
 jobs:
   lint:
     name: ktlint
@@ -14,6 +19,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/remote-build-cache
       - name: ktlint
         run: ./gradlew ktlintCheck
 
@@ -28,6 +34,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/remote-build-cache
       - name: API check
         run: ./gradlew apiCheck
 
@@ -42,6 +49,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/remote-build-cache
       - name: Build
         run: ./gradlew assembleDebug
 
@@ -56,6 +64,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/remote-build-cache
       - name: Unit tests
         run: ./gradlew testDebug --stacktrace
       - name: Upload testDebugUnitTest results

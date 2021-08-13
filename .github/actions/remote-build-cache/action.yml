@@ -1,0 +1,8 @@
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        echo "Hello $BUILD_CACHE_USER"
+        chmod +x ${{ github.action_path }}/create-gradle-init.sh
+        ${{ github.action_path }}/create-gradle-init.sh
+      shell: bash
