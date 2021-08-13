@@ -2,6 +2,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated dependency versions
+  - Coil 1.3.2
+  - AndroidX Activity 1.3.1
+  - AndroidX Startup 1.1.0
+  - AndroidX ConstraintLayout 2.1.0
+  - Dokka 1.5.0
+  - Lottie 4.0.0
 
 ### ✅ Added
 
