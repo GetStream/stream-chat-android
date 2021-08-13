@@ -78,7 +78,6 @@ internal class ChatSocketServiceImpl constructor(
                     }
                     is State.Connected -> {
                         healthMonitor.start()
-                        reconnectionAttempts = 0
                         callListeners { it.onConnected(newState.event) }
                     }
                     is State.NetworkDisconnected -> {
@@ -180,6 +179,7 @@ internal class ChatSocketServiceImpl constructor(
     }
 
     override fun disconnect() {
+        reconnectionAttempts = 0
         state = State.DisconnectedPermanently(null)
     }
 
