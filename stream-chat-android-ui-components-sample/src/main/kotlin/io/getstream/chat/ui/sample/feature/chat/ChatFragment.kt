@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
@@ -120,7 +121,8 @@ class ChatFragment : Fragment() {
         chatViewModel.members.observe(viewLifecycleOwner) { members ->
             binding.messagesHeaderView.apply {
                 setAvatarClickListener {
-                    chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))
+                    // TODO: remove this
+                    startActivity(ChannelListActivity.createIntent(context))
                 }
                 setTitleClickListener {
                     chatViewModel.onAction(ChatViewModel.Action.HeaderClicked(members))

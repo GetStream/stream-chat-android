@@ -176,6 +176,65 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicato
 	public static fun values ()[Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 }
 
+public class io/getstream/chat/android/ui/channel/ChannelListActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field Companion Lio/getstream/chat/android/ui/channel/ChannelListActivity$Companion;
+	public fun <init> ()V
+	protected fun createChannelListFragment ()Lio/getstream/chat/android/ui/channel/ChannelListFragment;
+	protected fun onCreate (Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/channel/ChannelListActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
+}
+
+public class io/getstream/chat/android/ui/channel/ChannelListFragment : androidx/fragment/app/Fragment {
+	public static final field ARG_SHOW_HEADER Ljava/lang/String;
+	public static final field ARG_SHOW_SEARCH Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/ui/channel/ChannelListFragment$Companion;
+	public fun <init> ()V
+	protected fun createChannelListViewModelFactory ()Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentChannelListBinding;
+	protected fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	protected fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public fun onAttach (Landroid/content/Context;)V
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onDetach ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	protected fun setupChannelList ()V
+	protected fun setupChannelListHeader ()V
+	protected fun setupSearchInput ()V
+	protected fun setupSearchResultList ()V
+}
+
+public final class io/getstream/chat/android/ui/channel/ChannelListFragment$Builder {
+	public fun <init> ()V
+	public final fun build ()Lio/getstream/chat/android/ui/channel/ChannelListFragment;
+	public final fun setFragment (Lio/getstream/chat/android/ui/channel/ChannelListFragment;)Lio/getstream/chat/android/ui/channel/ChannelListFragment$Builder;
+	public final fun showHeader (Z)Lio/getstream/chat/android/ui/channel/ChannelListFragment$Builder;
+	public final fun showSearch (Z)Lio/getstream/chat/android/ui/channel/ChannelListFragment$Builder;
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener {
+	public abstract fun onChannelClick (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
+public final class io/getstream/chat/android/ui/channel/ChannelListFragment$Companion {
+	public final fun newInstance (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/channel/ChannelListFragment;
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/ChannelListFragment$HeaderActionButtonClickListener {
+	public abstract fun onActionButtonClick ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/ChannelListFragment$HeaderUserAvatarClickListener {
+	public abstract fun onUserAvatarClick ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/ChannelListFragment$SearchResultClickListener {
+	public abstract fun onSearchResultClick (Lio/getstream/chat/android/client/models/Message;)V
+}
+
 public final class io/getstream/chat/android/ui/channel/list/ChannelActionsDialogViewStyle {
 	public fun <init> (Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -919,6 +978,53 @@ public final class io/getstream/chat/android/ui/mention/list/viewmodel/MentionLi
 
 public final class io/getstream/chat/android/ui/mention/list/viewmodel/MentionListViewModelBinding {
 	public static final fun bind (Lio/getstream/chat/android/ui/mention/list/viewmodel/MentionListViewModel;Lio/getstream/chat/android/ui/mention/list/MentionListView;Landroidx/lifecycle/LifecycleOwner;)V
+}
+
+public class io/getstream/chat/android/ui/message/MessageListActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListActivity$Companion;
+	public fun <init> ()V
+	protected fun createMessageListFragment (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment;
+	protected fun onCreate (Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/message/MessageListActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
+	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/message/MessageListActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
+}
+
+public class io/getstream/chat/android/ui/message/MessageListFragment : androidx/fragment/app/Fragment {
+	public static final field ARG_CHANNEL_ID Ljava/lang/String;
+	public static final field ARG_MESSAGE_ID Ljava/lang/String;
+	public static final field ARG_MESSAGE_LIMIT Ljava/lang/String;
+	public static final field ARG_SHOW_HEADER Ljava/lang/String;
+	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;
+	public fun <init> ()V
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentMessageListBinding;
+	public fun onAttach (Landroid/content/Context;)V
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onDetach ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	protected fun setupMessageInput ()V
+	protected fun setupMessageList ()V
+	protected fun setupMessageListHeader ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/MessageListFragment$BackPressListener {
+	public abstract fun onBackPress ()V
+}
+
+public final class io/getstream/chat/android/ui/message/MessageListFragment$Builder {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun build ()Lio/getstream/chat/android/ui/message/MessageListFragment;
+	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment$Builder;
+	public final fun messageLimit (I)Lio/getstream/chat/android/ui/message/MessageListFragment$Builder;
+	public final fun setFragment (Lio/getstream/chat/android/ui/message/MessageListFragment;)Lio/getstream/chat/android/ui/message/MessageListFragment$Builder;
+	public final fun showHeader (Z)Lio/getstream/chat/android/ui/message/MessageListFragment$Builder;
+}
+
+public final class io/getstream/chat/android/ui/message/MessageListFragment$Companion {
+	public final fun newInstance (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView : androidx/constraintlayout/widget/ConstraintLayout {
