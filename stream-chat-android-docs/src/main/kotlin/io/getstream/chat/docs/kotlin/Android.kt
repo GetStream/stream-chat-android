@@ -239,14 +239,6 @@ class Android {
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
         }
 
-        fun avatarPredicate() {
-            messageListView.setShowAvatarPredicate(
-                ShowAvatarPredicate { messageItem ->
-                    messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
-                }
-            )
-        }
-
         fun customMessageHandler() {
             messageInputView.setSendMessageHandler(
                 object : MessageInputView.MessageSendHandler {
@@ -446,6 +438,14 @@ class Android {
                         // Provide a way to format Time.
                         return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
                     }
+                }
+            )
+        }
+
+        fun avatarPredicate() {
+            messageListView.setShowAvatarPredicate(
+                ShowAvatarPredicate { messageItem ->
+                    messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
                 }
             )
         }
