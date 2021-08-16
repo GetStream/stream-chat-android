@@ -1140,6 +1140,7 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle$Companion;
 	public fun <init> (ZLandroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;FIILio/getstream/chat/android/ui/common/style/TextStyle;ZZZLandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZILandroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
@@ -1224,6 +1225,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputViewSt
 	public final fun getShowSendAlsoToChannelCheckbox ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle$Companion {
+	public final fun createDefault (Landroid/content/Context;)Lio/getstream/chat/android/ui/message/input/MessageInputViewStyle;
 }
 
 public final class io/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogFragment : com/google/android/material/bottomsheet/BottomSheetDialogFragment, io/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionListener {
