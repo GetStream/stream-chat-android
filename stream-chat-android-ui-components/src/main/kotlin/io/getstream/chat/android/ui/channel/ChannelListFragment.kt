@@ -38,7 +38,7 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
  * - [SearchInputView] - displays an input field to search message that contain specific text
  * - [SearchResultListView] - displays a list of search results
  *
- * **Note**: Fragments representing Self-contained screens are easy to use. They allow you
+ * **Note**: Fragments representing self-contained screens are easy to use. They allow you
  * to explore the SDK's features in a breeze, however, they offer limited customization.
  */
 public open class ChannelListFragment : Fragment() {
