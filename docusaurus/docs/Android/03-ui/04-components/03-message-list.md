@@ -432,3 +432,13 @@ messageListView.setEmptyStateView(
 This code will display the following empty state:
 
 ![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
+## Configure When Avatar Appears
+Is it possible to configure when the avatar for messages appears. You can use `MessageListView.setShowAvatarPredicate` and pass a predicate to define when the avatar is going to be shown. The example implements the default behaviour:
+
+```
+messageListView.setShowAvatarPredicate(
+    ShowAvatarPredicate { messageItem ->
+        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+    }
+)
+```
