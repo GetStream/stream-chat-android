@@ -5,7 +5,6 @@
     android:id="@+id/loadingViewContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="64dp"
     app:shimmer_auto_start="true"
     app:shimmer_base_color="@color/channels_shimmer_color"
     app:shimmer_colored="true"
