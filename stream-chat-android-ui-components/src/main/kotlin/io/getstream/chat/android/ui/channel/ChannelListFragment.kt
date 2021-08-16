@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StyleRes
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -42,8 +43,10 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
  */
 public open class ChannelListFragment : Fragment() {
 
+    private val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
     private val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, true) }
     private val showSearch: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_SEARCH, true) }
+    private val headerTitle: String? by lazy { requireArguments().getString(ARG_HEADER_TITLE) }
 
     private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
     private val channelListViewModel: ChannelListViewModel by viewModels { createChannelListViewModelFactory() }
@@ -63,6 +66,13 @@ public open class ChannelListFragment : Fragment() {
         headerActionButtonClickListener = findListener()
         channelListItemClickListener = findListener()
         searchResultClickListener = findListener()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (themeResId != 0) {
+            activity?.setTheme(themeResId)
+        }
     }
 
     override fun onCreateView(
@@ -86,6 +96,7 @@ public open class ChannelListFragment : Fragment() {
         with(binding.channelListHeaderView) {
             channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
+            headerTitle?.let(::setOnlineTitle)
             setOnActionButtonClickListener {
                 headerActionButtonClickListener?.onActionButtonClick()
             }
@@ -159,44 +170,99 @@ public open class ChannelListFragment : Fragment() {
         return ChannelListViewModelFactory(filter = getFilter(), sort = getSort())
     }
 
+    /**
+     * Default filter for channels. Override the method to provide custom filter.
+     */
     protected open fun getFilter(): FilterObject? {
         return null
     }
 
+    /**
+     * Default query sort for channels. Override the method to provide custom sort.
+     */
     protected open fun getSort(): QuerySort<Channel> {
         return ChannelListViewModel.DEFAULT_SORT
     }
 
+    /**
+     * Click listener for the right button in the header. Not implemented by default.
+     *
+     * **Note**: Implement the click listener in parent Fragment or Activity
+     * to override the default behavior.
+     */
     public fun interface HeaderActionButtonClickListener {
         public fun onActionButtonClick()
     }
 
+    /**
+     * Click listener for the left button in the header represented by the avatar of
+     * the current user. Not implemented by default.
+     *
+     * **Note**: Implement the click listener in parent Fragment or Activity
+     * to override the default behavior.
+     */
     public fun interface HeaderUserAvatarClickListener {
         public fun onUserAvatarClick()
     }
 
+    /**
+     * Click listener for channel item clicks. Navigates to [MessageListActivity] by default.
+     *
+     * **Note**: Implement the click listener in parent Fragment or Activity
+     * to override the default behavior.
+     */
     public fun interface ChannelListItemClickListener {
         public fun onChannelClick(channel: Channel)
     }
 
+    /**
+     * Click listener for search result items. Navigates to [MessageListActivity] by default.
+     *
+     * **Note**: Implement the click listener in parent Fragment or Activity
+     * to override the default behavior.
+     */
     public fun interface SearchResultClickListener {
         public fun onSearchResultClick(message: Message)
     }
 
     public class Builder {
+        private var themeResId: Int = 0
         private var showHeader: Boolean = true
         private var showSearch: Boolean = true
-
+        private var headerTitle: String? = null
         private var fragment: ChannelListFragment? = null
 
+        /**
+         * Custom theme for the screen.
+         */
+        public fun customTheme(@StyleRes themeResId: Int): Builder = apply {
+            this.themeResId = themeResId
+        }
+
+        /**
+         * Whether the header is shown or hidden.
+         */
         public fun showHeader(showHeader: Boolean): Builder = apply {
             this.showHeader = showHeader
         }
 
+        /**
+         * Whether the search input is shown or hidden.
+         */
         public fun showSearch(showSearch: Boolean): Builder = apply {
             this.showSearch = showSearch
         }
 
+        /**
+         * Header title. "Stream Chat" by default.
+         */
+        public fun headerTitle(headerTitle: String?): Builder = apply {
+            this.headerTitle = headerTitle
+        }
+
+        /**
+         * Sets custom channel list Fragment. The Fragment must be a subclass of [ChannelListFragment].
+         */
         public fun <T : ChannelListFragment> setFragment(fragment: T): Builder = apply {
             this.fragment = fragment
         }
@@ -204,17 +270,26 @@ public open class ChannelListFragment : Fragment() {
         public fun build(): ChannelListFragment {
             return (fragment ?: ChannelListFragment()).apply {
                 arguments = bundleOf(
+                    ARG_THEME_RES_ID to this@Builder.themeResId,
                     ARG_SHOW_HEADER to this@Builder.showHeader,
-                    ARG_SHOW_SEARCH to this@Builder.showSearch
+                    ARG_SHOW_SEARCH to this@Builder.showSearch,
+                    ARG_HEADER_TITLE to this@Builder.headerTitle,
                 )
             }
         }
     }
 
     public companion object {
-        public const val ARG_SHOW_HEADER: String = "show_header"
-        public const val ARG_SHOW_SEARCH: String = "show_search"
+        private const val ARG_THEME_RES_ID: String = "theme_res_id"
+        private const val ARG_SHOW_HEADER: String = "show_header"
+        private const val ARG_SHOW_SEARCH: String = "show_search"
+        private const val ARG_HEADER_TITLE: String = "header_title"
 
+        /**
+         * Creates instances of [ChannelListFragment].
+         *
+         * @param initializer the initializer to customize builder params
+         */
         public fun newInstance(initializer: Builder.() -> Unit): ChannelListFragment {
             val builder = Builder()
             builder.initializer()

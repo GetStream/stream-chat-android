@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StyleRes
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
@@ -39,14 +41,11 @@ public open class MessageListFragment : Fragment() {
     private val cid: String by lazy {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
-
+    private val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
     private val messageId: String? by lazy { requireArguments().getString(ARG_MESSAGE_ID) }
-    private val messageLimit: String? by lazy { requireArguments().getString(ARG_MESSAGE_LIMIT) }
-
     private val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
 
     private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid, messageId) }
-
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
@@ -59,6 +58,13 @@ public open class MessageListFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         backPressListener = findListener()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (themeResId != 0) {
+            activity?.setTheme(themeResId)
+        }
     }
 
     override fun onCreateView(
@@ -78,16 +84,6 @@ public open class MessageListFragment : Fragment() {
         setupMessageInput()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        backPressListener = null
-    }
-
     protected open fun setupMessageListHeader() {
         with(binding.messageListHeaderView) {
             messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
@@ -95,6 +91,7 @@ public open class MessageListFragment : Fragment() {
             setBackButtonClickListener {
                 messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
             }
+            isVisible = showHeader
         }
     }
 
@@ -136,6 +133,22 @@ public open class MessageListFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        backPressListener = null
+    }
+
+    /**
+     * Click listener for the navigation button in the header. Finishes Activity by default.
+     *
+     * **Note**: Implement the click listener in parent Fragment or Activity
+     * to override the default behavior.
+     */
     public fun interface BackPressListener {
         public fun onBackPress()
     }
@@ -146,33 +159,35 @@ public open class MessageListFragment : Fragment() {
      * @param cid the full channel id. ie messaging:123
      */
     public class Builder(private val cid: String) {
+        private var themeResId: Int = 0
         private var showHeader: Boolean = false
         private var messageId: String? = null
-        private var messageLimit: Int = 30
-
         private var fragment: MessageListFragment? = null
 
         /**
-         * If we're showing the header or not
+         * Custom theme for the screen.
+         */
+        public fun customTheme(@StyleRes themeResId: Int): Builder = apply {
+            this.themeResId = themeResId
+        }
+
+        /**
+         * Whether the header is shown or hidden.
          */
         public fun showHeader(showHeader: Boolean): Builder = apply {
             this.showHeader = showHeader
         }
 
         /**
-         * The limit of messages per query
+         * The id of the message to highlight.
          */
-        public fun messageLimit(messageLimit: Int): Builder = apply {
-            this.messageLimit = messageLimit
-        }
-
-        /**
-         * The id of the message to highlight
-         */
-        public fun messageId(messageId: String): Builder = apply {
+        public fun messageId(messageId: String?): Builder = apply {
             this.messageId = messageId
         }
 
+        /**
+         * Sets custom message list Fragment. The Fragment must be a subclass of [MessageListFragment].
+         */
         public fun <T : MessageListFragment> setFragment(fragment: T): Builder = apply {
             this.fragment = fragment
         }
@@ -180,20 +195,20 @@ public open class MessageListFragment : Fragment() {
         public fun build(): MessageListFragment {
             return (fragment ?: MessageListFragment()).apply {
                 arguments = bundleOf(
+                    ARG_THEME_RES_ID to this@Builder.themeResId,
                     ARG_CHANNEL_ID to this@Builder.cid,
                     ARG_MESSAGE_ID to this@Builder.messageId,
                     ARG_SHOW_HEADER to this@Builder.showHeader,
-                    ARG_MESSAGE_LIMIT to this@Builder.messageLimit,
                 )
             }
         }
     }
 
     public companion object {
-        public const val ARG_CHANNEL_ID: String = "cid"
-        public const val ARG_MESSAGE_ID: String = "message_id"
-        public const val ARG_SHOW_HEADER: String = "show_header"
-        public const val ARG_MESSAGE_LIMIT: String = "message_limit"
+        private const val ARG_THEME_RES_ID: String = "theme_res_id"
+        private const val ARG_CHANNEL_ID: String = "cid"
+        private const val ARG_MESSAGE_ID: String = "message_id"
+        private const val ARG_SHOW_HEADER: String = "show_header"
 
         /**
          * Creates instances of [MessageListFragment].

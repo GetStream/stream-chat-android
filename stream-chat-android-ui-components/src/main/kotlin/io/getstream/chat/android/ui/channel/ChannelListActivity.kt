@@ -26,10 +26,17 @@ public open class ChannelListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Creates an instance of [ChannelListFragment]. Override this method if you want to create an
+     * instance of [ChannelListFragment] with custom arguments or if you want to create a subclass
+     * of [ChannelListFragment].
+     */
     protected open fun createChannelListFragment(): ChannelListFragment {
         return ChannelListFragment.newInstance {
+            setFragment(ChannelListFragment())
             showSearch(true)
             showHeader(true)
+            headerTitle(getString(R.string.stream_ui_channel_list_header_connected))
         }
     }
 

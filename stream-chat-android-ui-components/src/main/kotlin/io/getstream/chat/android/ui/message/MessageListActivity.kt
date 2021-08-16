@@ -23,15 +23,23 @@ public open class MessageListActivity : AppCompatActivity() {
             val cid = requireNotNull(intent.getStringExtra(EXTRA_CID)) {
                 "Channel cid must not be null"
             }
+            val messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, createMessageListFragment(cid))
+                .replace(R.id.container, createMessageListFragment(cid, messageId))
                 .commit()
         }
     }
 
-    protected open fun createMessageListFragment(cid: String): MessageListFragment {
+    /**
+     * Creates an instance of [MessageListFragment]. Override this method if you want to create an
+     * instance of [MessageListFragment] with custom arguments or if you want to create a subclass
+     * of [MessageListFragment].
+     */
+    protected open fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
         return MessageListFragment.newInstance(cid) {
+            setFragment(MessageListFragment())
             showHeader(true)
+            messageId(messageId)
         }
     }
 

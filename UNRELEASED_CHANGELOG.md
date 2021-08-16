@@ -64,7 +64,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added self-contained higher-level UI components:
+  - `ChannelListFragment` - channel list screen which internally contains `ChannelListHeaderView`, `ChannelListView`, `SearchInputView`, `SearchResultListView`.
+  - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
+  - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
+  - `MessageListActivity` - thin wrapper around `MessageListFragment`
+    
 ### ⚠️ Changed
 
 ### ❌ Removed
