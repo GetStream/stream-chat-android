@@ -71,6 +71,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Now it is possible to customize when the avatar appears in the conversation. It is
+possible to use an avatar in messages fro other users and for message of the current user. Use
+`setShowAvatarPredicate` to change the default behaviour. Default: The avatar shows only
+for messages of other users, in the bottom of a group of messages (Position.Bottom). 
 
 ### ⚠️ Changed
 
