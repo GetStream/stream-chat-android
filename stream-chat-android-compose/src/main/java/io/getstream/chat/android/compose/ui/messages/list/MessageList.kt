@@ -81,7 +81,9 @@ public fun MessageList(
         onMessagesStartReached = onMessagesStartReached,
         onLongItemClick = onLongItemClick,
         onScrollToBottom = onScrollToBottom,
-        itemContent = itemContent
+        itemContent = itemContent,
+        loadingContent = loadingContent,
+        emptyContent = emptyContent
     )
 }
 
