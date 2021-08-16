@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecorator() {
+internal class BackgroundDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,

@@ -478,6 +478,7 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
