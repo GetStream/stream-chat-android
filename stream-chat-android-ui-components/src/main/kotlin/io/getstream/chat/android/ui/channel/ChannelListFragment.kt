@@ -92,7 +92,7 @@ public open class ChannelListFragment : Fragment() {
     }
 
     @StyleRes
-    protected fun getTheme(): Int {
+    protected open fun getTheme(): Int {
         return themeResId
     }
 

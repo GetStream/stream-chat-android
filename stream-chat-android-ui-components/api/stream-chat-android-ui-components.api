@@ -194,7 +194,7 @@ public class io/getstream/chat/android/ui/channel/ChannelListFragment : androidx
 	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentChannelListBinding;
 	protected fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	protected fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
-	protected final fun getTheme ()I
+	protected fun getTheme ()I
 	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
@@ -998,7 +998,7 @@ public class io/getstream/chat/android/ui/message/MessageListFragment : androidx
 	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;
 	public fun <init> ()V
 	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentMessageListBinding;
-	protected final fun getTheme ()I
+	protected fun getTheme ()I
 	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
