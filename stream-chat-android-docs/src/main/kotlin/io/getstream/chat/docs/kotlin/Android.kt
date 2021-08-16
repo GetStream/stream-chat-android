@@ -443,11 +443,9 @@ class Android {
         }
 
         fun avatarPredicate() {
-            messageListView.setShowAvatarPredicate(
-                ShowAvatarPredicate { messageItem ->
-                    messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
-                }
-            )
+            messageListView.setShowAvatarPredicate { messageItem ->
+                messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+            }
         }
 
         fun customMessagesFilter() {
