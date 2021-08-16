@@ -34,6 +34,7 @@ public open class ChannelListActivity : AppCompatActivity() {
     protected open fun createChannelListFragment(): ChannelListFragment {
         return ChannelListFragment.newInstance {
             setFragment(ChannelListFragment())
+            setTheme(R.style.StreamUiTheme_ChannelListScreen)
             showSearch(true)
             showHeader(true)
             headerTitle(getString(R.string.stream_ui_channel_list_header_connected))

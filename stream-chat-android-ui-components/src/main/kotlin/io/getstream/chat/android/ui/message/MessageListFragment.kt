@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message
 
 import android.content.Context
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,19 +61,17 @@ public open class MessageListFragment : Fragment() {
         backPressListener = findListener()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (themeResId != 0) {
-            activity?.setTheme(themeResId)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return StreamUiFragmentMessageListBinding.inflate(inflater, container, false)
+        val layoutInflater = if (getTheme() != 0) {
+            inflater.cloneInContext(ContextThemeWrapper(context, getTheme()))
+        } else {
+            inflater
+        }
+        return StreamUiFragmentMessageListBinding.inflate(layoutInflater, container, false)
             .apply { _binding = this }
             .root
     }
@@ -82,6 +81,11 @@ public open class MessageListFragment : Fragment() {
         setupMessageListHeader()
         setupMessageList()
         setupMessageInput()
+    }
+
+    @StyleRes
+    protected fun getTheme(): Int {
+        return themeResId
     }
 
     protected open fun setupMessageListHeader() {
