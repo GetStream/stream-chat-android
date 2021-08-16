@@ -79,6 +79,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
 
 ### ⬆️ Improved
 
