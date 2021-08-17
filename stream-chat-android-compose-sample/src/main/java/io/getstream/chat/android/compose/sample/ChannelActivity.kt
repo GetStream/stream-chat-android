@@ -67,7 +67,6 @@ class ChannelActivity : AppCompatActivity() {
          * */
         setContent {
             ChatTheme {
-                ChatTheme.colors.appBackground
                 ChannelsScreen(
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
