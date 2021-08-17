@@ -33,7 +33,7 @@ internal class AvatarDecorator(
     ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        setupAvatar(getAvatarView(viewHolder), data)
+        setupAvatar(getAvatarView(viewHolder, data), data)
     }
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
@@ -66,7 +66,13 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(holder: MessageDeletedViewHolder): AvatarView {
-        return holder.binding.avatarMineView
+    private fun getAvatarView(holder: MessageDeletedViewHolder, data: MessageListItem.MessageItem): AvatarView {
+        return if (data.isMine) {
+            holder.binding.avatarView.isVisible = false
+            holder.binding.avatarMineView
+        } else {
+            holder.binding.avatarMineView.isVisible = false
+            holder.binding.avatarView
+        }
     }
 }

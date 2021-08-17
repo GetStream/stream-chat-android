@@ -62,6 +62,15 @@
         />
 
     <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarMineView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:visibility="gone"
