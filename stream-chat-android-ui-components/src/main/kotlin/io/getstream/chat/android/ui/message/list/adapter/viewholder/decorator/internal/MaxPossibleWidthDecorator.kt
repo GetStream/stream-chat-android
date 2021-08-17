@@ -42,7 +42,7 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
     }
 
     companion object {
-        private const val MAX_POSSIBLE_WIDTH_FACTOR = .30f
+        private const val MAX_POSSIBLE_WIDTH_FACTOR = .25f
         private const val START_PERCENT = 0f
         private const val END_PERCENT = 1f
         private const val MINE_START_PERCENT = START_PERCENT + MAX_POSSIBLE_WIDTH_FACTOR
