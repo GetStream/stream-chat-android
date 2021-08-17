@@ -120,8 +120,6 @@
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/messageContainer"
-        app:layout_goneMarginEnd="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
-        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <ImageView
