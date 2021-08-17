@@ -17,14 +17,14 @@ internal class AvatarDecorator(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(getAvatarView(viewHolder, data), data)
+        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
     }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(getAvatarView(viewHolder, data), data)
+        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
     }
 
     override fun decorateGiphyMessage(
@@ -33,7 +33,7 @@ internal class AvatarDecorator(
     ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        setupAvatar(getAvatarView(viewHolder, data), data)
+        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
     }
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
@@ -46,8 +46,8 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(holder: TextAndAttachmentsViewHolder, data: MessageListItem.MessageItem): AvatarView {
-        return if (data.isMine) {
+    private fun getAvatarView(holder: TextAndAttachmentsViewHolder, isMine: Boolean): AvatarView {
+        return if (isMine) {
             holder.binding.avatarView.isVisible = false
             holder.binding.avatarMineView
         } else {
@@ -56,8 +56,8 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(holder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem): AvatarView {
-        return if (data.isMine) {
+    private fun getAvatarView(holder: MessagePlainTextViewHolder, isMine: Boolean): AvatarView {
+        return if (isMine) {
             holder.binding.avatarView.isVisible = false
             holder.binding.avatarMineView
         } else {
@@ -66,8 +66,8 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(holder: MessageDeletedViewHolder, data: MessageListItem.MessageItem): AvatarView {
-        return if (data.isMine) {
+    private fun getAvatarView(holder: MessageDeletedViewHolder, isMine: Boolean): AvatarView {
+        return if (isMine) {
             holder.binding.avatarView.isVisible = false
             holder.binding.avatarMineView
         } else {
