@@ -2,15 +2,15 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.message.list.DefaultShowAvatarPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
 internal class AvatarDecorator(
-    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate? = null,
+    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
 ) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
@@ -36,18 +36,12 @@ internal class AvatarDecorator(
     // }
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
-        if (showAvatarPredicate != null) {
-            val shouldShow = showAvatarPredicate.shouldShow(data)
-            avatarView.isVisible = shouldShow
-            
-            if (shouldShow) {
-                avatarView.setUserData(data.message.user)
-            }
-        } else if (data.isTheirs && data.isTheirs && data.isBottomPosition()) {
+        val shouldShow = showAvatarPredicate.shouldShow(data)
+
+        avatarView.isVisible = shouldShow
+
+        if (shouldShow) {
             avatarView.setUserData(data.message.user)
-            avatarView.isVisible = true
-        } else {
-            avatarView.isVisible = false
         }
     }
 

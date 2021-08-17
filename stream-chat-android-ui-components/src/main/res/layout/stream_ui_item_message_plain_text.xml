@@ -37,7 +37,6 @@
     <io.getstream.chat.android.ui.avatar.AvatarView
         android:id="@+id/avatarView"
         style="?attr/streamUiMessageListItemAvatarStyle"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
         tools:src="@tools:sample/avatars"
@@ -67,7 +66,7 @@
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         app:layout_goneMarginEnd="0dp"
-        app:layout_goneMarginStart="0dp"
+        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
 
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
@@ -134,7 +133,7 @@
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
-        app:layout_constraintEnd_toStartOf="@id/avatarMineView"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
         />

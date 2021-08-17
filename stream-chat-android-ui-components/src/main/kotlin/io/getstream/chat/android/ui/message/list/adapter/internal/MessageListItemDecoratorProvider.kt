@@ -20,7 +20,7 @@ internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
-    showAvatarPredicate: MessageListView.ShowAvatarPredicate?
+    showAvatarPredicate: MessageListView.ShowAvatarPredicate
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(

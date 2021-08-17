@@ -257,7 +257,7 @@ public class MessageListView : ConstraintLayout {
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
-    private var showAvatarPredicate: ShowAvatarPredicate? = null
+    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
