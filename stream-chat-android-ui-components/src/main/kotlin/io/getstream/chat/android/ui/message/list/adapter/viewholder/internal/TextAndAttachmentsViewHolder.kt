@@ -46,7 +46,7 @@ internal class TextAndAttachmentsViewHolder(
 
     init {
         binding.run {
-            // configMargins(style)
+            configMargins(style)
 
             root.setOnClickListener {
                 listeners.messageClickListener.onMessageClick(data.message)

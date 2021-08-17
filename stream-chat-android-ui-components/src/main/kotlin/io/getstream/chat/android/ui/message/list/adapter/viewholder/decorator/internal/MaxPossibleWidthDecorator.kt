@@ -23,7 +23,9 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
-    ) = Unit
+    ) {
+        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
+    }
 
     override fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,

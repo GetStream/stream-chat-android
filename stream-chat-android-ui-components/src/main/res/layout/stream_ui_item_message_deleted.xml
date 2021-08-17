@@ -26,6 +26,8 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:orientation="vertical"
         app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
         app:layout_constraintTop_toBottomOf="@id/gapView"
         >
 
