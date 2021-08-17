@@ -49,6 +49,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getImageAttachments (Ljava/lang/String;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getNotificationHandler ()Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;
 	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
@@ -604,6 +605,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun getImageAttachments (II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (IILjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun getMessagesWithAttachments (IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun hide (Z)Lio/getstream/chat/android/client/call/Call;

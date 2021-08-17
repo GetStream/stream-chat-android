@@ -756,7 +756,7 @@ public class ChatClient internal constructor(
         limit: Int,
         type: String,
     ): Call<List<Attachment>> =
-        getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
+        getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
             messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
@@ -770,6 +770,10 @@ public class ChatClient internal constructor(
      * @param limit max limit messages to be fetched
      * @param type The desired type attachment
      */
+    @Deprecated(
+        message = "Use getMessagesWithAttachments function with types list instead",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun getMessagesWithAttachments(
         channelType: String,
@@ -780,6 +784,29 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+    }
+
+    /**
+     * Returns a [Call] with messages that contain at least one desired type attachment but
+     * not necessarily all of them will have a specified type
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param offset the messages offset
+     * @param limit max limit messages to be fetched
+     * @param types desired attachment's types list
+     */
+    @CheckResult
+    public fun getMessagesWithAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        types: List<String>,
+    ): Call<List<Message>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", types)
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 

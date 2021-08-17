@@ -37,6 +37,9 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Allow specifying multiple attachment's type when getting messages with attachments:
+  - Deprecated `ChatClient::getMessagesWithAttachments` with `type` parameter. Use `ChatClient::getMessagesWithAttachments` function with types list instead
+  - Deprecated `ChannelClient::getMessagesWithAttachments` with `type` parameter. Use `ChannelClient::getMessagesWithAttachments` function with types list instead
 
 ### ❌ Removed
 
