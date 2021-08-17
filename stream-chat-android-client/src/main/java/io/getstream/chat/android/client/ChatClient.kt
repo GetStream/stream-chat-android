@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -84,7 +85,7 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
-import kotlin.jvm.Throws
+import kotlin.properties.Delegates
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -1082,6 +1083,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
+    @InternalStreamChatApi
     public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
 
     @CheckResult
@@ -1576,7 +1578,12 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
-        private const val VERSION_PREFIX = "stream-chat-android-"
+        @InternalStreamChatApi
+        @JvmStatic
+        public var VERSION_PREFIX: String by Delegates.vetoable(VersionPrefixHeader.CORE_ANDROID.prefix) { _, _, new ->
+            VersionPrefixHeader.values().any { it.prefix == new }
+        }
+
         private var instance: ChatClient? = null
 
         @JvmField

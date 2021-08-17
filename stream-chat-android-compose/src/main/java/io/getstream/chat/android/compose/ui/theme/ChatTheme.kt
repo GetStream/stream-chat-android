@@ -3,8 +3,11 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
 
 /**
@@ -47,6 +50,10 @@ public fun ChatTheme(
     reactionTypes: Map<String, Int> = defaultReactionTypes,
     content: @Composable () -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        ChatClient.VERSION_PREFIX = VersionPrefixHeader.COMPOSE.prefix
+    }
+
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalTypography provides typography,
