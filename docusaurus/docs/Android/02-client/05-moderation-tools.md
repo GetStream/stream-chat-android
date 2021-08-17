@@ -43,6 +43,17 @@ client.muteUser("user-id").enqueue { result ->
         // Handle result.error() 
     } 
 } 
+
+// Mute user for 60 minutes
+client.muteUser("user-id", timeout = 60)
+    .enqueue { result: Result<Unit> ->
+        if (result.isSuccess) {
+            // User was muted
+            val mute: Mute = result.data() 
+        } else {
+            // Handle result.error() 
+        }
+    }
  
 client.unmuteUser("user-id").enqueue { result -> 
     if (result.isSuccess) { 
