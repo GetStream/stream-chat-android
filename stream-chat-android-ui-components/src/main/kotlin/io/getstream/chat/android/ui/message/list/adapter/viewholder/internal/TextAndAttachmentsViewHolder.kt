@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -45,6 +46,8 @@ internal class TextAndAttachmentsViewHolder(
 
     init {
         binding.run {
+            // configMargins(style)
+
             root.setOnClickListener {
                 listeners.messageClickListener.onMessageClick(data.message)
             }
@@ -66,6 +69,18 @@ internal class TextAndAttachmentsViewHolder(
                 longClickTarget = root,
                 onLinkClicked = listeners.linkClickListener::onLinkClick
             )
+        }
+    }
+
+    private fun StreamUiItemTextAndAttachmentsBinding.configMargins(style: MessageListItemStyle) {
+        messageContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            marginStart = style.messageStartMargin
+            marginEnd = style.messageEndMargin
+        }
+
+        footnote.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            marginStart = style.messageStartMargin
+            marginEnd = style.messageEndMargin
         }
     }
 

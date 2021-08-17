@@ -133,6 +133,7 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
+            style,
         )
     }
 

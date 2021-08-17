@@ -95,6 +95,8 @@ public data class MessageListItemStyle(
     public val pinnedMessageIndicatorTextStyle: TextStyle,
     public val pinnedMessageIndicatorIcon: Drawable,
     @ColorInt public val pinnedMessageBackgroundColor: Int,
+    public val messageStartMargin: Int,
+    public val messageEndMargin: Int,
 ) {
 
     @ColorInt
@@ -508,6 +510,16 @@ public data class MessageListItemStyle(
                 context.getColorCompat(R.color.stream_ui_highlight)
             )
 
+            val messageStartMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageStartMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
+            val messageEndMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageEndMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -544,6 +556,8 @@ public data class MessageListItemStyle(
                 pinnedMessageIndicatorTextStyle = pinnedMessageIndicatorTextStyle,
                 pinnedMessageIndicatorIcon = pinnedMessageIndicatorIcon,
                 pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
+                messageStartMargin = messageStartMargin,
+                messageEndMargin = messageEndMargin,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

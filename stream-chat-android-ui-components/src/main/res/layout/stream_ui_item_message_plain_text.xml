@@ -62,11 +62,9 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:orientation="vertical"
         app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@id/avatarMineView"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
-        app:layout_goneMarginEnd="0dp"
-        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
 
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
@@ -122,7 +120,7 @@
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
         app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toBottomOf="@id/messageContainer"
-        app:layout_goneMarginEnd="0dp"
+        app:layout_goneMarginEnd="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
@@ -132,6 +130,7 @@
         android:layout_height="24dp"
         android:src="@drawable/stream_ui_ic_warning"
         android:visibility="gone"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:ignore="ContentDescription"
@@ -143,7 +142,7 @@
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:src="@tools:sample/avatars"
         />
 
