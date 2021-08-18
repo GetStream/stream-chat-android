@@ -100,16 +100,19 @@ public open class ChannelListFragment : Fragment() {
 
     protected open fun setupChannelListHeader() {
         with(binding.channelListHeaderView) {
-            channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
+            if (showHeader) {
+                channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
-            headerTitle?.let(::setOnlineTitle)
-            setOnActionButtonClickListener {
-                headerActionButtonClickListener?.onActionButtonClick()
+                headerTitle?.let(::setOnlineTitle)
+                setOnActionButtonClickListener {
+                    headerActionButtonClickListener?.onActionButtonClick()
+                }
+                setOnUserAvatarClickListener {
+                    headerUserAvatarClickListener?.onUserAvatarClick()
+                }
+            } else {
+                isVisible = false
             }
-            setOnUserAvatarClickListener {
-                headerUserAvatarClickListener?.onUserAvatarClick()
-            }
-            isVisible = showHeader
         }
     }
 
@@ -129,19 +132,22 @@ public open class ChannelListFragment : Fragment() {
 
     protected open fun setupSearchInput() {
         with(binding.searchInputView) {
-            setDebouncedInputChangedListener { query ->
-                if (query.isEmpty()) {
-                    binding.channelListView.isVisible = true
-                    binding.searchResultListView.isVisible = false
+            if (showSearch) {
+                setDebouncedInputChangedListener { query ->
+                    if (query.isEmpty()) {
+                        binding.channelListView.isVisible = true
+                        binding.searchResultListView.isVisible = false
+                    }
                 }
+                setSearchStartedListener { query ->
+                    Utils.hideSoftKeyboard(this)
+                    searchViewModel.setQuery(query)
+                    binding.channelListView.isVisible = query.isEmpty()
+                    binding.searchResultListView.isVisible = query.isNotEmpty()
+                }
+            } else {
+                isVisible = false
             }
-            setSearchStartedListener { query ->
-                Utils.hideSoftKeyboard(this)
-                searchViewModel.setQuery(query)
-                binding.channelListView.isVisible = query.isEmpty()
-                binding.searchResultListView.isVisible = query.isNotEmpty()
-            }
-            isVisible = showSearch
         }
     }
 

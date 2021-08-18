@@ -90,12 +90,15 @@ public open class MessageListFragment : Fragment() {
 
     protected open fun setupMessageListHeader() {
         with(binding.messageListHeaderView) {
-            messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
+            if (showHeader) {
+                messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
-            setBackButtonClickListener {
-                messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+                setBackButtonClickListener {
+                    messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+                }
+            } else {
+                isVisible = false
             }
-            isVisible = showHeader
         }
     }
 
