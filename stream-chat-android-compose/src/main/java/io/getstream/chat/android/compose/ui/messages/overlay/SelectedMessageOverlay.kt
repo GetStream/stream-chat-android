@@ -222,11 +222,12 @@ private fun SelectedMessage(message: Message) {
                     DeletedMessageContent()
                 } else {
                     Column {
-                        attachmentFactory?.factory?.invoke(
+                        attachmentFactory?.Content(
                             AttachmentState(
                                 modifier = Modifier.padding(4.dp),
-                                message = MessageItem(message, None)
-                            ) {}
+                                message = MessageItem(message, None),
+                                onLongItemClick = {}
+                            )
                         )
 
                         if (message.text.isNotEmpty()) {

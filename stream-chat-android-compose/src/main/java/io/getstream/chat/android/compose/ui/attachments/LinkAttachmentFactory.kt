@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -30,10 +31,17 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
  * */
-public class LinkAttachmentFactory : AttachmentFactory(
-    factory = { state -> LinkAttachmentContent(state) },
-    predicate = { message -> message.attachments.any { it.titleLink != null || it.ogUrl != null } }
-)
+public class LinkAttachmentFactory : AttachmentFactory() {
+
+    override fun predicate(message: Message): Boolean {
+        return message.attachments.any { it.titleLink != null || it.ogUrl != null }
+    }
+
+    @Composable
+    public override fun Content(attachmentState: AttachmentState) {
+        LinkAttachmentContent(attachmentState)
+    }
+}
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link
@@ -46,9 +54,7 @@ public class LinkAttachmentFactory : AttachmentFactory(
  * */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun LinkAttachmentContent(
-    attachmentState: AttachmentState,
-) {
+public fun LinkAttachmentContent(attachmentState: AttachmentState) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
 

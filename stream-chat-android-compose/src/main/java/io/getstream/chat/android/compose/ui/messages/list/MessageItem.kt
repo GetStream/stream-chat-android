@@ -167,7 +167,7 @@ public fun DefaultMessageContainer(
                             DeletedMessageContent()
                         } else {
                             Column {
-                                attachmentFactory?.factory?.invoke(
+                                attachmentFactory?.Content(
                                     AttachmentState(
                                         modifier = Modifier.padding(4.dp),
                                         message = messageItem,
@@ -468,7 +468,7 @@ internal fun QuotedMessage(
             shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {
-                    factory?.factory?.invoke(
+                    factory?.Content(
                         AttachmentState(
                             modifier = Modifier.padding(4.dp),
                             message = MessageItem(message, None),

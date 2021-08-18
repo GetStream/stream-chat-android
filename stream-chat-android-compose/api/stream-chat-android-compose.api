@@ -317,35 +317,17 @@ public final class io/getstream/chat/android/compose/state/messages/reaction/Rea
 
 public abstract class io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
-	public fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> ()V
+	public abstract fun Content (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
 	public final fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public final fun getFactory ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/attachments/ComposableSingletons$FileAttachmentFactoryKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/ComposableSingletons$FileAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/attachments/ComposableSingletons$ImageAttachmentFactoryKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/ComposableSingletons$ImageAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/attachments/ComposableSingletons$LinkAttachmentFactoryKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/ComposableSingletons$LinkAttachmentFactoryKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public abstract fun predicate (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/FileAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
 	public fun <init> ()V
+	public fun Content (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
+	public fun predicate (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/FileAttachmentFactoryKt {
@@ -355,6 +337,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/FileAttachme
 public final class io/getstream/chat/android/compose/ui/attachments/ImageAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
 	public fun <init> ()V
+	public fun Content (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
+	public fun predicate (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/ImageAttachmentFactoryKt {
@@ -364,6 +348,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/ImageAttachm
 public final class io/getstream/chat/android/compose/ui/attachments/LinkAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
 	public fun <init> ()V
+	public fun Content (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;I)V
+	public fun predicate (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/LinkAttachmentFactoryKt {
@@ -374,6 +360,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/StreamAttach
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;
 	public final fun getDefaultFactories ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/components/FileAttachmentImageKt {
+	public static final fun FileAttachmentImage (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/ChannelsScreenKt {
@@ -620,9 +610,10 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 public final class io/getstream/chat/android/compose/ui/theme/StreamShapes {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamShapes$Companion;
-	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
+	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
 	public final fun getAttachment ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getAvatar ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getImageThumbnail ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getInputField ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getMyMessageBubble ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getOtherMessageBubble ()Landroidx/compose/ui/graphics/Shape;

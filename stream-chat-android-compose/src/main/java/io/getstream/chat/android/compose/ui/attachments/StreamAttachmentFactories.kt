@@ -20,15 +20,8 @@ public object StreamAttachmentFactories {
 
 /**
  * Holds the information required to build an attachment message.
- *
- * @param factory - Function that provides a modifier and a message, to show the attachment.
- * @param predicate - Function that checks the message and returns if the factory can consume it or
- * not.
  * */
-public abstract class AttachmentFactory(
-    public val factory: @Composable (AttachmentState) -> Unit,
-    private val predicate: (Message) -> Boolean,
-) {
+public abstract class AttachmentFactory {
     /**
      * Returns if this specific factory can handle a specific message.
      *
@@ -38,4 +31,21 @@ public abstract class AttachmentFactory(
     public fun canHandle(message: Message): Boolean {
         return message.attachments.isNotEmpty() && predicate(message)
     }
+
+    /**
+     * Checks the message and returns if the factory can consume it or not.
+     *
+     * @param message - The message to validate
+     * @return - a Boolean value
+     * */
+    public abstract fun predicate(message: Message): Boolean
+
+    /**
+     * Composable function that allows users to define the content the [AttachmentFactory] will build using any given
+     * [attachmentState].
+     *
+     * @param attachmentState - The state for this attachment to use for the UI.
+     * */
+    @Composable
+    public abstract fun Content(attachmentState: AttachmentState)
 }
