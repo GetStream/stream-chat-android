@@ -6,4 +6,5 @@ import com.squareup.moshi.JsonClass
 internal data class MuteUserRequest(
     val target_id: String,
     val user_id: String,
+    val timeout: Int?,
 )
