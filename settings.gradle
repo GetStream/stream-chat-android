@@ -31,7 +31,9 @@ buildCache {
 	String streamAWSBucket = localProperties.get("buildCache.AWSBucket") ?: System.getenv("BUILD_CACHE_AWS_BUCKET") ?: ""
 	String streamAWSAccessKeyId = localProperties.get("buildCache.AWSAccessKeyId") ?: System.getenv("BUILD_CACHE_AWS_ACCESS_KEY_ID") ?: ""
 	String streamAWSSecretKey = localProperties.get("buildCache.AWSSecretKey") ?: System.getenv("BUILD_CACHE_AWS_SECRET_KEY") ?: ""
-	if (!streamAWSRegion.isBlank() &&
+	Boolean streamBuildCacheDisabled = Boolean.parseBoolean(localProperties.get("buildCache.disabled"))
+	if (!streamBuildCacheDisabled &&
+			!streamAWSRegion.isBlank() &&
 			!streamAWSBucket.isBlank() &&
 			!streamAWSAccessKeyId.isBlank() &&
 			!streamAWSSecretKey.isBlank()
