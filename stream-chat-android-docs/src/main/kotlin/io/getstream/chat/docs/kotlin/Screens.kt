@@ -7,9 +7,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
+import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.message.MessageListActivity
 import io.getstream.chat.android.ui.message.MessageListFragment
+import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 
 class Screens {
 
@@ -47,9 +49,9 @@ class Screens {
 
         class CustomChannelListFragment : ChannelListFragment() {
 
-            override fun setupChannelListHeader() {
-                super.setupChannelListHeader()
-                binding.channelListHeaderView.setOnUserAvatarClickListener {
+            override fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
+                super.setupChannelListHeader(channelListHeaderView)
+                channelListHeaderView.setOnUserAvatarClickListener {
                     // Handle avatar click
                 }
             }
@@ -100,9 +102,9 @@ class Screens {
 
         class CustomMessageListFragment : MessageListFragment() {
 
-            override fun setupMessageListHeader() {
-                super.setupMessageListHeader()
-                binding.messageListHeaderView.setBackButtonClickListener {
+            override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
+                super.setupMessageListHeader(messageListHeaderView)
+                messageListHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
             }
