@@ -103,7 +103,7 @@ public class ChatUI internal constructor(
                 markdown ?: ChatMarkdownImpl(appContext),
                 urlSigner ?: UrlSigner.DefaultUrlSigner()
             )
-            ChatClient.VERSION_PREFIX = VersionPrefixHeader.OLD_UI_COMPONENTS.prefix
+            ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.OLD_UI_COMPONENTS
             return instance()
         }
     }

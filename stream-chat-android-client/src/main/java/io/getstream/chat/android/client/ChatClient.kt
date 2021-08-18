@@ -85,7 +85,6 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
-import kotlin.properties.Delegates
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -1083,8 +1082,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    @InternalStreamChatApi
-    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
+    public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
 
     @CheckResult
     public fun acceptInvite(
@@ -1580,9 +1578,7 @@ public class ChatClient internal constructor(
     public companion object {
         @InternalStreamChatApi
         @JvmStatic
-        public var VERSION_PREFIX: String by Delegates.vetoable(VersionPrefixHeader.DEFAULT.prefix) { _, _, new ->
-            VersionPrefixHeader.values().any { it.prefix == new }
-        }
+        public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
 
         private var instance: ChatClient? = null
 

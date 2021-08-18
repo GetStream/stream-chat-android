@@ -8,9 +8,10 @@ import io.getstream.chat.android.ui.ChatUI
 
 public class ChatUIInitializer : Initializer<ChatUI> {
     override fun create(context: Context): ChatUI {
-        ChatClient.VERSION_PREFIX = VersionPrefixHeader.UI_COMPONENTS.prefix
+        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
         ChatUI.appContext = context
         return ChatUI
     }
+
     override fun dependencies(): MutableList<Class<out Initializer<*>>> = mutableListOf()
 }
