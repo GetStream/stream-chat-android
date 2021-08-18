@@ -408,6 +408,8 @@ class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
 messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
 ```
 
+Additionally, you can also use `ChatUI.markdown` for Markdown support. If you do that, don't use `android:autoLink` attribute because it'll break the markdown [Linkify](https://noties.io/Markwon/docs/v4/linkify/) implementation.
+
 ## Custom Empty State
 
 `MessageListView` handles loading and empty states out-of-box. If you want to customize these, you can do it at runtime.
