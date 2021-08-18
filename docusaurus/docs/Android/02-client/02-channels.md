@@ -567,9 +567,23 @@ By default, mutes stay in place indefinitely until the user removes it; however,
 client.muteChannel(channelType, channelId)
     .enqueue { result: Result<Unit> ->
         if (result.isSuccess) {
-            //channel is muted
+            // Channel muted
         } else {
-            result.error().printStackTrace()
+            // Handle result.error()
+        }
+    }
+```
+
+### Muting a Channel with Expiration Time
+
+```kotlin
+// Mute a channel for 60 minutes
+client.muteChannel(channelType, channelId, expiration = 60 * 60 * 1000)
+    .enqueue { result: Result<Unit> ->
+        if (result.isSuccess) {
+            // Channel muted
+        } else {
+            // Handle result.error() 
         }
     }
 ```

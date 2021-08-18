@@ -9,6 +9,7 @@ internal data class UpstreamMuteDto(
     val target: UpstreamUserDto,
     val created_at: Date,
     val updated_at: Date,
+    val expires: Date?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -17,4 +18,5 @@ internal data class DownstreamMuteDto(
     val target: DownstreamUserDto,
     val created_at: Date,
     val updated_at: Date,
+    val expires: Date?,
 )
