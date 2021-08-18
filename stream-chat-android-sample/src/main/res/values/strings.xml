@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatSample</string>
+    <string name="app_name">Chat Sample Android (Legacy)</string>
     <string name="new_channel_button">New channel</string>
     <string name="hint_enter_channel_name">Channel name…</string>
     <string name="add_new_channel_title">Add new channel</string>

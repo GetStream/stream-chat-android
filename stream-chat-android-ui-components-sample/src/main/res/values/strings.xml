@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatSample</string>
+    <string name="app_name">Chat Sample Android</string>
     <string name="backend_error_info">Ups, something went wrong</string>
     <string name="sdk_version_template">Stream SDK v %s</string>
     <string name="cancel">Cancel</string>
