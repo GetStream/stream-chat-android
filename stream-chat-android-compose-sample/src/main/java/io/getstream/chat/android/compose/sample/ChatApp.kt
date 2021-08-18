@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.sample
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
 
@@ -11,6 +12,7 @@ class ChatApp : Application() {
         super.onCreate()
 
         val client = ChatClient.Builder("qx5us2v6xvmh", applicationContext)
+            .logLevel(ChatLogLevel.ALL)
             .build()
         ChatDomain.Builder(client, applicationContext).build()
 
