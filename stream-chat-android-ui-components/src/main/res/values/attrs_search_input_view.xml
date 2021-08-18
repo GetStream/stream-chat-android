@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SearchInputView">
+        <!-- SearchInputView configuration -->
         <attr name="streamUiSearchInputViewHintText" format="string" />
         <attr name="streamUiSearchInputViewSearchIcon" format="reference" />
         <attr name="streamUiSearchInputViewClearInputIcon" format="reference" />

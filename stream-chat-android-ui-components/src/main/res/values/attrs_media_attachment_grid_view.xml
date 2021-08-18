@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="MediaAttachmentGridView">
+        <!-- Should show users avatars in media attachment grid view -->
         <attr name="streamUiShowUserAvatars" format="boolean" />
     </declare-styleable>
 </resources>
