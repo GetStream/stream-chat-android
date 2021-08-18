@@ -89,7 +89,7 @@ public class ChannelListView : FrameLayout {
             addView(this)
         }
 
-        loadingView = streamThemeInflater.inflate(style.loadingView, null).apply {
+        loadingView = streamThemeInflater.inflate(style.loadingView, this, false).apply {
             isVisible = false
             addView(this)
         }

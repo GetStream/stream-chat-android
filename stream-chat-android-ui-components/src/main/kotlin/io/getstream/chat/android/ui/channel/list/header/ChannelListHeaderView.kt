@@ -153,6 +153,10 @@ public class ChannelListHeaderView : ConstraintLayout {
         binding.userAvatar.setUserData(user)
     }
 
+    public fun setOnlineTitle(title: String) {
+        binding.onlineTextView.text = title
+    }
+
     public fun showOnlineTitle() {
         binding.offlineTitleContainer.isVisible = false
         binding.onlineTextView.isVisible = true
