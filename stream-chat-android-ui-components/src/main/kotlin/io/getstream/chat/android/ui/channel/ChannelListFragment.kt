@@ -87,19 +87,27 @@ public open class ChannelListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupChannelListHeader()
-        setupChannelList()
-        setupSearchInput()
-        setupSearchResultList()
+        setupChannelListHeader(binding.channelListHeaderView)
+        setupChannelList(binding.channelListView)
+        setupSearchInput(binding.searchInputView)
+        setupSearchResultList(binding.searchResultListView)
     }
 
+    /**
+     * Provides a custom theme for the screen.
+     */
     @StyleRes
     protected open fun getTheme(): Int {
         return themeResId
     }
 
-    protected open fun setupChannelListHeader() {
-        with(binding.channelListHeaderView) {
+    /**
+     * Configures [ChannelListHeaderView]. Override the method for a custom setup.
+     *
+     * @param channelListHeaderView the channel list header that is being configured
+     */
+    protected open fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
+        with(channelListHeaderView) {
             if (showHeader) {
                 channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
@@ -116,7 +124,12 @@ public open class ChannelListFragment : Fragment() {
         }
     }
 
-    protected open fun setupChannelList() {
+    /**
+     * Configures [ChannelListView]. Override the method for a custom setup.
+     *
+     * @param channelListView the channel list that is being configured
+     */
+    protected open fun setupChannelList(channelListView: ChannelListView) {
         with(binding.channelListView) {
             channelListViewModel.bindView(this, viewLifecycleOwner)
 
@@ -130,7 +143,12 @@ public open class ChannelListFragment : Fragment() {
         }
     }
 
-    protected open fun setupSearchInput() {
+    /**
+     * Configures [SearchInputView]. Override the method for a custom setup.
+     *
+     * @param searchInputView the search input that is being configured
+     */
+    protected open fun setupSearchInput(searchInputView: SearchInputView) {
         with(binding.searchInputView) {
             if (showSearch) {
                 setDebouncedInputChangedListener { query ->
@@ -151,7 +169,12 @@ public open class ChannelListFragment : Fragment() {
         }
     }
 
-    protected open fun setupSearchResultList() {
+    /**
+     * Configures [SearchResultListView]. Override the method for a custom setup.
+     *
+     * @param searchResultListView the search result list that is being configured
+     */
+    protected open fun setupSearchResultList(searchResultListView: SearchResultListView) {
         with(binding.searchResultListView) {
             searchViewModel.bindView(this, viewLifecycleOwner)
 

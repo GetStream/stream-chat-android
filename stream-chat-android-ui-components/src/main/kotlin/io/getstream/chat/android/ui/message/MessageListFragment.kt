@@ -78,18 +78,26 @@ public open class MessageListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupMessageListHeader()
-        setupMessageList()
-        setupMessageInput()
+        setupMessageListHeader(binding.messageListHeaderView)
+        setupMessageList(binding.messageListView)
+        setupMessageInput(binding.messageInputView)
     }
 
+    /**
+     * Provides a custom theme for the screen.
+     */
     @StyleRes
     protected open fun getTheme(): Int {
         return themeResId
     }
 
-    protected open fun setupMessageListHeader() {
-        with(binding.messageListHeaderView) {
+    /**
+     * Configures [MessageListHeaderView]. Override the method for a custom setup.
+     *
+     * @param messageListHeaderView the message list header that is being configured
+     */
+    protected open fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
+        with(messageListHeaderView) {
             if (showHeader) {
                 messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
 
@@ -102,8 +110,13 @@ public open class MessageListFragment : Fragment() {
         }
     }
 
-    protected open fun setupMessageList() {
-        messageListViewModel.bindView(binding.messageListView, viewLifecycleOwner)
+    /**
+     * Configures [MessageListView]. Override the method for a custom setup.
+     *
+     * @param messageListView the message list that is being configured
+     */
+    protected open fun setupMessageList(messageListView: MessageListView) {
+        messageListViewModel.bindView(messageListView, viewLifecycleOwner)
 
         messageListViewModel.state.observe(viewLifecycleOwner) {
             when (it) {
@@ -120,9 +133,14 @@ public open class MessageListFragment : Fragment() {
         }
     }
 
-    protected open fun setupMessageInput() {
+    /**
+     * Configures [MessageInputView]. Override the method for a custom setup.
+     *
+     * @param messageInputView the message inout that is being configured
+     */
+    protected open fun setupMessageInput(messageInputView: MessageInputView) {
         messageInputViewModel.apply {
-            messageInputViewModel.bindView(binding.messageInputView, viewLifecycleOwner)
+            messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
 
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {

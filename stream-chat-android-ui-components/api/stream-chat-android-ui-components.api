@@ -200,10 +200,10 @@ public class io/getstream/chat/android/ui/channel/ChannelListFragment : androidx
 	public fun onDestroyView ()V
 	public fun onDetach ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-	protected fun setupChannelList ()V
-	protected fun setupChannelListHeader ()V
-	protected fun setupSearchInput ()V
-	protected fun setupSearchResultList ()V
+	protected fun setupChannelList (Lio/getstream/chat/android/ui/channel/list/ChannelListView;)V
+	protected fun setupChannelListHeader (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView;)V
+	protected fun setupSearchInput (Lio/getstream/chat/android/ui/search/SearchInputView;)V
+	protected fun setupSearchResultList (Lio/getstream/chat/android/ui/search/list/SearchResultListView;)V
 }
 
 public final class io/getstream/chat/android/ui/channel/ChannelListFragment$Builder {
@@ -1004,9 +1004,9 @@ public class io/getstream/chat/android/ui/message/MessageListFragment : androidx
 	public fun onDestroyView ()V
 	public fun onDetach ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-	protected fun setupMessageInput ()V
-	protected fun setupMessageList ()V
-	protected fun setupMessageListHeader ()V
+	protected fun setupMessageInput (Lio/getstream/chat/android/ui/message/input/MessageInputView;)V
+	protected fun setupMessageList (Lio/getstream/chat/android/ui/message/list/MessageListView;)V
+	protected fun setupMessageListHeader (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderView;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/MessageListFragment$BackPressListener {
