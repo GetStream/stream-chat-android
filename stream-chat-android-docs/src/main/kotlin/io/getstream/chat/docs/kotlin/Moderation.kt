@@ -81,6 +81,17 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
+        fun muteUserWithTimeout() {
+            // Mute user for 60 minutes
+            client.muteUser("user-id", timeout = 60).enqueue { result ->
+                if (result.isSuccess) {
+                    // User was muted
+                } else {
+                    // Handle result.error()
+                }
+            }
+        }
+
         fun unmuteUser() {
             client.unmuteUser("user-id").enqueue { result ->
                 if (result.isSuccess) {
