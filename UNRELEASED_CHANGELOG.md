@@ -35,6 +35,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `expiration` parameter to `ChatClient::muteChannel`, `ChannelClient:mute` methods
+- Added the `timeout` parameter to `ChatClient::muteUser`, `ChannelClient:mute::muteUser` methods
 
 ### ⚠️ Changed
 
