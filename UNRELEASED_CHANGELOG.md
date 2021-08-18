@@ -35,6 +35,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `expiration` parameter to `ChatClient::muteChannel`, `ChannelClient:mute` methods
+- Added the `timeout` parameter to `ChatClient::muteUser`, `ChannelClient:mute::muteUser` methods
 
 ### ⚠️ Changed
 
@@ -71,7 +73,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added self-contained higher-level UI components:
+  - `ChannelListFragment` - channel list screen which internally contains `ChannelListHeaderView`, `ChannelListView`, `SearchInputView`, `SearchResultListView`.
+  - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
+  - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
+  - `MessageListActivity` - thin wrapper around `MessageListFragment`
+    
 ### ⚠️ Changed
 
 ### ❌ Removed

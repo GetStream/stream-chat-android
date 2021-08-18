@@ -109,10 +109,17 @@ internal interface ChatApi {
     ): Call<Message>
 
     @CheckResult
-    fun muteChannel(channelType: String, channelId: String): Call<Unit>
+    fun muteChannel(
+        channelType: String,
+        channelId: String,
+        expiration: Int?,
+    ): Call<Unit>
 
     @CheckResult
-    fun unmuteChannel(channelType: String, channelId: String): Call<Unit>
+    fun unmuteChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Unit>
 
     @CheckResult
     fun updateMessage(
@@ -259,6 +266,7 @@ internal interface ChatApi {
     @CheckResult
     fun muteUser(
         userId: String,
+        timeout: Int?,
     ): Call<Mute>
 
     @CheckResult

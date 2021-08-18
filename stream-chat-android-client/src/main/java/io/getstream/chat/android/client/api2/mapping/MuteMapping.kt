@@ -10,6 +10,7 @@ internal fun Mute.toDto(): UpstreamMuteDto =
         target = target.toDto(),
         created_at = createdAt,
         updated_at = updatedAt,
+        expires = expires,
     )
 
 internal fun DownstreamMuteDto.toDomain(): Mute =
@@ -18,4 +19,5 @@ internal fun DownstreamMuteDto.toDomain(): Mute =
         target = target.toDomain(),
         createdAt = created_at,
         updatedAt = updated_at,
+        expires = expires,
     )

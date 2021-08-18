@@ -9,5 +9,6 @@ public data class Mute(
     @SerializedName("created_at")
     var createdAt: Date,
     @SerializedName("updated_at")
-    var updatedAt: Date
+    var updatedAt: Date,
+    val expires: Date?,
 )
