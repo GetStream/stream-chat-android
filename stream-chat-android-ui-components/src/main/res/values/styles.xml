@@ -441,7 +441,7 @@
 
         <!-- Margin for messages -->
         <item name="streamUiMessageStartMargin">@dimen/stream_ui_message_viewholder_avatar_missing_margin</item>
-        <item name="streamUiMessageEndMargin">@dimen/stream_ui_message_viewholder_avatar_missing_margin</item>
+        <item name="streamUiMessageEndMargin">0dp</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
