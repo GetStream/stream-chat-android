@@ -232,13 +232,14 @@ internal class UsersApiCallsTests {
             mock.user,
             targetUser,
             Date(1),
-            Date(2)
+            Date(2),
+            null,
         )
 
         Mockito.`when`(
             mock.retrofitApi.muteUser(
                 mock.connectionId,
-                MuteUserRequest(targetUser.id, mock.userId)
+                MuteUserRequest(targetUser.id, mock.userId, null)
             )
         ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)).toRetrofitCall())
 
@@ -254,7 +255,7 @@ internal class UsersApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi.unmuteUser(
                 mock.connectionId,
-                MuteUserRequest(targetUser.id, mock.userId)
+                MuteUserRequest(targetUser.id, mock.userId, null)
             )
         ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
