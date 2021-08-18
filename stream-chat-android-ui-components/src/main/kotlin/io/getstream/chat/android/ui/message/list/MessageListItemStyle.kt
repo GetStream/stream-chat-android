@@ -58,6 +58,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
  * @property textStyleSystemMessage - appearance for system message text
  * @property textStyleErrorMessage - appearance for error message text
+ * @property messageStartMargin - Margin for messages in the left side. Default: 48dp
+ * @property messageEndMargin - Margin for messages in the right side. Default: 0dp
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -95,8 +97,8 @@ public data class MessageListItemStyle(
     public val pinnedMessageIndicatorTextStyle: TextStyle,
     public val pinnedMessageIndicatorIcon: Drawable,
     @ColorInt public val pinnedMessageBackgroundColor: Int,
-    public val messageStartMargin: Int,
-    public val messageEndMargin: Int,
+    @Px public val messageStartMargin: Int,
+    @Px public val messageEndMargin: Int,
 ) {
 
     @ColorInt
