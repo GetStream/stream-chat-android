@@ -123,7 +123,7 @@
     <dimen name="stream_ui_channel_item_message_date">13sp</dimen>
 
     <!-- Message ViewHolders -->
-    <dimen name="stream_ui_message_viewholder_avatar_missing_margin">48dp</dimen>
+    <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
     <dimen name="stream_ui_message_corner_radius_negative">-16dp</dimen>
     <dimen name="stream_ui_message_footnote_spacing">6dp</dimen>
     <dimen name="stream_ui_message_thread_reply_footnote_translation">18dp</dimen>
