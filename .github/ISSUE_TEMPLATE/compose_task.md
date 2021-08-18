@@ -1,19 +1,21 @@
 ---
 name: Compose SDK task
 about: Create a new task for the Compose SDK.
-title: '[Compose] '
+title: '[Compose] - '
 labels: compose
 assignees: ''
 ---
 
 ### Context
 
-TODO
+TODO - Describe what this task is about and why we need to support it.
 
-### Description
+### Change Proposal
 
-TODO
+TODO - Describe the proposed changes - what we should do, where to apply changes and how.
 
 ### Acceptance criteria
 
-- [] TODO
+To accept this task we need to complete the following items:
+
+- [] TODO - Add items to complete within this task.
