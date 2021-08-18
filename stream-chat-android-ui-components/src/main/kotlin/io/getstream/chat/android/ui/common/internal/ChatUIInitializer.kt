@@ -2,10 +2,13 @@ package io.getstream.chat.android.ui.common.internal
 
 import android.content.Context
 import androidx.startup.Initializer
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.ui.ChatUI
 
 public class ChatUIInitializer : Initializer<ChatUI> {
     override fun create(context: Context): ChatUI {
+        ChatClient.VERSION_PREFIX = VersionPrefixHeader.UI_COMPONENTS.prefix
         ChatUI.appContext = context
         return ChatUI
     }

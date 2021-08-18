@@ -1580,7 +1580,7 @@ public class ChatClient internal constructor(
     public companion object {
         @InternalStreamChatApi
         @JvmStatic
-        public var VERSION_PREFIX: String by Delegates.vetoable(VersionPrefixHeader.CORE_ANDROID.prefix) { _, _, new ->
+        public var VERSION_PREFIX: String by Delegates.vetoable(VersionPrefixHeader.DEFAULT.prefix) { _, _, new ->
             VersionPrefixHeader.values().any { it.prefix == new }
         }
 

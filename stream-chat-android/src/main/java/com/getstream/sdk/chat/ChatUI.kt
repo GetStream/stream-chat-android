@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.common.BuildConfig
 
@@ -35,7 +36,7 @@ public class ChatUI internal constructor(
     public val strings: ChatStrings,
     public val navigator: ChatNavigator,
     public val markdown: ChatMarkdown,
-    public val urlSigner: UrlSigner
+    public val urlSigner: UrlSigner,
 ) {
     public val version: String
         get() = BuildConfig.BUILD_TYPE + ":" + STREAM_CHAT_VERSION
@@ -52,7 +53,7 @@ public class ChatUI internal constructor(
         public constructor(
             client: ChatClient,
             chatDomain: ChatDomain,
-            appContext: Context
+            appContext: Context,
         ) : this(appContext)
 
         private var style: ChatStyle? = null
@@ -102,6 +103,7 @@ public class ChatUI internal constructor(
                 markdown ?: ChatMarkdownImpl(appContext),
                 urlSigner ?: UrlSigner.DefaultUrlSigner()
             )
+            ChatClient.VERSION_PREFIX = VersionPrefixHeader.OLD_UI_COMPONENTS.prefix
             return instance()
         }
     }
