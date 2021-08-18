@@ -8,6 +8,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
 
 /**
