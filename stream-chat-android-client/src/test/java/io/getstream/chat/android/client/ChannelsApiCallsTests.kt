@@ -482,7 +482,7 @@ internal class ChannelsApiCallsTests {
         whenever(
             mock.retrofitApi.muteChannel(
                 mock.connectionId,
-                MuteChannelRequest("${mock.channelType}:${mock.channelId}")
+                MuteChannelRequest("${mock.channelType}:${mock.channelId}", null)
             )
         ) doReturn RetroSuccess(CompletableResponse()).toRetrofitCall()
 
@@ -496,7 +496,7 @@ internal class ChannelsApiCallsTests {
         whenever(
             mock.retrofitApi.unmuteChannel(
                 mock.connectionId,
-                MuteChannelRequest("${mock.channelType}:${mock.channelId}")
+                MuteChannelRequest("${mock.channelType}:${mock.channelId}", null)
             )
         ) doReturn RetroSuccess(CompletableResponse()).toRetrofitCall()
 

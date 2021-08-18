@@ -6,5 +6,6 @@ internal data class MuteUserRequest(
     @SerializedName("target_id")
     val targetId: String,
     @SerializedName("user_id")
-    val userId: String
+    val userId: String,
+    val timeout: Int?,
 )
