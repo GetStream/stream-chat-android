@@ -161,6 +161,10 @@ Then the SDK will parse Markdown automatically:
 
 ![Markdown messages](../assets/markdown_support.png)
 
+:::note
+If you are using default `ChatMarkdown` implementation provided by Stream, do not set `android:autoLink` attribute on the message text view. It prevents markdown links from being formatted and clickable.
+:::
+
 ### Navigator
 
 The SDK performs navigation in certain cases:
