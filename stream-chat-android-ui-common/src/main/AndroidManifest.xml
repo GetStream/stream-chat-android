@@ -4,10 +4,17 @@
     package="io.getstream.chat.android.ui.common"
     >
 
+    <queries>
+        <intent>
+            <action android:name="android.media.action.VIDEO_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <application>
-        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentMediaActivity" />
         <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity" />
-        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentActivity" />
 
         <provider
             android:name="com.getstream.sdk.chat.StreamFileProvider"
