@@ -25,7 +25,7 @@ buildCache {
 	Properties localProperties = new Properties()
 	File file = new File("local.properties")
 	if (file.exists()) {
-		localProperties.load(file.newDataInputStream())
+		file.newDataInputStream().withCloseable { localProperties.load(it) }
 	}
 	String streamAWSRegion = localProperties.get("buildCache.AWSRegion") ?: System.getenv("BUILD_CACHE_AWS_REGION") ?: ""
 	String streamAWSBucket = localProperties.get("buildCache.AWSBucket") ?: System.getenv("BUILD_CACHE_AWS_BUCKET") ?: ""
