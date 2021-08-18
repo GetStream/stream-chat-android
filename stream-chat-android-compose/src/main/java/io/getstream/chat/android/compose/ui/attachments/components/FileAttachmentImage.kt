@@ -13,6 +13,12 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
+/**
+ * Represents the image that's shown in file attachments. This can be either an image/icon that represents the file type
+ * or a thumbnail in case the file type is an image.
+ *
+ * @param attachment - The attachment we use to show the image.
+ * */
 @Composable
 public fun FileAttachmentImage(attachment: Attachment) {
     val isImage = attachment.type == "image"
