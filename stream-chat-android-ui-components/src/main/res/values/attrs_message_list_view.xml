@@ -400,7 +400,5 @@
 
         <attr name="streamUiMessageStartMargin" format="dimension|reference" />
         <attr name="streamUiMessageEndMargin" format="dimension|reference" />
-
-
     </declare-styleable>
 </resources>
