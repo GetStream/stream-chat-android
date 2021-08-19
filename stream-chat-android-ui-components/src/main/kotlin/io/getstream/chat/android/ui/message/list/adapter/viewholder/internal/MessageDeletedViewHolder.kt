@@ -22,17 +22,6 @@ internal class MessageDeletedViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
-    init {
-        binding.configMargins(style)
-    }
-
-    private fun StreamUiItemMessageDeletedBinding.configMargins(style: MessageListItemStyle) {
-        messageContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            marginStart = style.messageStartMargin
-            marginEnd = style.messageEndMargin
-        }
-    }
-
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 

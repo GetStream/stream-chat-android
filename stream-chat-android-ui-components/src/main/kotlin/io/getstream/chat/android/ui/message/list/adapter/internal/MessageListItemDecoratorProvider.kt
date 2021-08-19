@@ -11,6 +11,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.FootnoteDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.GapDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.MaxPossibleWidthDecorator
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.MessageContainerMarginDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.PinIndicatorDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReactionsDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReplyDecorator
@@ -28,6 +29,7 @@ internal class MessageListItemDecoratorProvider(
         TextDecorator(messageListViewStyle.itemStyle),
         GapDecorator(),
         MaxPossibleWidthDecorator(),
+        MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
         AvatarDecorator(showAvatarPredicate),
         FailedIndicatorDecorator(),
         ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },

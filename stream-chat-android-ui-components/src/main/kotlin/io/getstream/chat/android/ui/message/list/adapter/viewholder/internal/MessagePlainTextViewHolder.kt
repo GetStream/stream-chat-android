@@ -8,7 +8,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
@@ -19,7 +18,6 @@ internal class MessagePlainTextViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
-    private val style: MessageListItemStyle,
     internal val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.streamThemeInflater,
@@ -30,8 +28,6 @@ internal class MessagePlainTextViewHolder(
 
     init {
         binding.run {
-            configMargins(style)
-
             root.setOnClickListener {
                 listeners.messageClickListener.onMessageClick(data.message)
             }
@@ -53,18 +49,6 @@ internal class MessagePlainTextViewHolder(
                 longClickTarget = root,
                 onLinkClicked = listeners.linkClickListener::onLinkClick
             )
-        }
-    }
-
-    private fun StreamUiItemMessagePlainTextBinding.configMargins(style: MessageListItemStyle) {
-        messageContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            marginStart = style.messageStartMargin
-            marginEnd = style.messageEndMargin
-        }
-
-        footnote.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            marginStart = style.messageStartMargin
-            marginEnd = style.messageEndMargin
         }
     }
 
