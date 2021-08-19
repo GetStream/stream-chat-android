@@ -44,7 +44,7 @@ context.startActivity(ChannelListActivity.createIntent(context))
 
 This small snippet will produce a fully working solution, as shown in the image below.
 
-![The ChannelsScreen Component](../../assets/compose_default_channels_screen_component.png)
+![The Channel List Screen Component](../../assets/channel_list_screen.png)
 
 ## Handling Actions
 

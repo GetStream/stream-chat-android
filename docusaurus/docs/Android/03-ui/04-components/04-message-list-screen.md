@@ -43,7 +43,7 @@ context.startActivity(MessageListActivity.createIntent(context, cid = "channelTy
 
 This small snippet will produce a fully working solution, as shown in the image below.
 
-![The ChannelsScreen Component](../../assets/compose_default_channels_screen_component.png)
+![The Message List Screen Component](../../assets/message_list_screen.png)
 
 ## Handling Actions
 
