@@ -61,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+Bug related to anonymous users when app goes onPause and then comes back to onResume state. 
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -82,7 +82,7 @@
   - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
   - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
   - `MessageListActivity` - thin wrapper around `MessageListFragment`
-    
+
 ### ⚠️ Changed
 
 ### ❌ Removed
