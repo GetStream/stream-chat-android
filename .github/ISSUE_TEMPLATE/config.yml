@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question
+    url: https://github.com/GetStream/stream-chat-android/discussions
+    about: If you just have a question, please open a discussion instead of an issue.

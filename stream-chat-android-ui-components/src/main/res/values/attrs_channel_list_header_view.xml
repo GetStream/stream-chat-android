@@ -2,35 +2,50 @@
 <resources>
     <!--ChannelsHeaderView-->
     <declare-styleable name="ChannelListHeaderView">
+        <!-- Sets the visibility of user avatar -->
         <attr name="streamUiShowUserAvatar" format="boolean" />
 
+        <!-- Text size of the ChannelHeader's online state title -->
         <attr name="streamUiOnlineTitleTextSize" format="dimension|reference" />
+        <!-- A color of the ChannelHeader's online state title -->
         <attr name="streamUiOnlineTitleTextColor" format="color|reference" />
+        <!-- Font name of the ChannelHeader's online state title -->
         <attr name="streamUiOnlineTitleTextFont" format="reference" />
+        <!-- Font assets reference for the ChannelHeader's online state title -->
         <attr name="streamUiOnlineTitleFontAssets" format="string" />
-        <attr name="streamUiOnlineTitleTextStyle">
+        <!-- Text style of the ChannelHeader's online state title: "normal", "bold", and "italic". -->
+        <attr name="streamUiOnlineTitleTextStyle" >
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Text size of the ChannelHeader's offline state title -->
         <attr name="streamUiOfflineTitleTextSize" format="dimension|reference" />
+        <!-- A color of the ChannelHeader's offline state title -->
         <attr name="streamUiOfflineTitleTextColor" format="color|reference" />
+        <!-- Font name of the ChannelHeader's offline state title -->
         <attr name="streamUiOfflineTitleTextFont" format="reference" />
+        <!-- Font assets reference for the ChannelHeader's offline state title -->
         <attr name="streamUiOfflineTitleFontAssets" format="string" />
+        <!-- Text style of the ChannelHeader's offline state title: "normal", "bold", and "italic". -->
         <attr name="streamUiOfflineTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Sets the visibility of the offline state progressbar -->
         <attr name="streamUiShowOfflineProgressBar" format="boolean" />
+        <!-- A color of the offline state progressbar -->
         <attr name="streamUiOfflineProgressBarTint" format="color|reference" />
-
+        <!-- Sets the visibility of the action button -->
         <attr name="streamUiShowActionButton" format="boolean" />
+        <!-- Action button icon drawable -->
         <attr name="streamUiActionButtonIcon" format="reference" />
         <!-- {@deprecated Use streamUiActionButtonIcon instead.} -->
         <attr name="streamUiActionButtonTint" format="color|reference" />
+        <!-- Action button background tint -->
         <attr name="streamUiActionBackgroundTint" format="color|reference" />
     </declare-styleable>
 

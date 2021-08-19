@@ -2,73 +2,108 @@
 <resources>
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
+        <!-- Channel list items separator drawable -->
         <attr name="streamUiChannelsItemSeparatorDrawable" format="reference" />
 
         <!--Background layout-->
+        <!-- Channel list items separator drawable -->
         <attr name="streamUiChannelOptionsIcon" format="reference" />
+        <!-- Delete icon drawable -->
         <attr name="streamUiChannelDeleteIcon" format="reference" />
+        <!-- Delete icon drawable -->
         <attr name="streamUiChannelOptionsEnabled" format="boolean" />
+        <!-- Shows or hides channel delete option -->
         <attr name="streamUiChannelDeleteEnabled" format="boolean" />
+        <!-- Enables or disables channel item swiping -->
         <attr name="streamUiSwipeEnabled" format="boolean" />
         <attr name="streamUiChannelListBackgroundColor" format="color|reference" />
+        <!-- Background color of channel item layout -->
         <attr name="streamUiBackgroundLayoutColor" format="color|reference" />
 
         <!--Foreground layout-->
+        <!-- Text size of the channel title text -->
         <attr name="streamUiChannelTitleTextSize" format="dimension|reference" />
+        <!-- A color of the channel title text -->
         <attr name="streamUiChannelTitleTextColor" format="color|reference" />
+        <!-- Font name of the channel title text -->
         <attr name="streamUiChannelTitleTextFont" format="reference" />
+        <!-- Font assets reference for the channel title text -->
         <attr name="streamUiChannelTitleFontAssets" format="string" />
+        <!-- Text style of the channel title text: "normal", "bold", and "italic". -->
         <attr name="streamUiChannelTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Text size of the last message text -->
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
+        <!-- A color of the last message text -->
         <attr name="streamUiLastMessageTextColor" format="color|reference" />
+        <!-- Font name of the last message text -->
         <attr name="streamUiLastMessageTextFont" format="reference" />
+        <!-- Font assets reference for the last message text -->
         <attr name="streamUiLastMessageFontAssets" format="string" />
+        <!-- Text style of the last message text: "normal", "bold", and "italic". -->
         <attr name="streamUiLastMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Text size of the date text -->
         <attr name="streamUiLastMessageDateTextSize" format="dimension|reference" />
+        <!-- A color of the date text -->
         <attr name="streamUiLastMessageDateTextColor" format="color|reference" />
+        <!-- Font name of the date text -->
         <attr name="streamUiLastMessageDateTextFont" format="reference" />
+        <!-- Font assets reference for the date text -->
         <attr name="streamUiLastMessageDateFontAssets" format="string" />
+        <!-- Text style of the date text: "normal", "bold", and "italic". -->
         <attr name="streamUiLastMessageDateTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Drawable of the message sent state indicator -->
         <attr name="streamUiIndicatorSentIcon" format="reference" />
+        <!-- Drawable of the message read state indicator -->
         <attr name="streamUiIndicatorReadIcon" format="reference" />
+        <!-- Drawable of the message pending sync indicator  -->
         <attr name="streamUiIndicatorPendingSyncIcon" format="reference" />
+        <!-- Foreground color of channel list item  -->
         <attr name="streamUiForegroundLayoutColor" format="color|reference" />
 
+        <!-- Text size of the unread message count text -->
         <attr name="streamUiUnreadMessageCounterTextSize" format="dimension|reference" />
+        <!-- A color of the unread message count text -->
         <attr name="streamUiUnreadMessageCounterTextColor" format="color|reference" />
+        <!-- Font name of the unread message count text -->
         <attr name="streamUiUnreadMessageCounterTextFont" format="reference" />
+        <!-- Font assets reference for the unread message count text -->
         <attr name="streamUiUnreadMessageCounterFontAssets" format="string" />
+        <!-- Text style of the unread message count text: "normal", "bold", and "italic". -->
         <attr name="streamUiUnreadMessageCounterTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
+        <!-- Background color of the unread message counter -->
         <attr name="streamUiUnreadMessageCounterBackgroundColor" format="color|reference" />
 
+        <!-- Drawable of the muted channel icon -->
         <attr name="streamUiMutedChannelIcon" format="reference" />
         <!-- {@deprecated Use custom icon instead.} -->
         <attr name="streamUiMutedChannelIconTint" format="color|reference" />
 
+        <!-- Reference to layout resource of the channel list "loading" view -->
         <attr name="streamUiLoadingView" format="reference" />
+        <!-- Reference to layout resource of the channel list empty state view -->
         <attr name="streamUiEmptyStateView" format="reference" />
+        <!-- Reference to layout resource of the channel list "loading more" view -->
         <attr name="streamUiLoadingMoreView" format="reference" />
-
+        <!-- A color of the "edge overscroll" effect -->
         <attr name="streamUiEdgeEffectColor" format="color|reference" />
 
         <attr name="streamUiChannelActionsDialogStyle" />

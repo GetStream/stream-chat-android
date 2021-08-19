@@ -1,3 +1,6 @@
+plugins {
+	id("com.github.burrunan.s3-build-cache") version "1.2"
+}
 include (
 		':stream-chat-android',
 		':stream-chat-android-sample',
@@ -18,5 +21,31 @@ buildCache {
 	local {
 		enabled = true
 		removeUnusedEntriesAfterDays = 7
+	}
+	Properties localProperties = new Properties()
+	File file = new File("local.properties")
+	if (file.exists()) {
+		file.newDataInputStream().withCloseable { localProperties.load(it) }
+	}
+	String streamAWSRegion = localProperties.get("buildCache.AWSRegion") ?: System.getenv("BUILD_CACHE_AWS_REGION") ?: ""
+	String streamAWSBucket = localProperties.get("buildCache.AWSBucket") ?: System.getenv("BUILD_CACHE_AWS_BUCKET") ?: ""
+	String streamAWSAccessKeyId = localProperties.get("buildCache.AWSAccessKeyId") ?: System.getenv("BUILD_CACHE_AWS_ACCESS_KEY_ID") ?: ""
+	String streamAWSSecretKey = localProperties.get("buildCache.AWSSecretKey") ?: System.getenv("BUILD_CACHE_AWS_SECRET_KEY") ?: ""
+	Boolean streamBuildCacheDisabled = Boolean.parseBoolean(localProperties.get("buildCache.disabled"))
+	if (!streamBuildCacheDisabled &&
+			!streamAWSRegion.isBlank() &&
+			!streamAWSBucket.isBlank() &&
+			!streamAWSAccessKeyId.isBlank() &&
+			!streamAWSSecretKey.isBlank()
+	) {
+		remote(com.github.burrunan.s3cache.AwsS3BuildCache) {
+			region = streamAWSRegion
+			bucket = streamAWSBucket
+			prefix = 'cache/'
+			awsAccessKeyId = streamAWSAccessKeyId
+			awsSecretKey = streamAWSSecretKey
+			push = System.getenv().containsKey("CI")
+
+		}
 	}
 }

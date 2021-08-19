@@ -3,12 +3,17 @@
     <declare-styleable name="AttachmentOptionsView">
         <!-- {@deprecated Use custom icons instead.} -->
         <attr name="streamUiIconsDefaultTint" format="color" />
+        <!-- Reply icon drawable -->
         <attr name="streamUiReplyIcon" format="reference" />
+        <!-- "Show in chat" icon drawable -->
         <attr name="streamUiShowInChatIcon" format="reference" />
+        <!-- "Save" icon drawable -->
         <attr name="streamUiSaveImageIcon" format="reference" />
+        <!-- "Delete" icon drawable -->
         <attr name="streamUiDeleteIcon" format="reference" />
         <!-- {@deprecated Use streamUiDeleteIcon instead.} -->
         <attr name="streamUiDeleteIconTint" format="reference" />
+        <!-- "Delete" text tint -->
         <attr name="streamUiDeleteTextTint" format="reference" />
     </declare-styleable>
 </resources>

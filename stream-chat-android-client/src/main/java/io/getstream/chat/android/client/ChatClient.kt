@@ -35,8 +35,11 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -84,7 +87,6 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executor
-import kotlin.jvm.Throws
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -756,7 +758,7 @@ public class ChatClient internal constructor(
         limit: Int,
         type: String,
     ): Call<List<Attachment>> =
-        getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
+        getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
             messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
@@ -770,6 +772,10 @@ public class ChatClient internal constructor(
      * @param limit max limit messages to be fetched
      * @param type The desired type attachment
      */
+    @Deprecated(
+        message = "Use getMessagesWithAttachments function with types list instead",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun getMessagesWithAttachments(
         channelType: String,
@@ -780,6 +786,29 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+    }
+
+    /**
+     * Returns a [Call] with messages that contain at least one desired type attachment but
+     * not necessarily all of them will have a specified type
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param offset the messages offset
+     * @param limit max limit messages to be fetched
+     * @param types desired attachment's types list
+     */
+    @CheckResult
+    public fun getMessagesWithAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        types: List<String>,
+    ): Call<List<Message>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", types)
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 
@@ -1082,7 +1111,7 @@ public class ChatClient internal constructor(
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
 
-    public fun getVersion(): String = VERSION_PREFIX + BuildConfig.STREAM_CHAT_VERSION
+    public fun getVersion(): String = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
 
     @CheckResult
     public fun acceptInvite(
@@ -1169,21 +1198,88 @@ public class ChatClient internal constructor(
         members
     )
 
+    /**
+     * Mutes a channel for the current user. Messages added to the channel will not trigger
+     * push notifications, and will not change the unread count for the users that muted it.
+     * By default, mutes stay in place indefinitely until the user removes it. However, you
+     * can optionally set an expiration time. Triggers `notification.channel_mutes_updated`
+     * event.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param expiration the duration of mute in **millis**
+     *
+     * @return executable async [Call] responsible for muting a channel
+     *
+     * @see [NotificationChannelMutesUpdatedEvent]
+     */
+    @JvmOverloads
     @CheckResult
-    public fun muteUser(userId: String): Call<Mute> = api.muteUser(userId)
-
-    @CheckResult
-    public fun muteChannel(channelType: String, channelId: String): Call<Unit> {
-        return api.muteChannel(channelType, channelId)
+    public fun muteChannel(
+        channelType: String,
+        channelId: String,
+        expiration: Int? = null,
+    ): Call<Unit> {
+        return api.muteChannel(
+            channelType = channelType,
+            channelId = channelId,
+            expiration = expiration
+        )
     }
 
+    /**
+     * Unmutes a channel for the current user. Triggers `notification.channel_mutes_updated`
+     * event.
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     *
+     * @return executable async [Call] responsible for unmuting a channel
+     *
+     * @see [NotificationChannelMutesUpdatedEvent]
+     */
     @CheckResult
-    public fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+    public fun unmuteChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> {
         return api.unmuteChannel(channelType, channelId)
     }
 
+    /**
+     * Mutes a user. Messages from muted users will not trigger push notifications. By default,
+     * mutes stay in place indefinitely until the user removes it. However, you can optionally
+     * set a mute timeout. Triggers `notification.mutes_updated` event.
+     *
+     * @param userId the user id to mute
+     * @param timeout the timeout in **minutes** until the mute is expired
+     *
+     * @return executable async [Call] responsible for muting a user
+     *
+     * @see [NotificationMutesUpdatedEvent]
+     */
+    @JvmOverloads
     @CheckResult
-    public fun unmuteUser(userId: String): Call<Unit> = api.unmuteUser(userId)
+    public fun muteUser(
+        userId: String,
+        timeout: Int? = null,
+    ): Call<Mute> {
+        return api.muteUser(userId, timeout)
+    }
+
+    /**
+     * Unmutes a previously muted user. Triggers `notification.mutes_updated` event.
+     *
+     * @param userId the user id to unmute
+     *
+     * @return executable async [Call] responsible for unmuting a user
+     *
+     * @see [NotificationMutesUpdatedEvent]
+     */
+    @CheckResult
+    public fun unmuteUser(userId: String): Call<Unit> {
+        return api.unmuteUser(userId)
+    }
 
     @CheckResult
     public fun unmuteCurrentUser(): Call<Unit> = api.unmuteCurrentUser()
@@ -1576,7 +1672,10 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
-        private const val VERSION_PREFIX = "stream-chat-android-"
+        @InternalStreamChatApi
+        @JvmStatic
+        public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+
         private var instance: ChatClient? = null
 
         @JvmField
