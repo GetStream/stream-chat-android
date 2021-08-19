@@ -657,7 +657,7 @@ channelClient.unmute().enqueue { result ->
 }
 ```
 
-### Checking if user muted a channel
+### Checking If User Muted a Channel
 
 There's a utility method to check if a user muted a `Channel`. 
 
