@@ -602,7 +602,7 @@ public class MessageListView : ConstraintLayout {
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
-            showAvatarPredicate = this.showAvatarPredicate
+            showAvatarPredicate = this.showAvatarPredicate,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
