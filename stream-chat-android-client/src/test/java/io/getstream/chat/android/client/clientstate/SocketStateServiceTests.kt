@@ -174,6 +174,15 @@ internal class SocketStateServiceTests {
         sut.state shouldBe SocketState.Idle
     }
 
+    @Test
+    fun `Given disconnected state When socket tries to connect again Should be able to`() {
+        val sut = Fixture().givenDisconnectedState().please()
+
+        sut.onConnected(randomString())
+
+        sut.state shouldBeInstanceOf SocketState.Connected::class.java
+    }
+
     private class Fixture {
         private val clientStateService = SocketStateService()
 

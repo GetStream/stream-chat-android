@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.clientstate
 
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.anyOrNull
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.api.Test
@@ -111,6 +112,25 @@ internal class UserStateServiceTests {
         Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
     }
 
+    @Test
+    fun `Given anonymous user state When user is updated state should be anonymous pending`() {
+        val sut = Fixture().givenAnonymousUserState().please()
+
+        sut.onSetAnonymous()
+
+        Truth.assertThat(sut.state).isEqualTo(UserState.Anonymous.Pending)
+    }
+
+    @Test
+    fun `Given anonymous user state User should be able to be updated`() {
+        val user = Mother.randomUser()
+        val sut = Fixture().givenAnonymousUserState(user).please()
+
+        sut.onUserUpdated(user)
+
+        Truth.assertThat(sut.state).isInstanceOf(UserState.Anonymous.AnonymousUserSet::class.java)
+    }
+
     private class Fixture {
         private val userStateService = UserStateService()
 
@@ -118,9 +138,9 @@ internal class UserStateServiceTests {
 
         fun givenAnonymousPendingState() = apply { userStateService.onSetAnonymous() }
 
-        fun givenAnonymousUserState() = apply {
+        fun givenAnonymousUserState(user: User = Mother.randomUser()) = apply {
             givenAnonymousPendingState()
-            userStateService.onUserUpdated(Mother.randomUser())
+            userStateService.onUserUpdated(user)
         }
 
         fun please() = userStateService
