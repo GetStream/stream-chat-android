@@ -92,7 +92,7 @@ class Screens {
             override fun createChannelListFragment(): ChannelListFragment {
                 return ChannelListFragment.newInstance {
                     setFragment(CustomChannelListFragment())
-                    setTheme(R.style.StreamUiTheme)
+                    customTheme(R.style.StreamUiTheme)
                     showSearch(true)
                     showHeader(true)
                     headerTitle("Title")
@@ -129,12 +129,12 @@ class Screens {
             }
 
             override fun getFilter(): FilterObject? {
-                // Return custom filter
+                // Provide custom filter
                 return null
             }
 
             override fun getSort(): QuerySort<Channel> {
-                // Return custom sort
+                // Provide custom sort
                 return ChannelListViewModel.DEFAULT_SORT
             }
         }
@@ -192,7 +192,7 @@ class Screens {
             override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
                 return MessageListFragment.newInstance(cid) {
                     setFragment(CustomMessageListFragment())
-                    setTheme(R.style.StreamUiTheme)
+                    customTheme(R.style.StreamUiTheme)
                     showHeader(true)
                     messageId(messageId)
                 }
@@ -224,4 +224,3 @@ class Screens {
         }
     }
 }
-

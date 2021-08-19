@@ -5,13 +5,15 @@ To set up a self-contained chat screen that shows a list of messages and give us
 * `MessageListFragment`: A Fragment that represents a self-contained chat screen.
 * `MessageListActivity`: An Activity that is just a thin wrapper around `MessageListFragment`.
 
-The `MessageListFragment` contains these three components:
+The `MessageListFragment` contains these three inner components:
 
 * [`MessageListHeaderView`](06-message-list-header.md): Displays a navigation icon, the name of the channel or thread and a channel avatar.
 * [`MessageListView`](05-message-list.md): Shows a list of paginated messages, with threads, replies, reactions and deleted messages.
 * [`MessageInputView`](07-message-input.md): Handles the message input, as well as attachments and message actions like editing and replying.
 
-**Note**: Fragments and Activities representing self-contained screens are easy to use. They allow you to explore the SDK's features in a breeze, however, they offer limited customization.
+:::note
+Fragments and Activities representing self-contained screens are easy to use. They allow you to explore the SDK's features in a breeze, however, they offer limited customization.
+:::
 
 ## Usage
 
@@ -66,3 +68,51 @@ Currently, there is one click listener you can use with the `MessageListFragment
 * `BackPressListener`: Click listener for the navigation button in the header. Finishes Activity by default.
 
 ## Customization
+
+Message list screen component offers limited customization. The `MessageListFragment` exposes a builder with the following methods:
+
+* `setFragment`: Sets custom message list Fragment. The Fragment must be a subclass of `MessageListFragment`.
+* `customTheme`: Custom theme for the screen.
+* `showHeader`: Whether the header is shown or hidden.
+* `messageId`: The ID of the message to highlight.
+
+Other than that, you can use inheritance for further customization as shown in the example below:
+
+```kotlin
+class CustomMessageListActivity : MessageListActivity() {
+
+    override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
+        return MessageListFragment.newInstance(cid) {
+            setFragment(CustomMessageListFragment())
+            customTheme(R.style.StreamUiTheme)
+            showHeader(true)
+            messageId(messageId)
+        }
+    }
+}
+
+class CustomMessageListFragment : MessageListFragment() {
+
+    override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
+        super.setupMessageListHeader(messageListHeaderView)
+        // Customize message list header view. For example, set a custom back button click listener:
+        messageListHeaderView.setBackButtonClickListener {
+            // Handle back press
+        }
+    }
+
+    override fun setupMessageList(messageListView: MessageListView) {
+        super.setupMessageList(messageListView)
+        // Customize message list view
+    }
+
+    override fun setupMessageInput(messageInputView: MessageInputView) {
+        super.setupMessageInput(messageInputView)
+        // Customize message input view
+    }
+}
+```
+
+:::note
+Fragments and Activities representing self-contained screens can be styled using the options described in the [theming](../02-theming.md) guide.
+:::
