@@ -48,11 +48,11 @@ internal class AvatarDecorator(
 
     private fun getAvatarView(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean): AvatarView {
         return if (isMine) {
-            myAvatar.isVisible = false
-            theirAvatar
-        } else {
             theirAvatar.isVisible = false
             myAvatar
+        } else {
+            myAvatar.isVisible = false
+            theirAvatar
         }
     }
 }
