@@ -43,14 +43,17 @@ public data class Attachment(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
+    @Transient
     var upload: File? = null,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
+    @Transient
     var uploadState: UploadState? = null,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
+    @Transient
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
 ) : CustomObject {

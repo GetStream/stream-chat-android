@@ -19,7 +19,6 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
-import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
@@ -83,7 +82,7 @@ public class ChannelListViewModel(
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
+                        stateMerger.value = state.copy(channels = state.channels)
                     } else {
                         stateMerger.value = state?.copy()
                     }
@@ -114,10 +113,7 @@ public class ChannelListViewModel(
             is QueryChannelsController.ChannelsState.Result ->
                 State(
                     isLoading = false,
-                    channels = parseMutedChannels(
-                        channelState.channels,
-                        currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
-                    ),
+                    channels = channelState.channels
                 )
         }
     }
@@ -159,17 +155,6 @@ public class ChannelListViewModel(
     }
 
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
-
-    private fun parseMutedChannels(
-        channelsMap: List<Channel>,
-        channelMutesIds: List<String>?,
-    ): List<Channel> {
-        return channelsMap.map { channel ->
-            channel.copy().apply {
-                isMuted = channelMutesIds?.contains(channel.id) ?: false
-            }
-        }
-    }
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
