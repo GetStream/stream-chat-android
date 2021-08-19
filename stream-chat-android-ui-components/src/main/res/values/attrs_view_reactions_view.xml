@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ViewReactionsView">
+        <!-- Color of the reactions bubble for the message sent by the current user -->
         <attr name="streamUiReactionsBubbleColorMine" />
+        <!-- Color of the reactions bubble for the message sent by the other user -->
         <attr name="streamUiReactionsBubbleColorTheirs" />
+        <!-- Border color of the reactions bubble for the message sent by the current user -->
         <attr name="streamUiReactionsBubbleBorderColorMine" format="color|reference" />
     </declare-styleable>
 </resources>
