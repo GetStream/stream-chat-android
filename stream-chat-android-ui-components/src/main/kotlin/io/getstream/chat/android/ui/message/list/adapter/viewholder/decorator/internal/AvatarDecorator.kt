@@ -17,14 +17,14 @@ internal class AvatarDecorator(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
     override fun decorateGiphyMessage(
@@ -33,7 +33,7 @@ internal class AvatarDecorator(
     ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        setupAvatar(getAvatarView(viewHolder, data.isMine), data)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
@@ -46,33 +46,13 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(holder: TextAndAttachmentsViewHolder, isMine: Boolean): AvatarView {
+    private fun getAvatarView(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean): AvatarView {
         return if (isMine) {
-            holder.binding.avatarView.isVisible = false
-            holder.binding.avatarMineView
+            myAvatar.isVisible = false
+            theirAvatar
         } else {
-            holder.binding.avatarMineView.isVisible = false
-            holder.binding.avatarView
-        }
-    }
-
-    private fun getAvatarView(holder: MessagePlainTextViewHolder, isMine: Boolean): AvatarView {
-        return if (isMine) {
-            holder.binding.avatarView.isVisible = false
-            holder.binding.avatarMineView
-        } else {
-            holder.binding.avatarMineView.isVisible = false
-            holder.binding.avatarView
-        }
-    }
-
-    private fun getAvatarView(holder: MessageDeletedViewHolder, isMine: Boolean): AvatarView {
-        return if (isMine) {
-            holder.binding.avatarView.isVisible = false
-            holder.binding.avatarMineView
-        } else {
-            holder.binding.avatarMineView.isVisible = false
-            holder.binding.avatarView
+            theirAvatar.isVisible = false
+            myAvatar
         }
     }
 }
