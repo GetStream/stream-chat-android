@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamConfiguration
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -61,7 +62,7 @@ public fun MessagesScreen(
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
 ) {
-    val factory = buildViewModelFactory(LocalContext.current, channelId, messageLimit)
+    val factory = buildViewModelFactory(LocalContext.current, channelId, ChatTheme.configuration, messageLimit)
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = factory)
@@ -193,6 +194,7 @@ public fun MessagesScreen(
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,
+    streamConfiguration: StreamConfiguration,
     messageLimit: Int,
 ): MessagesViewModelFactory {
     val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -203,6 +205,7 @@ private fun buildViewModelFactory(
         ChatClient.instance(),
         ChatDomain.instance(),
         channelId,
+        streamConfiguration,
         messageLimit
     )
 }
