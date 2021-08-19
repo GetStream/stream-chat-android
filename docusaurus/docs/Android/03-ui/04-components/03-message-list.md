@@ -442,3 +442,6 @@ messageListView.setShowAvatarPredicate(
     }
 )
 ```
+:::note
+To avoid overlap between the avatar and the messages of the chat, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the avatar of the messages.
+:::
