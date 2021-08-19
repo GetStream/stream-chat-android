@@ -1,8 +1,10 @@
 package io.getstream.chat.android.client.parser2.adapters
 
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.utils.threadLocal
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.text.SimpleDateFormat
@@ -30,6 +32,7 @@ public class DateAdapter : JsonAdapter<Date>() {
         }
     }
 
+    @ToJson
     override fun toJson(writer: JsonWriter, value: Date?) {
         if (value == null) {
             writer.nullValue()
@@ -39,6 +42,7 @@ public class DateAdapter : JsonAdapter<Date>() {
         }
     }
 
+    @FromJson
     override fun fromJson(reader: JsonReader): Date? {
         val nextValue = reader.peek()
         if (nextValue == JsonReader.Token.NULL) {

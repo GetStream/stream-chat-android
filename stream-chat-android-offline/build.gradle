@@ -85,8 +85,7 @@ dependencies {
 
     // Tests
     testImplementation project(":stream-chat-android-test")
-
-    testImplementation Dependencies.gson // TODO remove when possible
+    testImplementation Dependencies.moshiKotlin
 
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
