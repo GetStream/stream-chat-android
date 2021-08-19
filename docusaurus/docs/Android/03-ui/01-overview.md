@@ -14,14 +14,16 @@ This library builds on top of the offline library, and provides [ViewModels](#vi
 
 See the individual pages of the components to learn more about them:
 
-- [Channel List](04-components/01-channel-list.md)
-- [Channel List Header](04-components/02-channel-list-header.md)
-- [Message List](04-components/03-message-list.md)
-- [Message List Header](04-components/04-message-list-header.md)
-- [Message Input](04-components/05-message-input.md)
-- [Mention List View](04-components/06-mention-list-view.md)
-- [Search View](04-components/07-search-view.md)
-- [Attachment Gallery](04-components/08-attachment-gallery.md)
+- [Channel List Screen](04-components/01-channel-list-screen.md)
+- [Channel List](04-components/02-channel-list.md)
+- [Channel List Header](04-components/03-channel-list-header.md)
+- [Message List Screen](04-components/04-message-list-screen.md)
+- [Message List](04-components/05-message-list.md)
+- [Message List Header](04-components/06-message-list-header.md)
+- [Message Input](04-components/07-message-input.md)
+- [Mention List View](04-components/08-mention-list-view.md)
+- [Search View](04-components/09-search-view.md)
+- [Attachment Gallery](04-components/10-attachment-gallery.md)
 
 ## Requirements
 

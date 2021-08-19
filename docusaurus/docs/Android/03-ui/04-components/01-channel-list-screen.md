@@ -5,12 +5,12 @@ The easiest way to set up a screen that shows the active user's channels and giv
 * `ChannelListFragment`: A Fragment that represents a self-contained channel list screen.
 * `ChannelListActivity`: An Activity that is just a thin wrapper around `ChannelListFragment`.
 
-`ChannelListFragment` contains and initializes four components internally:
+The `ChannelListFragment` contains these four components:
 
-* [`ChannelListHeaderView`](./02-channel-list-header.md): Displays information about the current user and the connection state.
-* [`ChannelListView`](./01-channel-list.md): Displays a list of channel items in a paginated list.
-* [`SearchInputView`](./07-search-view.md): An input field to search for messages that contain specific text.
-* [`SearchResultListView`](./07-search-view.md): Displays a list of search results.
+* [`ChannelListHeaderView`](03-channel-list-header.md): Displays information about the current user and the connection state.
+* [`ChannelListView`](02-channel-list.md): Displays a list of channel items in a paginated list.
+* [`SearchInputView`](09-search-view.md): An input field to search for messages that contain specific text.
+* [`SearchResultListView`](09-search-view.md): Displays a list of search results.
 
 **Note**: Fragments and Activities representing self-contained screens are easy to use. They allow you to explore the SDK's features in a breeze, however, they offer limited customization.
 

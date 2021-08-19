@@ -5,11 +5,11 @@ To set up a self-contained chat screen that shows a list of messages and give us
 * `MessageListFragment`: A Fragment that represents a self-contained chat screen.
 * `MessageListActivity`: An Activity that is just a thin wrapper around `MessageListFragment`.
 
-`MessageListFragment` contains and initializes three components internally:
+The `MessageListFragment` contains these three components:
 
-* [`MessageListHeaderView`](./04-message-list-header.md): Displays a navigation icon, the name of the channel or thread and a channel avatar.
-* [`MessageListView`](./03-message-list.md): Shows a list of paginated messages, with threads, replies, reactions and deleted messages.
-* [`MessageInputView`](./05-message-input.md): Handles the message input, as well as attachments and message actions like editing and replying.
+* [`MessageListHeaderView`](06-message-list-header.md): Displays a navigation icon, the name of the channel or thread and a channel avatar.
+* [`MessageListView`](05-message-list.md): Shows a list of paginated messages, with threads, replies, reactions and deleted messages.
+* [`MessageInputView`](07-message-input.md): Handles the message input, as well as attachments and message actions like editing and replying.
 
 **Note**: Fragments and Activities representing self-contained screens are easy to use. They allow you to explore the SDK's features in a breeze, however, they offer limited customization.
 
