@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
@@ -36,17 +35,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
  * */
-public class ImageAttachmentFactory : AttachmentFactory() {
-
-    override fun predicate(message: Message): Boolean {
-        return message.attachments.all { it.type == "image" }
-    }
-
-    @Composable
-    public override fun Content(attachmentState: AttachmentState) {
-        ImageAttachmentContent(attachmentState)
-    }
-}
+public class ImageAttachmentFactory : AttachmentFactory(
+    predicate = { attachments -> attachments.all { it.type == "image" } },
+    content = @Composable { ImageAttachmentContent(it) }
+)
 
 /**
  * Builds an image attachment message, which can be composed of several images.
@@ -74,7 +66,7 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
-        val attachments = message.attachments
+        val attachments = message.attachments.filter { it.ogUrl == null && it.titleLink == null }
         val imageCount = attachments.size
 
         if (imageCount == 1) {

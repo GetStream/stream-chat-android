@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.list.Copy
@@ -58,6 +57,7 @@ import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
+import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
@@ -200,8 +200,6 @@ internal fun ReactionOptionItem(
  * */
 @Composable
 private fun SelectedMessage(message: Message) {
-    val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
-
     Row(
         Modifier.widthIn(max = 300.dp)
     ) {
@@ -222,13 +220,7 @@ private fun SelectedMessage(message: Message) {
                     DeletedMessageContent()
                 } else {
                     Column {
-                        attachmentFactory?.Content(
-                            AttachmentState(
-                                modifier = Modifier.padding(4.dp),
-                                message = MessageItem(message, None),
-                                onLongItemClick = {}
-                            )
-                        )
+                        MessageAttachmentsContent(messageItem = MessageItem(message, None), onLongItemClick = {})
 
                         if (message.text.isNotEmpty()) {
                             DefaultMessageContent(message = message)

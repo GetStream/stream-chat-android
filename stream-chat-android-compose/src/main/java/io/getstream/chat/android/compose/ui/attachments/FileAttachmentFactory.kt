@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.components.FileAttachmentImage
@@ -35,17 +34,10 @@ import io.getstream.chat.android.offline.ChatDomain
  * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
  * */
-public class FileAttachmentFactory : AttachmentFactory() {
-
-    override fun predicate(message: Message): Boolean {
-        return message.attachments.any { it.type != "image" }
-    }
-
-    @Composable
-    public override fun Content(attachmentState: AttachmentState) {
-        FileAttachmentContent(attachmentState)
-    }
-}
+public class FileAttachmentFactory : AttachmentFactory(
+    predicate = { attachments -> attachments.isNotEmpty() },
+    content = @Composable { FileAttachmentContent(it) }
+)
 
 /**
  * Builds a file attachment message.

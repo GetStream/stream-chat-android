@@ -48,13 +48,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
@@ -88,7 +88,6 @@ public fun DefaultMessageContainer(
 ) {
     val (message, position, parentMessageId) = messageItem
 
-    val attachmentFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
     val ownsMessage = messageItem.isMine
@@ -167,13 +166,7 @@ public fun DefaultMessageContainer(
                             DeletedMessageContent()
                         } else {
                             Column {
-                                attachmentFactory?.Content(
-                                    AttachmentState(
-                                        modifier = Modifier.padding(4.dp),
-                                        message = messageItem,
-                                        onLongItemClick = onLongItemClick
-                                    )
-                                )
+                                MessageAttachmentsContent(messageItem = messageItem, onLongItemClick = onLongItemClick)
 
                                 if (message.text.isNotEmpty()) {
                                     DefaultMessageContent(message = message)
@@ -453,7 +446,6 @@ internal fun QuotedMessage(
     modifier: Modifier = Modifier,
 ) {
     val painter = rememberImagePainter(data = message.user.image)
-    val factory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message) }
 
     Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
         Avatar(
@@ -468,13 +460,7 @@ internal fun QuotedMessage(
             shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {
-                    factory?.Content(
-                        AttachmentState(
-                            modifier = Modifier.padding(4.dp),
-                            message = MessageItem(message, None),
-                            onLongItemClick = { }
-                        )
-                    )
+                    MessageAttachmentsContent(messageItem = MessageItem(message, None), onLongItemClick = {})
 
                     if (message.text.isNotEmpty()) {
                         MessageText(message = message)

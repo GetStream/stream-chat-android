@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -31,17 +30,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
  * */
-public class LinkAttachmentFactory : AttachmentFactory() {
-
-    override fun predicate(message: Message): Boolean {
-        return message.attachments.any { it.titleLink != null || it.ogUrl != null }
-    }
-
-    @Composable
-    public override fun Content(attachmentState: AttachmentState) {
-        LinkAttachmentContent(attachmentState)
-    }
-}
+public class LinkAttachmentFactory : AttachmentFactory(
+    predicate = { links -> links.any { it.titleLink != null || it.ogUrl != null } },
+    content = @Composable { LinkAttachmentContent(it) }
+)
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link
@@ -108,7 +100,7 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
 
         if (title != null) {
             Text(
-                modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
                 text = title,
                 style = ChatTheme.typography.bodyBold,
                 color = ChatTheme.colors.textHighEmphasis,
@@ -120,8 +112,8 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
         if (description != null) {
             Text(
                 modifier = Modifier.padding(
-                    start = 4.dp,
-                    end = 4.dp,
+                    start = 8.dp,
+                    end = 8.dp,
                     bottom = 4.dp,
                     top = 2.dp
                 ),
