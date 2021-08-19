@@ -30,8 +30,6 @@ internal class BackgroundDecorator(private val style: MessageListItemStyle) : Ba
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
-
         val shapeAppearanceModel = ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .apply {
@@ -40,7 +38,6 @@ internal class BackgroundDecorator(private val style: MessageListItemStyle) : Ba
                     data.isBottomPosition() && data.isTheirs -> setBottomLeftCornerSize(0f)
                 }
             }
-            .setBottomRightCornerSize(bottomRightCorner)
             .build()
         viewHolder.binding.deleteLabel.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.messageDeletedBackground)
