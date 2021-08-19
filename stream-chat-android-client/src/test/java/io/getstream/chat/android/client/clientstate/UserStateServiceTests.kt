@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.clientstate
 
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.anyOrNull
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.api.Test
