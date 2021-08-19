@@ -259,7 +259,7 @@ public class ChatClient internal constructor(
         }
         val userState = userStateService.state
         when {
-            userState is UserState.UserSet && userState.user.id == user.id && socketStateService.state == SocketState.Idle -> {
+            userState is UserState.UserSet && userState.user.id == user.id && (socketStateService.state == SocketState.Idle || socketStateService.state == SocketState.Disconnected) -> {
                 userStateService.onUserUpdated(user)
                 tokenManager.setTokenProvider(tokenProvider)
                 connectionListener = listener
