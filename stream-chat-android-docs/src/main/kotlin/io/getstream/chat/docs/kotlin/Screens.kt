@@ -80,147 +80,148 @@ class Screens {
                 // Handle search result click
             }
         }
+    }
 
-        class ChannelListScreenCustomization {
+    class ChannelListScreenCustomization {
 
-            /**
-             * Using inheritance to customize [ChannelListActivity]
-             */
-            class CustomChannelListActivity : ChannelListActivity() {
+        /**
+         * Using inheritance to customize [ChannelListActivity]
+         */
+        class CustomChannelListActivity : ChannelListActivity() {
 
-                override fun createChannelListFragment(): ChannelListFragment {
-                    return ChannelListFragment.newInstance {
-                        setFragment(CustomChannelListFragment())
-                        setTheme(R.style.StreamUiTheme)
-                        showSearch(true)
-                        showHeader(true)
-                        headerTitle("Title")
-                    }
-                }
-            }
-
-            /**
-             * Using inheritance to customize [ChannelListFragment]
-             */
-            class CustomChannelListFragment : ChannelListFragment() {
-
-                override fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
-                    super.setupChannelListHeader(channelListHeaderView)
-                    // Customize channel list header view. For example, set a custom avatar click listener:
-                    channelListHeaderView.setOnUserAvatarClickListener {
-                        // Handle avatar click
-                    }
-                }
-
-                override fun setupChannelList(channelListView: ChannelListView) {
-                    super.setupChannelList(channelListView)
-                    // Customize channel list view
-                }
-
-                override fun setupSearchInput(searchInputView: SearchInputView) {
-                    super.setupSearchInput(searchInputView)
-                    // Customize search input field
-                }
-
-                override fun setupSearchResultList(searchResultListView: SearchResultListView) {
-                    super.setupSearchResultList(searchResultListView)
-                    // Customize search result list
-                }
-
-                override fun getFilter(): FilterObject? {
-                    // Return custom filter
-                    return null
-                }
-
-                override fun getSort(): QuerySort<Channel> {
-                    // Return custom sort
-                    return ChannelListViewModel.DEFAULT_SORT
+            override fun createChannelListFragment(): ChannelListFragment {
+                return ChannelListFragment.newInstance {
+                    setFragment(CustomChannelListFragment())
+                    setTheme(R.style.StreamUiTheme)
+                    showSearch(true)
+                    showHeader(true)
+                    headerTitle("Title")
                 }
             }
         }
 
-        class MessageListScreen {
+        /**
+         * Using inheritance to customize [ChannelListFragment]
+         */
+        class CustomChannelListFragment : ChannelListFragment() {
 
-            /**
-             * Adding [MessageListFragment] to your Activity
-             */
-            class MyMessageListActivity : AppCompatActivity() {
-
-                override fun onCreate(savedInstanceState: Bundle?) {
-                    super.onCreate(savedInstanceState)
-                    setContentView(R.layout.stream_ui_fragment_container)
-
-                    if (savedInstanceState == null) {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.container, MessageListFragment.newInstance(cid = "channelType:channelId") {})
-                            .commit()
-                    }
+            override fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
+                super.setupChannelListHeader(channelListHeaderView)
+                // Customize channel list header view. For example, set a custom avatar click listener:
+                channelListHeaderView.setOnUserAvatarClickListener {
+                    // Handle avatar click
                 }
             }
 
-            /**
-             * Starting [MessageListActivity] from the SDK
-             */
-            fun messageListActivity(context: Context, cid: String, messageId: String?) {
-                context.startActivity(MessageListActivity.createIntent(context, cid, messageId))
+            override fun setupChannelList(channelListView: ChannelListView) {
+                super.setupChannelList(channelListView)
+                // Customize channel list view
             }
 
-            /**
-             * Implementing click listeners of [MessageListFragment]
-             */
-            class MyMessageListActivityWithListeners : AppCompatActivity(), MessageListFragment.BackPressListener {
+            override fun setupSearchInput(searchInputView: SearchInputView) {
+                super.setupSearchInput(searchInputView)
+                // Customize search input field
+            }
 
-                override fun onCreate(savedInstanceState: Bundle?) {
-                    super.onCreate(savedInstanceState)
-                    // Add MessageListFragment to the layout
+            override fun setupSearchResultList(searchResultListView: SearchResultListView) {
+                super.setupSearchResultList(searchResultListView)
+                // Customize search result list
+            }
+
+            override fun getFilter(): FilterObject? {
+                // Return custom filter
+                return null
+            }
+
+            override fun getSort(): QuerySort<Channel> {
+                // Return custom sort
+                return ChannelListViewModel.DEFAULT_SORT
+            }
+        }
+    }
+
+    class MessageListScreen {
+
+        /**
+         * Adding [MessageListFragment] to your Activity
+         */
+        class MyMessageListActivity : AppCompatActivity() {
+
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.stream_ui_fragment_container)
+
+                if (savedInstanceState == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, MessageListFragment.newInstance(cid = "channelType:channelId") {})
+                        .commit()
                 }
+            }
+        }
 
-                override fun onBackPress() {
+        /**
+         * Starting [MessageListActivity] from the SDK
+         */
+        fun messageListActivity(context: Context, cid: String, messageId: String?) {
+            context.startActivity(MessageListActivity.createIntent(context, cid, messageId))
+        }
+
+        /**
+         * Implementing click listeners of [MessageListFragment]
+         */
+        class MyMessageListActivityWithListeners : AppCompatActivity(), MessageListFragment.BackPressListener {
+
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                // Add MessageListFragment to the layout
+            }
+
+            override fun onBackPress() {
+                // Handle back press
+            }
+        }
+    }
+
+    class MessageListScreenCustomization {
+
+        /**
+         * Using inheritance to customize [MessageListActivity]
+         */
+        class CustomMessageListActivity : MessageListActivity() {
+
+            override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
+                return MessageListFragment.newInstance(cid) {
+                    setFragment(CustomMessageListFragment())
+                    setTheme(R.style.StreamUiTheme)
+                    showHeader(true)
+                    messageId(messageId)
+                }
+            }
+        }
+
+        /**
+         * Using inheritance to customize [MessageListFragment]
+         */
+        class CustomMessageListFragment : MessageListFragment() {
+
+            override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
+                super.setupMessageListHeader(messageListHeaderView)
+                // Customize message list header view. For example, set a custom back button click listener:
+                messageListHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
             }
-        }
 
-        class MessageListScreenCustomization {
-
-            /**
-             * Using inheritance to customize [MessageListActivity]
-             */
-            class CustomMessageListActivity : MessageListActivity() {
-
-                override fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
-                    return MessageListFragment.newInstance(cid) {
-                        setFragment(CustomMessageListFragment())
-                        setTheme(R.style.StreamUiTheme)
-                        showHeader(true)
-                        messageId(messageId)
-                    }
-                }
+            override fun setupMessageList(messageListView: MessageListView) {
+                super.setupMessageList(messageListView)
+                // Customize message list view
             }
 
-            /**
-             * Using inheritance to customize [MessageListFragment]
-             */
-            class CustomMessageListFragment : MessageListFragment() {
-
-                override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
-                    super.setupMessageListHeader(messageListHeaderView)
-                    // Customize message list header view. For example, set a custom back button click listener:
-                    messageListHeaderView.setBackButtonClickListener {
-                        // Handle back press
-                    }
-                }
-
-                override fun setupMessageList(messageListView: MessageListView) {
-                    super.setupMessageList(messageListView)
-                    // Customize message list view
-                }
-
-                override fun setupMessageInput(messageInputView: MessageInputView) {
-                    super.setupMessageInput(messageInputView)
-                    // Customize message input view
-                }
+            override fun setupMessageInput(messageInputView: MessageInputView) {
+                super.setupMessageInput(messageInputView)
+                // Customize message input view
             }
         }
     }
 }
+
