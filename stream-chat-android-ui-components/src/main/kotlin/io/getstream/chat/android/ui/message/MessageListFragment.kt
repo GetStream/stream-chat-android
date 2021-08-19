@@ -241,9 +241,11 @@ public open class MessageListFragment : Fragment() {
          * @param cid the full channel id. ie messaging:123
          * @param initializer the initializer to customize builder params
          */
-        public fun newInstance(cid: String, initializer: Builder.() -> Unit): MessageListFragment {
+        public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
             val builder = Builder(cid)
-            builder.initializer()
+            if (initializer != null) {
+                builder.initializer()
+            }
             return builder.build()
         }
     }
