@@ -31,6 +31,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed a serialization error when editing messages that are replies
 
 ### ⬆️ Improved
 
