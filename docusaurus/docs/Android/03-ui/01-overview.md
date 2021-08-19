@@ -20,8 +20,9 @@ See the individual pages of the components to learn more about them:
 - [Message List Header](04-components/04-message-list-header.md)
 - [Message Input](04-components/05-message-input.md)
 - [Mention List View](04-components/06-mention-list-view.md)
-- [Search View](04-components/07-search-view.md)
-- [Attachment Gallery](04-components/08-attachment-gallery.md)
+- [Pinned Message List View](04-components/07-pinned-message-list-view.md))  
+- [Search View](04-components/08-search-view.md)
+- [Attachment Gallery](04-components/09-attachment-gallery.md)
 
 ## Requirements
 
