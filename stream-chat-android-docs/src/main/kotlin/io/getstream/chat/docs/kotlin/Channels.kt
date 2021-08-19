@@ -564,6 +564,15 @@ class Channels(val client: ChatClient, val channelClient: ChannelClient) {
                 }
             }
 
+            // Mute a channel for 60 minutes
+            channelClient.mute(expiration = 60 * 60 * 1000).enqueue { result ->
+                if (result.isSuccess) {
+                    // Channel is muted
+                } else {
+                    // Handle result.error()
+                }
+            }
+
             // Get list of muted channels when user is connected
             client.connectUser(User("user-id"), "token")
                 .enqueue { result ->

@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AvatarView">
+        <!-- AvatarView border color -->
         <attr name="streamUiAvatarBorderColor" format="color|reference" />
+        <!-- Border width of AvatarView -->
         <attr name="streamUiAvatarBorderWidth" format="dimension|reference" />
+        <!-- Text size of the AvatarView's initials letters -->
         <attr name="streamUiAvatarTextSize" format="dimension|reference" />
+        <!-- A color of the AvatarView's initials letters -->
         <attr name="streamUiAvatarTextColor" format="color|reference" />
+        <!-- Font name of the AvatarView's initials letters -->
         <attr name="streamUiAvatarTextFont" format="reference" />
+        <!-- Font assets reference for the AvatarView's initials letters -->
         <attr name="streamUiAvatarTextFontAssets" format="string" />
+        <!-- Text style of the AvatarView's initials letters -->
         <attr name="streamUiAvatarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- Sets the visibility of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
+        <!-- Sets the position of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
             <!-- {@deprecated Use topRight instead.} -->
             <enum name="top" value="0" />
@@ -23,7 +32,9 @@
             <enum name="bottomLeft" value="4" />
             <enum name="bottomRight" value="5" />
         </attr>
+        <!-- Color of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorColor" format="color|reference" />
+        <!-- Border color of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorBorderColor" format="color|reference" />
     </declare-styleable>
 </resources>

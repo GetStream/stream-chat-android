@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SearchResultListView">
-        <!-- Search Info Bar -->
+        <!-- Search info header configuration -->
         <attr name="streamUiSearchResultListBackground" format="reference" />
+        <!-- Modifies the background of search results list (drawable reference). -->
         <attr name="streamUiSearchResultListSearchInfoBarBackground" format="reference" />
+        <!-- Modifies the text color of search results list -->
         <attr name="streamUiSearchResultListSearchInfoBarTextColor" format="color|reference"/>
+        <!-- Modifies the text size of search results list items -->
         <attr name="streamUiSearchResultListSearchInfoBarTextSize" format="dimension"/>
+        <!-- Font assets reference for the search list items -->
         <attr name="streamUiSearchResultListSearchInfoBarTextFontAssets" format="string"/>
+        <!-- Font name of the search list items -->
         <attr name="streamUiSearchResultListSearchInfoBarTextFont" format="reference"/>
+        <!-- Text style of the search list items: "normal", "bold", and "italic". -->
         <attr name="streamUiSearchResultListSearchInfoBarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Empty State -->
+        <!-- Search results empty state -->
+        <!-- Empty state icon -->
         <attr name="streamUiSearchResultListEmptyStateIcon" format="reference" />
+        <!-- Empty state text color -->
         <attr name="streamUiSearchResultListEmptyStateTextColor" format="color|reference"/>
+        <!-- Empty state text size -->
         <attr name="streamUiSearchResultListEmptyStateTextSize" format="dimension"/>
+        <!-- Font assets for empty state text -->
         <attr name="streamUiSearchResultListEmptyStateTextFontAssets" format="string"/>
+        <!-- Font name of empty state text -->
         <attr name="streamUiSearchResultListEmptyStateTextFont" format="reference"/>
+        <!-- Text style of empty state text -->
         <attr name="streamUiSearchResultListEmptyStateTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
@@ -27,31 +39,47 @@
         </attr>
 
         <!-- Progress Bar -->
+        <!-- Drawable of the progressbar displayed when loading the search results -->
         <attr name="streamUiSearchResultListProgressBarIcon" format="reference" />
 
-        <!-- Message Preview -->
+        <!-- Search result item - message preview -->
+        <!-- A color of search results sender name text -->
         <attr name="streamUiSearchResultListSenderNameTextColor" format="color|reference"/>
+        <!-- Text size of search results sender name text -->
         <attr name="streamUiSearchResultListSenderNameTextSize" format="dimension"/>
+        <!-- Font assets reference for the search results sender name text -->
         <attr name="streamUiSearchResultListSenderNameTextFontAssets" format="string"/>
+        <!-- Font name of the search results sender name text -->
         <attr name="streamUiSearchResultListSenderNameTextFont" format="reference"/>
+        <!-- Text style of the search results sender name text: "normal", "bold", and "italic" -->
         <attr name="streamUiSearchResultListSenderNameTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- A color of search results message text -->
         <attr name="streamUiSearchResultListMessageTextColor" format="color|reference"/>
+        <!-- Text size of search results message text -->
         <attr name="streamUiSearchResultListMessageTextSize" format="dimension"/>
+        <!-- Font assets reference for the search results message text -->
         <attr name="streamUiSearchResultListMessageTextFontAssets" format="string"/>
+        <!-- Font name of the search results message text -->
         <attr name="streamUiSearchResultListMessageTextFont" format="reference"/>
+        <!-- Text style of the search results message text: "normal", "bold", and "italic" -->
         <attr name="streamUiSearchResultListMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- A color of search results message time -->
         <attr name="streamUiSearchResultListMessageTimeTextColor" format="color|reference"/>
+        <!-- Text size of search results message time -->
         <attr name="streamUiSearchResultListMessageTimeTextSize" format="dimension"/>
+        <!-- Font assets reference for the search results message time -->
         <attr name="streamUiSearchResultListMessageTimeTextFontAssets" format="string"/>
+        <!-- Font name of the search results message time -->
         <attr name="streamUiSearchResultListMessageTimeTextFont" format="reference"/>
+        <!-- Text style of the search results message time: "normal", "bold", and "italic" -->
         <attr name="streamUiSearchResultListMessageTimeTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />

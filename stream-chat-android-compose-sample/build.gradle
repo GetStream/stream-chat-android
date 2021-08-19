@@ -3,6 +3,8 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 apply from: "${rootDir}/scripts/android.gradle"
@@ -46,10 +48,15 @@ android {
 
     buildTypes {
         debug {
+            versionNameSuffix "-DEBUG"
+            applicationIdSuffix ".debug"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
             signingConfig signingConfigs.debug
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -92,4 +99,8 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
+
+    // Firebase
+    implementation Dependencies.firebaseAnalytics
+    implementation Dependencies.firebaseCrashlytics
 }

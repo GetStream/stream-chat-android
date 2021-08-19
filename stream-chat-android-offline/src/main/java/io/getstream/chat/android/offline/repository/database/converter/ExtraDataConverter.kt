@@ -1,21 +1,18 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import androidx.room.TypeConverter
-import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.offline.gson
+import com.squareup.moshi.adapter
 
 internal class ExtraDataConverter {
+    @OptIn(ExperimentalStdlibApi::class)
+    private val adapter = moshi.adapter<MutableMap<String, Any>>()
+
     @TypeConverter
-    fun stringToMap(data: String?): MutableMap<String, Any> {
+    fun stringToMap(data: String?): MutableMap<String, Any>? {
         if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
-        val mapType = object :
-            TypeToken<MutableMap<String?, Any?>?>() {}.type
-        return gson.fromJson(
-            data,
-            mapType
-        )
+        return adapter.fromJson(data)
     }
 
     @TypeConverter
@@ -23,6 +20,6 @@ internal class ExtraDataConverter {
         if (someObjects == null) {
             return "{}"
         }
-        return gson.toJson(someObjects)
+        return adapter.toJson(someObjects)
     }
 }

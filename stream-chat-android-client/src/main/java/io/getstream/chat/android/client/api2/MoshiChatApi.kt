@@ -205,38 +205,65 @@ internal class MoshiChatApi(
     }
 
     override fun muteCurrentUser(): Call<Mute> {
-        return muteUser(userId)
+        return muteUser(
+            userId = userId,
+            timeout = null,
+        )
     }
 
     override fun unmuteCurrentUser(): Call<Unit> {
         return unmuteUser(userId)
     }
 
-    override fun muteUser(userId: String): Call<Mute> {
+    override fun muteUser(
+        userId: String,
+        timeout: Int?,
+    ): Call<Mute> {
         return moderationApi.muteUser(
             connectionId = connectionId,
-            body = MuteUserRequest(userId, this.userId),
+            body = MuteUserRequest(
+                target_id = userId,
+                user_id = this.userId,
+                timeout = timeout,
+            ),
         ).map { response -> response.mute.toDomain() }
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
         return moderationApi.unmuteUser(
             connectionId = this.connectionId,
-            body = MuteUserRequest(userId, this.userId),
+            body = MuteUserRequest(
+                target_id = userId,
+                user_id = this.userId,
+                timeout = null
+            ),
         ).toUnitCall()
     }
 
-    override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
+    override fun muteChannel(
+        channelType: String,
+        channelId: String,
+        expiration: Int?,
+    ): Call<Unit> {
         return moderationApi.muteChannel(
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId"),
+            body = MuteChannelRequest(
+                channel_cid = "$channelType:$channelId",
+                expiration = expiration
+            ),
         ).toUnitCall()
     }
 
-    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+    override fun unmuteChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> {
         return moderationApi.unmuteChannel(
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId"),
+            body = MuteChannelRequest(
+                channel_cid = "$channelType:$channelId",
+                expiration = null
+            ),
         ).toUnitCall()
     }
 
