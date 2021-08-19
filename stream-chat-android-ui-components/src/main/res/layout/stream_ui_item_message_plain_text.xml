@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/messageContainer"
         />
 
