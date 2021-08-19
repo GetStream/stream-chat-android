@@ -661,7 +661,7 @@ channelClient.unmute().enqueue { result ->
 
 There's a utility method to check if a user muted a `Channel`. 
 
-```
+```kotlin
 val isMuted = channel.isMutedFor(user) 
 
 if (isMuted) {
