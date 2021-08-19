@@ -14,6 +14,8 @@
     <string name="stream_ui_message_list_attachment_uploading">Téléchargement %1$d / %2$d …</string>
     <string name="stream_ui_message_list_attachment_upload_complete">Transfert terminé, traitement…</string>
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
+    <string name="stream_ui_message_list_pinned_message">Épinglé par %s</string>
+    <string name="stream_ui_message_list_pinned_message_you">Vous</string>
     <plurals name="stream_ui_message_list_thread_reply">
         <item quantity="one">%d Réponse au fil de discussion</item>
         <item quantity="other">%d Réponses au fil de discussion</item>
@@ -30,6 +32,8 @@
     <string name="stream_ui_message_list_copy_message">Copier le message</string>
     <string name="stream_ui_message_list_edit_message">Modifier le message</string>
     <string name="stream_ui_message_list_flag_message">Signaler un message</string>
+    <string name="stream_ui_message_list_pin_message">Épingler à la conversation</string>
+    <string name="stream_ui_message_list_unpin_message">Détacher de la conversation</string>
     <string name="stream_ui_message_list_mute_user">Mettre en sourdine l\'utilisateur</string>
     <string name="stream_ui_message_list_unmute_user">Désactiver la mise en sourdine de l\'utilisateur</string>
     <string name="stream_ui_message_list_block_user">Bloquer l\'utilisateur</string>
@@ -57,7 +61,9 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_list_error_mute_user">Échec de la mise en sourdine de l\'utilisateur</string>
-    <string name="stream_ui_message_list_error_unmute_user">Échec à l\'utilisateur unmute</string>
+    <string name="stream_ui_message_list_error_unmute_user">Échec de la désactivation de la mise en sourdine de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_block_user">Échec du blocage de l\'utilisateur</string>
     <string name="stream_ui_message_list_error_flag_message">Échec du signalement du message</string>
+    <string name="stream_ui_message_list_error_pin_message">Échec de l\'épinglage du message</string>
+    <string name="stream_ui_message_list_error_unpin_message">Échec du désépinglage du message</string>
 </resources>

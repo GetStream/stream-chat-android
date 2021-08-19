@@ -99,8 +99,8 @@ public data class MessageInputViewStyle(
     public val dismissIconDrawable: Drawable,
 ) {
 
-    internal companion object {
-        operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle {
+    public companion object {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageInputView,
@@ -380,8 +380,18 @@ public data class MessageInputViewStyle(
                         Typeface.NORMAL
                     )
                     .build()
-                val videoLengthVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoLengthVisible, true)
-                val videoIconVisible = a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoIconVisible, true)
+                val videoLengthVisible =
+                    a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoLengthVisible, true)
+                val videoIconVisible =
+                    a.getBoolean(R.styleable.MessageInputView_streamUiAttachmentVideoIconVisible, true)
+                val attachmentSelectionBackgroundColor =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiAttachmentSelectionBackgroundColor,
+                        context.getColorCompat(R.color.stream_ui_white_smoke)
+                    )
+                val attachmentSelectionAttachIcon =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentSelectionAttachIcon)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
@@ -404,6 +414,8 @@ public data class MessageInputViewStyle(
                     videoDurationTextStyle = videoLengthTextStyle,
                     videoLengthLabelVisible = videoLengthVisible,
                     videoIconVisible = videoIconVisible,
+                    backgroundColor = attachmentSelectionBackgroundColor,
+                    attachButtonIcon = attachmentSelectionAttachIcon,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(
@@ -579,7 +591,7 @@ public data class MessageInputViewStyle(
             }
         }
 
-        fun createDefault(context: Context) = invoke(context, null)
+        public fun createDefault(context: Context): MessageInputViewStyle = invoke(context, null)
 
         private fun setTintListIfNeeded(
             typedArray: TypedArray,

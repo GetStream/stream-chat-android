@@ -51,6 +51,8 @@ import kotlin.math.abs
  * @param onLongItemClick - Handler for when the user long taps on a message and selects it.
  * @param onMessagesStartReached - Handler for pagination.
  * @param onScrollToBottom - Handler when the user reaches the bottom.
+ * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent - Composable that represents the empty content if there are no messages.
  * @param itemContent - Composable that represents each message item in a list. By default, we provide
  * the [DefaultMessageContainer] and connect the the long click handler with it.
  * Users can override this to provide fully custom UI and behavior.
@@ -63,6 +65,8 @@ public fun MessageList(
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (MessageItem) -> Unit = {
         DefaultMessageContainer(
             messageItem = it,
@@ -77,7 +81,9 @@ public fun MessageList(
         onMessagesStartReached = onMessagesStartReached,
         onLongItemClick = onLongItemClick,
         onScrollToBottom = onScrollToBottom,
-        itemContent = itemContent
+        itemContent = itemContent,
+        loadingContent = loadingContent,
+        emptyContent = emptyContent
     )
 }
 
@@ -91,6 +97,8 @@ public fun MessageList(
  * @param onScrollToBottom - Handler when the user scrolls to the bottom.
  * @param onLongItemClick - Handler for when the user long taps on an item.
  * @param onThreadClick - Handler for when the user taps on a message with an active thread.
+ * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent - Composable that represents the empty content if there are no messages.
  * @param itemContent - Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  * */
@@ -102,6 +110,8 @@ public fun MessageList(
     onScrollToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (MessageItem) -> Unit = {
         DefaultMessageContainer(
             messageItem = it,
@@ -113,7 +123,7 @@ public fun MessageList(
     val (isLoading, _, _, messages) = currentState
 
     when {
-        isLoading -> LoadingView(modifier)
+        isLoading -> loadingContent()
         !isLoading && messages.isNotEmpty() -> Messages(
             modifier = modifier,
             messagesState = currentState,
@@ -121,7 +131,7 @@ public fun MessageList(
             onScrollToBottom = onScrollToBottom,
             itemContent = itemContent
         )
-        else -> EmptyView(modifier = Modifier.fillMaxSize())
+        else -> emptyContent()
     }
 }
 

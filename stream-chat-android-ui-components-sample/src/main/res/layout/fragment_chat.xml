@@ -26,6 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
         app:streamUiFlagMessageConfirmationEnabled="true"
         app:streamUiMuteUserEnabled="false"
+        app:streamUiPinMessageEnabled="true"
         />
 
     <io.getstream.chat.android.ui.message.input.MessageInputView

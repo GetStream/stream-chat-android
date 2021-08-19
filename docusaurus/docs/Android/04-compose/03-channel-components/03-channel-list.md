@@ -43,7 +43,7 @@ The snippet above will generate the following UI.
 
 In order to fully utilize the `Channel` items, let's see how to handle actions and state from the ViewModel.
 
-## Handling Actions & State
+## Handling Actions
 
 If you've chosen the **bound** version of the `ChannelList` component, we recommend either providing your own instance of the `ViewModel`, or overriding default actions to react to state changes. To support that, the `ChannelList` signature exposes the following parameters:
 
@@ -131,12 +131,14 @@ We recommend that you create an instance of our `ViewModel` if you're thinking o
 
 ## Customization
 
-If you're looking to customize the UI of the `ChannelList`, there are two ways you can do so, as per the signature:
+If you're looking to customize the UI of the `ChannelList`, there are a few ways you can do so, as per the signature:
 
 ```kotlin
 @Composable
 fun ChannelList(
     modifier: Modifier = Modifier,
+    loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
+    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             item = channel,
@@ -150,6 +152,8 @@ fun ChannelList(
 ```
 
 * `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
+* `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
+* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available.  
 * `itemContent`: Customizable composable function that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
@@ -186,3 +190,5 @@ The snippet above will generate the following UI:
 ![Customized ChannelItem Component](../../assets/compose_custom_channel_item.png)
 
 As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
+
+And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.

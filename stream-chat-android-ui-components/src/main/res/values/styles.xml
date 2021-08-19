@@ -202,7 +202,7 @@
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
-    
+
     <style name="StreamUi">
         <!--Common styles properties-->
     </style>
@@ -368,7 +368,9 @@
         <item name="streamUiFlagOptionIcon">@drawable/stream_ui_ic_flag</item>
         <item name="streamUiFlagMessageEnabled">true</item>
         <item name="streamUiFlagMessageConfirmationEnabled">false</item>
-
+        <item name="streamUiPinOptionIcon">@drawable/stream_ui_ic_pin</item>
+        <item name="streamUiUnpinOptionIcon">@drawable/stream_ui_ic_unpin</item>
+        <item name="streamUiPinMessageEnabled">false</item>
         <item name="streamUiMuteOptionIcon">@drawable/stream_ui_ic_mute</item>
         <item name="streamUiUnmuteOptionIcon">@drawable/stream_ui_ic_umnute</item>
         <item name="streamUiMuteUserEnabled">true</item>
@@ -429,6 +431,13 @@
 
         <item name="streamUiMessagesStart">bottom</item>
         <item name="streamUiThreadMessagesStart">bottom</item>
+
+        <!-- Pinned message -->
+        <item name="streamUiPinnedMessageIndicatorTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiPinnedMessageIndicatorTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiPinnedMessageIndicatorTextStyle">normal</item>
+        <item name="streamUiPinnedMessageIndicatorIcon">@drawable/stream_ui_ic_pin</item>
+        <item name="streamUiPinnedMessageBackgroundColor">@color/stream_ui_highlight</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
@@ -904,5 +913,34 @@
         <item name="streamUiAttachmentsFilesEmptyStateText">@string/stream_ui_message_input_no_files</item>
         <item name="streamUiAttachmentsMediaEmptyStateText">@string/stream_ui_message_input_no_files</item>
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
+        <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
+    </style>
+
+    <style name="StreamUi.PinnedMessageList" parent="StreamUi">
+        <item name="streamUiPinnedMessageListBackground">@color/stream_ui_white_snow</item>
+        <item name="streamUiPinnedMessageListEmptyStateDrawable">@drawable/stream_ui_ic_pinned_messages_empty</item>
+        <item name="streamUiPinnedMessageListSenderNameTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiPinnedMessageListSenderNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPinnedMessageListSenderNameTextStyle">normal</item>
+        <item name="streamUiPinnedMessageListMessageTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiPinnedMessageListMessageTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPinnedMessageListMessageTextStyle">normal</item>
+        <item name="streamUiPinnedMessageListMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiPinnedMessageListMessageTimeTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPinnedMessageListMessageTimeTextStyle">normal</item>
+    </style>
+
+    <style name="StreamUiTheme.ChannelListScreen" parent="@style/StreamUiTheme">
+        <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelListScreen.ActionsDialog</item>
+        <item name="streamUiChannelListHeaderStyle">@style/StreamUi.ChannelListScreen.ChannelListHeader</item>
+    </style>
+
+    <style name="StreamUi.ChannelListScreen.ActionsDialog" parent="StreamUi.ChannelList.ActionsDialog">
+        <item name="streamUiChannelActionsViewInfoEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
+        <item name="streamUiShowActionButton">false</item>
     </style>
 </resources>

@@ -167,7 +167,7 @@ internal class MessageReplyView : FrameLayout {
         } else {
             val type = attachment.type
             if (type == ModelType.attach_link) {
-                attachment.titleLink ?: attachment.ogUrl
+                attachment.ogUrl
             } else {
                 attachment.title ?: attachment.name
             }

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TypingIndicatorView">
+        <!-- Layout reference to the typing indicator view -->
         <attr name="streamUiTypingIndicatorAnimationView" format="reference" />
 
-        <attr name="streamUiTypingIndicatorUsersTextColor" format="color|reference" />
+        <!-- Text size of the "typing users" text -->
         <attr name="streamUiTypingIndicatorUsersTextSize" format="dimension" />
-        <attr name="streamUiTypingIndicatorUsersTextFontAssets" format="string" />
+        <!-- A color of the "typing users" text -->
+        <attr name="streamUiTypingIndicatorUsersTextColor" format="color|reference" />
+        <!-- Font name of the "typing users" text -->
         <attr name="streamUiTypingIndicatorUsersTextFont" format="reference" />
+        <!-- Font assets reference for the "typing users" text -->
+        <attr name="streamUiTypingIndicatorUsersTextFontAssets" format="string" />
+        <!-- Text style of the "typing users" text: "normal", "bold", and "italic". -->
         <attr name="streamUiTypingIndicatorUsersTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
