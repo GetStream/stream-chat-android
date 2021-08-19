@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
@@ -116,6 +117,11 @@ public class ChannelListView : FrameLayout {
      */
     @JvmOverloads
     public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
+        // Make sure the loading view has no parent.
+        view.parent?.let { parent ->
+            (parent as ViewGroup).removeView(view)
+        }
+
         removeView(this.loadingView)
         this.loadingView = view
         addView(loadingView, layoutParams)
