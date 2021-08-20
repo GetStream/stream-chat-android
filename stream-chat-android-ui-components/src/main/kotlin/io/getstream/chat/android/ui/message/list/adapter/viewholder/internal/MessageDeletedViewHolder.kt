@@ -30,5 +30,9 @@ internal class MessageDeletedViewHolder(
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
         }
+
+        binding.footnote.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            horizontalBias = if (data.isTheirs) 0f else 1f
+        }
     }
 }
