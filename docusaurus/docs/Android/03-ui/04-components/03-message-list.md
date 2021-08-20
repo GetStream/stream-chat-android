@@ -435,7 +435,7 @@ This code will display the following empty state:
 ## Configure When Avatar Appears
 Is it possible to configure when the avatar for messages appears. You can use `MessageListView.setShowAvatarPredicate` and pass a predicate to define when the avatar is going to be shown. The example implements the default behaviour:
 
-```
+```kotlin
 messageListView.setShowAvatarPredicate(
     ShowAvatarPredicate { messageItem ->
         messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
