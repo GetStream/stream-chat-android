@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomain
-import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.ui.channel.list.viewmodel.v2.ChannelListViewModel
 
 /**
