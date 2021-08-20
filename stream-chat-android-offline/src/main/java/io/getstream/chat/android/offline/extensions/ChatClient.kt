@@ -1,6 +1,8 @@
 package io.getstream.chat.android.offline.extensions
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.adapter.ChatClientReferenceAdapter
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -10,4 +12,6 @@ internal val ChatClient.state: StateRegistry
         "Offline plugin must be configured in ChatClient"
     }
 
+@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public fun ChatClient.asReferenced(): ChatClientReferenceAdapter = ChatClientReferenceAdapter(this)

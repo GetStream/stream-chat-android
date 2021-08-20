@@ -411,7 +411,6 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
-	public static final fun asReferenced (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/plugin/adapter/ChatClientReferenceAdapter;
 }
 
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
