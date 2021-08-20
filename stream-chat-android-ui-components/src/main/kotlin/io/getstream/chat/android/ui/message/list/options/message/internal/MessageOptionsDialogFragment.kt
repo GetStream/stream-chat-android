@@ -214,7 +214,21 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     isMessagePinned = message.pinned
                 )
             }
+
+            if (messageItem.isMine) {
+                updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    marginEnd = style.itemStyle.messageEndMargin + optionsOffset()
+                }
+            } else {
+                updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    marginStart = style.itemStyle.messageStartMargin + optionsOffset()
+                }
+            }
         }
+    }
+
+    private fun optionsOffset(): Int {
+        return requireContext().getDimension(R.dimen.stream_ui_spacing_medium)
     }
 
     private fun setupOptionsClickListeners(
