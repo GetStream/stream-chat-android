@@ -62,12 +62,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         set(value) {
             chatDomainStateFlow.userPresence = value
         }
-    @Suppress("DEPRECATION_ERROR")
-    override var currentUser: User
-        get() = chatDomainStateFlow.currentUser
-        set(value) {
-            chatDomainStateFlow.currentUser = value
-        }
 
     override val user: LiveData<User?> = chatDomainStateFlow.user.asLiveData()
 

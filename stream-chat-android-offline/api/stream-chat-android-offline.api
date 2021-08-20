@@ -21,7 +21,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelController (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getChannelUnreadCount ()Landroidx/lifecycle/LiveData;
-	public abstract fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public abstract fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public abstract fun getInitialized ()Landroidx/lifecycle/LiveData;
 	public abstract fun getMuted ()Landroidx/lifecycle/LiveData;
@@ -58,7 +57,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setCurrentUser (Lio/getstream/chat/android/client/models/User;)V
 	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setRetryPolicy (Lio/getstream/chat/android/livedata/utils/RetryPolicy;)V
@@ -235,7 +233,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun getChannelConfig (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Config;
 	public abstract fun getChannelController (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public abstract fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitialized ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
@@ -272,7 +269,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
-	public abstract fun setCurrentUser (Lio/getstream/chat/android/client/models/User;)V
 	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
 	public abstract fun setRetryPolicy (Lio/getstream/chat/android/offline/utils/RetryPolicy;)V

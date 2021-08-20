@@ -184,12 +184,6 @@ internal class ChatDomainImpl internal constructor(
     private val _user = MutableStateFlow<User?>(null)
     override val user: StateFlow<User?> = _user
 
-    override var currentUser: User
-        get() = user.value!!
-        set(value) {
-            _user.value = value
-        }
-
     /** if the client connection has been initialized */
     override val initialized: StateFlow<Boolean> = _initialized
 
