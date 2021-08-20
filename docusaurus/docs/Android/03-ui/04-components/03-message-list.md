@@ -445,3 +445,15 @@ messageListView.setShowAvatarPredicate(
 :::note
 To avoid overlap between the avatar and the messages of the chat, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the avatar of the messages.
 :::
+
+If you set a predicate that shows avatars for your own messages as well, use this value:
+
+```
+streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+```
+
+If your predicate doesn't show avatars for your own messages (this is the default behavior), remove the end margin:
+
+```
+streamUiMessageEndMargin="0dp"
+```
