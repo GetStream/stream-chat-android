@@ -844,7 +844,6 @@ public class Android {
                     genericDrawable,
                     ColorStateList.valueOf(colorBlack),
                     genericDrawable,
-                    ColorStateList.valueOf(colorBlack),
                     genericDrawable,
                     "Allow access to media",
                     "Allow access to files",

@@ -71,9 +71,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             fileAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.fileAttachmentIcon
-                if (attachmentSelectionDialogStyle.fileAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.fileAttachmentIconTint
-                }
 
                 setOnClickListener {
                     setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)

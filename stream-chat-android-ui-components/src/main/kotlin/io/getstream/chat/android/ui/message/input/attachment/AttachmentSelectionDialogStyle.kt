@@ -16,8 +16,6 @@ public data class AttachmentSelectionDialogStyle(
     @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.ERROR)
     val pictureAttachmentIconTint: ColorStateList?,
     val fileAttachmentIcon: Drawable,
-    @Deprecated(message = "Use fileAttachmentIcon instead", level = DeprecationLevel.ERROR)
-    val fileAttachmentIconTint: ColorStateList?,
     val cameraAttachmentIcon: Drawable,
     val allowAccessToGalleryText: String,
     val allowAccessToFilesText: String,
@@ -45,7 +43,6 @@ public data class AttachmentSelectionDialogStyle(
                 pictureAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
                 pictureAttachmentIconTint = null,
                 fileAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!,
-                fileAttachmentIconTint = null,
                 cameraAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!,
                 allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
                 allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!,

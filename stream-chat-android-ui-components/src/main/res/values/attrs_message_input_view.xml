@@ -133,8 +133,6 @@
         <!-- {@deprecated Use streamUiPictureAttachmentIcon instead.} -->
         <attr name="streamUiPictureAttachmentIconTint" format="color|reference" />
         <attr name="streamUiFileAttachmentIcon" format="reference" />
-        <!-- {@deprecated Use streamUiFileAttachmentIcon instead.} -->
-        <attr name="streamUiFileAttachmentIconTint" format="color|reference" />
         <attr name="streamUiCameraAttachmentIcon" format="reference" />
         <attr name="streamUiAttachmentsRecentFilesText" format="string"/>
         <attr name="streamUiAttachmentsFileManagerIcon" format="reference"/>
