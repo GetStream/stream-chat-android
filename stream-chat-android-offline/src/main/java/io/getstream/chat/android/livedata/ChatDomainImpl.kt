@@ -119,7 +119,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
             chatDomainStateFlow.retryPolicy = value
         }
 
-    override suspend fun disconnect() = chatDomainStateFlow.disconnect()
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
 
     override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> =

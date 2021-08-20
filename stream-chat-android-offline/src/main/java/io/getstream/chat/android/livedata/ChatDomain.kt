@@ -102,11 +102,6 @@ public sealed interface ChatDomain {
      */
     public val typingUpdates: LiveData<TypingEvent>
 
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Disconnecting from ChatClient will automatically disconnect from ChatDomain",
-    )
-    public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
     public fun isInitialized(): Boolean
