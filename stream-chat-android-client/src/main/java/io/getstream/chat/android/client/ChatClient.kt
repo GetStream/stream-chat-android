@@ -201,20 +201,6 @@ public class ChatClient internal constructor(
     /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      *
-     * @see ChatClient.setUser with [TokenProvider] for advanced use cases
-     */
-    @Deprecated(
-        message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
-        setUser(user, ConstantTokenProvider(token), listener)
-    }
-
-    /**
-     * Initializes [ChatClient] for a specific user using the given user [token].
-     *
      * @param user Instance of [User] type.
      * @param token Instance of JWT token. It must be unique for each user.
      * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
@@ -242,12 +228,7 @@ public class ChatClient internal constructor(
      * @param tokenProvider a [TokenProvider] implementation
      * @param listener socket connection listener
      */
-    @Deprecated(
-        message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setUser(
+    private fun setUser(
         user: User,
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
@@ -354,12 +335,7 @@ public class ChatClient internal constructor(
         )
     }
 
-    @Deprecated(
-        message = "Use connectAnonymousUser instead",
-        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setAnonymousUser(listener: InitConnectionListener? = null) {
+    private fun setAnonymousUser(listener: InitConnectionListener? = null) {
         if (userStateService.state is UserState.NotSet) {
             socketStateService.onConnectionRequested()
             userStateService.onSetAnonymous()
@@ -387,15 +363,10 @@ public class ChatClient internal constructor(
         return createInitListenerCall { initListener -> setAnonymousUser(initListener) }
     }
 
-    @Deprecated(
-        message = "Use connectGuestUser instead",
-        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
+    private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
         getGuestToken(userId, username).enqueue {
             if (it.isSuccess) {
-                setUser(it.data().user, it.data().token, listener)
+                setUser(it.data().user, ConstantTokenProvider(it.data().token), listener)
             } else {
                 listener?.onError(it.error())
             }
