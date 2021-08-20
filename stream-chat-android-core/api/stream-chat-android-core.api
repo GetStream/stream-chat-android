@@ -15,11 +15,7 @@ public final class io/getstream/chat/android/client/call/Call$DefaultImpls {
 
 public final class io/getstream/chat/android/client/call/CallKt {
 	public static final fun await (Lio/getstream/chat/android/client/call/Call;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun doOnResult (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/call/Call;
-	public static final fun doOnStart (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun enqueue$default (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public static final fun map (Lio/getstream/chat/android/client/call/Call;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/call/Call;
-	public static final fun zipWith (Lio/getstream/chat/android/client/call/Call;Lio/getstream/chat/android/client/call/Call;)Lio/getstream/chat/android/client/call/Call;
 }
 
 public class io/getstream/chat/android/client/errors/ChatError {
