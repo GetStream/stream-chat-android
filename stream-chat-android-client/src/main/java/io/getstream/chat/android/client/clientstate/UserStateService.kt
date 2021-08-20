@@ -44,7 +44,6 @@ internal class UserStateService {
             onEvent<UserStateEvent.UnsetUser> { _, _ -> UserState.NotSet }
         }
         state<UserState.Anonymous.AnonymousUserSet> {
-            onEvent<UserStateEvent.ConnectAnonymous> { _, _ -> UserState.Anonymous.Pending }
             onEvent<UserStateEvent.UserUpdated> { _, event -> UserState.Anonymous.AnonymousUserSet(event.user) }
             onEvent<UserStateEvent.UnsetUser> { _, _ -> UserState.NotSet }
         }

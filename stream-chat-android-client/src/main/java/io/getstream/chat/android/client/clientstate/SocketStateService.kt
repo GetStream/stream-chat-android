@@ -54,7 +54,6 @@ internal class SocketStateService {
             state<SocketState.Disconnected> {
                 onEvent<ClientStateEvent.DisconnectedEvent> { _, _ -> stay() }
                 onEvent<ClientStateEvent.DisconnectRequestedEvent> { _, _ -> SocketState.Idle }
-                onEvent<ClientStateEvent.ConnectionRequested> { _, _ -> SocketState.Pending }
                 onEvent<ClientStateEvent.ConnectedEvent> { _, event -> SocketState.Connected(event.connectionId) }
                 onEvent<ClientStateEvent.ForceDisconnect> { _, _ -> SocketState.Idle }
             }

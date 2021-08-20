@@ -112,15 +112,6 @@ internal class UserStateServiceTests {
     }
 
     @Test
-    fun `Given anonymous user state When user is updated state should be anonymous pending`() {
-        val sut = Fixture().givenAnonymousUserState().please()
-
-        sut.onSetAnonymous()
-
-        Truth.assertThat(sut.state).isEqualTo(UserState.Anonymous.Pending)
-    }
-
-    @Test
     fun `Given anonymous user state User should be able to be updated`() {
         val user = Mother.randomUser()
         val sut = Fixture().givenAnonymousUserState(user).please()
