@@ -71,7 +71,7 @@ Fix for position of deleted messages for other users
 ### ⬆️ Improved
 
 ### ✅ Added
-Now it is possible to customise when the avatar appears in the conversation. It is
+Now it is possible to customize when the avatar appears in the conversation. It is
 possible to use an avatar in messages from other users and for messages of the current user. Use
 `setShowAvatarPredicate` to change the default behaviour. Default: The avatar shows only
 for messages of other users, in the bottom of a group of messages (Position.Bottom).
