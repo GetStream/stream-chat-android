@@ -135,7 +135,6 @@ internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     // the new behaviour for ChatDomain is to follow the ChatClient.setUser
     // the userOverwrite field is here for backwards compatibility
-    internal var userOverwrite: User? = null,
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -153,15 +152,14 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled: Boolean,
         appContext: Context,
     ) : this(
-        client,
-        null,
-        null,
-        handler,
-        offlineEnabled,
-        recoveryEnabled,
-        userPresence,
-        backgroundSyncEnabled,
-        appContext
+        client = client,
+        db = null,
+        mainHandler = handler,
+        offlineEnabled = offlineEnabled,
+        recoveryEnabled = recoveryEnabled,
+        userPresence = userPresence,
+        backgroundSyncEnabled = backgroundSyncEnabled,
+        appContext = appContext
     )
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
@@ -307,17 +305,15 @@ internal class ChatDomainImpl internal constructor(
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         // if the user is already defined, just call setUser ourselves
-        val current = userOverwrite ?: client.getCurrentUser()
+        val current = client.getCurrentUser()
         if (current != null) {
             setUser(current)
         }
         // past behaviour was to set the user on the chat domain
         // the new syntax is to automatically pick up changes from the client
-        if (userOverwrite == null) {
-            // listen to future user changes
-            client.preSetUserListeners.add {
-                setUser(it)
-            }
+        // listen to future user changes
+        client.preSetUserListeners.add {
+            setUser(it)
         }
         // disconnect if the low level client disconnects
         client.disconnectListeners.add {

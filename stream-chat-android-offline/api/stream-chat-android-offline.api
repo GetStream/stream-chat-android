@@ -72,9 +72,7 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 
 public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;)V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)V
 	public final fun build ()Lio/getstream/chat/android/livedata/ChatDomain;
 	public final fun copy (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/livedata/ChatDomain$Builder;Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;ILjava/lang/Object;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
@@ -288,9 +286,7 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 
 public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
-	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;)V
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)V
 	public final fun build ()Lio/getstream/chat/android/offline/ChatDomain;
 	public final fun copy (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/ChatDomain$Builder;Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;ILjava/lang/Object;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
