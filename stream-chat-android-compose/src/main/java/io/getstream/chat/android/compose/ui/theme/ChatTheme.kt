@@ -31,7 +31,7 @@ private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
 }
 
 private val LocalStreamConfiguration = compositionLocalOf<StreamConfiguration> {
-    error("No stream configuration provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+    error("No StreamConfiguration provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**

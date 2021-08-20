@@ -55,8 +55,8 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.ui.common.DateFormat
 import io.getstream.chat.android.compose.ui.common.MessageBubble
-import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -536,7 +536,7 @@ internal fun MessageFooter(
                 color = ChatTheme.colors.textLowEmphasis
             )
 
-            Timestamp(date = message.updatedAt ?: message.createdAt)
+            DateFormat(date = message.updatedAt ?: message.createdAt)
         }
     }
 }
@@ -567,7 +567,7 @@ private fun DeletedMessageFooter(
             color = ChatTheme.colors.textHighEmphasis
         )
 
-        Timestamp(
+        DateFormat(
             modifier = Modifier.padding(8.dp),
             date = message.updatedAt ?: message.createdAt
         )

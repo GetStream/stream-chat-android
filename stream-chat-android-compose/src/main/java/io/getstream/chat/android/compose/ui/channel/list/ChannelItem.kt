@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.common.Timestamp
+import io.getstream.chat.android.compose.ui.common.DateFormat
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
@@ -135,7 +135,7 @@ internal fun DefaultChannelItem(
                     tint = if (seenMessage) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
                 )
 
-                Timestamp(date = channel.lastUpdated)
+                DateFormat(date = channel.lastUpdated)
             }
         }
     }

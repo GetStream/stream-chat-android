@@ -19,6 +19,13 @@ public final class io/getstream/chat/android/compose/handlers/OnBackPressedHandl
 	public static final fun SystemBackPressedHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
+public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
+	public static final field DATE Lio/getstream/chat/android/compose/state/DateFormatType;
+	public static final field TIME Lio/getstream/chat/android/compose/state/DateFormatType;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/DateFormatType;
+	public static fun values ()[Lio/getstream/chat/android/compose/state/DateFormatType;
+}
+
 public final class io/getstream/chat/android/compose/state/QueryConfig {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
@@ -369,6 +376,10 @@ public final class io/getstream/chat/android/compose/ui/common/ComposableSinglet
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/compose/ui/common/DateFormatKt {
+	public static final fun DateFormat (Ljava/util/Date;Landroidx/compose/ui/Modifier;Lcom/getstream/sdk/chat/utils/DateFormatter;Lio/getstream/chat/android/compose/state/DateFormatType;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/common/EmptyViewKt {
 	public static final fun EmptyView (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
@@ -399,10 +410,6 @@ public final class io/getstream/chat/android/compose/ui/common/SearchInputKt {
 
 public final class io/getstream/chat/android/compose/ui/common/SimpleDialogKt {
 	public static final fun SimpleDialog (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-}
-
-public final class io/getstream/chat/android/compose/ui/common/TimestampKt {
-	public static final fun Timestamp (Ljava/util/Date;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/avatar/AvatarKt {
