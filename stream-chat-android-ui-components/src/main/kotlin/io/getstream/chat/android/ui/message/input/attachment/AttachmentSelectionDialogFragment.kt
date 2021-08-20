@@ -59,9 +59,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             mediaAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.pictureAttachmentIcon
-                if (attachmentSelectionDialogStyle.pictureAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.pictureAttachmentIconTint
-                }
 
                 isChecked = true
                 setOnClickListener {

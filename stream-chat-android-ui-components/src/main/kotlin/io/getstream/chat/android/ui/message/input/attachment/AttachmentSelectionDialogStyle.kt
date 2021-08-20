@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.input.attachment
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
@@ -13,8 +12,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 
 public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
-    @Deprecated(message = "Use pictureAttachmentIcon instead", level = DeprecationLevel.ERROR)
-    val pictureAttachmentIconTint: ColorStateList?,
     val fileAttachmentIcon: Drawable,
     val cameraAttachmentIcon: Drawable,
     val allowAccessToGalleryText: String,
@@ -41,7 +38,6 @@ public data class AttachmentSelectionDialogStyle(
         public fun createDefault(context: Context): AttachmentSelectionDialogStyle {
             return AttachmentSelectionDialogStyle(
                 pictureAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,
-                pictureAttachmentIconTint = null,
                 fileAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!,
                 cameraAttachmentIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!,
                 allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!,

@@ -842,7 +842,6 @@ public class Android {
 
             AttachmentSelectionDialogStyle attachmentSelectionDialogStyle = new AttachmentSelectionDialogStyle(
                     genericDrawable,
-                    ColorStateList.valueOf(colorBlack),
                     genericDrawable,
                     genericDrawable,
                     "Allow access to media",

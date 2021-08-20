@@ -277,9 +277,6 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiPictureAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
-                val pictureAttachmentIconTint =
-                    a.getColorStateList(R.styleable.MessageInputView_streamUiPictureAttachmentIconTint)
-
                 val fileAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiFileAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
@@ -389,7 +386,6 @@ public data class MessageInputViewStyle(
 
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
-                    pictureAttachmentIconTint = pictureAttachmentIconTint,
                     fileAttachmentIcon = fileAttachmentIcon,
                     cameraAttachmentIcon = cameraAttachmentIcon,
                     allowAccessToCameraIcon = allowAccessToCameraIcon,
