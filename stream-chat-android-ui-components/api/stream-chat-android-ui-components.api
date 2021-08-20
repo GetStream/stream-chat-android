@@ -166,10 +166,8 @@ public final class io/getstream/chat/android/ui/avatar/AvatarView : androidx/app
 }
 
 public final class io/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition : java/lang/Enum {
-	public static final field BOTTOM Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static final field BOTTOM_LEFT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static final field BOTTOM_RIGHT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
-	public static final field TOP Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static final field TOP_LEFT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static final field TOP_RIGHT Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/avatar/AvatarView$OnlineIndicatorPosition;
