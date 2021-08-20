@@ -215,12 +215,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 )
             }
 
-            if (messageItem.isMine) {
-                updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                if (messageItem.isMine) {
                     marginEnd = style.itemStyle.messageEndMargin + optionsOffset()
-                }
-            } else {
-                updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                } else {
                     marginStart = style.itemStyle.messageStartMargin + optionsOffset()
                 }
             }
