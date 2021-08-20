@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
  * @property deleteConfirmationEnabled - enables/disables showing confirmation dialog before deleting message. Enabled by default
  * @property flagMessageConfirmationEnabled - enables/disables showing confirmation dialog before flagging message. Disabled by default
- * @property warningActionsTintColor - color of dangerous option such as delete. Default - [R.color.stream_ui_accent_red].
  * @property messageOptionsText - text appearance of message option items
  * @property warningMessageOptionsText - text appearance of warning message option items
  * @property messageOptionsBackgroundColor - background color of message options. Default - [R.color.stream_ui_white]
