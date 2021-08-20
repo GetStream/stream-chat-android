@@ -4,8 +4,12 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.StateFlow
 
+@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public interface QueryChannelsState {
     public val filter: FilterObject
     public val sort: QuerySort<Channel>

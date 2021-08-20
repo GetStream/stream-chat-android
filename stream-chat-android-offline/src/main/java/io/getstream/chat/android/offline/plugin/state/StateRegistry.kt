@@ -3,6 +3,8 @@ package io.getstream.chat.android.offline.plugin.state
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
@@ -10,6 +12,8 @@ import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import java.util.concurrent.ConcurrentHashMap
 
+@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public class StateRegistry {
 
     private val scope: CoroutineScope

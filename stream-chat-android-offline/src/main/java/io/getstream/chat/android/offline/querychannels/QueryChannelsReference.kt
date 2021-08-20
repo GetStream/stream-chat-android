@@ -5,12 +5,16 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.extensions.state
 import io.getstream.chat.android.offline.plugin.QueryReference
 import io.getstream.chat.android.offline.querychannels.state.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public class QueryChannelsReference(
     public val request: QueryChannelsRequest,
     private val chatClient: ChatClient
