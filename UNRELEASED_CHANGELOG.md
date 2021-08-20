@@ -61,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-Bug related to anonymous users when app goes onPause and then comes back to onResume state. 
+- Fixed a bug in state handling for anonymous users. 
 ### ⬆️ Improved
 
 ### ✅ Added
