@@ -82,9 +82,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             cameraAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.cameraAttachmentIcon
-                if (attachmentSelectionDialogStyle.cameraAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.cameraAttachmentIconTint
-                }
 
                 setOnClickListener {
                     setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)
