@@ -9,7 +9,6 @@ import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -26,7 +25,6 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property giphyViewHolderStyle - style for [GiphyViewHolder]
  * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
  * @property backgroundColor - [MessageListView] background color. Default - [R.color.stream_ui_white_snow]
- * @property iconsTint - message options icon's tint. Default - [R.color.stream_ui_grey]
  * @property replyIcon - icon for reply option. Default - [R.drawable.stream_ui_ic_arrow_curve_left_grey]
  * @property replyEnabled - enables/disables reply feature. Enabled by default
  * @property threadReplyIcon - icon for thread option. Default - [R.drawable.stream_ui_ic_thread_reply]
@@ -66,8 +64,6 @@ public data class MessageListViewStyle(
     public val replyMessageStyle: MessageReplyStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
-    @Deprecated(message = "Use custom icons instead", level = DeprecationLevel.ERROR)
-    @ColorInt val iconsTint: Int?,
     val replyIcon: Int,
     val replyEnabled: Boolean,
     val threadReplyIcon: Int,
@@ -91,8 +87,6 @@ public data class MessageListViewStyle(
     val copyTextEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
-    @Deprecated(message = "Use deleteIcon instead", level = DeprecationLevel.ERROR)
-    @ColorInt val warningActionsTintColor: Int?,
     val messageOptionsText: TextStyle,
     val warningMessageOptionsText: TextStyle,
     @ColorInt val messageOptionsBackgroundColor: Int,
@@ -184,8 +178,6 @@ public data class MessageListViewStyle(
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
                 val replyMessageStyle = MessageReplyStyle(context = context, attributes = attributes)
 
-                val iconsTint = attributes.getColorOrNull(R.styleable.MessageListView_streamUiMessageOptionIconColor)
-
                 val replyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
                     R.drawable.stream_ui_ic_arrow_curve_left_grey
@@ -272,9 +264,6 @@ public data class MessageListViewStyle(
                     attributes.getBoolean(R.styleable.MessageListView_streamUiEditMessageEnabled, true)
 
                 val threadsEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiThreadsEnabled, true)
-
-                val warningActionsTintColor =
-                    attributes.getColorOrNull(R.styleable.MessageListView_streamUiWarningActionsTintColor)
 
                 val messageOptionsText = TextStyle.Builder(attributes)
                     .size(
@@ -372,7 +361,6 @@ public data class MessageListViewStyle(
                     giphyViewHolderStyle = giphyViewHolderStyle,
                     replyMessageStyle = replyMessageStyle,
                     backgroundColor = backgroundColor,
-                    iconsTint = iconsTint,
                     replyIcon = replyIcon,
                     replyEnabled = replyEnabled,
                     threadReplyIcon = threadReplyIcon,
@@ -396,7 +384,6 @@ public data class MessageListViewStyle(
                     deleteMessageEnabled = deleteMessageEnabled,
                     editMessageEnabled = editMessageEnabled,
                     threadsEnabled = threadsEnabled,
-                    warningActionsTintColor = warningActionsTintColor,
                     messageOptionsText = messageOptionsText,
                     warningMessageOptionsText = warningMessageOptionsText,
                     messageOptionsBackgroundColor = messageOptionsBackgroundColor,
