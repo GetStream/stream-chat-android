@@ -255,7 +255,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!getConfig().isTypingEvents) return Result(false)
+        if (!getConfig().typingEventsEnabled) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
@@ -272,7 +272,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!getConfig().isTypingEvents) return Result(false)
+        if (!getConfig().typingEventsEnabled) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
@@ -295,7 +295,7 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        if (!getConfig().isReadEvents) {
+        if (!getConfig().readEventsEnabled) {
             return false
         }
 
