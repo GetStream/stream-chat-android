@@ -37,7 +37,7 @@ public open class AttachmentDestination(
             }
             ModelType.attach_image -> {
                 when {
-                    attachment.ogUrl != null -> {
+                    attachment.titleLink != null || attachment.ogUrl != null -> {
                         url = attachment.ogUrl
                         type = ModelType.attach_link
                     }
@@ -50,6 +50,8 @@ public open class AttachmentDestination(
                         return
                     }
                 }
+
+                "lalalla".contains()
             }
             ModelType.attach_giphy -> url = attachment.thumbUrl
             ModelType.attach_product -> url = attachment.url

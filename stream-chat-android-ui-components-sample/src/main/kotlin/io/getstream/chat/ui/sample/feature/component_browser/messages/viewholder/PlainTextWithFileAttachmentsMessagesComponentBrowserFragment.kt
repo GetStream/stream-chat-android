@@ -14,7 +14,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
     @OptIn(InternalStreamChatApi::class)
     override fun getItems(): List<MessageListItem.MessageItem> {
         val attachmentLink = Attachment(
-            ogUrl = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
+            titleLink = drawableResToUri(requireContext(), R.drawable.stream_ui_sample_image_1),
             title = "Title",
             text = "Some description",
             authorName = "Stream",
