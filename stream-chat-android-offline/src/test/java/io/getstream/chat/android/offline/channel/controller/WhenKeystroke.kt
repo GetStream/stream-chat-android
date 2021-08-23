@@ -94,7 +94,7 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
         private var parentId: String? = null
 
         fun givenTypingEvents(areSupported: Boolean) = apply {
-            whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(isTypingEvents = areSupported)
+            whenever(chatDomainImpl.getChannelConfig(channelType)) doReturn randomConfig(typingEventsEnabled = areSupported)
         }
 
         fun givenParentId(parentId: String?) = apply {

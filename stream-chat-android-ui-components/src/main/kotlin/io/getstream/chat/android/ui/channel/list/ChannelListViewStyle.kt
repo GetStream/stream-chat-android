@@ -36,7 +36,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
  * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
  * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute_black]
- * @property mutedChannelIconTint - tint for mutedChannelIcon. Default - [R.color.stream_ui_black]
  * @property itemSeparator - items' separator. Default - [R.drawable.stream_ui_divider]
  * @property loadingView - loading view. Default - [R.layout.stream_ui_default_loading_view]
  * @property emptyStateView - empty state view. Default - [R.layout.stream_ui_channel_list_empty_state_view]
@@ -61,8 +60,6 @@ public data class ChannelListViewStyle(
     public val unreadMessageCounterText: TextStyle,
     @ColorInt public val unreadMessageCounterBackgroundColor: Int,
     public val mutedChannelIcon: Drawable,
-    @Deprecated(message = "Use mutedChannelIcon instead", level = DeprecationLevel.ERROR)
-    @ColorInt public val mutedChannelIconTint: Int?,
     public val itemSeparator: Drawable,
     @LayoutRes public val loadingView: Int,
     @LayoutRes public val emptyStateView: Int,
@@ -209,10 +206,6 @@ public data class ChannelListViewStyle(
                     R.styleable.ChannelListView_streamUiMutedChannelIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute_black)!!
 
-                val mutedChannelIconTint = a.getColorOrNull(R.styleable.ChannelListView_streamUiMutedChannelIconTint)?.also { tint ->
-                    mutedChannelIcon.setTint(tint)
-                }
-
                 val itemSeparator = a.getDrawable(
                     R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
@@ -252,7 +245,6 @@ public data class ChannelListViewStyle(
                     unreadMessageCounterText = unreadMessageCounterText,
                     unreadMessageCounterBackgroundColor = unreadMessageCounterBackgroundColor,
                     mutedChannelIcon = mutedChannelIcon,
-                    mutedChannelIconTint = mutedChannelIconTint,
                     itemSeparator = itemSeparator,
                     loadingView = loadingView,
                     emptyStateView = emptyStateView,
