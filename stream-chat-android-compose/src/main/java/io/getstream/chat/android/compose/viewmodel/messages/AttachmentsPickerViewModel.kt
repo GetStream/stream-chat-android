@@ -89,9 +89,7 @@ public class AttachmentsPickerViewModel(
         isShowingAttachments = showAttachments
 
         if (!showAttachments) {
-            attachmentsPickerMode = Images
-            files = emptyList()
-            images = emptyList()
+            dismissAttachments()
         } else {
             loadData()
         }

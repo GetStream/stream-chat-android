@@ -67,12 +67,12 @@ AttachmentsPicker(
     ..., // State and UI customization
     onAttachmentsSelected = { attachments -> 
         // Dismiss the picker and store the attachments
-        attachmentsPickerViewModel.onShowAttachments(false)
-        composerViewModel.onAttachmentsSelected(attachments)
+        attachmentsPickerViewModel.changeAttachmentState(false)
+        composerViewModel.addSelectedAttachments(attachments)
     },
     onDismiss = { // Reset the UI state and dismiss the picker
-        attachmentsPickerViewModel.onShowAttachments(false)
-        attachmentsPickerViewModel.onDismiss()
+        attachmentsPickerViewModel.changeAttachmentState(false)
+        attachmentsPickerViewModel.dismissAttachments()
     }
 )
 ```
@@ -85,6 +85,7 @@ This is a very simple way to customize the behavior and connect the `AttachmentP
 
 ## Customization
 
-You can customize the `AttachmentsPicker` with its `modifier` parameter:
+You can customize the `AttachmentsPicker` using the following parameters:
 
-* `modifier`: Allows you to customize the root content component of the picker and change its shape, size padding and more.
+* `modifier`: Allows you to customize the root content component of the picker and change its size, padding and more.
+* `shape`: Allows you to override the `AttachmentPicker` shape.
