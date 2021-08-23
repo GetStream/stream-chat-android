@@ -155,7 +155,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder {
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun logLevel (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun useNewSerialization (Z)Lio/getstream/chat/android/client/ChatClient$Builder;

@@ -8,7 +8,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChannelClient#getMessagesWithAttachments`<br/>*client* | 2021.08.17 ⌛ | 2021.08.31 ⌛ | 2021.09.14 ⌛ | Use getMessagesWithAttachments function with types list instead |
 | `created_at`, `updated_at`, `isTypingEvents`, `isReadEvents`, `isConnectEvents`, `isSearch`, `isMutes` in Config class are all deprecated. <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.07.27 ⌛ | 2021.08.10 ⌛ | Use `createdAt`, `updatedAt`, `typingEventsEnabled`, `readEventsEnabled`, `connectEventsEnabled`, `searchEnabled` and `mutesEnabled` instead |
 | `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.07.27 ⌛ | 2021.08.10 ⌛ | Use `MessageListViewModel#user.value` instead |
-| `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.07.29 ⌛ | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
+| `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
 | `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use `ChatDomain#sendMessage(message: Message)` instead |
 | Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |
 | Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |

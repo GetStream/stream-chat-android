@@ -1515,15 +1515,6 @@ public class ChatClient internal constructor(
             return this
         }
 
-        @Deprecated(
-            message = "Use logLevel function with ChatLogLevel parameter instead",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun logLevel(level: String): Builder {
-            logLevel = ChatLogLevel.valueOf(level)
-            return this
-        }
-
         public fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
             return this
