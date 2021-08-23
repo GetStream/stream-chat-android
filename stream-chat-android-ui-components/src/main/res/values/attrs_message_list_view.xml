@@ -265,10 +265,6 @@
         <attr name="streamUiDeleteMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
-        <!-- {@deprecated Use custom icons instead.} -->
-        <attr name="streamUiMessageOptionIconColor" format="color" />
-        <!-- {@deprecated Use custom icons instead.} -->
-        <attr name="streamUiWarningActionsTintColor" format="color" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
 
         <attr name="streamUiMessageOptionsTextSize" format="dimension|reference" />

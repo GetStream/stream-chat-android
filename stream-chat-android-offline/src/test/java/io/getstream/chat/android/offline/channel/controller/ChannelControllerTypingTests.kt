@@ -119,12 +119,12 @@ internal class ChannelControllerTypingTests {
         }
 
         fun givenReadEventsEnabled(): Fixture {
-            whenever(config.isReadEvents) doReturn true
+            whenever(config.readEventsEnabled) doReturn true
             return this
         }
 
         fun givenTypingEventsEnabled(): Fixture {
-            whenever(config.isTypingEvents) doReturn true
+            whenever(config.typingEventsEnabled) doReturn true
             return this
         }
 

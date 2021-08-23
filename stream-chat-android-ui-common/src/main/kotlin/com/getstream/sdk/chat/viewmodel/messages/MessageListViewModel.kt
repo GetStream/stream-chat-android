@@ -71,14 +71,6 @@ public class MessageListViewModel @JvmOverloads constructor(
 
     public val user: LiveData<User?> = domain.user
 
-    @Deprecated(
-        message = "Use user live data instead",
-        replaceWith = ReplaceWith("user.value"),
-        level = DeprecationLevel.WARNING,
-    )
-    public val currentUser: User
-        get() = user.value!!
-
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
             if (previousMessage == null) {

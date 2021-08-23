@@ -4,23 +4,25 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `created_at`, `updated_at`, `isTypingEvents`, `isReadEvents`, `isConnectEvents`, `isSearch`, `isMutes` in Config class are all deprecated. <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.07.27 ⌛ | 2021.08.10 ⌛ | Use `createdAt`, `updatedAt`, `typingEventsEnabled`, `readEventsEnabled`, `connectEventsEnabled`, `searchEnabled` and `mutesEnabled` instead |
-| `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.07.27 ⌛ | 2021.08.10 ⌛ | Use `MessageListViewModel#user.value` instead |
-| `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.07.29 ⌛ | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
-| `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.13<br/>4.14.0 | 2021.08.14 ⌛ | Use `ChatDomain#sendMessage(message: Message)` instead |
-| Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
-| Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
-| `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawable instead |
-| `ChannelListView.streamUiMutedChannelIconTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawable instead |
-| Multiple `AttachmentOptionsView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
-| `MessageListViewStyle#warningActionsTintColor`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawable instead |
-| `MessageListViewStyle#iconsTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Override drawables instead |
-| `AttachmentSelectionDialogStyle#pictureAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#pictureAttachmentIcon` instead |
-| `AttachmentSelectionDialogStyle#fileAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#fileAttachmentIcon` instead |
-| `AttachmentSelectionDialogStyle#cameraAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `AttachmentDialogStyle#cameraAttachmentIcon` instead |
-| `ChannelListViewStyle#mutedChannelIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.10⌛ | Use the `ChannelListViewStyle#mutedChannelIcon` instead |
-| `AvatarView.OnlineIndicatorPosition.TOP`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0 | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.TOP_RIGHT` constant instead |
-| `AvatarView.OnlineIndicatorPosition.BOTTOM`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0 | 2021.08.01⌛ | Use the `OnlineIndicatorPosition.BOTTOM_RIGHT` constant instead |
+| `ChatClient#getMessagesWithAttachments`<br/>*client* | 2021.08.25<br/>4.17.0 | 2021.08.31 ⌛ | 2021.09.14 ⌛ | Use getMessagesWithAttachments function with types list instead |
+| `ChannelClient#getMessagesWithAttachments`<br/>*client* | 2021.08.25<br/>4.17.0 | 2021.08.31 ⌛ | 2021.09.14 ⌛ | Use getMessagesWithAttachments function with types list instead |
+| `created_at`, `updated_at`, `isTypingEvents`, `isReadEvents`, `isConnectEvents`, `isSearch`, `isMutes` in Config class are all deprecated. <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | 2021.08.25<br/>4.17.0 | Use `createdAt`, `updatedAt`, `typingEventsEnabled`, `readEventsEnabled`, `connectEventsEnabled`, `searchEnabled` and `mutesEnabled` instead |
+| `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | 2021.08.25<br/>4.17.0 | Use `MessageListViewModel#user.value` instead |
+| `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
+| `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use `ChatDomain#sendMessage(message: Message)` instead |
+| Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |
+| Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |
+| `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawable instead |
+| `ChannelListView.streamUiMutedChannelIconTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawable instead |
+| Multiple `AttachmentOptionsView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |
+| `MessageListViewStyle#warningActionsTintColor`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawable instead |
+| `MessageListViewStyle#iconsTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Override drawables instead |
+| `AttachmentSelectionDialogStyle#pictureAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `AttachmentDialogStyle#pictureAttachmentIcon` instead |
+| `AttachmentSelectionDialogStyle#fileAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `AttachmentDialogStyle#fileAttachmentIcon` instead |
+| `AttachmentSelectionDialogStyle#cameraAttachmentIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `AttachmentDialogStyle#cameraAttachmentIcon` instead |
+| `ChannelListViewStyle#mutedChannelIconTint`<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `ChannelListViewStyle#mutedChannelIcon` instead |
+| `AvatarView.OnlineIndicatorPosition.TOP`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `OnlineIndicatorPosition.TOP_RIGHT` constant instead |
+| `AvatarView.OnlineIndicatorPosition.BOTTOM`<br/>*ui-components* | 2021.06.01 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Use the `OnlineIndicatorPosition.BOTTOM_RIGHT` constant instead |
 | `SocketListener::onDisconnected` <br/>*client* | 2021.05.17 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use method with DisconnectCause instead of it |
 | `ChatClient#onMessageReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use the `ChatClient.handleRemoteMessage` method instead |
 | `ChatClient#onNewTokenReceived`<br/>*client* | 2021.05.14<br/>4.11.0 | 2021.06.23<br/>4.12.1  | 2021.07.13<br/>4.14.0 | Use the `ChatClient.setFirebaseToken` method instead |
@@ -32,7 +34,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `ChannelController::offlineChannelData` instead
 | `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
-| `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.13 ⌛ | Subscribe to `ChatDomain::user` and handle nullable state |
+| `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | Subscribe to `ChatDomain::user` and handle nullable state |
 | `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Setting external SuggestionListView is no longer necessary |
 | `ChatDomain.usecases` <br/>*offline* | 2021.04.06 | 2021.05.06<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Replace this property call by obtaining a specific use case directly from ChatDomain |
 | `MessageInputView#setMembers` <br/>*ui-components* | 2021.04.07 | 2021.04.21<br/>4.9.0 | 2021.05.05<br>4.10.0 | Use MessageInputView::setUserLookupHandler instead of manually passing the list of users |
@@ -46,9 +48,9 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use the `unbanUser` method instead |
 | `ChannelClient#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use the `unbanUser` method instead |
 | `ChannelController#unBanUser`<br/>*client* | 2021.03.15<br/>4.7.1 | 2021.04.21<br/>4.9.0 | 2021.04.21<br/>4.9.0 | Use the `unbanUser` method instead |
-| `ChatDomain.Builder` constructors with user params | 2021.02.26<br/>4.7.0 | 2021.06.23<br/>4.12.1 | 2021.08.26 ⌛ | Use `ChatDomain.Builder(context, chatClient)` instead |
-| `ChatDomain#disconnect` | 2021.02.25<br/>4.7.0 | 2021.06.23<br/>4.12.1 | 2021.08.25 ⌛ | Use just `ChatClient#disconnect` instead |
-| `setUser` (and similar) methods<br/>*client* | 2021.02.03<br/>4.5.3 | 2021.05.03<br/>4.10.0 | 2021.08.03 ⌛ | Replaced by `connectUser` style methods that return `Call` objects, see the updated documentation for [Initialization & Users](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin)) |
+| `ChatDomain.Builder` constructors with user params | 2021.02.26<br/>4.7.0 | 2021.06.23<br/>4.12.1 | 2021.08.25<br/>4.17.0 | Use `ChatDomain.Builder(context, chatClient)` instead |
+| `ChatDomain#disconnect` | 2021.02.25<br/>4.7.0 | 2021.06.23<br/>4.12.1 | 2021.08.25<br/>4.17.0 | Use just `ChatClient#disconnect` instead |
+| `setUser` (and similar) methods<br/>*client* | 2021.02.03<br/>4.5.3 | 2021.05.03<br/>4.10.0 | 2021.08.25<br/>4.17.0 | Replaced by `connectUser` style methods that return `Call` objects, see the updated documentation for [Initialization & Users](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin)) |
 | `MessageListViewModel.Event.AttachmentDownload`<br/>*ui-common* | 2021.01.29<br/>4.5.2 | 2021.02.29<br/>4.7.0 | 2021.03.29<br/>4.8.0 | Use `DownloadAttachment` instead |
 | `subscribe` methods with Kotlin function parameters<br/>*client* | 2021.01.27<br/>4.5.2 | 2021.03.27<br/>4.8.0 | 2021.06.23<br/>4.12.1 | Use methods with `ChatEventListener` parameters instead (only affects Java clients) |
 | `ChatUI(client, domain, context)`<br/>*ui-common* | 2020.11.09<br/>4.4.2 | 2021.02.22<br/>4.6.0 | 2021.03.22<br/>4.8.0 | Use ctor with just Context param instead |

@@ -1,12 +1,17 @@
 package io.getstream.chat.android.offline.extensions
 
-import com.google.gson.reflect.TypeToken
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.parser.StreamGson
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
+import okio.buffer
+import okio.source
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -14,11 +19,13 @@ import java.util.Date
 
 internal class ChannelExtensionsTest {
 
+    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun `When apply pagination Should not throw any exception`() {
         val channelsFile = File(this.javaClass.classLoader!!.getResource("channels.json").toURI())
-        val type = object : TypeToken<List<Channel>>() {}.type
-        val channels = StreamGson.gson.fromJson<Collection<Channel>>(channelsFile.reader(), type)
+        val adapter =
+            Moshi.Builder().add(KotlinJsonAdapterFactory()).add(DateAdapter()).build().adapter<List<Channel>>()
+        val channels = requireNotNull(adapter.fromJson(JsonReader.of(channelsFile.source().buffer())))
         val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
@@ -45,7 +52,11 @@ internal class ChannelExtensionsTest {
             memberLimit = 30,
         )
 
-        val result1 = listOf(firstChannel, secondChannel, thirdChannel).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
+        val result1 = listOf(
+            firstChannel,
+            secondChannel,
+            thirdChannel
+        ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
         Assertions.assertTrue {
             result1.first() == secondChannel && result1.last() == firstChannel
@@ -66,7 +77,11 @@ internal class ChannelExtensionsTest {
             memberLimit = 30,
         )
 
-        val result1 = listOf(firstChannel, secondChannel, thirdChannel).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
+        val result1 = listOf(
+            firstChannel,
+            secondChannel,
+            thirdChannel
+        ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
         Assertions.assertTrue {
             result1.first() == firstChannel && result1.last() == secondChannel

@@ -20,7 +20,6 @@ internal data class UpstreamMessageDto(
     val pinned: Boolean,
     val pinned_at: Date?,
     val pinned_by: UpstreamUserDto?,
-    val quoted_message: UpstreamMessageDto?,
     val quoted_message_id: String?,
     val shadowed: Boolean,
     val show_in_channel: Boolean,

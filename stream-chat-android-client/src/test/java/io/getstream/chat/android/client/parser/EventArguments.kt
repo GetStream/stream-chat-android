@@ -124,16 +124,16 @@ internal object EventArguments {
     private val member = Member(user, role = "user", createdAt = date, updatedAt = date)
     private val giphyCommand = Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
     private val config = Config(
-        created_at = date,
-        updated_at = date,
+        createdAt = date,
+        updatedAt = date,
         name = "team",
-        isTypingEvents = true,
-        isReadEvents = true,
-        isConnectEvents = true,
-        isSearch = true,
+        typingEventsEnabled = true,
+        readEventsEnabled = true,
+        connectEventsEnabled = true,
+        searchEnabled = true,
         isReactionsEnabled = true,
         isRepliesEnabled = true,
-        isMutes = true,
+        muteEnabled = true,
         uploadsEnabled = true,
         urlEnrichmentEnabled = true,
         customEventsEnabled = true,
@@ -176,7 +176,7 @@ internal object EventArguments {
         userId = "bender",
         createdAt = date
     )
-    private val channelMute = ChannelMute(user, channel, date)
+    private val channelMute = ChannelMute(user, channel, date, date, null)
     private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)
     private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)
     private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, channel)

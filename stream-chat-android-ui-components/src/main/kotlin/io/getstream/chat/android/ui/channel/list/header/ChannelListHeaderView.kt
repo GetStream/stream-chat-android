@@ -95,11 +95,6 @@ public class ChannelListHeaderView : ConstraintLayout {
             isInvisible = !showActionButton
             isClickable = showActionButton
 
-            typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiActionButtonTint)
-                ?.let { colorStateList ->
-                    imageTintList = colorStateList
-                }
-
             val drawable = typedArray.getDrawable(R.styleable.ChannelListHeaderView_streamUiActionButtonIcon)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pen)
             setImageDrawable(drawable)
@@ -151,6 +146,10 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     public fun setUser(user: User) {
         binding.userAvatar.setUserData(user)
+    }
+
+    public fun setOnlineTitle(title: String) {
+        binding.onlineTextView.text = title
     }
 
     public fun showOnlineTitle() {

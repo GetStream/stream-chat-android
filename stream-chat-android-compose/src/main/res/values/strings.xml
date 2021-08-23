@@ -41,7 +41,7 @@
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
     <string name="stream_compose_new_message">New message</string>
     <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
-    <string name="stream_compose_query_channels">Query channels by name</string>
+    <string name="stream_compose_query_channels">Search channels by name</string>
     <string name="stream_compose_grant_permission">Give permission</string>
     <string name="stream_compose_remaining_images_count">+%1$d</string>
     <string name="stream_compose_empty_state_title">Let\'s start chatting!</string>

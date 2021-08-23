@@ -57,7 +57,7 @@ internal class TestDataHelper {
     val user1 = User("broad-lake-3")
     val user3 = User("user-3")
     val userEvil = User("user-evil")
-    val mute1 = Mute(user1, userEvil, Date(), Date())
+    val mute1 = Mute(user1, userEvil, Date(), Date(), null)
     val me1 = User("broad-lake-3").apply { mutes = listOf(mute1) }
 
     val user1Token = checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
@@ -93,7 +93,7 @@ internal class TestDataHelper {
 
     val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
-    val config1 = Config(isTypingEvents = true, isReadEvents = true)
+    val config1 = Config(typingEventsEnabled = true, readEventsEnabled = true)
     val channel1 = Channel().apply {
         type = "messaging"
         id = "123-testing"

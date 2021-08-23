@@ -49,6 +49,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param channelId - The ID of the opened/active Channel.
  * @param messageLimit - The limit of messages per query.
  * @param showHeader - If we're showing the header or not.
+ * @param enforceUniqueReactions - If we need to enforce unique reactions or not.
  * @param onBackPressed - Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick - Handler for when the user taps on the header action.
@@ -58,10 +59,11 @@ public fun MessagesScreen(
     channelId: String,
     messageLimit: Int = 30,
     showHeader: Boolean = true,
+    enforceUniqueReactions: Boolean = true,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
 ) {
-    val factory = buildViewModelFactory(LocalContext.current, channelId, messageLimit)
+    val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = factory)
@@ -193,6 +195,7 @@ public fun MessagesScreen(
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,
+    enforceUniqueReactions: Boolean,
     messageLimit: Int,
 ): MessagesViewModelFactory {
     val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -203,6 +206,7 @@ private fun buildViewModelFactory(
         ChatClient.instance(),
         ChatDomain.instance(),
         channelId,
+        enforceUniqueReactions,
         messageLimit
     )
 }

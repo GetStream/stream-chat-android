@@ -31,12 +31,18 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed a serialization error when editing messages that are replies
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `expiration` parameter to `ChatClient::muteChannel`, `ChannelClient:mute` methods
+- Added the `timeout` parameter to `ChatClient::muteUser`, `ChannelClient:mute::muteUser` methods
 
 ### ⚠️ Changed
+- Allow specifying multiple attachment's type when getting messages with attachments:
+  - Deprecated `ChatClient::getMessagesWithAttachments` with `type` parameter. Use `ChatClient::getMessagesWithAttachments` function with types list instead
+  - Deprecated `ChannelClient::getMessagesWithAttachments` with `type` parameter. Use `ChannelClient::getMessagesWithAttachments` function with types list instead
 
 ### ❌ Removed
 
@@ -55,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed a bug in state handling for anonymous users.
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -90,6 +96,11 @@ If your predicate doesn't show avatars for your own messages (this is the defaul
 streamUiMessageEndMargin="0dp"
 ```
 
+- Added self-contained higher-level UI components:
+  - `ChannelListFragment` - channel list screen which internally contains `ChannelListHeaderView`, `ChannelListView`, `SearchInputView`, `SearchResultListView`.
+  - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
+  - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
+  - `MessageListActivity` - thin wrapper around `MessageListFragment`
 
 ### ⚠️ Changed
 
@@ -99,10 +110,16 @@ streamUiMessageEndMargin="0dp"
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
+- Added an overlay to the `ChannelInfo` that blocks outside clicks.
+- Updated the `ChannelInfoUserItem` to use the `UserAvatar`.
 
 ### ⬆️ Improved
+- Added default date and time formatting to Channel and Message items.
 
 ### ✅ Added
+- Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
+- Added a `Timestamp` component that encapsulates date formatting.
+- Added a way to customize and override if messages use unique reactions.
 
 ### ⚠️ Changed
 

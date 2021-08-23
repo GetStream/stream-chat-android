@@ -202,7 +202,7 @@
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
     </style>
-    
+
     <style name="StreamUi">
         <!--Common styles properties-->
     </style>
@@ -934,5 +934,18 @@
         <item name="streamUiPinnedMessageListMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiPinnedMessageListMessageTimeTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiPinnedMessageListMessageTimeTextStyle">normal</item>
+    </style>
+
+    <style name="StreamUiTheme.ChannelListScreen" parent="@style/StreamUiTheme">
+        <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelListScreen.ActionsDialog</item>
+        <item name="streamUiChannelListHeaderStyle">@style/StreamUi.ChannelListScreen.ChannelListHeader</item>
+    </style>
+
+    <style name="StreamUi.ChannelListScreen.ActionsDialog" parent="StreamUi.ChannelList.ActionsDialog">
+        <item name="streamUiChannelActionsViewInfoEnabled">false</item>
+    </style>
+
+    <style name="StreamUi.ChannelListScreen.ChannelListHeader" parent="StreamUi.ChannelListHeader">
+        <item name="streamUiShowActionButton">false</item>
     </style>
 </resources>

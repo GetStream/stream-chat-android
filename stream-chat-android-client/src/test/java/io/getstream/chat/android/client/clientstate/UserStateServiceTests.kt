@@ -111,6 +111,16 @@ internal class UserStateServiceTests {
         Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
     }
 
+    @Test
+    fun `Given anonymous user state User should be able to be updated`() {
+        val user = Mother.randomUser()
+        val sut = Fixture().givenAnonymousUserState(user).please()
+
+        sut.onUserUpdated(user)
+
+        Truth.assertThat(sut.state).isInstanceOf(UserState.Anonymous.AnonymousUserSet::class.java)
+    }
+
     private class Fixture {
         private val userStateService = UserStateService()
 
@@ -118,9 +128,9 @@ internal class UserStateServiceTests {
 
         fun givenAnonymousPendingState() = apply { userStateService.onSetAnonymous() }
 
-        fun givenAnonymousUserState() = apply {
+        fun givenAnonymousUserState(user: User = Mother.randomUser()) = apply {
             givenAnonymousPendingState()
-            userStateService.onUserUpdated(Mother.randomUser())
+            userStateService.onUserUpdated(user)
         }
 
         fun please() = userStateService

@@ -100,7 +100,8 @@ internal object UserDtoTestData {
                     user = downstreamUserWithoutExtraData,
                     target = downstreamUserWithoutExtraData,
                     created_at = Date(1591787071000),
-                    updated_at = Date(1591787071588)
+                    updated_at = Date(1591787071588),
+                    null,
                 ),
             ),
             teams = listOf("team1", "team2"),

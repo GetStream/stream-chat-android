@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
-import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -101,7 +100,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -112,8 +110,6 @@ private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
-
-internal val gson = StreamGson.gson
 
 /**
  * The Chat Domain exposes StateFlow objects to make it easier to build your chat UI.
@@ -138,7 +134,6 @@ internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
     // the new behaviour for ChatDomain is to follow the ChatClient.setUser
     // the userOverwrite field is here for backwards compatibility
-    internal var userOverwrite: User? = null,
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -156,15 +151,14 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled: Boolean,
         appContext: Context,
     ) : this(
-        client,
-        null,
-        null,
-        handler,
-        offlineEnabled,
-        recoveryEnabled,
-        userPresence,
-        backgroundSyncEnabled,
-        appContext
+        client = client,
+        db = null,
+        mainHandler = handler,
+        offlineEnabled = offlineEnabled,
+        recoveryEnabled = recoveryEnabled,
+        userPresence = userPresence,
+        backgroundSyncEnabled = backgroundSyncEnabled,
+        appContext = appContext
     )
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
@@ -173,7 +167,7 @@ internal class ChatDomainImpl internal constructor(
     internal var scope = CoroutineScope(job + DispatcherProvider.IO)
 
     @VisibleForTesting
-    val defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
+    val defaultConfig: Config = Config(connectEventsEnabled = true, muteEnabled = true)
     internal var repos: RepositoryFacade = createNoOpRepos()
 
     private val _initialized = MutableStateFlow(false)
@@ -188,12 +182,6 @@ internal class ChatDomainImpl internal constructor(
 
     private val _user = MutableStateFlow<User?>(null)
     override val user: StateFlow<User?> = _user
-
-    override var currentUser: User
-        get() = user.value!!
-        set(value) {
-            _user.value = value
-        }
 
     /** if the client connection has been initialized */
     override val initialized: StateFlow<Boolean> = _initialized
@@ -310,17 +298,15 @@ internal class ChatDomainImpl internal constructor(
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         // if the user is already defined, just call setUser ourselves
-        val current = userOverwrite ?: client.getCurrentUser()
+        val current = client.getCurrentUser()
         if (current != null) {
             setUser(current)
         }
         // past behaviour was to set the user on the chat domain
         // the new syntax is to automatically pick up changes from the client
-        if (userOverwrite == null) {
-            // listen to future user changes
-            client.preSetUserListeners.add {
-                setUser(it)
-            }
+        // listen to future user changes
+        client.preSetUserListeners.add {
+            setUser(it)
         }
         // disconnect if the low level client disconnects
         client.disconnectListeners.add {
@@ -926,11 +912,6 @@ internal class ChatDomainImpl internal constructor(
     override fun createChannel(channel: Channel): Call<Channel> = CreateChannel(this).invoke(channel)
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
-
-    override fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = SendMessage(this).invoke(message, attachmentTransformer)
 
     override fun cancelMessage(message: Message): Call<Boolean> = CancelMessage(this).invoke(message)
 

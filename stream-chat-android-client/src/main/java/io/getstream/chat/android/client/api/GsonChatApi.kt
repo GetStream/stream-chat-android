@@ -290,17 +290,30 @@ internal class GsonChatApi(
         ).map { it.message }
     }
 
-    override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
+    override fun muteChannel(
+        channelType: String,
+        channelId: String,
+        expiration: Int?,
+    ): Call<Unit> {
         return retrofitApi.muteChannel(
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId")
+            body = MuteChannelRequest(
+                channel_cid = "$channelType:$channelId",
+                expiration = expiration,
+            )
         ).toUnitCall()
     }
 
-    override fun unmuteChannel(channelType: String, channelId: String): Call<Unit> {
+    override fun unmuteChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Unit> {
         return retrofitApi.unmuteChannel(
             connectionId = connectionId,
-            body = MuteChannelRequest("$channelType:$channelId")
+            body = MuteChannelRequest(
+                "$channelType:$channelId",
+                expiration = null,
+            )
         ).toUnitCall()
     }
 
@@ -317,7 +330,7 @@ internal class GsonChatApi(
     override fun partialUpdateMessage(
         messageId: String,
         set: Map<String, Any>,
-        unset: List<String>
+        unset: List<String>,
     ): Call<Message> {
         return retrofitApi.partialUpdateMessage(
             messageId = messageId,
@@ -512,7 +525,10 @@ internal class GsonChatApi(
     }
 
     override fun muteCurrentUser(): Call<Mute> {
-        return muteUser(userId)
+        return muteUser(
+            userId = userId,
+            timeout = null,
+        )
     }
 
     override fun unmuteCurrentUser(): Call<Unit> {
@@ -613,10 +629,15 @@ internal class GsonChatApi(
 
     override fun muteUser(
         userId: String,
+        timeout: Int?,
     ): Call<Mute> {
         return retrofitApi.muteUser(
             connectionId = connectionId,
-            body = MuteUserRequest(userId, this.userId)
+            body = MuteUserRequest(
+                targetId = userId,
+                userId = this.userId,
+                timeout = timeout
+            )
         ).map { it.mute }
     }
 
@@ -625,7 +646,11 @@ internal class GsonChatApi(
     ): Call<Unit> {
         return retrofitApi.unmuteUser(
             connectionId = connectionId,
-            body = MuteUserRequest(userId, this.userId)
+            body = MuteUserRequest(
+                targetId = userId,
+                userId = this.userId,
+                timeout = null
+            )
         ).toUnitCall()
     }
 

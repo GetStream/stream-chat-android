@@ -7,5 +7,8 @@ public data class ChannelMute(
     val user: User,
     val channel: Channel,
     @SerializedName("created_at")
-    val createdAt: Date
+    val createdAt: Date,
+    @SerializedName("updated_at")
+    var updatedAt: Date,
+    val expires: Date?,
 )
