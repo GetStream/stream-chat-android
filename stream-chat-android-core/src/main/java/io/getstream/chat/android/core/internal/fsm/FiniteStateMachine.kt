@@ -12,10 +12,10 @@ import kotlin.reflect.KClass
  * This class represents a Finite State Machine. It can be only in one possible state at a time
  * out of the set of possible states [S]. It can handle events from the set [E].
  *
- * @param initialState the initial state
- * @property stateFunctions a map of states and possible event handlers for them
- * @property defaultEventHandler called when [stateFunctions] has no handler for
- *                               a given state/event combination
+ * @param initialState The initial state.
+ * @property stateFunctions A map of states and possible event handlers for them.
+ * @property defaultEventHandler Called when [stateFunctions] has no handler for
+ *                               a given state/event combination.
  */
 @InternalStreamChatApi
 public class FiniteStateMachine<S : Any, E : Any>(

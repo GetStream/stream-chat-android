@@ -12,11 +12,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Wraps the content of a message in a bubble.
  *
- * @param content - The content of the message.
- * @param modifier - Modifier for styling.
- * @param color - The color of the bubble.
- * @param shape - The shape of the bubble.
- * */
+ * @param content The content of the message.
+ * @param modifier Modifier for styling.
+ * @param color The color of the bubble.
+ * @param shape The shape of the bubble.
+ */
 @Composable
 public fun MessageBubble(
     color: Color,

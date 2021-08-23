@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Message
  * @param groupPosition - The position of this message in a group, if it belongs to one.
  * @param parentMessageId - The id of the parent message, when we're in a thread.
  * @param isMine - If the message is of the current user or someone else.
- * */
+ */
 public data class MessageItem(
     val message: Message,
     val groupPosition: MessageItemGroupPosition,

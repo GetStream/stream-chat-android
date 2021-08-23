@@ -18,11 +18,11 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAtta
  * Style for [MediaAttachmentView].
  * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
  *
- * @param progressIcon - animated progress drawable. Default - [R.drawable.stream_ui_rotating_indeterminate_progress_gradient]
- * @param giphyIcon - Giphy icon. Default - [R.drawable.stream_ui_giphy_label]
- * @param imageBackgroundColor - image background. Default - [R.color.stream_ui_grey]
- * @param moreCountOverlayColor - more count semi-transparent overlay color. Default - [R.color.stream_ui_overlay]
- * @param moreCountTextStyle - appearance for "more count" text
+ * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
+ * @param giphyIcon Giphy icon. Default value is [R.drawable.stream_ui_giphy_label].
+ * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
+ * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
+ * @param moreCountTextStyle Appearance for "more count" text.
  */
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
