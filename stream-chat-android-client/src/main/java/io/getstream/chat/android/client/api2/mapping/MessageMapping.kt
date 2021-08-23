@@ -22,7 +22,6 @@ internal fun Message.toDto(): UpstreamMessageDto =
         pinned = pinned,
         pinned_at = pinnedAt,
         pinned_by = pinnedBy?.toDto(),
-        quoted_message = replyTo?.toDto(),
         quoted_message_id = replyMessageId,
         shadowed = shadowed,
         show_in_channel = showInChannel,

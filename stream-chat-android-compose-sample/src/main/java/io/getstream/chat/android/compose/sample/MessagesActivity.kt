@@ -50,12 +50,13 @@ class MessagesActivity : AppCompatActivity() {
 
     private val factory by lazy {
         MessagesViewModelFactory(
-            this,
-            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
-            ChatClient.instance(),
-            ChatDomain.instance(),
-            intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            30
+            context = this,
+            clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
+            chatClient = ChatClient.instance(),
+            chatDomain = ChatDomain.instance(),
+            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            enforceUniqueReactions = true,
+            messageLimit = 30
         )
     }
 
@@ -72,7 +73,7 @@ class MessagesActivity : AppCompatActivity() {
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
         setContent {
-            ChatTheme {
+            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
                     messageLimit = 30,

@@ -361,20 +361,6 @@ public class Messages {
                 }
             });
         }
-
-        public void searchMessagesWithAttachments() {
-            int offset = 0;
-            int limit = 10;
-            String type = "image";
-            channelClient.getMessagesWithAttachments(offset, limit, type).enqueue(result -> {
-                if (result.isSuccess()) {
-                    // These messages will contain at least one of the desired
-                    // type of attachment, but not necessarily all of their
-                    // attachments will have the specified type
-                    List<Message> messages = result.data();
-                }
-            });
-        }
     }
 
     /**

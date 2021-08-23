@@ -56,11 +56,10 @@ import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
 import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
+import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import java.text.SimpleDateFormat
-import java.util.Date
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -523,11 +522,7 @@ internal fun MessageFooter(
                 color = ChatTheme.colors.textLowEmphasis
             )
 
-            Text(
-                SimpleDateFormat.getTimeInstance().format(message.createdAt ?: Date()),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis
-            )
+            Timestamp(date = message.updatedAt ?: message.createdAt)
         }
     }
 }
@@ -558,11 +553,9 @@ private fun DeletedMessageFooter(
             color = ChatTheme.colors.textHighEmphasis
         )
 
-        Text(
-            modifier = Modifier.padding(start = 8.dp),
-            text = SimpleDateFormat.getTimeInstance().format(message.deletedAt ?: Date()),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis
+        Timestamp(
+            modifier = Modifier.padding(8.dp),
+            date = message.updatedAt ?: message.createdAt
         )
     }
 }
