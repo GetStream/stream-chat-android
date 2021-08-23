@@ -4,9 +4,11 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.helpers.AttachmentHelper
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
+import junit.framework.Assert.assertTrue
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -107,5 +109,22 @@ internal class AttachmentUrlValidatorTests {
             message.cid == message.cid && message.updatedAt!!.time == 2000L &&
                 message.attachments.first().imageUrl == "oldValidUrl"
         } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Given attachments with only imageUrls Should not update different attachments`() {
+        sut = AttachmentUrlValidator(AttachmentHelper())
+        val url1 = "https://community.dev.whoop.com/chat/stream/573570/team:community-770-general/2021-08-23T15:06:06.415904Z.png"
+        val url2 = "https://community.dev.whoop.com/chat/stream/573570/team:community-770-general/2021-08-23T15:06:27.941762Z.png"
+        val attachment1 = Attachment(imageUrl = url1)
+        val attachment2 = Attachment(imageUrl = url2)
+        val message = randomMessage(attachments = mutableListOf(attachment1, attachment2))
+
+        val result = sut.updateValidAttachmentsUrl(listOf(message.copy(updatedAt = Date())), mapOf(message.id to message))
+
+        result.first().attachments.let { attachments ->
+            assertTrue(attachments.any { it.imageUrl == url1 })
+            assertTrue(attachments.any { it.imageUrl == url2 })
+        }
     }
 }
