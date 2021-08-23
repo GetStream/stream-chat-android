@@ -4,8 +4,12 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
@@ -106,5 +110,25 @@ internal class ChatSocketServiceImplTest {
         socketService.anonymousConnect(randomString(), randomString())
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
+    }
+
+    @Test
+    fun `Should retry to connect`() {
+        whenever(networkStateProvider.isConnected()) doReturn true
+
+        val networkError = ChatNetworkError.create(
+            cause = null,
+            code = ChatErrorCode.NO_ERROR_BODY,
+            statusCode = 500,
+        )
+
+        socketService.anonymousConnect(randomString(), randomString())
+        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
+
+        whenever(networkStateProvider.isConnected()) doReturn false
+        socketService.onSocketError(networkError)
+
+        // Socket was recreated
+        verify(socketFactory, times(2)).createAnonymousSocket(any(), any(), any())
     }
 }

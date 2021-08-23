@@ -59,9 +59,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             mediaAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.pictureAttachmentIcon
-                if (attachmentSelectionDialogStyle.pictureAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.pictureAttachmentIconTint
-                }
 
                 isChecked = true
                 setOnClickListener {
@@ -71,9 +68,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             fileAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.fileAttachmentIcon
-                if (attachmentSelectionDialogStyle.fileAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.fileAttachmentIconTint
-                }
 
                 setOnClickListener {
                     setSelectedButton(fileAttachmentButton, AttachmentDialogPagerAdapter.PAGE_FILE_ATTACHMENT)
@@ -82,9 +76,6 @@ public class AttachmentSelectionDialogFragment : BottomSheetDialogFragment(), At
 
             cameraAttachmentButton.run {
                 background = attachmentSelectionDialogStyle.cameraAttachmentIcon
-                if (attachmentSelectionDialogStyle.cameraAttachmentIconTint != null) {
-                    backgroundTintList = attachmentSelectionDialogStyle.cameraAttachmentIconTint
-                }
 
                 setOnClickListener {
                     setSelectedButton(cameraAttachmentButton, AttachmentDialogPagerAdapter.PAGE_CAMERA_ATTACHMENT)

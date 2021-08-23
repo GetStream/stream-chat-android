@@ -277,22 +277,13 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiPictureAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
-                val pictureAttachmentIconTint =
-                    a.getColorStateList(R.styleable.MessageInputView_streamUiPictureAttachmentIconTint)
-
                 val fileAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiFileAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
-                val fileAttachmentIconTint =
-                    a.getColorStateList(R.styleable.MessageInputView_streamUiFileAttachmentIconTint)
-
                 val cameraAttachmentIcon = a.getDrawable(
                     R.styleable.MessageInputView_streamUiCameraAttachmentIcon
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
-
-                val cameraAttachmentIconTint =
-                    a.getColorStateList(R.styleable.MessageInputView_streamUiCameraAttachmentIconTint)
 
                 val allowAccessToCameraIcon =
                     a.getDrawable(R.styleable.MessageInputView_streamUiAllowAccessToCameraIcon)
@@ -395,11 +386,8 @@ public data class MessageInputViewStyle(
 
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
-                    pictureAttachmentIconTint = pictureAttachmentIconTint,
                     fileAttachmentIcon = fileAttachmentIcon,
-                    fileAttachmentIconTint = fileAttachmentIconTint,
                     cameraAttachmentIcon = cameraAttachmentIcon,
-                    cameraAttachmentIconTint = cameraAttachmentIconTint,
                     allowAccessToCameraIcon = allowAccessToCameraIcon,
                     allowAccessToFilesIcon = allowAccessToFilesIcon,
                     allowAccessToGalleryIcon = allowAccessToGalleryIcon,

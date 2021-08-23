@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import androidx.room.TypeConverter
-import com.google.gson.reflect.TypeToken
+import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.api.models.AndFilterObject
 import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
@@ -21,24 +21,24 @@ import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.offline.gson
 import java.lang.IllegalArgumentException
-import java.lang.reflect.Type
 
 internal class FilterObjectConverter {
+    @OptIn(ExperimentalStdlibApi::class)
+    private val adapter = moshi.adapter<Map<String, Any>>()
+
     @TypeConverter
-    fun stringToObject(data: String?): FilterObject {
+    fun stringToObject(data: String?): FilterObject? {
         if (data.isNullOrEmpty() || data == "null") {
             return NeutralFilterObject
         }
-        val hashType: Type = object : TypeToken<HashMap<String, Any>?>() {}.type
-        val dataMap: HashMap<String, Any> = gson.fromJson(data, hashType)
-        return dataMap.toFilterObject()
+        val dataMap = adapter.fromJson(data)
+        return dataMap?.toFilterObject()
     }
 
     @TypeConverter
     fun objectToString(filterObject: FilterObject): String {
-        return gson.getAdapter(Map::class.java).toJson(filterObject.toMap())
+        return adapter.toJson(filterObject.toMap())
     }
 }
 
@@ -74,7 +74,7 @@ private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.k
     }
 }
 
-private fun FilterObject.toMap(): Map<*, *> = when (this) {
+private fun FilterObject.toMap(): Map<String, Any> = when (this) {
     is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
     is OrFilterObject -> mapOf(KEY_OR to this.filterObjects.map(FilterObject::toMap))
     is NorFilterObject -> mapOf(KEY_NOR to this.filterObjects.map(FilterObject::toMap))

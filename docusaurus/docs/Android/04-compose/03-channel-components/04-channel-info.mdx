@@ -11,7 +11,7 @@ It also exposes a callback when the user selects a channel option from the list.
 
 ## Usage
 
-If you're using the [`ChannelScreen`](./01-channels-screen.md) component, you don't have to do anything. The `ChannelInfo` component and its logic will be integrated into the UI.
+If you're using the [`ChannelScreen`](./01-channels-screen.mdx) component, you don't have to do anything. The `ChannelInfo` component and its logic will be integrated into the UI.
 
 If you're looking to build a custom UI, you can add the `ChannelInfo` component on top of your UI, within a `Box`, like so:
 
@@ -96,7 +96,7 @@ This component offers the following customization options:
 fun ChannelInfo(
 	..., // state and actions
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+    shape: Shape = ChatTheme.shapes.bottomSheet,
 )
 ```
 
@@ -121,4 +121,4 @@ This code will produce the following UI:
 
 ![The ChannelInfo Component](../../assets/compose_custom_channel_info_component.png)
 
-The `ChannelInfo` component now looks more like a dialog, that displays over other elements. This is just an example of UI customization, the component still isn't a dialog, with a special scrim or dismiss actions.
+The `ChannelInfo` component now looks more like a dialog, that displays over other elements. This is just an example of how easy it is to apply UI customization to our components.

@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.getstream.sdk.chat.utils.formatDate
+import io.getstream.chat.android.client.extensions.isMutedFor
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -25,7 +26,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getLastMessagePreviewText
 import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
-import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.isCurrentUserOwnerOrAdmin
@@ -184,7 +184,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureUnreadCountBadge()
                 }
 
-                muteIcon.isVisible = channel.isMuted
+                muteIcon.isVisible = ChatDomain.instance().user.value?.let(channel::isMutedFor) == true
             }
         }
     }

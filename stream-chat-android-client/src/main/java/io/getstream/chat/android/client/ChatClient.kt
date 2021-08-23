@@ -201,20 +201,6 @@ public class ChatClient internal constructor(
     /**
      * Initializes [ChatClient] for a specific user using the given user [token].
      *
-     * @see ChatClient.setUser with [TokenProvider] for advanced use cases
-     */
-    @Deprecated(
-        message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, token).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
-        setUser(user, ConstantTokenProvider(token), listener)
-    }
-
-    /**
-     * Initializes [ChatClient] for a specific user using the given user [token].
-     *
      * @param user Instance of [User] type.
      * @param token Instance of JWT token. It must be unique for each user.
      * Check out [docs](https://getstream.io/chat/docs/android/init_and_users/) for more info about tokens.
@@ -242,12 +228,7 @@ public class ChatClient internal constructor(
      * @param tokenProvider a [TokenProvider] implementation
      * @param listener socket connection listener
      */
-    @Deprecated(
-        message = "Use connectUser instead",
-        replaceWith = ReplaceWith("this.connectUser(user, tokenProvider).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setUser(
+    private fun setUser(
         user: User,
         tokenProvider: TokenProvider,
         listener: InitConnectionListener? = null,
@@ -354,27 +335,27 @@ public class ChatClient internal constructor(
         )
     }
 
-    @Deprecated(
-        message = "Use connectAnonymousUser instead",
-        replaceWith = ReplaceWith("this.connectAnonymousUser().enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        socketStateService.onConnectionRequested()
-        userStateService.onSetAnonymous()
-        connectionListener = object : InitConnectionListener() {
-            override fun onSuccess(data: ConnectionData) {
-                notifySetUser(data.user)
-                listener?.onSuccess(data)
-            }
+    private fun setAnonymousUser(listener: InitConnectionListener? = null) {
+        if (userStateService.state is UserState.NotSet) {
+            socketStateService.onConnectionRequested()
+            userStateService.onSetAnonymous()
+            connectionListener = object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    notifySetUser(data.user)
+                    listener?.onSuccess(data)
+                }
 
-            override fun onError(error: ChatError) {
-                listener?.onError(error)
+                override fun onError(error: ChatError) {
+                    listener?.onError(error)
+                }
             }
+            config.isAnonymous = true
+            warmUp()
+            socket.connectAnonymously()
+        } else {
+            logger.logE("Failed to connect user. Please check you don't have connected user already")
+            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
         }
-        config.isAnonymous = true
-        warmUp()
-        socket.connectAnonymously()
     }
 
     @CheckResult
@@ -382,15 +363,10 @@ public class ChatClient internal constructor(
         return createInitListenerCall { initListener -> setAnonymousUser(initListener) }
     }
 
-    @Deprecated(
-        message = "Use connectGuestUser instead",
-        replaceWith = ReplaceWith("this.connectGuestUser(userId, username).enqueue { result -> TODO(\"Handle result\") })"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
+    private fun setGuestUser(userId: String, username: String, listener: InitConnectionListener? = null) {
         getGuestToken(userId, username).enqueue {
             if (it.isSuccess) {
-                setUser(it.data().user, it.data().token, listener)
+                setUser(it.data().user, ConstantTokenProvider(it.data().token), listener)
             } else {
                 listener?.onError(it.error())
             }
@@ -758,7 +734,7 @@ public class ChatClient internal constructor(
         limit: Int,
         type: String,
     ): Call<List<Attachment>> =
-        getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
+        getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
             messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
@@ -772,6 +748,10 @@ public class ChatClient internal constructor(
      * @param limit max limit messages to be fetched
      * @param type The desired type attachment
      */
+    @Deprecated(
+        message = "Use getMessagesWithAttachments function with types list instead",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun getMessagesWithAttachments(
         channelType: String,
@@ -782,6 +762,29 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+    }
+
+    /**
+     * Returns a [Call] with messages that contain at least one desired type attachment but
+     * not necessarily all of them will have a specified type
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param offset the messages offset
+     * @param limit max limit messages to be fetched
+     * @param types desired attachment's types list
+     */
+    @CheckResult
+    public fun getMessagesWithAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        types: List<String>,
+    ): Call<List<Message>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", types)
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 
@@ -1509,15 +1512,6 @@ public class ChatClient internal constructor(
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
-            return this
-        }
-
-        @Deprecated(
-            message = "Use logLevel function with ChatLogLevel parameter instead",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun logLevel(level: String): Builder {
-            logLevel = ChatLogLevel.valueOf(level)
             return this
         }
 

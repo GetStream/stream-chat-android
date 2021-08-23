@@ -31,12 +31,11 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
-import java.text.SimpleDateFormat
-import java.util.Date
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
@@ -136,11 +135,7 @@ internal fun DefaultChannelItem(
                     tint = if (seenMessage) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
                 )
 
-                Text(
-                    text = SimpleDateFormat.getTimeInstance().format(channel.lastUpdated ?: Date()),
-                    fontSize = 14.sp,
-                    color = ChatTheme.colors.textLowEmphasis,
-                )
+                Timestamp(date = channel.lastUpdated)
             }
         }
     }

@@ -3,7 +3,7 @@
 The **UI Components** library includes pre-built Android Views to easily load and display data from the Stream Chat API.
 
 :::info
-Already using Jetpack Compose? Check out our [Compose UI Components](../04-compose/01-overview.md)!
+Already using Jetpack Compose? Check out our [Compose UI Components](../04-compose/01-overview.mdx)!
 :::
 
 |||
@@ -14,20 +14,21 @@ This library builds on top of the offline library, and provides [ViewModels](#vi
 
 See the individual pages of the components to learn more about them:
 
-- [Channel List Screen](04-components/01-channel-list-screen.md)
-- [Channel List](04-components/02-channel-list.md)
-- [Channel List Header](04-components/03-channel-list-header.md)
-- [Message List Screen](04-components/04-message-list-screen.md)
-- [Message List](04-components/05-message-list.md)
-- [Message List Header](04-components/06-message-list-header.md)
-- [Message Input](04-components/07-message-input.md)
-- [Mention List View](04-components/08-mention-list-view.md)
-- [Search View](04-components/09-search-view.md)
-- [Attachment Gallery](04-components/10-attachment-gallery.md)
+- [Channel List Screen](04-components/01-channel-list-screen.mdx)
+- [Channel List](04-components/02-channel-list.mdx)
+- [Channel List Header](04-components/03-channel-list-header.mdx)
+- [Message List Screen](04-components/04-message-list-screen.mdx)
+- [Message List](04-components/05-message-list.mdx)
+- [Message List Header](04-components/06-message-list-header.mdx)
+- [Message Input](04-components/07-message-input.mdx)
+- [Mention List View](04-components/08-mention-list-view.mdx)
+- [Pinned Message List View](04-components/09-pinned-message-list-view.mdx)
+- [Search View](04-components/10-search-view.mdx)
+- [Attachment Gallery](04-components/11-attachment-gallery.mdx)
 
 ## Requirements
 
-To use the UI Components, add the dependency to your app, as described on the [Dependencies](../01-basics/02-dependencies.md#ui-components) page.
+To use the UI Components, add the dependency to your app, as described on the [Dependencies](../01-basics/02-dependencies.mdx#ui-components) page.
 
 Since this library uses Material elements, make sure that you use a Material theme in your application before adding the components. This means that your app's theme should extend a theme from `Theme.MaterialComponents`, and not `Theme.AppCompat`. Here's a correct example:
 
@@ -73,6 +74,6 @@ The [UI components sample app](https://github.com/GetStream/stream-chat-android/
 
 ## Customization
 
-The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](02-theming.md) page describes all the available styling options for the SDK in detail.
+The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](02-theming.mdx) page describes all the available styling options for the SDK in detail.
 
-You can also use the [`ChatUI` object](03-chatui.md) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.
+You can also use the [`ChatUI` object](03-chatui.mdx) to customize the behaviour of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.
