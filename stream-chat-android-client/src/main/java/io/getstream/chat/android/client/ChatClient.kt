@@ -360,21 +360,26 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        socketStateService.onConnectionRequested()
-        userStateService.onSetAnonymous()
-        connectionListener = object : InitConnectionListener() {
-            override fun onSuccess(data: ConnectionData) {
-                notifySetUser(data.user)
-                listener?.onSuccess(data)
-            }
+        if (userStateService.state is UserState.NotSet) {
+            socketStateService.onConnectionRequested()
+            userStateService.onSetAnonymous()
+            connectionListener = object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    notifySetUser(data.user)
+                    listener?.onSuccess(data)
+                }
 
-            override fun onError(error: ChatError) {
-                listener?.onError(error)
+                override fun onError(error: ChatError) {
+                    listener?.onError(error)
+                }
             }
+            config.isAnonymous = true
+            warmUp()
+            socket.connectAnonymously()
+        } else {
+            logger.logE("Failed to connect user. Please check you don't have connected user already")
+            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
         }
-        config.isAnonymous = true
-        warmUp()
-        socket.connectAnonymously()
     }
 
     @CheckResult
@@ -758,7 +763,7 @@ public class ChatClient internal constructor(
         limit: Int,
         type: String,
     ): Call<List<Attachment>> =
-        getMessagesWithAttachments(channelType, channelId, offset, limit, type).map { messages ->
+        getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
             messages.flatMap { message -> message.attachments.filter { it.type == type } }
         }
 
@@ -772,6 +777,10 @@ public class ChatClient internal constructor(
      * @param limit max limit messages to be fetched
      * @param type The desired type attachment
      */
+    @Deprecated(
+        message = "Use getMessagesWithAttachments function with types list instead",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun getMessagesWithAttachments(
         channelType: String,
@@ -782,6 +791,29 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", type)
+        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+    }
+
+    /**
+     * Returns a [Call] with messages that contain at least one desired type attachment but
+     * not necessarily all of them will have a specified type
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     * @param offset the messages offset
+     * @param limit max limit messages to be fetched
+     * @param types desired attachment's types list
+     */
+    @CheckResult
+    public fun getMessagesWithAttachments(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        types: List<String>,
+    ): Call<List<Message>> {
+        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", types)
         return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
     }
 

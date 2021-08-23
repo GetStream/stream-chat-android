@@ -1,33 +1,36 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import androidx.room.TypeConverter
-import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.offline.gson
+import com.squareup.moshi.adapter
 import io.getstream.chat.android.offline.repository.domain.channel.member.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.ChannelUserReadEntity
 
 internal class MapConverter {
+    @OptIn(ExperimentalStdlibApi::class)
+    private val stringMapAdapter = moshi.adapter<Map<String, String>>()
+    @OptIn(ExperimentalStdlibApi::class)
+    private val intMapAdapter = moshi.adapter<Map<String, Int>>()
+    @OptIn(ExperimentalStdlibApi::class)
+    private val channelUserReadMapAdapter = moshi.adapter<Map<String, ChannelUserReadEntity>>()
+    @OptIn(ExperimentalStdlibApi::class)
+    private val memberEntityMapAdapter = moshi.adapter<Map<String, MemberEntity>>()
+
     @TypeConverter
-    fun readMapToString(someObjects: MutableMap<String, ChannelUserReadEntity>?): String {
-        return gson.toJson(someObjects)
+    fun readMapToString(someObjects: Map<String, ChannelUserReadEntity>?): String {
+        return channelUserReadMapAdapter.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToReadMap(data: String?): MutableMap<String, ChannelUserReadEntity> {
+    fun stringToReadMap(data: String?): Map<String, ChannelUserReadEntity>? {
         if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
-        val listType = object :
-            TypeToken<MutableMap<String, ChannelUserReadEntity>>() {}.type
-        return gson.fromJson(
-            data,
-            listType
-        )
+        return channelUserReadMapAdapter.fromJson(data)
     }
 
     @TypeConverter
     fun memberMapToString(someObjects: Map<String, MemberEntity>?): String? {
-        return gson.toJson(someObjects)
+        return memberEntityMapAdapter.toJson(someObjects)
     }
 
     @TypeConverter
@@ -35,32 +38,20 @@ internal class MapConverter {
         if (data.isNullOrEmpty() || data == "null") {
             return emptyMap()
         }
-        val listType = object :
-            TypeToken<Map<String, MemberEntity>>() {}.type
-        return gson.fromJson(
-            data,
-            listType
-        )
+        return memberEntityMapAdapter.fromJson(data)
     }
 
     @TypeConverter
-    fun stringToMap(data: String?): Map<String, Int> {
+    fun stringToMap(data: String?): Map<String, Int>? {
         if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
-        val mapType = object :
-            TypeToken<Map<String, Int>?>() {}.type
-        return gson.fromJson(
-            data,
-            mapType
-        )
+        return intMapAdapter.fromJson(data)
     }
 
     @TypeConverter
     fun mapToString(someObjects: Map<String, Int>?): String? {
-        return gson.toJson(
-            someObjects
-        )
+        return intMapAdapter.toJson(someObjects)
     }
 
     @TypeConverter
@@ -68,18 +59,11 @@ internal class MapConverter {
         if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
-        val mapType = object :
-            TypeToken<Map<String, String>?>() {}.type
-        return gson.fromJson(
-            data,
-            mapType
-        )
+        return stringMapAdapter.fromJson(data)
     }
 
     @TypeConverter
     fun stringMapToString(someObjects: Map<String, String>?): String? {
-        return gson.toJson(
-            someObjects
-        )
+        return stringMapAdapter.toJson(someObjects)
     }
 }

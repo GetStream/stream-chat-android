@@ -354,21 +354,6 @@ class Messages(
                 }
             }
         }
-
-        fun searchMessagesWithAttachments() {
-            channelClient.getMessagesWithAttachments(
-                offset = 0,
-                limit = 10,
-                type = "image",
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    // These messages will contain at least one of the desired
-                    // type of attachment, but not necessarily all of their
-                    // attachments will have the specified type
-                    val messages: List<Message> = result.data()
-                }
-            }
-        }
     }
 
     /**

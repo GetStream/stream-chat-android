@@ -31,6 +31,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed a serialization error when editing messages that are replies
 
 ### ⬆️ Improved
 
@@ -39,6 +40,9 @@
 - Added the `timeout` parameter to `ChatClient::muteUser`, `ChannelClient:mute::muteUser` methods
 
 ### ⚠️ Changed
+- Allow specifying multiple attachment's type when getting messages with attachments:
+  - Deprecated `ChatClient::getMessagesWithAttachments` with `type` parameter. Use `ChatClient::getMessagesWithAttachments` function with types list instead
+  - Deprecated `ChannelClient::getMessagesWithAttachments` with `type` parameter. Use `ChannelClient::getMessagesWithAttachments` function with types list instead
 
 ### ❌ Removed
 
@@ -57,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed a bug in state handling for anonymous users. 
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -78,7 +82,7 @@
   - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
   - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
   - `MessageListActivity` - thin wrapper around `MessageListFragment`
-    
+
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -89,8 +93,12 @@
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
 
 ### ⬆️ Improved
+- Added default date and time formatting to Channel and Message items.
 
 ### ✅ Added
+- Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
+- Added a `Timestamp` component that encapsulates date formatting.
+- Added a way to customize and override if messages use unique reactions.
 
 ### ⚠️ Changed
 
