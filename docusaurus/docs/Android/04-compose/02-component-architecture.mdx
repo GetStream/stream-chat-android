@@ -63,7 +63,7 @@ They usually represent features on the screen like the header, input, search fie
 * `MessageList`: Connects to the API using the ViewModel, shows a list of messages or empty or loading states, handles pagination, item taps and long taps and more.
 * `ChannelList`: Same as the `MessageList`, but for channels.
 * `MessageComposer`: Holds an input field to write new messages in, allows you to send attachments, and shows different states when replying or editing a message.
-* `AttachmentPicker`: Allows you to pick and choose from system media, files, or media capture to send attachments.
+* `AttachmentsPicker`: Allows you to pick and choose from system media, files, or media capture to send attachments.
 
 ### Usage
 

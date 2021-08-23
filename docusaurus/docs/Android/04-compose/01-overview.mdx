@@ -63,11 +63,11 @@ val factory =
         chatClient = ChatClient.instance(),
         chatDomain = ChatDomain.instance(),
         channelId = intent.getStringExtra(KEY_CHANNEL_ID)!!,
+        enforceUniqueReactions = true,
         messageLimit = 30
     )
 // 2
 val listViewModel: MessageListViewModel by viewModels { factory }
-
 
 // 3
 setContent {

@@ -49,6 +49,7 @@ public class MessageListViewModel(
     public val chatDomain: ChatDomain,
     private val channelId: String,
     private val messageLimit: Int = 0,
+    private val enforceUniqueReactions: Boolean = true,
     private val clipboardHandler: ClipboardHandler,
 ) : ViewModel() {
 
@@ -459,8 +460,7 @@ public class MessageListViewModel(
         if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
             chatDomain.deleteReaction(channelId, reaction).enqueue()
         } else {
-            // todo check if we need to enforce unique
-            chatDomain.sendReaction(channelId, reaction, true).enqueue()
+            chatDomain.sendReaction(channelId, reaction, enforceUniqueReactions).enqueue()
         }
     }
 

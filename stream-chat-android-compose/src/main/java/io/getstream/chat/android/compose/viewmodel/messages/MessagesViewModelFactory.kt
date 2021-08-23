@@ -20,6 +20,7 @@ public class MessagesViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val channelId: String,
+    private val enforceUniqueReactions: Boolean,
     private val messageLimit: Int,
 ) : ViewModelProvider.Factory {
 
@@ -33,6 +34,7 @@ public class MessagesViewModelFactory(
                 chatDomain,
                 channelId,
                 messageLimit,
+                enforceUniqueReactions,
                 ClipboardHandlerImpl(clipboardManager)
             )
         },
