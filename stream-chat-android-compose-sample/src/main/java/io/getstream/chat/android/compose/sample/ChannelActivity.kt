@@ -66,7 +66,7 @@ class ChannelActivity : AppCompatActivity() {
          * or build a custom component yourself, like [MyCustomUi].
          * */
         setContent {
-            ChatTheme {
+            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 ChannelsScreen(
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,

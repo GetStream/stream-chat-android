@@ -31,6 +31,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed a serialization error when editing messages that are replies
 
 ### ⬆️ Improved
 
@@ -60,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed a bug in state handling for anonymous users. 
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -81,7 +82,7 @@
   - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
   - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
   - `MessageListActivity` - thin wrapper around `MessageListFragment`
-    
+
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -94,8 +95,12 @@
 - Updated the `ChannelInfoUserItem` to use the `UserAvatar`.
 
 ### ⬆️ Improved
+- Added default date and time formatting to Channel and Message items.
 
 ### ✅ Added
+- Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
+- Added a `Timestamp` component that encapsulates date formatting.
+- Added a way to customize and override if messages use unique reactions.
 
 ### ⚠️ Changed
 
