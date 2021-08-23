@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.extensions.internal.isGif
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
 
