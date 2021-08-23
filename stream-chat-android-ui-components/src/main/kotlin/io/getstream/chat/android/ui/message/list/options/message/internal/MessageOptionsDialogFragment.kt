@@ -49,7 +49,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
     }
 
-    private val optionsOffset: Int = requireContext().getDimension(R.dimen.stream_ui_spacing_medium)
+    private val optionsOffset: Int by lazy { requireContext().getDimension(R.dimen.stream_ui_spacing_medium) }
 
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
