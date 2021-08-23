@@ -1313,11 +1313,6 @@ public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageI
 	public static final fun bind (Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;Lio/getstream/chat/android/ui/message/input/MessageInputView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/message/list/DefaultShowAvatarPredicate : io/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate {
-	public fun <init> ()V
-	public fun shouldShow (Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Z
-}
-
 public abstract class io/getstream/chat/android/ui/message/list/DeletedMessageListItemPredicate : io/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate {
 }
 
