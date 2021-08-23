@@ -12,7 +12,7 @@ Let's see how to use it!
 
 ## Usage
 
-If you're using the [`MessagesScreen`](./01-messages-screen.md), the `SelectedMessageOverlay` is already set up for you. To use the `SelectedMessageOverlay` in your custom screens, simply add it to your UI, like so:
+If you're using the [`MessagesScreen`](./01-messages-screen.mdx), the `SelectedMessageOverlay` is already set up for you. To use the `SelectedMessageOverlay` in your custom screens, simply add it to your UI, like so:
 
 ```kotlin
 // The rest of your UI
@@ -32,7 +32,7 @@ if (selectedMessage != null) {
 }
 ```
 
-As you can see, adding the overlay is very simple. If a `selectedMessage` exists, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.md) component and everything else required to show the component is taken care internally.
+As you can see, adding the overlay is very simple. If a `selectedMessage` exists, you pass in the message options you want to expose to the user, as well as the selected message. The reactions you show are taken from the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx) component and everything else required to show the component is taken care internally.
 
 The small snippet of code above produces the following UI:
 
@@ -97,4 +97,4 @@ fun SelectedMessageOverlay(
 * `reactionTypes`: Allows you customize which reactions show in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the `ChatTheme` component.
 * `messageOptions`: Allows you to customize which message options are shown in the overlay. You can use `defaultMessageOptions()` to get the default actions that we expose in our SDK.
 
-If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.md)'s `reactionTypes` parameter.
+If you want to customize these options or reactions, you can set up custom reactions, using the [`ChatTheme`](../02-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.

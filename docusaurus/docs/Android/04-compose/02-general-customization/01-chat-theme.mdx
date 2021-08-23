@@ -7,6 +7,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **Shapes**: Defines several shapes we use across our Compose UI components. Can be used to change the shape of messages, input fields, avatars and attachments.
 * **AttachmentFactories**: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
 * **ReactionTypes**: Used to define the supported message reactions in the app. You can use the default-provided reactions, or customize them to your app's needs.
+* **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
@@ -58,7 +59,8 @@ setContent {
             attachment = RoundedCornerShape(16.dp),
             inputField = RectangleShape,
             myMessageBubble = RoundedCornerShape(16.dp),
-            otherMessageBubble = RoundedCornerShape(16.dp)
+            otherMessageBubble = RoundedCornerShape(16.dp),
+            bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
         )
     ) {
         MessagesScreen(
@@ -85,50 +87,24 @@ Let's see what each property exposes and what the values are used for.
 
 ### StreamColors
 
-`StreamColors` are used to represent all the colors we use and apply to our components in the SDK. It exposes the following properties:
+`StreamColors` are used to represent all the colors we use and apply to our components in the SDK.
 
-* `textHighEmphasis` - Used for main text and active icon status.
-* `textLowEmphasis` - Used for secondary text, default icon state, deleted messages text and datestamp background.
-* `disabled` - Used for disabled icons and empty states.
-* `borders` - Used for borders, the background of self messages, selected items, pressed state, button dividers.
-* `inputBackground` - Used for the input background, deleted messages, section headings.
-* `appBackground` - Used for the default app background and channel list item background.
-* `barsBackground` - Used for button text, top and bottom bar background and other user messages.
-* `linkBackground` - Used for the message link card background.
-* `overlay` - Used for general overlays and background when opening modals.
-* `primaryAccent` - Used for selected icon state, call to actions, white buttons text and links.
-* `errorAccent` - Used for error text labels, notification badges and disruptive action text and icons.
-* `infoAccent` - Used for the online status.
+You can find the definitions of all the colors we expose in [the class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamColors.kt), as well as what the default provided colors are.
 
-You can find all these definitions in [the class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamColors.kt), as well as what the default provided colors are. You can also browse which components are using the colors, to know what will be affected by any change.
+You can also browse which components are using the colors, to know what will be affected by any change.
 
 ### StreamTypography
 
-`StreamTypography` is used to apply different font weights and sizes to our textual UI components. It exposes the following main properties:
+`StreamTypography` is used to apply different font weights and sizes to our textual UI components.
 
-* `title3Bold` - Used for titles of app bars and bottom bars.
-* `body` - Used for body content, such as messages.
-* `bodyItalic` - Used for body content, italicized, like deleted message components.
-* `bodyBold` - Used for emphasized body content, like small titles.
-* `footnote` - Used for footnote information, like timestamps.
-* `tabBar` - Used for items on top/bottom bars.
+You can find all the text style properties we expose in [the class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamTypography.kt), as well as what the default styles are.
 
-It also exposes more properties which are not currently used in the SDK, but are available to you, like:
-
-* `title3`: Useful for important titles, like app bar or bottom bar titles, where the text shouldn't be bold.
-* `captionBold`: Useful for important small text that represents captions and is bold.
-* `tabBar`: Useful for small, less important text shown on tab bars or in bottom menus.
-
-You can customize all of these properties to make your closer to your design system.
+You can also browse which components are using the styles, to know what will be affected by any change.
 
 ### StreamShapes
 
-`StreamShapes` provides a small collection of shapes that let us style our containers. It provides the following properties:
+`StreamShapes` provides a small collection of shapes that let us style our containers.
 
-* `avatar` - The avatar shape.
-* `myMessageBubble` - The bubble that wraps my message content.
-* `otherMessageBubble` - The bubble that wraps other people's message content.
-* `inputField` - The shape of the input field.
-* `attachment` - The shape of attachments.
+You can find all the shapes we expose in [the class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamShapes.kt), as well as what the default shapes are.
 
 These are really easy to customize, as you've seen before, and can make your app feel closer to your design system.

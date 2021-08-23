@@ -27,7 +27,6 @@ import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
 import kotlinx.coroutines.flow.map
-import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 
 /**
@@ -61,12 +60,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         get() = chatDomainStateFlow.userPresence
         set(value) {
             chatDomainStateFlow.userPresence = value
-        }
-    @Suppress("DEPRECATION_ERROR")
-    override var currentUser: User
-        get() = chatDomainStateFlow.currentUser
-        set(value) {
-            chatDomainStateFlow.currentUser = value
         }
 
     override val user: LiveData<User?> = chatDomainStateFlow.user.asLiveData()
@@ -119,7 +112,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
             chatDomainStateFlow.retryPolicy = value
         }
 
-    override suspend fun disconnect() = chatDomainStateFlow.disconnect()
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
 
     override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> =
@@ -196,12 +188,6 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override fun createChannel(channel: Channel): Call<Channel> = chatDomainStateFlow.createChannel(channel)
 
     override fun sendMessage(message: Message): Call<Message> = chatDomainStateFlow.sendMessage(message)
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = chatDomainStateFlow.sendMessage(message, attachmentTransformer)
 
     override fun cancelMessage(message: Message): Call<Boolean> = chatDomainStateFlow.cancelMessage(message)
 

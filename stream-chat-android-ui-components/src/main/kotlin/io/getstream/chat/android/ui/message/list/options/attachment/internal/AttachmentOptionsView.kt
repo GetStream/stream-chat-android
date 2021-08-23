@@ -9,9 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawable
-import io.getstream.chat.android.ui.common.extensions.internal.setLeftDrawableWithTint
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentOptionsViewBinding
@@ -65,10 +63,10 @@ internal class AttachmentOptionsView : FrameLayout {
     private fun init(context: Context, attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.AttachmentOptionsView).use { array ->
             readConfiguration(array).run {
-                binding.reply.configureListItem(replyIcon, iconsDefaultTint)
-                binding.showInChat.configureListItem(showInChatIcon, iconsDefaultTint)
-                binding.saveImage.configureListItem(saveImageIcon, iconsDefaultTint)
-                binding.delete.configureListItem(deleteIcon, deleteIconTint, deleteTextTint)
+                binding.reply.setLeftDrawable(replyIcon)
+                binding.showInChat.setLeftDrawable(showInChatIcon)
+                binding.saveImage.setLeftDrawable(saveImageIcon)
+                binding.delete.configureListItem(deleteIcon, deleteTextTint)
             }
         }
     }
@@ -78,7 +76,6 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     private fun readConfiguration(array: TypedArray): Configuration {
-        val iconsTint = array.getColorOrNull(R.styleable.AttachmentOptionsView_streamUiIconsDefaultTint)
 
         val replyIcon = array.getResourceId(
             R.styleable.AttachmentOptionsView_streamUiReplyIcon,
@@ -99,7 +96,6 @@ internal class AttachmentOptionsView : FrameLayout {
             R.styleable.AttachmentOptionsView_streamUiDeleteIcon,
             R.drawable.stream_ui_ic_delete,
         )
-        val deleteIconTint = array.getColorOrNull(R.styleable.AttachmentOptionsView_streamUiDeleteIconTint)
 
         val deleteTextTint = array.getColor(
             R.styleable.AttachmentOptionsView_streamUiDeleteTextTint,
@@ -107,23 +103,19 @@ internal class AttachmentOptionsView : FrameLayout {
         )
 
         return Configuration(
-            iconsDefaultTint = iconsTint,
             replyIcon = replyIcon,
             showInChatIcon = showInChatIcon,
             saveImageIcon = saveImageIcon,
             deleteIcon = deleteIcon,
-            deleteIconTint = deleteIconTint,
             deleteTextTint = deleteTextTint
         )
     }
 
     internal data class Configuration(
-        val iconsDefaultTint: Int?,
         val replyIcon: Int,
         val showInChatIcon: Int,
         val saveImageIcon: Int,
         val deleteIcon: Int,
-        val deleteIconTint: Int?,
         val deleteTextTint: Int,
     ) : Serializable
 
@@ -143,16 +135,8 @@ internal class AttachmentOptionsView : FrameLayout {
         fun onClick()
     }
 
-    private fun TextView.configureListItem(icon: Int, iconTint: Int?) {
-        if (iconTint != null) {
-            this.setLeftDrawableWithTint(icon, iconTint)
-        } else {
-            setLeftDrawable(icon)
-        }
-    }
-
-    private fun TextView.configureListItem(icon: Int, iconTint: Int?, textTint: Int) {
+    private fun TextView.configureListItem(icon: Int, textTint: Int) {
         this.setTextColor(textTint)
-        configureListItem(icon, iconTint)
+        setLeftDrawable(icon)
     }
 }

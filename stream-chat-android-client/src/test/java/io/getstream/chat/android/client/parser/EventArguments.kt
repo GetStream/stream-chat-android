@@ -124,16 +124,16 @@ internal object EventArguments {
     private val member = Member(user, role = "user", createdAt = date, updatedAt = date)
     private val giphyCommand = Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
     private val config = Config(
-        created_at = date,
-        updated_at = date,
+        createdAt = date,
+        updatedAt = date,
         name = "team",
-        isTypingEvents = true,
-        isReadEvents = true,
-        isConnectEvents = true,
-        isSearch = true,
+        typingEventsEnabled = true,
+        readEventsEnabled = true,
+        connectEventsEnabled = true,
+        searchEnabled = true,
         isReactionsEnabled = true,
         isRepliesEnabled = true,
-        isMutes = true,
+        muteEnabled = true,
         uploadsEnabled = true,
         urlEnrichmentEnabled = true,
         customEventsEnabled = true,

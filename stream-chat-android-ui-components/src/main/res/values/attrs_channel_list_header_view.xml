@@ -43,8 +43,6 @@
         <attr name="streamUiShowActionButton" format="boolean" />
         <!-- Action button icon drawable -->
         <attr name="streamUiActionButtonIcon" format="reference" />
-        <!-- {@deprecated Use streamUiActionButtonIcon instead.} -->
-        <attr name="streamUiActionButtonTint" format="color|reference" />
         <!-- Action button background tint -->
         <attr name="streamUiActionBackgroundTint" format="color|reference" />
     </declare-styleable>

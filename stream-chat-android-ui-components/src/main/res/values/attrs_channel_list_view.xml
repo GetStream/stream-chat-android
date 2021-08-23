@@ -94,8 +94,6 @@
 
         <!-- Drawable of the muted channel icon -->
         <attr name="streamUiMutedChannelIcon" format="reference" />
-        <!-- {@deprecated Use custom icon instead.} -->
-        <attr name="streamUiMutedChannelIconTint" format="color|reference" />
 
         <!-- Reference to layout resource of the channel list "loading" view -->
         <attr name="streamUiLoadingView" format="reference" />
