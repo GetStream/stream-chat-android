@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.common.extensions.internal.isGif
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
 
@@ -130,8 +131,6 @@ public open class AttachmentDestination(
             )
             .show()
     }
-
-    private fun Attachment.isGif() = mimeType?.contains("gif") ?: false
 
     private companion object {
         private const val VIDEO_MIME_TYPE_PREFIX = "video"

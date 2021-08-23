@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
+import io.getstream.chat.android.ui.common.extensions.internal.isGif
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -44,7 +45,9 @@ public open class AttachmentViewFactory {
         style: MessageListItemStyle,
         parent: ViewGroup,
     ): View {
-        val (links, attachments) = data.message.attachments.partition(Attachment::hasLink)
+        val (links, attachments) = data.message.attachments.partition { attachment ->
+            attachment.hasLink() && attachment.isGif()
+        }
 
         return when {
             links.isNotEmpty() && attachments.isNotEmpty() -> createLinkAndAttachmentsContent(
