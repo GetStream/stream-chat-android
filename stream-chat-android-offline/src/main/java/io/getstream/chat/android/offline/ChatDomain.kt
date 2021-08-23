@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
-import java.io.File
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat
@@ -323,27 +322,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun sendMessage(message: Message): Call<Message>
-
-    /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain
-     *
-     * @param message the message to send
-     *
-     * @return executable async [Call] responsible for sending a message
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)"),
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message>
 
     /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.

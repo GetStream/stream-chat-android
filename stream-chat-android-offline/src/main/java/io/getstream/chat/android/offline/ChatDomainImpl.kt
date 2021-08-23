@@ -100,7 +100,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.io.File
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -913,11 +912,6 @@ internal class ChatDomainImpl internal constructor(
     override fun createChannel(channel: Channel): Call<Channel> = CreateChannel(this).invoke(channel)
 
     override fun sendMessage(message: Message): Call<Message> = SendMessage(this).invoke(message)
-
-    override fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message> = SendMessage(this).invoke(message, attachmentTransformer)
 
     override fun cancelMessage(message: Message): Call<Boolean> = CancelMessage(this).invoke(message)
 

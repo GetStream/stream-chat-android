@@ -25,7 +25,6 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
-import java.io.File
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -327,27 +326,6 @@ public sealed interface ChatDomain {
      */
     @CheckResult
     public fun sendMessage(message: Message): Call<Message>
-
-    /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain
-     *
-     * @param message the message to send
-     *
-     * @return executable async [Call] responsible for sending a message
-     *
-     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)"),
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message>
 
     /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
