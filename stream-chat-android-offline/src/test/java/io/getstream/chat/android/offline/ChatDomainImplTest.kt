@@ -5,7 +5,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +30,6 @@ internal class ChatDomainImplTest {
         val client: ChatClient = mock {
             on { it.channel(any()) } doReturn mock()
         }
-        val currentUser = randomUser()
         val db: ChatDatabase = mock {
             on { userDao() } doReturn mock()
             on { channelConfigDao() } doReturn mock()
@@ -48,7 +46,6 @@ internal class ChatDomainImplTest {
         val recoveryEnabled = true
         sut = ChatDomainImpl(
             client,
-            currentUser,
             db,
             handler,
             offlineEnabled,
@@ -57,12 +54,13 @@ internal class ChatDomainImplTest {
             false,
             mock()
         )
+        sut.setUser(randomUser())
     }
 
     @Test
     fun `When create a new channel without author should set current user as author and return channel with author`() =
         testCoroutines.scope.runBlockingTest {
-            val newChannel = randomChannel(cid = "channelType:channelId", createdBy = User())
+            val newChannel = randomChannel(cid = "channelType:channelId", createdBy = randomUser())
 
             val result = sut.createNewChannel(newChannel)
 
