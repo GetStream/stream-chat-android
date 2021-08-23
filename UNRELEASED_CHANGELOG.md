@@ -93,8 +93,12 @@
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
 
 ### ⬆️ Improved
+- Added default date and time formatting to Channel and Message items.
 
 ### ✅ Added
+- Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
+- Added a `Timestamp` component that encapsulates date formatting.
+- Added a way to customize and override if messages use unique reactions.
 
 ### ⚠️ Changed
 

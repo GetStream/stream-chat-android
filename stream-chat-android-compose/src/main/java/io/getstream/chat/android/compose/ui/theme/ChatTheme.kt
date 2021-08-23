@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
@@ -30,8 +31,8 @@ private val LocalReactionTypes = compositionLocalOf<Map<String, Int>> {
     error("No reactions provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
-private val LocalStreamConfiguration = compositionLocalOf<StreamConfiguration> {
-    error("No StreamConfiguration provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
+    error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
@@ -43,7 +44,7 @@ private val LocalStreamConfiguration = compositionLocalOf<StreamConfiguration> {
  * @param shapes - The set of shapes we provide, wrapped in [StreamShapes].
  * @param attachmentFactories - Attachment factories that we provide. By default, images and files.
  * @param reactionTypes - The reaction types supported in the Messaging screen.
- * @param streamConfiguration - General configuration options used in the application.
+ * @param dateFormatter - [DateFormatter] used throughout the app for date and time information.
  * @param content - The content shown within the theme wrapper.
  * */
 @Composable
@@ -54,7 +55,7 @@ public fun ChatTheme(
     shapes: StreamShapes = StreamShapes.default,
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories,
     reactionTypes: Map<String, Int> = defaultReactionTypes,
-    streamConfiguration: StreamConfiguration = StreamConfiguration.defaultConfiguration(LocalContext.current),
+    dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -67,7 +68,7 @@ public fun ChatTheme(
         LocalShapes provides shapes,
         LocalAttachmentFactories provides attachmentFactories,
         LocalReactionTypes provides reactionTypes,
-        LocalStreamConfiguration provides streamConfiguration
+        LocalDateFormatter provides dateFormatter
     ) {
         content()
     }
@@ -104,8 +105,8 @@ public object ChatTheme {
         @ReadOnlyComposable
         get() = LocalReactionTypes.current
 
-    public val configuration: StreamConfiguration
+    public val dateFormatter: DateFormatter
         @Composable
         @ReadOnlyComposable
-        get() = LocalStreamConfiguration.current
+        get() = LocalDateFormatter.current
 }

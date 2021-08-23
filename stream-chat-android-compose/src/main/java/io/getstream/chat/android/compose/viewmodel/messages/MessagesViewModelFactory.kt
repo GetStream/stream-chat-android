@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
-import io.getstream.chat.android.compose.ui.theme.StreamConfiguration
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.offline.ChatDomain
 
@@ -21,7 +20,7 @@ public class MessagesViewModelFactory(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val channelId: String,
-    private val streamConfiguration: StreamConfiguration,
+    private val enforceUniqueReactions: Boolean,
     private val messageLimit: Int,
 ) : ViewModelProvider.Factory {
 
@@ -35,7 +34,7 @@ public class MessagesViewModelFactory(
                 chatDomain,
                 channelId,
                 messageLimit,
-                streamConfiguration.enforceUniqueReactions,
+                enforceUniqueReactions,
                 ClipboardHandlerImpl(clipboardManager)
             )
         },

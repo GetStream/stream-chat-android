@@ -22,10 +22,10 @@ import java.util.Date
  * using [DATE] by default, as it's the most common behavior.
  * */
 @Composable
-public fun DateFormat(
+public fun Timestamp(
     date: Date?,
     modifier: Modifier = Modifier,
-    formatter: DateFormatter = ChatTheme.configuration.dateFormatter,
+    formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
 ) {
     val timestamp = when (formatType) {

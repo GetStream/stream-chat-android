@@ -40,7 +40,6 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOverlay
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamConfiguration
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -51,13 +50,13 @@ class MessagesActivity : AppCompatActivity() {
 
     private val factory by lazy {
         MessagesViewModelFactory(
-            this,
-            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
-            ChatClient.instance(),
-            ChatDomain.instance(),
-            intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            StreamConfiguration.defaultConfiguration(this),
-            30
+            context = this,
+            clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
+            chatClient = ChatClient.instance(),
+            chatDomain = ChatDomain.instance(),
+            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            enforceUniqueReactions = true,
+            messageLimit = 30
         )
     }
 
@@ -74,7 +73,7 @@ class MessagesActivity : AppCompatActivity() {
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
         setContent {
-            ChatTheme {
+            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
                     messageLimit = 30,
