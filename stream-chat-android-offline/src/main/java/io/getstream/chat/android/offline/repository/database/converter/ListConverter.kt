@@ -1,25 +1,22 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import androidx.room.TypeConverter
-import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.offline.gson
+import com.squareup.moshi.adapter
 
 internal class ListConverter {
+    @OptIn(ExperimentalStdlibApi::class)
+    private val adapter = moshi.adapter<List<String>>()
+
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
         if (data.isNullOrEmpty() || data == "null") {
             return emptyList()
         }
-        val listType = object :
-            TypeToken<List<String?>?>() {}.type
-        return gson.fromJson(
-            data,
-            listType
-        )
+        return adapter.fromJson(data)
     }
 
     @TypeConverter
     fun stringListToString(someObjects: List<String>?): String? {
-        return gson.toJson(someObjects)
+        return adapter.toJson(someObjects)
     }
 }

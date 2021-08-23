@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
-import io.getstream.chat.android.client.parser.StreamGson
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -112,8 +111,6 @@ private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
-
-internal val gson = StreamGson.gson
 
 /**
  * The Chat Domain exposes StateFlow objects to make it easier to build your chat UI.

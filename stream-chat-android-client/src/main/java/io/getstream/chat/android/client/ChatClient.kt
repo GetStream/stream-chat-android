@@ -360,21 +360,26 @@ public class ChatClient internal constructor(
         level = DeprecationLevel.ERROR,
     )
     public fun setAnonymousUser(listener: InitConnectionListener? = null) {
-        socketStateService.onConnectionRequested()
-        userStateService.onSetAnonymous()
-        connectionListener = object : InitConnectionListener() {
-            override fun onSuccess(data: ConnectionData) {
-                notifySetUser(data.user)
-                listener?.onSuccess(data)
-            }
+        if (userStateService.state is UserState.NotSet) {
+            socketStateService.onConnectionRequested()
+            userStateService.onSetAnonymous()
+            connectionListener = object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    notifySetUser(data.user)
+                    listener?.onSuccess(data)
+                }
 
-            override fun onError(error: ChatError) {
-                listener?.onError(error)
+                override fun onError(error: ChatError) {
+                    listener?.onError(error)
+                }
             }
+            config.isAnonymous = true
+            warmUp()
+            socket.connectAnonymously()
+        } else {
+            logger.logE("Failed to connect user. Please check you don't have connected user already")
+            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
         }
-        config.isAnonymous = true
-        warmUp()
-        socket.connectAnonymously()
     }
 
     @CheckResult
