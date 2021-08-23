@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -72,6 +73,7 @@ public fun AttachmentsPicker(
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
     val context = LocalContext.current
     val storagePermissionState =
@@ -107,7 +109,7 @@ public fun AttachmentsPicker(
                 interactionSource = remember { MutableInteractionSource() }
             ),
             elevation = 4.dp,
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            shape = shape,
             backgroundColor = ChatTheme.colors.inputBackground,
         ) {
             Column {

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -68,7 +67,7 @@ public fun ChannelInfo(
     user: User?,
     onChannelOptionClick: (ChannelListAction) -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
     val isAdmin = selectedChannel.members.firstOrNull { it.user.id == user?.id }?.role == "admin"
 
