@@ -761,6 +761,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
 	public final fun addSelectedAttachments (Ljava/util/List;)V
+	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
+	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
 	public final fun dismissMessageActions ()V
 	public final fun getActiveAction ()Lio/getstream/chat/android/compose/state/messages/list/MessageAction;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
