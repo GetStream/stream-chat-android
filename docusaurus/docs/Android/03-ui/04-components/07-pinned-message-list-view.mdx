@@ -36,7 +36,9 @@ We recommend using this view with its [ViewModel](../01-overview.md#viewmodels),
 The basic setup of the ViewModel and connecting it to the View is done the following way:
 
 ```kotlin
-val viewModel: PinnedMessageListViewModel by viewModels { PinnedMessageListViewModelFactory(cid = "channelType:channelId") }
+val viewModel: PinnedMessageListViewModel by viewModels {
+    PinnedMessageListViewModelFactory(cid = "channelType:channelId")
+}
 viewModel.bindView(binding.pinnedMessageListView, viewLifecycleOwner)
 ```
 
