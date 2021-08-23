@@ -91,6 +91,8 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
+- Added an overlay to the `ChannelInfo` that blocks outside clicks.
+- Updated the `ChannelInfoUserItem` to use the `UserAvatar`.
 
 ### ⬆️ Improved
 - Added default date and time formatting to Channel and Message items.
