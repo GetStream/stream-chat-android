@@ -77,30 +77,7 @@ Fix for position of deleted messages for other users
 ### ⬆️ Improved
 
 ### ✅ Added
-Now it is possible to customize when the avatar appears in the conversation. It is
-possible to use an avatar in messages from other users and for messages of the current user. Use
-`setShowAvatarPredicate` to change the default behaviour. Default: The avatar shows only
-for messages of other users, in the bottom of a group of messages (Position.Bottom).
-Also now it is possible to apply a custom margin to messages of MessageListView. You need
-to add margins to avoid overlap between messages and avatars.
-
-If you set a predicate that shows avatars for your own messages as well, use this value:
-
-```
-streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
-```
-
-If your predicate doesn't show avatars for your own messages (this is the default behavior), remove the end margin:
-
-```
-streamUiMessageEndMargin="0dp"
-```
-
-- Added self-contained higher-level UI components:
-  - `ChannelListFragment` - channel list screen which internally contains `ChannelListHeaderView`, `ChannelListView`, `SearchInputView`, `SearchResultListView`.
-  - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
-  - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
-  - `MessageListActivity` - thin wrapper around `MessageListFragment`
+- Now it is possible to customize when the avatar appears in the conversation. It is possible to use an avatar in messages from other users and for messages of the current user. You can check it here:  https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#configure-when-avatar-appears
 
 ### ⚠️ Changed
 
