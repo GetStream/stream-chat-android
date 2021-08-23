@@ -50,8 +50,6 @@ public open class AttachmentDestination(
                         return
                     }
                 }
-
-                "lalalla".contains()
             }
             ModelType.attach_giphy -> url = attachment.thumbUrl
             ModelType.attach_product -> url = attachment.url

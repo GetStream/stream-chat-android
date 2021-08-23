@@ -132,6 +132,8 @@ public open class AttachmentDestination(
             .show()
     }
 
+    private fun Attachment.isGif() = mimeType?.contains("gif") ?: false
+
     private companion object {
         private const val VIDEO_MIME_TYPE_PREFIX = "video"
     }
