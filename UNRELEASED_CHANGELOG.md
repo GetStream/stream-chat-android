@@ -91,9 +91,16 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
+- Fixed a bug where selected File attachment icons were clipped.
+- Fixed a bug where image file attachments weren't shown as thumbnails.
 
 ### ⬆️ Improved
 - Added default date and time formatting to Channel and Message items.
+- Improved attachments API by providing cleaner examples of attachment factories.
+- Updated documentation & examples.
+- Decoupled attachment content to specific attachment files.
+- Decouple message attachment content to a `MessageAttachmentsContent` component.
+- Re-structured SDK module to accommodate a new `attachment` package.
 
 ### ✅ Added
 - Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
