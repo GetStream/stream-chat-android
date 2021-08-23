@@ -90,6 +90,10 @@ public class AttachmentsPickerViewModel(
 
         if (!showAttachments) {
             attachmentsPickerMode = Images
+            files = emptyList()
+            images = emptyList()
+        } else {
+            loadData()
         }
     }
 

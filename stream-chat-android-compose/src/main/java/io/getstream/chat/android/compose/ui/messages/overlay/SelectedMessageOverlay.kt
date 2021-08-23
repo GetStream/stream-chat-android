@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -98,7 +97,7 @@ public fun SelectedMessageOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.DarkGray.copy(alpha = 0.7f))
+            .background(ChatTheme.colors.overlay.copy(alpha = 0.7f))
             .clickable(
                 onClick = onDismiss,
                 indication = null,

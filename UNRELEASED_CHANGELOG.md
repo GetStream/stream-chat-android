@@ -93,6 +93,8 @@
 - Added missing `emptyContent` and `loadingContent` parameters to `MessageList` inner components.
 - Fixed a bug where selected File attachment icons were clipped.
 - Fixed a bug where image file attachments weren't shown as thumbnails.
+- Added an overlay to the `ChannelInfo` that blocks outside clicks.
+- Updated the `ChannelInfoUserItem` to use the `UserAvatar`.
 
 ### ⬆️ Improved
 - Added default date and time formatting to Channel and Message items.

@@ -513,7 +513,7 @@ public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenK
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
-	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentsPickerKt {
@@ -531,6 +531,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/Com
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/FilesPickerKt {
+	public static final fun FileItemImage (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentItem;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun FileListItem (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 }
 
@@ -641,9 +642,10 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 public final class io/getstream/chat/android/compose/ui/theme/StreamShapes {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamShapes$Companion;
-	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
+	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
 	public final fun getAttachment ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getAvatar ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getBottomSheet ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getImageThumbnail ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getInputField ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getMyMessageBubble ()Landroidx/compose/ui/graphics/Shape;
