@@ -5,7 +5,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi

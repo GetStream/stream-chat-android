@@ -15,8 +15,8 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
+import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedEvent

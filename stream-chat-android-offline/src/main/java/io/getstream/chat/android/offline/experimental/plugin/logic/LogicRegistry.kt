@@ -1,16 +1,18 @@
-package io.getstream.chat.android.offline.plugin.logic
+package io.getstream.chat.android.offline.experimental.plugin.logic
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.querychannels.state.toMutableState
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
+import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import java.util.concurrent.ConcurrentHashMap
 
+@ExperimentalStreamChatApi
 internal class LogicRegistry internal constructor(private val stateRegistry: StateRegistry) {
 
     private val chatDomain: ChatDomainImpl

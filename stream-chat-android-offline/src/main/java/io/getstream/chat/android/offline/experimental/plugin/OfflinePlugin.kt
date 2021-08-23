@@ -1,16 +1,16 @@
-package io.getstream.chat.android.offline.plugin
+package io.getstream.chat.android.offline.experimental.plugin
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.plugin.logic.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
+import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
 @InternalStreamChatApi
 @ExperimentalStreamChatApi

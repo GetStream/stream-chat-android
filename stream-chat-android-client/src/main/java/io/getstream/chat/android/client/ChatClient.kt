@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -67,7 +68,6 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
-import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -82,6 +82,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.CoroutineScope
@@ -96,6 +97,7 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,

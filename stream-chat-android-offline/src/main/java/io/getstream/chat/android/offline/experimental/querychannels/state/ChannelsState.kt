@@ -1,8 +1,12 @@
-package io.getstream.chat.android.offline.querychannels.state
+package io.getstream.chat.android.offline.experimental.querychannels.state
 
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 
+@InternalStreamChatApi
+@ExperimentalStreamChatApi
 public sealed class ChannelsState {
     /** No query is currently running.
      * If you know that a query will be started you typically want to display a loading icon.

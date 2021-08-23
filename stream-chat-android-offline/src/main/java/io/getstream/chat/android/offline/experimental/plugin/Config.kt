@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.plugin
+package io.getstream.chat.android.offline.experimental.plugin
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 

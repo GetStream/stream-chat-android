@@ -10,9 +10,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
+import io.getstream.chat.android.offline.experimental.plugin.Config
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.plugin.Config
-import io.getstream.chat.android.offline.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper

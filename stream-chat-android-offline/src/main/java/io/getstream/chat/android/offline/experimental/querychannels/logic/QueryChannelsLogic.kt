@@ -1,25 +1,27 @@
-package io.getstream.chat.android.offline.querychannels.logic
+package io.getstream.chat.android.offline.experimental.querychannels.logic
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.model.ChannelConfig
-import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.isFirstPage
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 
+@ExperimentalStreamChatApi
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val chatDomainImpl: ChatDomainImpl,

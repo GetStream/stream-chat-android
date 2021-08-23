@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.querychannels.state
+package io.getstream.chat.android.offline.experimental.querychannels.state
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest

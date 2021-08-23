@@ -20,10 +20,11 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
+import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.extensions.users
-import io.getstream.chat.android.offline.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.toQueryChannelsRequest
@@ -38,6 +39,7 @@ private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
+@OptIn(ExperimentalStreamChatApi::class)
 public class QueryChannelsController internal constructor(
     public val filter: FilterObject,
     public val sort: QuerySort<Channel>,
@@ -63,10 +65,10 @@ public class QueryChannelsController internal constructor(
 
     public val channelsState: StateFlow<ChannelsState> = mutableState.channelsState.map { state ->
         when (state) {
-            io.getstream.chat.android.offline.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
-            io.getstream.chat.android.offline.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
-            io.getstream.chat.android.offline.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
-            is io.getstream.chat.android.offline.querychannels.state.ChannelsState.Result -> ChannelsState.Result(state.channels)
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
+            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Result -> ChannelsState.Result(state.channels)
         }
     }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
