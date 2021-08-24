@@ -16,21 +16,21 @@ internal class DefaultUserLookupHandlerTest {
     fun `exact matches should be selected`() = runBlockingTest {
         val userName = randomString()
 
-        testSimpleNameChange(userName, userName)
+        testNameChange(userName, userName)
     }
 
     @Test
     fun `insertion with 2 caracteres should be selected`() = runBlockingTest {
         val userName = randomString()
 
-        testSimpleNameChange(userName, "${userName}aa")
+        testNameChange(userName, "${userName}aa")
     }
 
     @Test
     fun `insertion with 4 caracteres should be removed selected`() = runBlockingTest {
         val userName = randomString()
 
-        testSimpleNameChange(userName, "${userName}aaaa", emptyList())
+        testNameChange(userName, "${userName}aaaa", emptyList())
     }
 
     @Test
@@ -38,29 +38,29 @@ internal class DefaultUserLookupHandlerTest {
         val userName = "áéàèãöüäDziękujęç"
         val userNameNoAccents = "aeaeaouaDziekujec"
 
-        testSimpleNameChange(userName, userNameNoAccents)
+        testNameChange(userName, userNameNoAccents)
     }
 
     @Test
-    fun `transliteration should work for russian`() = runBlockingTest {
-        val latinName = "Leandro"
-        val cyrillicName = "Леандро"
-        val cyrillicToLatinId = "Cyrl-Latn"
-
-        val user1 = createUser().apply { name = latinName }
-
-        val users = listOf(
-            user1,
-            createUser().apply { name = randomString() },
-            createUser().apply { name = randomString() },
-        )
-
-        val result = DefaultUserLookupHandler(users, cyrillicToLatinId).handleUserLookup(cyrillicName)
-
-        assertEquals(listOf(user1), result)
+    fun `search should work for many different examples`() = runBlockingTest {
+        testNameChange("Leandro", "Le")
+        testNameChange("Leandro", "Leubdro")
+        testNameChange("Blah", "Bleh")
+        testNameChange("Asdfghj", "AS")
+        testNameChange("Asdfghj", "ASdf")
+        testNameChange("Xablau", "Xublau")
     }
 
-    private suspend fun testSimpleNameChange(userName: String, query: String, expectedResult: List<User>? = null) {
+    @Test
+    fun `transliteration should work for many cyrillic cases`() = runBlockingTest {
+        cyrillicTest("Leandro", "Леандро")
+        cyrillicTest("petyo", "Пе")
+        cyrillicTest("anastasia", "Ана")
+        cyrillicTest("dmitriy", "Дмитрии")
+        cyrillicTest("dmitriy", "Дмитри")
+    }
+
+    private suspend fun testNameChange(userName: String, query: String, expectedResult: List<User>? = null) {
         val user1 = createUser().apply { name = userName }
 
         val users = listOf(
@@ -76,5 +76,21 @@ internal class DefaultUserLookupHandlerTest {
         } else {
             assertEquals(listOf(user1), result)
         }
+    }
+
+    private suspend fun cyrillicTest(latin: String, cyrillic: String) {
+        val cyrillicToLatinId = "Cyrl-Latn"
+
+        val user1 = createUser().apply { name = latin }
+
+        val users = listOf(
+            user1,
+            createUser().apply { name = randomString() },
+            createUser().apply { name = randomString() },
+        )
+
+        val result = DefaultUserLookupHandler(users, cyrillicToLatinId).handleUserLookup(cyrillic)
+
+        assertEquals(listOf(user1), result)
     }
 }

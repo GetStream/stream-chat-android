@@ -12,11 +12,11 @@ private val regexUnaccent = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 
 public class DefaultUserLookupHandler(
     public var users: List<User>,
-    transliterationId: String? = null
+    transliterationId: String? = null,
 ) : UserLookupHandler {
 
     private var transliterator: Transliterator? = null
-    private val logger =  ChatLogger.get("DefaultUserLookupHandler")
+    private val logger = ChatLogger.get("DefaultUserLookupHandler")
 
     init {
         transliterationId.let { id ->
@@ -29,18 +29,6 @@ public class DefaultUserLookupHandler(
     }
 
     override suspend fun handleUserLookup(query: String): List<User> {
-        return if (query.length < MAX_DISTANCE) {
-            fewCharactersSearch(query)
-        } else {
-            manyCharactersSearch(query)
-        }
-    }
-
-    private fun fewCharactersSearch(query: String): List<User> {
-        return users.filter { it.name.contains(query, true) }
-    }
-
-    private fun manyCharactersSearch(query: String): List<User> {
         return users.filter { user ->
             val formattedQuery = query
                 .lowercase()
@@ -49,9 +37,9 @@ public class DefaultUserLookupHandler(
                     transliterator?.transliterate(it) ?: it
                 }
 
-            val distance = levenshtein(formattedQuery, user.name.lowercase().unaccent())
+            val formattedName = user.name.lowercase().unaccent()
 
-            distance <= MAX_DISTANCE
+            formattedName.contains(formattedQuery) || levenshtein(formattedQuery, formattedName) <= MAX_DISTANCE
         }
     }
 }
