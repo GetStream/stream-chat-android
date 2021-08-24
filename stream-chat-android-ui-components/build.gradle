@@ -82,6 +82,7 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
+    implementation Dependencies.icu4j
 
     // Markdown
     implementation Dependencies.markwonCore
@@ -99,6 +100,4 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
-
-    implementation 'com.ibm.icu:icu4j:58.2'
 }
