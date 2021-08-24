@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -30,7 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * An extensions of the [AttachmentFactory] that validates and shows Giphy attachments.
  * */
 public class GiphyAttachmentFactory : AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == "giphy" } },
+    canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
     content = @Composable { GiphyAttachmentContent(it) }
 )
 
@@ -47,16 +48,16 @@ public fun GiphyAttachmentContent(attachmentState: AttachmentState) {
     val context = LocalContext.current
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
-    val attachment = message.attachments.firstOrNull { it.type == "giphy" }
+    val attachment = message.attachments.firstOrNull { it.type == ModelType.attach_giphy }
 
-    requireNotNull(attachment) {
-        IllegalStateException("Missing Giphy attachment.")
+    checkNotNull(attachment) {
+        "Missing Giphy attachment."
     }
 
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
 
-    requireNotNull(previewUrl) {
-        IllegalStateException("Missing preview URL.")
+    checkNotNull(previewUrl) {
+        "Missing preview URL."
     }
 
     val painter = rememberImagePainter(attachment.imagePreviewUrl)

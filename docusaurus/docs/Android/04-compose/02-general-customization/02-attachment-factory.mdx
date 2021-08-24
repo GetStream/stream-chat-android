@@ -25,7 +25,7 @@ public val defaultFactories: List<AttachmentFactory> = listOf(
 
 These factories perform specific checks that you can explore by opening each specific factory.
 
-Each of these factories supplies a predicate, as well as a content composable lambda function that calls `LinkAttachmentContent`, `ImageAttachmentContent` or `FileAttachmentContent`.
+Each of these factories supplies a predicate, as well as a content composable lambda function that provides the appropriate content.
 
 To customize the factories your code uses, you can always override the `attachmentFactories` parameter of the `ChatTheme` wrapper:
 

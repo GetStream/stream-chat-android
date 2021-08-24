@@ -54,14 +54,14 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && it.type != "giphy" }
 
-    requireNotNull(attachment) {
-        IllegalStateException("Missing link attachment.")
+    checkNotNull(attachment) {
+        "Missing link attachment."
     }
 
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
 
-    requireNotNull(previewUrl) {
-        IllegalStateException("Missing preview URL.")
+    checkNotNull(previewUrl) {
+        "Missing preview URL."
     }
 
     val hasImage = attachment.imagePreviewUrl != null
