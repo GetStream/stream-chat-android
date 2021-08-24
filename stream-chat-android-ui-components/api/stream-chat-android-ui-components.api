@@ -220,6 +220,7 @@ public abstract interface class io/getstream/chat/android/ui/channel/ChannelList
 
 public final class io/getstream/chat/android/ui/channel/ChannelListFragment$Companion {
 	public final fun newInstance (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/channel/ChannelListFragment;
+	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/channel/ChannelListFragment$Companion;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/ChannelListFragment;
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/ChannelListFragment$HeaderActionButtonClickListener {
@@ -1020,6 +1021,7 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Buil
 
 public final class io/getstream/chat/android/ui/message/MessageListFragment$Companion {
 	public final fun newInstance (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/MessageListFragment;
+	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView : androidx/constraintlayout/widget/ConstraintLayout {
