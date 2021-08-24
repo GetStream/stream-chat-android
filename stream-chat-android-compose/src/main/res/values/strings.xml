@@ -49,4 +49,5 @@
     <string name="stream_compose_attachment_gallery_share">Share Image</string>
     <string name="stream_compose_channel_list_untitled_channel">Channel without name</string>
     <string name="stream_compose_channel_list_you">You</string>
+    <string name="stream_compose_giphy_label">GIPHY</string>
 </resources>

@@ -7,10 +7,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import coil.compose.LocalImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
+import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
 /**
  * Local providers for various properties we connect to our components, for styling.
@@ -68,7 +72,8 @@ public fun ChatTheme(
         LocalShapes provides shapes,
         LocalAttachmentFactories provides attachmentFactories,
         LocalReactionTypes provides reactionTypes,
-        LocalDateFormatter provides dateFormatter
+        LocalDateFormatter provides dateFormatter,
+        LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current)
     ) {
         content()
     }
