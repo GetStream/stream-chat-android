@@ -17,6 +17,7 @@ internal class AvatarDecorator(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
         setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
@@ -24,6 +25,7 @@ internal class AvatarDecorator(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
         setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
@@ -33,6 +35,7 @@ internal class AvatarDecorator(
     ) = Unit
 
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
         setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
@@ -47,12 +50,11 @@ internal class AvatarDecorator(
     }
 
     private fun getAvatarView(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean): AvatarView {
-        return if (isMine) {
-            theirAvatar.isVisible = false
-            myAvatar
-        } else {
-            myAvatar.isVisible = false
-            theirAvatar
-        }
+        return if (isMine) myAvatar else theirAvatar
+    }
+
+    private fun controlVisibility(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean) {
+        theirAvatar.isVisible = !isMine
+        myAvatar.isVisible = isMine
     }
 }
