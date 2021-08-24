@@ -44,6 +44,7 @@ internal class PushTokenUpdateHandler(
     suspend fun updateDeviceIfNecessary(device: Device) {
         val userPushToken = device.toUserPushToken()
         if (device.isValid() && this.userPushToken != userPushToken) {
+            removeStoredDevice()
             val result = ChatClient.instance().addDevice(device).await()
             if (result.isSuccess) {
                 this.userPushToken = userPushToken
