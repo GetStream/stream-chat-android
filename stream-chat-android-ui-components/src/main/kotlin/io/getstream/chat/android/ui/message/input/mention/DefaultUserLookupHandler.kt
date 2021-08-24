@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.name
 import java.text.Normalizer
 import kotlin.math.min
 
-private const val MAX_DISTANCE = 4
+private const val MAX_DISTANCE = 3
 private val regexUnaccent = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 
 public class DefaultUserLookupHandler(
@@ -29,6 +29,18 @@ public class DefaultUserLookupHandler(
     }
 
     override suspend fun handleUserLookup(query: String): List<User> {
+        return if (query.length < MAX_DISTANCE) {
+            fewCharactersSearch(query)
+        } else {
+            manyCharactersSearch(query)
+        }
+    }
+
+    private fun fewCharactersSearch(query: String): List<User> {
+        return users.filter { it.name.contains(query, true) }
+    }
+
+    private fun manyCharactersSearch(query: String): List<User> {
         return users.filter { user ->
             val formattedQuery = query
                 .lowercase()
@@ -37,10 +49,9 @@ public class DefaultUserLookupHandler(
                     transliterator?.transliterate(it) ?: it
                 }
 
-            levenshtein(
-                formattedQuery,
-                user.name.lowercase().unaccent()
-            ) < MAX_DISTANCE
+            val distance = levenshtein(formattedQuery, user.name.lowercase().unaccent())
+
+            distance <= MAX_DISTANCE
         }
     }
 }
