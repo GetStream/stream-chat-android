@@ -115,15 +115,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendReaction (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Reaction;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun setAnonymousUser (Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
-	public static synthetic fun setAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
 	public static final fun setDevice (Lio/getstream/chat/android/client/models/Device;)V
-	public final fun setGuestUser (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
-	public static synthetic fun setGuestUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
-	public final fun setUser (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
-	public final fun setUser (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;)V
-	public static synthetic fun setUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/token/TokenProvider;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
-	public static synthetic fun setUser$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Lio/getstream/chat/android/client/socket/InitConnectionListener;ILjava/lang/Object;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -163,7 +155,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder {
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun logLevel (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun useNewSerialization (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -2161,28 +2152,21 @@ public final class io/getstream/chat/android/client/models/Config {
 	public final fun getCommands ()Ljava/util/List;
 	public final fun getConnectEventsEnabled ()Z
 	public final fun getCreatedAt ()Ljava/util/Date;
-	public final fun getCreated_at ()Ljava/util/Date;
 	public final fun getCustomEventsEnabled ()Z
 	public final fun getMaxMessageLength ()I
 	public final fun getMessageRetention ()Ljava/lang/String;
-	public final fun getMutesEnabled ()Z
+	public final fun getMuteEnabled ()Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPushNotificationsEnabled ()Z
 	public final fun getReadEventsEnabled ()Z
 	public final fun getSearchEnabled ()Z
 	public final fun getTypingEventsEnabled ()Z
 	public final fun getUpdatedAt ()Ljava/util/Date;
-	public final fun getUpdated_at ()Ljava/util/Date;
 	public final fun getUploadsEnabled ()Z
 	public final fun getUrlEnrichmentEnabled ()Z
 	public fun hashCode ()I
-	public final fun isConnectEvents ()Z
-	public final fun isMutes ()Z
 	public final fun isReactionsEnabled ()Z
-	public final fun isReadEvents ()Z
 	public final fun isRepliesEnabled ()Z
-	public final fun isSearch ()Z
-	public final fun isTypingEvents ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2781,25 +2765,6 @@ public final class io/getstream/chat/android/client/socket/ErrorResponse {
 	public final fun setDuration (Ljava/lang/String;)V
 	public final fun setMessage (Ljava/lang/String;)V
 	public final fun setStatusCode (I)V
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/client/socket/InitConnectionListener {
-	public fun <init> ()V
-	public fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public fun onSuccess (Lio/getstream/chat/android/client/socket/InitConnectionListener$ConnectionData;)V
-}
-
-public final class io/getstream/chat/android/client/socket/InitConnectionListener$ConnectionData {
-	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)Lio/getstream/chat/android/client/socket/InitConnectionListener$ConnectionData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/socket/InitConnectionListener$ConnectionData;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/socket/InitConnectionListener$ConnectionData;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getConnectionId ()Ljava/lang/String;
-	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
-	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

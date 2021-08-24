@@ -6,16 +6,16 @@ import io.getstream.chat.android.client.models.Config
 
 internal fun ConfigDto.toDomain(): Config =
     Config(
-        created_at = created_at,
-        updated_at = updated_at,
+        createdAt = created_at,
+        updatedAt = updated_at,
         name = name,
-        isTypingEvents = typing_events,
-        isReadEvents = read_events,
-        isConnectEvents = connect_events,
-        isSearch = search,
+        typingEventsEnabled = typing_events,
+        readEventsEnabled = read_events,
+        connectEventsEnabled = connect_events,
+        searchEnabled = search,
         isReactionsEnabled = reactions,
         isRepliesEnabled = replies,
-        isMutes = mutes,
+        muteEnabled = mutes,
         uploadsEnabled = uploads,
         urlEnrichmentEnabled = url_enrichment,
         customEventsEnabled = custom_events,

@@ -328,9 +328,11 @@ public open class ChannelListFragment : Fragment() {
          *
          * @param initializer the initializer to customize builder params
          */
-        public fun newInstance(initializer: Builder.() -> Unit): ChannelListFragment {
+        public fun newInstance(initializer: (Builder.() -> Unit)? = null): ChannelListFragment {
             val builder = Builder()
-            builder.initializer()
+            if (initializer != null) {
+                builder.initializer()
+            }
             return builder.build()
         }
     }

@@ -90,15 +90,12 @@ public class AvatarView : AppCompatImageView {
         onlineIndicatorPaint.color = avatarStyle.onlineIndicatorColor
     }
 
-    @Suppress("DEPRECATION_ERROR")
     private fun drawOnlineStatus(canvas: Canvas) {
         if (isOnline && avatarStyle.onlineIndicatorEnabled) {
             val cx: Float = when (avatarStyle.onlineIndicatorPosition) {
                 OnlineIndicatorPosition.TOP_LEFT,
                 OnlineIndicatorPosition.BOTTOM_LEFT,
                 -> width / 8f
-                OnlineIndicatorPosition.TOP,
-                OnlineIndicatorPosition.BOTTOM,
                 OnlineIndicatorPosition.TOP_RIGHT,
                 OnlineIndicatorPosition.BOTTOM_RIGHT,
                 -> width - (width / 8f)
@@ -107,11 +104,9 @@ public class AvatarView : AppCompatImageView {
             val cy: Float = when (avatarStyle.onlineIndicatorPosition) {
                 OnlineIndicatorPosition.TOP_LEFT,
                 OnlineIndicatorPosition.TOP_RIGHT,
-                OnlineIndicatorPosition.TOP,
                 -> height / 8f
                 OnlineIndicatorPosition.BOTTOM_LEFT,
                 OnlineIndicatorPosition.BOTTOM_RIGHT,
-                OnlineIndicatorPosition.BOTTOM,
                 -> height - height / 8f
             }
             canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
@@ -131,17 +126,6 @@ public class AvatarView : AppCompatImageView {
     }
 
     public enum class OnlineIndicatorPosition {
-        @Deprecated(
-            message = "Use OnlineIndicatorPosition.TOP_RIGHT instead",
-            level = DeprecationLevel.ERROR,
-        )
-        TOP,
-
-        @Deprecated(
-            message = "Use OnlineIndicatorPosition.BOTTOM_RIGHT instead",
-            level = DeprecationLevel.ERROR,
-        )
-        BOTTOM,
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
