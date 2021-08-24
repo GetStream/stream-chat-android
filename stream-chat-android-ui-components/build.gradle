@@ -99,4 +99,6 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.truth
+
+    implementation 'com.ibm.icu:icu4j:58.2'
 }
