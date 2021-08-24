@@ -55,6 +55,10 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     }
 
     fun subscribe(listener: NetworkStateListener) {
+        if (listeners.contains(listener)) {
+            return
+        }
+
         listeners = listeners + listener
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
         isRegistered.set(true)

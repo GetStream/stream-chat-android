@@ -86,6 +86,7 @@ internal class ChatSocketServiceImpl constructor(
                         callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                     }
                     is State.DisconnectedByRequest -> {
+                        networkStateProvider.unsubscribe(networkStateListener)
                         shutdownSocketConnection()
                         healthMonitor.stop()
                         callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
