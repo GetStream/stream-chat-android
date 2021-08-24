@@ -28,23 +28,11 @@ import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
-import java.io.File
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat
  */
 public sealed interface ChatDomain {
-
-    @Deprecated(
-        message = "This property is not NPE-Safe, it could be not initialized. You should subscribe to [ChatDomain.user] instead",
-        level = DeprecationLevel.ERROR,
-    )
-    /** Unsafe property that represent the current user. This property could be not initialized.
-     * You should subscribe to [ChatDomain.user] instead
-     *
-     * @see [ChatDomain.user]
-     */
-    public var currentUser: User
 
     /** The current user on the chatDomain object */
     public val user: StateFlow<User?>
@@ -336,27 +324,6 @@ public sealed interface ChatDomain {
     public fun sendMessage(message: Message): Call<Message>
 
     /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain
-     *
-     * @param message the message to send
-     *
-     * @return executable async [Call] responsible for sending a message
-     *
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
-     */
-    @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. Implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)"),
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,
-    ): Call<Message>
-
-    /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
      * API call to remove the message is retried according to the retry policy specified on the chatDomain
      *
@@ -599,27 +566,8 @@ public sealed interface ChatDomain {
         private val appContext: Context,
         private val client: ChatClient,
     ) {
-        private var user: User? = null
 
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
-
-        @Deprecated(
-            level = DeprecationLevel.ERROR,
-            message = "Use constructor without user",
-            replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
-        )
-        public constructor(appContext: Context, client: ChatClient, user: User?) : this(appContext, client) {
-            this.user = user
-        }
-
-        @Deprecated(
-            level = DeprecationLevel.ERROR,
-            message = "Use constructor without user",
-            replaceWith = ReplaceWith("Use ChatDomain.Builder(appContext, chatClient) instead")
-        )
-        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client) {
-            this.user = user
-        }
 
         private var database: ChatDatabase? = null
 
@@ -682,7 +630,6 @@ public sealed interface ChatDomain {
             val handler = Handler(Looper.getMainLooper())
             return ChatDomainImpl(
                 client,
-                user,
                 database,
                 handler,
                 storageEnabled,

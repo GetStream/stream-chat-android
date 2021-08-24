@@ -23,14 +23,10 @@
         <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
         <!-- Sets the position of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorPosition" format="enum">
-            <!-- {@deprecated Use topRight instead.} -->
-            <enum name="top" value="0" />
-            <!-- {@deprecated Use bottomRight instead.} -->
-            <enum name="bottom" value="1" />
-            <enum name="topLeft" value="2" />
-            <enum name="topRight" value="3" />
-            <enum name="bottomLeft" value="4" />
-            <enum name="bottomRight" value="5" />
+            <enum name="topLeft" value="0" />
+            <enum name="topRight" value="1" />
+            <enum name="bottomLeft" value="2" />
+            <enum name="bottomRight" value="3" />
         </attr>
         <!-- Color of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorColor" format="color|reference" />

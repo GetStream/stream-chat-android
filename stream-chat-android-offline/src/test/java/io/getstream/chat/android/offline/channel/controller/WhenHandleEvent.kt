@@ -52,7 +52,7 @@ internal class WhenHandleEvent {
         on(it.appContext) doReturn mock()
         on(it.scope) doReturn TestCoroutineScope()
         on(it.user) doReturn MutableStateFlow(currentUser)
-        on(it.getChannelConfig(any())) doReturn Config(isConnectEvents = true, isMutes = true)
+        on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
     }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 

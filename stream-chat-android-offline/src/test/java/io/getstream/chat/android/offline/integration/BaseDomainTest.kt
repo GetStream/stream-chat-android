@@ -214,7 +214,6 @@ internal open class BaseDomainTest {
         val backgroundSyncEnabled = false
         chatDomainImpl = ChatDomainImpl(
             client,
-            data.user1,
             db,
             handler,
             offlineEnabled,
@@ -223,6 +222,7 @@ internal open class BaseDomainTest {
             backgroundSyncEnabled,
             context
         )
+        chatDomainImpl.setUser(data.user1)
         chatDomainImpl.scope = testCoroutines.scope
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
