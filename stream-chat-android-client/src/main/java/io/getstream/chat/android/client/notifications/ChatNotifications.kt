@@ -32,6 +32,7 @@ internal interface ChatNotifications {
     fun onChatEvent(event: ChatEvent)
     fun cancelLoadDataWork()
     suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
+    fun removeStoredDevice()
 }
 
 internal class ChatNotificationsImpl constructor(
@@ -145,6 +146,12 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
+    override fun removeStoredDevice() {
+        GlobalScope.launch(DispatcherProvider.IO) {
+            pushTokenUpdateHandler.removeStoredDevice()
+        }
+    }
+
     private fun showNotification(channel: Channel, message: Message, shouldShowInForeground: Boolean = false) {
         logger.logD("Showing notification with loaded data")
         val notificationId = System.currentTimeMillis().toInt()
@@ -215,4 +222,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun onChatEvent(event: ChatEvent) = Unit
     override fun cancelLoadDataWork() = Unit
     override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
+    override fun removeStoredDevice() = Unit
 }

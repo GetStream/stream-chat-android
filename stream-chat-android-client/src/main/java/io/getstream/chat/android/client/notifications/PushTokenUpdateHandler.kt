@@ -56,6 +56,16 @@ internal class PushTokenUpdateHandler(
         }
     }
 
+    suspend fun removeStoredDevice() {
+        userPushToken.toDevice()
+            .takeIf { it.isValid() }
+            ?.let {
+                if (ChatClient.instance().deleteDevice(it).await().isSuccess) {
+                    userPushToken = UserPushToken("", "", "")
+                }
+            }
+    }
+
     private data class UserPushToken(
         val userId: String,
         val token: String,
@@ -74,6 +84,8 @@ internal class PushTokenUpdateHandler(
         token = token,
         pushProvider = pushProvider.key
     )
+
+    private fun UserPushToken.toDevice() = Device(token = token, pushProvider = PushProvider.fromKey(pushProvider))
 
     private fun Device.isValid() = pushProvider != PushProvider.UNKNOWN
 }
