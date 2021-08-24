@@ -101,13 +101,15 @@
 - Improved attachments API by providing cleaner examples of attachment factories.
 - Updated documentation & examples.
 - Decoupled attachment content to specific attachment files.
-- Decouple message attachment content to a `MessageAttachmentsContent` component.
+- Decoupled message attachment content to a `MessageAttachmentsContent` component.
 - Re-structured SDK module to accommodate a new `attachment` package.
 
 ### ✅ Added
 - Added `DateFormatter` option to the `ChatTheme`, to allow for date format customization across the app.
 - Added a `Timestamp` component that encapsulates date formatting.
 - Added a way to customize and override if messages use unique reactions.
+- Added a `GiphyAttachmentFactory` for GIF specific attachments.
+- Added support for loading GIFs using a custom `ImageLoader` for Coil.
 
 ### ⚠️ Changed
 

@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasLink
 
 /**
  * Represents the content that's shown in message attachments. We decide if we need to show link previews or other
@@ -25,10 +26,19 @@ public fun MessageAttachmentsContent(
 
     if (message.attachments.isNotEmpty()) {
 
-        val (links, attachments) = message.attachments.partition { (it.ogUrl != null || it.titleLink != null) }
-        val linkFactory = ChatTheme.attachmentFactories.firstOrNull { links.isNotEmpty() && it.canHandle(links) }
-        val attachmentFactory =
-            ChatTheme.attachmentFactories.firstOrNull { attachments.isNotEmpty() && it.canHandle(attachments) }
+        val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != "giphy" }
+
+        val linkFactory = if (links.isNotEmpty()) {
+            ChatTheme.attachmentFactories.firstOrNull { it.canHandle(links) }
+        } else {
+            null
+        }
+
+        val attachmentFactory = if (attachments.isNotEmpty()) {
+            ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
+        } else {
+            null
+        }
 
         val attachmentState = AttachmentState(
             modifier = Modifier.padding(4.dp),
@@ -36,10 +46,10 @@ public fun MessageAttachmentsContent(
             onLongItemClick = onLongItemClick
         )
 
-        if (attachmentFactory == null) {
-            linkFactory?.content?.invoke(attachmentState)
+        if (attachmentFactory != null) {
+            attachmentFactory.content(attachmentState)
+        } else if (linkFactory != null) {
+            linkFactory.content(attachmentState)
         }
-
-        attachmentFactory?.content?.invoke(attachmentState)
     }
 }

@@ -25,13 +25,14 @@ import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasLink
 
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
  * */
 public class LinkAttachmentFactory : AttachmentFactory(
-    predicate = { links -> links.any { it.titleLink != null || it.ogUrl != null } },
+    canHandle = { links -> links.any { it.hasLink() && it.type != "giphy" } },
     content = @Composable { LinkAttachmentContent(it) }
 )
 
@@ -51,7 +52,7 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
     val (message, _) = messageItem
 
     val context = LocalContext.current
-    val attachment = message.attachments.firstOrNull { it.titleLink != null || it.ogUrl != null }
+    val attachment = message.attachments.firstOrNull { it.hasLink() && it.type != "giphy" }
 
     requireNotNull(attachment) {
         IllegalStateException("Missing link attachment.")
@@ -63,6 +64,7 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
         IllegalStateException("Missing preview URL.")
     }
 
+    val hasImage = attachment.imagePreviewUrl != null
     val painter = rememberImagePainter(data = attachment.imagePreviewUrl)
 
     Column(
@@ -85,16 +87,18 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 250.dp)
-                .padding(4.dp)
-                .clip(ChatTheme.shapes.attachment),
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
+        if (hasImage) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 250.dp)
+                    .padding(4.dp)
+                    .clip(ChatTheme.shapes.attachment),
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        }
 
         val title = attachment.title
 

@@ -13,6 +13,7 @@ public object StreamAttachmentFactories {
      * */
     public val defaultFactories: List<AttachmentFactory> = listOf(
         LinkAttachmentFactory(),
+        GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
         FileAttachmentFactory()
     )
@@ -21,21 +22,11 @@ public object StreamAttachmentFactories {
 /**
  * Holds the information required to build an attachment message.
  *
- * @param predicate - Checks the message and returns if the factory can consume it or not.
+ * @param canHandle - Checks the message and returns if the factory can consume it or not.
  * @param content - Composable function that allows users to define the content the [AttachmentFactory] will build using any given
  * [AttachmentState].
  * */
 public abstract class AttachmentFactory(
-    public val predicate: (attachments: List<Attachment>) -> Boolean,
+    public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val content: @Composable (AttachmentState) -> Unit,
-) {
-    /**
-     * Returns if this specific factory can handle given attachments.
-     *
-     * @param attachments - The attachments to check.
-     * @return a boolean value, if we can consume the attachments and render the UI.
-     * */
-    public fun canHandle(attachments: List<Attachment>): Boolean {
-        return predicate(attachments)
-    }
-}
+)

@@ -35,7 +35,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * build the UI for the message.
  * */
 public class FileAttachmentFactory : AttachmentFactory(
-    predicate = { attachments -> attachments.isNotEmpty() },
+    canHandle = { attachments -> attachments.isNotEmpty() },
     content = @Composable { FileAttachmentContent(it) }
 )
 

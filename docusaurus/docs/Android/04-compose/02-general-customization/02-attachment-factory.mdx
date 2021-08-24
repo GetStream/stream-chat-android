@@ -4,24 +4,20 @@ The `AttachmentFactory` class allows you to build your own attachments to displa
 
 ```kotlin
 public abstract class AttachmentFactory(
-    public val predicate: (attachments: List<Attachment>) -> Boolean,
+    public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val content: @Composable (AttachmentState) -> Unit,
-) {
-    // Validator to check if we can handle the given message
-    public fun canHandle(attachments: List<Attachment>): Boolean {
-        return predicate(attachments)
-    }
-}
+)
 ```
 
-* `predicate`: Lambda function that accepts a list of attachments in a message and returns `true` if a given factory can consume the attachments and show some UI.
+* `canHandle`: Lambda function that accepts a list of attachments in a message and returns `true` if a given factory can consume the attachments and show some UI.
 * `content`: Defines the composable function that accepts an `AttachmentState` and shows a given attachment component.
 
-There are three examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories.kt):
+There are a few examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories.kt):
 
 ```kotlin
 public val defaultFactories: List<AttachmentFactory> = listOf(
     LinkAttachmentFactory(),
+    GiphyAttachmentFactory(),
     ImageAttachmentFactory(),
     FileAttachmentFactory()
 )

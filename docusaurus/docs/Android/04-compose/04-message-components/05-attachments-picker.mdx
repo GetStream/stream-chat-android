@@ -67,11 +67,11 @@ AttachmentsPicker(
     ..., // State and UI customization
     onAttachmentsSelected = { attachments -> 
         // Dismiss the picker and store the attachments
-        attachmentsPickerViewModel.changeAttachmentState(false)
+        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
         composerViewModel.addSelectedAttachments(attachments)
     },
     onDismiss = { // Reset the UI state and dismiss the picker
-        attachmentsPickerViewModel.changeAttachmentState(false)
+        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
         attachmentsPickerViewModel.dismissAttachments()
     }
 )

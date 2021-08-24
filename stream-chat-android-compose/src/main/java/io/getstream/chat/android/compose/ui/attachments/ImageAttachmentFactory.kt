@@ -30,13 +30,15 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.hasLink
+import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
  * */
 public class ImageAttachmentFactory : AttachmentFactory(
-    predicate = { attachments -> attachments.all { it.type == "image" } },
+    canHandle = { attachments -> attachments.all { it.isMedia() } },
     content = @Composable { ImageAttachmentContent(it) }
 )
 
@@ -66,7 +68,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
-        val attachments = message.attachments.filter { it.ogUrl == null && it.titleLink == null }
+        val attachments =
+            message.attachments.filter { !it.hasLink() && it.isMedia() }
         val imageCount = attachments.size
 
         if (imageCount == 1) {
