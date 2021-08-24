@@ -15,7 +15,12 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
         return timestamp > systemTimeProvider.provideCurrentTimeInSeconds()
     }
 
+    public fun hasStreamImageUrl(attachment: Attachment): Boolean {
+        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.contains(STREAM_CDN_HOST_PART, ignoreCase = true) ?: false
+    }
+
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
+        private const val STREAM_CDN_HOST_PART = "stream-chat"
     }
 }
