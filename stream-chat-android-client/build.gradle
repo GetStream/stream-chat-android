@@ -68,6 +68,7 @@ dependencies {
     implementation Dependencies.androidxSecurityCrypto
     implementation Dependencies.workRuntimeKtx
     implementation Dependencies.constraintLayout
+    implementation Dependencies.androidxRecyclerview
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.retrofit

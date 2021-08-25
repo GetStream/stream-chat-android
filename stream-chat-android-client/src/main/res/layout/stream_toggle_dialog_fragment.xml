@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/stream_toggle_list_item"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:paddingEnd="8dp"
+        tools:ignore="RtlSymmetry"
+        >
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_marginEnd="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Save"
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/dismissButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="Dismiss"
+            android:layout_toStartOf="@id/saveButton"
+            tools:ignore="HardcodedText"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
