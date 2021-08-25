@@ -238,7 +238,7 @@ class Android {
             val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
         }
-        
+
         fun transliterationSupport(users: List<User>) {
             val defaultUserLookupHandler = DefaultUserLookupHandler(users, "Cyrl-Latn")
             messageInputView.setUserLookupHandler(defaultUserLookupHandler)
