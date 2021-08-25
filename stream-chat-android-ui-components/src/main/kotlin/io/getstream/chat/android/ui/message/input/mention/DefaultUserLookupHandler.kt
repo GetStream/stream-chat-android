@@ -15,7 +15,7 @@ public class DefaultUserLookupHandler(
     transliterationId: String? = null,
 ) : UserLookupHandler {
 
-    public var transliterator: Transliterator? = null
+    private var transliterator: Transliterator? = null
     private val logger = ChatLogger.get("DefaultUserLookupHandler")
 
     init {
