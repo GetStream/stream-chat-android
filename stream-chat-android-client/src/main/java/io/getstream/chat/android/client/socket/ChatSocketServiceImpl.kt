@@ -241,10 +241,10 @@ internal class ChatSocketServiceImpl constructor(
     }
 
     private fun shutdownSocketConnection() {
+        socketConnectionJob?.cancel()
         eventsParser?.closeByClient()
         eventsParser = null
-        socketConnectionJob?.cancel()
-        socket?.close(1000, "Connection close by client")
+        socket?.close(EventsParser.CODE_CLOSE_SOCKET_FROM_CLIENT, "Connection close by client")
         socket = null
     }
 
