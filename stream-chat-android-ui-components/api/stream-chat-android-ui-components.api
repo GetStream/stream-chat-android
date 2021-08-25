@@ -190,14 +190,29 @@ public class io/getstream/chat/android/ui/channel/ChannelListFragment : androidx
 	public fun <init> ()V
 	protected fun createChannelListViewModelFactory ()Lio/getstream/chat/android/ui/channel/list/viewmodel/factory/ChannelListViewModelFactory;
 	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentChannelListBinding;
+	protected final fun getChannelListHeaderViewModel ()Lio/getstream/chat/android/ui/channel/list/header/viewmodel/ChannelListHeaderViewModel;
+	protected final fun getChannelListItemClickListener ()Lio/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener;
+	protected final fun getChannelListViewModel ()Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel;
 	protected fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	protected final fun getHeaderActionButtonClickListener ()Lio/getstream/chat/android/ui/channel/ChannelListFragment$HeaderActionButtonClickListener;
+	protected final fun getHeaderTitle ()Ljava/lang/String;
+	protected final fun getHeaderUserAvatarClickListener ()Lio/getstream/chat/android/ui/channel/ChannelListFragment$HeaderUserAvatarClickListener;
+	protected final fun getSearchResultClickListener ()Lio/getstream/chat/android/ui/channel/ChannelListFragment$SearchResultClickListener;
+	protected final fun getSearchViewModel ()Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel;
+	protected final fun getShowHeader ()Z
+	protected final fun getShowSearch ()Z
 	protected fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
 	protected fun getTheme ()I
+	protected final fun getThemeResId ()I
 	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onDetach ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	protected final fun setChannelListItemClickListener (Lio/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener;)V
+	protected final fun setHeaderActionButtonClickListener (Lio/getstream/chat/android/ui/channel/ChannelListFragment$HeaderActionButtonClickListener;)V
+	protected final fun setHeaderUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/ChannelListFragment$HeaderUserAvatarClickListener;)V
+	protected final fun setSearchResultClickListener (Lio/getstream/chat/android/ui/channel/ChannelListFragment$SearchResultClickListener;)V
 	protected fun setupChannelList (Lio/getstream/chat/android/ui/channel/list/ChannelListView;)V
 	protected fun setupChannelListHeader (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView;)V
 	protected fun setupSearchInput (Lio/getstream/chat/android/ui/search/SearchInputView;)V
@@ -994,13 +1009,23 @@ public final class io/getstream/chat/android/ui/message/MessageListActivity$Comp
 public class io/getstream/chat/android/ui/message/MessageListFragment : androidx/fragment/app/Fragment {
 	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;
 	public fun <init> ()V
+	protected final fun getBackPressListener ()Lio/getstream/chat/android/ui/message/MessageListFragment$BackPressListener;
 	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiFragmentMessageListBinding;
+	protected final fun getCid ()Ljava/lang/String;
+	protected final fun getFactory ()Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory;
+	protected final fun getMessageId ()Ljava/lang/String;
+	protected final fun getMessageInputViewModel ()Lcom/getstream/sdk/chat/viewmodel/MessageInputViewModel;
+	protected final fun getMessageListHeaderViewModel ()Lio/getstream/chat/android/ui/message/list/header/viewmodel/MessageListHeaderViewModel;
+	protected final fun getMessageListViewModel ()Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel;
+	protected final fun getShowHeader ()Z
 	protected fun getTheme ()I
+	protected final fun getThemeResId ()I
 	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onDetach ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	protected final fun setBackPressListener (Lio/getstream/chat/android/ui/message/MessageListFragment$BackPressListener;)V
 	protected fun setupMessageInput (Lio/getstream/chat/android/ui/message/input/MessageInputView;)V
 	protected fun setupMessageList (Lio/getstream/chat/android/ui/message/list/MessageListView;)V
 	protected fun setupMessageListHeader (Lio/getstream/chat/android/ui/message/list/header/MessageListHeaderView;)V
