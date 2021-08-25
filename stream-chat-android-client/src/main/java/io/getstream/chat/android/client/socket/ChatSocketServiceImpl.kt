@@ -59,7 +59,10 @@ internal class ChatSocketServiceImpl constructor(
         }
 
         override fun onDisconnected() {
-            state = State.NetworkDisconnected
+            healthMonitor.stop()
+            if (state is State.Connected || state is State.Connecting) {
+                state = State.NetworkDisconnected
+            }
         }
     }
 
