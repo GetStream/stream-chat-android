@@ -21,13 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
@@ -202,19 +199,23 @@ public fun Messages(
             }
         }
 
+        // TODO - build this according to design
+        val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
+
         when {
             newMessageState == MyOwn -> coroutineScope.launch {
-                currentListState.scrollToItem(5)
+                if (firstVisibleItemIndex > 5) {
+                    currentListState.scrollToItem(5)
+                }
                 currentListState.animateScrollToItem(0)
             }
 
-            abs(currentListState.firstVisibleItemIndex) >= 3 -> {
-                val title =
-                    if (newMessageState == Other) R.string.stream_compose_new_message else R.string.stream_compose_scroll_to_bottom
-
-                MessagesScrollingOption(text = stringResource(id = title)) {
+            abs(firstVisibleItemIndex) >= 1 -> {
+                MessagesScrollingOption(messagesState) {
                     coroutineScope.launch {
-                        currentListState.scrollToItem(5) // TODO - Try a custom animation spec
+                        if (firstVisibleItemIndex > 5) {
+                            currentListState.scrollToItem(5) // TODO - Try a custom animation spec
+                        }
                         currentListState.animateScrollToItem(0)
                     }
                 }
@@ -226,7 +227,7 @@ public fun Messages(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BoxScope.MessagesScrollingOption(
-    text: String,
+    messagesState: MessagesState,
     onClick: () -> Unit,
 ) {
     Surface(
@@ -240,7 +241,7 @@ private fun BoxScope.MessagesScrollingOption(
     ) {
         Text(
             modifier = Modifier.padding(8.dp),
-            text = text,
+            text = "text",
             style = ChatTheme.typography.body,
             color = ChatTheme.colors.textHighEmphasis,
         )
