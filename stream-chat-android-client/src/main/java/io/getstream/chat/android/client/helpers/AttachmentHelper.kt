@@ -18,11 +18,11 @@ public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider
     }
 
     public fun hasStreamImageUrl(attachment: Attachment): Boolean {
-        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.contains(STREAM_CDN_HOST_PART, ignoreCase = true) ?: false
+        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(STREAM_CDN_HOST_PATTERN::matches) ?: false
     }
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
-        private const val STREAM_CDN_HOST_PART = "stream-chat"
+        private val STREAM_CDN_HOST_PATTERN = "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
     }
 }
