@@ -64,6 +64,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added support for slow mode. Users are no longer able to send messages during cooldown interval.
+- Added possibility to customize the appearance of cooldown timer in the `MessageInputView` using the following attributes:
+  - `streamUiCooldownTimerTextSize`, `streamUiCooldownTimerTextColor`, `streamUiCooldownTimerFontAssets`, `streamUiCooldownTimerFont`, `streamUiCooldownTimerTextStyle` attributes to customize cooldown timer text
+  - `streamUiCooldownTimerBackgroundColor`- the background color of cooldown timer
 
 ### ⚠️ Changed
 

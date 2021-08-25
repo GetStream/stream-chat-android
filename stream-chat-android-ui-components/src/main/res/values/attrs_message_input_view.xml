@@ -230,6 +230,18 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+
+        <!-- Cooldown Timer -->
+        <attr name="streamUiCooldownTimerTextSize" format="dimension" />
+        <attr name="streamUiCooldownTimerTextColor" format="reference|color" />
+        <attr name="streamUiCooldownTimerFontAssets" format="string" />
+        <attr name="streamUiCooldownTimerFont" format="string" />
+        <attr name="streamUiCooldownTimerTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiCooldownTimerBackgroundColor" format="reference|color" />
     </declare-styleable>
 
 </resources>

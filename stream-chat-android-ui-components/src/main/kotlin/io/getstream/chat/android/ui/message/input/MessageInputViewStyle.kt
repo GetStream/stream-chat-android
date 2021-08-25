@@ -56,6 +56,8 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * @property commandInputBadgeIcon - icon inside command badge. Default - [R.drawable.stream_ui_ic_command_white]
 * @property commandInputBadgeBackgroundDrawable - background shape of command badge. Default - [R.drawable.stream_ui_shape_command_background]
 * @property commandInputBadgeTextStyle - text appearance of command name inside command badge
+* @property cooldownTimerTextStyle - text appearance for cooldown timer text displayed over the send button
+* @property cooldownTimerBackgroundColor - background color for cooldown timer. Default - [R.color.stream_ui_grey]
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -97,6 +99,8 @@ public data class MessageInputViewStyle(
     public val fileAttachmentEmptyStateText: String,
     public val mediaAttachmentEmptyStateText: String,
     public val dismissIconDrawable: Drawable,
+    public val cooldownTimerTextStyle: TextStyle,
+    @ColorInt public val cooldownTimerBackgroundColor: Int,
 ) {
 
     public companion object {
@@ -535,6 +539,30 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiMessageInputCloseButtonIconDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
 
+                val cooldownTimerTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextColor,
+                        context.getColorCompat(R.color.stream_ui_literal_white)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCooldownTimerFontAssets,
+                        R.styleable.MessageInputView_streamUiCooldownTimerFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val cooldownTimerBackgroundColor = a.getColor(
+                    R.styleable.MessageInputView_streamUiCooldownTimerBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_grey)
+                )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -575,6 +603,8 @@ public data class MessageInputViewStyle(
                     fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
                     mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
                     dismissIconDrawable = dismissIconDrawable,
+                    cooldownTimerTextStyle = cooldownTimerTextStyle,
+                    cooldownTimerBackgroundColor = cooldownTimerBackgroundColor,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }
