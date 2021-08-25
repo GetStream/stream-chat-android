@@ -26,7 +26,7 @@ public class DefaultUserLookupHandler(
         if (Transliterator.getAvailableIDs().asSequence().contains(id)) {
             this.transliterator = Transliterator.getInstance(id)
         } else {
-            logger.logD("The id: $transliterationId for transliteration is not available")
+            logger.logD("The id: $id for transliteration is not available")
         }
     }
 
