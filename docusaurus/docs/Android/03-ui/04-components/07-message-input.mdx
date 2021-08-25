@@ -244,6 +244,14 @@ This produces the following result:
 
 ![Custom suggestion item](../../assets/custom_suggestion_item.jpg)
 
+## Changing Mention Search
+It is possible to change the search method in the mention list. The default class: `DefaultUserLookupHandler` removes diacritics and uses levenstein distance to include similar words in the results. It also supports transliteration, you can add the id for the desired transliteration and apply the new `UserLookupHandler`:
+
+```
+val defaultUserLookupHandler = DefaultUserLookupHandler(users, "Cyrl-Latn")
+messageInputView.setUserLookupHandler(defaultUserLookupHandler)
+
+```
 
 ## Attachment Size Limits
 

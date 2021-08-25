@@ -58,6 +58,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
@@ -236,6 +237,11 @@ class Android {
         fun customSuggestionListviewHolderFactory() {
             val customViewHolderFactory: SuggestionListItemViewHolderFactory = CustomSuggestionListViewHolderFactory()
             messageInputView.setSuggestionListViewHolderFactory(customViewHolderFactory)
+        }
+        
+        fun transliterationSupport(users: List<User>) {
+            val defaultUserLookupHandler = DefaultUserLookupHandler(users, "Cyrl-Latn")
+            messageInputView.setUserLookupHandler(defaultUserLookupHandler)
         }
 
         fun customMessageHandler() {
