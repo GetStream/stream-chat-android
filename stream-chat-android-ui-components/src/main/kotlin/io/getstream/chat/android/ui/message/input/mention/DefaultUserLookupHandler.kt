@@ -15,16 +15,18 @@ public class DefaultUserLookupHandler(
     transliterationId: String? = null,
 ) : UserLookupHandler {
 
-    private var transliterator: Transliterator? = null
+    public var transliterator: Transliterator? = null
     private val logger = ChatLogger.get("DefaultUserLookupHandler")
 
     init {
-        transliterationId.let { id ->
-            if (Transliterator.getAvailableIDs().asSequence().contains(id)) {
-                this.transliterator = Transliterator.getInstance(id)
-            } else {
-                logger.logD("The id: $transliterationId for transliteration is not available")
-            }
+        transliterationId?.let(::setTransliterator)
+    }
+
+    private fun setTransliterator(id: String) {
+        if (Transliterator.getAvailableIDs().asSequence().contains(id)) {
+            this.transliterator = Transliterator.getInstance(id)
+        } else {
+            logger.logD("The id: $transliterationId for transliteration is not available")
         }
     }
 
