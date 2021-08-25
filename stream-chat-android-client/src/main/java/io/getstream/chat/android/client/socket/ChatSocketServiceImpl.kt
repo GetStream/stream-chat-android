@@ -42,7 +42,11 @@ internal class ChatSocketServiceImpl constructor(
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         object : HealthMonitor.HealthCallback {
-            override fun reconnect() = this@ChatSocketServiceImpl.reconnect(connectionConf)
+            override fun reconnect() {
+                if (state is State.DisconnectedTemporarily) {
+                    this@ChatSocketServiceImpl.reconnect(connectionConf)
+                }
+            }
             override fun check() {
                 (state as? State.Connected)?.let {
                     sendEvent(it.event)
