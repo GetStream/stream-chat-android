@@ -9,8 +9,8 @@ apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_VERSION = Configuration.versionName
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
