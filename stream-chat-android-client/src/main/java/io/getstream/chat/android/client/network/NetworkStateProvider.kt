@@ -31,7 +31,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     private var isConnected: Boolean = isConnected()
 
     @Volatile
-    private var listeners: List<NetworkStateListener> = listOf()
+    private var listeners: Set<NetworkStateListener> = setOf()
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
@@ -56,8 +56,9 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
 
     fun subscribe(listener: NetworkStateListener) {
         listeners = listeners + listener
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
-        isRegistered.set(true)
+        if (isRegistered.compareAndSet(false, true)) {
+            connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+        }
     }
 
     fun unsubscribe(listener: NetworkStateListener) {

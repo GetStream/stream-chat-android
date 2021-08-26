@@ -24,8 +24,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- `TooManyRequestsException` caused to be subscribed multiple times to the `ConnectivityManager`
 
 ### ⬆️ Improved
+- Reconnection process
 
 ### ✅ Added
 
