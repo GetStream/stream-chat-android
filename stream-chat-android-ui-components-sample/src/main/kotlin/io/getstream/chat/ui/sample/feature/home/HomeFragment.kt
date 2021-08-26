@@ -102,11 +102,11 @@ class HomeFragment : Fragment() {
             // disable reloading fragment when clicking again on the same tab
             setOnNavigationItemReselectedListener {}
             setBackgroundResource(R.drawable.shape_bottom_navigation_background)
-            getOrCreateBadge(R.id.channels_fragment)?.apply {
+            getOrCreateBadge(R.id.channels_fragment).apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
                 badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }
-            getOrCreateBadge(R.id.mentions_fragment)?.apply {
+            getOrCreateBadge(R.id.mentions_fragment).apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
                 badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }

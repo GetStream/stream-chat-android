@@ -89,6 +89,22 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
+    <style name="StreamUiCooldownBadgeStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">@drawable/stream_ui_cooldown_badge_background</item>
+        <item name="android:backgroundTint">@color/stream_ui_grey</item>
+        <item name="android:minWidth">24dp</item>
+        <item name="android:minHeight">24dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/stream_ui_literal_white</item>
+    </style>
+
     <style name="StreamUiMessageOptionItem">
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -920,6 +936,10 @@
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiCooldownTimerTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiCooldownTimerTextStyle">bold</item>
+        <item name="streamUiCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">

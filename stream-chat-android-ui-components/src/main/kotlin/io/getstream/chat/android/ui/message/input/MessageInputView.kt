@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.os.CountDownTimer
 import android.util.AttributeSet
 import android.view.View
 import android.view.WindowManager
@@ -27,6 +28,7 @@ import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
@@ -41,6 +43,7 @@ import kotlinx.coroutines.flow.collect
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
 import java.lang.Exception
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
@@ -72,6 +75,10 @@ public class MessageInputView : ConstraintLayout {
     private var isKeyboardListenerRegistered: Boolean = false
 
     private var maxMessageLength: Int = Integer.MAX_VALUE
+
+    private var cooldownInterval: Int = 0
+    private var cooldownTimer: CountDownTimer? = null
+    private var previousInputHint: String? = null
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -258,6 +265,16 @@ public class MessageInputView : ConstraintLayout {
     }
 
     /**
+     * Sets the cooldown interval. When slow mode is enabled, users can only send messages every
+     * [cooldownInterval] time interval.
+     *
+     * @param cooldownInterval the cooldown interval in seconds
+     */
+    public fun setCooldownInterval(cooldownInterval: Int) {
+        this.cooldownInterval = cooldownInterval
+    }
+
+    /**
      * Sets a custom [MaxMessageLengthHandler] which is responsible to handling max-length errors.
      */
     public fun setMaxMessageLengthHandler(maxMessageLengthHandler: MaxMessageLengthHandler) {
@@ -276,6 +293,8 @@ public class MessageInputView : ConstraintLayout {
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
+        cooldownTimer?.cancel()
+        cooldownTimer = null
         hideSuggestionList()
         super.onDetachedFromWindow()
     }
@@ -328,6 +347,36 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
             binding.messageInputFieldView.clearContent()
+            startCooldownTimerIfNecessary()
+        }
+    }
+
+    /**
+     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     */
+    private fun startCooldownTimerIfNecessary() {
+        if (cooldownInterval > 0) {
+            // store the current message input hint
+            previousInputHint = binding.messageInputFieldView.messageHint
+
+            with(binding) {
+                cooldownBadgeTextView.isVisible = true
+                messageInputFieldView.messageHint = context.getString(R.string.stream_ui_message_input_slow_mode_hint)
+
+                cooldownTimer = object : CountDownTimer(cooldownInterval * 1000L, 1000) {
+
+                    override fun onTick(millisUntilFinished: Long) {
+                        val secondsRemaining = (millisUntilFinished.toFloat() / 1000).roundToInt()
+                        cooldownBadgeTextView.text = "$secondsRemaining"
+                    }
+
+                    override fun onFinish() {
+                        cooldownBadgeTextView.isVisible = false
+                        // restore the last input hint
+                        messageInputFieldView.messageHint = previousInputHint ?: ""
+                    }
+                }.start()
+            }
         }
     }
 
@@ -469,6 +518,8 @@ public class MessageInputView : ConstraintLayout {
 
         binding.separator.background = messageInputViewStyle.dividerBackground
         binding.dismissInputMode.setImageDrawable(messageInputViewStyle.dismissIconDrawable)
+        binding.cooldownBadgeTextView.setTextStyle(messageInputViewStyle.cooldownTimerTextStyle)
+        binding.cooldownBadgeTextView.background = messageInputViewStyle.commandInputBadgeBackgroundDrawable
     }
 
     /**
