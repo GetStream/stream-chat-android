@@ -10,19 +10,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.items.Bottom
@@ -47,6 +56,7 @@ import kotlin.math.abs
  * @param onThreadClick - Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick - Handler for when the user long taps on a message and selects it.
  * @param onMessagesStartReached - Handler for pagination.
+ * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom - Handler when the user reaches the bottom.
  * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent - Composable that represents the empty content if there are no messages.
@@ -61,6 +71,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onLastVisibleMessageChanged: (MessageItem) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
@@ -76,6 +87,7 @@ public fun MessageList(
         modifier = modifier,
         currentState = viewModel.currentMessagesState,
         onMessagesStartReached = onMessagesStartReached,
+        onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onScrollToBottom = onScrollToBottom,
         itemContent = itemContent,
@@ -91,6 +103,7 @@ public fun MessageList(
  * @param modifier - Modifier for styling.
  * @param currentState - The state of the component, represented by [MessagesState].
  * @param onMessagesStartReached - Handler for pagination.
+ * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom - Handler when the user scrolls to the bottom.
  * @param onLongItemClick - Handler for when the user long taps on an item.
  * @param onThreadClick - Handler for when the user taps on a message with an active thread.
@@ -104,6 +117,7 @@ public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
     onMessagesStartReached: () -> Unit = {},
+    onLastVisibleMessageChanged: (MessageItem) -> Unit = {},
     onScrollToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
@@ -125,6 +139,7 @@ public fun MessageList(
             modifier = modifier,
             messagesState = currentState,
             onMessagesStartReached = onMessagesStartReached,
+            onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrollToBottom = onScrollToBottom,
             itemContent = itemContent
         )
@@ -142,6 +157,7 @@ public fun MessageList(
  * @param messagesState - Current state of messages, like messages to display, if we're loading more
  * and if we've reached the end of the list.
  * @param onMessagesStartReached - Handler for pagination, when the user reaches the start of messages.
+ * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom - Handler when the user reaches the bottom of the list.
  * @param itemContent - Composable that represents the item that displays each message.
  * @param modifier - Modifier for styling.
@@ -150,6 +166,7 @@ public fun MessageList(
 public fun Messages(
     messagesState: MessagesState,
     onMessagesStartReached: () -> Unit,
+    onLastVisibleMessageChanged: (MessageItem) -> Unit,
     onScrollToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable (MessageItem) -> Unit,
@@ -169,8 +186,10 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            itemsIndexed(messages.reversed()) { index, item ->
+            itemsIndexed(messages) { index, item ->
                 itemContent(item)
+
+                onLastVisibleMessageChanged(item)
 
                 if (index == 0 && currentListState.isScrollInProgress) {
                     onScrollToBottom()
@@ -180,7 +199,7 @@ public fun Messages(
                     onMessagesStartReached()
                 }
 
-                if (item.position == None || item.position == Bottom) {
+                if (item.groupPosition == None || item.groupPosition == Bottom) {
                     Spacer(Modifier.size(4.dp))
                 } else {
                     Spacer(Modifier.size(2.dp))
@@ -199,7 +218,6 @@ public fun Messages(
             }
         }
 
-        // TODO - build this according to design
         val firstVisibleItemIndex = currentListState.firstVisibleItemIndex
 
         when {
@@ -211,7 +229,7 @@ public fun Messages(
             }
 
             abs(firstVisibleItemIndex) >= 1 -> {
-                MessagesScrollingOption(messagesState) {
+                MessagesScrollingOption(messagesState.unreadCount) {
                     coroutineScope.launch {
                         if (firstVisibleItemIndex > 5) {
                             currentListState.scrollToItem(5) // TODO - Try a custom animation spec
@@ -224,26 +242,56 @@ public fun Messages(
     }
 }
 
+/**
+ * Shows an option when the user scrolls away from the bottom of the list. If there are any new messages it also gives
+ * the user information on how many messages they haven't read.
+ *
+ * @param unreadCount - The count of unread messages.
+ * @param onClick - The handler that's triggered when the user taps on the action.
+ * */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BoxScope.MessagesScrollingOption(
-    messagesState: MessagesState,
+    unreadCount: Int,
     onClick: () -> Unit,
 ) {
-    Surface(
+    Box(
         modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(16.dp),
-        shape = RoundedCornerShape(16.dp),
-        elevation = 4.dp,
-        onClick = onClick,
-        color = ChatTheme.colors.inputBackground,
+            .align(BottomEnd)
+            .padding(16.dp)
+            .wrapContentSize()
     ) {
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = "text",
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textHighEmphasis,
-        )
+        Surface(
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .size(48.dp),
+            shape = CircleShape,
+            elevation = 4.dp,
+            indication = rememberRipple(),
+            onClick = onClick
+        ) {
+            Icon(
+                modifier = Modifier.padding(16.dp),
+                painter = painterResource(R.drawable.stream_compose_ic__arrow_down),
+                contentDescription = null,
+                tint = ChatTheme.colors.primaryAccent
+            )
+        }
+
+        if (unreadCount != 0) {
+            Surface(
+                modifier = Modifier
+                    .align(TopCenter),
+                shape = RoundedCornerShape(16.dp),
+                color = ChatTheme.colors.primaryAccent
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    text = unreadCount.toString(),
+                    style = ChatTheme.typography.footnoteBold,
+                    color = Color.White
+                )
+            }
+        }
     }
 }

@@ -103,8 +103,8 @@ public abstract class io/getstream/chat/android/compose/state/messages/MessageMo
 public final class io/getstream/chat/android/compose/state/messages/MessagesState {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;)V
-	public synthetic fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;I)V
+	public synthetic fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
@@ -113,8 +113,9 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 	public final fun component6 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component7 ()Lio/getstream/chat/android/compose/state/messages/NewMessageState;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun copy (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;)Lio/getstream/chat/android/compose/state/messages/MessagesState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/MessagesState;ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/MessagesState;
+	public final fun component9 ()I
+	public final fun copy (ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;I)Lio/getstream/chat/android/compose/state/messages/MessagesState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/MessagesState;ZZZLjava/util/List;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getEndOfMessages ()Z
@@ -122,6 +123,7 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 	public final fun getNewMessageState ()Lio/getstream/chat/android/compose/state/messages/NewMessageState;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getSelectedMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getUnreadCount ()I
 	public fun hashCode ()I
 	public final fun isLoading ()Z
 	public final fun isLoadingMore ()Z
@@ -219,9 +221,9 @@ public final class io/getstream/chat/android/compose/state/messages/items/Messag
 	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;Z)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/MessageItem;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGroupPosition ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getParentMessageId ()Ljava/lang/String;
-	public final fun getPosition ()Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;
 	public fun hashCode ()I
 	public final fun isMine ()Z
 	public fun toString ()Ljava/lang/String;
@@ -599,9 +601,9 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessageIte
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageListKt {
-	public static final fun MessageList (Lio/getstream/chat/android/compose/state/messages/MessagesState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageList (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun Messages (Lio/getstream/chat/android/compose/state/messages/MessagesState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageList (Lio/getstream/chat/android/compose/state/messages/MessagesState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageList (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Messages (Lio/getstream/chat/android/compose/state/messages/MessagesState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/overlay/ComposableSingletons$SelectedMessageOverlayKt {
@@ -818,6 +820,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun performMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun removeOverlay ()V
 	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun updateLastSeenMessage (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
