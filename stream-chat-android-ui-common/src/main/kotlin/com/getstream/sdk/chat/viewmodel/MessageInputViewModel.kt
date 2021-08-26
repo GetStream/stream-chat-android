@@ -30,6 +30,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val _commands = MediatorLiveData<List<Command>>()
     private val _members = MediatorLiveData<List<Member>>()
     public val maxMessageLength: LiveData<Int> = _maxMessageLength
+    private val _cooldownInterval = MediatorLiveData<Int>()
+    public val cooldownInterval: LiveData<Int> = _cooldownInterval
     public val commands: LiveData<List<Command>> = _commands
     public val members: LiveData<List<Member>> = _members
     private val _messageToEdit: MutableLiveData<Message?> = MutableLiveData()
@@ -48,6 +50,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
                 val channelController = channelControllerResult.data()
                 _channel.addSource(channelController.offlineChannelData) { _channel.value = channelController.toChannel() }
                 _maxMessageLength.addSource(_channel) { _maxMessageLength.value = it.config.maxMessageLength }
+                _cooldownInterval.addSource(_channel) { _cooldownInterval.value = it.cooldown }
                 _commands.addSource(_channel) { _commands.value = it.config.commands }
                 _isDirectMessage.addSource(
                     _channel.combineWith(chatDomain.user) { channel, user ->

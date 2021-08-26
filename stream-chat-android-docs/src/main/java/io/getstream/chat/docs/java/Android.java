@@ -907,6 +907,8 @@ public class Android {
                                 textStyleGeneric,
                                 "Empty state text",
                                 "Empty state text",
+                                genericDrawable,
+                                textStyleGeneric,
                                 genericDrawable
                         )
 
