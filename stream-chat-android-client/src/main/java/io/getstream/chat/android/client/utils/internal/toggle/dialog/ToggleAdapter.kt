@@ -9,8 +9,10 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.R
 
-internal class ToggleAdapter(private val listener: ToggleSwitchListener) : RecyclerView.Adapter<ToggleItemViewHolder>() {
+internal class ToggleAdapter : RecyclerView.Adapter<ToggleItemViewHolder>() {
     private var toggles: List<Pair<String, Boolean>> = emptyList()
+
+    var listener = ToggleSwitchListener { _, _ -> }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Pair<String, Boolean>>) {

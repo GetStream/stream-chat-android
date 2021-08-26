@@ -16,7 +16,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
                 viewRef = WeakReference(event.view)
                 val toggles = toggleService.getToggles()
                 ToggleState.StateData(toggles, emptyMap()).also {
-                    viewRef.get()?.renderNewState(it)
+                    viewRef.get()?.showData(it.dataSnapshot, it.hasChanges())
                 }
             }
         }
@@ -26,8 +26,10 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
                 viewRef.get()?.dismiss()
                 ToggleState.Final
             }
-            onEvent<ToggleEvent.CommitChanges> { state, _ ->
+            onEvent<ToggleEvent.CommitChanges> { state, event ->
                 state.changes.entries.forEach { (toggle, value) -> toggleService.setToggle(toggle, value) }
+                state.changes.toList().let(event.togglesChangesCommittedListener::invoke)
+                viewRef.get()?.dismiss()
                 ToggleState.Final
             }
             onEvent<ToggleEvent.ToggleChanged> { stateData, event ->
@@ -45,7 +47,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         } else {
             stateData.copy(changes = stateData.changes + (event.toggleName to event.value))
         }
-        viewRef.get()?.renderNewState(newState)
+        viewRef.get()?.showData(newState.dataSnapshot, newState.hasChanges())
 
         return newState
     }
@@ -58,8 +60,8 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         fsm.sendEvent(ToggleEvent.ToggleChanged(toggleName, isChecked))
     }
 
-    fun onSaveButtonClicked() {
-        fsm.sendEvent(ToggleEvent.CommitChanges)
+    fun onSaveButtonClicked(togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit) {
+        fsm.sendEvent(ToggleEvent.CommitChanges(togglesChangesCommittedListener))
     }
 
     fun onDismissButtonClicked() {
@@ -82,6 +84,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
         class AttachView(val view: ToggleDialogFragment) : ToggleEvent()
         class ToggleChanged(val toggleName: String, val value: Boolean) : ToggleEvent()
         object Dismiss : ToggleEvent()
-        object CommitChanges : ToggleEvent()
+        class CommitChanges(val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit) :
+            ToggleEvent()
     }
 }

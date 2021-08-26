@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonBar"
         tools:listitem="@layout/stream_toggle_list_item"/>
 
     <RelativeLayout
+        android:id="@+id/buttonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:paddingEnd="8dp"
+        android:layout_weight="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="RtlSymmetry"
         >
 
@@ -28,9 +38,11 @@
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="Save"
+            android:textColor="@drawable/stream_text_color_selector"
             tools:ignore="HardcodedText"/>
 
         <Button
@@ -39,10 +51,11 @@
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:text="Dismiss"
+            android:textColor="@drawable/stream_text_color_selector"
             android:layout_toStartOf="@id/saveButton"
             tools:ignore="HardcodedText"
             />
 
     </RelativeLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
