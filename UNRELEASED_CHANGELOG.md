@@ -64,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added style attributes for `AttachmentGalleryActivity` to control menu options like enabling/disabling reply button etc.
 
 ### ⚠️ Changed
 
