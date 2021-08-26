@@ -57,7 +57,7 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * @property commandInputBadgeBackgroundDrawable - background shape of command badge. Default - [R.drawable.stream_ui_shape_command_background]
 * @property commandInputBadgeTextStyle - text appearance of command name inside command badge
 * @property cooldownTimerTextStyle - text appearance for cooldown timer text displayed over the send button
-* @property cooldownTimerBackgroundColor - background color for cooldown timer. Default - [R.color.stream_ui_grey]
+* @property cooldownTimerBackgroundDrawable - background drawable for cooldown timer. Default - [R.color.stream_ui_cooldown_badge_background]
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -100,7 +100,7 @@ public data class MessageInputViewStyle(
     public val mediaAttachmentEmptyStateText: String,
     public val dismissIconDrawable: Drawable,
     public val cooldownTimerTextStyle: TextStyle,
-    @ColorInt public val cooldownTimerBackgroundColor: Int,
+    public val cooldownTimerBackgroundDrawable: Drawable,
 ) {
 
     public companion object {
@@ -558,10 +558,9 @@ public data class MessageInputViewStyle(
                     )
                     .build()
 
-                val cooldownTimerBackgroundColor = a.getColor(
-                    R.styleable.MessageInputView_streamUiCooldownTimerBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_grey)
-                )
+                val cooldownTimerBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCooldownTimerBackgroundDrawable,
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
 
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
@@ -604,7 +603,7 @@ public data class MessageInputViewStyle(
                     mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
                     dismissIconDrawable = dismissIconDrawable,
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
-                    cooldownTimerBackgroundColor = cooldownTimerBackgroundColor,
+                    cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

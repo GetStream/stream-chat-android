@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Build
 import android.os.CountDownTimer
 import android.util.AttributeSet
@@ -521,7 +520,7 @@ public class MessageInputView : ConstraintLayout {
         binding.separator.background = messageInputViewStyle.dividerBackground
         binding.dismissInputMode.setImageDrawable(messageInputViewStyle.dismissIconDrawable)
         binding.cooldownBadgeTextView.setTextStyle(messageInputViewStyle.cooldownTimerTextStyle)
-        binding.cooldownBadgeTextView.backgroundTintList = ColorStateList.valueOf(messageInputViewStyle.cooldownTimerBackgroundColor)
+        binding.cooldownBadgeTextView.background = messageInputViewStyle.commandInputBadgeBackgroundDrawable
     }
 
     /**

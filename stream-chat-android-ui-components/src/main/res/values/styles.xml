@@ -931,6 +931,10 @@
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiCooldownTimerTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiCooldownTimerTextStyle">bold</item>
+        <item name="streamUiCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">

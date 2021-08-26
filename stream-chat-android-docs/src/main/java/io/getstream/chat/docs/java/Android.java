@@ -905,7 +905,7 @@ public class Android {
                                 "Empty state text",
                                 genericDrawable,
                                 textStyleGeneric,
-                                colorBlack
+                                genericDrawable
                         )
 
             );

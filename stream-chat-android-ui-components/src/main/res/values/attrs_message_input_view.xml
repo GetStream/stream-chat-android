@@ -241,7 +241,7 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
-        <attr name="streamUiCooldownTimerBackgroundColor" format="reference|color" />
+        <attr name="streamUiCooldownTimerBackgroundDrawable" format="reference" />
     </declare-styleable>
 
 </resources>
