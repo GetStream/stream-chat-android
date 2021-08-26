@@ -1,12 +1,16 @@
 package io.getstream.chat.android.offline.channel
 
+import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.helpers.AttachmentHelper
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
+import junit.framework.Assert.assertTrue
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,7 +23,9 @@ internal class AttachmentUrlValidatorTests {
 
     @BeforeEach
     fun setup() {
-        attachmentHelper = mock()
+        attachmentHelper = mock {
+            on { it.hasStreamImageUrl(any()) } doReturn true
+        }
         sut = AttachmentUrlValidator(attachmentHelper)
     }
 
@@ -34,7 +40,7 @@ internal class AttachmentUrlValidatorTests {
     }
 
     @Test
-    fun `If old messages contains the same id and old url is null to new url Should return list with new message`() {
+    fun `Given old messages contains the same id and old url is null Should return list with new message`() {
         val oldAttachment = randomAttachment { imageUrl = null }
         val newAttachment = oldAttachment.copy(imageUrl = "imageUrl")
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
@@ -53,7 +59,7 @@ internal class AttachmentUrlValidatorTests {
     }
 
     @Test
-    fun `If old messages contains the same id and old url is equal to new url Should return list with new message`() {
+    fun `Given old messages contains the same id and old url is equal to new url Should return list with new message`() {
         val oldAttachment = randomAttachment { imageUrl = "imageUrl" }
         val newAttachment = oldAttachment.copy(name = "otherName")
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
@@ -107,5 +113,36 @@ internal class AttachmentUrlValidatorTests {
             message.cid == message.cid && message.updatedAt!!.time == 2000L &&
                 message.attachments.first().imageUrl == "oldValidUrl"
         } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Given attachments with only imageUrls and they are valid Should not update different attachments`() {
+        val url1 = "url1"
+        val url2 = "url2"
+        val attachment1 = Attachment(imageUrl = url1)
+        val attachment2 = Attachment(imageUrl = url2)
+        whenever(attachmentHelper.hasValidImageUrl(any())) doReturn true
+        val message = randomMessage(attachments = mutableListOf(attachment1, attachment2))
+
+        val result = sut.updateValidAttachmentsUrl(listOf(message.copy(updatedAt = Date())), mapOf(message.id to message))
+
+        result.first().attachments.let { attachments ->
+            assertTrue(attachments.any { it.imageUrl == url1 })
+            assertTrue(attachments.any { it.imageUrl == url2 })
+        }
+    }
+
+    @Test
+    fun `Given attachments with not stream imageUrls and valid old urls Should Not return attachment with old url`() {
+        val oldAttachment = randomAttachment { imageUrl = "oldUrl" }
+        val newAttachment = oldAttachment.copy(imageUrl = "newUrl")
+        val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment))
+        val newMessage = oldMessage.copy(attachments = mutableListOf(newAttachment))
+        whenever(attachmentHelper.hasStreamImageUrl(oldAttachment)) doReturn false
+        whenever(attachmentHelper.hasValidImageUrl(any())) doReturn true
+
+        val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
+
+        Truth.assertThat(result.first().attachments.first()).isEqualTo(newAttachment)
     }
 }
