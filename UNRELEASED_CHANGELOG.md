@@ -2,6 +2,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Now we provide SNAPSHOT versions of our SDK for every commit arrives to the `develop` branch.
+They shouldn't be used for a production release because they could contains some known bugs or breaking changes that will be fixed before a normal version is released, but you can use them to fetch last changes from our SDK
+To use them you need add a new maven repository to your `build.gradle` file and use the SNAPSHOT.
+```
+ maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+```
+Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.(Z+1)-SNAPSHOT`
 
 ### ✅ Added
 
