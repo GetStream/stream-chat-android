@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Mes
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecorator() {
+internal class BackgroundDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
@@ -30,9 +30,15 @@ internal class BackgroundDecorator(val style: MessageListItemStyle) : BaseDecora
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        val bottomRightCorner = if (data.isBottomPosition()) 0f else DEFAULT_CORNER_RADIUS
-        val shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .setBottomRightCornerSize(bottomRightCorner).build()
+        val shapeAppearanceModel = ShapeAppearanceModel.builder()
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .apply {
+                when {
+                    data.isBottomPosition() && data.isMine -> setBottomRightCornerSize(0f)
+                    data.isBottomPosition() && data.isTheirs -> setBottomLeftCornerSize(0f)
+                }
+            }
+            .build()
         viewHolder.binding.deleteLabel.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.messageDeletedBackground)
         }
