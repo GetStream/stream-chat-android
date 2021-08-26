@@ -150,10 +150,10 @@ internal class AttachmentOptionsView : FrameLayout {
         val saveImageIcon: Int,
         val deleteIcon: Int,
         val deleteTextTint: Int,
-        val replyEnabled: Boolean = true,
-        val showInChatEnabled: Boolean = true,
-        val saveImageEnabled: Boolean = true,
-        val deleteEnabled: Boolean = true,
+        val replyEnabled: Boolean,
+        val showInChatEnabled: Boolean,
+        val saveImageEnabled: Boolean,
+        val deleteEnabled: Boolean,
     ) : Serializable
 
     interface ReplyClickListener {
