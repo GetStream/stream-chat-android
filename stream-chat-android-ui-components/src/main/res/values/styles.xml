@@ -923,8 +923,9 @@
         <item name="streamUiAttachmentsFileSizeTextSize">@dimen/stream_ui_text_small</item>
         <item name="streamUiAttachmentsFileSizeTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiAttachmentsFileSizeTextStyle">bold</item>
-        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_white_snow</item>
-        <item name="streamUiFileCheckBoxSelectorDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiFileCheckBoxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiAttachmentsFilesEmptyStateStyle">normal</item>

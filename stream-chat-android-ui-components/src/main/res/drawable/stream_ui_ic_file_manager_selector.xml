@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/stream_ui_ic_file_manager" android:state_checked="false" />
+    <item android:drawable="@drawable/stream_ui_circle_blue" android:state_checked="true" />
+</selector>
