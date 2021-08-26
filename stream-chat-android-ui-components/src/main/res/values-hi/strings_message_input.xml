@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">मैसेज का जवाब दें</string>
     <string name="stream_ui_message_input_hint">यहाँ कुछ लिखें</string>
     <string name="stream_ui_message_input_only_attachments_hint">एक टिप्पणी जोड़ें या भेजें</string>
+    <string name="stream_ui_message_input_slow_mode_hint">स्लो मोड ऑन</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">इंस्टेंट कमांड</string>
