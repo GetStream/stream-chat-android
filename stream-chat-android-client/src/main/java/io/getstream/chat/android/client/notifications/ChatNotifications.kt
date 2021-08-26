@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 internal interface ChatNotifications {
@@ -39,6 +39,7 @@ internal class ChatNotificationsImpl constructor(
     override val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context,
+    private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
     private val logger = ChatLogger.get("ChatNotifications")
 
@@ -56,7 +57,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override fun setDevice(device: Device) {
-        GlobalScope.launch(DispatcherProvider.IO) {
+        scope.launch {
             pushTokenUpdateHandler.updateDeviceIfNecessary(device)
         }
     }
@@ -112,7 +113,7 @@ internal class ChatNotificationsImpl constructor(
 
         if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
-            GlobalScope.launch(DispatcherProvider.Main) {
+            scope.launch(DispatcherProvider.Main) {
                 val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
                 if (result.isSuccess) {
                     showNotification(
@@ -147,7 +148,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override fun removeStoredDevice() {
-        GlobalScope.launch(DispatcherProvider.IO) {
+        scope.launch {
             pushTokenUpdateHandler.removeStoredDevice()
         }
     }
