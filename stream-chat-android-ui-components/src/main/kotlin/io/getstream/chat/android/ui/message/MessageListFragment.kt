@@ -37,21 +37,22 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
  * **Note**: Fragments representing self-contained screens are easy to use. They allow you
  * to explore the SDK's features in a breeze, however, they offer limited customization.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 public open class MessageListFragment : Fragment() {
 
-    private val cid: String by lazy {
+    protected val cid: String by lazy {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
-    private val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
-    private val messageId: String? by lazy { requireArguments().getString(ARG_MESSAGE_ID) }
-    private val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
+    protected val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
+    protected val messageId: String? by lazy { requireArguments().getString(ARG_MESSAGE_ID) }
+    protected val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
 
-    private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid, messageId) }
-    private val messageListViewModel: MessageListViewModel by viewModels { factory }
-    private val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
-    private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+    protected val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid, messageId) }
+    protected val messageListViewModel: MessageListViewModel by viewModels { factory }
+    protected val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+    protected val messageInputViewModel: MessageInputViewModel by viewModels { factory }
 
-    private var backPressListener: BackPressListener? = null
+    protected var backPressListener: BackPressListener? = null
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
     protected val binding: StreamUiFragmentMessageListBinding get() = _binding!!
@@ -243,9 +244,7 @@ public open class MessageListFragment : Fragment() {
          */
         public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
             val builder = Builder(cid)
-            if (initializer != null) {
-                builder.initializer()
-            }
+            initializer?.invoke(builder)
             return builder.build()
         }
     }
