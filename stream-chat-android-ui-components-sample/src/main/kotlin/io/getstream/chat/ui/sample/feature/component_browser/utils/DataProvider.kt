@@ -10,8 +10,6 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {

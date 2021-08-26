@@ -30,6 +30,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecated `Channel#name`, `Channel#image`, `User#name`, `Ues#image` extension properties. Use class members instead.
 
 ### ❌ Removed
 

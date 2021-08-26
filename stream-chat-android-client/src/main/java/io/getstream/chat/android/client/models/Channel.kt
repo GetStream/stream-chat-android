@@ -58,6 +58,18 @@ public data class Channel(
     var pinnedMessages: List<Message> = mutableListOf(),
 ) : CustomObject {
 
+    var name: String
+        get() = getExternalField(this, EXTRA_NAME)
+        set(value) {
+            extraData[EXTRA_NAME] = value
+        }
+
+    var image: String
+        get() = getExternalField(this, EXTRA_IMAGE)
+        set(value) {
+            extraData[EXTRA_IMAGE] = value
+        }
+
     val lastUpdated: Date?
         get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
 

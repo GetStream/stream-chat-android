@@ -63,4 +63,16 @@ public data class User(
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 
-) : CustomObject
+) : CustomObject {
+    var name: String
+        get() = getExternalField(this, EXTRA_NAME)
+        set(value) {
+            extraData[EXTRA_NAME] = value
+        }
+
+    var image: String
+        get() = getExternalField(this, EXTRA_IMAGE)
+        set(value) {
+            extraData[EXTRA_IMAGE] = value
+        }
+}

@@ -2022,11 +2022,13 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun getHidden ()Ljava/lang/Boolean;
 	public final fun getHiddenMessagesBefore ()Ljava/util/Date;
 	public final fun getId ()Ljava/lang/String;
+	public final fun getImage ()Ljava/lang/String;
 	public final fun getLastMessageAt ()Ljava/util/Date;
 	public final fun getLastUpdated ()Ljava/util/Date;
 	public final fun getMemberCount ()I
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getMessages ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
 	public final fun getPinnedMessages ()Ljava/util/List;
 	public final fun getRead ()Ljava/util/List;
 	public final fun getSyncStatus ()Lio/getstream/chat/android/client/utils/SyncStatus;
@@ -2048,9 +2050,11 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun setHidden (Ljava/lang/Boolean;)V
 	public final fun setHiddenMessagesBefore (Ljava/util/Date;)V
 	public final fun setId (Ljava/lang/String;)V
+	public final fun setImage (Ljava/lang/String;)V
 	public final fun setLastMessageAt (Ljava/util/Date;)V
 	public final fun setMembers (Ljava/util/List;)V
 	public final fun setMessages (Ljava/util/List;)V
+	public final fun setName (Ljava/lang/String;)V
 	public final fun setPinnedMessages (Ljava/util/List;)V
 	public final fun setRead (Ljava/util/List;)V
 	public final fun setSyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;)V
@@ -2629,9 +2633,11 @@ public final class io/getstream/chat/android/client/models/User : io/getstream/c
 	public fun getExtraData ()Ljava/util/Map;
 	public fun getExtraValue (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun getId ()Ljava/lang/String;
+	public final fun getImage ()Ljava/lang/String;
 	public final fun getInvisible ()Z
 	public final fun getLastActive ()Ljava/util/Date;
 	public final fun getMutes ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
 	public final fun getOnline ()Z
 	public final fun getRole ()Ljava/lang/String;
 	public final fun getTeams ()Ljava/util/List;
@@ -2645,9 +2651,11 @@ public final class io/getstream/chat/android/client/models/User : io/getstream/c
 	public final fun setDevices (Ljava/util/List;)V
 	public fun setExtraData (Ljava/util/Map;)V
 	public final fun setId (Ljava/lang/String;)V
+	public final fun setImage (Ljava/lang/String;)V
 	public final fun setInvisible (Z)V
 	public final fun setLastActive (Ljava/util/Date;)V
 	public final fun setMutes (Ljava/util/List;)V
+	public final fun setName (Ljava/lang/String;)V
 	public final fun setOnline (Z)V
 	public final fun setRole (Ljava/lang/String;)V
 	public final fun setTotalUnreadCount (I)V
