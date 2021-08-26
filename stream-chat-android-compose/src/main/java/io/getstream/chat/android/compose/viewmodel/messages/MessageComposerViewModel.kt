@@ -185,7 +185,7 @@ public class MessageComposerViewModel(
      *
      * @return [Message] object, with all the data required to send it to the API.
      * */
-    internal fun buildNewMessage(
+    public fun buildNewMessage(
         message: String,
         attachments: List<Attachment> = emptyList(),
     ): Message {
