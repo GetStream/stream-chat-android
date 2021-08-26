@@ -371,6 +371,7 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 	public final fun editMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun getActiveThread ()Landroidx/lifecycle/LiveData;
 	public final fun getCommands ()Landroidx/lifecycle/LiveData;
+	public final fun getCooldownInterval ()Landroidx/lifecycle/LiveData;
 	public final fun getMaxMessageLength ()Landroidx/lifecycle/LiveData;
 	public final fun getMembers ()Landroidx/lifecycle/LiveData;
 	public final fun getMessageToEdit ()Landroidx/lifecycle/LiveData;
