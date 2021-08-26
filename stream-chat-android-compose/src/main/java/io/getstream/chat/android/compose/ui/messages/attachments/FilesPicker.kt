@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
@@ -132,14 +134,11 @@ public fun FileListItem(
 //            }
         }
 
-        Icon(
+        FileItemImage(
+            fileItem = fileItem,
             modifier = Modifier
                 .padding(start = 16.dp)
-                .size(height = 40.dp, width = 35.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            painter = painterResource(id = MimeTypeIconProvider.getIconRes(fileItem.attachmentMetaData.mimeType)),
-            contentDescription = null,
-            tint = Color.Unspecified,
+                .size(size = 40.dp)
         )
 
         Column(
@@ -160,4 +159,40 @@ public fun FileListItem(
             )
         }
     }
+}
+
+/**
+ * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file type
+ * or a thumbnail in case the file type is an image.
+ *
+ * @param fileItem - The item we use to show the image.
+ * */
+@Composable
+public fun FileItemImage(
+    fileItem: AttachmentItem,
+    modifier: Modifier = Modifier,
+) {
+    val attachment = fileItem.attachmentMetaData
+    val isImage = fileItem.attachmentMetaData.type == "image"
+
+    val painter = if (isImage) {
+        val dataToLoad = attachment.uri ?: attachment.file
+
+        rememberImagePainter(dataToLoad)
+    } else {
+        painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
+    }
+
+    val shape = if (isImage) ChatTheme.shapes.imageThumbnail else null
+
+    val imageModifier = modifier.let { baseModifier ->
+        if (shape != null) baseModifier.clip(shape) else baseModifier
+    }
+
+    Image(
+        modifier = imageModifier,
+        painter = painter,
+        contentDescription = null,
+        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
+    )
 }

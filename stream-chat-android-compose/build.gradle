@@ -73,4 +73,5 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
+    implementation Dependencies.coilGif
 }
