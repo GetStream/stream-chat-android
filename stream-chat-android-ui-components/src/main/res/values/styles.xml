@@ -454,6 +454,10 @@
         <item name="streamUiPinnedMessageIndicatorTextStyle">normal</item>
         <item name="streamUiPinnedMessageIndicatorIcon">@drawable/stream_ui_ic_pin</item>
         <item name="streamUiPinnedMessageBackgroundColor">@color/stream_ui_highlight</item>
+
+        <!-- Margin for messages -->
+        <item name="streamUiMessageStartMargin">@dimen/stream_ui_message_viewholder_avatar_missing_margin</item>
+        <item name="streamUiMessageEndMargin">0dp</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
@@ -493,7 +497,8 @@
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>

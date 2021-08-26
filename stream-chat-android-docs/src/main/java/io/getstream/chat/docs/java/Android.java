@@ -431,6 +431,10 @@ public class Android {
             });
         }
 
+        public void avatarPredicate() {
+            messageListView.setShowAvatarPredicate(messageItem -> true);
+        }
+
         public void customMessagesFilter() {
             messageListView.setMessageListItemPredicate(messageList -> {
                 // Boolean logic here
