@@ -902,6 +902,7 @@ public class Android {
                                 textStyleGeneric,
                                 textStyleGeneric,
                                 genericDrawable,
+                                genericDrawable,
                                 colorBlack,
                                 textStyleGeneric,
                                 textStyleGeneric,

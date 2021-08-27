@@ -63,7 +63,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fix for position of deleted messages for other users
+- Fix for position of deleted messages for other users
+- Fix glitch in selectors of file
 ### ⬆️ Improved
 
 ### ✅ Added

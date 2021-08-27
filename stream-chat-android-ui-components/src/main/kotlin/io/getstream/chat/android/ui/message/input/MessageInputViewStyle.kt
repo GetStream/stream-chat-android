@@ -58,6 +58,8 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * @property commandInputBadgeTextStyle - text appearance of command name inside command badge
 * @property cooldownTimerTextStyle - text appearance for cooldown timer text displayed over the send button
 * @property cooldownTimerBackgroundDrawable - background drawable for cooldown timer. Default - [R.color.stream_ui_cooldown_badge_background]
+* @property fileCheckboxSelectedDrawable - Background for selector of files list in selected state. Default - [R.color.stream_ui_circle_blue]
+* @property fileCheckboxDeselectedDrawable - Background for selector of files list in deselected state. Default - [R.color.stream_ui_ic_file_manager]
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -92,7 +94,8 @@ public data class MessageInputViewStyle(
     public val commandInputBadgeTextStyle: TextStyle,
     public val fileNameTextStyle: TextStyle,
     public val fileSizeTextStyle: TextStyle,
-    public val fileCheckboxSelectorDrawable: Drawable,
+    public val fileCheckboxSelectedDrawable: Drawable,
+    public val fileCheckboxDeselectedDrawable: Drawable,
     @ColorInt public val fileCheckboxTextColor: Int,
     public val fileAttachmentEmptyStateTextStyle: TextStyle,
     public val mediaAttachmentEmptyStateTextStyle: TextStyle,
@@ -482,11 +485,15 @@ public data class MessageInputViewStyle(
                 val fileCheckboxTextColor =
                     a.getColor(
                         R.styleable.MessageInputView_streamUiFileCheckBoxSelectorTextColor,
-                        context.getColorCompat(R.color.stream_ui_white_snow)
+                        context.getColorCompat(R.color.stream_ui_literal_white)
                     )
 
-                val fileCheckboxSelectorDrawable =
-                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectorDrawable)
+                val fileCheckboxSelectedDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectedDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_circle_blue)!!
+
+                val fileCheckboxDeselectedDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxDeselectedDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
                 val fileAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
@@ -596,7 +603,8 @@ public data class MessageInputViewStyle(
                     fileNameTextStyle = fileNameTextStyle,
                     fileSizeTextStyle = fileSizeTextStyle,
                     fileCheckboxTextColor = fileCheckboxTextColor,
-                    fileCheckboxSelectorDrawable = fileCheckboxSelectorDrawable,
+                    fileCheckboxSelectedDrawable = fileCheckboxSelectedDrawable,
+                    fileCheckboxDeselectedDrawable = fileCheckboxDeselectedDrawable,
                     fileAttachmentEmptyStateTextStyle = fileAttachmentEmptyStateTextStyle,
                     mediaAttachmentEmptyStateTextStyle = mediaAttachmentEmptyStateTextStyle,
                     fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
