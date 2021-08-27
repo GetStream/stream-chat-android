@@ -82,6 +82,7 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
+	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 }
@@ -295,6 +296,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
+	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 }
@@ -414,6 +416,15 @@ public final class io/getstream/chat/android/offline/channel/ChannelData {
 
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
+}
+
+public final class io/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field METERED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field NOT_ROAMING Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field UNMETERED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static fun values ()[Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
 }
 
 public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController {

@@ -42,6 +42,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatDomain#Builder#uploadAttachmentsWorkerNetworkType` for customizing `UploadAttachmentsWorker` network type constraint
 
 ### ⚠️ Changed
 
