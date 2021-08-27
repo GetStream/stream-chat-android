@@ -58,6 +58,8 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 * @property commandInputBadgeTextStyle - text appearance of command name inside command badge
 * @property cooldownTimerTextStyle - text appearance for cooldown timer text displayed over the send button
 * @property cooldownTimerBackgroundDrawable - background drawable for cooldown timer. Default - [R.color.stream_ui_cooldown_badge_background]
+* @property fileCheckboxSelectedDrawable - Background for selector of files list in selected state. Default - [R.color.stream_ui_circle_blue]
+* @property fileCheckboxDeselectedDrawable - Background for selector of files list in deselected state. Default - [R.color.stream_ui_ic_file_manager]
 */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
