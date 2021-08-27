@@ -491,10 +491,9 @@ public class MessageListViewModel(
      * */
     private fun groupMessages(messages: List<Message>): List<MessageItem> {
         val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
-        val items = mutableListOf<MessageItem>()
         val currentUser = user.value
 
-        messages.forEachIndexed { index, message ->
+        return messages.mapIndexed { index, message ->
             val user = message.user
             val previousUser = messages.getOrNull(index - 1)?.user
             val nextUser = messages.getOrNull(index + 1)?.user
@@ -505,18 +504,13 @@ public class MessageListViewModel(
                 previousUser == user && nextUser != user -> Bottom
                 else -> None
             }
-
-            items.add(
-                MessageItem(
-                    message = message,
-                    groupPosition = position,
-                    parentMessageId = parentMessageId,
-                    isMine = user.id == currentUser?.id
-                )
+            MessageItem(
+                message = message,
+                groupPosition = position,
+                parentMessageId = parentMessageId,
+                isMine = user.id == currentUser?.id
             )
-        }
-
-        return items.reversed()
+        }.reversed()
     }
 
     /**

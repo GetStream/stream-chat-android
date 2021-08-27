@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,9 +33,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.ui.common.EmptyView
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -186,7 +183,7 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            itemsIndexed(messages) { index, item ->
+            itemsIndexed(messages, key = { _, item -> item.message.id }) { index, item ->
                 itemContent(item)
 
                 onLastVisibleMessageChanged(item)
@@ -197,12 +194,6 @@ public fun Messages(
 
                 if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && currentListState.isScrollInProgress) {
                     onMessagesStartReached()
-                }
-
-                if (item.groupPosition == None || item.groupPosition == Bottom) {
-                    Spacer(Modifier.size(4.dp))
-                } else {
-                    Spacer(Modifier.size(2.dp))
                 }
             }
 
