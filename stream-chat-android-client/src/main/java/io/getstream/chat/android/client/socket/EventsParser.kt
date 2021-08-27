@@ -44,8 +44,12 @@ internal class EventsParser(
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) { }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-        // Treat as failure and reconnect, socket shouldn't be closed by server
-        onFailure(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED))
+        if (code == CODE_CLOSE_SOCKET_FROM_CLIENT) {
+            closedByClient = true
+        } else {
+            // Treat as failure and reconnect, socket shouldn't be closed by server
+            onFailure(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED))
+        }
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -103,5 +107,9 @@ internal class EventsParser(
         if (!closedByClient) {
             service.onEvent(event)
         }
+    }
+
+    internal companion object {
+        internal const val CODE_CLOSE_SOCKET_FROM_CLIENT = 1000
     }
 }

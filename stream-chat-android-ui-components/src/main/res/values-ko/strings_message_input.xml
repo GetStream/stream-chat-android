@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">메시지에 회신합니다</string>
     <string name="stream_ui_message_input_hint">여기에 글을 쓰세요</string>
     <string name="stream_ui_message_input_only_attachments_hint">주석을 추가하거나 보냅니다</string>
+    <string name="stream_ui_message_input_slow_mode_hint">슬로우 모드 켜짐</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">인스턴트 커맨즈</string>

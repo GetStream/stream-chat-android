@@ -44,6 +44,7 @@ internal class PushTokenUpdateHandler(
     suspend fun updateDeviceIfNecessary(device: Device) {
         val userPushToken = device.toUserPushToken()
         if (device.isValid() && this.userPushToken != userPushToken) {
+            removeStoredDevice()
             val result = ChatClient.instance().addDevice(device).await()
             if (result.isSuccess) {
                 this.userPushToken = userPushToken
@@ -54,6 +55,16 @@ internal class PushTokenUpdateHandler(
                 logger.logE("Error registering device ${result.error().message}")
             }
         }
+    }
+
+    suspend fun removeStoredDevice() {
+        userPushToken.toDevice()
+            .takeIf { it.isValid() }
+            ?.let {
+                if (ChatClient.instance().deleteDevice(it).await().isSuccess) {
+                    userPushToken = UserPushToken("", "", "")
+                }
+            }
     }
 
     private data class UserPushToken(
@@ -74,6 +85,8 @@ internal class PushTokenUpdateHandler(
         token = token,
         pushProvider = pushProvider.key
     )
+
+    private fun UserPushToken.toDevice() = Device(token = token, pushProvider = PushProvider.fromKey(pushProvider))
 
     private fun Device.isValid() = pushProvider != PushProvider.UNKNOWN
 }

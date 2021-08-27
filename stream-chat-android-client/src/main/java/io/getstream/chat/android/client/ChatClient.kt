@@ -682,6 +682,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+        notifications.removeStoredDevice()
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             userStateService.state.userOrError().let { user ->

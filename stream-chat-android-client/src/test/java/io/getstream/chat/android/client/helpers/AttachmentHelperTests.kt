@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.SystemTimeProvider
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
@@ -87,12 +88,30 @@ internal class AttachmentHelperTests {
         result shouldBeEqualTo false
     }
 
+    /** [streamUrlsInput] */
+    @ParameterizedTest
+    @MethodSource("streamUrlsInput")
+    fun `Should detect stream link correctly`(inputAndResult: Pair<String, Boolean>) {
+        val (inputUrl, expectedResult) = inputAndResult
+        sut.hasStreamImageUrl(Attachment(imageUrl = inputUrl)) shouldBeEqualTo expectedResult
+    }
+
     companion object {
         @JvmStatic
         fun nonValidUrls() = listOf(
             "someNotValidUrl",
             "https://????.com",
             "www.someDomainWithoutProtocol.com"
+        )
+
+        @JvmStatic
+        fun streamUrlsInput() = listOf(
+            "https://www.google.com/search?q=find+something" to false,
+            "https://stream-chat-us-east-c4.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&s=43257e963dbb993d65bd358d57b54a38" to true,
+            "https://stream-chat-.imgix.net/102398/images/6f211fba-415b-4c67-a09f-fdd4dc0fd81c.Screenshot_2021-06-25-14-43-19-061_com.whatsa.jpg?ro=0&s=43257e963dbb993d65bd358d57b54a38" to false,
+            "https://stream-chat&$^376473.io/failedLink" to false,
+            "https://us-east.stream-io-cdn.com/link-to-some-file.png" to true,
+            "https://stream-io-cdn.com/link-to-some-file.png" to false,
         )
     }
 }

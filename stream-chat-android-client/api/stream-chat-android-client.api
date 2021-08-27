@@ -1837,13 +1837,6 @@ public final class io/getstream/chat/android/client/extensions/SharedPreferences
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
 }
 
-public final class io/getstream/chat/android/client/helpers/AttachmentHelper {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/utils/SystemTimeProvider;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/utils/SystemTimeProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun hasValidImageUrl (Lio/getstream/chat/android/client/models/Attachment;)Z
-}
-
 public final class io/getstream/chat/android/client/logger/ChatLogLevel : java/lang/Enum {
 	public static final field ALL Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static final field DEBUG Lio/getstream/chat/android/client/logger/ChatLogLevel;

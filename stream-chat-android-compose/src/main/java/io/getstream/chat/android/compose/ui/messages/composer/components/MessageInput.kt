@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,11 +44,11 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.Reply
+import io.getstream.chat.android.compose.ui.attachments.components.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
@@ -268,13 +267,7 @@ internal fun MessageInputFileAttachments(
                         .padding(vertical = 8.dp, horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = Modifier
-                            .size(height = 40.dp, width = 35.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        painter = painterResource(id = MimeTypeIconProvider.getIconRes(file.mimeType)),
-                        contentDescription = null
-                    )
+                    FileAttachmentImage(attachment = file)
 
                     Column(
                         modifier = Modifier

@@ -74,7 +74,7 @@ internal class MessageInputFieldView : FrameLayout {
             }
         }
 
-    private var messageHint: String
+    internal var messageHint: String
         get() {
             return binding.messageEditText.hint.toString()
         }

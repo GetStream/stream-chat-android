@@ -3,14 +3,15 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -48,9 +49,11 @@ public class QueryChannelsController internal constructor(
     private val queryChannelsLogic: QueryChannelsLogic,
 ) {
 
+    public var checkFilterOnChannelUpdatedEvent: Boolean = false
     internal val recoveryNeeded: MutableStateFlow<Boolean> = mutableState.recoveryNeeded
 
-    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = queryChannelsLogic.newChannelEventFilter
+    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean =
+        queryChannelsLogic.newChannelEventFilter
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
@@ -68,7 +71,9 @@ public class QueryChannelsController internal constructor(
             io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
             io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
             io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
-            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Result -> ChannelsState.Result(state.channels)
+            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Result -> ChannelsState.Result(
+                state.channels
+            )
         }
     }.stateIn(domainImpl.scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
 
@@ -105,12 +110,14 @@ public class QueryChannelsController internal constructor(
 
     internal suspend fun handleEvent(event: ChatEvent) {
         when (event) {
-            is NotificationAddedToChannelEvent -> event.channel
-            is ChannelUpdatedEvent -> event.channel
-            is ChannelUpdatedByUserEvent -> event.channel
-            is NotificationMessageNewEvent -> event.channel
-            else -> null
-        }?.let { updateQueryChannelSpec(it) }
+            is NotificationAddedToChannelEvent -> updateQueryChannelSpec(event.channel)
+            is ChannelDeletedEvent -> removeChannel(event.channel.cid)
+            is NotificationChannelDeletedEvent -> removeChannel(event.channel.cid)
+            is ChannelUpdatedByUserEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }
+                ?.let { updateQueryChannelSpec(it) }
+            is ChannelUpdatedEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }
+                ?.let { updateQueryChannelSpec(it) }
+        }
 
         if (event is MarkAllReadEvent) {
             refreshAllChannels()
