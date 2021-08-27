@@ -19,6 +19,9 @@ internal class AttachmentOptionsView : FrameLayout {
 
     private val binding = StreamUiAttachmentOptionsViewBinding.inflate(streamThemeInflater, this, true)
 
+    var isDeleteEnabled: Boolean = false
+        private set
+
     constructor(context: Context) : super(context) {
         init(context, null)
     }
@@ -86,6 +89,7 @@ internal class AttachmentOptionsView : FrameLayout {
                     binding.saveImage.isVisible = false
                 }
 
+                isDeleteEnabled = deleteEnabled
                 if (deleteEnabled) {
                     binding.delete.configureListItem(deleteIcon, deleteTextTint)
                 } else {
