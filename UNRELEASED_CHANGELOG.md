@@ -31,8 +31,10 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- `TooManyRequestsException` caused to be subscribed multiple times to the `ConnectivityManager`
 
 ### ⬆️ Improved
+- Reconnection process
 
 ### ✅ Added
 
@@ -68,7 +70,8 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-Fix for position of deleted messages for other users
+- Fix for position of deleted messages for other users
+- Fix glitch in selectors of file
 ### ⬆️ Improved
 
 ### ✅ Added
