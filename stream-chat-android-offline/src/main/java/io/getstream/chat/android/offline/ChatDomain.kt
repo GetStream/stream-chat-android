@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -575,6 +576,7 @@ public sealed interface ChatDomain {
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncEnabled: Boolean = true
+        private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
 
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -621,6 +623,11 @@ public sealed interface ChatDomain {
             return this
         }
 
+        public fun uploadAttachmentsWorkerNetworkType(networkType: UploadAttachmentsNetworkType): Builder {
+            this.uploadAttachmentsNetworkType = networkType
+            return this
+        }
+
         public fun build(): ChatDomain {
             instance = buildImpl()
             return instance()
@@ -636,7 +643,8 @@ public sealed interface ChatDomain {
                 recoveryEnabled,
                 userPresence,
                 backgroundSyncEnabled,
-                appContext
+                appContext,
+                uploadAttachmentsNetworkType,
             )
         }
     }

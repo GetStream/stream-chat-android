@@ -49,6 +49,7 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatDomain#Builder#uploadAttachmentsWorkerNetworkType` for customizing `UploadAttachmentsWorker` network type constraint
 
 ### ⚠️ Changed
 
