@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingStart="@dimen/stream_ui_spacing_small"
     android:paddingEnd="@dimen/stream_ui_spacing_small"
@@ -9,23 +11,41 @@
 
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
-        android:id="@+id/deleteLabel"
+    <LinearLayout
+        android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:paddingStart="@dimen/stream_ui_spacing_medium"
-        android:paddingTop="@dimen/stream_ui_spacing_small"
-        android:paddingEnd="@dimen/stream_ui_spacing_medium"
-        android:paddingBottom="@dimen/stream_ui_spacing_small"
-        android:text="@string/stream_ui_message_list_deleted_message"
-        android:textColor="@color/stream_ui_text_color_secondary"
-        android:textStyle="italic"
-        />
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        android:orientation="vertical"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        >
+
+        <TextView
+            android:id="@+id/deleteLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:paddingStart="@dimen/stream_ui_spacing_medium"
+            android:paddingTop="@dimen/stream_ui_spacing_small"
+            android:paddingEnd="@dimen/stream_ui_spacing_medium"
+            android:paddingBottom="@dimen/stream_ui_spacing_small"
+            android:text="@string/stream_ui_message_list_deleted_message"
+            android:textColor="@color/stream_ui_text_color_secondary"
+            android:textStyle="italic"
+            />
+
+    </LinearLayout>
 
     <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
@@ -34,6 +54,43 @@
         android:layout_gravity="end"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintTop_toBottomOf="@id/messageContainer"
         />
 
-</LinearLayout>
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarMineView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_begin="20dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_end="20dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

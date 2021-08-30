@@ -33,6 +33,13 @@ public sealed interface QueryChannelsController {
      * By default it will simply add every channel for which this event is received
      */
     public var newChannelEventFilter: (Channel, FilterObject) -> Boolean
+
+    /**
+     * When ChannelUpdatedEvent is triggered, if it is true a new query to the server is done to check if the update
+     * on the channel match the filter to be added or deleted from the list of channels
+     */
+    public var checkFilterOnChannelUpdatedEvent: Boolean
+
     /**
      * If the API call failed and we need to rerun this query
      */
