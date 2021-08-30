@@ -1,3 +1,8 @@
+# August 30th, 2021 - 4.17.2
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixes a bug related to incorrect theme of AttachmentActivity.
+
 # August 30th, 2021 - 4.17.1
 ## Common changes for all artifacts
 ### ⬆️ Improved
