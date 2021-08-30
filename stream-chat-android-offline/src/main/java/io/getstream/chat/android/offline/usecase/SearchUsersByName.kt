@@ -22,10 +22,12 @@ internal class SearchUsersByName(private val chatDomainImpl: ChatDomainImpl) {
 
     @VisibleForTesting
     internal val defaultUsersQueryFilter by lazy {
-        createFilter(
-            Filters.ne(FIELD_NAME, ""),
-            chatDomainImpl.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
-        )
+        val currentUserId = chatDomainImpl.user.value?.id
+        if (currentUserId != null) {
+            Filters.ne(FIELD_ID, currentUserId)
+        } else {
+            Filters.neutral()
+        }
     }
 
     /**
