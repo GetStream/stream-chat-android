@@ -750,6 +750,7 @@
     </style>
 
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
         <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
@@ -757,6 +758,13 @@
         <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
         <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
         <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
+    </style>
+
+    <style name="StreamUi.AttachmentGallery.Options">
+        <item name="streamUiAttachmentReplyEnabled">true</item>
+        <item name="streamUiShowInChatEnabled">true</item>
+        <item name="streamUiSaveImageEnabled">true</item>
+        <item name="streamUiDeleteEnabled">true</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="StreamUi">
@@ -923,8 +931,9 @@
         <item name="streamUiAttachmentsFileSizeTextSize">@dimen/stream_ui_text_small</item>
         <item name="streamUiAttachmentsFileSizeTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiAttachmentsFileSizeTextStyle">bold</item>
-        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_white_snow</item>
-        <item name="streamUiFileCheckBoxSelectorDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiFileCheckBoxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiAttachmentsFilesEmptyStateStyle">normal</item>

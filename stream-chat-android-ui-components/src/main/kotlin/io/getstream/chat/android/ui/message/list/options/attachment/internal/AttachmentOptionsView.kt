@@ -19,6 +19,9 @@ internal class AttachmentOptionsView : FrameLayout {
 
     private val binding = StreamUiAttachmentOptionsViewBinding.inflate(streamThemeInflater, this, true)
 
+    var isDeleteEnabled: Boolean = false
+        private set
+
     constructor(context: Context) : super(context) {
         init(context, null)
     }
@@ -61,12 +64,37 @@ internal class AttachmentOptionsView : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.AttachmentOptionsView).use { array ->
+        context.obtainStyledAttributes(
+            attrs,
+            R.styleable.AttachmentOptionsView,
+            R.attr.streamUiAttachmentGalleryOptionsStyle,
+            R.style.StreamUi_AttachmentGallery_Options
+        ).use { array ->
             readConfiguration(array).run {
-                binding.reply.setLeftDrawable(replyIcon)
-                binding.showInChat.setLeftDrawable(showInChatIcon)
-                binding.saveImage.setLeftDrawable(saveImageIcon)
-                binding.delete.configureListItem(deleteIcon, deleteTextTint)
+                if (replyEnabled) {
+                    binding.reply.setLeftDrawable(replyIcon)
+                } else {
+                    binding.reply.isVisible = false
+                }
+
+                if (showInChatEnabled) {
+                    binding.showInChat.setLeftDrawable(showInChatIcon)
+                } else {
+                    binding.showInChat.isVisible = false
+                }
+
+                if (saveImageEnabled) {
+                    binding.saveImage.setLeftDrawable(saveImageIcon)
+                } else {
+                    binding.saveImage.isVisible = false
+                }
+
+                isDeleteEnabled = deleteEnabled
+                if (deleteEnabled) {
+                    binding.delete.configureListItem(deleteIcon, deleteTextTint)
+                } else {
+                    binding.delete.isVisible = false
+                }
             }
         }
     }
@@ -102,12 +130,21 @@ internal class AttachmentOptionsView : FrameLayout {
             ContextCompat.getColor(context, R.color.stream_ui_accent_red)
         )
 
+        val replyEnabled = array.getBoolean(R.styleable.AttachmentOptionsView_streamUiAttachmentReplyEnabled, true)
+        val showInChatEnabled = array.getBoolean(R.styleable.AttachmentOptionsView_streamUiShowInChatEnabled, true)
+        val saveImageEnabled = array.getBoolean(R.styleable.AttachmentOptionsView_streamUiSaveImageEnabled, true)
+        val deleteEnabled = array.getBoolean(R.styleable.AttachmentOptionsView_streamUiDeleteEnabled, true)
+
         return Configuration(
             replyIcon = replyIcon,
             showInChatIcon = showInChatIcon,
             saveImageIcon = saveImageIcon,
             deleteIcon = deleteIcon,
-            deleteTextTint = deleteTextTint
+            deleteTextTint = deleteTextTint,
+            replyEnabled = replyEnabled,
+            showInChatEnabled = showInChatEnabled,
+            saveImageEnabled = saveImageEnabled,
+            deleteEnabled = deleteEnabled
         )
     }
 
@@ -117,6 +154,10 @@ internal class AttachmentOptionsView : FrameLayout {
         val saveImageIcon: Int,
         val deleteIcon: Int,
         val deleteTextTint: Int,
+        val replyEnabled: Boolean,
+        val showInChatEnabled: Boolean,
+        val saveImageEnabled: Boolean,
+        val deleteEnabled: Boolean,
     ) : Serializable
 
     interface ReplyClickListener {

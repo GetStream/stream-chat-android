@@ -40,6 +40,7 @@ import io.getstream.chat.android.offline.experimental.querychannels.state.toMuta
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
@@ -145,6 +146,7 @@ internal class ChatDomainImpl internal constructor(
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
     private val offlinePlugin: OfflinePlugin,
+    internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,

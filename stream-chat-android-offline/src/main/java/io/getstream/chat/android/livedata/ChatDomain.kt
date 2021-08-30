@@ -24,6 +24,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -606,6 +607,10 @@ public sealed interface ChatDomain {
 
         public fun userPresenceDisabled(): Builder = apply {
             offlineChatDomainBuilder.userPresenceDisabled()
+        }
+
+        public fun uploadAttachmentsWorkerNetworkType(networkType: UploadAttachmentsNetworkType): Builder = apply {
+            offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
         }
 
         public fun build(): ChatDomain {
