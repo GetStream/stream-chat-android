@@ -39,7 +39,6 @@ nexusPublishing {
             stagingProfileId = sonatypeStagingProfileId
             username = ossrhUsername
             password = ossrhPassword
-            group = Configuration.artifactGroup
             version = rootVersionName
         }
     }
