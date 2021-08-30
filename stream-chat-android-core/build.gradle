@@ -9,8 +9,8 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_VERSION = Configuration.versionName
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-core'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"

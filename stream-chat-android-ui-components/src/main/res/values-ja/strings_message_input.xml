@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">メッセージに返信</string>
     <string name="stream_ui_message_input_hint">ここに何か書く</string>
     <string name="stream_ui_message_input_only_attachments_hint">コメントの追加や送信</string>
+    <string name="stream_ui_message_input_slow_mode_hint">スローモードオン</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">インスタントコマンド</string>

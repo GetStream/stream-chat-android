@@ -393,5 +393,8 @@
         <attr name="streamUiPinnedMessageIndicatorIcon" format="reference" />
 
         <attr name="streamUiPinnedMessageBackgroundColor" format="color" />
+
+        <attr name="streamUiMessageStartMargin" format="dimension|reference" />
+        <attr name="streamUiMessageEndMargin" format="dimension|reference" />
     </declare-styleable>
 </resources>

@@ -434,3 +434,28 @@ messageListView.setEmptyStateView(
 This code will display the following empty state:
 
 ![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
+## Configure When Avatar Appears
+Is it possible to configure when the avatar for messages appears. You can use `MessageListView.setShowAvatarPredicate` and pass a predicate to define when the avatar is going to be shown. This example implements the default behaviour:
+
+```kotlin
+messageListView.setShowAvatarPredicate(
+    ShowAvatarPredicate { messageItem ->
+        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+    }
+)
+```
+:::note
+To avoid overlap between the avatar and the messages of the chat, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the avatar of the messages.
+:::
+
+If you set a predicate that shows avatars for your own messages as well, use this value:
+
+```xml
+streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+```
+
+If your predicate doesn't show avatars for your own messages (this is the default behavior), remove the end margin:
+
+```xml
+streamUiMessageEndMargin="0dp"
+```

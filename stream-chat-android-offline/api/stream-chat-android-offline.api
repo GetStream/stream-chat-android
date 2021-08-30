@@ -82,6 +82,7 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
+	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 }
@@ -155,6 +156,7 @@ public final class io/getstream/chat/android/livedata/controller/ChannelControll
 public abstract interface class io/getstream/chat/android/livedata/controller/QueryChannelsController {
 	public abstract fun getChannels ()Landroidx/lifecycle/LiveData;
 	public abstract fun getChannelsState ()Landroidx/lifecycle/LiveData;
+	public abstract fun getCheckFilterOnChannelUpdatedEvent ()Z
 	public abstract fun getEndOfChannels ()Landroidx/lifecycle/LiveData;
 	public abstract fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public abstract fun getLoading ()Landroidx/lifecycle/LiveData;
@@ -163,6 +165,7 @@ public abstract interface class io/getstream/chat/android/livedata/controller/Qu
 	public abstract fun getNewChannelEventFilter ()Lkotlin/jvm/functions/Function2;
 	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public abstract fun setCheckFilterOnChannelUpdatedEvent (Z)V
 	public abstract fun setNewChannelEventFilter (Lkotlin/jvm/functions/Function2;)V
 }
 
@@ -293,6 +296,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
+	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 }
@@ -414,9 +418,19 @@ public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }
 
+public final class io/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field METERED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field NOT_ROAMING Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static final field UNMETERED Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+	public static fun values ()[Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;
+}
+
 public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController {
 	public final fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getChannelsState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getCheckFilterOnChannelUpdatedEvent ()Z
 	public final fun getEndOfChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public final fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
@@ -428,6 +442,7 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun query$default (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;IIILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun refreshChannel (Ljava/lang/String;)V
+	public final fun setCheckFilterOnChannelUpdatedEvent (Z)V
 	public final fun setNewChannelEventFilter (Lkotlin/jvm/functions/Function3;)V
 	public final fun setRecoveryNeeded (Z)V
 }

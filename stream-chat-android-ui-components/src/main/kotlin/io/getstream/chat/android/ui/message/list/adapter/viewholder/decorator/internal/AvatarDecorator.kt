@@ -2,25 +2,31 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.message.list.DefaultShowAvatarPredicate
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class AvatarDecorator : BaseDecorator() {
+internal class AvatarDecorator(
+    private val showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
+) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        setupAvatar(viewHolder.binding.avatarView, data)
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
     }
 
     override fun decorateGiphyMessage(
@@ -28,12 +34,27 @@ internal class AvatarDecorator : BaseDecorator() {
         data: MessageListItem.MessageItem,
     ) = Unit
 
+    override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+    }
+
     private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
-        if (data.isTheirs && data.isTheirs && data.isBottomPosition()) {
-            avatarView.isVisible = true
+        val shouldShow = showAvatarPredicate.shouldShow(data)
+
+        avatarView.isVisible = shouldShow
+
+        if (shouldShow) {
             avatarView.setUserData(data.message.user)
-        } else {
-            avatarView.isVisible = false
         }
+    }
+
+    private fun getAvatarView(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean): AvatarView {
+        return if (isMine) myAvatar else theirAvatar
+    }
+
+    private fun controlVisibility(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean) {
+        theirAvatar.isVisible = !isMine
+        myAvatar.isVisible = isMine
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -45,8 +44,9 @@ internal class UploadAttachmentsAndroidWorker(
             channelId: String,
             messageId: String,
         ) {
+            val networkType = (ChatDomain.instance() as ChatDomainImpl).uploadAttachmentsNetworkType.toNetworkType()
             val uploadAttachmentsWorRequest = OneTimeWorkRequestBuilder<UploadAttachmentsAndroidWorker>()
-                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.NOT_ROAMING).build())
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(networkType).build())
                 .setInputData(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,
