@@ -767,7 +767,7 @@
         <item name="streamUiDeleteEnabled">true</item>
     </style>
 
-    <style name="StreamUi.AttachmentActivity" parent="StreamUi">
+    <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
         <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
         <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
