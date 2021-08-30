@@ -183,10 +183,14 @@ public fun DefaultMessageContainer(
                 } else if (!isDeleted) {
                     MessageFooter(messageItem)
                 }
+
+                val spacerSize = if (position == None || position == Bottom) 4.dp else 2.dp
+
+                Spacer(Modifier.size(spacerSize))
             }
 
             if (ownsMessage) {
-                MessageAvatar(position, message.user)
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }
