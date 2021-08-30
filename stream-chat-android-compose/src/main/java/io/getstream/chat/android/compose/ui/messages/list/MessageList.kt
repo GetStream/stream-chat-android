@@ -259,7 +259,8 @@ private fun BoxScope.MessagesScrollingOption(
             shape = CircleShape,
             elevation = 4.dp,
             indication = rememberRipple(),
-            onClick = onClick
+            onClick = onClick,
+            color = ChatTheme.colors.barsBackground
         ) {
             Icon(
                 modifier = Modifier.padding(16.dp),
