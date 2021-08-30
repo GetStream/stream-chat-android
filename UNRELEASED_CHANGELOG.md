@@ -60,7 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fixes a bug related to incorrect theme of AttachmentActivity.
 ### ⬆️ Improved
 
 ### ✅ Added

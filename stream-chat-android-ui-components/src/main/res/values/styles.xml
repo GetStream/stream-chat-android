@@ -749,7 +749,7 @@
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="StreamUi.AttachmentGallery" parent="StreamUiTheme">
         <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -767,7 +767,7 @@
         <item name="streamUiDeleteEnabled">true</item>
     </style>
 
-    <style name="StreamUi.AttachmentActivity" parent="StreamUi">
+    <style name="StreamUi.AttachmentActivity" parent="StreamUiTheme">
         <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
         <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
         <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
@@ -822,7 +822,7 @@
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
     </style>
 
-    <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="StreamUi.MediaActivity" parent="StreamUiTheme">
         <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
     </style>
 
