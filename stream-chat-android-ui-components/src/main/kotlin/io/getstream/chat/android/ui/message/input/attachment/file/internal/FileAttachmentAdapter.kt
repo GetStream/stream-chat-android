@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.input.attachment.file.internal
 
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -16,8 +17,9 @@ internal class FileAttachmentAdapter(
 
     private var attachments: List<AttachmentMetaData> = emptyList()
 
-    override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int) =
+    override fun onBindViewHolder(holder: FileAttachmentViewHolder, position: Int) {
         holder.bind(attachments[position])
+    }
 
     override fun getItemCount(): Int = attachments.size
 
@@ -65,8 +67,15 @@ internal class FileAttachmentAdapter(
         lateinit var attachment: AttachmentMetaData
 
         init {
-            binding.root.setOnClickListener {
-                onAttachmentClick(attachment)
+            binding.run {
+                selectionIndicator.setTextColor(style.fileCheckboxTextColor)
+
+                root.setOnClickListener {
+                    onAttachmentClick(attachment)
+                }
+
+                style.fileNameTextStyle.apply(fileNameTextView)
+                style.fileSizeTextStyle.apply(fileSizeTextView)
             }
         }
 
@@ -77,12 +86,18 @@ internal class FileAttachmentAdapter(
                 fileTypeImageView.loadAttachmentThumb(attachment)
                 fileNameTextView.text = attachment.title
                 fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
+
+                selectionIndicator.background = getSelectionIndicatorBackground(attachment.isSelected, style)
                 selectionIndicator.isChecked = attachment.isSelected
                 selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
-                style.fileNameTextStyle.apply(fileNameTextView)
-                style.fileSizeTextStyle.apply(fileSizeTextView)
-                selectionIndicator.background = style.fileCheckboxSelectorDrawable
-                selectionIndicator.setTextColor(style.fileCheckboxTextColor)
+            }
+        }
+
+        private fun getSelectionIndicatorBackground(selected: Boolean, style: MessageInputViewStyle): Drawable {
+            return if (selected) {
+                style.fileCheckboxSelectedDrawable
+            } else {
+                style.fileCheckboxDeselectedDrawable
             }
         }
     }

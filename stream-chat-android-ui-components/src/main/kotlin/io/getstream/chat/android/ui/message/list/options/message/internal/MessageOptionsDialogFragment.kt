@@ -49,6 +49,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
     }
 
+    private val optionsOffset: Int by lazy { requireContext().getDimension(R.dimen.stream_ui_spacing_medium) }
+
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
             message,
@@ -213,6 +215,14 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     isMessageAuthorMuted = isMessageAuthorMuted,
                     isMessagePinned = message.pinned
                 )
+            }
+
+            updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                if (messageItem.isMine) {
+                    marginEnd = style.itemStyle.messageEndMargin + optionsOffset
+                } else {
+                    marginStart = style.itemStyle.messageStartMargin + optionsOffset
+                }
             }
         }
     }

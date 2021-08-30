@@ -37,6 +37,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
             }
         }
 
+    override var checkFilterOnChannelUpdatedEvent: Boolean = false
     override var recoveryNeeded: Boolean
         get() = queryChannels.recoveryNeeded
         set(value) {

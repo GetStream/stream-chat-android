@@ -44,21 +44,22 @@ import io.getstream.chat.android.ui.search.list.viewmodel.bindView
  * **Note**: Fragments representing self-contained screens are easy to use. They allow you
  * to explore the SDK's features in a breeze, however, they offer limited customization.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 public open class ChannelListFragment : Fragment() {
 
-    private val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
-    private val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, true) }
-    private val showSearch: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_SEARCH, true) }
-    private val headerTitle: String? by lazy { requireArguments().getString(ARG_HEADER_TITLE) }
+    protected val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
+    protected val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, true) }
+    protected val showSearch: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_SEARCH, true) }
+    protected val headerTitle: String? by lazy { requireArguments().getString(ARG_HEADER_TITLE) }
 
-    private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
-    private val channelListViewModel: ChannelListViewModel by viewModels { createChannelListViewModelFactory() }
-    private val searchViewModel: SearchViewModel by viewModels()
+    protected val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
+    protected val channelListViewModel: ChannelListViewModel by viewModels { createChannelListViewModelFactory() }
+    protected val searchViewModel: SearchViewModel by viewModels()
 
-    private var headerUserAvatarClickListener: HeaderUserAvatarClickListener? = null
-    private var headerActionButtonClickListener: HeaderActionButtonClickListener? = null
-    private var channelListItemClickListener: ChannelListItemClickListener? = null
-    private var searchResultClickListener: SearchResultClickListener? = null
+    protected var headerUserAvatarClickListener: HeaderUserAvatarClickListener? = null
+    protected var headerActionButtonClickListener: HeaderActionButtonClickListener? = null
+    protected var channelListItemClickListener: ChannelListItemClickListener? = null
+    protected var searchResultClickListener: SearchResultClickListener? = null
 
     private var _binding: StreamUiFragmentChannelListBinding? = null
     protected val binding: StreamUiFragmentChannelListBinding get() = _binding!!
@@ -328,9 +329,9 @@ public open class ChannelListFragment : Fragment() {
          *
          * @param initializer the initializer to customize builder params
          */
-        public fun newInstance(initializer: Builder.() -> Unit): ChannelListFragment {
+        public fun newInstance(initializer: (Builder.() -> Unit)? = null): ChannelListFragment {
             val builder = Builder()
-            builder.initializer()
+            initializer?.invoke(builder)
             return builder.build()
         }
     }

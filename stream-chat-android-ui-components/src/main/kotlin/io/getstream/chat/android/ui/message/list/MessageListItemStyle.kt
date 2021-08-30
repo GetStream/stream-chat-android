@@ -58,6 +58,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
  * @property textStyleSystemMessage - appearance for system message text
  * @property textStyleErrorMessage - appearance for error message text
+ * @property messageStartMargin - Margin for messages in the left side. Default: 48dp
+ * @property messageEndMargin - Margin for messages in the right side. Default: 0dp
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -95,6 +97,8 @@ public data class MessageListItemStyle(
     public val pinnedMessageIndicatorTextStyle: TextStyle,
     public val pinnedMessageIndicatorIcon: Drawable,
     @ColorInt public val pinnedMessageBackgroundColor: Int,
+    @Px public val messageStartMargin: Int,
+    @Px public val messageEndMargin: Int,
 ) {
 
     @ColorInt
@@ -508,6 +512,16 @@ public data class MessageListItemStyle(
                 context.getColorCompat(R.color.stream_ui_highlight)
             )
 
+            val messageStartMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageStartMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
+            val messageEndMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageEndMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -544,6 +558,8 @@ public data class MessageListItemStyle(
                 pinnedMessageIndicatorTextStyle = pinnedMessageIndicatorTextStyle,
                 pinnedMessageIndicatorIcon = pinnedMessageIndicatorIcon,
                 pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
+                messageStartMargin = messageStartMargin,
+                messageEndMargin = messageEndMargin,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

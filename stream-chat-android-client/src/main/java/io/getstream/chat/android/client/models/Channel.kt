@@ -52,6 +52,10 @@ public data class Channel(
     @IgnoreSerialisation
     @IgnoreDeserialisation
     var hiddenMessagesBefore: Date? = null,
+
+    /**
+     *  Cooldown period after sending each message in seconds
+     */
     val cooldown: Int = 0,
 
     @SerializedName("pinned_messages")

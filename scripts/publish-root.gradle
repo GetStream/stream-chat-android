@@ -1,3 +1,5 @@
+import io.getstream.chat.android.Configuration
+
 // Create variables with empty default values
 ext["ossrhUsername"] = ''
 ext["ossrhPassword"] = ''
@@ -5,6 +7,7 @@ ext["sonatypeStagingProfileId"] = ''
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''
 ext["signing.key"] = ''
+ext["snapshot"] = ''
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
@@ -20,6 +23,13 @@ if (secretPropsFile.exists()) {
     ext["signing.keyId"] = System.getenv('SIGNING_KEY_ID')
     ext["signing.password"] = System.getenv('SIGNING_PASSWORD')
     ext["signing.key"] = System.getenv('SIGNING_KEY')
+    ext["snapshot"] = System.getenv('SNAPSHOT')
+}
+
+if (snapshot) {
+    ext["rootVersionName"] = Configuration.snapshotVersionName
+} else {
+    ext["rootVersionName"] = Configuration.versionName
 }
 
 // Set up Sonatype repository
@@ -29,6 +39,7 @@ nexusPublishing {
             stagingProfileId = sonatypeStagingProfileId
             username = ossrhUsername
             password = ossrhPassword
+            version = rootVersionName
         }
     }
 }

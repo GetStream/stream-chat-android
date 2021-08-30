@@ -8,7 +8,11 @@ apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_VERSION = Configuration.versionName + "-beta"
+    if (snapshot) {
+        PUBLISH_VERSION = Configuration.snapshotVersionName
+    } else {
+        PUBLISH_VERSION = Configuration.versionName + "-beta"
+    }
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-compose'
 }
 
@@ -73,4 +77,5 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
+    implementation Dependencies.coilGif
 }

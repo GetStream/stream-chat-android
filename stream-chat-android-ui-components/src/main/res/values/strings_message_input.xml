@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
     <string name="stream_ui_message_input_only_attachments_hint">Add a comment or send</string>
+    <string name="stream_ui_message_input_slow_mode_hint">Slow mode ON</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">Instant Commands</string>

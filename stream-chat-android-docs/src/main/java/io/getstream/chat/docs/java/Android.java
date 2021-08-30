@@ -431,6 +431,10 @@ public class Android {
             });
         }
 
+        public void avatarPredicate() {
+            messageListView.setShowAvatarPredicate(messageItem -> true);
+        }
+
         public void customMessagesFilter() {
             messageListView.setMessageListItemPredicate(messageList -> {
                 // Boolean logic here
@@ -898,11 +902,14 @@ public class Android {
                                 textStyleGeneric,
                                 textStyleGeneric,
                                 genericDrawable,
+                                genericDrawable,
                                 colorBlack,
                                 textStyleGeneric,
                                 textStyleGeneric,
                                 "Empty state text",
                                 "Empty state text",
+                                genericDrawable,
+                                textStyleGeneric,
                                 genericDrawable
                         )
 

@@ -58,7 +58,7 @@ internal class AttachmentOptionsDialogFragment : FullScreenDialogFragment() {
             }
         )
         binding.root.setOnClickListener { dismiss() }
-        binding.attachmentOptionsMenu.setDeleteItemVisiblity(isMine)
+        binding.attachmentOptionsMenu.setDeleteItemVisiblity(isMine && binding.attachmentOptionsMenu.isDeleteEnabled)
     }
 
     companion object {
