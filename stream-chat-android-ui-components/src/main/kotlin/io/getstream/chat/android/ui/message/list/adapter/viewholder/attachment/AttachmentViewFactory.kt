@@ -44,7 +44,8 @@ public open class AttachmentViewFactory {
         style: MessageListItemStyle,
         parent: ViewGroup,
     ): View {
-        val (links, attachments) = data.message.attachments.partition(Attachment::hasLink)
+        val (linksAndGiphy, attachments) = data.message.attachments.partition { attachment -> attachment.hasLink() }
+        val (giphy, links) = linksAndGiphy.partition { attachment -> attachment.type == "giphy" }
 
         return when {
             links.isNotEmpty() && attachments.isNotEmpty() -> createLinkAndAttachmentsContent(
@@ -57,6 +58,7 @@ public open class AttachmentViewFactory {
             )
             links.isNotEmpty() -> createLinkContent(links.first(), data.isMine, listeners, style, parent)
             attachments.isNotEmpty() -> createAttachmentsContent(data, listeners, attachments, parent)
+            giphy.isNotEmpty() -> createAttachmentsContent(data, listeners, giphy, parent)
             else -> error("Can't create content view for the empty attachments collection")
         }
     }
