@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AttachmentOptionsView">
+        <!-- "Reply to attachment" enabled/disabled -->
+        <attr name="streamUiAttachmentReplyEnabled" format="boolean" />
         <!-- Reply icon drawable -->
         <attr name="streamUiReplyIcon" format="reference" />
+        <!-- "Show in chat" enabled/disabled -->
+        <attr name="streamUiShowInChatEnabled" format="boolean"/>
         <!-- "Show in chat" icon drawable -->
         <attr name="streamUiShowInChatIcon" format="reference" />
+        <!-- "Save image" enabled/disabled -->
+        <attr name="streamUiSaveImageEnabled" format="boolean"/>
         <!-- "Save" icon drawable -->
         <attr name="streamUiSaveImageIcon" format="reference" />
+        <!-- "Delete" enabled/disabled -->
+        <attr name="streamUiDeleteEnabled" format="boolean"/>
         <!-- "Delete" icon drawable -->
         <attr name="streamUiDeleteIcon" format="reference" />
         <!-- "Delete" text tint -->
