@@ -24,8 +24,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- `TooManyRequestsException` caused to be subscribed multiple times to the `ConnectivityManager`
 
 ### ⬆️ Improved
+- Reconnection process
 
 ### ✅ Added
 
@@ -48,6 +50,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed a bug in state handling for anonymous users.
 
 ### ⬆️ Improved
 
@@ -60,12 +63,18 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fix for position of deleted messages for other users
+- Fix glitch in selectors of file
 ### ⬆️ Improved
 
 ### ✅ Added
 - Added style attributes for `AttachmentGalleryActivity` to control menu options like enabling/disabling reply button etc.
-
+- Now it is possible to customize when the avatar appears in the conversation. It is possible to use an avatar in messages from other users and for messages of the current user. You can check it here:  https://getstream.io/chat/docs/sdk/android/ui/components/message-list/#configure-when-avatar-appears
+- Added support for slow mode. Users are no longer able to send messages during cooldown interval.
+- Added possibility to customize the appearance of cooldown timer in the `MessageInputView` using the following attributes:
+  - `streamUiCooldownTimerTextSize`, `streamUiCooldownTimerTextColor`, `streamUiCooldownTimerFontAssets`, `streamUiCooldownTimerFont`, `streamUiCooldownTimerTextStyle` attributes to customize cooldown timer text
+  - `cooldownTimerBackgroundDrawable`- the background drawable for cooldown timer
+  
 ### ⚠️ Changed
 
 ### ❌ Removed

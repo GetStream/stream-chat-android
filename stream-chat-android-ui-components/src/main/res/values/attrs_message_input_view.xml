@@ -161,7 +161,8 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
-        <attr name="streamUiFileCheckBoxSelectorDrawable" format="reference" />
+        <attr name="streamUiFileCheckBoxSelectedDrawable" format="reference" />
+        <attr name="streamUiFileCheckBoxDeselectedDrawable" format="reference" />
         <attr name="streamUiFileCheckBoxSelectorTextColor" format="reference" />
         <attr name="streamUiAttachmentVideoLogoIcon" format="reference" />
         <attr name="streamUiAttachmentVideoLengthTextSize" format="dimension" />
@@ -230,6 +231,18 @@
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
         </attr>
+
+        <!-- Cooldown Timer -->
+        <attr name="streamUiCooldownTimerTextSize" format="dimension" />
+        <attr name="streamUiCooldownTimerTextColor" format="reference|color" />
+        <attr name="streamUiCooldownTimerFontAssets" format="string" />
+        <attr name="streamUiCooldownTimerFont" format="string" />
+        <attr name="streamUiCooldownTimerTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+        <attr name="streamUiCooldownTimerBackgroundDrawable" format="reference" />
     </declare-styleable>
 
 </resources>

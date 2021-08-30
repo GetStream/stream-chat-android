@@ -15,10 +15,12 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.randomChannel
+import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedEvent
 import io.getstream.chat.android.offline.randomMember
-import io.getstream.chat.android.offline.randomNotificationMessageNewEvent
+import io.getstream.chat.android.offline.randomNotificationAddedToChannelEvent
+import io.getstream.chat.android.offline.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
@@ -158,39 +160,7 @@ internal class QueryChannelsControllerTest {
         }
 
     @Test
-    fun `When a new message arrives in a new channel Should update the channels`() =
-        runBlockingTest {
-            val channel = randomChannel()
-            val channelController: ChannelController = mock {
-                on(mock.toChannel()) doReturn channel
-            }
-            val queryController = Fixture()
-                .givenNewChannelControllerForChannel(channelController)
-                .get()
-
-            queryController.handleEvent(randomNotificationMessageNewEvent(channel = channel))
-
-            verify(channelController).updateDataFromChannel(eq(channel))
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
-        }
-
-    @Test
-    fun `When a new message arrives in a new channel Should update the channel when it is already there`() =
-        runBlockingTest {
-            val cid = randomString()
-            val channelController: ChannelController = mock()
-            val queryController = Fixture()
-                .givenNewChannelControllerForChannel(channelController)
-                .get()
-            queryController.queryChannelsSpec.cids = setOf(cid)
-
-            queryController.handleEvent(randomNotificationMessageNewEvent(channel = randomChannel(cid = cid)))
-
-            verify(channelController).updateDataFromChannel(any())
-        }
-
-    @Test
-    fun `When a channel updated arrives Should add the channel when filter matches and it wasn't added yet`() =
+    fun `When a channel updated arrives Shouldn't check if filter matches the channel`() =
         runBlockingTest {
             val channel = randomChannel()
             val channelController: ChannelController = mock {
@@ -202,7 +172,40 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated arrives Should add the channel when filter matches and it wasn't added yet`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenNewChannelControllerForChannel(channelController)
+                .enableFilterOnChannelUpdatedEvent()
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
+
             Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated by user arrives Shouldn't check if filter matches the channel`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
         }
 
     @Test
@@ -214,9 +217,151 @@ internal class QueryChannelsControllerTest {
             }
             val queryController = Fixture()
                 .givenNewChannelControllerForChannel(channelController)
+                .enableFilterOnChannelUpdatedEvent()
                 .get()
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated arrives Shouldn't check if filter matches the channel to remove it`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated arrives Should remove the channel when filter matches and it was added previously`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenCurrentUser(randomUser())
+                .givenNewChannelControllerForChannel(channelController)
+                .addInitialChannel(channel)
+                .enableFilterOnChannelUpdatedEvent()
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated by user arrives Shouldn't check if filter matches the channel to remove it`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenCurrentUser(randomUser())
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+        }
+
+    @Test
+    fun `When a channel updated by user arrives Should remove the channel when filter matches and it was added previously`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenCurrentUser(randomUser())
+                .givenNewChannelControllerForChannel(channelController)
+                .enableFilterOnChannelUpdatedEvent()
+                .get()
+
+            queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a notification channel deleted arrives Should remove the channel`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomNotificationChannelDeletedEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a channel deleted arrives Should remove the channel`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomChannelDeletedEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a notification added to channel arrives Should remove the channel when filter matches and it was added previously`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .addInitialChannel(channel)
+                .givenCurrentUser(randomUser())
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
+
+            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+        }
+
+    @Test
+    fun `When a notification added to channel arrives Should add the channel when filter matches and it wasn't added yet`() =
+        runBlockingTest {
+            val channel = randomChannel()
+            val channelController: ChannelController = mock {
+                on(mock.toChannel()) doReturn channel
+            }
+            val queryController = Fixture()
+                .givenNewChannelControllerForChannel(channelController)
+                .get()
+
+            queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
 
             Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
         }
@@ -230,6 +375,8 @@ private class Fixture {
 
     private var currentUser: User? = null
     private var channelType: String = ""
+    private var checkFilterOnChannelUpdatedEvent = false
+    private val initialCids = mutableSetOf<String>()
 
     init {
         whenever(chatDomainImpl.job) doReturn Job()
@@ -264,6 +411,14 @@ private class Fixture {
         whenever(chatDomainImpl.repos) doReturn mock()
     }
 
+    fun enableFilterOnChannelUpdatedEvent() = apply {
+        checkFilterOnChannelUpdatedEvent = true
+    }
+
+    fun addInitialChannel(channel: Channel) = apply {
+        initialCids.add(channel.cid)
+    }
+
     fun get(): QueryChannelsController =
         QueryChannelsController(mock(), querySort, chatClient, chatDomainImpl).apply {
             newChannelEventFilter = { channel, _ ->
@@ -273,5 +428,7 @@ private class Fixture {
                     channel.members.any { member -> member.user.id == currentUser!!.id }
                 }
             }
+            checkFilterOnChannelUpdatedEvent = this@Fixture.checkFilterOnChannelUpdatedEvent
+            queryChannelsSpec.cids = initialCids
         }
 }

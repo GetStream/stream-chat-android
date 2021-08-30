@@ -27,6 +27,7 @@ public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner
     }
     commands.observe(lifecycleOwner, view::setCommands)
     maxMessageLength.observe(lifecycleOwner, view::setMaxMessageLength)
+    cooldownInterval.observe(lifecycleOwner, view::setCooldownInterval)
     getActiveThread().observe(lifecycleOwner) {
         view.inputMode = if (it != null) {
             MessageInputView.InputMode.Thread(it)
