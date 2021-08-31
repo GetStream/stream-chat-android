@@ -400,6 +400,7 @@ public class ChannelController internal constructor(
             domainImpl.repos.deleteChannelMessagesBefore(cid, now)
             Result(Unit)
         } else {
+            logger.logE("Could not delete message. Error message: ${result.error().message}")
             Result(result.error())
         }
     }
