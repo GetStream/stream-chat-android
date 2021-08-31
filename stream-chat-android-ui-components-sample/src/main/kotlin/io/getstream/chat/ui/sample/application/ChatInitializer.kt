@@ -22,6 +22,7 @@ class ChatInitializer(private val context: Context) {
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
+
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
             .notifications(notificationHandler)

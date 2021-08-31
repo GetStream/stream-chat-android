@@ -19,6 +19,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         super.setup()
         runBlocking {
             chatDomainImpl.repos.insertUsers(data.userMap.values)
+            queryControllerImpl.newChannelEventFilter = { _, _ -> true }
         }
     }
 

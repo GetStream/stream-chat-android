@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.doOnResult
+import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -37,6 +39,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -79,8 +82,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -92,6 +97,7 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -103,6 +109,9 @@ public class ChatClient internal constructor(
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
+    private val scope: CoroutineScope,
+    private val appContext: Context,
+    public val plugins: Collection<Plugin> = emptyList(),
 ) {
 
     @InternalStreamChatApi
@@ -157,6 +166,8 @@ public class ChatClient internal constructor(
             }
         }
         logger.logI("Initialised: " + getVersion())
+
+        plugins.forEach { it.init(appContext, this) }
     }
 
     //region Set user
@@ -823,9 +834,18 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> {
-        return api.sendMessage(channelType, channelId, message)
-    }
+    ): Call<Message> = api.sendMessage(channelType, channelId, message)
+        .doOnStart(scope) { plugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
+        .doOnResult(scope) { result ->
+            plugins.forEach {
+                it.onMessageSendResult(
+                    result,
+                    channelType,
+                    channelId,
+                    message
+                )
+            }
+        }
 
     @CheckResult
     public fun updateMessage(
@@ -913,18 +933,32 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @InternalStreamChatApi
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
+
+    @CheckResult
     public fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
-    }
+    ): Call<Channel> = queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
+        .doOnStart(scope) {
+            plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+        }
+        .doOnResult(scope) { result ->
+            plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+        }
 
     @CheckResult
-    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.queryChannels(request)
-    }
+    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
+            .doOnStart(scope) {
+                plugins.forEach { it.onQueryChannelsRequest(request) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onQueryChannelsResult(result, request) }
+            }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -1510,6 +1544,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var plugins: List<Plugin> = emptyList()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1599,6 +1634,10 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
+        public fun withPlugin(plugin: Plugin): Builder = apply {
+            plugins += plugin
+        }
+
         public fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
@@ -1631,6 +1670,9 @@ public class ChatClient internal constructor(
                 module.queryChannelsPostponeHelper,
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
+                scope = module.networkScope,
+                appContext = appContext,
+                plugins = plugins,
             )
 
             instance = result
