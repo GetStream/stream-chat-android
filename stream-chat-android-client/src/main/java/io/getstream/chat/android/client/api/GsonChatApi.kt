@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -179,10 +180,10 @@ internal class GsonChatApi(
         return retrofitApi.getDevices(
             connectionId = connectionId
         ).map {
-            it.devices.map { deviceReponse ->
+            it.devices.map { deviceResponse ->
                 Device(
-                    token = deviceReponse.token,
-                    pushProvider = PushProvider.fromKey(deviceReponse.pushProvider)
+                    token = deviceResponse.token,
+                    pushProvider = PushProvider.fromKey(deviceResponse.pushProvider)
                 )
             }
         }
@@ -194,12 +195,47 @@ internal class GsonChatApi(
             payload = request
         )
             .map {
-                it.results.map { resp ->
+                it.results.map { response ->
+                    response.message.apply {
+                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
+                            ?.let(::enrichWithCid)
+                    }
+                }
+            }
+    }
+
+    override fun searchMessages(
+        channelFilter: FilterObject,
+        messageFilter: FilterObject,
+        offset: Int?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySort<Message>?,
+    ): Call<SearchMessagesResult> {
+        return retrofitApi.searchMessages(
+            connectionId = connectionId,
+            payload = SearchMessagesRequest(
+                channelFilter = channelFilter,
+                messageFilter = messageFilter,
+                offset = offset,
+                limit = limit,
+                next = next,
+                querySort = sort,
+            )
+        )
+            .map { response ->
+                val messages = response.results.map { resp ->
                     resp.message.apply {
                         (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
                             ?.let(::enrichWithCid)
                     }
                 }
+                SearchMessagesResult(
+                    messages = messages,
+                    next = response.next,
+                    previous = response.previous,
+                    resultsWarning = response.resultsWarning
+                )
             }
     }
 

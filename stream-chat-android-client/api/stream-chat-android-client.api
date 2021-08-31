@@ -99,7 +99,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun removeMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
+	public final fun searchMessages (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/client/call/Call;
 	public final fun searchMessages (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendAction (Lio/getstream/chat/android/client/api/models/SendActionRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendEvent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendEvent$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -537,18 +539,24 @@ public final class io/getstream/chat/android/client/api/models/QueryUsersRequest
 }
 
 public final class io/getstream/chat/android/client/api/models/SearchMessagesRequest {
-	public fun <init> (IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;)V
-	public final fun component1 ()I
-	public final fun component2 ()I
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
 	public final fun component3 ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public final fun component4 ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun copy (IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun getLimit ()I
+	public final fun getLimit ()Ljava/lang/Integer;
 	public final fun getMessageFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun getOffset ()I
+	public final fun getNext ()Ljava/lang/String;
+	public final fun getOffset ()Ljava/lang/Integer;
+	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public final fun getSort ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2644,6 +2652,42 @@ public final class io/getstream/chat/android/client/models/Reaction : io/getstre
 	public final fun setUpdatedAt (Ljava/util/Date;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
 	public final fun setUserId (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/SearchMessagesResult {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/SearchWarning;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/SearchWarning;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/getstream/chat/android/client/models/SearchWarning;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/SearchWarning;)Lio/getstream/chat/android/client/models/SearchMessagesResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/SearchMessagesResult;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/SearchWarning;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/SearchMessagesResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessages ()Ljava/util/List;
+	public final fun getNext ()Ljava/lang/String;
+	public final fun getPrevious ()Ljava/lang/String;
+	public final fun getResultsWarning ()Lio/getstream/chat/android/client/models/SearchWarning;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/SearchWarning {
+	public fun <init> (Ljava/util/List;IILjava/lang/String;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;IILjava/lang/String;)Lio/getstream/chat/android/client/models/SearchWarning;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/SearchWarning;Ljava/util/List;IILjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/SearchWarning;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelSearchCids ()Ljava/util/List;
+	public final fun getChannelSearchCount ()I
+	public final fun getWarningCode ()I
+	public final fun getWarningDescription ()Ljava/lang/String;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

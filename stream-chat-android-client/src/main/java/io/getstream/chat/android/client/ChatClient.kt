@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.models.ModelFields
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
@@ -715,9 +716,45 @@ public class ChatClient internal constructor(
         return api.addDevice(device)
     }
 
+    @Deprecated(
+        message = "Use ChatClient::searchMessages method instead",
+        replaceWith = ReplaceWith("ChatClient::searchMessages(channelFilter: FilterObject, messageFilter: FilterObject, offset: Int?, limit: Int? = null, next: String? = null, sort: QuerySort<Message>?)"),
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
+    }
+
+    /**
+     * Search messages across channels
+     *
+     * @param channelFilter channel filter conditions
+     * @param messageFilter message filter conditions
+     * @param offset pagination offset, cannot be used with sort or next
+     * @param limit the number of messages to return
+     * @param next pagination parameter, cannot be used with non-zero offset
+     * @param sort sort parameters, cannot be used with non-zero offset
+     *
+     * @return executable async [Call] responsible for searching messages
+     */
+    @CheckResult
+    public fun searchMessages(
+        channelFilter: FilterObject,
+        messageFilter: FilterObject,
+        offset: Int? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySort<Message>? = null,
+    ): Call<SearchMessagesResult> {
+        return api.searchMessages(
+            channelFilter = channelFilter,
+            messageFilter = messageFilter,
+            offset = offset,
+            limit = limit,
+            next = next,
+            sort = sort
+        )
     }
 
     @CheckResult
