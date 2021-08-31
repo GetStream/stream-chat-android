@@ -2,12 +2,13 @@ package io.getstream.chat.android.client.utils.internal.toggle
 
 import android.content.Context
 import android.content.SharedPreferences
+import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public class ToggleService private constructor(private val sharedPreferences: SharedPreferences) {
 
-    public fun isEnabled(featureKey: String): Boolean = sharedPreferences.getBoolean(featureKey, false)
+    public fun isEnabled(featureKey: String): Boolean = sharedPreferences.getBoolean(featureKey, false) && BuildConfig.DEBUG
 
     public fun setToggle(featureKey: String, value: Boolean) {
         sharedPreferences.edit()
