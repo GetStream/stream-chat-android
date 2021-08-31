@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatTime
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.R

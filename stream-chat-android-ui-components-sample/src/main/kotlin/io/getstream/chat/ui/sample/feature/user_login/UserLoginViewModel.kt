@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig

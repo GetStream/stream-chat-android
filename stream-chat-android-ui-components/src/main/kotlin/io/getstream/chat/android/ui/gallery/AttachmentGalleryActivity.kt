@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat

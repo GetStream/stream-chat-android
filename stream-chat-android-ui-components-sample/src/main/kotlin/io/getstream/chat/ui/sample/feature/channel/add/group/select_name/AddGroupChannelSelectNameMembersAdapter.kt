@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.ui.sample.databinding.AddGroupChannelSelectNameMemberItemBinding
 import io.getstream.chat.ui.sample.feature.channel.add.group.select_name.AddGroupChannelSelectNameMembersAdapter.DeleteMemberClickListener
 
