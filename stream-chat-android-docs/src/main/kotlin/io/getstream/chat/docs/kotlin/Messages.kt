@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
@@ -340,15 +339,13 @@ class Messages(
     inner class Search {
         fun searchMessages() {
             client.searchMessages(
-                SearchMessagesRequest(
-                    offset = 0,
-                    limit = 10,
-                    channelFilter = Filters.`in`("members", listOf("john")),
-                    messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious")
-                )
+                channelFilter = Filters.`in`("members", listOf("john")),
+                messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious"),
+                offset = 0,
+                limit = 10
             ).enqueue { result ->
                 if (result.isSuccess) {
-                    val messages: List<Message> = result.data()
+                    val messages: List<Message> = result.data().messages
                 } else {
                     // Handle result.error()
                 }
@@ -398,16 +395,14 @@ class Messages(
         }
 
         fun searchForAllPinnedMessages() {
-            val request = SearchMessagesRequest(
+            client.searchMessages(
+                channelFilter = Filters.`in`("cid", "channelType:channelId"),
+                messageFilter = Filters.eq("pinned", true),
                 offset = 0,
                 limit = 30,
-                channelFilter = Filters.`in`("cid", "channelType:channelId"),
-                messageFilter = Filters.eq("pinned", true)
-            )
-
-            client.searchMessages(request).enqueue { result ->
+            ).enqueue { result ->
                 if (result.isSuccess) {
-                    val pinnedMessages = result.data()
+                    val pinnedMessages = result.data().messages
                 } else {
                     // Handle result.error()
                 }

@@ -539,6 +539,8 @@ public final class io/getstream/chat/android/client/api/models/QueryUsersRequest
 }
 
 public final class io/getstream/chat/android/client/api/models/SearchMessagesRequest {
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Integer;

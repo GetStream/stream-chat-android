@@ -347,15 +347,15 @@ public class Messages {
             FilterObject messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious");
 
             client.searchMessages(
-                    new SearchMessagesRequest(
-                            offset,
-                            limit,
-                            channelFilter,
-                            messageFilter
-                    )
+                    channelFilter,
+                    messageFilter,
+                    offset,
+                    limit,
+                    null,
+                    null
             ).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Message> messages = result.data();
+                    List<Message> messages = result.data().getMessages();
                 } else {
                     // Handle result.error()
                 }
@@ -408,11 +408,17 @@ public class Messages {
             int limit = 10;
             FilterObject channelFilter = Filters.in("cid", "channelType:channelId");
             FilterObject messageFilter = Filters.eq("pinned", true);
-            SearchMessagesRequest request = new SearchMessagesRequest(offset, limit, channelFilter, messageFilter);
 
-            client.searchMessages(request).enqueue(result -> {
+            client.searchMessages(
+                    channelFilter,
+                    messageFilter,
+                    offset,
+                    limit,
+                    null,
+                    null
+            ).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Message> pinnedMessages = result.data();
+                    List<Message> pinnedMessages = result.data().getMessages();
                 } else {
                     // Handle result.error()
                 }
@@ -455,7 +461,7 @@ public class Messages {
                     @NotNull ViewGroup parent
             ) {
                 boolean containsMyAttachments = false;
-                for (Attachment attachment: data.getMessage().getAttachments()) {
+                for (Attachment attachment : data.getMessage().getAttachments()) {
                     if (attachment.getImageUrl().contains(MY_URL_ADDRESS)) {
                         containsMyAttachments = true;
                     }

@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -138,21 +139,24 @@ internal class MessagesApiCallsTests {
         ).thenReturn(
             RetroSuccess(
                 SearchMessagesResponse(
-                    listOf(
+                    results = listOf(
                         MessageResponse(
                             Message().apply {
                                 this.text = messageText
                                 this.user = user
                             }
                         )
-                    )
+                    ),
+                    next = "next-page",
+                    previous = "prev-page",
+                    resultsWarning = null,
                 )
             ).toRetrofitCall()
         )
 
-        val result = client.searchMessages(searchRequest).execute()
+        val result = client.searchMessages(channelFilter, messageFilter, 0, 1).execute()
 
-        verifySuccess(result, listOf(message))
+        verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))
     }
 
     @Test
@@ -168,7 +172,7 @@ internal class MessagesApiCallsTests {
                 .searchMessages(mock.connectionId, searchRequest)
         ).thenReturn(RetroError<SearchMessagesResponse>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.searchMessages(searchRequest).execute()
+        val result = client.searchMessages(channelFilter, messageFilter, 0, 1).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

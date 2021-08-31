@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 
-public data class SearchMessagesRequest(
+public data class SearchMessagesRequest @JvmOverloads constructor(
     /**
      * Pagination offset. Cannot be used with sort or next.
      */
