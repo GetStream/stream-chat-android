@@ -58,6 +58,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
+    public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val replyMessageStyle: MessageReplyStyle,
@@ -154,6 +155,13 @@ public data class MessageListViewStyle(
                         R.styleable.MessageListView_streamUiScrollButtonIcon,
                         context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                     ).build()
+
+                val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
+                    attributes.getInt(
+                        R.styleable.MessageListView_streamUiNewMessagesBehaviour,
+                        MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value
+                    )
+                )
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
@@ -355,6 +363,7 @@ public data class MessageListViewStyle(
 
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
+                    scrollButtonBehaviour = scrollButtonBehaviour,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
