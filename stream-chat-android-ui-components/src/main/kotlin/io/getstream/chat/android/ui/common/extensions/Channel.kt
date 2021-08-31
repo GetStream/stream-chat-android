@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import com.getstream.sdk.chat.utils.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 

@@ -30,10 +30,13 @@ import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
@@ -131,10 +134,10 @@ private const val CHANNEL_LIMIT = 30
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
+@OptIn(ExperimentalStreamChatApi::class)
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
-    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
-    // the userOverwrite field is here for backwards compatibility
+    @VisibleForTesting
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -142,6 +145,7 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
+    private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
 ) : ChatDomain {
     internal constructor(
@@ -152,6 +156,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
+        offlinePlugin: OfflinePlugin,
     ) : this(
         client = client,
         db = null,
@@ -160,8 +165,10 @@ internal class ChatDomainImpl internal constructor(
         recoveryEnabled = recoveryEnabled,
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
-        appContext = appContext
+        appContext = appContext,
+        offlinePlugin = offlinePlugin,
     )
+
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
 
@@ -559,11 +566,14 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+            val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
+            val logic = offlinePlugin.logic.queryChannels(filter, sort)
             QueryChannelsController(
                 filter,
                 sort,
-                client,
-                this
+                this,
+                mutableState,
+                logic
             )
         }
 
@@ -633,7 +643,7 @@ internal class ChatDomainImpl internal constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
-            .filter { it.recoveryNeeded || recoverAll }
+            .filter { it.recoveryNeeded.value || recoverAll }
             .take(3)
         for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
@@ -989,6 +999,7 @@ internal class ChatDomainImpl internal constructor(
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
         context(appContext)
         scope(scope)
+        database(db)
         defaultConfig(defaultConfig)
         setOfflineEnabled(false)
     }.build()

@@ -28,17 +28,10 @@ import kotlinx.coroutines.launch
  * A state store that represents all the information required to query, filter, show and react to
  * [Channel] items in a list.
  *
- * Exposes the following state:
+ * @param initialSort - The initial sort used for [Channel]s.
  *
- * @property initialFilters - The current data filter. Users can change this state using [setFilters] to
+ * @param initialFilters - The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
- *
- * @property searchQuery - The current channel query. Users can change it through
- * [setSearchQuery]. This impacts what data is shown on the UI.
- *
- * @property channelsState - The state of the ChannelsList, represented by [ChannelsState].
- *
- * @property selectedChannel - Currently selected channel, of which the users can view the info.
  * */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,

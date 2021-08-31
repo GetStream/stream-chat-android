@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `User#name` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
+| `User#image` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
+| `Channel#name` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
+| `Channel#image` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
 | `ChatClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.08.31 ⌛ | 2021.09.14 ⌛ | Use getMessagesWithAttachments function with types list instead |
 | `ChannelClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.08.31 ⌛ | 2021.09.14 ⌛ | Use getMessagesWithAttachments function with types list instead |
 | `created_at`, `updated_at`, `isTypingEvents`, `isReadEvents`, `isConnectEvents`, `isSearch`, `isMutes` in Config class are all deprecated. <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | 2021.08.25<br/>4.17.0 | Use `createdAt`, `updatedAt`, `typingEventsEnabled`, `readEventsEnabled`, `connectEventsEnabled`, `searchEnabled` and `mutesEnabled` instead |

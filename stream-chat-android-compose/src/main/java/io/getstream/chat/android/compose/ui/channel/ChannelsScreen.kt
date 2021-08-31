@@ -48,6 +48,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param isShowingSearch - If we show the search input or hide it.
  * @param onHeaderClickAction - Handler for the default header action.
  * @param onItemClick - Handler for Channel item clicks.
+ * @param onViewChannelInfoAction - Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed - Handler for back press action.
  * */
 @Composable

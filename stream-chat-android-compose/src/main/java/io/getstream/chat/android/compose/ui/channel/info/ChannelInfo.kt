@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param user - Currently logged-in user data.
  * @param onChannelOptionClick - Handler for when the user selects a channel option.
  * @param modifier - Modifier for styling.
+ * @param shape - The shape of the component.
  * */
 @Composable
 public fun ChannelInfo(
