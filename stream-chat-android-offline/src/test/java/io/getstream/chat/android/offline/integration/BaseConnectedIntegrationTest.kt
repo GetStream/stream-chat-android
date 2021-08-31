@@ -7,8 +7,11 @@ import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
+import io.getstream.chat.android.offline.experimental.plugin.Config
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
@@ -47,6 +50,15 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
+
+        val plugin = OfflinePlugin(
+            Config(
+                backgroundSyncEnabled = backgroundSyncEnabled,
+                userPresence = userPresence,
+                persistenceEnabled = offlineEnabled
+            )
+        )
+
         chatDomainImpl = ChatDomainImpl(
             client,
             db,
@@ -55,7 +67,8 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
-            context
+            context,
+            offlinePlugin = plugin,
         )
         chatDomain = chatDomainImpl
         chatDomainImpl.retryPolicy = NoRetryPolicy()
@@ -65,11 +78,13 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 println("error event$it")
             }
         }
+        ChatDomain.instance = chatDomainImpl
         return chatDomainImpl
     }
 
     @Before
     override fun setup() {
+        setupWorkManager()
         runBlocking {
             if (Companion.client == null) {
                 // do one time setup here
