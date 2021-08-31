@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.util.Date
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -127,6 +128,16 @@ public class MessageListViewModel(
     private var lastLoadedMessage: Message? = null
 
     /**
+     * Represents the latest message we've seen in the channel.
+     * */
+    private var lastSeenChannelMessage: MessageItem? by mutableStateOf(null)
+
+    /**
+     * Represents the latest message we've seen in the active thread.
+     * */
+    private var lastSeenThreadMessage: MessageItem? by mutableStateOf(null)
+
+    /**
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
      * */
@@ -178,14 +189,19 @@ public class MessageListViewModel(
                         }
                     }
                 }.collect { newState ->
-                    val newLastMessage = newState.messageItems.lastOrNull()?.message
+                    val newLastMessage = newState.messageItems.firstOrNull()?.message
 
                     val hasNewMessage = lastLoadedMessage != null &&
                         messagesState.messageItems.isNotEmpty() &&
                         newLastMessage?.id != lastLoadedMessage?.id
 
                     messagesState = if (hasNewMessage) {
-                        newState.copy(newMessageState = getNewMessageState(newLastMessage))
+                        val newMessageState = getNewMessageState(newLastMessage)
+
+                        newState.copy(
+                            newMessageState = newMessageState,
+                            unreadCount = getUnreadMessageCount(newMessageState)
+                        )
                     } else {
                         newState
                     }
@@ -233,6 +249,93 @@ public class MessageListViewModel(
             }
         } else {
             null
+        }
+    }
+
+    /**
+     * Counts how many messages the user hasn't read already. This is based on what the last message they've seen is,
+     * and the current message state.
+     *
+     * @param newMessageState - The state that tells us if there are new messages in the list.
+     * @return - [Int] which describes how many messages come after the last message we've seen in the list.
+     * */
+    private fun getUnreadMessageCount(newMessageState: NewMessageState? = currentMessagesState.newMessageState): Int {
+        if (newMessageState == null || newMessageState == MyOwn) return 0
+
+        val messageItems = currentMessagesState.messageItems
+        val lastSeenMessagePosition =
+            getLastSeenMessagePosition(if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage)
+        var unreadCount = 0
+
+        for (i in 0..lastSeenMessagePosition) {
+            val messageItem = messageItems[i]
+
+            if (!messageItem.isMine && messageItem.message.deletedAt == null) {
+                unreadCount++
+            }
+        }
+
+        return unreadCount
+    }
+
+    /**
+     * Gets the list position of the last seen message in the list.
+     *
+     * @param lastSeenMessage - The last message we saw in the list.
+     * @return - [Int] list position of the last message we've seen.
+     * */
+    private fun getLastSeenMessagePosition(lastSeenMessage: MessageItem?): Int {
+        if (lastSeenMessage == null) return 0
+
+        return currentMessagesState.messageItems.indexOfFirst {
+            it.message.id == lastSeenMessage.message.id
+        }
+    }
+
+    /**
+     * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
+     * time the data loads and whenever we see a message that's newer than the current last seen message.
+     *
+     * @param currentMessage - The message that is currently seen by the user.
+     * */
+    public fun updateLastSeenMessage(currentMessage: MessageItem) {
+        val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
+
+        if (lastSeenMessage == null) {
+            updateLastSeenMessageState(currentMessage)
+            return
+        }
+
+        val lastSeenMessageDate = lastSeenMessage.message.createdAt ?: Date()
+        val currentMessageDate = currentMessage.message.createdAt ?: Date()
+
+        if (currentMessageDate < lastSeenMessageDate) {
+            return
+        }
+        val messages = currentMessagesState.messageItems
+
+        val currentMessagePosition = messages.indexOfFirst { it.message.id == currentMessage.message.id }
+        val lastSeenMessagePosition = messages.indexOfFirst { it.message.id == lastSeenMessage.message.id }
+
+        if (currentMessagePosition < lastSeenMessagePosition) {
+            updateLastSeenMessageState(currentMessage)
+        }
+    }
+
+    /**
+     * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding state.
+     *
+     * @param currentMessage - The current message the user sees.
+     * */
+    private fun updateLastSeenMessageState(currentMessage: MessageItem) {
+        if (isInThread) {
+            lastSeenThreadMessage = currentMessage
+
+            threadMessagesState = threadMessagesState.copy(unreadCount = getUnreadMessageCount())
+        } else {
+            lastSeenChannelMessage = currentMessage
+
+            messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
     }
 
@@ -388,10 +491,9 @@ public class MessageListViewModel(
      * */
     private fun groupMessages(messages: List<Message>): List<MessageItem> {
         val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
-        val items = mutableListOf<MessageItem>()
         val currentUser = user.value
 
-        messages.forEachIndexed { index, message ->
+        return messages.mapIndexed { index, message ->
             val user = message.user
             val previousUser = messages.getOrNull(index - 1)?.user
             val nextUser = messages.getOrNull(index + 1)?.user
@@ -402,18 +504,13 @@ public class MessageListViewModel(
                 previousUser == user && nextUser != user -> Bottom
                 else -> None
             }
-
-            items.add(
-                MessageItem(
-                    message,
-                    position,
-                    parentMessageId,
-                    user.id == currentUser?.id
-                )
+            MessageItem(
+                message = message,
+                groupPosition = position,
+                parentMessageId = parentMessageId,
+                isMine = user.id == currentUser?.id
             )
-        }
-
-        return items
+        }.reversed()
     }
 
     /**
@@ -473,6 +570,7 @@ public class MessageListViewModel(
         messageMode = Normal
         messagesState = messagesState.copy(selectedMessage = null)
         threadMessagesState = MessagesState()
+        lastSeenThreadMessage = null
         threadJob?.cancel()
     }
 
@@ -489,7 +587,7 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      * */
     public fun clearNewMessageState() {
-        threadMessagesState = threadMessagesState.copy(newMessageState = null)
-        messagesState = messagesState.copy(newMessageState = null)
+        threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
+        messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
     }
 }

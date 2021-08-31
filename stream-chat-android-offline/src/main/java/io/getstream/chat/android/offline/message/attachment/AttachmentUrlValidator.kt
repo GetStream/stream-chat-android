@@ -43,14 +43,32 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
             oldAttachment == null -> newAttachment
             oldAttachment.imageUrl.isNullOrEmpty() -> newAttachment
             oldAttachment.imageUrl == newAttachment.imageUrl -> newAttachment
+            attachmentHelper.hasStreamImageUrl(oldAttachment).not() -> newAttachment
             attachmentHelper.hasValidImageUrl(oldAttachment).not() -> newAttachment
             else -> newAttachment.copy(imageUrl = oldAttachment.imageUrl)
         }
     }
 
     private fun Attachment.partialEquality(other: Attachment): Boolean {
-        return authorName == other.authorName && titleLink == other.titleLink && mimeType == other.mimeType &&
-            fileSize == other.fileSize && title == other.title && text == other.text && type == other.type &&
-            name == other.name && fallback == other.fallback
+        return authorName == other.authorName &&
+            titleLink == other.titleLink &&
+            mimeType == other.mimeType &&
+            fileSize == other.fileSize &&
+            title == other.title &&
+            text == other.text &&
+            type == other.type &&
+            name == other.name &&
+            fallback == other.fallback &&
+            isDefault().not()
+    }
+
+    private fun Attachment.isDefault(): Boolean {
+        return authorName.isNullOrBlank() &&
+            titleLink.isNullOrBlank() &&
+            fileSize == 0 &&
+            title.isNullOrBlank() &&
+            text.isNullOrBlank() &&
+            name.isNullOrBlank() &&
+            fallback.isNullOrBlank()
     }
 }
