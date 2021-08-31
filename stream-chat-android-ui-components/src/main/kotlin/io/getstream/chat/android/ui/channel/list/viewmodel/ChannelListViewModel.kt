@@ -163,16 +163,16 @@ public class ChannelListViewModel(
 
     private fun parseMutedChannels(
         channels: List<Channel>,
-        channelMutesIds: List<String>?,
+        channelMutesIds: List<String>,
     ): List<Channel> {
         return channels.map { channel ->
             when {
-                channel.isMuted && channelMutesIds?.contains(channel.id) == false ->
+                channel.isMuted && !channelMutesIds.contains(channel.id) ->
                     channel.copy(
                         extraData = channel.extraData.clone(EXTRA_DATA_MUTED, false)
                     )
 
-                !channel.isMuted && channelMutesIds?.contains(channel.id) == true ->
+                !channel.isMuted && channelMutesIds.contains(channel.id) ->
                     channel.copy(
                         extraData = channel.extraData.clone(EXTRA_DATA_MUTED, true)
                     )
@@ -184,7 +184,7 @@ public class ChannelListViewModel(
 
     private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
         return mutableMapOf<K, V>().apply {
-            putAll(this)
+            putAll(this@clone)
             put(changeKey, changeValue)
         }
     }
