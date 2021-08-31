@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
@@ -337,12 +339,12 @@ class Messages(
      * @see <a href="https://getstream.io/chat/docs/search/?language=kotlin">Search</a>
      */
     inner class Search {
-        fun searchMessages() {
+        fun searchMessagesLimitAndOffsetPagination() {
             client.searchMessages(
+                offset = 0,
+                limit = 10,
                 channelFilter = Filters.`in`("members", listOf("john")),
                 messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious"),
-                offset = 0,
-                limit = 10
             ).enqueue { result ->
                 if (result.isSuccess) {
                     val messages: List<Message> = result.data().messages
@@ -350,6 +352,35 @@ class Messages(
                     // Handle result.error()
                 }
             }
+        }
+
+        fun searchMessagesLimitAndNextPagination() {
+            val channelFilter = Filters.`in`("members", listOf("john"))
+            val messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious")
+
+            // First 10 results sorted by relevance in descending order
+            val page1: SearchMessagesResult = client.searchMessages(
+                channelFilter = channelFilter,
+                messageFilter = messageFilter,
+                limit = 10,
+                sort = QuerySort.desc("relevance")
+            ).execute().data()
+
+            // Next 10 results with the same sort order embedded in the next value
+            val page2: SearchMessagesResult = client.searchMessages(
+                channelFilter = channelFilter,
+                messageFilter = messageFilter,
+                limit = 10,
+                next = page1.previous
+            ).execute().data()
+
+            // The previous 10 results
+            val page1Again: SearchMessagesResult = client.searchMessages(
+                channelFilter = channelFilter,
+                messageFilter = messageFilter,
+                limit = 10,
+                next = page2.previous
+            ).execute().data()
         }
     }
 
@@ -396,10 +427,10 @@ class Messages(
 
         fun searchForAllPinnedMessages() {
             client.searchMessages(
-                channelFilter = Filters.`in`("cid", "channelType:channelId"),
-                messageFilter = Filters.eq("pinned", true),
                 offset = 0,
                 limit = 30,
+                channelFilter = Filters.`in`("cid", "channelType:channelId"),
+                messageFilter = Filters.eq("pinned", true),
             ).enqueue { result ->
                 if (result.isSuccess) {
                     val pinnedMessages = result.data().messages
