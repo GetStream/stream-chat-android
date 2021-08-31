@@ -717,8 +717,8 @@ public class ChatClient internal constructor(
     }
 
     @Deprecated(
-        message = "Use ChatClient::searchMessages method instead",
-        replaceWith = ReplaceWith("ChatClient::searchMessages(channelFilter: FilterObject, messageFilter: FilterObject, offset: Int?, limit: Int? = null, next: String? = null, sort: QuerySort<Message>?)"),
+        message = "Use the searchMessages method with unwrapped parameters instead",
+        replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
         level = DeprecationLevel.WARNING,
     )
     @CheckResult
