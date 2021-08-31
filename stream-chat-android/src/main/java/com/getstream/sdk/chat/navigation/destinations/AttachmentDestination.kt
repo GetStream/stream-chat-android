@@ -37,7 +37,7 @@ public open class AttachmentDestination(
             }
             ModelType.attach_image -> {
                 when {
-                    attachment.ogUrl != null -> {
+                    attachment.titleLink != null || attachment.ogUrl != null -> {
                         url = attachment.ogUrl
                         type = ModelType.attach_link
                     }

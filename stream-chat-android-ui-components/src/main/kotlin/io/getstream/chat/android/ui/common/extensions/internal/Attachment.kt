@@ -7,4 +7,4 @@ private val MEDIA_ATTACHMENT_TYPES: Collection<String> = listOf(ModelType.attach
 
 internal fun Attachment.isMedia(): Boolean = type in MEDIA_ATTACHMENT_TYPES
 
-internal fun Attachment.hasLink(): Boolean = ogUrl != null
+internal fun Attachment.hasLink(): Boolean = titleLink != null || ogUrl != null

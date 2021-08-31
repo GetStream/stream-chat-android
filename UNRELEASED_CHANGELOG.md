@@ -72,8 +72,12 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed a bug where the Message list flickered when sending new messages
 
 ### ⬆️ Improved
+- Improved the Message list scrolling behavior and scroll to bottom actions
+- Added an unread count on the Message list's scroll to bottom CTA
+- Improved the way we build items in the Message list
 
 ### ✅ Added
 
