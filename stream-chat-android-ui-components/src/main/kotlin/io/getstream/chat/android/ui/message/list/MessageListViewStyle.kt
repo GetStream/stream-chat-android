@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * Use this class together with [TransformStyle.messageListStyleTransformer] to change [MessageListView] styles programmatically.
  *
  * @property scrollButtonViewStyle - style for [ScrollButtonView]
+ * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle - style for message list view holders
  * @property giphyViewHolderStyle - style for [GiphyViewHolder]
  * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
