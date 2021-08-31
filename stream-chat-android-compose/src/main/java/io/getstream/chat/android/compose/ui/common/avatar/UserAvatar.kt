@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
