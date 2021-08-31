@@ -20,8 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -30,10 +32,14 @@ import io.getstream.chat.android.compose.ui.util.hasLink
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
+ *
+ * @param linkDescriptionLineLimit - The limit of how many lines we show for the link description.
  * */
-public class LinkAttachmentFactory : AttachmentFactory(
-    canHandle = { links -> links.any { it.hasLink() && it.type != "giphy" } },
-    content = @Composable { LinkAttachmentContent(it) }
+public class LinkAttachmentFactory(
+    linkDescriptionLineLimit: Int,
+) : AttachmentFactory(
+    canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
+    content = @Composable { LinkAttachmentContent(it, linkDescriptionLineLimit) }
 )
 
 /**
@@ -44,15 +50,20 @@ public class LinkAttachmentFactory : AttachmentFactory(
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
+ *
+ * @param descriptionLineLimit - The limit of how many lines we show for the link description.
  * */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun LinkAttachmentContent(attachmentState: AttachmentState) {
+public fun LinkAttachmentContent(
+    attachmentState: AttachmentState,
+    descriptionLineLimit: Int,
+) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
 
     val context = LocalContext.current
-    val attachment = message.attachments.firstOrNull { it.hasLink() && it.type != "giphy" }
+    val attachment = message.attachments.firstOrNull { it.hasLink() && it.type != ModelType.attach_giphy }
 
     checkNotNull(attachment) {
         "Missing link attachment."
@@ -124,6 +135,8 @@ public fun LinkAttachmentContent(attachmentState: AttachmentState) {
                 text = description,
                 style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textHighEmphasis,
+                maxLines = descriptionLineLimit,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

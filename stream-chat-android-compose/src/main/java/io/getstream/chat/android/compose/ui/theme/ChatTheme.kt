@@ -46,7 +46,7 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
  * @param colors - The set of colors we provide, wrapped in [StreamColors].
  * @param typography - The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes - The set of shapes we provide, wrapped in [StreamShapes].
- * @param attachmentFactories - Attachment factories that we provide. By default, images and files.
+ * @param attachmentFactories - Attachment factories that we provide.
  * @param reactionTypes - The reaction types supported in the Messaging screen.
  * @param dateFormatter - [DateFormatter] used throughout the app for date and time information.
  * @param content - The content shown within the theme wrapper.
@@ -57,7 +57,7 @@ public fun ChatTheme(
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     typography: StreamTypography = StreamTypography.default,
     shapes: StreamShapes = StreamShapes.default,
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories,
+    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     reactionTypes: Map<String, Int> = defaultReactionTypes,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     content: @Composable () -> Unit,

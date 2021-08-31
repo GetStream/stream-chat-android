@@ -78,10 +78,13 @@
 - Improved the Message list scrolling behavior and scroll to bottom actions
 - Added an unread count on the Message list's scroll to bottom CTA
 - Improved the way we build items in the Message list
+- Added line limit to link attachment descriptions
+- Added a way to customize the default line limit for link descriptions
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- `StreamAttachment.defaultFactories()` is a function now, instead of a property.
 
 ### ❌ Removed
 

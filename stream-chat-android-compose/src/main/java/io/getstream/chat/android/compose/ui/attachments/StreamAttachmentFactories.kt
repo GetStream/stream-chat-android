@@ -7,12 +7,20 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 public object StreamAttachmentFactories {
 
     /**
+     * The default description length of link attachments. We limit this, because for some links the description
+     * can prove to be too long.
+     * */
+    private const val DEFAULT_LINK_DESCRIPTION_LINE_LIMIT = 5
+
+    /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
      *
-     * Uses the functions below to display the UI.
+     * @param linkDescriptionLineLimit - The limit of how long the link attachment descriptions can be.
      * */
-    public val defaultFactories: List<AttachmentFactory> = listOf(
-        LinkAttachmentFactory(),
+    public fun defaultFactories(
+        linkDescriptionLineLimit: Int = DEFAULT_LINK_DESCRIPTION_LINE_LIMIT,
+    ): List<AttachmentFactory> = listOf(
+        LinkAttachmentFactory(linkDescriptionLineLimit),
         GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
         FileAttachmentFactory()
