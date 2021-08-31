@@ -61,7 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
 ### ⬆️ Improved
 
 ### ✅ Added
