@@ -183,8 +183,10 @@ public class ChannelListViewModel(
     }
 
     private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
+        val originalMap = this
+
         return mutableMapOf<K, V>().apply {
-            putAll(this@clone)
+            putAll(originalMap)
             put(changeKey, changeValue)
         }
     }
