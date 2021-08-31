@@ -22,6 +22,8 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
         unreadCountChanged = unreadCount != other.unreadCount,
+        updatedAtChanged = updatedAt != other.updatedAt,
+        extraDataChanged = extraData != other.extraData
     )
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
