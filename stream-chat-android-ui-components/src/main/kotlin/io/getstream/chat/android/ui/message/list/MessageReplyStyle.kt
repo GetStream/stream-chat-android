@@ -24,8 +24,8 @@ import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MES
  *
  * @property messageBackgroundColorMine Background color for message sent by the current user. Default value is [R.color.stream_ui_grey_gainsboro].
  * @property messageBackgroundColorTheirs Background color for message sent by other user. Default value is [R.color.stream_ui_white].
- * @property linkBackgroundColorMine TODO TODO TODO
- * @property linkBackgroundColorTheirs TODO TODO TODO
+ * @property linkBackgroundColorMine Background color of links in the message sent by the current user.
+ * @property linkBackgroundColorTheirs Background color of links in the message sent by the other user.
  * @property linkStyleMine Appearance for message link sent by the current user.
  * @property linkStyleTheirs Appearance for message link sent by other users.
  * @property textStyleMine Appearance for message text sent by the current user.
