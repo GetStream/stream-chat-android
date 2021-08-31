@@ -7,7 +7,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
@@ -184,7 +183,7 @@ public class ChannelListViewModel(
     }
 
     private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
-        return mutableMapOf<K,V>().apply {
+        return mutableMapOf<K, V>().apply {
             putAll(this)
             put(changeKey, changeValue)
         }
