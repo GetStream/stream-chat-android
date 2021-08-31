@@ -22,7 +22,6 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
         unreadCountChanged = unreadCount != other.unreadCount,
-        updatedAtChanged = updatedAt != other.updatedAt,
         extraDataChanged = extraData != other.extraData
     )
 
@@ -71,7 +70,7 @@ internal fun Channel.getLastMessagePreviewText(
     }
 }
 
-private const val EXTRA_DATA_MUTED: String = "mutedChannel"
+internal const val EXTRA_DATA_MUTED: String = "mutedChannel"
 
 internal var Channel.isMuted: Boolean
     get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false

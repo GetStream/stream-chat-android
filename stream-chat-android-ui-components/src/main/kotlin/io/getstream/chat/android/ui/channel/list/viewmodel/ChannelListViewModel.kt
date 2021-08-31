@@ -7,6 +7,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.enqueue
@@ -19,6 +20,7 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
@@ -161,13 +163,30 @@ public class ChannelListViewModel(
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
 
     private fun parseMutedChannels(
-        channelsMap: List<Channel>,
+        channels: List<Channel>,
         channelMutesIds: List<String>?,
     ): List<Channel> {
-        return channelsMap.map { channel ->
-            channel.copy().apply {
-                isMuted = channelMutesIds?.contains(channel.id) ?: false
+        return channels.map { channel ->
+            when {
+                channel.isMuted && channelMutesIds?.contains(channel.id) == false ->
+                    channel.copy(
+                        extraData = channel.extraData.clone(EXTRA_DATA_MUTED, false)
+                    )
+
+                !channel.isMuted && channelMutesIds?.contains(channel.id) == true ->
+                    channel.copy(
+                        extraData = channel.extraData.clone(EXTRA_DATA_MUTED, true)
+                    )
+
+                else -> channel
             }
+        }
+    }
+
+    private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
+        return mutableMapOf<K,V>().apply {
+            putAll(this)
+            put(changeKey, changeValue)
         }
     }
 

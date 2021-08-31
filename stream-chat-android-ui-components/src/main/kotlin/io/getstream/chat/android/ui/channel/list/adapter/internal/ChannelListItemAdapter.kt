@@ -57,7 +57,6 @@ internal class ChannelListItemAdapter(
             lastMessageChanged = true,
             readStateChanged = true,
             unreadCountChanged = true,
-            updatedAtChanged = true,
             extraDataChanged = true,
         )
 
@@ -67,7 +66,6 @@ internal class ChannelListItemAdapter(
             lastMessageChanged = false,
             readStateChanged = false,
             unreadCountChanged = false,
-            updatedAtChanged = false,
             extraDataChanged = false,
         )
     }
