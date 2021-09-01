@@ -727,7 +727,13 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Search messages across channels
+     * Search messages across channels. There are two ways to paginate through search results:
+     *
+     * * Using [limit] and [offset] parameters
+     * * Using [limit] and [next] parameters
+     *
+     * Pages of sort results will be returned with **next** and **previous** strings which
+     * can be supplied as a next parameter when making a query to get a new page of results.
      *
      * @param channelFilter channel filter conditions
      * @param messageFilter message filter conditions
@@ -736,7 +742,7 @@ public class ChatClient internal constructor(
      * @param next pagination parameter, cannot be used with non-zero offset
      * @param sort sort parameters, cannot be used with non-zero offset
      *
-     * @return executable async [Call] responsible for searching messages
+     * @return executable async [Call] responsible for searching messages across channels
      */
     @CheckResult
     public fun searchMessages(
@@ -747,6 +753,9 @@ public class ChatClient internal constructor(
         next: String? = null,
         sort: QuerySort<Message>? = null,
     ): Call<SearchMessagesResult> {
+        if (offset != null && (sort != null || next != null)) {
+            return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
+        }
         return api.searchMessages(
             channelFilter = channelFilter,
             messageFilter = messageFilter,
