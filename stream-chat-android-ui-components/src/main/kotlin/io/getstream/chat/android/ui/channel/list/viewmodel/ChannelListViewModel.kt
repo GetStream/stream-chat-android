@@ -19,6 +19,8 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
+import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
@@ -82,7 +84,7 @@ public class ChannelListViewModel(
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = state.channels)
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
                     } else {
                         stateMerger.value = state?.copy()
                     }
@@ -113,7 +115,10 @@ public class ChannelListViewModel(
             is QueryChannelsController.ChannelsState.Result ->
                 State(
                     isLoading = false,
-                    channels = channelState.channels
+                    channels = parseMutedChannels(
+                        channelState.channels,
+                        currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
+                    ),
                 )
         }
     }
@@ -155,6 +160,29 @@ public class ChannelListViewModel(
     }
 
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
+
+    private fun parseMutedChannels(
+        channels: List<Channel>,
+        channelMutesIds: List<String>,
+    ): List<Channel> {
+        return channels.map { channel ->
+            when {
+                channel.isMuted != channelMutesIds.contains(channel.id) ->
+                    channel.copy(extraData = channel.extraData.clone(EXTRA_DATA_MUTED, !channel.isMuted))
+
+                else -> channel
+            }
+        }
+    }
+
+    private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
+        val originalMap = this
+
+        return mutableMapOf<K, V>().apply {
+            putAll(originalMap)
+            put(changeKey, changeValue)
+        }
+    }
 
     public data class PaginationState(
         val loadingMore: Boolean = false,
