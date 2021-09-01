@@ -25,3 +25,16 @@ internal fun String.camelCaseToSnakeCase(): String {
 }
 
 internal fun String.isAnonymousChannelId(): Boolean = contains("!members")
+
+/**
+ * Parses CID of channel to channelType and channelId.
+ *
+ * @return Pair<String, String> Pair with channelType and channelId.
+ * @throws IllegalStateException Throws an exception if format of cid is incorrect.
+ */
+@Throws(IllegalStateException::class)
+public fun String.cidToTypeAndId(): Pair<String, String> {
+    require(isNotEmpty()) { "cid can not be empty" }
+    require(':' in this) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
+    return requireNotNull(split(":").takeIf { it.size >= 2 }?.let { it.first() to it.last() })
+}

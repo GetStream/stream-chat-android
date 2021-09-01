@@ -1835,6 +1835,7 @@ public final class io/getstream/chat/android/client/extensions/SharedPreferences
 }
 
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
+	public static final fun cidToTypeAndId (Ljava/lang/String;)Lkotlin/Pair;
 }
 
 public final class io/getstream/chat/android/client/logger/ChatLogLevel : java/lang/Enum {
