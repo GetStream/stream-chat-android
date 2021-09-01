@@ -905,12 +905,14 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
-public class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
+public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
 	public static final field TYPE_KEY Ljava/lang/String;
 	public static final field URL_KEY Ljava/lang/String;
 	public fun <init> ()V
-	protected fun onCreate (Landroid/os/Bundle;)V
-	public fun playVideo (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {

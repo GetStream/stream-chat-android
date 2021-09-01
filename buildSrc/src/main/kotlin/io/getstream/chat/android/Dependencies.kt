@@ -162,7 +162,6 @@ object Dependencies {
         "org.jetbrains.kotlinx:binary-compatibility-validator:${Versions.KOTLIN_BINARY_VALIDATOR}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN}"
-    const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
     const val ktlintPlugin = "org.jlleitschuh.gradle:ktlint-gradle:${Versions.KTLINT_PLUGIN}"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.LEAK_CANARY}"
     const val lottie = "com.airbnb.android:lottie:${Versions.LOTTIE}"

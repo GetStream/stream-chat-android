@@ -80,10 +80,6 @@ android {
         }
     }
 
-    sourceSets.all {
-        it.java.srcDir "src/$it.name/kotlin"
-    }
-
     lintOptions {
         abortOnError false
         xmlReport true
@@ -118,8 +114,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-pushprovider-firebase")
-
-    implementation Dependencies.kotlinStdLib
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
