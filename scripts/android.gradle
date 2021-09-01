@@ -1,11 +1,11 @@
 import io.getstream.chat.android.Configuration
 
 android {
-    compileSdkVersion Configuration.compileSdkVersion
+    compileSdk Configuration.compileSdk
 
     defaultConfig {
-        minSdkVersion Configuration.minSdkVersion
-        targetSdkVersion Configuration.targetSdkVersion
+        minSdk Configuration.minSdk
+        targetSdk Configuration.targetSdk
         versionName Configuration.versionName
     }
 }
