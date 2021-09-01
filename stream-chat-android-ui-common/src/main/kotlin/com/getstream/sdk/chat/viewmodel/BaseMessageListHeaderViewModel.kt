@@ -12,8 +12,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 
-@InternalStreamChatApi
-public abstract class BaseMessageListHeaderViewModel constructor(
+public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi constructor(
     cid: String,
     private val chatDomain: ChatDomain,
 ) : ViewModel() {
