@@ -71,6 +71,14 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
+        if (attachment.type == ModelType.attach_giphy) {
+            val params = binding.imageView.layoutParams
+
+            binding.imageView.layoutParams = params.apply {
+                height = 200.dpToPx()
+            }
+        }
+
         showImageByUrl(url) {
             showMore()
             showGiphyLabel()
@@ -122,7 +130,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             .let(this::setImageShape)
     }
 
-    fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
+    private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)
