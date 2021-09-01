@@ -167,15 +167,8 @@ public class ChannelListViewModel(
     ): List<Channel> {
         return channels.map { channel ->
             when {
-                channel.isMuted && !channelMutesIds.contains(channel.id) ->
-                    channel.copy(
-                        extraData = channel.extraData.clone(EXTRA_DATA_MUTED, false)
-                    )
-
-                !channel.isMuted && channelMutesIds.contains(channel.id) ->
-                    channel.copy(
-                        extraData = channel.extraData.clone(EXTRA_DATA_MUTED, true)
-                    )
+                channel.isMuted != channelMutesIds.contains(channel.id) ->
+                    channel.copy(extraData = channel.extraData.clone(EXTRA_DATA_MUTED, !channel.isMuted))
 
                 else -> channel
             }
