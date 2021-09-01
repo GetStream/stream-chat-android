@@ -39,7 +39,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-
+- Improving logs for Message deletion error.
 ### ✅ Added
 
 ### ⚠️ Changed
