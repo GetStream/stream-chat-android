@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.FakeResponse.Body
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatRequestError
-import io.getstream.chat.android.client.parser.GsonChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -16,7 +16,7 @@ import org.junit.Test
 internal class TokenAuthInterceptorTests {
 
     val token = "token"
-    val parser = GsonChatParser()
+    val parser = MoshiChatParser()
 
     @Test
     fun undefinedToken() {
@@ -62,7 +62,6 @@ internal class TokenAuthInterceptorTests {
 
     @Test
     fun invalidTokenAttachment() {
-
         val invalidHeader = "🤢"
 
         val tm = FakeTokenManager(invalidHeader)
@@ -80,15 +79,14 @@ internal class TokenAuthInterceptorTests {
 
     @Test
     fun expiredToken() {
-
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
         tm.setTokenProvider(FakeTokenProvider("token-a", "token-b"))
 
         val chain = FakeChain(
-            FakeResponse(444, Body("{code:40}")),
-            FakeResponse(200, Body("{}"))
+            FakeResponse(444, Body("""{ "code": 40 }""")),
+            FakeResponse(200, Body("""{}"""))
         )
         interceptor.intercept(chain)
         chain.processChain()

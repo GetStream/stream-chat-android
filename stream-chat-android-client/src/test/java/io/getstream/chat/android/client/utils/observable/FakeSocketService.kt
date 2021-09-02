@@ -52,7 +52,7 @@ internal class FakeSocketService(
     }
 
     fun verifyConnectionUserId(userId: String) {
-        assertThat(userId).isEqualTo(connectionUserId)
+        assertThat(connectionUserId).isEqualTo(userId)
     }
 
     fun verifyNoConnectionUserId() {
