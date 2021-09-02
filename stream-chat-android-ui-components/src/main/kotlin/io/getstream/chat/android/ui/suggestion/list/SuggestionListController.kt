@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.suggestion.Suggestions
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,7 @@ public class SuggestionListController(
     private var currentSuggestions: Suggestions by Delegates.observable(Suggestions.EmptySuggestions) { _, _, newSuggestions ->
         scope.launch { renderSuggestions(newSuggestions) }
     }
-    public var userLookupHandler: UserLookupHandler
+    public var userLookupHandler: MessageInputView.UserLookupHandler
         by Delegates.observable(DefaultUserLookupHandler(emptyList())) { _, _, _ -> computeSuggestions() }
     public var commands: List<Command> by Delegates.observable(emptyList()) { _, _, _ -> computeSuggestions() }
     public var mentionsEnabled: Boolean by Delegates.observable(true) { _, _, _ -> computeSuggestions() }
@@ -46,7 +47,7 @@ public class SuggestionListController(
     }
 
     private suspend fun handleUserLookup(
-        userLookupHandler: UserLookupHandler,
+        userLookupHandler: MessageInputView.UserLookupHandler,
         messageText: String,
     ) {
         currentSuggestions = withContext(DispatcherProvider.IO) {
