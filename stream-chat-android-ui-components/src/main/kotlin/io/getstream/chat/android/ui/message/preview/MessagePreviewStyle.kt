@@ -8,9 +8,9 @@ import io.getstream.chat.android.ui.search.list.SearchResultListView
 /**
  * Style for [MessagePreviewView] used by [MentionListView] and [SearchResultListView].
  *
- * @property messageSenderTextStyle - appearance for message sender text
- * @property messageTextStyle - appearance for message text
- * @property messageTimeTextStyle - appearance for message time text
+ * @property messageSenderTextStyle Appearance for message sender text.
+ * @property messageTextStyle Appearance for message text.
+ * @property messageTimeTextStyle Appearance for message time text.
  */
 public data class MessagePreviewStyle(
     val messageSenderTextStyle: TextStyle,

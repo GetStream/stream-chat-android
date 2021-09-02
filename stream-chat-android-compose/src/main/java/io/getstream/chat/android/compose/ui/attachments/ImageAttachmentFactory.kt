@@ -36,7 +36,7 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class ImageAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
     content = @Composable { ImageAttachmentContent(it) }
@@ -47,7 +47,7 @@ public class ImageAttachmentFactory : AttachmentFactory(
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {

@@ -18,7 +18,7 @@ import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
 /**
  * Local providers for various properties we connect to our components, for styling.
- * */
+ */
 private val LocalColors = compositionLocalOf<StreamColors> {
     error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -42,15 +42,15 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
- * @param isInDarkMode - If we're currently in the dark mode or not.
- * @param colors - The set of colors we provide, wrapped in [StreamColors].
- * @param typography - The set of typography styles we provide, wrapped in [StreamTypography].
- * @param shapes - The set of shapes we provide, wrapped in [StreamShapes].
- * @param attachmentFactories - Attachment factories that we provide. By default, images and files.
- * @param reactionTypes - The reaction types supported in the Messaging screen.
- * @param dateFormatter - [DateFormatter] used throughout the app for date and time information.
- * @param content - The content shown within the theme wrapper.
- * */
+ * @param isInDarkMode If we're currently in the dark mode or not.
+ * @param colors The set of colors we provide, wrapped in [StreamColors].
+ * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
+ * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param attachmentFactories Attachment factories that we provide. By default, images and files.
+ * @param reactionTypes The reaction types supported in the Messaging screen.
+ * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
+ * @param content The content shown within the theme wrapper.
+ */
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -84,7 +84,7 @@ public object ChatTheme {
     /**
      * These represent the default ease-of-use accessors for colors, typography, shapes, attachment factories and
      * reaction types.
-     * */
+     */
     public val colors: StreamColors
         @Composable
         @ReadOnlyComposable

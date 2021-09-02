@@ -11,8 +11,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Shows the default loading UI.
  *
- * @param modifier - Modifier for styling.
- * */
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun LoadingView(modifier: Modifier = Modifier) {
     Box(
