@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `ChatDomain#removeMembers` <br/>*offline* | 2021.09.14<br/>4.18.0 | 2021.10.14⌛ | 2021.11.14 ⌛ | Use class member instead |
+| `ChatDomain#removeMembers` <br/>*offline* | 2021.09.14<br/>4.18.0 | 2021.10.14⌛ | 2021.11.14 ⌛ | Use ChatClient::removeMembers directly |
 | `User#name` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
 | `User#image` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
 | `Channel#name` extension<br/>*client* | 2021.09.14<br/>4.18.0 | 2021.09.14<br/>4.18.0 | 2021.10.14 ⌛ | Use class member instead |
