@@ -4,16 +4,23 @@ import com.ibm.icu.text.Transliterator
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import java.text.Normalizer
 import kotlin.math.min
 
 private const val MAX_DISTANCE = 3
 private val regexUnaccent = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 
+/*
+* Default implementation for MessageInputView.UserLookupHandler. This class ignores diacritics and upper case.
+* Tt uses levenshtein approximation so typos are included in the search. It is possible to choose a transliteration
+* in the class to conversions between languages are possible. It uses https://unicode-org.github.io/icu/userguide/icu4j/
+* for transliteration
+*/
 public class DefaultUserLookupHandler(
     public var users: List<User>,
     transliterationId: String? = null,
-) : UserLookupHandler {
+) : MessageInputView.UserLookupHandler {
 
     private var transliterator: Transliterator? = null
     private val logger = ChatLogger.get("DefaultUserLookupHandler")
