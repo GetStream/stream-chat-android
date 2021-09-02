@@ -59,7 +59,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(':stream-chat-android-client')
 
-    implementation Dependencies.kotlinStdLib
     api Dependencies.firebaseMessaging
     implementation Dependencies.googlePlayServicesBase
 
