@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments
+package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Intent
 import android.net.Uri
@@ -28,19 +28,6 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
-
-/**
- * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
- * build the UI for the message.
- *
- * @param linkDescriptionLineLimit - The limit of how many lines we show for the link description.
- * */
-public class LinkAttachmentFactory(
-    linkDescriptionLineLimit: Int,
-) : AttachmentFactory(
-    canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
-    content = @Composable { LinkAttachmentContent(it, linkDescriptionLineLimit) }
-)
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link

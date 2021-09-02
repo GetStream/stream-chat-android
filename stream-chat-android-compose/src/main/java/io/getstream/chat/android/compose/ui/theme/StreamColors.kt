@@ -21,7 +21,7 @@ import io.getstream.chat.android.compose.R
  * @param errorAccent - Used for error text labels, notification badges and disruptive action text and icons.
  * @param infoAccent - Used for the online status.
  * */
-public class StreamColors(
+public data class StreamColors(
     public val textHighEmphasis: Color,
     public val textLowEmphasis: Color,
     public val disabled: Color,
@@ -37,6 +37,11 @@ public class StreamColors(
 ) {
 
     public companion object {
+        /**
+         * Provides the default colors for the light mode of the app.
+         *
+         * @return A [StreamColors] instance holding our color palette.
+         */
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
@@ -53,6 +58,11 @@ public class StreamColors(
             infoAccent = colorResource(R.color.stream_compose_info_accent),
         )
 
+        /**
+         * Provides the default colors for the dark mode of the app.
+         *
+         * @return A [StreamColors] instance holding our color palette.
+         */
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
