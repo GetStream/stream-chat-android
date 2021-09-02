@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.content
+package io.getstream.chat.android.compose.ui.attachments.file
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

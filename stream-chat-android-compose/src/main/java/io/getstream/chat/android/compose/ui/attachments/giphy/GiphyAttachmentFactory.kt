@@ -1,9 +1,8 @@
-package io.getstream.chat.android.compose.ui.attachments.factory
+package io.getstream.chat.android.compose.ui.attachments.giphy
 
 import androidx.compose.runtime.Composable
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 
 /**
  * An extensions of the [AttachmentFactory] that validates and shows Giphy attachments using [GiphyAttachmentContent].

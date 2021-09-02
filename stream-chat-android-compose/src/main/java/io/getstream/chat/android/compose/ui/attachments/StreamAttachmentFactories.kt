@@ -3,10 +3,10 @@ package io.getstream.chat.android.compose.ui.attachments
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.file.FileAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.giphy.GiphyAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.image.ImageAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.link.LinkAttachmentFactory
 
 public object StreamAttachmentFactories {
 

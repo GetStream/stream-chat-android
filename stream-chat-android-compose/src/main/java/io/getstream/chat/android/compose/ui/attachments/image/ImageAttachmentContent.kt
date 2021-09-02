@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.content
+package io.getstream.chat.android.compose.ui.attachments.image
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

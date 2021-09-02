@@ -1,8 +1,7 @@
-package io.getstream.chat.android.compose.ui.attachments.factory
+package io.getstream.chat.android.compose.ui.attachments.file
 
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 
 /**
  * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to

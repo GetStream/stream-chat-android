@@ -1,8 +1,7 @@
-package io.getstream.chat.android.compose.ui.attachments.factory
+package io.getstream.chat.android.compose.ui.attachments.image
 
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentContent
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
