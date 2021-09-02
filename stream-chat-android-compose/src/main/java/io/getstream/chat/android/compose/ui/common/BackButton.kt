@@ -10,10 +10,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Basic back button, that shows an icon and calls [onBackPressed] when tapped.
  *
- * @param imageVector - The icon to show.
- * @param onBackPressed - Handler for the back action.
- * @param modifier - Modifier for styling.
- * */
+ * @param imageVector The icon to show.
+ * @param onBackPressed Handler for the back action.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun BackButton(
     imageVector: ImageVector,

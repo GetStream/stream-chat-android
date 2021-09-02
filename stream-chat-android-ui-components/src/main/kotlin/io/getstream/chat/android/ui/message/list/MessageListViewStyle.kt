@@ -20,41 +20,41 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * Style for [MessageListView].
  * Use this class together with [TransformStyle.messageListStyleTransformer] to change [MessageListView] styles programmatically.
  *
- * @property scrollButtonViewStyle - style for [ScrollButtonView]
- * @property itemStyle - style for message list view holders
- * @property giphyViewHolderStyle - style for [GiphyViewHolder]
- * @property reactionsEnabled - enables/disables reactions feature. Enabled by default
- * @property backgroundColor - [MessageListView] background color. Default - [R.color.stream_ui_white_snow]
- * @property replyIcon - icon for reply option. Default - [R.drawable.stream_ui_ic_arrow_curve_left_grey]
- * @property replyEnabled - enables/disables reply feature. Enabled by default
- * @property threadReplyIcon - icon for thread option. Default - [R.drawable.stream_ui_ic_thread_reply]
- * @property threadsEnabled - enables/disables threads feature. Enabled by default
- * @property retryIcon - icon for retry option. Default - [R.drawable.stream_ui_ic_send]
- * @property copyIcon - icon for copy option. Default - [R.drawable.stream_ui_ic_copy]
- * @property editMessageEnabled - enables/disables edit message feature. Enabled by default
- * @property editIcon - icon for edit message option. Default - [R.drawable.stream_ui_ic_edit]
- * @property flagIcon - icon for flag message option. Default - [R.drawable.stream_ui_ic_flag]
- * @property flagEnabled - enables/disables "flag message" option
- * @property pinIcon - icon for pin message option. Default - [R.drawable.stream_ui_ic_pin]
- * @property unpinIcon - icon for unpin message option. Default - [R.drawable.stream_ui_ic_unpin]
- * @property pinMessageEnabled - enables/disables pin message feature. Disabled by default
- * @property muteIcon - icon for mute option. Default - [R.drawable.stream_ui_ic_mute]
- * @property muteEnabled - enables/disables "mute user" option
- * @property blockIcon - icon for block option. Default - [R.drawable.stream_ui_ic_user_block]
- * @property blockEnabled - enables/disables "block user" option
- * @property deleteIcon - icon for delete message option. Default - [R.drawable.stream_ui_ic_delete]
- * @property deleteMessageEnabled - enables/disables delete message feature. Enabled by default
- * @property copyTextEnabled - enables/disables copy text feature. Enabled by default
- * @property deleteConfirmationEnabled - enables/disables showing confirmation dialog before deleting message. Enabled by default
- * @property flagMessageConfirmationEnabled - enables/disables showing confirmation dialog before flagging message. Disabled by default
- * @property messageOptionsText - text appearance of message option items
- * @property warningMessageOptionsText - text appearance of warning message option items
- * @property messageOptionsBackgroundColor - background color of message options. Default - [R.color.stream_ui_white]
- * @property userReactionsBackgroundColor - background color of user reactions card. Default - [R.color.stream_ui_white]
- * @property userReactionsTitleText - text appearance of of user reactions card title
- * @property optionsOverlayDimColor - overlay dim color. Default - [R.color.stream_ui_literal_transparent]
- * @property messagesStart - Messages start at the bottom or top of the screen. Default: bottom
- * @property threadMessagesStart - Thread messages start at the bottom or top of the screen. Default: bottom
+ * @property scrollButtonViewStyle Style for [ScrollButtonView].
+ * @property itemStyle Style for message list view holders.
+ * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+ * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
+ * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
+ * @property replyIcon Icon for reply option. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
+ * @property replyEnabled Enables/disables reply feature. Enabled by default.
+ * @property threadReplyIcon Icon for thread option. Default value is [R.drawable.stream_ui_ic_thread_reply].
+ * @property threadsEnabled Enables/disables threads feature. Enabled by default.
+ * @property retryIcon Icon for retry option. Default value is [R.drawable.stream_ui_ic_send].
+ * @property copyIcon Icon for copy option. Default value is [R.drawable.stream_ui_ic_copy].
+ * @property editMessageEnabled Enables/disables edit message feature. Enabled by default.
+ * @property editIcon Icon for edit message option. Default value is [R.drawable.stream_ui_ic_edit].
+ * @property flagIcon Icon for flag message option. Default value is [R.drawable.stream_ui_ic_flag].
+ * @property flagEnabled Enables/disables "flag message" option.
+ * @property pinIcon Icon for pin message option. Default value is [R.drawable.stream_ui_ic_pin].
+ * @property unpinIcon Icon for unpin message option. Default value is [R.drawable.stream_ui_ic_unpin].
+ * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
+ * @property muteIcon Icon for mute option. Default value is [R.drawable.stream_ui_ic_mute].
+ * @property muteEnabled Enables/disables "mute user" option.
+ * @property blockIcon Icon for block option. Default value is [R.drawable.stream_ui_ic_user_block].
+ * @property blockEnabled Enables/disables "block user" option.
+ * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
+ * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
+ * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
+ * @property deleteConfirmationEnabled Enables/disables showing confirmation dialog before deleting message. Enabled by default.
+ * @property flagMessageConfirmationEnabled Enables/disables showing confirmation dialog before flagging message. Disabled by default.
+ * @property messageOptionsText Text appearance of message option items.
+ * @property warningMessageOptionsText Text appearance of warning message option items.
+ * @property messageOptionsBackgroundColor Background color of message options. Default value is [R.color.stream_ui_white].
+ * @property userReactionsBackgroundColor Background color of user reactions card. Default value is [R.color.stream_ui_white].
+ * @property userReactionsTitleText Text appearance of of user reactions card title.
+ * @property optionsOverlayDimColor Overlay dim color. Default value is [R.color.stream_ui_literal_transparent].
+ * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
+ * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,

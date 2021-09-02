@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * An extensions of the [AttachmentFactory] that validates and shows Giphy attachments.
- * */
+ */
 public class GiphyAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
     content = @Composable { GiphyAttachmentContent(it) }
@@ -41,7 +41,7 @@ public class GiphyAttachmentFactory : AttachmentFactory(
  * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
  *
  * @param attachmentState - The attachment to show.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun GiphyAttachmentContent(attachmentState: AttachmentState) {

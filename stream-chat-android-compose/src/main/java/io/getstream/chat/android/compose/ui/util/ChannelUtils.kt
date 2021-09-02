@@ -19,8 +19,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Generates the display name for a channel based on its data.
  *
- * @return - The display name of the channel.
- * */
+ * @return The display name of the channel.
+ */
 @Composable
 @ReadOnlyComposable
 public fun Channel.getDisplayName(): String {
@@ -51,9 +51,9 @@ public fun Channel.getLastMessage(currentUser: User?): Message? =
  *
  * It formats the message based on if there are attachments or not and based on the sender.
  *
- * @param currentUser - The current user in the app.
- * @return - The formatted preview text for the channel item.
- * */
+ * @param currentUser The current user in the app.
+ * @return The formatted preview text for the channel item.
+ */
 @Composable
 @ReadOnlyComposable
 public fun Channel.getLastMessagePreviewText(

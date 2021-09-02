@@ -30,10 +30,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
  * items.
  *
- * @param images - The images the user can pick, to be rendered in a list.
- * @param onImageSelected - Handler when the user clicks on any image item.
- * @param modifier - Modifier for styling.
- * */
+ * @param images The images the user can pick, to be rendered in a list.
+ * @param onImageSelected Handler when the user clicks on any image item.
+ * @param modifier Modifier for styling.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ImagesPicker(
@@ -53,9 +53,9 @@ internal fun ImagesPicker(
 /**
  * Represents each image item in the grid.
  *
- * @param imageItem - The image to render.
- * @param onImageSelected - Handler when the user selects an image.
- * */
+ * @param imageItem The image to render.
+ * @param onImageSelected Handler when the user selects an image.
+ */
 @Composable
 internal fun ImageGridItem(
     imageItem: AttachmentItem,

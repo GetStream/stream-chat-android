@@ -40,12 +40,12 @@ import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
  *
- * @param channel - The channel data to show.
- * @param currentUser - The user that's currently logged in.
- * @param onChannelClick - Handler for a single tap on an item.
- * @param onChannelLongClick - Handler for a long tap on an item.
- * @param modifier - Modifier for styling.
- * */
+ * @param channel The channel data to show.
+ * @param currentUser The user that's currently logged in.
+ * @param onChannelClick Handler for a single tap on an item.
+ * @param onChannelLongClick Handler for a long tap on an item.
+ * @param modifier Modifier for styling.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun DefaultChannelItem(

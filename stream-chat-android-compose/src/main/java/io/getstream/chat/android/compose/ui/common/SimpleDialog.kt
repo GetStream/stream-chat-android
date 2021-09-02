@@ -12,12 +12,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Generic dialog component that allows us to prompt the user.
  *
- * @param title - Title for the dialog.
- * @param message - Message for the dialog.
- * @param onPositiveAction - Handler when the user confirms the dialog.
- * @param onDismiss - Handler when the user dismisses the dialog.
- * @param modifier - Modifier for styling.
- * */
+ * @param title Title for the dialog.
+ * @param message Message for the dialog.
+ * @param onPositiveAction Handler when the user confirms the dialog.
+ * @param onDismiss Handler when the user dismisses the dialog.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun SimpleDialog(
     title: String,

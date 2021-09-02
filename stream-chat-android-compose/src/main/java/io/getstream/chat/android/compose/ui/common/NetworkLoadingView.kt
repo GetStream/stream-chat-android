@@ -18,9 +18,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Represents the default network loading view for the header, in case the network is down.
  *
- * @param modifier - Styling for the [Row]
- * @param spinnerSize - The size of the spinner.
- * */
+ * @param modifier Styling for the [Row].
+ * @param spinnerSize The size of the spinner.
+ */
 @Composable
 public fun NetworkLoadingView(
     modifier: Modifier = Modifier,

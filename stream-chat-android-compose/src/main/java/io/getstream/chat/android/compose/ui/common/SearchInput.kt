@@ -30,14 +30,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * It also holds a clear action, that is active when the search is in focus and not empty, to clear
  * the input.
  *
- * @param modifier - Modifier for styling.
- * @param query - Current query value.
- * @param onValueChange - Handler when the value changes.
- * @param onSearchStarted - Handler when the search starts, by focusing the input field.
- * @param leadingIcon - The icon at the start of the search component that's customizable, but shows
+ * @param modifier Modifier for styling.
+ * @param query Current query value.
+ * @param onValueChange Handler when the value changes.
+ * @param onSearchStarted Handler when the search starts, by focusing the input field.
+ * @param leadingIcon The icon at the start of the search component that's customizable, but shows
  * [DefaultSearchLeadingIcon] by default.
- * @param label - The label shown in the search component, when there's no input.
- * */
+ * @param label The label shown in the search component, when there's no input.
+ */
 @Composable
 public fun SearchInput(
     query: String,
@@ -103,7 +103,7 @@ public fun SearchInput(
 
 /**
  * Default search input field leading "search" icon.
- * */
+ */
 @Composable
 internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
     Icon(
@@ -116,7 +116,7 @@ internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
 
 /**
  * Default search input field label.
- * */
+ */
 @Composable
 internal fun DefaultSearchLabel() {
     Text(

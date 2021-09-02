@@ -26,18 +26,18 @@ import io.getstream.chat.android.offline.ChatDomain
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and
  * show it on the UI.
  *
- * @param modifier - Modifier for styling.
- * @param viewModel - The ViewModel that loads all the data and connects it to the UI. We provide a
+ * @param modifier Modifier for styling.
+ * @param viewModel The ViewModel that loads all the data and connects it to the UI. We provide a
  * factory that builds the default ViewModel in case the user doesn't want to provide their own.
- * @param onLastItemReached - Handler for pagination, when the user reaches the last item in the list.
- * @param onChannelClick - Handler for a single item tap.
- * @param onChannelLongClick - Handler for a long item tap.
- * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent - Composable that represents the empty content if there are no channels.
- * @param itemContent - UI lambda function that allows the user to completely customize the item UI.
+ * @param onLastItemReached Handler for pagination, when the user reaches the last item in the list.
+ * @param onChannelClick Handler for a single item tap.
+ * @param onChannelLongClick Handler for a long item tap.
+ * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent Composable that represents the empty content if there are no channels.
+ * @param itemContent UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
- * */
+ */
 @Composable
 public fun ChannelList(
     modifier: Modifier = Modifier,
@@ -93,18 +93,18 @@ public fun ChannelList(
  *
  * If there is data available and it is not empty, we show [Channels].
  *
- * @param modifier - Modifier for styling.
- * @param currentUser - The data of the current user, used various states.
- * @param channelsState - Current state of the Channel list, represented by [ChannelsState].
- * @param onLastItemReached - Handler for pagination, when the user reaches the end of the list.
- * @param onChannelClick - Handler for a single item tap.
- * @param onChannelLongClick - Handler for a long item tap.
- * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent - Composable that represents the empty content if there are no channels.
- * @param itemContent - UI lambda function that allows the user to completely customize the item UI.
+ * @param modifier Modifier for styling.
+ * @param currentUser The data of the current user, used various states.
+ * @param channelsState Current state of the Channel list, represented by [ChannelsState].
+ * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
+ * @param onChannelClick Handler for a single item tap.
+ * @param onChannelLongClick Handler for a long item tap.
+ * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent Composable that represents the empty content if there are no channels.
+ * @param itemContent UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
- * */
+ */
 @Composable
 public fun ChannelList(
     channelsState: ChannelsState,
@@ -141,12 +141,12 @@ public fun ChannelList(
 /**
  * Builds a list of [DefaultChannelItem] elements, based on [channelsState] and action handlers that it receives.
  *
- * @param channelsState - exposes if we're loading more items, reaches the end of the list and the
+ * @param channelsState Exposes if we're loading more items, reaches the end of the list and the
  * current list of channels to show.
- * @param onLastItemReached - Handler for when the user reaches the end of the list.
- * @param itemContent - Customizable UI component, that represents each item in the list.
- * @param modifier - Modifier for styling.
- * */
+ * @param onLastItemReached Handler for when the user reaches the end of the list.
+ * @param itemContent Customizable UI component, that represents each item in the list.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun Channels(
     channelsState: ChannelsState,

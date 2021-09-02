@@ -6,7 +6,7 @@ package io.getstream.chat.android.compose.state.messages.attachments
  * [Images] - Picking media items from the device.
  * [Files] - Picking files from the device.
  * [MediaCapture] - Capturing images/videos.
- * */
+ */
 public sealed class AttachmentsPickerMode
 
 public object Images : AttachmentsPickerMode()
