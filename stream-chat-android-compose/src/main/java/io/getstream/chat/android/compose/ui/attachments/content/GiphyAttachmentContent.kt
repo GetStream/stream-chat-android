@@ -33,7 +33,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
  *
  * @param attachmentState - The attachment to show.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun GiphyAttachmentContent(attachmentState: AttachmentState) {

@@ -35,7 +35,7 @@ import io.getstream.chat.android.offline.ChatDomain
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @Composable
 public fun FileAttachmentContent(attachmentState: AttachmentState) {
     val (modifier, messageItem, _) = attachmentState

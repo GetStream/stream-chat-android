@@ -38,7 +38,7 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {

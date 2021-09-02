@@ -7,7 +7,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentCo
 /**
  * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class FileAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.isNotEmpty() },
     content = @Composable { FileAttachmentContent(it) }

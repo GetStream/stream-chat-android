@@ -11,7 +11,7 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * build the UI for the message.
  *
  * @param linkDescriptionLineLimit - The limit of how many lines we show for the link description.
- * */
+ */
 public class LinkAttachmentFactory(
     linkDescriptionLineLimit: Int,
 ) : AttachmentFactory(
