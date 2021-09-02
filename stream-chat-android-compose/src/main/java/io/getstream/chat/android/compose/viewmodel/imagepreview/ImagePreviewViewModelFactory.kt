@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 /**
  * Holds the dependencies required for the Image Preview Screen.
  * Currently builds the [ImagePreviewViewModel] using those dependencies.
- * */
+ */
 public class ImagePreviewViewModelFactory(
     private val chatClient: ChatClient,
     private val messageId: String,

@@ -38,14 +38,14 @@ import io.getstream.chat.android.compose.ui.util.getDisplayName
  * This allows the user to fully govern how the [MessageListHeader] behaves, by passing in all the
  * data that's required to display it and drive its actions.
  *
- * @param modifier - Modifier for styling.
- * @param channel - Channel info to display.
- * @param currentUser - The current user, required for different UI states.
- * @param isNetworkAvailable - A flag that governs if we show the subtitle or the network loading view.
- * @param messageMode - The current message mode, that changes the header content, if we're in a Thread.
- * @param onBackPressed - Handler that propagates the back button click event.
- * @param onHeaderActionClick - Action handler when the user taps on the header action.
- * */
+ * @param modifier Modifier for styling.
+ * @param channel Channel info to display.
+ * @param currentUser The current user, required for different UI states.
+ * @param isNetworkAvailable A flag that governs if we show the subtitle or the network loading view.
+ * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
+ * @param onBackPressed Handler that propagates the back button click event.
+ * @param onHeaderActionClick Action handler when the user taps on the header action.
+ */
 @Composable
 public fun MessageListHeader(
     channel: Channel,
@@ -121,11 +121,11 @@ public fun MessageListHeader(
  * Wrapper for the title of the header, that handles if we should show a loading view for network,
  * or the channel information.
  *
- * @param modifier - Modifier for styling.
- * @param title - The title of the header.
- * @param subtitle - The subtitle of the header - usually information about channel members.
- * @param isNetworkAvailable - A flag that governs if we show the subtitle or the network loading view.
- * */
+ * @param modifier Modifier for styling.
+ * @param title The title of the header.
+ * @param subtitle The subtitle of the header - usually information about channel members.
+ * @param isNetworkAvailable A flag that governs if we show the subtitle or the network loading view.
+ */
 @Composable
 private fun MessagesHeaderTitle(
     modifier: Modifier,

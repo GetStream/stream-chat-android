@@ -30,7 +30,7 @@ import io.getstream.chat.android.compose.ui.util.hasLink
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class LinkAttachmentFactory : AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && it.type != "giphy" } },
     content = @Composable { LinkAttachmentContent(it) }
@@ -44,7 +44,7 @@ public class LinkAttachmentFactory : AttachmentFactory(
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun LinkAttachmentContent(attachmentState: AttachmentState) {

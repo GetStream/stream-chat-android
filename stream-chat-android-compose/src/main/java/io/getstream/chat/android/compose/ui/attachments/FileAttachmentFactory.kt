@@ -33,7 +33,7 @@ import io.getstream.chat.android.offline.ChatDomain
 /**
  * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class FileAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.isNotEmpty() },
     content = @Composable { FileAttachmentContent(it) }
@@ -44,7 +44,7 @@ public class FileAttachmentFactory : AttachmentFactory(
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @Composable
 public fun FileAttachmentContent(attachmentState: AttachmentState) {
     val (modifier, messageItem, _) = attachmentState

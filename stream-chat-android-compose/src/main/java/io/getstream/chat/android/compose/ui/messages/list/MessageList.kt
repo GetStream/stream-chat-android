@@ -46,21 +46,21 @@ import kotlin.math.abs
  * handling operations. It also delegates events to the ViewModel to handle, like long item
  * clicks and pagination.
  *
- * @param viewModel - The ViewModel that stores all the data and business logic required to show a
+ * @param viewModel The ViewModel that stores all the data and business logic required to show a
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
- * @param modifier - Modifier for styling.
- * @param onThreadClick - Handler when the user taps on the message, while there's a thread going.
- * @param onLongItemClick - Handler for when the user long taps on a message and selects it.
- * @param onMessagesStartReached - Handler for pagination.
- * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrollToBottom - Handler when the user reaches the bottom.
- * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent - Composable that represents the empty content if there are no messages.
- * @param itemContent - Composable that represents each message item in a list. By default, we provide
+ * @param modifier Modifier for styling.
+ * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
+ * @param onLongItemClick Handler for when the user long taps on a message and selects it.
+ * @param onMessagesStartReached Handler for pagination.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onScrollToBottom Handler when the user reaches the bottom.
+ * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent Composable that represents the empty content if there are no messages.
+ * @param itemContent Composable that represents each message item in a list. By default, we provide
  * the [DefaultMessageContainer] and connect the the long click handler with it.
  * Users can override this to provide fully custom UI and behavior.
- * */
+ */
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
@@ -97,18 +97,18 @@ public fun MessageList(
  * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
- * @param modifier - Modifier for styling.
- * @param currentState - The state of the component, represented by [MessagesState].
- * @param onMessagesStartReached - Handler for pagination.
- * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrollToBottom - Handler when the user scrolls to the bottom.
- * @param onLongItemClick - Handler for when the user long taps on an item.
- * @param onThreadClick - Handler for when the user taps on a message with an active thread.
- * @param loadingContent - Composable that represents the loading content, when we're loading the initial data.
- * @param emptyContent - Composable that represents the empty content if there are no messages.
- * @param itemContent - Composable that represents each item in the list, that the user can override
+ * @param modifier Modifier for styling.
+ * @param currentState The state of the component, represented by [MessagesState].
+ * @param onMessagesStartReached Handler for pagination.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onScrollToBottom Handler when the user scrolls to the bottom.
+ * @param onLongItemClick Handler for when the user long taps on an item.
+ * @param onThreadClick Handler for when the user taps on a message with an active thread.
+ * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
+ * @param emptyContent Composable that represents the empty content if there are no messages.
+ * @param itemContent Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
- * */
+ */
 @Composable
 public fun MessageList(
     currentState: MessagesState,
@@ -151,14 +151,14 @@ public fun MessageList(
  * Finally, it handles the scrolling behavior, such as when a new message arrives, be it ours or from
  * someone else.
  *
- * @param messagesState - Current state of messages, like messages to display, if we're loading more
+ * @param messagesState Current state of messages, like messages to display, if we're loading more
  * and if we've reached the end of the list.
- * @param onMessagesStartReached - Handler for pagination, when the user reaches the start of messages.
- * @param onLastVisibleMessageChanged - Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrollToBottom - Handler when the user reaches the bottom of the list.
- * @param itemContent - Composable that represents the item that displays each message.
- * @param modifier - Modifier for styling.
- * */
+ * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
+ * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
+ * @param onScrollToBottom Handler when the user reaches the bottom of the list.
+ * @param itemContent Composable that represents the item that displays each message.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun Messages(
     messagesState: MessagesState,
@@ -237,9 +237,9 @@ public fun Messages(
  * Shows an option when the user scrolls away from the bottom of the list. If there are any new messages it also gives
  * the user information on how many messages they haven't read.
  *
- * @param unreadCount - The count of unread messages.
- * @param onClick - The handler that's triggered when the user taps on the action.
- * */
+ * @param unreadCount The count of unread messages.
+ * @param onClick The handler that's triggered when the user taps on the action.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BoxScope.MessagesScrollingOption(
