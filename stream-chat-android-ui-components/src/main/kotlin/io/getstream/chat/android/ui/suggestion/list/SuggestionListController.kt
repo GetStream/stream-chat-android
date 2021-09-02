@@ -5,7 +5,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.message.input.mention.UserLookupHandler
 import io.getstream.chat.android.ui.suggestion.Suggestions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

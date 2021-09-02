@@ -33,7 +33,6 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.message.input.mention.UserLookupHandler
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
@@ -687,5 +686,18 @@ public class MessageInputView : ConstraintLayout {
     @FunctionalInterface
     public interface BigFileSelectionListener {
         public fun handleBigFileSelected(hasBigFile: Boolean)
+    }
+
+    /**
+     * Users lookup functional interface. Used to create custom users lookup algorithm.
+     */
+    public interface UserLookupHandler {
+        /**
+         * Performs users lookup by given [query] in suspend way. It's executed on background, so it can perform heavy operations.
+         *
+         * @param query String as user input for lookup algorithm.
+         * @return List of users as result of lookup.
+         */
+        public suspend fun handleUserLookup(query: String): List<User>
     }
 }
