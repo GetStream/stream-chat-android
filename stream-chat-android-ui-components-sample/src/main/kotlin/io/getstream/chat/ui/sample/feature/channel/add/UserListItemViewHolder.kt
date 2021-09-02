@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding

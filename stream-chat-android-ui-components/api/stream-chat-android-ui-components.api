@@ -456,16 +456,18 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 }
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff {
-	public fun <init> (ZZZZZ)V
+	public fun <init> (ZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (ZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public final fun component6 ()Z
+	public final fun copy (ZZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarViewChanged ()Z
+	public final fun getExtraDataChanged ()Z
 	public final fun getLastMessageChanged ()Z
 	public final fun getNameChanged ()Z
 	public final fun getReadStateChanged ()Z
@@ -903,12 +905,14 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
-public class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
+public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
+	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
 	public static final field TYPE_KEY Ljava/lang/String;
 	public static final field URL_KEY Ljava/lang/String;
 	public fun <init> ()V
-	protected fun onCreate (Landroid/os/Bundle;)V
-	public fun playVideo (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
 }
 
 public final class io/getstream/chat/android/ui/gallery/overview/MediaAttachmentGridView : android/widget/FrameLayout {

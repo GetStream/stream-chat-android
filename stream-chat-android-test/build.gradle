@@ -19,7 +19,6 @@ dependencies {
     api project(":stream-chat-android-core")
 
     implementation Dependencies.androidxLifecycleLiveDataKtx
-    implementation Dependencies.kotlinStdLib
     api Dependencies.coroutinesTest
     implementation Dependencies.androidxArchCoreTest
     implementation Dependencies.junitJupiterApi

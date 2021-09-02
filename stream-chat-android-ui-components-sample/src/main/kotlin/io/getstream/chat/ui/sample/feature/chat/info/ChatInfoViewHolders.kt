@@ -5,8 +5,6 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.image
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
