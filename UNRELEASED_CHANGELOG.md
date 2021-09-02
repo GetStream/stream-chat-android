@@ -62,7 +62,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- The search for mentions now include transliteration, diacritics removal and ignore typos.To use transliteration, pass the id of the desired alphabets to `DefaultUserLookupHandler` and set it using `MessageInputView.setUserLookupHandler`. 
+- The search for mentions now includes transliteration, diacritics removal, and ignore typos. To use transliteration, pass the id of the desired alphabets to `DefaultUserLookupHandler` and set it using `MessageInputView.setUserLookupHandler`.
 
 ### ✅ Added
 
