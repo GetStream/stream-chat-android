@@ -43,7 +43,6 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
-import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
@@ -192,28 +191,18 @@ internal open class BaseChatModule(
     }
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
-        return if (chatConfig.enableMoshi) {
-            MoshiChatApi(
-                fileUploader ?: defaultFileUploader,
-                buildRetrofitApi<UserApi>(),
-                buildRetrofitApi<GuestApi>(),
-                buildRetrofitApi<MessageApi>(),
-                buildRetrofitApi<ChannelApi>(),
-                buildRetrofitApi<DeviceApi>(),
-                buildRetrofitApi<ModerationApi>(),
-                buildRetrofitApi<GeneralApi>(),
-                networkScope,
-            )
-        } else {
-            GsonChatApi(
-                buildRetrofitApi<RetrofitApi>(),
-                buildRetrofitApi<RetrofitAnonymousApi>(),
-                UuidGeneratorImpl(),
-                fileUploader ?: defaultFileUploader,
-                networkScope,
-            )
-        }
+    private fun buildApi(): ChatApi {
+        return MoshiChatApi(
+            fileUploader ?: defaultFileUploader,
+            buildRetrofitApi<UserApi>(),
+            buildRetrofitApi<GuestApi>(),
+            buildRetrofitApi<MessageApi>(),
+            buildRetrofitApi<ChannelApi>(),
+            buildRetrofitApi<DeviceApi>(),
+            buildRetrofitApi<ModerationApi>(),
+            buildRetrofitApi<GeneralApi>(),
+            networkScope,
+        )
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {

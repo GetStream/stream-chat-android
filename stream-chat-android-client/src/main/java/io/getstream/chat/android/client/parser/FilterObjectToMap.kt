@@ -1,9 +1,5 @@
 package io.getstream.chat.android.client.parser
 
-import com.google.gson.Gson
-import com.google.gson.TypeAdapter
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
 import io.getstream.chat.android.client.api.models.AndFilterObject
 import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.ContainsFilterObject
@@ -22,18 +18,6 @@ import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
 import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
-
-internal class FilterObjectTypeAdapter(val gson: Gson) : TypeAdapter<FilterObject>() {
-
-    override fun write(out: JsonWriter, filterObject: FilterObject) {
-        val adapter = gson.getAdapter(Map::class.java)
-        adapter.write(out, filterObject.toMap())
-    }
-
-    override fun read(reader: JsonReader): FilterObject? {
-        return null
-    }
-}
 
 internal fun FilterObject.toMap(): Map<*, *> = when (this) {
     is AndFilterObject -> mapOf(KEY_AND to this.filterObjects.map(FilterObject::toMap))
@@ -60,7 +44,6 @@ private const val KEY_CONTAINS: String = "\$contains"
 private const val KEY_AND: String = "\$and"
 private const val KEY_OR: String = "\$or"
 private const val KEY_NOR: String = "\$nor"
-private const val KEY_EQUALS: String = "\$ne"
 private const val KEY_NOT_EQUALS: String = "\$ne"
 private const val KEY_GREATER_THAN: String = "\$gt"
 private const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
