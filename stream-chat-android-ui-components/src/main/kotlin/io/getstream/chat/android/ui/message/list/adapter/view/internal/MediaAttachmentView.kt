@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -20,6 +21,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+
+private const val DEFAULT_GIPHY_HEIGHT = 200
 
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -72,10 +75,8 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
         if (attachment.type == ModelType.attach_giphy) {
-            val params = binding.imageView.layoutParams
-
-            binding.imageView.layoutParams = params.apply {
-                height = 200.dpToPx()
+            binding.imageView.updateLayoutParams {
+                height = DEFAULT_GIPHY_HEIGHT.dpToPx()
             }
         }
 
