@@ -34,7 +34,7 @@ internal fun String.isAnonymousChannelId(): Boolean = contains("!members")
  */
 @Throws(IllegalStateException::class)
 public fun String.cidToTypeAndId(): Pair<String, String> {
-    require(isNotEmpty()) { "cid can not be empty" }
-    require(':' in this) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
-    return requireNotNull(split(":").takeIf { it.size >= 2 }?.let { it.first() to it.last() })
+    check(isNotEmpty()) { "cid can not be empty" }
+    check(':' in this) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
+    return checkNotNull(split(":").takeIf { it.size >= 2 }?.let { it.first() to it.last() })
 }
