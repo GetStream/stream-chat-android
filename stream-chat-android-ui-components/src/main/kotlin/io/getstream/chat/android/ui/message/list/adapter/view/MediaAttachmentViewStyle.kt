@@ -5,14 +5,17 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView
+
+private const val DEFAULT_GIPHY_HEIGHT = 200
 
 /**
  * Style for [MediaAttachmentView].
@@ -31,6 +34,7 @@ public data class MediaAttachmentViewStyle(
     @ColorInt val imageBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
+    @DimenRes public val giphyHeight: Int,
 ) {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
@@ -79,6 +83,10 @@ public data class MediaAttachmentViewStyle(
                     a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
+                val giphyHeight =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentGiphyHeight,
+                        DEFAULT_GIPHY_HEIGHT.dpToPx())
+
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     giphyIcon = giphyIcon,
@@ -86,6 +94,7 @@ public data class MediaAttachmentViewStyle(
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
+                    giphyHeight = giphyHeight,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

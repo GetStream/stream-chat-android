@@ -22,8 +22,6 @@ import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
 
-private const val DEFAULT_GIPHY_HEIGHT = 200
-
 internal class MediaAttachmentView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
@@ -76,7 +74,7 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         if (attachment.type == ModelType.attach_giphy) {
             binding.imageView.updateLayoutParams {
-                height = DEFAULT_GIPHY_HEIGHT.dpToPx()
+                height = style.giphyHeight
             }
         }
 
