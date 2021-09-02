@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api2.GeneralApi
 import io.getstream.chat.android.client.api2.GuestApi
 import io.getstream.chat.android.client.api2.MessageApi
 import io.getstream.chat.android.client.api2.ModerationApi
-import io.getstream.chat.android.client.api2.MoshiApi
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.UserApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -211,13 +210,10 @@ internal open class BaseChatModule(
             config.httpUrl,
             config.baseTimeout,
             config,
-            if (apiClass.isMoshiApi) moshiParser else gsonParser,
+            moshiParser,
             apiClass.isAnonymousApi,
         ).create(apiClass)
     }
-
-    private val Class<*>.isMoshiApi: Boolean
-        get() = this.annotations.any { it is MoshiApi }
 
     private val Class<*>.isAnonymousApi: Boolean
         get() {
@@ -240,8 +236,8 @@ internal open class BaseChatModule(
             config.cdnHttpUrl,
             config.cdnTimeout,
             config,
-            if (apiClass.isMoshiApi) moshiParser else gsonParser,
-            apiClass.isAnonymousApi
+            moshiParser,
+            apiClass.isAnonymousApi,
         ).create(apiClass)
     }
 }
