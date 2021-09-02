@@ -1193,15 +1193,11 @@ public class ChannelController internal constructor(
         _members.value = _members.value - userId
     }
 
-    internal fun upsertMembers(members: List<Member>) {
+    private fun upsertMembers(members: List<Member>) {
         _members.value = _members.value + members.associateBy { it.user.id }
     }
 
-    internal suspend fun removeMembers(vararg userIds: String): Result<Channel> {
-        return channelClient.removeMembers(*userIds).await()
-    }
-
-    internal fun upsertMember(member: Member) {
+    private fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 
