@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
+    private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             notifyListenersIfActiveNetworkAvailable()
@@ -55,16 +56,20 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     }
 
     fun subscribe(listener: NetworkStateListener) {
-        listeners = listeners + listener
-        if (isRegistered.compareAndSet(false, true)) {
-            connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+        synchronized(lock) {
+            listeners = listeners + listener
+            if (isRegistered.compareAndSet(false, true)) {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+            }
         }
     }
 
     fun unsubscribe(listener: NetworkStateListener) {
-        listeners = (listeners - listener).also {
-            if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
-                connectivityManager.unregisterNetworkCallback(callback)
+        synchronized(lock) {
+            listeners = (listeners - listener).also {
+                if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
+                    connectivityManager.unregisterNetworkCallback(callback)
+                }
             }
         }
     }
