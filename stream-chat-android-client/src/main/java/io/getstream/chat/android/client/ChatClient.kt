@@ -1535,7 +1535,6 @@ public class ChatClient internal constructor(
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 30_000L
         private var cdnTimeout = 30_000L
-        private var enableMoshi = true
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
@@ -1564,24 +1563,6 @@ public class ChatClient internal constructor(
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
             return this
-        }
-
-        /**
-         * A new serialization implementation is now used by default by the SDK.
-         *
-         * If you experience any issues with the new implementation, call this builder method with `false`
-         * as the parameter to revert to the old implementation. Note that the old implementation will be
-         * removed soon.
-         *
-         * To check for issues caused by new serialization, enable error logs using the [logLevel]
-         * method and look for the NEW_SERIALIZATION_ERROR tag in your logs.
-         */
-        @Deprecated(
-            message = "Old serialization will be removed soon",
-            level = DeprecationLevel.ERROR,
-        )
-        public fun useNewSerialization(enabled: Boolean): Builder = apply {
-            this.enableMoshi = enabled
         }
 
         public fun baseTimeout(timeout: Long): Builder {
@@ -1654,8 +1635,6 @@ public class ChatClient internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )
-
-            config.enableMoshi = enableMoshi
 
             val module =
                 ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)

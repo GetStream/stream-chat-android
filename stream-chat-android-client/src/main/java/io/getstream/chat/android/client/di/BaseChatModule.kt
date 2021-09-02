@@ -7,9 +7,6 @@ import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.GsonChatApi
-import io.getstream.chat.android.client.api.RetrofitAnonymousApi
-import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
@@ -34,7 +31,6 @@ import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser.GsonChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
@@ -60,15 +56,14 @@ internal open class BaseChatModule(
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
 
-    private val gsonParser: ChatParser by lazy { GsonChatParser() }
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
     private val defaultNotifications by lazy {
         buildNotification(notificationsHandler, api())
     }
-    private val defaultApi by lazy { buildApi(config) }
+    private val defaultApi by lazy { buildApi() }
     private val defaultSocket by lazy {
-        buildSocket(config, if (config.enableMoshi) moshiParser else gsonParser)
+        buildSocket(config, moshiParser)
     }
     private val defaultFileUploader by lazy {
         StreamFileUploader(buildRetrofitCdnApi())
