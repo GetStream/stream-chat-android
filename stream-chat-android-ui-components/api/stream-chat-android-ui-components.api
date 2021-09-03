@@ -1070,7 +1070,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListViewHolderFactory (Lio/getstream/chat/android/ui/suggestion/list/adapter/SuggestionListItemViewHolderFactory;)V
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
-	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/mention/UserLookupHandler;)V
+	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$BigFileSelectionListener {
@@ -1149,6 +1149,10 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$TypingListener {
 	public abstract fun onKeystroke ()V
 	public abstract fun onStopTyping ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public abstract fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputViewStyle {
@@ -1325,16 +1329,12 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 }
 
-public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/mention/UserLookupHandler {
+public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
 	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getUsers ()Ljava/util/List;
 	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun setUsers (Ljava/util/List;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/message/input/mention/UserLookupHandler {
-	public abstract fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/ui/message/input/viewmodel/MessageInputViewModelBinding {
@@ -2361,14 +2361,14 @@ public final class io/getstream/chat/android/ui/suggestion/list/SuggestionListCo
 	public final fun getCommands ()Ljava/util/List;
 	public final fun getCommandsEnabled ()Z
 	public final fun getMentionsEnabled ()Z
-	public final fun getUserLookupHandler ()Lio/getstream/chat/android/ui/message/input/mention/UserLookupHandler;
+	public final fun getUserLookupHandler ()Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;
 	public final fun hideSuggestionList ()V
 	public final fun isSuggestionListVisible ()Z
 	public final fun onNewMessageText (Ljava/lang/String;)V
 	public final fun setCommands (Ljava/util/List;)V
 	public final fun setCommandsEnabled (Z)V
 	public final fun setMentionsEnabled (Z)V
-	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/mention/UserLookupHandler;)V
+	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun showAvailableCommands ()V
 }
 
