@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes.defaultReactionTypes
+import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
 /**
@@ -42,11 +42,12 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
- * @param isInDarkMode If we're currently in the dark mode or not.
+ * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
+ * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
- * @param attachmentFactories Attachment factories that we provide. By default, images and files.
+ * @param attachmentFactories Attachment factories that we provide.
  * @param reactionTypes The reaction types supported in the Messaging screen.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param content The content shown within the theme wrapper.
@@ -55,10 +56,10 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
-    typography: StreamTypography = StreamTypography.default,
-    shapes: StreamShapes = StreamShapes.default,
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories,
-    reactionTypes: Map<String, Int> = defaultReactionTypes,
+    typography: StreamTypography = StreamTypography.defaultTypography(),
+    shapes: StreamShapes = StreamShapes.defaultShapes(),
+    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
@@ -82,8 +83,8 @@ public fun ChatTheme(
 public object ChatTheme {
 
     /**
-     * These represent the default ease-of-use accessors for colors, typography, shapes, attachment factories and
-     * reaction types.
+     * These represent the default ease-of-use accessors for different properties used to style and customize the app
+     * look and feel.
      */
     public val colors: StreamColors
         @Composable

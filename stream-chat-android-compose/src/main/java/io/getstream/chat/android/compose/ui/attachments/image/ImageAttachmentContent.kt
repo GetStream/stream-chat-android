@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments
+package io.getstream.chat.android.compose.ui.attachments.image
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -32,15 +32,6 @@ import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
-
-/**
- * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
- * build the UI for the message.
- */
-public class ImageAttachmentFactory : AttachmentFactory(
-    canHandle = { attachments -> attachments.all { it.isMedia() } },
-    content = @Composable { ImageAttachmentContent(it) }
-)
 
 /**
  * Builds an image attachment message, which can be composed of several images.
