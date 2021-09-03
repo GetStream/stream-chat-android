@@ -38,13 +38,13 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  *
- * @param descriptionLineLimit - The limit of how many lines we show for the link description.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
-    descriptionLineLimit: Int,
+    linkDescriptionMaxLines: Int,
 ) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
@@ -122,7 +122,7 @@ public fun LinkAttachmentContent(
                 text = description,
                 style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textHighEmphasis,
-                maxLines = descriptionLineLimit,
+                maxLines = linkDescriptionMaxLines,
                 overflow = TextOverflow.Ellipsis
             )
         }

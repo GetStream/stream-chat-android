@@ -9,11 +9,11 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
  *
- * @param linkDescriptionLineLimit - The limit of how many lines we show for the link description.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  */
 public class LinkAttachmentFactory(
-    linkDescriptionLineLimit: Int,
+    linkDescriptionMaxLines: Int,
 ) : AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
-    content = @Composable { LinkAttachmentContent(it, linkDescriptionLineLimit) }
+    content = @Composable { LinkAttachmentContent(it, linkDescriptionMaxLines) }
 )
