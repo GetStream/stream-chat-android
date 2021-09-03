@@ -1193,15 +1193,11 @@ public class ChannelController internal constructor(
         _members.value = _members.value - userId
     }
 
-    internal fun upsertMembers(members: List<Member>) {
+    private fun upsertMembers(members: List<Member>) {
         _members.value = _members.value + members.associateBy { it.user.id }
     }
 
-    internal suspend fun removeMembers(vararg userIds: String): Result<Channel> {
-        return channelClient.removeMembers(*userIds).await()
-    }
-
-    internal fun upsertMember(member: Member) {
+    private fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 
@@ -1479,7 +1475,7 @@ public class ChannelController internal constructor(
     public sealed class MessagesState {
         /** The ChannelController is initialized but no query is currently running.
          * If you know that a query will be started you typically want to display a loading icon.
-         * */
+         */
         public object NoQueryActive : MessagesState()
 
         /** Indicates we are loading the first page of results.
@@ -1489,7 +1485,7 @@ public class ChannelController internal constructor(
          * @see loading
          * @see loadingNewerMessages
          * @see loadingOlderMessages
-         * */
+         */
         public object Loading : MessagesState()
 
         /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
@@ -1498,7 +1494,7 @@ public class ChannelController internal constructor(
         /** The list of messages, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
          * @see ChatDomainImpl.online
-         * */
+         */
         public data class Result(val messages: List<Message>) : MessagesState()
     }
 

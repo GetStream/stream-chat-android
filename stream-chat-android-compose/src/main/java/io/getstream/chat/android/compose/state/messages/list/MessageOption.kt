@@ -9,12 +9,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * UI representation of a Message option, when the user selects a message in the list.
  *
- * @param title - The title to represent the action.
- * @param titleColor - The color of the title text.
- * @param icon - The icon to represent the action.
- * @param iconColor - The color of the icon.
- * @param action - The [MessageAction] the option represents.
- * */
+ * @param title The title to represent the action.
+ * @param titleColor The color of the title text.
+ * @param icon The icon to represent the action.
+ * @param iconColor The color of the icon.
+ * @param action The [MessageAction] the option represents.
+ */
 
 public class MessageOption(
     @StringRes public val title: Int,

@@ -19,17 +19,17 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [MessageListHeaderView].
  * Use this class together with [TransformStyle.messageListHeaderStyleTransformer] to change [MessageListHeaderView] styles programmatically.
  *
- * @property titleTextStyle - appearance for title text
- * @property offlineTextStyle - appearance for offline text
- * @property searchingForNetworkTextStyle - appearance for searching for network text
- * @property onlineTextStyle - appearance for online text
- * @property showUserAvatar - shows/hides user avatar. Shown by default
- * @property backButtonIcon - icon for back button. Default - [R.drawable.stream_ui_arrow_left]
- * @property showBackButton - shows/hides back button. Shown by default
- * @property showBackButtonBadge - shows/hides unread badge. Hidden by default
- * @property backButtonBadgeBackgroundColor - unread badge color. Default - [R.color.stream_ui_accent_red]
- * @property showSearchingForNetworkProgressBar - shows/hides searching for network progress bar. Shown by default
- * @property searchingForNetworkProgressBarTint - progress bar tint color. Default - [R.color.stream_ui_accent_blue]
+ * @property titleTextStyle Appearance for title text.
+ * @property offlineTextStyle Appearance for offline text.
+ * @property searchingForNetworkTextStyle Appearance for searching for network text.
+ * @property onlineTextStyle Appearance for online text.
+ * @property showUserAvatar Shows/hides user avatar. Shown by default.
+ * @property backButtonIcon Icon for back button. Default value is [R.drawable.stream_ui_arrow_left].
+ * @property showBackButton Shows/hides back button. Shown by default.
+ * @property showBackButtonBadge Shows/hides unread badge. Hidden by default.
+ * @property backButtonBadgeBackgroundColor Unread badge color. Default value is [R.color.stream_ui_accent_red].
+ * @property showSearchingForNetworkProgressBar Shows/hides searching for network progress bar. Shown by default.
+ * @property searchingForNetworkProgressBarTint Progress bar tint color. Default value is [R.color.stream_ui_accent_blue].
  */
 public data class MessageListHeaderViewStyle(
     @ColorInt public val background: Int,
