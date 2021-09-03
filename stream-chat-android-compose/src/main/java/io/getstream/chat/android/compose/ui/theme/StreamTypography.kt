@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
  * @param footnoteBold Used for footnote information in certain important items, like the thread reply text, or user
  * info components.
  */
-public class StreamTypography(
+public data class StreamTypography(
     public val title1: TextStyle,
     public val title3: TextStyle,
     public val title3Bold: TextStyle,
@@ -35,8 +35,10 @@ public class StreamTypography(
     public companion object {
         /**
          * Builds the default typography set for our theme.
+         *
+         * @return [StreamTypography] that holds all the default text styles that we support.
          */
-        public val default: StreamTypography = StreamTypography(
+        public fun defaultTypography(): StreamTypography = StreamTypography(
             title1 = TextStyle(
                 fontSize = 24.sp,
                 lineHeight = 34.sp,

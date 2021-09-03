@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments
+package io.getstream.chat.android.compose.ui.attachments.giphy
 
 import android.content.Intent
 import android.net.Uri
@@ -28,15 +28,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * An extensions of the [AttachmentFactory] that validates and shows Giphy attachments.
- */
-public class GiphyAttachmentFactory : AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
-    content = @Composable { GiphyAttachmentContent(it) }
-)
-
-/**
- * Represents the content that [GiphyAttachmentFactory] produces for any given Giphy attachment.
+ * Builds a Giphy attachment message.
  *
  * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
  *

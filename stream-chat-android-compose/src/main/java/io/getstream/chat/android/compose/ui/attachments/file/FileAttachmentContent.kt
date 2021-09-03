@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments
+package io.getstream.chat.android.compose.ui.attachments.file
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,16 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
- * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
- * build the UI for the message.
- */
-public class FileAttachmentFactory : AttachmentFactory(
-    canHandle = { attachments -> attachments.isNotEmpty() },
-    content = @Composable { FileAttachmentContent(it) }
-)
-
-/**
- * Builds a file attachment message.
+ * Builds a file attachment message using.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
