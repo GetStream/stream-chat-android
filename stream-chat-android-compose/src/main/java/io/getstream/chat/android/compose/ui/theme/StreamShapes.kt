@@ -8,14 +8,14 @@ import androidx.compose.ui.unit.dp
 /**
  * Contains all the shapes we provide for our components.
  *
- * @param avatar - The avatar shape.
- * @param myMessageBubble - The bubble that wraps my message content.
- * @param otherMessageBubble - The bubble that wraps other people's message content.
- * @param inputField - The shape of the input field.
- * @param attachment - The shape of attachments.
- * @param imageThumbnail - The shape of image thumbnails, shown in selected attachments and image file attachments.
- * @param bottomSheet - The shape of components used as bottom sheets.
- * */
+ * @param avatar The avatar shape.
+ * @param myMessageBubble The bubble that wraps my message content.
+ * @param otherMessageBubble The bubble that wraps other people's message content.
+ * @param inputField The shape of the input field.
+ * @param attachment The shape of attachments.
+ * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
+ * @param bottomSheet The shape of components used as bottom sheets.
+ */
 public data class StreamShapes(
     public val avatar: Shape,
     public val myMessageBubble: Shape,

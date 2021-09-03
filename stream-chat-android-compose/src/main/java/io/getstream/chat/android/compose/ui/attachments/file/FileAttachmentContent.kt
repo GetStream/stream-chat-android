@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
- * Builds a file attachment message.
+ * Builds a file attachment message using.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.

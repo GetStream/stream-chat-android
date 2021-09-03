@@ -46,14 +46,14 @@ import io.getstream.chat.android.offline.ChatDomain
  * Because this screen can be shown only if there is an active/selected Channel, the user must provide
  * a [channelId] in order to load up all the data. Otherwise, we can't show the UI.
  *
- * @param channelId - The ID of the opened/active Channel.
- * @param messageLimit - The limit of messages per query.
- * @param showHeader - If we're showing the header or not.
- * @param enforceUniqueReactions - If we need to enforce unique reactions or not.
- * @param onBackPressed - Handler for when the user taps on the Back button and/or the system
+ * @param channelId The ID of the opened/active Channel.
+ * @param messageLimit The limit of messages per query.
+ * @param showHeader If we're showing the header or not.
+ * @param enforceUniqueReactions If we need to enforce unique reactions or not.
+ * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
- * @param onHeaderActionClick - Handler for when the user taps on the header action.
- * */
+ * @param onHeaderActionClick Handler for when the user taps on the header action.
+ */
 @Composable
 public fun MessagesScreen(
     channelId: String,
@@ -188,10 +188,10 @@ public fun MessagesScreen(
 /**
  * Builds the [MessagesViewModelFactory] required to run the Conversation/Messages screen.
  *
- * @param context - Used to build the [ClipboardManager].
- * @param channelId - The current channel ID, to load the messages from.
- * @param messageLimit - The limit when loading messages.
- * */
+ * @param context Used to build the [ClipboardManager].
+ * @param channelId The current channel ID, to load the messages from.
+ * @param messageLimit The limit when loading messages.
+ */
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,

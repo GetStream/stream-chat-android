@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -89,7 +90,6 @@ import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
-import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -466,11 +466,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
-        validateCid(cid)
-        val channelController = channel(cid)
-        return CoroutineCall(scope) {
-            channelController.removeMembers(*userIds)
-        }
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return client.removeMembers(channelType, channelId, userIds.toList())
     }
 
     /**

@@ -42,15 +42,15 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
- * @param isInDarkMode - If we're currently in the dark mode or not. Affects only the default color palette that's
+ * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
- * @param colors - The set of colors we provide, wrapped in [StreamColors].
- * @param typography - The set of typography styles we provide, wrapped in [StreamTypography].
- * @param shapes - The set of shapes we provide, wrapped in [StreamShapes].
- * @param attachmentFactories - Attachment factories that we provide.
- * @param reactionTypes - The reaction types supported in the Messaging screen.
- * @param dateFormatter - [DateFormatter] used throughout the app for date and time information.
- * @param content - The content shown within the theme wrapper.
+ * @param colors The set of colors we provide, wrapped in [StreamColors].
+ * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
+ * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param attachmentFactories Attachment factories that we provide.
+ * @param reactionTypes The reaction types supported in the Messaging screen.
+ * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
+ * @param content The content shown within the theme wrapper.
  */
 @Composable
 public fun ChatTheme(

@@ -64,7 +64,7 @@ class ChannelActivity : AppCompatActivity() {
          *
          * You can use the default [ChannelsScreen] component that sets everything up for you,
          * or build a custom component yourself, like [MyCustomUi].
-         * */
+         */
         setContent {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 ChannelsScreen(
@@ -106,7 +106,7 @@ class ChannelActivity : AppCompatActivity() {
      * options that the user can make with each channel, we need to use a [Box] and overlap the
      * two elements. This makes it easier as it's all presented in the same layer, rather than being
      * wrapped in drawers or more components.
-     * */
+     */
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable

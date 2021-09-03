@@ -99,6 +99,11 @@ public sealed interface ChatDomain {
     public fun getVersion(): String
 
     @CheckResult
+    @Deprecated(
+        message = "Use ChatClient::removeMembers directly",
+        replaceWith = ReplaceWith("ChatClient::removeMembers"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
     // region use-case functions

@@ -17,7 +17,7 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  *
  * @param messageItem - The message that contains the attachments.
  * @param onLongItemClick - Handler for long item taps on this content.
- * */
+ */
 @Composable
 public fun MessageAttachmentsContent(
     messageItem: MessageItem,

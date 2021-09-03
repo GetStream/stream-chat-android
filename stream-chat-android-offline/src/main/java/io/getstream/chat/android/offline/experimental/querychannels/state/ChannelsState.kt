@@ -10,7 +10,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 public sealed class ChannelsState {
     /** No query is currently running.
      * If you know that a query will be started you typically want to display a loading icon.
-     * */
+     */
     public object NoQueryActive : ChannelsState()
 
     /** Indicates we are loading the first page of results.
@@ -19,7 +19,7 @@ public sealed class ChannelsState {
      *
      * @see QueryChannelsState.loadingMore
      * @see QueryChannelsState.loading
-     * */
+     */
     public object Loading : ChannelsState()
 
     /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
@@ -28,6 +28,6 @@ public sealed class ChannelsState {
     /** The list of channels, loaded either from offline storage or an API call.
      * Observe chatDomain.online to know if results are currently up to date
      * @see ChatDomainImpl.online
-     * */
+     */
     public data class Result(val channels: List<Channel>) : ChannelsState()
 }

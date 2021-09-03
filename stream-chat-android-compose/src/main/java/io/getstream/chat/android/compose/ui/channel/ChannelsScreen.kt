@@ -41,16 +41,16 @@ import io.getstream.chat.android.offline.ChatDomain
  *
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
  *
- * @param filters - Default filters for channels.
- * @param querySort - Default query sort for channels.
- * @param title - Header title.
- * @param isShowingHeader - If we show the header or hide it.
- * @param isShowingSearch - If we show the search input or hide it.
- * @param onHeaderClickAction - Handler for the default header action.
- * @param onItemClick - Handler for Channel item clicks.
- * @param onViewChannelInfoAction - Handler for when the user selects the [ViewInfo] option for a [Channel].
- * @param onBackPressed - Handler for back press action.
- * */
+ * @param filters Default filters for channels.
+ * @param querySort Default query sort for channels.
+ * @param title Header title.
+ * @param isShowingHeader If we show the header or hide it.
+ * @param isShowingSearch If we show the search input or hide it.
+ * @param onHeaderClickAction Handler for the default header action.
+ * @param onItemClick Handler for Channel item clicks.
+ * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
+ * @param onBackPressed Handler for back press action.
+ */
 @Composable
 public fun ChannelsScreen(
     filters: FilterObject = Filters.and(
