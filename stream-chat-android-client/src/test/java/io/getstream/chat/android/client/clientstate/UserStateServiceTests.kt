@@ -4,8 +4,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalStateException
 
 internal class UserStateServiceTests {
 
@@ -30,13 +28,6 @@ internal class UserStateServiceTests {
 
         Truth.assertThat(sut.state).isInstanceOf(UserState.UserSet::class.java)
         Truth.assertThat(sut.state.userOrError()).isEqualTo(user2)
-    }
-
-    @Test
-    fun `Given Idle state When user updated Should throw an exception`() {
-        val sut = Fixture().please()
-
-        assertThrows<IllegalStateException> { sut.onUserUpdated(Mother.randomUser()) }
     }
 
     @Test
