@@ -33,13 +33,6 @@ internal class UserStateServiceTests {
     }
 
     @Test
-    fun `Given Idle state When user updated Should throw an exception`() {
-        val sut = Fixture().please()
-
-        assertThrows<IllegalStateException> { sut.onUserUpdated(Mother.randomUser()) }
-    }
-
-    @Test
     fun `Given user set state When logout Should move to user not set state`() {
         val sut = Fixture().givenUserSetState().please()
 
