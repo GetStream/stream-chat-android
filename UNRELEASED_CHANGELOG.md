@@ -1,6 +1,6 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- But related to FiniteStateMachine in a wrong state. 
+
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -24,7 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-
+- Fixed bug which can lead to crash when immediate logout after login
 ### ⬆️ Improved
 
 ### ✅ Added
