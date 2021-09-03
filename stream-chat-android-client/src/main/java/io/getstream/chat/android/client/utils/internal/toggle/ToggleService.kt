@@ -8,7 +8,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 @InternalStreamChatApi
 public class ToggleService private constructor(private val sharedPreferences: SharedPreferences) {
 
-    public fun isEnabled(featureKey: String): Boolean = sharedPreferences.getBoolean(featureKey, false) && BuildConfig.DEBUG
+    public fun isEnabled(featureKey: String): Boolean =
+        sharedPreferences.getBoolean(featureKey, false) && BuildConfig.DEBUG
 
     public fun setToggle(featureKey: String, value: Boolean) {
         sharedPreferences.edit()
@@ -17,7 +18,8 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
     }
 
     @Suppress("UNCHECKED_CAST")
-    public fun getToggles(): Map<String, Boolean> = sharedPreferences.all.filter { it.value is Boolean }.toMap() as Map<String, Boolean>
+    public fun getToggles(): Map<String, Boolean> =
+        sharedPreferences.all.filter { it.value is Boolean }.toMap() as Map<String, Boolean>
 
     @InternalStreamChatApi
     public companion object {
@@ -33,7 +35,11 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
         @InternalStreamChatApi
         public fun init(appContext: Context, predefinedValues: Map<String, Boolean> = emptyMap()): ToggleService {
             val sp = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).also {
-                predefinedValues.entries.forEach { (key, value) -> it.edit().putBoolean(key, value).commit() }
+                predefinedValues.entries.forEach { (key, value) ->
+                    if (it.contains(key).not()) {
+                        it.edit().putBoolean(key, value).commit()
+                    }
+                }
             }
 
             return ToggleService(sp).also { instance = it }

@@ -7,13 +7,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingVertical="16dp"
         android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,6 +26,7 @@
         android:padding="2dp"
         android:paddingEnd="8dp"
         android:layout_weight="0.5"
+        app:layout_constraintTop_toBottomOf="@id/listView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="RtlSymmetry"

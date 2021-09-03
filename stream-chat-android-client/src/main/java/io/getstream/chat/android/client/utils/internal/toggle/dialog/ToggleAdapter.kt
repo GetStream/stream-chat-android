@@ -1,50 +1,43 @@
 package io.getstream.chat.android.client.utils.internal.toggle.dialog
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
-import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.R
 
-internal class ToggleAdapter : RecyclerView.Adapter<ToggleItemViewHolder>() {
-    private var toggles: List<Pair<String, Boolean>> = emptyList()
+internal class ToggleAdapter(context: Context) :
+    ArrayAdapter<Pair<String, Boolean>>(context, R.layout.stream_toggle_list_item, emptyList()) {
 
     var listener = ToggleSwitchListener { _, _ -> }
+    private var data: List<Pair<String, Boolean>> = emptyList()
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<Pair<String, Boolean>>) {
-        toggles = data
+    fun addData(list: List<Pair<String, Boolean>>) {
+        data = list
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToggleItemViewHolder {
-        return LayoutInflater.from(parent.context).inflate(R.layout.stream_toggle_list_item, parent, false)
-            .let(::ToggleItemViewHolder)
-    }
+    override fun getCount() = data.size
 
-    override fun onBindViewHolder(holder: ToggleItemViewHolder, position: Int) {
-        holder.bindData(toggles[position], listener)
-    }
+    override fun getItem(position: Int): Pair<String, Boolean> = data[position]
 
-    override fun getItemCount(): Int = toggles.size
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val itemView =
+            convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.stream_toggle_list_item, parent, false)
+        val label: TextView = itemView.findViewById(R.id.label)
+        val switch: SwitchCompat = itemView.findViewById(R.id.switcher)
+        val toggle = getItem(position)
+        label.text = toggle.first
+        switch.isChecked = toggle.second
+        switch.setOnCheckedChangeListener { _, isChecked -> listener.onSwitched(toggle.first, isChecked) }
+
+        return itemView
+    }
 }
 
 internal fun interface ToggleSwitchListener {
     fun onSwitched(toggleName: String, isEnabled: Boolean)
-}
-
-internal class ToggleItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val label: TextView
-        get() = itemView.findViewById(R.id.label)
-    private val switch: SwitchCompat
-        get() = itemView.findViewById(R.id.switcher)
-
-    fun bindData(toggle: Pair<String, Boolean>, listener: ToggleSwitchListener) {
-        label.text = toggle.first
-        switch.isChecked = toggle.second
-        switch.setOnCheckedChangeListener { _, isChecked -> listener.onSwitched(toggle.first, isChecked) }
-    }
 }
