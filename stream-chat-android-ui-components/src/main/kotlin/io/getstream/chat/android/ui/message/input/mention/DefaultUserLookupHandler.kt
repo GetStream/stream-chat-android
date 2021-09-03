@@ -38,18 +38,28 @@ public class DefaultUserLookupHandler(
     }
 
     override suspend fun handleUserLookup(query: String): List<User> {
-        return users.filter { user ->
-            val formattedQuery = query
-                .lowercase()
-                .unaccent()
-                .let {
-                    transliterator?.transliterate(it) ?: it
+        return users
+            .asSequence()
+            .map { user ->
+                val formattedQuery = query
+                    .lowercase()
+                    .unaccent()
+                    .let {
+                        transliterator?.transliterate(it) ?: it
+                    }
+
+                val formattedName = user.name.lowercase().unaccent()
+
+                if (formattedName.contains(formattedQuery)) {
+                    user to 0
+                } else {
+                    user to levenshtein(formattedQuery, formattedName)
                 }
-
-            val formattedName = user.name.lowercase().unaccent()
-
-            formattedName.contains(formattedQuery) || levenshtein(formattedQuery, formattedName) <= MAX_DISTANCE
-        }
+            }
+            .filter { (_, distance) -> distance < MAX_DISTANCE }
+            .sortedBy { (_, distance) -> distance }
+            .map { (user, _) -> user }
+            .toList()
     }
 }
 
