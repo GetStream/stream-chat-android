@@ -24,7 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed bug which can lead to crash when immediate logout after login
+
 ### ⬆️ Improved
 
 ### ✅ Added

@@ -1,4 +1,9 @@
 # August 30th, 2021 - 4.17.2
+## stream-chat-android-ui-client
+### 🐞 Fixed
+- Fixed bug which can lead to crash when immediate logout after login
+
+# August 30th, 2021 - 4.17.2
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixes a bug related to incorrect theme of AttachmentActivity.
@@ -522,7 +527,7 @@ in your Manifest file:
 
 ### ✅ Added
 - Added `streamUiMessagesStart` that allows to controll if the stack of messages starts at the bottom or the top.
-- Added `streamUiThreadMessagesStart` that allows to controll if the stack of thread messages starts at the bottom or the top. 
+- Added `streamUiThreadMessagesStart` that allows to controll if the stack of thread messages starts at the bottom or the top.
 - Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
 - Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
 - `MentionListView` can be customisable with XML parameters and with a theme.
