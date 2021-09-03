@@ -4,8 +4,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalStateException
 
 internal class UserStateServiceTests {
 
