@@ -21,15 +21,15 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  *
  * @constructor Create the data class with all the information necessary to customize SuggestionListView
  *
- * @property suggestionsBackground background color of the suggestions box (command and mentions)
- * @property commandsTitleTextStyle Sets the styles for title for the commands box. Use to customise size, colour, font and style (ex: bold)
+ * @property suggestionsBackground Background color of the suggestions box (command and mentions).
+ * @property commandsTitleTextStyle Sets the styles for title for the commands box. Use to customise size, colour, font and style (ex: bold).
  * @property commandsNameTextStyle Sets the styles for the name of the command in the command list. Use to customise size, colour, font and style (ex: bold)
- * @property commandsDescriptionTextStyle Sets the styles for the description of the command in the command list. Use to customise size, colour, font and style (ex: bold)
- * @property mentionsUsernameTextStyle Configure the appearance for username in the mention list
- * @property mentionsNameTextStyle Configure the appearance for username in the mention list
- * @property mentionIcon Icon for mentions. It is normally "@"
- * @property commandIcon Icon for each command item. Default - [R.drawable.stream_ui_ic_command_circle]
- * @property lightningIcon Icon to the left of command list title. Default - [R.drawable.stream_ui_ic_command_blue]
+ * @property commandsDescriptionTextStyle Sets the styles for the description of the command in the command list. Use to customise size, colour, font and style (ex: bold).
+ * @property mentionsUsernameTextStyle Configure the appearance for username in the mention list.
+ * @property mentionsNameTextStyle Configure the appearance for username in the mention list.
+ * @property mentionIcon Icon for mentions. It is normally "@".
+ * @property commandIcon Icon for each command item. Default value is [R.drawable.stream_ui_ic_command_circle].
+ * @property lightningIcon Icon to the left of command list title. Default value is [R.drawable.stream_ui_ic_command_blue].
  */
 public data class SuggestionListViewStyle(
     @ColorInt val suggestionsBackground: Int,

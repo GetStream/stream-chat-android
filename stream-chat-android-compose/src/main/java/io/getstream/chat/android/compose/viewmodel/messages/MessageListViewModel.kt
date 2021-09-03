@@ -44,7 +44,7 @@ import java.util.Date
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
- * */
+ */
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
@@ -58,89 +58,89 @@ public class MessageListViewModel(
      * State handler for the UI, which holds all the information the UI needs to render messages.
      *
      * It chooses between [threadMessagesState] and [messagesState] based on if we're in a thread or not.
-     * */
+     */
     public val currentMessagesState: MessagesState
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
      * State of the screen, for the [Normal] [messageMode].
-     * */
+     */
     private var messagesState: MessagesState by mutableStateOf(MessagesState())
 
     /**
      * State of the screen, for the [Thread] [messageMode].
-     * */
+     */
     private var threadMessagesState: MessagesState by mutableStateOf(MessagesState())
 
     /**
      * Holds the current [MessageMode] that's used for the messages list. [Normal] by default.
-     * */
+     */
     public var messageMode: MessageMode by mutableStateOf(Normal)
         private set
 
     /**
      * The information for the current [Channel].
-     * */
+     */
     public var channel: Channel by mutableStateOf(Channel())
         private set
 
     /**
      * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
      * similar actions.
-     * */
+     */
     public var messageActions: Set<MessageAction> by mutableStateOf(mutableSetOf())
         private set
 
     /**
      * Gives us information if we're currently in the [Thread] message mode.
-     * */
+     */
     public val isInThread: Boolean
         get() = messageMode is Thread
 
     /**
      * Gives us information if we're showing the selected message overlay.
-     * */
+     */
     public val isShowingOverlay: Boolean
         get() = messagesState.selectedMessage != null || threadMessagesState.selectedMessage != null
 
     /**
      * Gives us information about the online state of the device.
-     * */
+     */
     public val isOnline: StateFlow<Boolean>
         get() = chatDomain.online
 
     /**
      * Gives us information about the logged in user state.
-     * */
+     */
     public val user: StateFlow<User?>
         get() = chatDomain.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
      * out of the thread state.
-     * */
+     */
     private var threadJob: Job? = null
 
     /**
      * Represents the last loaded message in the list, for comparison when determining the
      * [NewMessageState] for the screen.
-     * */
+     */
     private var lastLoadedMessage: Message? = null
 
     /**
      * Represents the latest message we've seen in the channel.
-     * */
+     */
     private var lastSeenChannelMessage: MessageItem? by mutableStateOf(null)
 
     /**
      * Represents the latest message we've seen in the active thread.
-     * */
+     */
     private var lastSeenThreadMessage: MessageItem? by mutableStateOf(null)
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
      * messages and other pieces of information.
-     * */
+     */
     init {
         viewModelScope.launch {
             val result =
@@ -164,8 +164,8 @@ public class MessageListViewModel(
      * controller, as well as build the `newMessageState` using [getNewMessageState] and combine it
      * into a [MessagesState] that holds all the information required for the screen.
      *
-     * @param controller - The controller for the channel with the current [channelId].
-     * */
+     * @param controller The controller for the channel with the current [channelId].
+     */
     private fun observeConversation(controller: ChannelController) {
         viewModelScope.launch {
             controller.messagesState
@@ -213,7 +213,7 @@ public class MessageListViewModel(
 
     /**
      * Sets the current channel, used to show info in the UI.
-     * */
+     */
     private fun setChanel(channel: Channel) {
         this.channel = channel
     }
@@ -221,9 +221,9 @@ public class MessageListViewModel(
     /**
      * Used to filter messages deleted by other users.
      *
-     * @param messages - List of all messages.
-     * @return - Filtered messages.
-     * */
+     * @param messages List of all messages.
+     * @return Filtered messages.
+     */
     private fun filterDeletedMessages(messages: List<Message>): List<Message> {
         val currentUser = user.value
 
@@ -235,8 +235,8 @@ public class MessageListViewModel(
      * allow us to show the user a floating button giving them the option to scroll to the bottom
      * when needed.
      *
-     * @param lastMessage - Last message in the list, used for comparison.
-     * */
+     * @param lastMessage Last message in the list, used for comparison.
+     */
     private fun getNewMessageState(lastMessage: Message?): NewMessageState? {
         val lastLoadedMessage = lastLoadedMessage
         val currentUser = user.value
@@ -257,8 +257,8 @@ public class MessageListViewModel(
      * and the current message state.
      *
      * @param newMessageState - The state that tells us if there are new messages in the list.
-     * @return - [Int] which describes how many messages come after the last message we've seen in the list.
-     * */
+     * @return [Int] which describes how many messages come after the last message we've seen in the list.
+     */
     private fun getUnreadMessageCount(newMessageState: NewMessageState? = currentMessagesState.newMessageState): Int {
         if (newMessageState == null || newMessageState == MyOwn) return 0
 
@@ -282,8 +282,8 @@ public class MessageListViewModel(
      * Gets the list position of the last seen message in the list.
      *
      * @param lastSeenMessage - The last message we saw in the list.
-     * @return - [Int] list position of the last message we've seen.
-     * */
+     * @return [Int] list position of the last message we've seen.
+     */
     private fun getLastSeenMessagePosition(lastSeenMessage: MessageItem?): Int {
         if (lastSeenMessage == null) return 0
 
@@ -297,7 +297,7 @@ public class MessageListViewModel(
      * time the data loads and whenever we see a message that's newer than the current last seen message.
      *
      * @param currentMessage - The message that is currently seen by the user.
-     * */
+     */
     public fun updateLastSeenMessage(currentMessage: MessageItem) {
         val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
 
@@ -326,7 +326,7 @@ public class MessageListViewModel(
      * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding state.
      *
      * @param currentMessage - The current message the user sees.
-     * */
+     */
     private fun updateLastSeenMessageState(currentMessage: MessageItem) {
         if (isInThread) {
             lastSeenThreadMessage = currentMessage
@@ -342,14 +342,14 @@ public class MessageListViewModel(
     /**
      * If there's an error, we just set the current state to be empty - 'isLoading' as false and
      * 'messages' as an empty list.
-     * */
+     */
     private fun showEmptyState() {
         messagesState = messagesState.copy(isLoading = false, messageItems = emptyList())
     }
 
     /**
      * Triggered when the user loads more data by reaching the end of the current messages.
-     * */
+     */
     public fun loadMore() {
         val messageMode = messageMode
 
@@ -367,8 +367,8 @@ public class MessageListViewModel(
      * Triggered when the user long taps on and selects a message. This updates the internal state
      * and allows our UI to re-render it and show an overlay.
      *
-     * @param message - The selected message.
-     * */
+     * @param message The selected message.
+     */
     public fun selectMessage(message: Message?) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessage = message)
@@ -381,8 +381,8 @@ public class MessageListViewModel(
      * Triggered when the user taps on a message that has a thread active. This changes the current
      * [messageMode] to [Thread] and loads the thread data.
      *
-     * @param message - The selected message with a thread.
-     * */
+     * @param message The selected message with a thread.
+     */
     public fun openMessageThread(message: Message) {
         this.messageMode = Thread(message)
 
@@ -392,15 +392,15 @@ public class MessageListViewModel(
     /**
      * Used to dismiss a specific message action, such as delete, reply, edit or something similar.
      *
-     * @param messageAction - The action to dismiss.
-     * */
+     * @param messageAction The action to dismiss.
+     */
     public fun dismissMessageAction(messageAction: MessageAction) {
         this.messageActions = messageActions - messageAction
     }
 
     /**
      * Dismisses all message actions, when we cancel them in the rest of the UI.
-     * */
+     */
     public fun dismissAllMessageActions() {
         this.messageActions = emptySet()
     }
@@ -412,8 +412,8 @@ public class MessageListViewModel(
      * we do different things, such as starting a thread & loading thread data, showing delete or flag
      * events and dialogs, copying the message, muting users and more.
      *
-     * @param messageAction - The action the user chose.
-     * */
+     * @param messageAction The action the user chose.
+     */
     public fun performMessageAction(messageAction: MessageAction) {
         removeOverlay()
 
@@ -440,8 +440,8 @@ public class MessageListViewModel(
      * The data is loaded by fetching the [ThreadController] first, based on the [parentMessage],
      * after which we observe specific data from the thread.
      *
-     * @param parentMessage - The message with the thread we want to observe.
-     * */
+     * @param parentMessage The message with the thread we want to observe.
+     */
     private fun loadThread(parentMessage: Message) {
         messageMode = Thread(parentMessage)
 
@@ -463,8 +463,8 @@ public class MessageListViewModel(
      * The data consists of the 'loadingOlderMessages', 'messages' and 'endOfOlderMessages' states,
      * that are combined into one [MessagesState].
      *
-     * @param controller - The controller for the active thread.
-     * */
+     * @param controller The controller for the active thread.
+     */
     private fun observeThreadMessages(controller: ThreadController) {
         threadJob = viewModelScope.launch {
             controller.messages
@@ -486,9 +486,9 @@ public class MessageListViewModel(
      * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
      * group, where the positions can be [Top], [Middle], [Bottom] or [None] if the message isn't in a group.
      *
-     * @param messages - The messages we need to group.
-     * @return - A list of [MessageItem]s, each containing a position.
-     * */
+     * @param messages The messages we need to group.
+     * @return A list of [MessageItem]s, each containing a position.
+     */
     private fun groupMessages(messages: List<Message>): List<MessageItem> {
         val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
         val currentUser = user.value
@@ -517,8 +517,8 @@ public class MessageListViewModel(
      * Removes the delete actions from our [messageActions], as well as the overlay, before deleting
      * the selected message.
      *
-     * @param message - Message to delete.
-     * */
+     * @param message Message to delete.
+     */
     public fun deleteMessage(message: Message) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
@@ -530,8 +530,8 @@ public class MessageListViewModel(
      * Copies the message content using the [ClipboardHandler] we provide. This can copy both
      * attachment and text messages.
      *
-     * @param message - Message with the content to copy.
-     * */
+     * @param message Message with the content to copy.
+     */
     private fun copyMessage(message: Message) {
         clipboardHandler.copyMessage(message)
     }
@@ -539,8 +539,8 @@ public class MessageListViewModel(
     /**
      * Mutes the user that sent a particular message.
      *
-     * @param user - The user to mute.
-     * */
+     * @param user The user to mute.
+     */
     private fun muteUser(user: User) {
         chatClient.muteUser(user.id).enqueue()
     }
@@ -550,9 +550,9 @@ public class MessageListViewModel(
      * message already has that reaction, from the current user, we remove it. Otherwise we add a new
      * reaction.
      *
-     * @param reaction - The reaction to add or remove.
-     * @param message - The currently selected message.
-     * */
+     * @param reaction The reaction to add or remove.
+     * @param message The currently selected message.
+     */
     private fun reactToMessage(reaction: Reaction, message: Message) {
         if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
             chatDomain.deleteReaction(channelId, reaction).enqueue()
@@ -565,7 +565,7 @@ public class MessageListViewModel(
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
      *
      * It also cancels the [threadJob] to clean up resources.
-     * */
+     */
     public fun leaveThread() {
         messageMode = Normal
         messagesState = messagesState.copy(selectedMessage = null)
@@ -576,7 +576,7 @@ public class MessageListViewModel(
 
     /**
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
-     * */
+     */
     public fun removeOverlay() {
         threadMessagesState = threadMessagesState.copy(selectedMessage = null)
         messagesState = messagesState.copy(selectedMessage = null)
@@ -585,7 +585,7 @@ public class MessageListViewModel(
     /**
      * Clears the [NewMessageState] from our UI state, after the user taps on the "Scroll to bottom"
      * or "New Message" actions in the list or simply scrolls to the bottom.
-     * */
+     */
     public fun clearNewMessageState() {
         threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
         messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)

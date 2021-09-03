@@ -17,19 +17,19 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [ChannelActionsDialogFragment].
  * Use this class together with [TransformStyle.channelActionsDialogStyleTransformer] to change [ChannelActionsDialogFragment] styles programmatically.
  *
- * @property memberNamesTextStyle - test appearance for dialog title with member names
- * @property memberInfoTextStyle - test appearance for dialog subtitle with member info
- * @property itemTextStyle - text appearance for action item
- * @property itemTextStyle - text appearance for warning action item
- * @property viewInfoIcon - icon for view info action. Default - [R.drawable.stream_ui_ic_single_user]
- * @property viewInfoEnabled - shows/hides view info action. Hidden by default
- * @property leaveGroupIcon - icon for leave group action. Default - [R.drawable.stream_ui_ic_leave_group]
- * @property leaveGroupEnabled - shows/hides leave group action. Shown by default
- * @property deleteConversationIcon - icon for delete conversation action. Default - [R.drawable.stream_ui_ic_delete]
- * @property deleteConversationEnabled - shows/hides delete conversation action. Shown by default
- * @property cancelIcon - icon for dismiss dialog action. Default - [R.drawable.stream_ui_ic_clear]
- * @property cancelEnabled - shows/hides dismiss dialog action. Shown by default
- * @property background - dialog's background
+ * @property memberNamesTextStyle Text appearance for dialog title with member names.
+ * @property memberInfoTextStyle Text appearance for dialog subtitle with member info.
+ * @property itemTextStyle Text appearance for action item.
+ * @property itemTextStyle Text appearance for warning action item.
+ * @property viewInfoIcon Icon for view info action. Default value is [R.drawable.stream_ui_ic_single_user].
+ * @property viewInfoEnabled Shows/hides view info action. Hidden by default.
+ * @property leaveGroupIcon Icon for leave group action. Default value is [R.drawable.stream_ui_ic_leave_group].
+ * @property leaveGroupEnabled Shows/hides leave group action. Shown by default.
+ * @property deleteConversationIcon Icon for delete conversation action. Default value is [R.drawable.stream_ui_ic_delete].
+ * @property deleteConversationEnabled Shows/hides delete conversation action. Shown by default.
+ * @property cancelIcon Icon for dismiss dialog action. Default value is [R.drawable.stream_ui_ic_clear].
+ * @property cancelEnabled Shows/hides dismiss dialog action. Shown by default.
+ * @property background Dialog's background.
  */
 public data class ChannelActionsDialogViewStyle(
     public val memberNamesTextStyle: TextStyle,

@@ -32,12 +32,12 @@ import java.util.Date
  * - Makes the MessageListItem immutable to prevent future bugs
  * - Improved test coverage
  *
- * @param getCurrentUserId lambda which lazily provides the user id who is currently authenticated
- * @param messages a livedata object with the messages
- * @param readsLd a livedata object with the read state per user
- * @param typingLd a livedata object with the users who are currently typing
- * @param isThread if we are in a thread or not. if in a thread we add a threadSeperator in position 1 of the item list
- * @param dateSeparatorHandler function to compare previous and current message and return if we should insert a date separator
+ * @param currentUser Lambda which lazily provides the user id who is currently authenticated.
+ * @param messages A livedata object with the messages.
+ * @param readsLd A livedata object with the read state per user.
+ * @param typingLd A livedata object with the users who are currently typing.
+ * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the item list.
+ * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a date separator.
  *
  * Here's an example:
  *

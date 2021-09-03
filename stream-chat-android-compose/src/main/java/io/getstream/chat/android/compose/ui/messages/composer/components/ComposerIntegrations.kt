@@ -17,9 +17,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * Currently just shows the Attachment picker action.
  *
- * @param onAttachmentsClick - Handler when the user selects attachments.
- * @param modifier - Modifier for styling.
- * */
+ * @param onAttachmentsClick Handler when the user selects attachments.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun RowScope.DefaultComposerIntegrations(
     onAttachmentsClick: () -> Unit,
