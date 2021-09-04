@@ -54,10 +54,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Shows the options "header" for the message input component. This is based on the currently active
  * message action - [Reply] or [Edit].
  *
- * @param modifier - Modifier for styling.
- * @param activeAction - Currently active [MessageAction].
- * @param onCancelAction - Handler when the user cancels the current action.
- * */
+ * @param modifier Modifier for styling.
+ * @param activeAction Currently active [MessageAction].
+ * @param onCancelAction Handler when the user cancels the current action.
+ */
 @Composable
 public fun MessageInputOptions(
     activeAction: MessageAction,
@@ -105,14 +105,14 @@ public fun MessageInputOptions(
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
  * when the input changes.
  *
- * @param value - Current value of the input.
- * @param attachments - Currently selected and visible attachments.
- * @param activeAction - Currently active action (for [Edit] UI).
- * @param onValueChange - Handler when the value changes.
- * @param onAttachmentRemoved - Handler when the user removes a selected attachment.
- * @param modifier - Modifier for styling.
- * @param label - Composable function that represents the label UI, when there's no input/focus.
- * */
+ * @param value Current value of the input.
+ * @param attachments Currently selected and visible attachments.
+ * @param activeAction Currently active action (for [Edit] UI).
+ * @param onValueChange Handler when the value changes.
+ * @param onAttachmentRemoved Handler when the user removes a selected attachment.
+ * @param modifier Modifier for styling.
+ * @param label Composable function that represents the label UI, when there's no input/focus.
+ */
 @Composable
 public fun MessageInput(
     value: String,
@@ -166,10 +166,10 @@ public fun MessageInput(
 /**
  * Shows the selected attachments within the composer, based on if they're images or files.
  *
- * @param attachments - List of selected attachments.
- * @param onAttachmentRemoved - Handler when the user removes a selected attachment.
- * @param modifier - Modifier for styling.
- * */
+ * @param attachments List of selected attachments.
+ * @param onAttachmentRemoved Handler when the user removes a selected attachment.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun MessageInputAttachments(
     attachments: List<Attachment>,
@@ -186,10 +186,10 @@ private fun MessageInputAttachments(
 /**
  * UI for currently selected image attachments, within the [MessageInput].
  *
- * @param attachments - Selected attachments.
- * @param onAttachmentRemoved - Handler when the user removes an attachment from the list.
- * @param modifier - Modifier for styling.
- * */
+ * @param attachments Selected attachments.
+ * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun MessageInputImageAttachments(
     attachments: List<Attachment>,
@@ -236,10 +236,10 @@ internal fun MessageInputImageAttachments(
 /**
  * UI for currently selected file attachments, within the [MessageInput].
  *
- * @param attachments - Selected attachments.
- * @param onAttachmentRemoved - Handler when the user removes an attachment from the list.
- * @param modifier - Modifier for styling.
- * */
+ * @param attachments Selected attachments.
+ * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun MessageInputFileAttachments(
     attachments: List<Attachment>,

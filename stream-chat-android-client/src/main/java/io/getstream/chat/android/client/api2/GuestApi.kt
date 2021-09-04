@@ -8,7 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 @AnonymousApi
-@MoshiApi
 internal interface GuestApi {
 
     @POST("/guest")

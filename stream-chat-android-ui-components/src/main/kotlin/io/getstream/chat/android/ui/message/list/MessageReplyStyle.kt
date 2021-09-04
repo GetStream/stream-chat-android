@@ -22,20 +22,18 @@ import io.getstream.chat.android.ui.message.list.MessageReplyStyle.Companion.MES
  * Style for view holders used inside [MessageListView] allowing to customize message "reply" view.
  * Use this class together with [TransformStyle.messageReplyStyleTransformer] to change styles programmatically.
  *
- * @property messageBackgroundColorMine - background color for message sent by the current user. Default - [R.color.stream_ui_grey_gainsboro]
- * @property messageBackgroundColorTheirs - background color for message sent by other user. Default - [R.color.stream_ui_white]
- * @property messageLinkTextColorMine - color for links sent by the current user. Default - [R.color.stream_ui_accent_blue]
- * @property messageLinkTextColorTheirs - color for links sent by other user. Default - [R.color.stream_ui_accent_blue]
- * @property messageLinkBackgroundColorMine - background color for message with link, sent by the current user. Default - [R.color.stream_ui_blue_alice]
- * @property messageLinkBackgroundColorTheirs - background color for message with link, sent by other user. Default - [R.color.stream_ui_blue_alice]
- * @property linkStyleMine - appearance for message link sent by the current user
- * @property linkStyleTheirs - appearance for message link sent by other user
- * @property textStyleMine - appearance for message text sent by the current user
- * @property textStyleTheirs - appearance for message text sent by other user
- * @property messageStrokeColorMine - stroke color for message sent by the current user. Default - [MESSAGE_STROKE_COLOR_MINE]
- * @property messageStrokeWidthMine - stroke width for message sent by the current user. Default - [MESSAGE_STROKE_WIDTH_MINE]
- * @property messageStrokeColorTheirs - stroke color for message sent by other user. Default - [MESSAGE_STROKE_COLOR_THEIRS]
- * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
+ * @property messageBackgroundColorMine Background color for message sent by the current user. Default value is [R.color.stream_ui_grey_gainsboro].
+ * @property messageBackgroundColorTheirs Background color for message sent by other user. Default value is [R.color.stream_ui_white].
+ * @property linkBackgroundColorMine Background color of links in the message sent by the current user.
+ * @property linkBackgroundColorTheirs Background color of links in the message sent by the other user.
+ * @property linkStyleMine Appearance for message link sent by the current user.
+ * @property linkStyleTheirs Appearance for message link sent by other users.
+ * @property textStyleMine Appearance for message text sent by the current user.
+ * @property textStyleTheirs Appearance for message text sent by other users.
+ * @property messageStrokeColorMine Stroke color for message sent by the current user. Default value is [MESSAGE_STROKE_COLOR_MINE].
+ * @property messageStrokeWidthMine Stroke width for message sent by the current user. Default value is [MESSAGE_STROKE_WIDTH_MINE].
+ * @property messageStrokeColorTheirs Stroke color for message sent by other user. Default value is [MESSAGE_STROKE_COLOR_THEIRS].
+ * @property messageStrokeWidthTheirs Stroke width for message sent by other user. Default value is [MESSAGE_STROKE_WIDTH_THEIRS].
  */
 public data class MessageReplyStyle(
     @ColorInt public val messageBackgroundColorMine: Int,

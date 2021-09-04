@@ -19,15 +19,15 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
  * Style for [GiphyViewHolder].
  * Use this class together with [TransformStyle.giphyViewHolderStyleTransformer] to change styles programmatically.
  *
- * @param cardBackgroundColor - card's background color. Default - [R.color.stream_ui_white]
- * @param cardElevation - card's elevation. Default - [R.dimen.stream_ui_elevation_small]
- * @param cardButtonDividerColor - color for dividers placed between action buttons. Default - [R.color.stream_ui_border]
- * @param giphyIcon - Giphy icon. Default - [R.drawable.stream_ui_ic_giphy]
- * @param labelTextStyle - appearance for label text
- * @param queryTextStyle - appearance for query text
- * @param cancelButtonTextStyle - appearance for cancel button text
- * @param shuffleButtonTextStyle - appearance for shuffle button text
- * @param sendButtonTextStyle - appearance for send button text
+ * @param cardBackgroundColor Card's background color. Default value is [R.color.stream_ui_white].
+ * @param cardElevation Card's elevation. Default value is [R.dimen.stream_ui_elevation_small].
+ * @param cardButtonDividerColor Color for dividers placed between action buttons. Default value is [R.color.stream_ui_border].
+ * @param giphyIcon Giphy icon. Default value is [R.drawable.stream_ui_ic_giphy].
+ * @param labelTextStyle Appearance for label text.
+ * @param queryTextStyle Appearance for query text.
+ * @param cancelButtonTextStyle Appearance for cancel button text.
+ * @param shuffleButtonTextStyle Appearance for shuffle button text.
+ * @param sendButtonTextStyle Appearance for send button text.
  */
 public data class GiphyViewHolderStyle(
     @ColorInt val cardBackgroundColor: Int,

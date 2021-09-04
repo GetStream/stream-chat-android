@@ -12,8 +12,5 @@ public class ChatClientConfig(
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
 ) {
-
     public var isAnonymous: Boolean = false
-
-    internal var enableMoshi: Boolean = false
 }

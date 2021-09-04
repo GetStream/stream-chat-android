@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Message
 
 /**
  * ViewModel responsible for loading and showing the images of a selected message.
- * */
+ */
 public class ImagePreviewViewModel(
     private val chatClient: ChatClient,
     private val messageId: String
@@ -20,7 +20,7 @@ public class ImagePreviewViewModel(
 
     /**
      * Loads the message data, which then updates the UI state to shows images.
-     * */
+     */
     init {
         chatClient.getMessage(messageId).enqueue { result ->
             if (result.isSuccess) {

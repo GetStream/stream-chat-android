@@ -60,7 +60,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(':stream-chat-android-core')
 
-    implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
 
     implementation Dependencies.androidxAppCompat
@@ -72,8 +71,6 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.retrofit
-    implementation Dependencies.gson
-    implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     kapt Dependencies.moshiCodegen

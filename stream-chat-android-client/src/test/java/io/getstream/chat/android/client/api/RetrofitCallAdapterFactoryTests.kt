@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.api
 
 import com.google.common.reflect.TypeToken
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.client.parser.GsonChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import junit.framework.Assert.fail
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +19,7 @@ internal class RetrofitCallAdapterFactoryTests {
     @JvmField
     val server = MockWebServer()
 
-    private val factory: CallAdapter.Factory = RetrofitCallAdapterFactory.create(GsonChatParser())
+    private val factory: CallAdapter.Factory = RetrofitCallAdapterFactory.create(MoshiChatParser())
     private lateinit var retrofit: Retrofit
 
     @Before

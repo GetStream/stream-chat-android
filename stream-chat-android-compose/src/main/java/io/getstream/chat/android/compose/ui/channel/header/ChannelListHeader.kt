@@ -36,18 +36,18 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * This allows the user to fully govern how the [ChannelListHeader] behaves, by passing in all the
  * data that's required to display it and drive its actions.
  *
- * @param modifier - Modifier for styling.
- * @param title - The title to display, when the network is available.
- * @param currentUser - The currently logged in user, to load its image in the avatar.
- * @param isNetworkAvailable - A flag that governs if we show the title or the network loading view.
- * @param onAvatarClick - Action handler when the user taps on an avatar.
- * @param onHeaderActionClick - Action handler when the user taps on the header action.
- * @param leadingContent - Custom composable that allows the user to replace the default header leading content.
+ * @param modifier Modifier for styling.
+ * @param title The title to display, when the network is available.
+ * @param currentUser The currently logged in user, to load its image in the avatar.
+ * @param isNetworkAvailable A flag that governs if we show the title or the network loading view.
+ * @param onAvatarClick Action handler when the user taps on an avatar.
+ * @param onHeaderActionClick Action handler when the user taps on the header action.
+ * @param leadingContent Custom composable that allows the user to replace the default header leading content.
  * By default it shows a [UserAvatar].
- * @param trailingContent - Custom composable that allows the user to completely replace the default header
+ * @param trailingContent Custom composable that allows the user to completely replace the default header
  * action. If nothing is passed in, the default element will be built, using the [onHeaderActionClick]
  * parameter as its handler, and it will represent [DefaultChannelListHeaderAction].
- * */
+ */
 @Composable
 public fun ChannelListHeader(
     modifier: Modifier = Modifier,
@@ -89,7 +89,7 @@ public fun ChannelListHeader(
  * Represents the default leading content for the [ChannelListHeader], which is a [UserAvatar].
  *
  * We show the avatar if the user is available, otherwise we add a spacer to make sure the alignment is correct.
- * */
+ */
 @Composable
 internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
@@ -113,10 +113,10 @@ internal fun DefaultChannelHeaderLeadingContent(
  * Represents the channel header's title slot. It either shows a [Text] if [isNetworkAvailable] is true,
  * or a [NetworkLoadingView] if there is no connections.
  *
- * @param isNetworkAvailable - If the network connection is available or not.
- * @param title - The title to show.
- * @param modifier - Modifier for styling.
- * */
+ * @param isNetworkAvailable If the network connection is available or not.
+ * @param title The title to show.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun ChannelHeaderTitle(
     isNetworkAvailable: Boolean,
@@ -141,9 +141,9 @@ internal fun ChannelHeaderTitle(
 /**
  * Represents the default action for the ChannelList header.
  *
- * @param onHeaderActionClick - Handler for when the user taps on the action.
- * @param modifier - Modifier for styling.
- * */
+ * @param onHeaderActionClick Handler for when the user taps on the action.
+ * @param modifier Modifier for styling.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun DefaultChannelListHeaderAction(

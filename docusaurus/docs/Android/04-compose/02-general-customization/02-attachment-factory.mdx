@@ -15,8 +15,10 @@ public abstract class AttachmentFactory(
 There are a few examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories.kt):
 
 ```kotlin
-public val defaultFactories: List<AttachmentFactory> = listOf(
-    LinkAttachmentFactory(),
+public fun defaultFactories(
+    linkDescriptionLineLimit: Int = DEFAULT_LINK_DESCRIPTION_LINE_LIMIT,
+): List<AttachmentFactory> = listOf(
+    LinkAttachmentFactory(linkDescriptionLineLimit),
     GiphyAttachmentFactory(),
     ImageAttachmentFactory(),
     FileAttachmentFactory()
@@ -32,7 +34,7 @@ To customize the factories your code uses, you can always override the `attachme
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val defaultFactories = StreamAttachmentFactories.defaultFactories
+    val defaultFactories = StreamAttachmentFactories.defaultFactories()
 
     setContent {
         // override the default factories by adding your own
