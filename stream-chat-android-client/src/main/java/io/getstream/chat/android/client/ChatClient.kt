@@ -729,9 +729,15 @@ public class ChatClient internal constructor(
     /**
      * Search messages across channels. There are two ways to paginate through search results:
      *
-     * * Using [limit] and [offset] parameters
-     * * Using [limit] and [next] parameters
+     * 1. Using [limit] and [offset] parameters
+     * 1. Using [limit] and [next] parameters
      *
+     * Limit and offset will allow you to access up to 1000 results matching your query.
+     * You will not be able to sort using limit and offset. The results will instead be
+     * sorted by relevance and message ID.
+     *
+     * Next pagination will allow you to access all search results that match your query,
+     * and you will be able to sort using any filter-able fields and custom fields.
      * Pages of sort results will be returned with **next** and **previous** strings which
      * can be supplied as a next parameter when making a query to get a new page of results.
      *
