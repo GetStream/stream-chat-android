@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 class AddChannelViewModel : ViewModel() {
 
     private val chatDomain = ChatDomain.instance()
+    private val chatClient = ChatClient.instance()
     private val _state: MutableLiveData<State> = MutableLiveData()
     private val _paginationState: MutableLiveData<PaginationState> = MutableLiveData()
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
@@ -77,8 +78,7 @@ class AddChannelViewModel : ViewModel() {
         }
         viewModelScope.launch(Dispatchers.IO) {
             val currentUserId = chatDomain.user.value?.id ?: error("User must be set before create new channel!")
-            val result = chatDomain
-                .createDistinctChannel(
+            val result = chatClient.createChannel(
                     channelType = CHANNEL_MESSAGING_TYPE,
                     members = members.map(User::id) + currentUserId,
                     extraData = mapOf(CHANNEL_ARG_DRAFT to true)
