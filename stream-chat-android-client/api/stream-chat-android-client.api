@@ -2892,6 +2892,10 @@ public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public final fun provideCurrentTimeInSeconds ()J
 }
 
+public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {
+	public static synthetic fun init$default (Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion;Landroid/content/Context;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService;
+}
+
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {
 	public abstract fun dispose ()V
 	public abstract fun isDisposed ()Z

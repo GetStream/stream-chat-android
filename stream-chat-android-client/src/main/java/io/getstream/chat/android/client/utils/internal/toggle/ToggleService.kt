@@ -21,7 +21,6 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
     public fun getToggles(): Map<String, Boolean> =
         sharedPreferences.all.filter { it.value is Boolean }.toMap() as Map<String, Boolean>
 
-    @InternalStreamChatApi
     public companion object {
         private const val PREFS_NAME = "toggle_storage"
 
