@@ -762,7 +762,7 @@ public class ChatClient internal constructor(
             offset = offset,
             limit = limit,
             next = next,
-            sort = sort
+            sort = sort,
         )
     }
 
