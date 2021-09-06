@@ -8,8 +8,11 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.soloader.SoLoader
 import io.getstream.chat.android.client.di.networkFlipper
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 object ApplicationConfigurator {
+    @OptIn(InternalStreamChatApi::class)
     fun configureApp(application: Application) {
         SoLoader.init(application, false)
 
@@ -20,5 +23,7 @@ object ApplicationConfigurator {
                 addPlugin(networkFlipper)
             }.start()
         }
+
+        ToggleService.init(application, mapOf("ToggleSample" to false))
     }
 }

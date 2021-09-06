@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -1490,8 +1491,7 @@ public class ChatClient internal constructor(
      * @param cid the full channel id. ie messaging:123
      */
     public fun channel(cid: String): ChannelClient {
-        val type = cid.split(":")[0]
-        val id = cid.split(":")[1]
+        val (type, id) = cid.cidToTypeAndId()
         return channel(type, id)
     }
 

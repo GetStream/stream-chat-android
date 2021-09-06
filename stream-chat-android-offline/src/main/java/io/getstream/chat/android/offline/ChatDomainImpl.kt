@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -982,15 +981,7 @@ internal class ChatDomainImpl internal constructor(
         channelType: String,
         members: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> {
-        return CoroutineCall(scope) {
-            client.createChannel(channelType, members, extraData).await().also {
-                if (it.isSuccess) {
-                    repos.insertChannel(it.data())
-                }
-            }
-        }
-    }
+    ): Call<Channel> = client.createChannel(channelType, members, extraData)
 // end region
 
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {

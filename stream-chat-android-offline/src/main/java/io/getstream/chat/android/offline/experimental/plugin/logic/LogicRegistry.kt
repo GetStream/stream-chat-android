@@ -8,6 +8,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelLogic
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import java.util.concurrent.ConcurrentHashMap
@@ -29,4 +30,6 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
 
     fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
+
+    fun queryChannel(): QueryChannelLogic = QueryChannelLogic(chatDomain)
 }
