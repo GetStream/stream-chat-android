@@ -1486,9 +1486,6 @@ public class ChannelController internal constructor(
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private const val MESSAGE_ACTION_SEND = "send"
-        private const val TYPE_IMAGE = "image"
-        private const val TYPE_VIDEO = "video"
-        private const val TYPE_FILE = "file"
         private const val OFFSET_EVENT_TIME = 5L
     }
 }
