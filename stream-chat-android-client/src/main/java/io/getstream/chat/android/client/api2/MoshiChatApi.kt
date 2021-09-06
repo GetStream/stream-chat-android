@@ -698,7 +698,7 @@ internal class MoshiChatApi(
             offset = request.offset,
             limit = request.limit,
             next = request.next,
-            sort = request.sort
+            sort = request.sort,
         )
         return generalApi.searchMessages(connectionId, newRequest)
             .map { response ->
