@@ -158,7 +158,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder {
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun useNewSerialization (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugin (Lio/getstream/chat/android/client/experimental/plugin/Plugin;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
@@ -566,17 +565,6 @@ public final class io/getstream/chat/android/client/api/models/SendActionRequest
 	public final fun getFormData ()Ljava/util/Map;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/UpdateUsersRequest {
-	public fun <init> (Ljava/util/Map;)V
-	public final fun component1 ()Ljava/util/Map;
-	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/client/api/models/UpdateUsersRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/UpdateUsersRequest;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/UpdateUsersRequest;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUsers ()Ljava/util/Map;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2908,6 +2896,10 @@ public final class io/getstream/chat/android/client/utils/SyncStatus$Companion {
 public final class io/getstream/chat/android/client/utils/SystemTimeProvider {
 	public fun <init> ()V
 	public final fun provideCurrentTimeInSeconds ()J
+}
+
+public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {
+	public static synthetic fun init$default (Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion;Landroid/content/Context;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/internal/toggle/ToggleService;
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {

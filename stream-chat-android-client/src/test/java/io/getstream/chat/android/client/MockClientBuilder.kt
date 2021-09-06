@@ -3,9 +3,7 @@ package io.getstream.chat.android.client
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.GsonChatApi
-import io.getstream.chat.android.client.api.RetrofitAnonymousApi
-import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -18,7 +16,6 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.mockito.Mockito
@@ -49,9 +46,7 @@ internal class MockClientBuilder(
     private lateinit var socket: FakeChatSocket
     private lateinit var fileUploader: FileUploader
 
-    internal lateinit var retrofitApi: RetrofitApi
-    internal lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
-    private lateinit var api: GsonChatApi
+    lateinit var api: MoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
 
@@ -70,17 +65,10 @@ internal class MockClientBuilder(
         val tokenUtil: TokenUtils = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
         socket = FakeChatSocket()
-        retrofitApi = mock()
-        retrofitAnonymousApi = mock()
         fileUploader = mock()
         notificationsManager = mock()
-        api = GsonChatApi(
-            retrofitApi,
-            retrofitAnonymousApi,
-            UuidGeneratorImpl(),
-            fileUploader,
-            testCoroutineScope
-        )
+
+        api = mock()
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
