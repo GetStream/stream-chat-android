@@ -53,14 +53,14 @@ internal class QueryChannelsMutableState(
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels
     override val channels: StateFlow<List<Channel>> = _sortedChannels
     override val mutedChannelIds: StateFlow<List<String>> = _mutedChannelIds
-    override val channelsState: StateFlow<ChannelsState> =
+    override val channelsStateData: StateFlow<ChannelsStateData> =
         _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel> ->
             when {
-                loading -> ChannelsState.Loading
-                channels.isEmpty() -> ChannelsState.OfflineNoResults
-                else -> ChannelsState.Result(channels)
+                loading -> ChannelsStateData.Loading
+                channels.isEmpty() -> ChannelsStateData.OfflineNoResults
+                else -> ChannelsStateData.Result(channels)
             }
-        }.stateIn(scope, SharingStarted.Eagerly, ChannelsState.NoQueryActive)
+        }.stateIn(scope, SharingStarted.Eagerly, ChannelsStateData.NoQueryActive)
 
     override val nextPageRequest: StateFlow<QueryChannelsRequest?> =
         currentRequest.combine(channelsOffset) { currentRequest, currentOffset ->
