@@ -740,7 +740,7 @@ public class ChatClient internal constructor(
      * @param offset pagination offset, cannot be used with sort or next
      * @param limit the number of messages to return
      * @param next pagination parameter, cannot be used with non-zero offset
-     * @param sort sort parameters, cannot be used with non-zero offset
+     * @param sort the sort criteria applied to the result, cannot be used with non-zero offset
      *
      * @return executable async [Call] responsible for searching messages across channels
      */
