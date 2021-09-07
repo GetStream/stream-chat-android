@@ -371,7 +371,9 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun consumeHasBigFile(hasBigFile: Boolean) {
-        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) { alertBigFileSendAttempt() }
+        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) {
+            alertBigFileSendAttempt()
+        }
     }
 
     private fun alertBigFileSendAttempt() {
@@ -379,10 +381,8 @@ public class MessageInputView : ConstraintLayout {
             resources.getString(R.string.stream_ui_message_input_error_file_large_size,
                 messageInputViewStyle.attachmentMaxFileSize),
             Snackbar.LENGTH_LONG)
-            .apply {
-                anchorView = binding.sendButtonContainer
-                alpha = 0.75f
-            }.show()
+            .apply { anchorView = binding.sendButtonContainer }
+            .show()
     }
 
     /**
