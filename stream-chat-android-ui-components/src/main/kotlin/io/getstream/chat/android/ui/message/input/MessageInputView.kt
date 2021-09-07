@@ -299,12 +299,7 @@ public class MessageInputView : ConstraintLayout {
         messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
         scope = CoroutineScope(DispatcherProvider.Main)
         scope?.launch {
-            binding.messageInputFieldView.hasBigAttachment.collect { hasBigFiles ->
-                if (hasBigFiles) {
-                    alertBigFileSendAttempt()
-                }
-                bigFileSelectionListener?.also { it.handleBigFileSelected(hasBigFiles) }
-            }
+            binding.messageInputFieldView.hasBigAttachment.collect(::consumeHasBigFile)
         }
     }
 
@@ -345,9 +340,6 @@ public class MessageInputView : ConstraintLayout {
 
     public fun listenForBigAttachments(listener: BigFileSelectionListener) {
         bigFileSelectionListener = listener
-        scope?.launch {
-            binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
-        }
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -361,7 +353,7 @@ public class MessageInputView : ConstraintLayout {
     private fun configSendButtonListener() {
         binding.sendMessageButtonEnabled.setOnClickListener {
             if (binding.messageInputFieldView.hasBigAttachment.value) {
-                alertBigFileSendAttempt()
+                consumeHasBigFile(true)
             } else {
                 onSendButtonClickListener?.onClick()
                 inputMode.let {
@@ -378,8 +370,11 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    private fun consumeHasBigFile(hasBigFile: Boolean) {
+        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) { alertBigFileSendAttempt() }
+    }
+
     private fun alertBigFileSendAttempt() {
-        bigFileSelectionListener?.handleBigFileSelected(true)
         Snackbar.make(this,
             resources.getString(R.string.stream_ui_message_input_error_file_large_size,
                 messageInputViewStyle.attachmentMaxFileSize),

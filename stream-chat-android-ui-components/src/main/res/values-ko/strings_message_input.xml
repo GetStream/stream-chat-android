@@ -30,5 +30,5 @@
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">파일이 너무 큽니다</string>
     <string name="stream_ui_message_input_error_max_length">"최대 메시지 길이(%d)를 초과했습니다."</string>
-    <string name="stream_ui_message_input_error_file_large_size">파일이 너무 큽니다 - 최대%dMB.</string>
+    <string name="stream_ui_message_input_error_file_large_size">파일이 너무 큽니다 - 최대 %dMB입니다.</string>
 </resources>
