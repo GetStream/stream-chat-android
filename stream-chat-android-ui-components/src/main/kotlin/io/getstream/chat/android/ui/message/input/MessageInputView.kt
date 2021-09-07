@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.CountDownTimer
 import android.util.AttributeSet
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -19,6 +20,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
@@ -30,6 +32,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
+import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -42,7 +45,6 @@ import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopup
 import kotlinx.coroutines.flow.collect
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
-import java.lang.Exception
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
@@ -112,6 +114,8 @@ public class MessageInputView : ConstraintLayout {
 
     private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
     private var messageInputDebouncer: Debouncer? = null
+
+    private var bigFileSelectionListener: BigFileSelectionListener? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -324,6 +328,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     public suspend fun listenForBigAttachments(listener: BigFileSelectionListener) {
+        bigFileSelectionListener = listener
         binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
     }
 
@@ -584,32 +589,48 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        if (binding.messageInputFieldView.hasValidAttachments()) {
-            sendMessageHandler.sendMessageWithAttachments(
-                binding.messageInputFieldView.messageText,
-                binding.messageInputFieldView.getAttachedFiles(),
-                messageReplyTo
-            )
-        } else {
-            sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo)
-        }
+        doSend(
+            { attachments ->
+                sendMessageHandler.sendMessageWithAttachments(
+                    binding.messageInputFieldView.messageText,
+                    attachments,
+                    messageReplyTo
+                )
+            },
+            { sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo) }
+        )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        if (binding.messageInputFieldView.hasValidAttachments()) {
+        doSend({ attachments ->
             sendMessageHandler.sendToThreadWithAttachments(
                 parentMessage,
                 binding.messageInputFieldView.messageText,
                 sendAlsoToChannel,
-                binding.messageInputFieldView.getAttachedFiles()
+                attachments
             )
+        },
+            {
+                sendMessageHandler.sendToThread(parentMessage,
+                    binding.messageInputFieldView.messageText,
+                    sendAlsoToChannel)
+            }
+        )
+    }
+
+    private fun doSend(attachmentSender: (List<Pair<File, String?>>) -> Unit, simpleSender: () -> Unit) {
+        if (binding.messageInputFieldView.hasBigAttachment.value) {
+            bigFileSelectionListener?.handleBigFileSelected(true) ?:
+            Snackbar.make(parent as View, R.string.stream_ui_message_input_error_max_length, Snackbar.LENGTH_LONG).show()
+        }
+
+        val attachments = binding.messageInputFieldView.getAttachedFiles()
+
+        if (attachments.isNotEmpty()) {
+            attachmentSender(attachments)
         } else {
-            sendMessageHandler.sendToThread(
-                parentMessage,
-                binding.messageInputFieldView.messageText,
-                sendAlsoToChannel
-            )
+            simpleSender()
         }
     }
 

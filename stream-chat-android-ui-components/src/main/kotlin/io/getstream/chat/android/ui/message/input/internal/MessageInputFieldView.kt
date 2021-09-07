@@ -308,9 +308,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun hasText(): Boolean = messageText.isNotBlank()
 
-    fun hasValidAttachments(): Boolean = selectedAttachments.any { metaData -> metaData.size < attachmentMaxFileSize }
-
-    fun hasContent(): Boolean = hasText() || hasValidAttachments()
+    fun hasContent(): Boolean = hasText() || selectedAttachments.isNotEmpty()
 
     private fun onMessageTextChanged() {
         resetModeIfNecessary()
