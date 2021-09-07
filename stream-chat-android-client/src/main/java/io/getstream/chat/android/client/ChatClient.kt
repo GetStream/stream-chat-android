@@ -742,14 +742,14 @@ public class ChatClient internal constructor(
      * Pages of sort results will be returned with **next** and **previous** strings which
      * can be supplied as a next parameter when making a query to get a new page of results.
      *
-     * @param channelFilter channel filter conditions
-     * @param messageFilter message filter conditions
-     * @param offset pagination offset, cannot be used with sort or next
-     * @param limit the number of messages to return
-     * @param next pagination parameter, cannot be used with non-zero offset
-     * @param sort the sort criteria applied to the result, cannot be used with non-zero offset
+     * @param channelFilter Channel filter conditions.
+     * @param messageFilter Message filter conditions.
+     * @param offset Pagination offset, cannot be used with sort or next.
+     * @param limit The number of messages to return.
+     * @param next Pagination parameter, cannot be used with non-zero offset.
+     * @param sort The sort criteria applied to the result, cannot be used with non-zero offset.
      *
-     * @return executable async [Call] responsible for searching messages across channels
+     * @return Executable async [Call] responsible for searching messages across channels.
      */
     @CheckResult
     public fun searchMessages(
