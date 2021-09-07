@@ -3,16 +3,29 @@ package io.getstream.chat.android.compose.ui.attachments
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.file.FileAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.giphy.GiphyAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.image.ImageAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.link.LinkAttachmentFactory
 
 public object StreamAttachmentFactories {
 
     /**
+     * The default max length of the link attachments description. We limit this, because for some links the description
+     * can be too long.
+     */
+    private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 5
+
+    /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
      *
-     * Uses the functions below to display the UI.
+     * @param linkDescriptionMaxLines - The limit of how long the link attachment descriptions can be.
+     * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
-    public val defaultFactories: List<AttachmentFactory> = listOf(
-        LinkAttachmentFactory(),
+    public fun defaultFactories(
+        linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
+    ): List<AttachmentFactory> = listOf(
+        LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
         FileAttachmentFactory()
