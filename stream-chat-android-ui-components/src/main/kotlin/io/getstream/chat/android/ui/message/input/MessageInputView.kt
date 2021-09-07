@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -42,7 +43,10 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
 import kotlin.math.roundToInt
@@ -115,6 +119,7 @@ public class MessageInputView : ConstraintLayout {
     private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
     private var messageInputDebouncer: Debouncer? = null
 
+    private var scope: CoroutineScope? = null
     private var bigFileSelectionListener: BigFileSelectionListener? = null
 
     public constructor(context: Context) : this(context, null)
@@ -292,6 +297,15 @@ public class MessageInputView : ConstraintLayout {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
+        scope = CoroutineScope(DispatcherProvider.Main)
+        scope?.launch {
+            binding.messageInputFieldView.hasBigAttachment.collect { hasBigFiles ->
+                if (hasBigFiles) {
+                    alertBigFileSendAttempt()
+                }
+                bigFileSelectionListener?.also { it.handleBigFileSelected(hasBigFiles) }
+            }
+        }
     }
 
     override fun onDetachedFromWindow() {
@@ -300,6 +314,8 @@ public class MessageInputView : ConstraintLayout {
         cooldownTimer?.cancel()
         cooldownTimer = null
         hideSuggestionList()
+        scope?.cancel()
+        scope = null
         super.onDetachedFromWindow()
     }
 
@@ -327,9 +343,11 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
-    public suspend fun listenForBigAttachments(listener: BigFileSelectionListener) {
+    public fun listenForBigAttachments(listener: BigFileSelectionListener) {
         bigFileSelectionListener = listener
-        binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
+        scope?.launch {
+            binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
+        }
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -362,14 +380,14 @@ public class MessageInputView : ConstraintLayout {
 
     private fun alertBigFileSendAttempt() {
         bigFileSelectionListener?.handleBigFileSelected(true)
-            ?: Snackbar.make(this,
-                resources.getString(R.string.stream_ui_message_input_error_file_large_size,
-                    messageInputViewStyle.attachmentMaxFileSize),
-                Snackbar.LENGTH_LONG)
-                .apply {
-                    anchorView = binding.sendButtonContainer
-                    alpha = 0.75f
-                }.show()
+        Snackbar.make(this,
+            resources.getString(R.string.stream_ui_message_input_error_file_large_size,
+                messageInputViewStyle.attachmentMaxFileSize),
+            Snackbar.LENGTH_LONG)
+            .apply {
+                anchorView = binding.sendButtonContainer
+                alpha = 0.75f
+            }.show()
     }
 
     /**
