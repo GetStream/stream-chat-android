@@ -62,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the bug when MessageInputView let send a message with large attachments. Such message is never sent.
 
 ### ⬆️ Improved
 
