@@ -342,18 +342,34 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.sendMessageButtonEnabled.setOnClickListener {
-            onSendButtonClickListener?.onClick()
-            inputMode.let {
-                when (it) {
-                    is InputMode.Normal -> sendMessage()
-                    is InputMode.Thread -> sendThreadMessage(it.parentMessage)
-                    is InputMode.Edit -> editMessage(it.oldMessage)
-                    is InputMode.Reply -> sendMessage(it.repliedMessage)
+            if (binding.messageInputFieldView.hasBigAttachment.value) {
+                alertBigFileSendAttempt()
+            } else {
+                onSendButtonClickListener?.onClick()
+                inputMode.let {
+                    when (it) {
+                        is InputMode.Normal -> sendMessage()
+                        is InputMode.Thread -> sendThreadMessage(it.parentMessage)
+                        is InputMode.Edit -> editMessage(it.oldMessage)
+                        is InputMode.Reply -> sendMessage(it.repliedMessage)
+                    }
                 }
+                binding.messageInputFieldView.clearContent()
+                startCooldownTimerIfNecessary()
             }
-            binding.messageInputFieldView.clearContent()
-            startCooldownTimerIfNecessary()
         }
+    }
+
+    private fun alertBigFileSendAttempt() {
+        bigFileSelectionListener?.handleBigFileSelected(true)
+            ?: Snackbar.make(this,
+                resources.getString(R.string.stream_ui_message_input_error_file_large_size,
+                    messageInputViewStyle.attachmentMaxFileSize),
+                Snackbar.LENGTH_LONG)
+                .apply {
+                    anchorView = binding.sendButtonContainer
+                    alpha = 0.75f
+                }.show()
     }
 
     /**
@@ -620,11 +636,6 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun doSend(attachmentSender: (List<Pair<File, String?>>) -> Unit, simpleSender: () -> Unit) {
-        if (binding.messageInputFieldView.hasBigAttachment.value) {
-            bigFileSelectionListener?.handleBigFileSelected(true) ?:
-            Snackbar.make(parent as View, R.string.stream_ui_message_input_error_max_length, Snackbar.LENGTH_LONG).show()
-        }
-
         val attachments = binding.messageInputFieldView.getAttachedFiles()
 
         if (attachments.isNotEmpty()) {
