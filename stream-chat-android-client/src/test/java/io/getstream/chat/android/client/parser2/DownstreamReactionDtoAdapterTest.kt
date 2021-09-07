@@ -1,11 +1,11 @@
 package io.getstream.chat.android.client.parser2
 
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.parser2.testdata.ReactionDtoTestData.downstreamJson
 import io.getstream.chat.android.client.parser2.testdata.ReactionDtoTestData.downstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.ReactionDtoTestData.downstreamReaction
 import io.getstream.chat.android.client.parser2.testdata.ReactionDtoTestData.downstreamReactionWithoutExtraData
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -15,13 +15,13 @@ internal class DownstreamReactionDtoAdapterTest {
     @Test
     fun `Deserialize JSON reaction with custom fields`() {
         val reaction = parser.fromJson(downstreamJson, DownstreamReactionDto::class.java)
-        assertThat(reaction).isEqualTo(downstreamReaction)
+        reaction shouldBeEqualTo downstreamReaction
     }
 
     @Test
     fun `Deserialize JSON reaction without custom fields`() {
         val reaction = parser.fromJson(downstreamJsonWithoutExtraData, DownstreamReactionDto::class.java)
-        assertThat(reaction).isEqualTo(downstreamReactionWithoutExtraData)
+        reaction shouldBeEqualTo downstreamReactionWithoutExtraData
     }
 
     @Test

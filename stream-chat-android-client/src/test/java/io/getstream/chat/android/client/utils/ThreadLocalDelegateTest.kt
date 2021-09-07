@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.utils
 
-import com.google.common.truth.Truth.assertThat
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.thread
@@ -18,19 +18,19 @@ internal class ThreadLocalDelegateTest {
             .forEach(Thread::join)
 
         val delegateValues = results.values
-        assertThat(delegateValues.size).isEqualTo(100)
-        assertThat(delegateValues.distinct().size).isEqualTo(100)
+        delegateValues.size shouldBeEqualTo 100
+        delegateValues.distinct().size shouldBeEqualTo 100
     }
 
     @Test
     fun `Should reuse same instance for a given thread`() {
         val results = mutableListOf<Any>()
 
-        (1..100).forEach {
+        repeat(100) {
             results += delegate
         }
 
-        assertThat(results.size).isEqualTo(100)
-        assertThat(results.distinct().size).isEqualTo(1)
+        results.size shouldBeEqualTo 100
+        results.distinct().size shouldBeEqualTo 1
     }
 }

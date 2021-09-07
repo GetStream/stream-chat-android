@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils.observable
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -10,6 +9,7 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
@@ -34,7 +34,7 @@ internal class ChatEventsObservableTest {
 
         socket.sendEvent(event)
 
-        assertThat(result).isEqualTo(listOf(event))
+        result shouldBeEqualTo listOf(event)
     }
 
     @Test
@@ -59,7 +59,7 @@ internal class ChatEventsObservableTest {
         socket.sendEvent(eventB)
         socket.sendEvent(eventC)
 
-        assertThat(result).isEqualTo(listOf(eventA, eventB, eventC))
+        result shouldBeEqualTo listOf(eventA, eventB, eventC)
     }
 
     @Test
@@ -79,7 +79,7 @@ internal class ChatEventsObservableTest {
         socket.sendEvent(eventB)
         socket.sendEvent(eventC)
 
-        assertThat(result).isEqualTo(listOf(eventB))
+        result shouldBeEqualTo listOf(eventB)
     }
 
     @Test
@@ -97,6 +97,6 @@ internal class ChatEventsObservableTest {
 
         socket.sendEvent(eventC)
 
-        assertThat(result).isEqualTo(listOf(eventA, eventB))
+        result shouldBeEqualTo listOf(eventA, eventB)
     }
 }

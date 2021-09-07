@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.querychannels
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
@@ -19,6 +18,7 @@ import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -26,33 +26,34 @@ import org.junit.runner.RunWith
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`() = runBlocking {
-        val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
-            DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
+    fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`(): Unit =
+        runBlocking {
+            val counter = DiffUtilOperationCounter { old: List<Channel>, new: List<Channel> ->
+                DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
+            }
+            val sut = Fixture(chatDomainImpl, data.filter1)
+                .givenChannelInOfflineStorage(data.channel1)
+                .givenMessageInOfflineStorage(data.message1)
+                .withCounter(counter)
+                .get()
+
+            // querying channels, should trigger 2 events (once for offline and another for online),
+            // but there should be only 1 insert since the channels in our case are the same
+            sut.query()
+            counter.counts shouldBeEqualTo UpdateOperationCounts(events = 2, changed = 0, inserted = 1)
+
+            // adding a new channel, should trigger 1 "insert" operation, 1 "update" caused by refresh flow values
+            chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
+            counter.counts shouldBeEqualTo UpdateOperationCounts(events = 4, changed = 1, inserted = 2)
+
+            // adding a new message, should trigger 1 "changed" operation
+            chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
+            counter.counts shouldBeEqualTo UpdateOperationCounts(events = 5, changed = 2, inserted = 2)
+
+            // updating the last message, should should trigger 1 "changed" operation
+            chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
+            counter.counts shouldBeEqualTo UpdateOperationCounts(events = 6, changed = 3, inserted = 2)
         }
-        val sut = Fixture(chatDomainImpl, data.filter1)
-            .givenChannelInOfflineStorage(data.channel1)
-            .givenMessageInOfflineStorage(data.message1)
-            .withCounter(counter)
-            .get()
-
-        // querying channels, should trigger 2 events (once for offline and another for online),
-        // but there should be only 1 insert since the channels in our case are the same
-        sut.query()
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 2, changed = 0, inserted = 1))
-
-        // adding a new channel, should trigger 1 "insert" operation, 1 "update" caused by refresh flow values
-        chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
-
-        // adding a new message, should trigger 1 "changed" operation
-        chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 5, changed = 2, inserted = 2))
-
-        // updating the last message, should should trigger 1 "changed" operation
-        chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 6, changed = 3, inserted = 2))
-    }
 
     private class Fixture(
         private val chatDomainImpl: ChatDomainImpl,

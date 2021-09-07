@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.parser
 
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -14,6 +13,8 @@ import io.getstream.chat.android.client.socket.EventsParser
 import io.getstream.chat.android.client.utils.observable.FakeSocketService
 import okhttp3.Response
 import okhttp3.WebSocket
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -122,7 +123,7 @@ internal class EventsParserTests {
     }
 
     private fun verifyEvent(event: ChatEvent, clazz: Class<out ChatEvent>, type: String) {
-        assertThat(event).isInstanceOf(clazz)
-        assertThat(event.type).isEqualTo(type)
+        event.shouldBeInstanceOf(clazz)
+        event.type shouldBeEqualTo type
     }
 }

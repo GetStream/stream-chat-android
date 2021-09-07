@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.repository
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -13,6 +12,10 @@ import io.getstream.chat.android.offline.randomQueryChannelsSpec
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.QueryChannelsRepositoryImpl
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -52,11 +55,11 @@ internal class QueryChannelsImplRepositoryTest {
 
         val result = sut.selectById("id1")
 
-        Truth.assertThat(result).isNotNull()
-        Truth.assertThat(result!!.filter).isInstanceOf(ContainsFilterObject::class.java)
-        Truth.assertThat((result.filter as ContainsFilterObject).fieldName).isEqualTo("cid")
-        Truth.assertThat(result.filter.value).isEqualTo("cid1")
-        Truth.assertThat(result.cids).isEqualTo(setOf("cid1"))
+        result.shouldNotBeNull()
+        result.filter.shouldBeInstanceOf<ContainsFilterObject>()
+        (result.filter as ContainsFilterObject).fieldName shouldBeEqualTo "cid"
+        result.filter.value shouldBeEqualTo "cid1"
+        result.cids shouldBeEqualTo setOf("cid1")
     }
 
     @Test
@@ -65,6 +68,6 @@ internal class QueryChannelsImplRepositoryTest {
 
         val result = sut.selectById("id1")
 
-        Truth.assertThat(result).isNull()
+        result.shouldBeNull()
     }
 }

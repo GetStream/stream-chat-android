@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils
 
-import com.google.common.truth.Truth
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
@@ -37,7 +37,7 @@ internal class LegacyDateFormatterTest {
             50, // minutes
             37, // seconds
         )
-        Truth.assertThat(legacyFormatter.lastParam).isEqualTo(expected)
+        legacyFormatter.lastParam shouldBeEqualTo expected
     }
 
     @Test
@@ -52,6 +52,6 @@ internal class LegacyDateFormatterTest {
             minutes = 50
             seconds = 37
         }
-        Truth.assertThat(legacyFormatter.lastParam).isEqualTo(expected)
+        legacyFormatter.lastParam shouldBeEqualTo expected
     }
 }

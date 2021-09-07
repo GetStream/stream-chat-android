@@ -85,6 +85,5 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.truth
     testImplementation Dependencies.coroutinesTest
 }

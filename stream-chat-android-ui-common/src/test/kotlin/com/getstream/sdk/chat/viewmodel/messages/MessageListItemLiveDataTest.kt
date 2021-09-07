@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
@@ -18,6 +17,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldNotBeEmpty
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
@@ -92,10 +95,10 @@ internal class MessageListItemLiveDataTest {
     fun `Observe should trigger a recompute`() {
         val many = oneMessage(createMessage())
         val items = many.getOrAwaitValue().items
-        Truth.assertThat(items.size).isEqualTo(2)
+        items.size shouldBeEqualTo 2
         val empty = emptyMessages()
         val items2 = empty.getOrAwaitValue().items
-        Truth.assertThat(items2.size).isEqualTo(0)
+        items2.size shouldBeEqualTo 0
     }
 
     // test typing indicator logic:
@@ -104,7 +107,7 @@ internal class MessageListItemLiveDataTest {
         val messageListItemLd = emptyMessages()
         messageListItemLd.typingChanged(emptyList())
         val items = messageListItemLd.getOrAwaitValue().items
-        Truth.assertThat(items).isEmpty()
+        items.shouldBeEmpty()
     }
 
     @Test
@@ -113,7 +116,7 @@ internal class MessageListItemLiveDataTest {
         val typing = listOf(currentUser.value!!)
         messageListItemLd.handleTypingUsersChange(typing, currentUser.value!!)
         val items = messageListItemLd.getOrAwaitValue().items
-        Truth.assertThat(items).isEmpty()
+        items.shouldBeEmpty()
     }
 
     @Test
@@ -121,8 +124,8 @@ internal class MessageListItemLiveDataTest {
         val messageListItemLd = emptyMessages()
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
-        Truth.assertThat(items.size).isEqualTo(1)
-        Truth.assertThat(items.last()).isInstanceOf(MessageListItem.TypingItem::class.java)
+        items.size shouldBeEqualTo 1
+        items.last().shouldBeInstanceOf<MessageListItem.TypingItem>()
     }
 
     @Test
@@ -132,10 +135,10 @@ internal class MessageListItemLiveDataTest {
         messageListItemLd.messagesChanged(listOf(message), currentUser.value!!.id)
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
-        Truth.assertThat(items.size).isEqualTo(3)
-        Truth.assertThat(items.first()).isInstanceOf(MessageListItem.DateSeparatorItem::class.java)
-        Truth.assertThat(items[1]).isInstanceOf(MessageListItem.MessageItem::class.java)
-        Truth.assertThat(items.last()).isInstanceOf(MessageListItem.TypingItem::class.java)
+        items.size shouldBeEqualTo 3
+        items.first().shouldBeInstanceOf<MessageListItem.DateSeparatorItem>()
+        items[1].shouldBeInstanceOf<MessageListItem.MessageItem>()
+        items.last().shouldBeInstanceOf<MessageListItem.TypingItem>()
     }
 
     // test how we merge read state
@@ -144,7 +147,7 @@ internal class MessageListItemLiveDataTest {
         val messageListItemLd = manyMessages()
         val items = messageListItemLd.getOrAwaitValue().items
         val lastMessage = items.last() as MessageListItem.MessageItem
-        Truth.assertThat(lastMessage.messageReadBy).isNotEmpty()
+        lastMessage.messageReadBy.shouldNotBeEmpty()
     }
 
     @Test
@@ -153,7 +156,7 @@ internal class MessageListItemLiveDataTest {
         val items = messageListItemLd.getOrAwaitValue().items
         val messages = items.filterIsInstance<MessageListItem.MessageItem>()
         val firstMessage = messages.first()
-        Truth.assertThat(firstMessage.messageReadBy).isNotEmpty()
+        firstMessage.messageReadBy.shouldNotBeEmpty()
     }
 
     // test message grouping
@@ -171,7 +174,7 @@ internal class MessageListItemLiveDataTest {
         // there are 3 users, so we should have 3 top sections
         val correctPositions =
             listOf(MessageListItem.Position.TOP, MessageListItem.Position.MIDDLE, MessageListItem.Position.BOTTOM)
-        Truth.assertThat(topMessages).isEqualTo(correctPositions + correctPositions + correctPositions)
+        topMessages shouldBeEqualTo correctPositions + correctPositions + correctPositions
     }
 
     // test data separators
@@ -185,7 +188,7 @@ internal class MessageListItemLiveDataTest {
                 separators.add(item)
             }
         }
-        Truth.assertThat(separators.size).isEqualTo(3)
+        separators.size shouldBeEqualTo 3
     }
 
     @Test

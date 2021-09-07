@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -143,6 +142,6 @@ internal class AttachmentUrlValidatorTests {
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
 
-        Truth.assertThat(result.first().attachments.first()).isEqualTo(newAttachment)
+        result.first().attachments.first() shouldBeEqualTo newAttachment
     }
 }

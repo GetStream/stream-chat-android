@@ -1,9 +1,10 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -11,15 +12,15 @@ import org.junit.runner.RunWith
 internal class StopTypingTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun stopTyping() = runBlocking {
+    fun stopTyping(): Unit = runBlocking {
         chatDomain.watchChannel(data.channel1.cid, 10).execute()
         val result = chatDomain.keystroke(data.channel1.cid, null).execute()
-        Truth.assertThat(result.data()).isTrue()
+        result.data().shouldBeTrue()
         val result2 = chatDomain.stopTyping(data.channel1.cid).execute()
-        Truth.assertThat(result2.data()).isTrue()
+        result2.data().shouldBeTrue()
 
         // this shouldnt trigger an event since nobody is typing
         val result3 = chatDomain.stopTyping(data.channel1.cid).execute()
-        Truth.assertThat(result3.data()).isFalse()
+        result3.data().shouldBeFalse()
     }
 }

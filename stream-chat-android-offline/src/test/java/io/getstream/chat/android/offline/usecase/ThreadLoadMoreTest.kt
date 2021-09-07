@@ -1,9 +1,10 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseConnectedIntegrationTest
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +25,7 @@ internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         val result2 = chatDomain.sendMessage(message2).execute()
         assertSuccess(result2)
         val parentMessage = channelState.getMessage(parentId)!!
-        Truth.assertThat(parentMessage.id).isEqualTo(parentId)
+        parentMessage.id shouldBeEqualTo parentId
         // get the thread
         val result3 = chatDomain.getThread(data.channel1.cid, parentId).execute()
         assertSuccess(result3)
@@ -34,6 +35,6 @@ internal class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         val result4 = chatDomain.threadLoadMore(data.channel1.cid, parentId, 100).execute()
         assertSuccess(result4)
         val endReached = threadController.endOfOlderMessages.value
-        Truth.assertThat(endReached).isTrue()
+        endReached.shouldBeTrue()
     }
 }
