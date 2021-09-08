@@ -81,6 +81,9 @@
 - Improved the way we build items in the Message list
 
 ### ✅ Added
+- Added an uploading indicator to files and images
+- Images being uploaded are now preloaded from the system
+- Upload indicators show the upload progress and how much data is left to send
 
 ### ⚠️ Changed
 
