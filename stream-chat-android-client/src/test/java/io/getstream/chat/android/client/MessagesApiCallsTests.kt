@@ -1,10 +1,10 @@
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -113,19 +113,22 @@ internal class MessagesApiCallsTests {
         val messageFilter = Filters.eq("text", "search-text")
         val channelFilter = Filters.eq("cid", "cid")
 
-        val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)
-
         Mockito.`when`(
-            mock.api.searchMessages(searchRequest)
+            mock.api.searchMessages(channelFilter, messageFilter, 0, 1, null, null)
         ).thenReturn(
             RetroSuccess(
-                listOf(Message(text = messageText, user = user))
+                SearchMessagesResult(
+                    messages = listOf(Message(text = messageText, user = user)),
+                    next = "next-page",
+                    previous = "prev-page",
+                    resultsWarning = null,
+                )
             ).toRetrofitCall()
         )
 
-        val result = client.searchMessages(searchRequest).execute()
+        val result = client.searchMessages(channelFilter, messageFilter, 0, 1).execute()
 
-        verifySuccess(result, listOf(message))
+        verifySuccess(result, SearchMessagesResult(messages = listOf(message), next = "next-page", previous = "prev-page"))
     }
 
     @Test
@@ -133,13 +136,11 @@ internal class MessagesApiCallsTests {
         val messageFilter = Filters.eq("text", "search-text")
         val channelFilter = Filters.eq("cid", "cid")
 
-        val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)
-
         Mockito.`when`(
-            mock.api.searchMessages(searchRequest)
-        ).thenReturn(RetroError<List<Message>>(mock.serverErrorCode).toRetrofitCall())
+            mock.api.searchMessages(channelFilter, messageFilter, 0, 1, null, null)
+        ).thenReturn(RetroError<SearchMessagesResult>(mock.serverErrorCode).toRetrofitCall())
 
-        val result = client.searchMessages(searchRequest).execute()
+        val result = client.searchMessages(channelFilter, messageFilter, 0, 1).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

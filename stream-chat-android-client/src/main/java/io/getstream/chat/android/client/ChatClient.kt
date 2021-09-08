@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.models.ModelFields
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
@@ -715,9 +716,60 @@ public class ChatClient internal constructor(
         return api.addDevice(device)
     }
 
+    @Deprecated(
+        message = "Use the searchMessages method with unwrapped parameters instead",
+        replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
+    }
+
+    /**
+     * Search messages across channels. There are two ways to paginate through search results:
+     *
+     * 1. Using [limit] and [offset] parameters
+     * 1. Using [limit] and [next] parameters
+     *
+     * Limit and offset will allow you to access up to 1000 results matching your query.
+     * You will not be able to sort using limit and offset. The results will instead be
+     * sorted by relevance and message ID.
+     *
+     * Next pagination will allow you to access all search results that match your query,
+     * and you will be able to sort using any filter-able fields and custom fields.
+     * Pages of sort results will be returned with **next** and **previous** strings which
+     * can be supplied as a next parameter when making a query to get a new page of results.
+     *
+     * @param channelFilter Channel filter conditions.
+     * @param messageFilter Message filter conditions.
+     * @param offset Pagination offset, cannot be used with sort or next.
+     * @param limit The number of messages to return.
+     * @param next Pagination parameter, cannot be used with non-zero offset.
+     * @param sort The sort criteria applied to the result, cannot be used with non-zero offset.
+     *
+     * @return Executable async [Call] responsible for searching messages across channels.
+     */
+    @CheckResult
+    public fun searchMessages(
+        channelFilter: FilterObject,
+        messageFilter: FilterObject,
+        offset: Int? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySort<Message>? = null,
+    ): Call<SearchMessagesResult> {
+        if (offset != null && (sort != null || next != null)) {
+            return ErrorCall(ChatError("Cannot specify offset with sort or next parameters"))
+        }
+        return api.searchMessages(
+            channelFilter = channelFilter,
+            messageFilter = messageFilter,
+            offset = offset,
+            limit = limit,
+            next = next,
+            sort = sort,
+        )
     }
 
     @CheckResult
