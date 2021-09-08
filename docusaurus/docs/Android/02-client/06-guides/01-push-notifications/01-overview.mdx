@@ -1,0 +1,113 @@
+---
+slug: /client/guides/push-notifications/
+---
+
+# Overview
+
+Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes in your chat in real time.
+
+:::info
+Members of a channel will receive a push notification if they don't have an open socket connection.
+:::
+
+To receive push notifications from Stream Chat, you'll need to:
+
+1. Configure your push notification provider on the [Stream Dashboard](https://dashboard.getstream.io/).
+2. Add the client-side integration for the chosen provider in your app.
+
+We support the following providers:
+
+- [Firebase](./02-firebase.mdx)
+- Huawei Push Kit (Coming soon, stay tuned!)
+- Mi Push (Coming soon, stay tuned!)
+
+We ship an individual artifact for each of these to make client-side integration with their service quick and simple. See their individual documentation pages linked above for details.
+
+## Customizing Push Notifications
+
+If you want, you can also customize how the push notifications work.
+
+There are two ways to customize push notifications:
+
+* `NotificationConfig`: Customize notification resources and metadata.
+* `ChatNotificationHandler`: Customize the default push notifications handling behaviour.
+
+Let's see how to create a custom `ChatNotificationHandler`.
+
+### Redirecting From a Notification To Your App
+
+In order to redirect the user from notifications to a specific `Activity` in your app, you need to create a custom `ChatNotificationHandler`.
+
+Here's an example of a custom handler:
+
+```kotlin
+class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
+    ChatNotificationHandler(context, notificationConfig) {
+
+    override fun getNewMessageIntent(
+        messageId: String,
+        channelType: String,
+        channelId: String
+    ): Intent = Intent(context, MainActivity::class.java).apply {
+        putExtra(EXTRA_CHANNEL_ID, channelId)
+        putExtra(EXTRA_CHANNEL_TYPE, channelType)
+        putExtra(EXTRA_MESSAGE_ID, messageId)
+    }
+
+    companion object {
+        const val EXTRA_CHANNEL_ID = "extra_channel_id"
+        const val EXTRA_CHANNEL_TYPE = "extra_channel_type"
+        const val EXTRA_MESSAGE_ID = "extra_message_id"
+    }
+}
+```
+
+You extended the `ChatNotificationHandler` to provide a custom implementation, and added an override for `getNewMessageIntent()`. This function allows you to intercept a notification and build a custom `Intent` that can point to any `Activity` in your app. You can also add custom data to the `Intent` if you need it.
+
+Now that you've created a custom handler, you need to pass it into the `ChatClient.Builder`:
+
+```kotlin {4}
+val notificationHandler = MyNotificationHandler(context, notificationsConfig)
+
+ChatClient.Builder("api-key", context)
+    .notifications(notificationHandler)
+    .build()
+```
+
+:::note
+Consider overriding `ChatNotificationHandler.getErrorCaseIntent()` for error case notifications.
+:::
+
+### Customize Notification Data
+
+The SDK also allows you to generate the notification UI that users see after they receive a push notification.
+
+All you need to do is override `buildNotification()` as shown on the following example:
+
+```kotlin
+class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
+    ChatNotificationHandler(context, notificationConfig) {
+
+    override fun buildNotification(
+        notificationId: Int,
+        channel: Channel,
+        message: Message
+    ): NotificationCompat.Builder {
+        // Build your notification, customizing the Notification Builder as needed
+        return NotificationCompact.Builder(context, CHANNEL_NOTIFICATION_ID)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+    }
+}
+```
+
+Within `buildNotification()` you receive the `notificationId` and the `Channel` and `Message` that this notification came from. You can use the `NotificationCompat.Builder()` to customize the notification appearance and default values and behaviour.
+
+Finally, once you're done, pass in the `ChatNotificationHandler` into the `ChatClient.Builder`:
+
+```kotlin {4}
+val notificationHandler = MyNotificationHandler(context, notificationConfig)
+
+ChatClient.Builder("api-key", context)
+    .notifications(notificationHandler)
+    .build()
+```
