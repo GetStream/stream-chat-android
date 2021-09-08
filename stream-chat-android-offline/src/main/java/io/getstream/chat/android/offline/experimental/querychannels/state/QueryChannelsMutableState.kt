@@ -68,4 +68,5 @@ internal class QueryChannelsMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, null)
 }
 
+@ExperimentalStreamChatApi
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState

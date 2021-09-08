@@ -35,6 +35,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
@@ -509,11 +510,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun channel(cid: String): ChannelController {
-        if (!CHANNEL_CID_REGEX.matches(cid)) {
-            throw IllegalArgumentException("Received invalid cid, expected format messaging:123, got $cid")
-        }
-        val parts = cid.split(":")
-        return channel(parts[0], parts[1])
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return channel(channelType, channelId)
     }
 
     internal fun channel(
@@ -523,8 +521,7 @@ internal class ChatDomainImpl internal constructor(
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController = ChannelController(
-                channelType = channelType,
-                channelId = channelId,
+                mutableState = offlinePlugin.state.channel(channelType, channelId).toMutableState(),
                 client = client,
                 domainImpl = this,
             )
