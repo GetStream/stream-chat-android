@@ -1817,6 +1817,7 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
+	public static synthetic fun getUsers$default (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
 }

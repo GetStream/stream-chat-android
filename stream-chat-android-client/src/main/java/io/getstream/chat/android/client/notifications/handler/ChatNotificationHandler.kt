@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
@@ -106,10 +107,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun buildNotification(
         notificationId: Int,
         channel: Channel,
-        message: Message
+        message: Message,
     ): NotificationCompat.Builder {
         return getNotificationBuilder(
-            contentTitle = channel.name,
+            contentTitle = channel.getNotificationContentTitle(),
             contentText = message.text,
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
@@ -141,7 +142,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     public open fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
         return getNotificationBuilder(
-            contentTitle = channel.name,
+            contentTitle = channel.getNotificationContentTitle(),
             contentText = context.getString(config.notificationGroupSummaryContentText),
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
@@ -271,6 +272,15 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.asyncGenerateDevice(onDeviceCreated)
     }
+
+    private fun Channel.getNotificationContentTitle(): String =
+        name.takeIf { it.isNotEmpty() }
+            ?: getMemberNamesWithoutCurrentUser()
+            ?: context.getString(R.string.stream_chat_notification_title)
+
+    private fun Channel.getMemberNamesWithoutCurrentUser(): String? = getUsers()
+        .joinToString { it.name }
+        .takeIf { it.isNotEmpty() }
 
     private companion object {
         private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"

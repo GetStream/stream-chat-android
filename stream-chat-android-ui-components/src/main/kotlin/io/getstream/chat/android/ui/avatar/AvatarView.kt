@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Circle
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User

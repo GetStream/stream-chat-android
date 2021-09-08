@@ -9,7 +9,7 @@ import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.size.PixelSize
 import coil.size.Size
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
