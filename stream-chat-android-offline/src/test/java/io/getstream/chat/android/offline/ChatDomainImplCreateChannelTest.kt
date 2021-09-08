@@ -223,23 +223,6 @@ internal class ChatDomainImplCreateChannelTest {
             verify(repositoryFacade, never()).insertChannels(any())
         }
 
-    @Test
-    fun `Given successful network response When create distinct channel Should return channel result And insert channel to DB`() =
-        runBlockingTest {
-            val repositoryFacade: RepositoryFacade = mock()
-            val networkChannel = randomChannel()
-            val sut = Fixture()
-                .givenChatClientResult(Result(networkChannel))
-                .givenRepositoryFacade(repositoryFacade)
-                .get()
-
-            val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
-
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(networkChannel)
-            verify(repositoryFacade).insertChannel(networkChannel)
-        }
-
     private inner class Fixture {
         private val context: Context = mock()
         private val chatClient: ChatClient = mock {

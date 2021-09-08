@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.client.parser.GsonChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -15,7 +15,7 @@ internal class RetroError<T : Any>(val statusCode: Int) : Call<T> {
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = GsonChatParser(),
+            parser = MoshiChatParser(),
             callbackExecutor = { runnable -> runnable.run() },
         )
     }

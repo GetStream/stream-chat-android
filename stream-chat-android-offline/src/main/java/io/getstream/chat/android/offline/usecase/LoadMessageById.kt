@@ -9,12 +9,12 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class LoadMessageById(private val domainImpl: ChatDomainImpl) {
     /**
-     * Loads message for a given message id and channel id
+     * Loads message for a given message id and channel id.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param messageId: the id of the message
-     * @param olderMessagesOffset: how many new messages to load before the requested message
-     * @param newerMessagesOffset: how many new messages to load after the requested message
+     * @param cid The full channel id i. e. messaging:123.
+     * @param messageId The id of the message.
+     * @param olderMessagesOffset How many new messages to load before the requested message.
+     * @param newerMessagesOffset How many new messages to load after the requested message.
      */
     @CheckResult
     operator fun invoke(

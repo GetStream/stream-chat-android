@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline.utils
 
 /**
- * Validates a cid. Verifies it's not empty and in the format messaging:123
+ * Validates a cid. Verifies it's not empty and in the format messaging:123.
  */
 internal fun validateCid(cid: String): String = cid.apply {
     require(cid.isNotEmpty()) { "cid can not be empty" }

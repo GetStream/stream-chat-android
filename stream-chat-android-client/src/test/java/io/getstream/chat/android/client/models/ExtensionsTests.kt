@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.models
 
-import org.assertj.core.api.Assertions.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 internal class ExtensionsTests {

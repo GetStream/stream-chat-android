@@ -10,12 +10,12 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 
 /**
- * Creates a channels view model factory
+ * Creates a channels view model factory.
  *
- * @param filter how to filter the channels
- * @param sort how to sort the channels, defaults to last_updated
- * @param limit how many channels to return
- * @param messageLimit the number of messages to fetch for each channel
+ * @param filter How to filter the channels.
+ * @param sort How to sort the channels, defaults to last_updated.
+ * @param limit How many channels to return.
+ * @param messageLimit The number of messages to fetch for each channel.
  *
  * @see Filters
  * @see QuerySort

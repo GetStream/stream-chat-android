@@ -10,9 +10,9 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class GetChannelController(private val domainImpl: ChatDomainImpl) {
     /**
-     * Returns a ChannelController for given cid
+     * Returns a ChannelController for given cid.
      *
-     * @param cid the full channel id. ie messaging:123
+     * @param cid The full channel id. ie messaging:123.
      *
      * @see io.getstream.chat.android.offline.channel.ChannelController
      */

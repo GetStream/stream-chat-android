@@ -98,9 +98,9 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
-     * @param view will be added to the view hierarchy of [ChannelListView] and managed by it.
-     * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container ViewGroup.
+     * @param view Will be added to the view hierarchy of [ChannelListView] and managed by it.
+     * This view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams Defines how the view will be situated inside its container ViewGroup.
      */
     @JvmOverloads
     public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
@@ -110,9 +110,9 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
-     * @param view will be added to the view hierarchy of [ChannelListView] and managed by it.
-     * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container ViewGroup.
+     * @param view Will be added to the view hierarchy of [ChannelListView] and managed by it.
+     * This view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams Defines how the view will be situated inside its container ViewGroup.
      */
     @JvmOverloads
     public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams) {
@@ -122,9 +122,9 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
-     * Uses the [drawableResource] as the separator for list items
+     * Uses the [drawableResource] as the separator for list items.
      *
-     * @param drawableResource the drawable used as a separator
+     * @param drawableResource The drawable used as a separator.
      */
     public fun setItemSeparator(@DrawableRes drawableResource: Int) {
         simpleChannelListView.setItemSeparator(drawableResource)
@@ -139,82 +139,82 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
-     * Allows clients to set a custom implementation of [ChannelListItemViewHolderFactory]
+     * Allows clients to set a custom implementation of [ChannelListItemViewHolderFactory].
      *
-     * @param factory the custom factory to be used when generating item view holders
+     * @param factory The custom factory to be used when generating item view holders.
      */
     public fun setViewHolderFactory(factory: ChannelListItemViewHolderFactory) {
         simpleChannelListView.setViewHolderFactory(factory)
     }
 
     /**
-     * Allows clients to set a click listener for all channel list items
+     * Allows clients to set a click listener for all channel list items.
      *
-     * @param listener the callback to be invoked on channel item click
+     * @param listener The callback to be invoked on channel item click.
      */
     public fun setChannelItemClickListener(listener: ChannelClickListener?) {
         simpleChannelListView.setChannelClickListener(listener)
     }
 
     /**
-     * Allows clients to set a long-click listener for all channel list items
+     * Allows clients to set a long-click listener for all channel list items.
      *
-     * @param listener the callback to be invoked on channel long click
+     * @param listener The callback to be invoked on channel long click.
      */
     public fun setChannelLongClickListener(listener: ChannelLongClickListener?) {
         simpleChannelListView.setChannelLongClickListener(listener)
     }
 
     /**
-     * Allows clients to set a click listener to be notified of user click events
+     * Allows clients to set a click listener to be notified of user click events.
      *
-     * @param listener the listener to be invoked when a user click event occurs
+     * @param listener The listener to be invoked when a user click event occurs.
      */
     public fun setUserClickListener(listener: UserClickListener?) {
         simpleChannelListView.setUserClickListener(listener)
     }
 
     /**
-     * Allows clients to set a click listener to be notified of delete clicks via channel actions
+     * Allows clients to set a click listener to be notified of delete clicks via channel actions.
      * or view holder swipe menu
      *
-     * @param listener - the callback to be invoked when delete is clicked
+     * @param listener The callback to be invoked when delete is clicked.
      */
     public fun setChannelDeleteClickListener(listener: ChannelClickListener?) {
         simpleChannelListView.setChannelDeleteClickListener(listener)
     }
 
     /**
-     * Allows clients to set a click listener to be notified of "more options" clicks in ViewHolder items
+     * Allows clients to set a click listener to be notified of "more options" clicks in ViewHolder items.
      *
-     * @param listener - the callback to be invoked when "more options" is clicked
+     * @param listener The callback to be invoked when "more options" is clicked.
      */
     public fun setMoreOptionsClickListener(listener: ChannelClickListener?) {
         simpleChannelListView.setMoreOptionsClickListener(listener)
     }
 
     /**
-     * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu
+     * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu.
      *
-     * @param listener - the callback to be invoked when "channel info" is clicked
+     * @param listener The callback to be invoked when "channel info" is clicked.
      */
     public fun setChannelInfoClickListener(listener: ChannelClickListener?) {
         channelInfoListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     /**
-     * Allows a client to set a click listener to be notified of "leave channel" clicks in the "more options" menu
+     * Allows a client to set a click listener to be notified of "leave channel" clicks in the "more options" menu.
      *
-     * @param listener - the callback to be invoked when "leave channel" is clicked
+     * @param listener The callback to be invoked when "leave channel" is clicked.
      */
     public fun setChannelLeaveClickListener(listener: ChannelClickListener?) {
         channelLeaveListener = listener ?: ChannelClickListener.DEFAULT
     }
 
     /**
-     * Allows a client to set a swipe listener to be notified of swipe details in order to take action
+     * Allows a client to set a swipe listener to be notified of swipe details in order to take action.
      *
-     * @param listener - the set of functions to be invoked during a swipe's lifecycle
+     * @param listener The set of functions to be invoked during a swipe's lifecycle.
      */
     public fun setSwipeListener(listener: SwipeListener?) {
         simpleChannelListView.setSwipeListener(listener)
@@ -225,9 +225,9 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
-     * Allows a client to set a ChannelListItemPredicate to filter ChannelListItems before they are drawn
+     * Allows a client to set a ChannelListItemPredicate to filter ChannelListItems before they are drawn.
      *
-     * @param channelListItemPredicate - ChannelListItemsPredicate used to filter the list of ChannelListItem
+     * @param channelListItemPredicate Predicate used to filter the list of ChannelListItem.
      */
     public fun setChannelListItemPredicate(channelListItemPredicate: ChannelListItemPredicate) {
         this.channelListItemPredicate = channelListItemPredicate
@@ -362,7 +362,7 @@ public class ChannelListView : FrameLayout {
         /**
          * Called when a channel has been clicked and held.
          *
-         * @return true if the callback consumed the long click, false otherwise.
+         * @return True if the callback consumed the long click, false otherwise.
          */
         public fun onLongClick(channel: Channel): Boolean
     }
@@ -376,6 +376,9 @@ public class ChannelListView : FrameLayout {
      * before applying it to ChannelListView.
      */
     public fun interface ChannelListItemPredicate {
+        /**
+         * Should return true for items that should be kept after filtering.
+         */
         public fun predicate(channelListItem: ChannelListItem): Boolean
     }
 
@@ -387,30 +390,30 @@ public class ChannelListView : FrameLayout {
         /**
          * Invoked when a swipe is detected.
          *
-         * @param viewHolder the view holder that is being swiped
-         * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
-         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
+         * @param viewHolder The view holder that is being swiped.
+         * @param adapterPosition The internal adapter position of the item being bound.
+         * @param x The raw X of the swipe origin; null may indicate the call isn't from user interaction.
+         * @param y The raw Y of the swipe origin; null may indicate the call isn't from user interaction.
          */
         public fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float? = null, y: Float? = null)
 
         /**
          * Invoked after a swipe has been detected, and movement is occurring.
          *
-         * @param viewHolder the view holder that is being swiped
-         * @param adapterPosition the internal adapter position of the item being bound
-         * @param dX the change from the previous swipe touch event to the current
-         * @param totalDeltaX the change from the first touch event to the current
+         * @param viewHolder The view holder that is being swiped.
+         * @param adapterPosition The internal adapter position of the item being bound.
+         * @param dX The change from the previous swipe touch event to the current.
+         * @param totalDeltaX The change from the first touch event to the current.
          */
         public fun onSwipeChanged(viewHolder: SwipeViewHolder, adapterPosition: Int, dX: Float, totalDeltaX: Float)
 
         /**
          * Invoked when a swipe is successfully completed naturally, without cancellation.
          *
-         * @param viewHolder the view holder that is being swiped
-         * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
-         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction
+         * @param viewHolder The view holder that is being swiped.
+         * @param adapterPosition The internal adapter position of the item being bound.
+         * @param x The raw X of the swipe origin; null may indicate the call isn't from user interaction.
+         * @param y The raw Y of the swipe origin; null may indicate the call isn't from user interaction.
          */
         public fun onSwipeCompleted(
             viewHolder: SwipeViewHolder,
@@ -422,10 +425,11 @@ public class ChannelListView : FrameLayout {
         /**
          * Invoked when a swipe is canceled.
          *
-         * @param viewHolder the view holder that is being swiped
-         * @param adapterPosition the internal adapter position of the item being bound
-         * @param x the raw X of the swipe origin; null may indicate the call isn't from user interaction
-         * @param y the raw Y of the swipe origin; null may indicate the call isn't from user interaction         */
+         * @param viewHolder The view holder that is being swiped.
+         * @param adapterPosition The internal adapter position of the item being bound.
+         * @param x The raw X of the swipe origin; null may indicate the call isn't from user interaction.
+         * @param y The raw Y of the swipe origin; null may indicate the call isn't from user interaction.
+         */
         public fun onSwipeCanceled(
             viewHolder: SwipeViewHolder,
             adapterPosition: Int,
@@ -439,8 +443,8 @@ public class ChannelListView : FrameLayout {
          * track the swiped state and determine if the view holder should appear as swiped for the item
          * being bound.
          *
-         * @param viewHolder the view holder being bound
-         * @param adapterPosition the internal adapter position of the item being bound
+         * @param viewHolder The view holder being bound.
+         * @param adapterPosition The internal adapter position of the item being bound.
          */
         public fun onRestoreSwipePosition(viewHolder: SwipeViewHolder, adapterPosition: Int)
 

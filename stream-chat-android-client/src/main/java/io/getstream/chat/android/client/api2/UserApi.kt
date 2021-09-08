@@ -15,7 +15,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 @AuthenticatedApi
-@MoshiApi
 internal interface UserApi {
     @POST("/users")
     fun updateUsers(

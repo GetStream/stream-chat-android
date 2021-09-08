@@ -16,10 +16,10 @@ import io.getstream.chat.android.compose.ui.util.initialsGradient
  * Represents a special avatar case when we need to show the initials instead of an image. Usually happens when there
  * are no images to show in the avatar.
  *
- * @param initials - The initials to show.
- * @param modifier - Modifier for styling.
- * @param shape - The shape of the avatar.
- * */
+ * @param initials The initials to show.
+ * @param modifier Modifier for styling.
+ * @param shape The shape of the avatar.
+ */
 @Composable
 public fun InitialsAvatar(
     initials: String,

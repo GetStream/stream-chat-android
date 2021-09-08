@@ -15,12 +15,12 @@ import java.util.Date
 /**
  * Represents a timestamp in the app, that's used primarily for channels and messages.
  *
- * @param date - The date to show in the timestamp.
- * @param modifier - Modifier for styling.
- * @param formatter - The formatter that's used to format the date to a String.
- * @param formatType - The type of formatting to provide - either a timestamp or a full date. We format the information
+ * @param date The date to show in the timestamp.
+ * @param modifier Modifier for styling.
+ * @param formatter The formatter that's used to format the date to a String.
+ * @param formatType The type of formatting to provide - either a timestamp or a full date. We format the information
  * using [DATE] by default, as it's the most common behavior.
- * */
+ */
 @Composable
 public fun Timestamp(
     date: Date?,

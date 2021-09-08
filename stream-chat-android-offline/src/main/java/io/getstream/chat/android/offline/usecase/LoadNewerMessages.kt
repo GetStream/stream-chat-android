@@ -9,10 +9,10 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class LoadNewerMessages(private val domainImpl: ChatDomainImpl) {
     /**
-     * Loads newer messages for the channel
+     * Loads newer messages for the channel.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param messageLimit: how many new messages to load
+     * @param cid The full channel id i. e. messaging:123.
+     * @param messageLimit How many new messages to load.
      */
     @CheckResult
     operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {

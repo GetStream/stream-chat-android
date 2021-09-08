@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -692,10 +693,12 @@ internal class MoshiChatApi(
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            offset = request.offset,
-            limit = request.limit,
             filter_conditions = request.channelFilter.toMap(),
             message_filter_conditions = request.messageFilter.toMap(),
+            offset = request.offset,
+            limit = request.limit,
+            next = request.next,
+            sort = request.sort,
         )
         return generalApi.searchMessages(connectionId, newRequest)
             .map { response ->
@@ -705,6 +708,41 @@ internal class MoshiChatApi(
                             ?.let(::enrichWithCid)
                     }
                 }
+            }
+    }
+
+    override fun searchMessages(
+        channelFilter: FilterObject,
+        messageFilter: FilterObject,
+        offset: Int?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySort<Message>?
+    ): Call<SearchMessagesResult> {
+        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
+            filter_conditions = channelFilter.toMap(),
+            message_filter_conditions = messageFilter.toMap(),
+            offset = offset,
+            limit = limit,
+            next = next,
+            sort = sort?.toDto(),
+        )
+        return generalApi.searchMessages(connectionId, newRequest)
+            .map { response ->
+                val results = response.results
+
+                val messages = results.map { resp ->
+                    resp.message.toDomain().apply {
+                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
+                            ?.let(::enrichWithCid)
+                    }
+                }
+                SearchMessagesResult(
+                    messages = messages,
+                    next = response.next,
+                    previous = response.previous,
+                    resultsWarning = response.resultsWarning?.toDomain(),
+                )
             }
     }
 

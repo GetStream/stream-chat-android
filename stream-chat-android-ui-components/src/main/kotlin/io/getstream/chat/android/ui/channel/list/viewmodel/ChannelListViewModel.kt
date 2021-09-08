@@ -19,6 +19,8 @@ import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
+import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
+import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
@@ -27,11 +29,12 @@ import kotlinx.coroutines.flow.map
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelListViewModel.bindView] function.
- * @param chatDomain entry point for all livedata & offline operations
- * @param filter filter for querying channels, should never be empty
- * @param sort defines the ordering of the channels
- * @param limit the maximum number of channels to fetch
- * @param messageLimit the number of messages to fetch for each channel
+ *
+ * @param chatDomain Entry point for all livedata & offline operations.
+ * @param filter Filter for querying channels, should never be empty.
+ * @param sort Defines the ordering of the channels.
+ * @param limit The maximum number of channels to fetch.
+ * @param messageLimit The number of messages to fetch for each channel.
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
@@ -82,7 +85,7 @@ public class ChannelListViewModel(
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
-                        stateMerger.value = state.copy(channels = state.channels)
+                        stateMerger.value = state.copy(channels = parseMutedChannels(state.channels, mutedChannels))
                     } else {
                         stateMerger.value = state?.copy()
                     }
@@ -113,7 +116,10 @@ public class ChannelListViewModel(
             is QueryChannelsController.ChannelsState.Result ->
                 State(
                     isLoading = false,
-                    channels = channelState.channels
+                    channels = parseMutedChannels(
+                        channelState.channels,
+                        currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
+                    ),
                 )
         }
     }
@@ -155,6 +161,29 @@ public class ChannelListViewModel(
     }
 
     public data class State(val isLoading: Boolean, val channels: List<Channel>)
+
+    private fun parseMutedChannels(
+        channels: List<Channel>,
+        channelMutesIds: List<String>,
+    ): List<Channel> {
+        return channels.map { channel ->
+            when {
+                channel.isMuted != channelMutesIds.contains(channel.id) ->
+                    channel.copy(extraData = channel.extraData.clone(EXTRA_DATA_MUTED, !channel.isMuted))
+
+                else -> channel
+            }
+        }
+    }
+
+    private fun <K, V> Map<K, V>.clone(changeKey: K, changeValue: V): MutableMap<K, V> {
+        val originalMap = this
+
+        return mutableMapOf<K, V>().apply {
+            putAll(originalMap)
+            put(changeKey, changeValue)
+        }
+    }
 
     public data class PaginationState(
         val loadingMore: Boolean = false,

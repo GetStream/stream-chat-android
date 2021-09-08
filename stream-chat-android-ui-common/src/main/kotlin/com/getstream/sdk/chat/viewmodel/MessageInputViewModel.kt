@@ -15,11 +15,10 @@ import io.getstream.chat.android.livedata.ChatDomain
 import java.io.File
 
 /**
- * ViewModel class for [com.getstream.sdk.chat.view.messageinput.MessageInputView].
- * Responsible for sending and updating chat messages.
- * Can be bound to the view using [MessageInputViewModel.bindView] function.
- * @param cid the full channel id, i.e. "messaging:123"
- * @param chatDomain entry point for all livedata & offline operations
+ * ViewModel class for MessageInputView. Responsible for sending and updating chat messages.
+ * Can be bound to the view using the MessageInputViewModel.bindView function.
+ * @param cid The full channel id, i.e. "messaging:123".
+ * @param chatDomain Entry point for all livedata & offline operations.
  */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
@@ -65,7 +64,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Sets and informs about new active thread
+     * Sets and informs about new active thread.
      */
     public fun setActiveThread(parentMessage: Message) {
         activeThread.postValue(parentMessage)
@@ -79,7 +78,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         get() = activeThread.value != null
 
     /**
-     * Resets currently active thread
+     * Resets currently active thread.
      */
     public fun resetThread() {
         activeThread.postValue(null)
@@ -108,9 +107,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Edit message
+     * Edit message.
      *
-     * @param message the Message sent
+     * @param message The Message sent.
      */
     public fun editMessage(message: Message) {
         stopTyping()
@@ -118,17 +117,17 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Sets the message to be edited
+     * Sets the message to be edited.
      *
-     * @param message the Message to edit
+     * @param message The Message to edit.
      */
     public fun postMessageToEdit(message: Message?) {
         _messageToEdit.postValue(message)
     }
 
     /**
-     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-     * Call this on every keystroke
+     * First of the typing.start and typing.stop events based on the users keystrokes.
+     * Call this on every keystroke.
      */
     @Synchronized
     public fun keystroke() {
@@ -137,7 +136,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
-     * stopTyping - Sets last typing to null and sends the typing.stop event
+     * Sets last typing to null and sends the typing.stop event.
      */
     public fun stopTyping() {
         val parentId = activeThread.value?.id
