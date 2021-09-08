@@ -444,6 +444,7 @@ public class MessageListView : ConstraintLayout {
         messageListViewStyle?.messagesStart?.let(::chatMessageStart)
 
         initRecyclerView()
+        initScrollHelper()
         initLoadingView()
         initEmptyStateView()
 
@@ -493,10 +494,6 @@ public class MessageListView : ConstraintLayout {
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }
-
-        scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
-        scrollHelper.alwaysScrollToBottom =
-            requireStyle().scrollButtonBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
@@ -516,10 +513,21 @@ public class MessageListView : ConstraintLayout {
             }
 
             binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-        }
 
-        if (background == null) {
-            setBackgroundColor(requireStyle().backgroundColor)
+            scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
+
+            NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                    R.styleable.MessageListView_streamUiNewMessagesBehaviour,
+                    NewMessagesBehaviour.COUNT_UPDATE.value
+                )
+            ).also {
+                scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+            }
+
+            if (background == null) {
+                setBackgroundColor(requireStyle().backgroundColor)
+            }
         }
     }
 
@@ -568,7 +576,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun init(channel: Channel) {
         this.channel = channel
-        initScrollHelper()
 
         initAdapter()
 
