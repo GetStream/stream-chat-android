@@ -64,12 +64,12 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
 ### ⬆️ Improved
 - Improved scroll of message when many gif images are present in `MessageListView`
 
 ### ✅ Added
-
+- Added scroll behaviour to `MessageListViewStyle`.
 ### ⚠️ Changed
 
 ### ❌ Removed
