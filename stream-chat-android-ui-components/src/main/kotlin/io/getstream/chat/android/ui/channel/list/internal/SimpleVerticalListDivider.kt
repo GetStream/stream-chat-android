@@ -16,7 +16,7 @@ internal class SimpleVerticalListDivider(context: Context) : RecyclerView.ItemDe
     var drawable: Drawable = context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
     /**
-     * Drawable height in pixels
+     * Drawable height in pixels.
      */
     var drawableHeight: Int? = null
 

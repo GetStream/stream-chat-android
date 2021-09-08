@@ -34,7 +34,7 @@ public fun Channel.getDisplayName(): String {
  * Returns channel's last regular or system message if exists.
  * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
  *
- * @return Last message from the channel or null if it doesn't exist
+ * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(currentUser: User?): Message? =
     messages.asSequence()

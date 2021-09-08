@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -235,9 +236,9 @@ public class ChatClient internal constructor(
      * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
      * You can use [listener] to get updates about socket connection.
      *
-     * @param user the user to set
-     * @param tokenProvider a [TokenProvider] implementation
-     * @param listener socket connection listener
+     * @param user The user to set.
+     * @param tokenProvider A [TokenProvider] implementation.
+     * @param listener Socket connection listener.
      */
     private fun setUser(
         user: User,
@@ -297,8 +298,8 @@ public class ChatClient internal constructor(
      * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
      * You can use [listener] to get updates about socket connection.
      *
-     * @param user the user to set
-     * @param tokenProvider a [TokenProvider] implementation
+     * @param user The user to set.
+     * @param tokenProvider A [TokenProvider] implementation.
      */
     @CheckResult
     public fun connectUser(user: User, tokenProvider: TokenProvider): Call<ConnectionData> {
@@ -312,7 +313,6 @@ public class ChatClient internal constructor(
      *
      * This method initializes [ChatClient] to allow the use of Stream REST API client.
      * Moreover, it warms up the connection, and sets up notifications.
-     *
      */
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
@@ -413,12 +413,12 @@ public class ChatClient internal constructor(
      * The Stream CDN imposes the following restrictions on file uploads:
      * - The maximum file size is 20 MB
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param file the file that needs to be uploaded
-     * @param callback the callback to track progress
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param file The file that needs to be uploaded.
+     * @param callback The callback to track progress.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -442,12 +442,12 @@ public class ChatClient internal constructor(
      * - The maximum image size is 20 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param file the image file that needs to be uploaded
-     * @param callback the callback to track progress
+     * @param channelType The channel type. ie messaging.
+     * @param channelId Еhe channel id. ie 123.
+     * @param file The image file that needs to be uploaded.
+     * @param callback The callback to track progress.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -468,11 +468,11 @@ public class ChatClient internal constructor(
     /**
      * Deletes the file represented by [url] from the given channel.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param url the URL of the file to be deleted
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param url The URL of the file to be deleted.
      *
-     * @return executable async [Call] responsible for deleting a file
+     * @return Executable async [Call] responsible for deleting a file.
      *
      * @see FileUploader
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
@@ -485,11 +485,11 @@ public class ChatClient internal constructor(
     /**
      * Deletes the image represented by [url] from the given channel.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param url the URL of the image to be deleted
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param url The URL of the image to be deleted.
      *
-     * @return executable async [Call] responsible for deleting an image
+     * @return Executable async [Call] responsible for deleting an image.
      *
      * @see FileUploader
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
@@ -752,13 +752,13 @@ public class ChatClient internal constructor(
 
     /**
      * Returns a [Call<List<Message>>] With messages which contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type
+     * not necessarily all of them will have a specified type.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param offset The messages offset
-     * @param limit max limit messages to be fetched
-     * @param type The desired type attachment
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param offset The messages offset.
+     * @param limit Max limit messages to be fetched.
+     * @param type The desired type attachment.
      */
     @Deprecated(
         message = "Use getMessagesWithAttachments function with types list instead",
@@ -779,13 +779,13 @@ public class ChatClient internal constructor(
 
     /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type
+     * not necessarily all of them will have a specified type.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param offset the messages offset
-     * @param limit max limit messages to be fetched
-     * @param types desired attachment's types list
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param offset The messages offset.
+     * @param limit Max limit messages to be fetched.
+     * @param types Desired attachment's types list.
      */
     @CheckResult
     public fun getMessagesWithAttachments(
@@ -857,11 +857,11 @@ public class ChatClient internal constructor(
     /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
      *
-     * @param messageId the message ID
-     * @param set the key-value data which will be added to the existing message object
-     * @param unset the list of fields which will be removed from the existing message object
+     * @param messageId The message ID.
+     * @param set The key-value data which will be added to the existing message object.
+     * @param unset The list of fields which will be removed from the existing message object.
      *
-     * @return executable async [Call] responsible for partially updating the message
+     * @return Executable async [Call] responsible for partially updating the message.
      */
     @CheckResult
     public fun partialUpdateMessage(
@@ -877,12 +877,12 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Pins the message
+     * Pins the message.
      *
-     * @param message the message object containing the ID of the message to be pinned
-     * @param expirationDate the exact expiration date
+     * @param message The message object containing the ID of the message to be pinned.
+     * @param expirationDate The exact expiration date.
      *
-     * @return executable async [Call] responsible for pinning the message
+     * @return Executable async [Call] responsible for pinning the message.
      */
     @CheckResult
     public fun pinMessage(message: Message, expirationDate: Date? = null): Call<Message> {
@@ -896,12 +896,12 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Pins the message
+     * Pins the message.
      *
-     * @param message the message object containing the ID of the message to be pinned
-     * @param timeout the expiration timeout in seconds
+     * @param message The message object containing the ID of the message to be pinned.
+     * @param timeout The expiration timeout in seconds.
      *
-     * @return executable async [Call] responsible for pinning the message
+     * @return Executable async [Call] responsible for pinning the message.
      */
     @CheckResult
     public fun pinMessage(message: Message, timeout: Int): Call<Message> {
@@ -920,9 +920,9 @@ public class ChatClient internal constructor(
     /**
      * Unpins the message that was previously pinned
      *
-     * @param message the message object containing the ID of the message to be unpinned
+     * @param message The message object containing the ID of the message to be unpinned.
      *
-     * @return executable async [Call] responsible for unpinning the message
+     * @return Executable async [Call] responsible for unpinning the message.
      */
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> {
@@ -991,10 +991,10 @@ public class ChatClient internal constructor(
     /**
      * Removes all of the messages of the channel but doesn't affect the channel data or members.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the truncated channel
+     * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
@@ -1011,12 +1011,12 @@ public class ChatClient internal constructor(
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
      * will be deleted.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param updateMessage the message object allowing you to show a system message in the channel
-     * @param channelExtraData the updated channel extra data
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param updateMessage The message object allowing you to show a system message in the channel.
+     * @param channelExtraData The updated channel extra data.
      *
-     * @return executable async [Call] responsible for updating channel data
+     * @return Executable async [Call] responsible for updating channel data.
      */
     @CheckResult
     public fun updateChannel(
@@ -1035,12 +1035,12 @@ public class ChatClient internal constructor(
     /**
      * Updates specific fields of channel data retaining the custom data fields which were set previously.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param set the key-value data which will be added to the existing channel data object
-     * @param unset the list of fields which will be removed from the existing channel data object
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param set The key-value data which will be added to the existing channel data object.
+     * @param unset The list of fields which will be removed from the existing channel data object.
      *
-     * @return executable async [Call] responsible for updating channel data
+     * @return Executable async [Call] responsible for updating channel data.
      */
     @CheckResult
     public fun updateChannelPartial(
@@ -1062,11 +1062,11 @@ public class ChatClient internal constructor(
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
      * between 1-120.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param cooldownTimeInSeconds the duration of the time interval users have to wait between messages
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param cooldownTimeInSeconds The duration of the time interval users have to wait between messages.
      *
-     * @return executable async [Call] responsible for enabling slow mode
+     * @return Executable async [Call] responsible for enabling slow mode.
      */
     @CheckResult
     public fun enableSlowMode(
@@ -1084,10 +1084,10 @@ public class ChatClient internal constructor(
     /**
      * Disables slow mode for the channel.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
      *
-     * @return executable async [Call] responsible for disabling slow mode
+     * @return Executable async [Call] responsible for disabling slow mode.
      */
     @CheckResult
     public fun disableSlowMode(
@@ -1105,12 +1105,12 @@ public class ChatClient internal constructor(
     /**
      * Sends an event to all users watching the channel.
      *
-     * @param eventType the event name
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param extraData the event payload
+     * @param eventType The event name.
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param extraData The event payload.
      *
-     * @return executable async [Call] responsible for sending an event.
+     * @return Executable async [Call] responsible for sending an event.
      */
     @CheckResult
     public fun sendEvent(
@@ -1156,11 +1156,11 @@ public class ChatClient internal constructor(
     /**
      * Updates specific user fields retaining the custom data fields which were set previously.
      *
-     * @param id user ids
-     * @param set the key-value data which will be added to the existing user object
-     * @param unset the list of fields which will be removed from the existing user object
+     * @param id User ids.
+     * @param set The key-value data which will be added to the existing user object.
+     * @param unset The list of fields which will be removed from the existing user object.
      *
-     * @return executable async [Call]
+     * @return Executable async [Call].
      */
     @CheckResult
     public fun partialUpdateUser(
@@ -1216,11 +1216,11 @@ public class ChatClient internal constructor(
      * can optionally set an expiration time. Triggers `notification.channel_mutes_updated`
      * event.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
-     * @param expiration the duration of mute in **millis**
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param expiration The duration of mute in **millis**.
      *
-     * @return executable async [Call] responsible for muting a channel
+     * @return Executable async [Call] responsible for muting a channel.
      *
      * @see [NotificationChannelMutesUpdatedEvent]
      */
@@ -1242,10 +1242,10 @@ public class ChatClient internal constructor(
      * Unmutes a channel for the current user. Triggers `notification.channel_mutes_updated`
      * event.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
      *
-     * @return executable async [Call] responsible for unmuting a channel
+     * @return Executable async [Call] responsible for unmuting a channel.
      *
      * @see [NotificationChannelMutesUpdatedEvent]
      */
@@ -1262,10 +1262,10 @@ public class ChatClient internal constructor(
      * mutes stay in place indefinitely until the user removes it. However, you can optionally
      * set a mute timeout. Triggers `notification.mutes_updated` event.
      *
-     * @param userId the user id to mute
-     * @param timeout the timeout in **minutes** until the mute is expired
+     * @param userId The user id to mute.
+     * @param timeout The timeout in **minutes** until the mute is expired.
      *
-     * @return executable async [Call] responsible for muting a user
+     * @return Executable async [Call] responsible for muting a user.
      *
      * @see [NotificationMutesUpdatedEvent]
      */
@@ -1281,9 +1281,9 @@ public class ChatClient internal constructor(
     /**
      * Unmutes a previously muted user. Triggers `notification.mutes_updated` event.
      *
-     * @param userId the user id to unmute
+     * @param userId The user id to unmute.
      *
-     * @return executable async [Call] responsible for unmuting a user
+     * @return Executable async [Call] responsible for unmuting a user.
      *
      * @see [NotificationMutesUpdatedEvent]
      */
@@ -1423,23 +1423,22 @@ public class ChatClient internal constructor(
     }
 
     /**
-     * Returns a [ChannelClient] for given type and id
+     * Returns a [ChannelClient] for given type and id.
      *
-     * @param channelType the channel type. ie messaging
-     * @param channelId the channel id. ie 123
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
      */
     public fun channel(channelType: String, channelId: String): ChannelClient {
         return ChannelClient(channelType, channelId, this)
     }
 
     /**
-     * Returns a [ChannelClient] for given cid
+     * Returns a [ChannelClient] for given cid.
      *
-     * @param cid the full channel id. ie messaging:123
+     * @param cid The full channel id. ie messaging:123.
      */
     public fun channel(cid: String): ChannelClient {
-        val type = cid.split(":")[0]
-        val id = cid.split(":")[1]
+        val (type, id) = cid.cidToTypeAndId()
         return channel(type, id)
     }
 
@@ -1488,10 +1487,10 @@ public class ChatClient internal constructor(
      * Returns all events that happened for a list of channels since last sync (while the user was not
      * connected to the web-socket).
      *
-     * @param channelsIds the list of channel CIDs
-     * @param lastSyncAt the last time the user was online and in sync
+     * @param channelsIds The list of channel CIDs
+     * @param lastSyncAt The last time the user was online and in sync
      *
-     * @return executable async [Call] responsible for obtaining missing events.
+     * @return Executable async [Call] responsible for obtaining missing events.
      */
     @CheckResult
     public fun getSyncHistory(

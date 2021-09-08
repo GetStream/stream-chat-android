@@ -23,7 +23,7 @@ abstract class BaseViewHolder<T : ChatInfoItem>(
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
-     * Workaround to allow a downcast of the ChatInfoItem to T
+     * Workaround to allow a downcast of the ChatInfoItem to T.
      */
     @Suppress("UNCHECKED_CAST")
     internal fun bindListItem(item: ChatInfoItem) = bind(item as T)

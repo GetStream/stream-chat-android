@@ -15,7 +15,7 @@ internal interface ReactionRepository {
 }
 
 /**
- * We don't do any caching on reactions since usage is infrequent
+ * We don't do any caching on reactions since usage is infrequent.
  */
 internal class ReactionRepositoryImpl(
     private val reactionDao: ReactionDao,

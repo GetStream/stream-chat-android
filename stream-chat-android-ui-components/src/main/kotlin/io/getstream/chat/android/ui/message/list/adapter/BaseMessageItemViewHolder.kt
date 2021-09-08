@@ -23,7 +23,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     private var highlightAnimation: ValueAnimator? = null
 
     /**
-     * Workaround to allow a downcast of the MessageListItem to T
+     * Workaround to allow a downcast of the MessageListItem to T.
      */
     @Suppress("UNCHECKED_CAST")
     internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) {

@@ -95,7 +95,7 @@ public open class MessageListFragment : Fragment() {
     /**
      * Configures [MessageListHeaderView]. Override the method for a custom setup.
      *
-     * @param messageListHeaderView the message list header that is being configured
+     * @param messageListHeaderView The message list header that is being configured.
      */
     protected open fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
         with(messageListHeaderView) {
@@ -114,7 +114,7 @@ public open class MessageListFragment : Fragment() {
     /**
      * Configures [MessageListView]. Override the method for a custom setup.
      *
-     * @param messageListView the message list that is being configured
+     * @param messageListView The message list that is being configured.
      */
     protected open fun setupMessageList(messageListView: MessageListView) {
         messageListViewModel.bindView(messageListView, viewLifecycleOwner)
@@ -137,7 +137,7 @@ public open class MessageListFragment : Fragment() {
     /**
      * Configures [MessageInputView]. Override the method for a custom setup.
      *
-     * @param messageInputView the message inout that is being configured
+     * @param messageInputView The message inout that is being configured.
      */
     protected open fun setupMessageInput(messageInputView: MessageInputView) {
         messageInputViewModel.apply {
@@ -182,7 +182,7 @@ public open class MessageListFragment : Fragment() {
     /**
      * Creates instances of [MessageListFragment].
      *
-     * @param cid the full channel id. ie messaging:123
+     * @param cid The full channel id. ie messaging:123.
      */
     public class Builder(private val cid: String) {
         private var themeResId: Int = 0
@@ -239,8 +239,8 @@ public open class MessageListFragment : Fragment() {
         /**
          * Creates instances of [MessageListFragment].
          *
-         * @param cid the full channel id. ie messaging:123
-         * @param initializer the initializer to customize builder params
+         * @param cid The full channel id. ie messaging:123.
+         * @param initializer The initializer to customize builder params.
          */
         public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
             val builder = Builder(cid)

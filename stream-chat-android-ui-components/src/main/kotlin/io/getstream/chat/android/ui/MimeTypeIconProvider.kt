@@ -14,8 +14,8 @@ public fun interface MimeTypeIconProvider {
     /**
      * Return icon drawable resource for the given MIME type.
      *
-     * @param mimeType mimeType A MIME type (i.e. application/pdf)
-     * @return The drawable resource for the given MIME type
+     * @param mimeType The MIME type (i.e. application/pdf).
+     * @return The drawable resource for the given MIME type.
      */
     public fun getIconRes(mimeType: String?): Int
 }

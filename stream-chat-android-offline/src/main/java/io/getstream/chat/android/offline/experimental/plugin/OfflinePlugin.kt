@@ -2,6 +2,7 @@ package io.getstream.chat.android.offline.experimental.plugin
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.models.Channel
@@ -37,6 +38,13 @@ public class OfflinePlugin(private val config: Config) : Plugin {
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest): Unit =
         logic.queryChannels(request).onQueryChannelsResult(result, request)
+
+    override suspend fun onQueryChannelResult(
+        result: Result<Channel>,
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Unit = logic.queryChannel().onQueryChannelResult(result, channelType, channelId, request)
 
     public companion object {
         public const val MODULE_NAME: String = "Offline"

@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
- ** Style for [SuggestionListView]
+ ** Style for [SuggestionListView].
  *
  * Use this class to style SuggestionListView programmatically. You can pass this class to [TransformStyle.suggestionListStyleTransformer]
  * to change the configuration of the View.

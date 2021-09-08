@@ -130,7 +130,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var currentUser: User
 
     /**
-     * If you are allowed to scroll up or not
+     * If you are allowed to scroll up or not.
      */
     private var lockScrollUp = true
 
@@ -463,9 +463,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * @param view Will be added to the view hierarchy of [ChannelsView] and managed by it.
      * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
+     * @param layoutParams Defines how the view will be situated inside its container [ViewGroup].
      */
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         loadingViewContainer.removeView(loadingView)
@@ -482,9 +482,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * @param view Will be added to the view hierarchy of [ChannelsView] and managed by it.
      * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
+     * @param layoutParams Defines how the view will be situated inside its container [ViewGroup].
      */
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         emptyStateViewContainer.removeView(emptyStateView)
