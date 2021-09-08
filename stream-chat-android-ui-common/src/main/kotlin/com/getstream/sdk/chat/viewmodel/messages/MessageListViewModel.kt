@@ -29,9 +29,10 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
- * @param cid the full channel id, i.e. "messaging:123"
- * @param domain entry point for all livedata & offline operations
- * @param client entry point for all low-level operations
+ *
+ * @param cid The full channel id, i.e. "messaging:123"
+ * @param domain Entry point for all livedata & offline operations.
+ * @param client Entry point for all low-level operations.
  */
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
@@ -58,13 +59,13 @@ public class MessageListViewModel @JvmOverloads constructor(
     public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
 
     /**
-     * Whether the user is viewing a thread
+     * Whether the user is viewing a thread.
      * @see Mode
      */
     public val mode: LiveData<Mode> = _mode
 
     /**
-     * Current message list state
+     * Current message list state.
      * @see State
      */
     public val state: LiveData<State> = stateMerger
@@ -177,7 +178,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     /**
-     * Handles an [event] coming from the View layer
+     * Handles an [event] coming from the View layer.
      * @see Event
      */
     public fun onEvent(event: Event) {

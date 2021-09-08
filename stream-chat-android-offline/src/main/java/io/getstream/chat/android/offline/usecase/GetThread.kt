@@ -10,10 +10,10 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class GetThread(private val domainImpl: ChatDomainImpl) {
     /**
-     * Returns a thread controller for the given channel and message id
+     * Returns a thread controller for the given channel and message id.
      *
-     * @param cid the full channel id. ie messaging:123
-     * @param parentId the message id for the parent of this thread
+     * @param cid The full channel id. ie messaging:123.
+     * @param parentId The message id for the parent of this thread.
      *
      * @see io.getstream.chat.android.offline.thread.ThreadController
      */

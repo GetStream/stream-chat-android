@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 
 internal class WatchChannel(private val domainImpl: ChatDomainImpl) {
     /**
-     * Watches the given channel and returns a ChannelController
+     * Watches the given channel and returns a ChannelController.
      *
-     * @param cid the full channel id. ie messaging:123
-     * @param messageLimit how many messages to load on the first request
+     * @param cid The full channel id. ie messaging:123.
+     * @param messageLimit How many messages to load on the first request.
      *
      * @see io.getstream.chat.android.offline.channel.ChannelController
      */
