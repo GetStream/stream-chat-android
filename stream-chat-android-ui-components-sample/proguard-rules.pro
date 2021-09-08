@@ -23,3 +23,10 @@
 -keep class * extends androidx.fragment.app.Fragment{}
 -keepnames class * extends android.os.Parcelable
 -keepnames class * extends java.io.Serializable
+
+-dontwarn org.openjsse.javax.net.ssl.**
+-dontwarn org.openjsse.net.ssl.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn com.caverock.androidsvg.**
+-dontwarn pl.droidsonroids.gif.**

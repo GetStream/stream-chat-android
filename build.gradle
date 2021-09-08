@@ -12,9 +12,11 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
+        maven { url 'https://storage.googleapis.com/r8-releases/raw' }
     }
 
     dependencies {
+        classpath 'com.android.tools:r8:3.0.65'
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
         classpath Dependencies.googleServicesPlugin
