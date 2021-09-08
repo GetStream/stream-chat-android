@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message

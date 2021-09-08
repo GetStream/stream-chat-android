@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.common.extensions
 
 import android.content.Context
 import androidx.annotation.StringRes
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
