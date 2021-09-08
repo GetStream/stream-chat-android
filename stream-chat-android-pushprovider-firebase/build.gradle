@@ -70,7 +70,6 @@ dependencies {
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
 
-    testImplementation Dependencies.assertj
     testImplementation Dependencies.json
     testImplementation Dependencies.kluent
     testImplementation Dependencies.truth
@@ -81,7 +80,6 @@ dependencies {
     testImplementation Dependencies.robolectric
 
     // Instrumentation tests
-    androidTestImplementation Dependencies.assertj
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
