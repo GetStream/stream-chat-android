@@ -351,7 +351,7 @@ public class ChannelClient internal constructor(
     /**
      * Removes all of the messages of the channel but doesn't affect the channel data or members.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the truncated channel
+     * @return Executable async [Call] which completes with [Result] having data equal to the truncated channel
      * if the channel was successfully truncated.
      */
     @CheckResult
@@ -365,10 +365,10 @@ public class ChannelClient internal constructor(
      * The Stream CDN imposes the following restrictions on file uploads:
      * - The maximum file size is 20 MB
      *
-     * @param file the file that needs to be uploaded
-     * @param callback the callback to track progress
+     * @param file The file that needs to be uploaded.
+     * @param callback The callback to track progress.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -387,10 +387,10 @@ public class ChannelClient internal constructor(
      * - The maximum image size is 20 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
-     * @param file the image file that needs to be uploaded
-     * @param callback the callback to track progress
+     * @param file The image file that needs to be uploaded.
+     * @param callback The callback to track progress.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -406,9 +406,9 @@ public class ChannelClient internal constructor(
     /**
      * Deletes the file represented by [url] from the given channel.
      *
-     * @param url the URL of the file to be deleted
+     * @param url The URL of the file to be deleted.
      *
-     * @return executable async [Call] responsible for deleting a file
+     * @return Executable async [Call] responsible for deleting a file.
      *
      * @see FileUploader
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
@@ -421,9 +421,9 @@ public class ChannelClient internal constructor(
     /**
      * Deletes the image represented by [url] from the given channel.
      *
-     * @param url the URL of the image to be deleted
+     * @param url The URL of the image to be deleted.
      *
-     * @return executable async [Call] responsible for deleting an image
+     * @return Executable async [Call] responsible for deleting an image.
      *
      * @see FileUploader
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
@@ -466,10 +466,10 @@ public class ChannelClient internal constructor(
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
      * will be deleted.
      *
-     * @param message the message object allowing you to show a system message in the channel
-     * @param extraData the updated channel extra data
+     * @param message The message object allowing you to show a system message in the channel.
+     * @param extraData The updated channel extra data.
      *
-     * @return executable async [Call] responsible for updating channel data
+     * @return Executable async [Call] responsible for updating channel data.
      */
     @CheckResult
     public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel> {
@@ -479,8 +479,8 @@ public class ChannelClient internal constructor(
     /**
      * Updates specific fields of channel data retaining the custom data fields which were set previously.
      *
-     * @param set the key-value data which will be added to the existing channel data object
-     * @param unset the list of fields which will be removed from the existing channel data object
+     * @param set The key-value data which will be added to the existing channel data object.
+     * @param unset The list of fields which will be removed from the existing channel data object.
      */
     @CheckResult
     public fun updatePartial(set: Map<String, Any> = emptyMap(), unset: List<String> = emptyList()): Call<Channel> {
@@ -492,9 +492,9 @@ public class ChannelClient internal constructor(
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
      * between 1-120.
      *
-     * @param cooldownTimeInSeconds the duration of the time interval users have to wait between messages
+     * @param cooldownTimeInSeconds The duration of the time interval users have to wait between messages.
      *
-     * @return executable async [Call] responsible for enabling slow mode
+     * @return Executable async [Call] responsible for enabling slow mode.
      */
     @CheckResult
     public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
@@ -503,7 +503,7 @@ public class ChannelClient internal constructor(
     /**
      * Disables slow mode for the channel.
      *
-     * @return executable async [Call] responsible for disabling slow mode
+     * @return Executable async [Call] responsible for disabling slow mode.
      */
     @CheckResult
     public fun disableSlowMode(): Call<Channel> =
@@ -536,9 +536,9 @@ public class ChannelClient internal constructor(
      * can optionally set an expiration time. Triggers `notification.channel_mutes_updated`
      * event.
      *
-     * @param expiration the duration of mute in **millis**
+     * @param expiration The duration of mute in **millis**.
      *
-     * @return executable async [Call] responsible for muting a channel
+     * @return Executable async [Call] responsible for muting a channel.
      *
      * @see [NotificationChannelMutesUpdatedEvent]
      */
@@ -552,7 +552,7 @@ public class ChannelClient internal constructor(
      * Unmutes a channel for the current user. Triggers `notification.channel_mutes_updated`
      * event.
      *
-     * @return executable async [Call] responsible for unmuting a channel
+     * @return Executable async [Call] responsible for unmuting a channel.
      *
      * @see [NotificationChannelMutesUpdatedEvent]
      */
@@ -566,10 +566,10 @@ public class ChannelClient internal constructor(
      * mutes stay in place indefinitely until the user removes it. However, you can optionally
      * set a mute timeout. Triggers `notification.mutes_updated` event.
      *
-     * @param userId the user id to mute
-     * @param timeout the timeout in **minutes** until the mute is expired
+     * @param userId The user id to mute.
+     * @param timeout The timeout in **minutes** until the mute is expired.
      *
-     * @return executable async [Call] responsible for muting a user
+     * @return Executable async [Call] responsible for muting a user.
      *
      * @see [NotificationMutesUpdatedEvent]
      */
@@ -582,9 +582,9 @@ public class ChannelClient internal constructor(
     /**
      * Unmutes a previously muted user. Triggers `notification.mutes_updated` event.
      *
-     * @param userId the user id to unmute
+     * @param userId The user id to unmute.
      *
-     * @return executable async [Call] responsible for unmuting a user
+     * @return Executable async [Call] responsible for unmuting a user.
      *
      * @see [NotificationMutesUpdatedEvent]
      */
@@ -636,10 +636,10 @@ public class ChannelClient internal constructor(
     /**
      * Sends an event to all users watching the channel.
      *
-     * @param eventType the event name
-     * @param extraData the event payload
+     * @param eventType The event name.
+     * @param extraData The event payload.
      *
-     * @return executable async [Call] responsible for sending an event.
+     * @return Executable async [Call] responsible for sending an event.
      */
     @CheckResult
     public fun sendEvent(
@@ -678,11 +678,11 @@ public class ChannelClient internal constructor(
 
     /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type
+     * not necessarily all of them will have a specified type.
      *
-     * @param offset the messages offset
-     * @param limit max limit messages to be fetched
-     * @param types desired attachment's types list
+     * @param offset The messages offset.
+     * @param limit Max limit messages to be fetched.
+     * @param types Desired attachment's types list.
      */
     @CheckResult
     public fun getMessagesWithAttachments(offset: Int, limit: Int, types: List<String>): Call<List<Message>> {

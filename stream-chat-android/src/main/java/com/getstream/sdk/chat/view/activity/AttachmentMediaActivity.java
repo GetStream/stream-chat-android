@@ -58,9 +58,9 @@ public class AttachmentMediaActivity extends AppCompatActivity {
     }
 
     /**
-     * Play media file with url
+     * Play media file with url.
      *
-     * @param url media url
+     * @param url Media url.
      */
     public void playVideo(String url) {
         videoView.isPlaying(); // Workaround to init some internals of the library

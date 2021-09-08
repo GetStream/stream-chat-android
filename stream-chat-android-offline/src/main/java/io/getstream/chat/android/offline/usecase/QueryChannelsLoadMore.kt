@@ -10,11 +10,12 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 
 internal class QueryChannelsLoadMore(private val domainImpl: ChatDomainImpl) {
     /**
-     * Load more channels for this query
-     * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
-     * @param sort the sort for the channels, by default will sort on last_message_at
-     * @param limit the number of channels to retrieve
-     * @param messageLimit how many messages to fetch per chanel
+     * Load more channels for this query.
+     *
+     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
+     * @param sort The sort for the channels, by default will sort on last_message_at.
+     * @param limit The number of channels to retrieve.
+     * @param messageLimit How many messages to fetch per channel.
      * @see io.getstream.chat.android.client.api.models.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>

@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Verify that all events correctly update state in room
+ * Verify that all events correctly update state in room.
  */
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {

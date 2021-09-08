@@ -105,7 +105,7 @@ public open class ChannelListFragment : Fragment() {
     /**
      * Configures [ChannelListHeaderView]. Override the method for a custom setup.
      *
-     * @param channelListHeaderView the channel list header that is being configured
+     * @param channelListHeaderView The channel list header that is being configured.
      */
     protected open fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
         with(channelListHeaderView) {
@@ -128,7 +128,7 @@ public open class ChannelListFragment : Fragment() {
     /**
      * Configures [ChannelListView]. Override the method for a custom setup.
      *
-     * @param channelListView the channel list that is being configured
+     * @param channelListView The channel list that is being configured.
      */
     protected open fun setupChannelList(channelListView: ChannelListView) {
         with(binding.channelListView) {
@@ -147,7 +147,7 @@ public open class ChannelListFragment : Fragment() {
     /**
      * Configures [SearchInputView]. Override the method for a custom setup.
      *
-     * @param searchInputView the search input that is being configured
+     * @param searchInputView The search input that is being configured.
      */
     protected open fun setupSearchInput(searchInputView: SearchInputView) {
         with(binding.searchInputView) {
@@ -173,7 +173,7 @@ public open class ChannelListFragment : Fragment() {
     /**
      * Configures [SearchResultListView]. Override the method for a custom setup.
      *
-     * @param searchResultListView the search result list that is being configured
+     * @param searchResultListView The search result list that is being configured.
      */
     protected open fun setupSearchResultList(searchResultListView: SearchResultListView) {
         with(binding.searchResultListView) {
@@ -327,7 +327,7 @@ public open class ChannelListFragment : Fragment() {
         /**
          * Creates instances of [ChannelListFragment].
          *
-         * @param initializer the initializer to customize builder params
+         * @param initializer The initializer to customize builder params.
          */
         public fun newInstance(initializer: (Builder.() -> Unit)? = null): ChannelListFragment {
             val builder = Builder()

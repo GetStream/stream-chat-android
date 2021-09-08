@@ -12,20 +12,20 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 
 /**
- * UseCase for querying members of a channel
+ * UseCase for querying members of a channel.
  *
- * @property domainImpl instance of a ChatDomain
+ * @property domainImpl Instance of a ChatDomain.
  */
 internal class QueryMembers(private val domainImpl: ChatDomainImpl) {
 
     /**
      * Obtains an executable coroutine call for querying members
      *
-     * @param cid CID of the Channel whose members we are querying
-     * @param offset indicates how many items to exclude from the start of the result
-     * @param limit indicates the maximum allowed number of items in the result
-     * @param filter applied to online queries for advanced selection criteria
-     * @param sort the sort criteria applied to the result
+     * @param cid CID of the Channel whose members we are querying.
+     * @param offset Indicates how many items to exclude from the start of the result.
+     * @param limit Indicates the maximum allowed number of items in the result.
+     * @param filter Applied to online queries for advanced selection criteria.
+     * @param sort The sort criteria applied to the result.
      * @param members
      * @return
      */

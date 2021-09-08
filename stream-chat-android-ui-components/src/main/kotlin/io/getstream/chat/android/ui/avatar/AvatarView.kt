@@ -134,7 +134,7 @@ public class AvatarView : AppCompatImageView {
 
     internal companion object {
         /**
-         * A small extra added to the avatar size to prevent anti-aliasing issues
+         * A small extra added to the avatar size to prevent anti-aliasing issues.
          */
         internal const val AVATAR_SIZE_EXTRA = 1
 

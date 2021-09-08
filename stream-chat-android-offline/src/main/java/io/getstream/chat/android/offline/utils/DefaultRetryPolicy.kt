@@ -13,7 +13,7 @@ internal class DefaultRetryPolicy : RetryPolicy {
     }
 
     /**
-     * Returns the timeout in milliseconds
+     * Returns the timeout in milliseconds.
      */
     override fun retryTimeout(
         client: ChatClient,
