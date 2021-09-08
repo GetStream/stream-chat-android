@@ -65,7 +65,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Added scroll behaviour to `MessageListViewStyle`.
 ### ⚠️ Changed
 
 ### ❌ Removed
