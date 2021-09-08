@@ -1,108 +1,98 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat
 
-import com.getstream.sdk.chat.utils.MediaStringUtil;
-import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.MediaStringUtil.convertFileSizeByteCount
+import com.getstream.sdk.chat.utils.MediaStringUtil.convertVideoLength
+import com.getstream.sdk.chat.utils.StringUtility.convertMentionedText
+import com.getstream.sdk.chat.utils.StringUtility.getDeletedOrMentionedText
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class GetDeletedOrMentionedTextTest {
+internal class GetDeletedOrMentionedTextTest {
 
     @Test
-    void getMentionedMarkDownTextTest() {
-        String text = "@Steep moon @Broken waterfall hi, there?";
-        Message message = new Message();
-        message.setText(text);
-        List<User>mentionedUsers = new ArrayList<>();
+    fun getMentionedMarkDownTextTest() {
+        val message = Message(text = "@Steep moon @Broken waterfall hi, there?")
 
-        User user1 = new User();
-        user1.setId("steep-moon-9");
-        user1.getExtraData().put("name", "Steep moon");
+        val user1 = User(
+            id = "steep-moon-9",
+            extraData = mutableMapOf("name" to "Steep moon")
+        )
 
-        User user2 = new User();
-        user2.setId("broken-waterfall-5");
-        user2.getExtraData().put("name", "Broken waterfall");
+        val user2 = User(
+            id = "broken-waterfall-5",
+            extraData = mutableMapOf("name" to "Broken waterfall")
+        )
 
-        mentionedUsers.add(user1);
-        mentionedUsers.add(user2);
-        message.getMentionedUsers().addAll(mentionedUsers);
+        message.mentionedUsers.add(user1)
+        message.mentionedUsers.add(user2)
 
-        String expectedMessage = "**@Steep moon** **@Broken waterfall** hi, there?";
-        assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
+        val expectedMessage = "**@Steep moon** **@Broken waterfall** hi, there?"
+        getDeletedOrMentionedText(message) shouldBeEqualTo expectedMessage
     }
 
     @Test
-    void getMentionedMarkDownTextWithoutPrefixWhitespaceTest() {
-        String text = "HI@Steep moonThere";
-        Message message = new Message();
-        message.setText(text);
-        List<User>mentionedUsers = new ArrayList<>();
+    fun getMentionedMarkDownTextWithoutPrefixWhitespaceTest() {
+        val message = Message(text = "HI@Steep moonThere")
 
-        User user = new User();
-        user.setId("steep-moon-9");
-        user.getExtraData().put("name", "Steep moon");
-        mentionedUsers.add(user);
-        message.getMentionedUsers().addAll(mentionedUsers);
+        val user = User(
+            id = "steep-moon-9",
+            extraData = mutableMapOf("name" to "Steep moon")
+        )
 
-        String expectedMessage = "HI **@Steep moon**There";
-        assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
+        message.mentionedUsers.add(user)
+
+        val expectedMessage = "HI **@Steep moon**There"
+        getDeletedOrMentionedText(message) shouldBeEqualTo expectedMessage
     }
 
     @Test
-    void newLineTest() {
-        String text = "\n\n\n .a. \n\n\n";
-        Message message = new Message();
-        message.setText(text);
-        assertEquals(" .a. ", StringUtility.getDeletedOrMentionedText(message));
+    fun newLineTest() {
+        val message = Message(text = "\n\n\n .a. \n\n\n")
+        getDeletedOrMentionedText(message) shouldBeEqualTo " .a. "
     }
 
     @Test
-    void convertVideoLengthTest() {
-        long videoLength = 216844;
-        assertEquals("60:14:04", MediaStringUtil.convertVideoLength(videoLength));
+    fun convertVideoLengthTest() {
+        val videoLength: Long = 216844
+        convertVideoLength(videoLength) shouldBeEqualTo "60:14:04"
     }
 
     @Test
-    void convertFileSizeTest() {
-        long fileSize = 999;
-        assertEquals("999 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
-        fileSize = 110592;
-        assertEquals("110.59 KB", MediaStringUtil.convertFileSizeByteCount(fileSize));
-        fileSize = 452984832;
-        assertEquals("452.98 MB", MediaStringUtil.convertFileSizeByteCount(fileSize));
-        fileSize = 900000;
-        assertEquals("900 KB", MediaStringUtil.convertFileSizeByteCount(fileSize));
-        fileSize = 0;
-        assertEquals("0 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
-        fileSize = -100;
-        assertEquals("0 B", MediaStringUtil.convertFileSizeByteCount(fileSize));
+    fun convertFileSizeTest() {
+        var fileSize: Long = 999
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "999 B"
+        fileSize = 110592
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "110.59 KB"
+        fileSize = 452984832
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "452.98 MB"
+        fileSize = 900000
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "900 KB"
+        fileSize = 0
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "0 B"
+        fileSize = -100
+        convertFileSizeByteCount(fileSize) shouldBeEqualTo "0 B"
     }
 
     @Test
-    void convertMentionTextTest() {
-        String text;
-        String userName = "Adrian";
+    fun convertMentionTextTest() {
+        var text: String
+        val userName = "Adrian"
 
-        text = "@";
-        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "@A";
-        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "This@";
-        assertEquals("This@Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "This a @A";
-        assertEquals("This a @Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "@@@This a @";
-        assertEquals("@@@This a @Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "@@@This a @@@@";
-        assertEquals("@@@This a @@@@Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "@@@Adrian a @@This is @A";
-        assertEquals("@@@Adrian a @@This is @Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@"
+        convertMentionedText(text, userName) shouldBeEqualTo "@Adrian"
+        text = "@A"
+        convertMentionedText(text, userName) shouldBeEqualTo "@Adrian"
+        text = "This@"
+        convertMentionedText(text, userName) shouldBeEqualTo "This@Adrian"
+        text = "This a @A"
+        convertMentionedText(text, userName) shouldBeEqualTo "This a @Adrian"
+        text = "@@@This a @"
+        convertMentionedText(text, userName) shouldBeEqualTo "@@@This a @Adrian"
+        text = "@@@This a @@@@"
+        convertMentionedText(text, userName) shouldBeEqualTo "@@@This a @@@@Adrian"
+        text = "@@@Adrian a @@This is @A"
+        convertMentionedText(text, userName) shouldBeEqualTo "@@@Adrian a @@This is @Adrian"
     }
 }
