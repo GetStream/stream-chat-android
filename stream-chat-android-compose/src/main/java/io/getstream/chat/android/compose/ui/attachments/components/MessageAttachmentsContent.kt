@@ -43,7 +43,7 @@ public fun MessageAttachmentsContent(
 
         val attachmentState = AttachmentState(
             modifier = Modifier.padding(4.dp),
-            message = messageItem,
+            messageItem = messageItem,
             onLongItemClick = onLongItemClick
         )
 

@@ -29,7 +29,7 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.common.LoadingView
+import io.getstream.chat.android.compose.ui.attachments.components.FileUploadContent
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
@@ -38,21 +38,39 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 /**
  * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class ImageAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
     content = @Composable { ImageAttachmentContent(it) }
 )
 
 /**
- * Builds an image attachment message, which can be composed of several images.
+ * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
+ * currently uploading images.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {
+    val message = attachmentState.messageItem.message
+
+    if (message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }) {
+        FileUploadContent(attachmentState = attachmentState)
+    } else {
+        ImageAttachmentGallery(attachmentState = attachmentState)
+    }
+}
+
+/**
+ * Represents the image attachment gallery content.
+ *
+ * @param attachmentState The state of this attachment.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
     val context = LocalContext.current
@@ -135,8 +153,7 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
 }
 
 /**
- * Represents each image in the attachment gallery. Decided if we should show an upload indicator or not, based on the
- * upload state.
+ * Represents each image item in the attachment gallery.
  *
  * @param attachment Image attachment data to show.
  * @param modifier Modifier for styling.
@@ -146,21 +163,16 @@ internal fun ImageAttachmentContentItem(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val isUploading = attachment.uploadState == Attachment.UploadState.InProgress
-    val painter = rememberImagePainter(if (isUploading) attachment.upload else attachment.imagePreviewUrl)
+    val painter = rememberImagePainter(attachment.imagePreviewUrl)
 
     Box(modifier = modifier.fillMaxWidth()) {
         Image(
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxSize(),
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
-
-        if (isUploading) {
-            LoadingView(modifier = Modifier.align(Alignment.Center))
-        }
     }
 }
 
@@ -170,7 +182,7 @@ internal fun ImageAttachmentContentItem(
  * @param imageCount The number of total images.
  * @param imageIndex The current image index.
  * @param modifier Modifier for styling.
- * */
+ */
 @Composable
 internal fun ImageAttachmentViewMoreOverlay(
     imageCount: Int,

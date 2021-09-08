@@ -24,29 +24,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.components.FileAttachmentImage
+import io.getstream.chat.android.compose.ui.attachments.components.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
- * */
+ */
 public class FileAttachmentFactory : AttachmentFactory(
     canHandle = { attachments -> attachments.isNotEmpty() },
     content = @Composable { FileAttachmentContent(it) }
 )
 
 /**
- * Builds a file attachment message.
+ * Builds a file attachment message which shows a list of files or those files being uploaded.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * */
+ */
 @Composable
 public fun FileAttachmentContent(attachmentState: AttachmentState) {
+    val message = attachmentState.messageItem.message
+
+    if (message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }) {
+        FileUploadContent(attachmentState = attachmentState)
+    } else {
+        FileAttachmentList(attachmentState = attachmentState)
+    }
+}
+
+/**
+ * Represents the file attachment list of files that are already uploaded.
+ *
+ * @param attachmentState The state of this attachment.
+ */
+@Composable
+public fun FileAttachmentList(attachmentState: AttachmentState) {
     val (modifier, messageItem, _) = attachmentState
     val (message, _) = messageItem
 
