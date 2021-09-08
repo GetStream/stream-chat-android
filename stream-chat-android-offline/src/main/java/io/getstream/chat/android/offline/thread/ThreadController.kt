@@ -4,7 +4,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.wasCreatedAfterOrAt
@@ -17,14 +16,9 @@ import kotlinx.coroutines.flow.stateIn
 
 public class ThreadController internal constructor(
     public val threadId: String,
-    private val channelControllerImpl: ChannelController,
+    private val channelController: ChannelController,
     domain: ChatDomainImpl,
 ) {
-    internal constructor(
-        threadId: String,
-        channelControllerImpl: ChannelController,
-        domain: ChatDomain,
-    ) : this(threadId, channelControllerImpl, domain as ChatDomainImpl)
 
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
@@ -32,11 +26,14 @@ public class ThreadController internal constructor(
     private val logger = ChatLogger.get("ThreadController")
 
     private val threadMessages: Flow<List<Message>> =
-        channelControllerImpl.unfilteredMessages.map { messageList -> messageList.filter { it.id == threadId || it.parentId == threadId } }
+        channelController.unfilteredMessages.map { messageList -> messageList.filter { it.id == threadId || it.parentId == threadId } }
 
-    private val sortedVisibleMessages: StateFlow<List<Message>> = threadMessages.map {
-        it.sortedBy { m -> m.createdAt ?: m.createdLocallyAt }
-            .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore) }
+    private val sortedVisibleMessages: StateFlow<List<Message>> = threadMessages.map { threadMessages ->
+        threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt }
+            .filter {
+                channelController.hideMessagesBefore == null ||
+                    it.wasCreatedAfterOrAt(channelController.hideMessagesBefore)
+            }
     }.stateIn(domain.scope, SharingStarted.Eagerly, emptyList())
 
     /** the sorted list of messages for this thread */
@@ -58,7 +55,7 @@ public class ThreadController internal constructor(
             return Result(ChatError(errorMsg))
         }
         _loadingOlderMessages.value = true
-        val result = channelControllerImpl.loadOlderThreadMessages(threadId, limit, firstMessage)
+        val result = channelController.loadOlderThreadMessages(threadId, limit, firstMessage)
         if (result.isSuccess) {
             _endOfOlderMessages.value = result.data().size < limit
             firstMessage = result.data().sortedBy { it.createdAt }.firstOrNull() ?: firstMessage
