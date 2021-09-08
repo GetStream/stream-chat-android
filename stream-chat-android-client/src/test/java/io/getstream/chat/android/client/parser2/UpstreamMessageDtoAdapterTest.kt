@@ -5,9 +5,10 @@ import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upst
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamMessage
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamMessageWithoutExtraData
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class UpstreamMessageDtoAdapterTest {
     private val parser = MoshiChatParser()
@@ -26,8 +27,8 @@ internal class UpstreamMessageDtoAdapterTest {
 
     @Test
     fun `Can't parse upstream message`() {
-        assertThrows<RuntimeException> {
+        invoking {
             parser.fromJson(upstreamJson, UpstreamMessageDto::class.java)
-        }
+        }.shouldThrow(RuntimeException::class)
     }
 }

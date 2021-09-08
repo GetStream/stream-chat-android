@@ -5,9 +5,10 @@ import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstr
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUser
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutExtraData
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class DownstreamUserDtoAdapterTest {
     private val parser = MoshiChatParser()
@@ -26,8 +27,8 @@ internal class DownstreamUserDtoAdapterTest {
 
     @Test
     fun `Can't serialize downstream dto`() {
-        assertThrows<RuntimeException> {
+        invoking {
             parser.toJson(downstreamUser)
-        }
+        }.shouldThrow(RuntimeException::class)
     }
 }

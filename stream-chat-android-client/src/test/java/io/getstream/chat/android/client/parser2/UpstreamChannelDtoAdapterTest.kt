@@ -2,9 +2,10 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class UpstreamChannelDtoAdapterTest {
 
@@ -24,8 +25,8 @@ internal class UpstreamChannelDtoAdapterTest {
 
     @Test
     fun `Can't parse upstream channel`() {
-        assertThrows<RuntimeException> {
+        invoking {
             parser.fromJson(ChannelDtoTestData.upstreamJson, UpstreamChannelDto::class.java)
-        }
+        }.shouldThrow(RuntimeException::class)
     }
 }
