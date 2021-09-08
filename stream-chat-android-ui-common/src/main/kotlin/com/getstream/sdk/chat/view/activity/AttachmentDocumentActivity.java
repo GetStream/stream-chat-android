@@ -61,7 +61,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     /**
      * Load document as url
      *
-     * @param url document url
+     * @param url Document url.
      */
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);

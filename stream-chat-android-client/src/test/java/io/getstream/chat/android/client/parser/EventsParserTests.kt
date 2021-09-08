@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.parser
 
+import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -13,7 +14,6 @@ import io.getstream.chat.android.client.socket.EventsParser
 import io.getstream.chat.android.client.utils.observable.FakeSocketService
 import okhttp3.Response
 import okhttp3.WebSocket
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

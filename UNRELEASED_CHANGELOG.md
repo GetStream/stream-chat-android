@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed setting notification's `contentTitle` when a Channel doesn't have the name. It will now show members names instead
 
 ### ⬆️ Improved
 

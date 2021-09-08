@@ -10,10 +10,11 @@ import io.getstream.chat.android.offline.utils.validateCid
 internal class SendReaction(private val domainImpl: ChatDomainImpl) {
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
-     * API call to send the reaction is retried according to the retry policy specified on the chatDomain
-     * @param cid: the full channel id i. e. messaging:123
-     * @param reaction the reaction to add
-     * @param enforceUnique if set to true, new reaction will replace all reactions the user has on this message
+     * API call to send the reaction is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param cid The full channel id i. e. messaging:123.
+     * @param reaction The reaction to add.
+     * @param enforceUnique If set to true, new reaction will replace all reactions the user has on this message.
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult

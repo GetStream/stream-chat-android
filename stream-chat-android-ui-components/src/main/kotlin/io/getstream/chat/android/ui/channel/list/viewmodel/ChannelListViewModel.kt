@@ -29,11 +29,12 @@ import kotlinx.coroutines.flow.map
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelListViewModel.bindView] function.
- * @param chatDomain entry point for all livedata & offline operations
- * @param filter filter for querying channels, should never be empty
- * @param sort defines the ordering of the channels
- * @param limit the maximum number of channels to fetch
- * @param messageLimit the number of messages to fetch for each channel
+ *
+ * @param chatDomain Entry point for all livedata & offline operations.
+ * @param filter Filter for querying channels, should never be empty.
+ * @param sort Defines the ordering of the channels.
+ * @param limit The maximum number of channels to fetch.
+ * @param messageLimit The number of messages to fetch for each channel.
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),

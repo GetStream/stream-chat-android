@@ -7,12 +7,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import com.getstream.sdk.chat.utils.extensions.getUsers
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -35,7 +34,7 @@ public fun Channel.getDisplayName(): String {
  * Returns channel's last regular or system message if exists.
  * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
  *
- * @return Last message from the channel or null if it doesn't exist
+ * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(currentUser: User?): Message? =
     messages.asSequence()
