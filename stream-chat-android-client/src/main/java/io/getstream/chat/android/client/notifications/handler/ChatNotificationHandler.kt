@@ -11,9 +11,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
@@ -278,9 +278,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             ?: getMemberNamesWithoutCurrentUser()
             ?: context.getString(R.string.stream_chat_notification_title)
 
-    private fun Channel.getMemberNamesWithoutCurrentUser(): String? = members.filter {
-        it.getUserId() != ChatClient.instance().getCurrentUser()?.id ?: ""
-    }.map { it.user }
+    private fun Channel.getMemberNamesWithoutCurrentUser(): String? = getUsers()
         .joinToString { it.name }
         .takeIf { it.isNotEmpty() }
 
