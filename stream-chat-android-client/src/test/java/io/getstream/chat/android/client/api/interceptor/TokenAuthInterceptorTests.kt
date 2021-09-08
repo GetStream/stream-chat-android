@@ -9,8 +9,9 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Assert.assertThrows
+import org.amshove.kluent.shouldThrow
 import org.junit.Test
 
 internal class TokenAuthInterceptorTests {
@@ -23,11 +24,11 @@ internal class TokenAuthInterceptorTests {
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(200)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        exception.streamCode shouldBeEqualTo ChatErrorCode.UNDEFINED_TOKEN.code
+        exceptionResult.exception.streamCode shouldBeEqualTo ChatErrorCode.UNDEFINED_TOKEN.code
     }
 
     @Test
@@ -35,11 +36,11 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager("token")
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(500)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        exception.statusCode shouldBeEqualTo 500
+        exceptionResult.exception.statusCode shouldBeEqualTo 500
     }
 
     @Test
@@ -61,11 +62,11 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager(invalidHeader)
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(200)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        exception.streamCode shouldBeEqualTo ChatErrorCode.INVALID_TOKEN.code
+        exceptionResult.exception.streamCode shouldBeEqualTo ChatErrorCode.INVALID_TOKEN.code
     }
 
     @Test
