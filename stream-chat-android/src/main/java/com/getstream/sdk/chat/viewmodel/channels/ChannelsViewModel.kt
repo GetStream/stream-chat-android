@@ -21,10 +21,11 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
  * ViewModel class for [com.getstream.sdk.chat.view.channels.ChannelsView].
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelsViewModel.bindView] function.
- * @param chatDomain entry point for all livedata & offline operations
- * @param filter filter for querying channels, should never be empty
- * @param sort defines the ordering of the channels
- * @param limit the maximum number of channels to fetch
+ *
+ * @param chatDomain Entry point for all livedata & offline operations.
+ * @param filter Filter for querying channels, should never be empty.
+ * @param sort Defines the ordering of the channels.
+ * @param limit The maximum number of channels to fetch.
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),

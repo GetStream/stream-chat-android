@@ -8,20 +8,20 @@ import io.getstream.chat.android.compose.R
 /**
  * Contains all the colors in our palette. Each color is used for various things an can be changed to
  * customize the app design style.
- * @param textHighEmphasis - Used for main text and active icon status.
- * @param textLowEmphasis - Used for secondary text, default icon state, deleted messages text and datestamp background.
- * @param disabled - Used for disabled icons and empty states.
- * @param borders - Used for borders, the background of self messages, selected items, pressed state, button dividers.
- * @param inputBackground - Used for the input background, deleted messages, section headings.
- * @param appBackground - Used for the default app background and channel list item background.
- * @param barsBackground - Used for button text, top and bottom bar background and other user messages.
- * @param linkBackground - Used for the message link card background.
- * @param overlay - Used for general overlays and background when opening modals.
- * @param primaryAccent - Used for selected icon state, call to actions, white buttons text and links.
- * @param errorAccent - Used for error text labels, notification badges and disruptive action text and icons.
- * @param infoAccent - Used for the online status.
- * */
-public class StreamColors(
+ * @param textHighEmphasis Used for main text and active icon status.
+ * @param textLowEmphasis Used for secondary text, default icon state, deleted messages text and datestamp background.
+ * @param disabled Used for disabled icons and empty states.
+ * @param borders Used for borders, the background of self messages, selected items, pressed state, button dividers.
+ * @param inputBackground Used for the input background, deleted messages, section headings.
+ * @param appBackground Used for the default app background and channel list item background.
+ * @param barsBackground Used for button text, top and bottom bar background and other user messages.
+ * @param linkBackground Used for the message link card background.
+ * @param overlay Used for general overlays and background when opening modals.
+ * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
+ * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
+ * @param infoAccent Used for the online status.
+ */
+public data class StreamColors(
     public val textHighEmphasis: Color,
     public val textLowEmphasis: Color,
     public val disabled: Color,
@@ -37,6 +37,11 @@ public class StreamColors(
 ) {
 
     public companion object {
+        /**
+         * Provides the default colors for the light mode of the app.
+         *
+         * @return A [StreamColors] instance holding our color palette.
+         */
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
@@ -53,6 +58,11 @@ public class StreamColors(
             infoAccent = colorResource(R.color.stream_compose_info_accent),
         )
 
+        /**
+         * Provides the default colors for the dark mode of the app.
+         *
+         * @return A [StreamColors] instance holding our color palette.
+         */
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),

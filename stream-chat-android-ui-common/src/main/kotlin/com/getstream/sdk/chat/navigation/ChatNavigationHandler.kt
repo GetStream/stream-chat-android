@@ -7,7 +7,7 @@ public fun interface ChatNavigationHandler {
     /**
      * Attempt to navigate to the given [destination].
      *
-     * @return true if navigation was successfully handled.
+     * @return True if navigation was successfully handled.
      */
     public fun navigate(destination: ChatDestination): Boolean
 }

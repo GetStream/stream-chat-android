@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- * Ensures the context being accessed in a View can be cast to Activity
+ * Ensures the context being accessed in a View can be cast to Activity.
  */
 @InternalStreamChatApi
 public val View.activity: AppCompatActivity?

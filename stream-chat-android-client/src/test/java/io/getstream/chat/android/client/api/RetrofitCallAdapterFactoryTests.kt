@@ -1,11 +1,11 @@
 package io.getstream.chat.android.client.api
 
 import com.google.common.reflect.TypeToken
+import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.client.parser.GsonChatParser
+import io.getstream.chat.android.client.parser2.MoshiChatParser
 import junit.framework.Assert.fail
 import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +19,7 @@ internal class RetrofitCallAdapterFactoryTests {
     @JvmField
     val server = MockWebServer()
 
-    private val factory: CallAdapter.Factory = RetrofitCallAdapterFactory.create(GsonChatParser())
+    private val factory: CallAdapter.Factory = RetrofitCallAdapterFactory.create(MoshiChatParser())
     private lateinit var retrofit: Retrofit
 
     @Before
@@ -36,8 +36,7 @@ internal class RetrofitCallAdapterFactoryTests {
             factory[RetrofitCall::class.java, emptyArray(), retrofit]
             fail()
         } catch (e: IllegalArgumentException) {
-            assertThat(e)
-                .hasMessage("Call return type must be parameterized as Call<Foo>")
+            assertThat(e).hasMessageThat().matches("Call return type must be parameterized as Call<Foo>")
         }
     }
 
@@ -46,7 +45,7 @@ internal class RetrofitCallAdapterFactoryTests {
         val typeToken: Type = object : TypeToken<RetrofitCall<String>>() {}.type
         val callAdapter = factory[typeToken, emptyArray(), retrofit]
 
-        assertThat(callAdapter).isNotNull
+        assertThat(callAdapter).isNotNull()
         assertThat(callAdapter!!.responseType())
             .isEqualTo(object : TypeToken<String>() {}.type)
     }

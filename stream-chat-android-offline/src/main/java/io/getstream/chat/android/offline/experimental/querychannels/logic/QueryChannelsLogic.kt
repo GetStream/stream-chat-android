@@ -125,10 +125,10 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Updates the state on the channelController based on the channel object we received from the API
+     * Updates the state on the channelController based on the channel object we received from the API.
      *
-     * @param channels the list of channels to update
-     * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
+     * @param channels The list of channels to update.
+     * @param isFirstPage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
      *
      */
     internal suspend fun updateOnlineChannels(

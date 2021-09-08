@@ -14,15 +14,15 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
 
 /**
- * Style for [ScrollButtonView]
+ * Style for [ScrollButtonView].
  *
- * @property scrollButtonEnabled - enables/disables view which allows to scroll to the latest messages. Default - enabled.
- * @property scrollButtonUnreadEnabled - enables/disables unread label. Default - enabled
- * @property scrollButtonColor - [ScrollButtonView] background color. Default - [R.color.stream_ui_white].
- * @property scrollButtonRippleColor - [ScrollButtonView] ripple color. Default - [R.color.stream_ui_white_smoke]
- * @property scrollButtonBadgeColor - unread label background color. Default - [R.color.stream_ui_accent_blue]
- * @property scrollButtonIcon - [ScrollButtonView] icon. Default - [R.drawable.stream_ui_ic_down]
- * @property scrollButtonBadgeTextStyle - appearance for unread label
+ * @property scrollButtonEnabled Enables/disables view which allows to scroll to the latest messages. Default value is true.
+ * @property scrollButtonUnreadEnabled Enables/disables unread label. Default value is enabled.
+ * @property scrollButtonColor [ScrollButtonView] background color. Default value is [R.color.stream_ui_white].
+ * @property scrollButtonRippleColor [ScrollButtonView] ripple color. Default value is [R.color.stream_ui_white_smoke].
+ * @property scrollButtonBadgeColor Unread label background color. Default value is [R.color.stream_ui_accent_blue].
+ * @property scrollButtonIcon [ScrollButtonView] icon. Default value is [R.drawable.stream_ui_ic_down].
+ * @property scrollButtonBadgeTextStyle Appearance for unread label.
  */
 public data class ScrollButtonViewStyle(
     public val scrollButtonEnabled: Boolean,

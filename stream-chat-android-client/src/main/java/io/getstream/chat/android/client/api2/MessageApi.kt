@@ -20,7 +20,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-@MoshiApi
 @AuthenticatedApi
 internal interface MessageApi {
 

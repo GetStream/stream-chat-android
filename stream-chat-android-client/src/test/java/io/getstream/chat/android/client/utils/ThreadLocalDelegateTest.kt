@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.utils
 
-import org.assertj.core.api.Assertions.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.thread

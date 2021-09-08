@@ -13,6 +13,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
@@ -46,6 +49,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         parseNotificationData()
@@ -65,6 +69,17 @@ class HomeFragment : Fragment() {
             }
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
+            if (BuildConfig.DEBUG) {
+                setOnUserAvatarLongClickListener {
+                    ToggleDialogFragment().apply {
+                        togglesChangesCommittedListener = { changedToggles ->
+                            if (changedToggles.isNotEmpty()) {
+                                activity?.recreate()
+                            }
+                        }
+                    }.show(parentFragmentManager, null)
+                }
             }
         }
     }

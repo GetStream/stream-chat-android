@@ -30,21 +30,21 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
  * communicate various events.
  *
- * @param viewModel - The ViewModel that provides pieces of data to show in the composer, like the
+ * @param viewModel The ViewModel that provides pieces of data to show in the composer, like the
  * currently selected integration data or the user input. It also handles sending messages.
- * @param modifier - Modifier for styling.
- * @param onSendMessage - Handler when the user sends a message. By default it delegates this to the
+ * @param modifier Modifier for styling.
+ * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
- * @param onAttachmentsClick - Handler for the default Attachments integration.
- * @param onCancelAction - Handler for the cancel button on Message actions, such as Edit and Reply.
- * @param onValueChange - Handler when the input field value changes.
- * @param onAttachmentRemoved - Handler when the user taps on the cancel/delete attachment action.
- * @param integrations - A view that represents custom integrations. By default, we provide
+ * @param onAttachmentsClick Handler for the default Attachments integration.
+ * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onValueChange Handler when the input field value changes.
+ * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
+ * @param integrations A view that represents custom integrations. By default, we provide
  * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
  * their own integrations, which they need to hook up to their own data providers and UI.
- * @param label - The input field label (hint).
- * @param input - The input field for the composer, [MessageInput] by default.
- * */
+ * @param label The input field label (hint).
+ * @param input The input field for the composer, [MessageInput] by default.
+ */
 @Composable
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
@@ -93,16 +93,16 @@ public fun MessageComposer(
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
- * @param value - Current input field value.
- * @param attachments - Currently selected attachments, shown in the composer.
- * @param integrations - Composable that represents integrations for the composer, such as Attachments.
- * @param input - Composable that represents the input field in the composer.
- * @param modifier - Modifier for styling.
- * @param shouldShowIntegrations - If we should show or hide integrations.
- * @param activeAction - Currently active action either Reply or Edit, whichever is last.
- * @param onSendMessage - Handler when the user taps on the send message button.
- * @param onCancelAction - Handler when the user cancels the active action (Reply or Edit).
- * */
+ * @param value Current input field value.
+ * @param attachments Currently selected attachments, shown in the composer.
+ * @param integrations Composable that represents integrations for the composer, such as Attachments.
+ * @param input Composable that represents the input field in the composer.
+ * @param modifier Modifier for styling.
+ * @param shouldShowIntegrations If we should show or hide integrations.
+ * @param activeAction Currently active action either Reply or Edit, whichever is last.
+ * @param onSendMessage Handler when the user taps on the send message button.
+ * @param onCancelAction Handler when the user cancels the active action (Reply or Edit).
+ */
 @Composable
 public fun MessageComposer(
     value: String,
@@ -170,7 +170,7 @@ public fun MessageComposer(
 
 /**
  * Default input field label that the user can override in [MessageComposer].
- * */
+ */
 @Composable
 internal fun DefaultComposerLabel() {
     Text(

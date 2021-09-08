@@ -10,8 +10,8 @@ import androidx.compose.ui.unit.dp
 /**
  * Shows the loading footer UI in lists.
  *
- * @param modifier - Modifier for styling.
- * */
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun LoadingFooter(modifier: Modifier = Modifier) {
     Box(modifier = modifier.padding(top = 8.dp, bottom = 48.dp)) {

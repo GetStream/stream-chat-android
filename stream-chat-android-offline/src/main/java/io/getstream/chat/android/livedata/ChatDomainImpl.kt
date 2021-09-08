@@ -74,7 +74,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
 
     /**
      * The total unread message count for the current user.
-     * Depending on your app you'll want to show this or the channelUnreadCount
+     * Depending on your app you'll want to show this or the channelUnreadCount.
      */
     override val totalUnreadCount: LiveData<Int> = chatDomainStateFlow.totalUnreadCount.asLiveData()
 

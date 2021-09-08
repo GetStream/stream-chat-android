@@ -54,7 +54,7 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
-import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
@@ -72,12 +72,12 @@ import java.util.Date
  *
  * It also allows for long click and thread click events.
  *
- * @param messageItem - The message item to show, which holds the message and the group position, if the message is in
+ * @param messageItem The message item to show, which holds the message and the group position, if the message is in
  * a group of messages from the same user.
- * @param onLongItemClick - Handler when the user selects a message, on long tap.
- * @param modifier - Modifier for styling.
- * @param onThreadClick - Handler for thread clicks, if this message has a thread going.
- * */
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param modifier Modifier for styling.
+ * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun DefaultMessageContainer(
@@ -207,9 +207,9 @@ public fun DefaultMessageContainer(
  * Represents the section of each message where the [Avatar] resides. In case we don't need to show an avatar, we instead
  * add a spacer, to keep messages aligned the same way.
  *
- * @param position - Position of the message in a group. This determines if we should show the user image or a spacer.
- * @param user - The user that owns the message.
- * */
+ * @param position Position of the message in a group. This determines if we should show the user image or a spacer.
+ * @param user The user that owns the message.
+ */
 @Composable
 private fun RowScope.MessageAvatar(
     position: MessageItemGroupPosition,
@@ -231,9 +231,9 @@ private fun RowScope.MessageAvatar(
 /**
  * Container for all the reactions this message has.
  *
- * @param modifier - Modifier for styling.
- * @param reactions - Map of reactions and their count.
- * */
+ * @param modifier Modifier for styling.
+ * @param reactions Map of reactions and their count.
+ */
 @Composable
 private fun MessageReactions(
     reactions: List<Pair<Int, Boolean>>,
@@ -262,9 +262,9 @@ private fun MessageReactions(
 /**
  * The default text message content. It holds the quoted message in case there is one.
  *
- * @param message - The message to show.
- * @param modifier - Modifier for styling.
- * */
+ * @param message The message to show.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
@@ -293,9 +293,9 @@ internal fun DefaultMessageContent(
  *
  * Alternatively, it just shows a basic [Text] element.
  *
- * @param message - Message to show.
- * @param modifier - Modifier for styling.
- * */
+ * @param message Message to show.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun MessageText(
     message: Message,
@@ -350,10 +350,10 @@ internal fun MessageText(
  * Takes the given message and builds an annotated message text that shows links and allows for clicks,
  * if there are any links available.
  *
- * @param message - The message to extract the text from and style.
+ * @param message The message to extract the text from and style.
  *
- * @return - The annotated String, with clickable links, if applicable.
- * */
+ * @return The annotated String, with clickable links, if applicable.
+ */
 @Composable
 private fun buildAnnotatedMessageText(message: Message): AnnotatedString {
     val text = message.text
@@ -411,9 +411,9 @@ private val URL_SCHEMES = listOf("http://", "https://")
 /**
  * Shows a row of participants in the message thread, if they exist.
  *
- * @param participants - List of users in the thread.
- * @param modifier - Modifier for styling.
- * */
+ * @param participants List of users in the thread.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ThreadParticipants(
     participants: List<User>,
@@ -447,9 +447,9 @@ private fun ThreadParticipants(
  * Wraps the quoted message into a special component, that doesn't show some information, like
  * the timestamp, thread participants and similar.
  *
- * @param message - Message to show.
- * @param modifier - Modifier for styling.
- * */
+ * @param message Message to show.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun QuotedMessage(
     message: Message,
@@ -484,8 +484,8 @@ internal fun QuotedMessage(
 /**
  * Component that shows that the message has been (soft) deleted.
  *
- * @param modifier - Modifier for styling.
- * */
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun DeletedMessageContent(
     modifier: Modifier = Modifier,
@@ -540,7 +540,7 @@ public fun UploadingFooter(
  *
  * @param messageItem Message to show.
  * @param modifier Modifier for styling.
- * */
+ */
 @Composable
 internal fun MessageFooter(
     messageItem: MessageItem,
@@ -573,7 +573,7 @@ internal fun MessageFooter(
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
- * */
+ */
 @Composable
 private fun OwnedMessageVisibilityContent(
     message: Message,

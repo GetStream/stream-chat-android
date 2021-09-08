@@ -14,7 +14,7 @@ abstract class BaseViewHolder<T : SharedAttachment>(
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
-     * Workaround to allow a downcast of the SharedAttachment to T
+     * Workaround to allow a downcast of the SharedAttachment to T.
      */
     @Suppress("UNCHECKED_CAST")
     internal fun bindListItem(item: SharedAttachment) = bind(item as T)

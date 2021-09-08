@@ -266,7 +266,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var channel: Channel
 
     /**
-     * If you are allowed to scroll up or not
+     * If you are allowed to scroll up or not.
      */
     private var lockScrollUp = true
 

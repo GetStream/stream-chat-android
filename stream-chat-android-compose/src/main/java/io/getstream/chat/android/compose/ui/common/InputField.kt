@@ -16,7 +16,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * corners and a border stroke, with some extra padding on each side.
  *
  * Within it, we allow for custom decoration, so that
- * */
+ */
 @Composable
 public fun InputField(
     value: String,

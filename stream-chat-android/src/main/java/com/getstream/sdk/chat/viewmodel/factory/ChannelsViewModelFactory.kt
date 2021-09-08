@@ -10,11 +10,11 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
 
 /**
- * Creates a channels view model factory
+ * Creates a channels view model factory.
  *
- * @param filter how to filter the channels
- * @param sort how to sort the channels, defaults to last_updated
- * @param limit how many channels to return
+ * @param filter How to filter the channels.
+ * @param sort How to sort the channels, defaults to last_updated.
+ * @param limit How many channels to return.
  *
  * @see Filters
  * @see QuerySort

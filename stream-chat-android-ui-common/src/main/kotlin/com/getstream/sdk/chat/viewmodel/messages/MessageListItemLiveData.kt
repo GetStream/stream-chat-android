@@ -32,12 +32,12 @@ import java.util.Date
  * - Makes the MessageListItem immutable to prevent future bugs
  * - Improved test coverage
  *
- * @param getCurrentUserId lambda which lazily provides the user id who is currently authenticated
- * @param messages a livedata object with the messages
- * @param readsLd a livedata object with the read state per user
- * @param typingLd a livedata object with the users who are currently typing
- * @param isThread if we are in a thread or not. if in a thread we add a threadSeperator in position 1 of the item list
- * @param dateSeparatorHandler function to compare previous and current message and return if we should insert a date separator
+ * @param currentUser Lambda which lazily provides the user id who is currently authenticated.
+ * @param messages A livedata object with the messages.
+ * @param readsLd A livedata object with the read state per user.
+ * @param typingLd A livedata object with the users who are currently typing.
+ * @param isThread If we are in a thread or not. If in a thread, we add a thread seperator in position 1 of the item list.
+ * @param dateSeparatorHandler Function to compare previous and current message and return if we should insert a date separator.
  *
  * Here's an example:
  *
@@ -131,8 +131,8 @@ internal class MessageListItemLiveData(
     }
 
     /**
-     * Typing changes are the most common changes on the message list
-     * Note how they don't recompute the message list, but only add to the end
+     * Typing changes are the most common changes on the message list.
+     * Note how they don't recompute the message list, but only add to the end.
      */
     @UiThread
     internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
@@ -163,7 +163,7 @@ internal class MessageListItemLiveData(
 
     /**
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
-     * It's fast enough though
+     * It's fast enough though.
      */
     private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
         hasNewMessages = false
@@ -236,9 +236,9 @@ internal class MessageListItemLiveData(
     }
 
     /**
-     * Reads changing is the second most common change on the message item list
-     * Since the most common scenario is that someone read to the end, we start by matching the end of the list
-     * We also sort the read state for easier merging of the lists
+     * Reads changing is the second most common change on the message item list.
+     * Since the most common scenario is that someone read to the end, we start by matching the end of the list.
+     * We also sort the read state for easier merging of the lists.
      */
     private fun addReads(
         messages: List<MessageListItem>,

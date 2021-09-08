@@ -16,7 +16,6 @@ import retrofit2.http.OPTIONS
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-@MoshiApi
 @AuthenticatedApi
 internal interface GeneralApi {
     @OPTIONS("/connect")

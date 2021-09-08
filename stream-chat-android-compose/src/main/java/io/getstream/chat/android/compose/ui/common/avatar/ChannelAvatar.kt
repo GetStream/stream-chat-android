@@ -20,11 +20,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * Based on the state of the [Channel] and the number of members, it shows different types of images.
  *
- * @param channel - The channel whose data we need to show.
- * @param currentUser - The current user, used to determine avatar data.
- * @param modifier - Modifier for styling.
- * @param contentDescription - The description to use for the avatar.
- * */
+ * @param channel The channel whose data we need to show.
+ * @param currentUser The current user, used to determine avatar data.
+ * @param modifier Modifier for styling.
+ * @param contentDescription The description to use for the avatar.
+ */
 @Composable
 public fun ChannelAvatar(
     channel: Channel,
@@ -38,7 +38,7 @@ public fun ChannelAvatar(
     when {
         /**
          * If the channel has an image we load that as a priority.
-         * */
+         */
         channel.image.isNotEmpty() -> {
             val painter = rememberImagePainter(data = channel.image)
 
@@ -50,7 +50,7 @@ public fun ChannelAvatar(
         }
         /**
          * If the channel has just one member (current user) we show our initials.
-         * */
+         */
         memberCount == 1 -> {
             val channelInitials = channel.initials
 
@@ -58,7 +58,7 @@ public fun ChannelAvatar(
         }
         /**
          * If the channel has two members - direct message with another person - we show their image or initials.
-         * */
+         */
         memberCount == 2 -> {
             val user = members.first { it.user.id != currentUser?.id }.user
 
@@ -70,7 +70,7 @@ public fun ChannelAvatar(
         }
         /**
          * If the channel has more than two members - group - we load a matrix of their images or initials.
-         * */
+         */
         else -> {
             val activeUsers = members.filter { it.user.id != currentUser?.id }.take(4)
             val imageCount = activeUsers.size
