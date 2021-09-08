@@ -513,7 +513,6 @@ public class MessageListView : ConstraintLayout {
             }
 
             binding.scrollToBottomButton.setScrollButtonViewStyle(requireStyle().scrollButtonViewStyle)
-
             scrollHelper.scrollToBottomButtonEnabled = requireStyle().scrollButtonViewStyle.scrollButtonEnabled
 
             NewMessagesBehaviour.parseValue(
@@ -524,10 +523,10 @@ public class MessageListView : ConstraintLayout {
             ).also {
                 scrollHelper.alwaysScrollToBottom = it == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             }
+        }
 
-            if (background == null) {
-                setBackgroundColor(requireStyle().backgroundColor)
-            }
+        if (background == null) {
+            setBackgroundColor(requireStyle().backgroundColor)
         }
     }
 
@@ -576,7 +575,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun init(channel: Channel) {
         this.channel = channel
-
         initAdapter()
 
         messageListViewStyle = requireStyle().copy(
