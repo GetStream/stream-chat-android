@@ -29,6 +29,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a new way to paginate through search message results using limit and next/previous values.
 
 ### ⚠️ Changed
 - Deprecated `Channel#name`, `Channel#image`, `User#name`, `Ues#image` extension properties. Use class members instead.
