@@ -20,7 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Assertions
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -118,7 +118,7 @@ internal class UploadAttachmentsWorkerTest {
                 chatClient
             )
 
-        Assertions.assertTrue(result.isError)
+        result.isError.shouldBeTrue()
     }
 
     @Test
@@ -134,6 +134,6 @@ internal class UploadAttachmentsWorkerTest {
                 chatClient
             )
 
-        Assertions.assertTrue(result.isError)
+        result.isError.shouldBeTrue()
     }
 }

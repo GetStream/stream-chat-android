@@ -9,8 +9,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
-import junit.framework.Assert.assertTrue
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -126,8 +126,8 @@ internal class AttachmentUrlValidatorTests {
         val result = sut.updateValidAttachmentsUrl(listOf(message.copy(updatedAt = Date())), mapOf(message.id to message))
 
         result.first().attachments.let { attachments ->
-            assertTrue(attachments.any { it.imageUrl == url1 })
-            assertTrue(attachments.any { it.imageUrl == url2 })
+            attachments.any { it.imageUrl == url1 }.shouldBeTrue()
+            attachments.any { it.imageUrl == url2 }.shouldBeTrue()
         }
     }
 

@@ -2,8 +2,8 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser2.MoshiChatParser
-import junit.framework.Assert.fail
 import okhttp3.mockwebserver.MockWebServer
+import org.amshove.kluent.fail
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
@@ -38,7 +38,7 @@ internal class RetrofitCallAdapterFactoryTests {
     fun `When returning raw call Then should throw an exception`() {
         try {
             factory[RetrofitCall::class.java, emptyArray(), retrofit]
-            fail()
+            fail("Assertion failed")
         } catch (e: IllegalArgumentException) {
             e.message shouldBeEqualTo "Call return type must be parameterized as Call<Foo>"
         }

@@ -14,10 +14,11 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -44,16 +45,16 @@ internal class LoadNewerMessagesTest {
 
     @Test
     fun `Given empty cid When invoke Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "", messageLimit = randomInt())
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
     fun `Given inappropriate formatted cid When invoke Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "cid", messageLimit = randomInt())
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test

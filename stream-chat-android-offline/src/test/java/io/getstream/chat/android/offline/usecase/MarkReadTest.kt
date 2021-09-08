@@ -17,8 +17,9 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeTrue
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -66,16 +67,16 @@ internal class MarkReadTest {
 
     @Test
     fun `Given empty cid Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke("")
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
     fun `Given invalid cid Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke("no-colon")
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
