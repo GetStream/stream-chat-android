@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools:r8:3.0.65'
+        classpath Dependencies.r8Tools
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
         classpath Dependencies.googleServicesPlugin
