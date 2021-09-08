@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -71,6 +72,12 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
+        if (attachment.type == ModelType.attach_giphy) {
+            binding.imageView.updateLayoutParams {
+                height = style.giphyHeight
+            }
+        }
+
         showImageByUrl(url) {
             showMore()
             showGiphyLabel()
@@ -122,7 +129,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             .let(this::setImageShape)
     }
 
-    fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
+    private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)

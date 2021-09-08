@@ -66,6 +66,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved scroll of message when many gif images are present in `MessageListView`
 
 ### ✅ Added
 
