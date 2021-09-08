@@ -8,7 +8,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
-import io.getstream.chat.android.client.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -24,7 +24,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @ReadOnlyComposable
 public fun Channel.getDisplayName(): String {
     return name.takeIf { it.isNotEmpty() }
-        ?: getUsers()
+        ?: getUsersExcludingCurrent()
             .joinToString { it.name }
             .takeIf { it.isNotEmpty() }
         ?: stringResource(id = R.string.stream_compose_channel_list_untitled_channel)
