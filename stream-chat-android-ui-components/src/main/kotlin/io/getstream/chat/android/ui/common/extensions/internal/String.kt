@@ -13,8 +13,8 @@ internal val String.Companion.EMPTY: String
  * Returns a list of ranges corresponding to the indices of each occurrence of each item.
  * If no list is provided, the range of the entire string receiver is returned.
  *
- * @param items the occurrences of items for which ranges should be derived
- * @return the ranges of every occurrence of every item
+ * @param items The occurrences of items for which ranges should be derived.
+ * @return The ranges of every occurrence of every item.
  */
 internal fun String.getOccurrenceRanges(items: List<String>? = null, ignoreCase: Boolean = false): List<IntRange> {
     val regexOptions: Set<RegexOption> = setOfNotNull(RegexOption.IGNORE_CASE.takeIf { ignoreCase })

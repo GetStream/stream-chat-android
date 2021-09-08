@@ -9,11 +9,11 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class ThreadLoadMore(private val domainImpl: ChatDomainImpl) {
     /**
-     * Loads more messages for the specified thread
+     * Loads more messages for the specified thread.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param parentId: the parentId of the thread
-     * @param messageLimit: how many new messages to load
+     * @param cid The full channel id i. e. messaging:123.
+     * @param parentId The parentId of the thread.
+     * @param messageLimit How many new messages to load.
      */
     @CheckResult
     operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call<List<Message>> {

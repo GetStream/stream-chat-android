@@ -8,10 +8,10 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class HideChannel(private val domainImpl: ChatDomainImpl) {
     /**
-     * Hides the channel with the specified id
+     * Hides the channel with the specified id.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param keepHistory: boolean, if you want to keep the history of this channel or not
+     * @param cid The full channel id i. e. messaging:123.
+     * @param keepHistory Boolean, if you want to keep the history of this channel or not.
      *
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */

@@ -131,8 +131,8 @@ internal class MessageListItemLiveData(
     }
 
     /**
-     * Typing changes are the most common changes on the message list
-     * Note how they don't recompute the message list, but only add to the end
+     * Typing changes are the most common changes on the message list.
+     * Note how they don't recompute the message list, but only add to the end.
      */
     @UiThread
     internal fun typingChanged(newTypingUsers: List<User>): MessageListItemWrapper {
@@ -163,7 +163,7 @@ internal class MessageListItemLiveData(
 
     /**
      * We could speed this up further in the case of a new message by only recomputing the last 2 items
-     * It's fast enough though
+     * It's fast enough though.
      */
     private fun groupMessages(messages: List<Message>?, currentUserId: String): List<MessageListItem> {
         hasNewMessages = false
@@ -236,9 +236,9 @@ internal class MessageListItemLiveData(
     }
 
     /**
-     * Reads changing is the second most common change on the message item list
-     * Since the most common scenario is that someone read to the end, we start by matching the end of the list
-     * We also sort the read state for easier merging of the lists
+     * Reads changing is the second most common change on the message item list.
+     * Since the most common scenario is that someone read to the end, we start by matching the end of the list.
+     * We also sort the read state for easier merging of the lists.
      */
     private fun addReads(
         messages: List<MessageListItem>,

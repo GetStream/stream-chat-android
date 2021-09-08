@@ -22,12 +22,12 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
 /**
- * Style for MessageInputView
+ * Style for [MessageInputView].
  *
  * Use this class to style MessageInputView programmatically. You can pass this class to TransformStyle.messageInputStyleTransformer
  * to change the configuration of the View.
  *
- * @constructor Create the data class with all the information necessary to customize MessageInputView
+ * @constructor Create the data class with all the information necessary to customize MessageInputView.
  *
  * @property attachButtonEnabled Enables/disabled the attachment button. If this parameter is set as false, the button gets invisible.
  * @property attachButtonIcon Selects the icon for the attachment button.
@@ -56,10 +56,10 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
  * @property commandInputBadgeIcon Icon inside command badge. Default value is [R.drawable.stream_ui_ic_command_white].
  * @property commandInputBadgeBackgroundDrawable Background shape of command badge. Default value is [R.drawable.stream_ui_shape_command_background].
  * @property commandInputBadgeTextStyle Text appearance of command name inside command badge.
- * @property cooldownTimerTextStyle - text appearance for cooldown timer text displayed over the send button
- * @property cooldownTimerBackgroundDrawable - background drawable for cooldown timer. Default value is [R.color.stream_ui_cooldown_badge_background].
- * @property fileCheckboxSelectedDrawable - Background for selector of files list in selected state. Default value is [R.color.stream_ui_circle_blue].
- * @property fileCheckboxDeselectedDrawable - Background for selector of files list in deselected state. Default value is [R.color.stream_ui_ic_file_manager].
+ * @property cooldownTimerTextStyle Text appearance for cooldown timer text displayed over the send button
+ * @property cooldownTimerBackgroundDrawable Background drawable for cooldown timer. Default value is [R.drawable.stream_ui_cooldown_badge_background].
+ * @property fileCheckboxSelectedDrawable Background for selector of files list in selected state. Default value is [R.drawable.stream_ui_circle_blue].
+ * @property fileCheckboxDeselectedDrawable Background for selector of files list in deselected state. Default value is [R.drawable.stream_ui_ic_file_manager].
  */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,

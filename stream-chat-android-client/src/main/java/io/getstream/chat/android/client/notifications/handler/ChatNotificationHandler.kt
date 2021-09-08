@@ -33,7 +33,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
      * Handles showing notification after receiving [NewMessageEvent] from other users.
      * Default implementation loads necessary data and displays notification even if app is in foreground.
      *
-     * @return false if notification should be handled internally
+     * @return False if notification should be handled internally.
      */
     public open fun onChatEvent(event: NewMessageEvent): Boolean {
         return true
@@ -43,7 +43,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
      * Handles showing notification after receiving [PushMessage].
      * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
      *
-     * @return false if remote message should be handled internally
+     * @return False if remote message should be handled internally.
      */
     public open fun onPushMessage(message: PushMessage): Boolean {
         return false

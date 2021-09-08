@@ -256,7 +256,7 @@ public class MessageListViewModel(
      * Counts how many messages the user hasn't read already. This is based on what the last message they've seen is,
      * and the current message state.
      *
-     * @param newMessageState - The state that tells us if there are new messages in the list.
+     * @param newMessageState The state that tells us if there are new messages in the list.
      * @return [Int] which describes how many messages come after the last message we've seen in the list.
      */
     private fun getUnreadMessageCount(newMessageState: NewMessageState? = currentMessagesState.newMessageState): Int {
@@ -296,7 +296,7 @@ public class MessageListViewModel(
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
      * time the data loads and whenever we see a message that's newer than the current last seen message.
      *
-     * @param currentMessage - The message that is currently seen by the user.
+     * @param currentMessage The message that is currently seen by the user.
      */
     public fun updateLastSeenMessage(currentMessage: MessageItem) {
         val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
@@ -325,7 +325,7 @@ public class MessageListViewModel(
     /**
      * Updates the state of the last seen message. Based on if we're [isInThread] or not, it updates corresponding state.
      *
-     * @param currentMessage - The current message the user sees.
+     * @param currentMessage The current message the user sees.
      */
     private fun updateLastSeenMessageState(currentMessage: MessageItem) {
         if (isInThread) {
