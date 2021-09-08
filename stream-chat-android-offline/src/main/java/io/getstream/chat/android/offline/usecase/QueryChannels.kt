@@ -16,10 +16,10 @@ internal class QueryChannels(private val domainImpl: ChatDomainImpl) {
      * Queries offline storage and the API for channels matching the filter
      * Returns a queryChannelsController
      *
-     * @param filter the filter object
-     * @param sort how to sort the channels (default is last_message_at)
-     * @param limit the number of channels to retrieve
-     * @param messageLimit how many messages to retrieve per channel
+     * @param filter The filter object.
+     * @param sort How to sort the channels (default is last_message_at).
+     * @param limit The number of channels to retrieve.
+     * @param messageLimit How many messages to retrieve per channel.
      *
      * @see io.getstream.chat.android.offline.querychannels.QueryChannelsController
      * @see io.getstream.chat.android.client.utils.FilterObject

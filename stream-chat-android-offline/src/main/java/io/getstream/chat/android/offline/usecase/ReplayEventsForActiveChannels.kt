@@ -9,11 +9,11 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class ReplayEventsForActiveChannels(private val domainImpl: ChatDomainImpl) {
     /**
-     * Adds the specified channel to the active channels
-     * Replays events for all active channels
-     * This ensures that your local storage is up to date with the server
+     * Adds the specified channel to the active channels.
+     * Replays events for all active channels.
+     * This ensures that your local storage is up to date with the server.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      */
     @CheckResult
     operator fun invoke(cid: String): Call<List<ChatEvent>> {

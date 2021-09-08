@@ -14,7 +14,7 @@ abstract class BaseViewHolder<T : UserListItem>(
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
-     * Workaround to allow a downcast of the UserListItem to T
+     * Workaround to allow a downcast of the UserListItem to T.
      */
     @Suppress("UNCHECKED_CAST")
     internal fun bindListItem(userListItem: UserListItem) = bind(userListItem as T)

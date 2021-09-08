@@ -258,7 +258,7 @@ public class MessageInputView : ConstraintLayout {
      *
      * @param maxMessageLength the maximum message length in characters.
      *
-     * @see [setMaxMessageLengthHandler] for more information on how to provide a custom error message
+     * @see [setMaxMessageLengthHandler] for more information on how to provide a custom error message.
      */
     public fun setMaxMessageLength(maxMessageLength: Int) {
         this.maxMessageLength = maxMessageLength
@@ -268,7 +268,7 @@ public class MessageInputView : ConstraintLayout {
      * Sets the cooldown interval. When slow mode is enabled, users can only send messages every
      * [cooldownInterval] time interval.
      *
-     * @param cooldownInterval the cooldown interval in seconds
+     * @param cooldownInterval The cooldown interval in seconds.
      */
     public fun setCooldownInterval(cooldownInterval: Int) {
         this.cooldownInterval = cooldownInterval
@@ -713,12 +713,12 @@ public class MessageInputView : ConstraintLayout {
     public fun interface MaxMessageLengthHandler {
 
         /**
-         * Called when message text length has changed
+         * Called when message text length has changed.
          *
-         * @param messageText the updated message text
-         * @param messageLength the updated message length
-         * @param maxMessageLength the maximum allowed message length
-         * @param maxMessageLengthExceeded true if the length of the text is greater than the maximum length.
+         * @param messageText The updated message text.
+         * @param messageLength The updated message length.
+         * @param maxMessageLength The maximum allowed message length.
+         * @param maxMessageLengthExceeded True if the length of the text is greater than the maximum length.
          */
         public fun onMessageLengthChanged(
             messageText: String,

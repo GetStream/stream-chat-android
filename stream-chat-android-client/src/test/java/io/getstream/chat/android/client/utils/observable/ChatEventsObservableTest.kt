@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.utils.observable
 
+import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -9,7 +10,6 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.util.Date

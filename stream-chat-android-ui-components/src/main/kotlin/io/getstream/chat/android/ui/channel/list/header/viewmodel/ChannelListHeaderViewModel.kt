@@ -10,7 +10,7 @@ import io.getstream.chat.android.livedata.ChatDomain
  * Responsible for updating current user information.
  * Can be bound to the view using [ChannelListHeaderViewModel.bindView] function.
  *
- * @param chatDomain entry point for offline operations
+ * @param chatDomain Entry point for offline operations.
  */
 public class ChannelListHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
