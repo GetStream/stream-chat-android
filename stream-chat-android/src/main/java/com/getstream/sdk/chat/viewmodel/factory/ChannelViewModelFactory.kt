@@ -7,10 +7,10 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
 /**
- * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageInputViewModel
+ * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageInputViewModel.
  *
- * @param cid: the channel id in the format messaging:123
- * @param messageId: the id of the target message to displayed
+ * @param cid The channel id in the format messaging:123.
+ * @param messageId The id of the target message to displayed.
  *
  * @see MessageListViewModel
  * @see ChannelHeaderViewModel

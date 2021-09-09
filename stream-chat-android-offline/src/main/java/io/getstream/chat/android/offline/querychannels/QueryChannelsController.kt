@@ -155,7 +155,7 @@ public class QueryChannelsController internal constructor(
      * Note that this only refreshes channels that are already matching with the query
      * It retrieves the data from the current channelController object
      *
-     * @param cId the channel to update
+     * @param cId The channel to update.
      *
      * If you want to add to the list of channels use the addToQueryResult method
      *
@@ -185,7 +185,7 @@ public class QueryChannelsController internal constructor(
      * Refreshes multiple channels on this query
      * Note that it retrieves the data from the current channelController object
      *
-     * @param cIds the channels to refresh
+     * @param cIds The channels to refresh.
      * @see ChannelController
      */
     internal fun refreshChannels(cIds: Collection<String>) {
@@ -239,10 +239,10 @@ public class QueryChannelsController internal constructor(
     }
 
     /**
-     * Updates the state on the channelController based on the channel object we received from the API
+     * Updates the state on the channelController based on the channel object we received from the API.
      *
-     * @param channels the list of channels to update
-     * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
+     * @param channels The list of channels to update.
+     * @param isFirstPage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
      *
      */
     internal suspend fun updateOnlineChannels(

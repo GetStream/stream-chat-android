@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.api.interceptor
 
+import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.FakeResponse.Body
@@ -9,8 +10,7 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.catchThrowableOfType
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 internal class TokenAuthInterceptorTests {
@@ -23,12 +23,9 @@ internal class TokenAuthInterceptorTests {
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = catchThrowableOfType(
-            {
-                interceptor.intercept(FakeChain(FakeResponse(200)))
-            },
-            ChatRequestError::class.java
-        )
+        val exception = assertThrows(ChatRequestError::class.java) {
+            interceptor.intercept(FakeChain(FakeResponse(200)))
+        }
 
         assertThat(exception.streamCode).isEqualTo(ChatErrorCode.UNDEFINED_TOKEN.code)
     }
@@ -38,12 +35,9 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager("token")
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = catchThrowableOfType(
-            {
-                interceptor.intercept(FakeChain(FakeResponse(500)))
-            },
-            ChatRequestError::class.java
-        )
+        val exception = assertThrows(ChatRequestError::class.java) {
+            interceptor.intercept(FakeChain(FakeResponse(500)))
+        }
 
         assertThat(exception.statusCode).isEqualTo(500)
     }
@@ -67,12 +61,9 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager(invalidHeader)
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = catchThrowableOfType(
-            {
-                interceptor.intercept(FakeChain(FakeResponse(200)))
-            },
-            ChatRequestError::class.java
-        )
+        val exception = assertThrows(ChatRequestError::class.java) {
+            interceptor.intercept(FakeChain(FakeResponse(200)))
+        }
 
         assertThat(exception.streamCode).isEqualTo(ChatErrorCode.INVALID_TOKEN.code)
     }

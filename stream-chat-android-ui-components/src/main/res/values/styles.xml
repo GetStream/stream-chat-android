@@ -470,6 +470,8 @@
         <item name="streamUiMediaAttachmentMoreCountTextSize">@dimen/stream_ui_message_media_attachment_more_count_text_size</item>
         <item name="streamUiMediaAttachmentMoreCountTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
+
+        <item name="streamUiMediaAttachmentGiphyHeight">200dp</item>
     </style>
 
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">

@@ -40,7 +40,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @property loadingView Loading view. Default value is [R.layout.stream_ui_default_loading_view].
  * @property emptyStateView Empty state view. Default value is [R.layout.stream_ui_channel_list_empty_state_view].
  * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_channel_list_loading_more_view].
- * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null..
+ * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,

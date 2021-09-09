@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
@@ -52,6 +53,16 @@ internal interface ChatApi {
 
     @CheckResult
     fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
+
+    @CheckResult
+    fun searchMessages(
+        channelFilter: FilterObject,
+        messageFilter: FilterObject,
+        offset: Int?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySort<Message>?,
+    ): Call<SearchMessagesResult>
 
     @CheckResult
     fun getRepliesMore(

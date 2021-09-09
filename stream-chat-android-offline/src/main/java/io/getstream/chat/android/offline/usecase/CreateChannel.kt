@@ -8,10 +8,10 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 
 internal class CreateChannel(private val domainImpl: ChatDomainImpl) {
     /**
-     * Creates a new channel. Will retry according to the retry policy if it fails
-     * @see io.getstream.chat.android.offline.utils.RetryPolicy
+     * Creates a new channel. Will retry according to the retry policy if it fails.
      *
-     * @param channel the channel object
+     * @param channel The channel object.
+     * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
     operator fun invoke(channel: Channel): Call<Channel> {

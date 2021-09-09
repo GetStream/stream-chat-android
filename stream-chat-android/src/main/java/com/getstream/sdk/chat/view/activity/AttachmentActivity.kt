@@ -76,9 +76,9 @@ public class AttachmentActivity : AppCompatActivity() {
     }
 
     /**
-     * Show web view with url
+     * Show web view with url.
      *
-     * @param url web url
+     * @param url Web url.
      */
     private fun loadUrlToWeb(url: String?) {
         iv_image.isVisible = false
@@ -89,9 +89,9 @@ public class AttachmentActivity : AppCompatActivity() {
     }
 
     /**
-     * Play giphy with url
+     * Play giphy with url.
      *
-     * @param url giphy url
+     * @param url Giphy url.
      */
     private fun showGiphy(url: String?) {
         if (url == null) {
