@@ -29,6 +29,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a new way to paginate through search message results using limit and next/previous values.
 
 ### ⚠️ Changed
 - Deprecated `Channel#name`, `Channel#image`, `User#name`, `Ues#image` extension properties. Use class members instead.
@@ -63,11 +64,14 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the bug when MessageInputView let send a message with large attachments. Such message is never sent.
+- Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
 
 ### ⬆️ Improved
+- Improved scroll of message when many gif images are present in `MessageListView`
 
 ### ✅ Added
-
+- Added scroll behaviour to `MessageListViewStyle`.
 ### ⚠️ Changed
 
 ### ❌ Removed

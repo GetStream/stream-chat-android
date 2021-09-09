@@ -30,4 +30,5 @@
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">Fichero demasiado grande</string>
     <string name="stream_ui_message_input_error_max_length">Tamaño máximo de mensaje (%1$d) excedido.</string>
+    <string name="stream_ui_message_input_error_file_large_size">El fichero es demasiado grande - Máximo %dMB.</string>
 </resources>

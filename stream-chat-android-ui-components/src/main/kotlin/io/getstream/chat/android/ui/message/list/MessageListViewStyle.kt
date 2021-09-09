@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * Use this class together with [TransformStyle.messageListStyleTransformer] to change [MessageListView] styles programmatically.
  *
  * @property scrollButtonViewStyle Style for [ScrollButtonView].
+ * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
@@ -58,6 +59,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
+    public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val replyMessageStyle: MessageReplyStyle,
@@ -154,6 +156,13 @@ public data class MessageListViewStyle(
                         R.styleable.MessageListView_streamUiScrollButtonIcon,
                         context.getDrawableCompat(R.drawable.stream_ui_ic_down)
                     ).build()
+
+                val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
+                    attributes.getInt(
+                        R.styleable.MessageListView_streamUiNewMessagesBehaviour,
+                        MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value
+                    )
+                )
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
@@ -355,6 +364,7 @@ public data class MessageListViewStyle(
 
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
+                    scrollButtonBehaviour = scrollButtonBehaviour,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
