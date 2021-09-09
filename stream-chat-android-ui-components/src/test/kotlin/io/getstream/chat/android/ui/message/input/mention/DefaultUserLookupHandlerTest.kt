@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.input.mention
 
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.test.randomString
 import io.getstream.chat.android.ui.createUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,15 +50,6 @@ internal class DefaultUserLookupHandlerTest {
         testNameChange("Xablau", "Xublau")
     }
 
-    @Test
-    fun `transliteration should work for many cyrillic cases`() = runBlockingTest {
-        cyrillicTest("Leandro", "Леандро")
-        cyrillicTest("petyo", "Пе")
-        cyrillicTest("anastasia", "Ана")
-        cyrillicTest("dmitriy", "Дмитрии")
-        cyrillicTest("dmitriy", "Дмитри")
-    }
-
     private suspend fun testNameChange(userName: String, query: String, expectedResult: List<User>? = null) {
         val user1 = createUser().apply { name = userName }
 
@@ -76,21 +66,5 @@ internal class DefaultUserLookupHandlerTest {
         } else {
             assertEquals(listOf(user1), result)
         }
-    }
-
-    private suspend fun cyrillicTest(latin: String, cyrillic: String) {
-        val cyrillicToLatinId = "Cyrl-Latn"
-
-        val user1 = createUser().apply { name = latin }
-
-        val users = listOf(
-            user1,
-            createUser().apply { name = randomString() },
-            createUser().apply { name = randomString() },
-        )
-
-        val result = DefaultUserLookupHandler(users, cyrillicToLatinId).handleUserLookup(cyrillic)
-
-        assertEquals(listOf(user1), result)
     }
 }

@@ -75,7 +75,6 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.icu4j
 
     // Markdown
     implementation Dependencies.markwonCore

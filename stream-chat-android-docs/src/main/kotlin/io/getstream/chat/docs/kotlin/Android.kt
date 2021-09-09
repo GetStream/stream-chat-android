@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.ui.ChatUI
@@ -59,6 +58,7 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
@@ -240,7 +240,10 @@ class Android {
         }
 
         fun transliterationSupport(users: List<User>) {
-            val defaultUserLookupHandler = DefaultUserLookupHandler(users, "Cyrl-Latn")
+            val defaultUserLookupHandler = DefaultUserLookupHandler(
+                users,
+                DefaultStreamTransliterator("Cyrl-Latn")
+            )
             messageInputView.setUserLookupHandler(defaultUserLookupHandler)
         }
 

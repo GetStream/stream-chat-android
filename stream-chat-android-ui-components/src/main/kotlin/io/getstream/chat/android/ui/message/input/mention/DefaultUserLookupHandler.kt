@@ -1,10 +1,9 @@
 package io.getstream.chat.android.ui.message.input.mention
 
-import com.ibm.icu.text.Transliterator
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
+import io.getstream.chat.android.ui.message.input.transliteration.StreamTransliterator
 import java.text.Normalizer
 import kotlin.math.min
 
@@ -19,23 +18,8 @@ private val regexUnaccent = "\\p{InCombiningDiacriticalMarks}+".toRegex()
 */
 public class DefaultUserLookupHandler(
     public var users: List<User>,
-    transliterationId: String? = null,
+    private var streamTransliterator: StreamTransliterator = DefaultStreamTransliterator(),
 ) : MessageInputView.UserLookupHandler {
-
-    private var transliterator: Transliterator? = null
-    private val logger = ChatLogger.get("DefaultUserLookupHandler")
-
-    init {
-        transliterationId?.let(::setTransliterator)
-    }
-
-    private fun setTransliterator(id: String) {
-        if (Transliterator.getAvailableIDs().asSequence().contains(id)) {
-            this.transliterator = Transliterator.getInstance(id)
-        } else {
-            logger.logD("The id: $id for transliteration is not available")
-        }
-    }
 
     override suspend fun handleUserLookup(query: String): List<User> {
         return users
@@ -44,9 +28,7 @@ public class DefaultUserLookupHandler(
                 val formattedQuery = query
                     .lowercase()
                     .unaccent()
-                    .let {
-                        transliterator?.transliterate(it) ?: it
-                    }
+                    .let(streamTransliterator::transliterate)
 
                 val formattedName = user.name.lowercase().unaccent()
 
