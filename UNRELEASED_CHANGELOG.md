@@ -64,7 +64,9 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the bug when MessageInputView let send a message with large attachments. Such message is never sent.
 - Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
+
 ### ⬆️ Improved
 - Improved scroll of message when many gif images are present in `MessageListView`
 
