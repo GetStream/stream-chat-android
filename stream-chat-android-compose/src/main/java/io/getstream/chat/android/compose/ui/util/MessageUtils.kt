@@ -9,8 +9,8 @@ import io.getstream.chat.android.compose.R
 /**
  * Takes the current message and returns the sender display name.
  *
- * @return - Sender display name.
- * */
+ * @return Sender display name.
+ */
 internal fun Message.getSenderDisplayName(
     context: Context,
     currentUser: User?,
@@ -21,11 +21,11 @@ internal fun Message.getSenderDisplayName(
     }
 
 /**
- * @return - If the message type is regular.
- * */
+ * @return If the message type is regular.
+ */
 internal fun Message.isRegular(): Boolean = type == ModelType.message_regular
 
 /**
- * @return - If the message type is system.
- * */
+ * @return If the message type is system.
+ */
 internal fun Message.isSystem(): Boolean = type == ModelType.message_system

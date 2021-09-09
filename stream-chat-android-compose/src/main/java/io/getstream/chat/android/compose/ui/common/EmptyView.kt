@@ -20,8 +20,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * The view that's shown when there's no data available.
  *
- * @param modifier - Modifier for styling.
- * */
+ * @param modifier Modifier for styling.
+ */
 @Composable
 public fun EmptyView(modifier: Modifier = Modifier) {
     Column(

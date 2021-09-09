@@ -1,10 +1,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.Mother.randomDevice
-import io.getstream.chat.android.client.api.models.AddDeviceRequest
-import io.getstream.chat.android.client.api.models.CompletableResponse
-import io.getstream.chat.android.client.api.models.DeviceReponse
-import io.getstream.chat.android.client.api.models.GetDevicesResponse
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -34,19 +31,12 @@ internal class DevicesApiCallsTests {
 
     @Test
     fun getDevicesSuccess() {
-
         val devices = List(10) { randomDevice() }
 
         Mockito.`when`(
-            mock.retrofitApi.getDevices(
-                mock.connectionId
-            )
+            mock.api.getDevices()
         ).thenReturn(
-            RetroSuccess(
-                GetDevicesResponse(
-                    devices.map { DeviceReponse(it.token, it.pushProvider.key) }
-                )
-            ).toRetrofitCall()
+            RetroSuccess(devices).toRetrofitCall()
         )
 
         val result = client.getDevices().execute()
@@ -56,12 +46,9 @@ internal class DevicesApiCallsTests {
 
     @Test
     fun getDevicesError() {
-
         Mockito.`when`(
-            mock.retrofitApi.getDevices(
-                mock.connectionId
-            )
-        ).thenReturn(RetroError<GetDevicesResponse>(mock.serverErrorCode).toRetrofitCall())
+            mock.api.getDevices()
+        ).thenReturn(RetroError<List<Device>>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getDevices().execute()
 
@@ -71,17 +58,10 @@ internal class DevicesApiCallsTests {
     @Test
     fun addDevicesSuccess() {
         val device = randomDevice()
-        val request = AddDeviceRequest(
-            token = device.token,
-            pushProvider = device.pushProvider.key
-        )
 
         Mockito.`when`(
-            mock.retrofitApi.addDevices(
-                mock.connectionId,
-                request
-            )
-        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
+            mock.api.addDevice(device)
+        ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.addDevice(device).execute()
 
@@ -91,17 +71,10 @@ internal class DevicesApiCallsTests {
     @Test
     fun addDevicesError() {
         val device = randomDevice()
-        val request = AddDeviceRequest(
-            token = device.token,
-            pushProvider = device.pushProvider.key
-        )
 
         Mockito.`when`(
-            mock.retrofitApi.addDevices(
-                mock.connectionId,
-                request
-            )
-        ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
+            mock.api.addDevice(device)
+        ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.addDevice(device).execute()
 
@@ -110,15 +83,11 @@ internal class DevicesApiCallsTests {
 
     @Test
     fun deleteDeviceSuccess() {
-
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.retrofitApi.deleteDevice(
-                device.token,
-                mock.connectionId
-            )
-        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
+            mock.api.deleteDevice(device)
+        ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.deleteDevice(device).execute()
 
@@ -130,11 +99,8 @@ internal class DevicesApiCallsTests {
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.retrofitApi.deleteDevice(
-                device.token,
-                mock.connectionId
-            )
-        ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
+            mock.api.deleteDevice(device)
+        ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.deleteDevice(device).execute()
 

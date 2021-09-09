@@ -28,36 +28,38 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * Style for view holders used inside [MessageListView].
  * Use this class together with [TransformStyle.messageListItemStyleTransformer] to change styles programmatically.
  *
- * @property messageBackgroundColorMine - background color for message sent by the current user. Default - [R.color.stream_ui_grey_gainsboro]
- * @property messageBackgroundColorTheirs - background color for message sent by other user. Default - [R.color.stream_ui_white]
- * @property messageLinkTextColorMine - color for links sent by the current user. Default - [R.color.stream_ui_accent_blue]
- * @property messageLinkTextColorTheirs - color for links sent by other user. Default - [R.color.stream_ui_accent_blue]
- * @property messageLinkBackgroundColorMine - background color for message with link, sent by the current user. Default - [R.color.stream_ui_blue_alice]
- * @property messageLinkBackgroundColorTheirs - background color for message with link, sent by other user. Default - [R.color.stream_ui_blue_alice]
- * @property linkDescriptionMaxLines - max lines for link's description. Default - 5
- * @property textStyleMine - appearance for message text sent by the current user
- * @property textStyleTheirs - appearance for message text sent by other user
- * @property textStyleUserName - appearance for user name text
- * @property textStyleMessageDate - appearance for message date text
- * @property textStyleThreadCounter - appearance for thread counter text
- * @property textStyleLinkTitle - appearance for link
- * @property textStyleLinkDescription - appearance for link's description text
- * @property dateSeparatorBackgroundColor - background color for data separator. Default - [R.color.stream_ui_overlay_dark]
- * @property textStyleDateSeparator - appearance for date separator text
- * @property reactionsViewStyle - style for [ViewReactionsView]
- * @property editReactionsViewStyle - style for [EditReactionsView]
- * @property iconIndicatorSent - icon for message's sent status. Default - [R.drawable.stream_ui_ic_check_single]
- * @property iconIndicatorRead - icon for message's read status. Default - [R.drawable.stream_ui_ic_check_double]
- * @property iconIndicatorPendingSync - icon for message's pending status. Default - [R.drawable.stream_ui_ic_clock]
- * @property iconOnlyVisibleToYou - icon for message's pending status. Default - [R.drawable.stream_ui_ic_icon_eye_off]
- * @property textStyleMessageDeleted - appearance for message deleted text
- * @property messageDeletedBackground - background color for deleted message. Default - [R.color.stream_ui_grey_whisper]
- * @property messageStrokeColorMine - stroke color for message sent by the current user. Default - [MESSAGE_STROKE_COLOR_MINE]
- * @property messageStrokeWidthMine - stroke width for message sent by the current user. Default - [MESSAGE_STROKE_WIDTH_MINE]
- * @property messageStrokeColorTheirs - stroke color for message sent by other user. Default - [MESSAGE_STROKE_COLOR_THEIRS]
- * @property messageStrokeWidthTheirs - stroke width for message sent by other user. Default - [MESSAGE_STROKE_WIDTH_THEIRS]
- * @property textStyleSystemMessage - appearance for system message text
- * @property textStyleErrorMessage - appearance for error message text
+ * @property messageBackgroundColorMine Background color for message sent by the current user. Default value is [R.color.stream_ui_grey_gainsboro].
+ * @property messageBackgroundColorTheirs Background color for message sent by other user. Default value is [R.color.stream_ui_white].
+ * @property messageLinkTextColorMine Color for links sent by the current user. Default value is [R.color.stream_ui_accent_blue].
+ * @property messageLinkTextColorTheirs Color for links sent by other user. Default value is [R.color.stream_ui_accent_blue].
+ * @property messageLinkBackgroundColorMine Background color for message with link, sent by the current user. Default value is [R.color.stream_ui_blue_alice].
+ * @property messageLinkBackgroundColorTheirs Background color for message with link, sent by other user. Default value is [R.color.stream_ui_blue_alice].
+ * @property linkDescriptionMaxLines Max lines for link's description. Default value is 5.
+ * @property textStyleMine Appearance for message text sent by the current user.
+ * @property textStyleTheirs Appearance for message text sent by other user.
+ * @property textStyleUserName Appearance for user name text.
+ * @property textStyleMessageDate Appearance for message date text.
+ * @property textStyleThreadCounter Appearance for thread counter text.
+ * @property textStyleLinkTitle Appearance for link.
+ * @property textStyleLinkDescription Appearance for link's description text.
+ * @property dateSeparatorBackgroundColor Background color for data separator. Default value is [R.color.stream_ui_overlay_dark].
+ * @property textStyleDateSeparator Appearance for date separator text.
+ * @property reactionsViewStyle Style for [ViewReactionsView].
+ * @property editReactionsViewStyle Style for [EditReactionsView].
+ * @property iconIndicatorSent Icon for message's sent status. Default value is [R.drawable.stream_ui_ic_check_single].
+ * @property iconIndicatorRead Icon for message's read status. Default value is [R.drawable.stream_ui_ic_check_double].
+ * @property iconIndicatorPendingSync Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_clock].
+ * @property iconOnlyVisibleToYou Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_icon_eye_off].
+ * @property textStyleMessageDeleted Appearance for message deleted text.
+ * @property messageDeletedBackground Background color for deleted message. Default value is [R.color.stream_ui_grey_whisper].
+ * @property messageStrokeColorMine Stroke color for message sent by the current user. Default value is [MESSAGE_STROKE_COLOR_MINE].
+ * @property messageStrokeWidthMine Stroke width for message sent by the current user. Default value is [MESSAGE_STROKE_WIDTH_MINE].
+ * @property messageStrokeColorTheirs Stroke color for message sent by other user. Default value is [MESSAGE_STROKE_COLOR_THEIRS].
+ * @property messageStrokeWidthTheirs Stroke width for message sent by other user. Default value is [MESSAGE_STROKE_WIDTH_THEIRS].
+ * @property textStyleSystemMessage Appearance for system message text.
+ * @property textStyleErrorMessage Appearance for error message text.
+ * @property messageStartMargin Margin for messages in the left side. Default value is 48dp.
+ * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -95,6 +97,8 @@ public data class MessageListItemStyle(
     public val pinnedMessageIndicatorTextStyle: TextStyle,
     public val pinnedMessageIndicatorIcon: Drawable,
     @ColorInt public val pinnedMessageBackgroundColor: Int,
+    @Px public val messageStartMargin: Int,
+    @Px public val messageEndMargin: Int,
 ) {
 
     @ColorInt
@@ -508,6 +512,16 @@ public data class MessageListItemStyle(
                 context.getColorCompat(R.color.stream_ui_highlight)
             )
 
+            val messageStartMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageStartMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
+            val messageEndMargin = attributes.getDimension(
+                R.styleable.MessageListView_streamUiMessageEndMargin,
+                context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
+            ).toInt()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -544,6 +558,8 @@ public data class MessageListItemStyle(
                 pinnedMessageIndicatorTextStyle = pinnedMessageIndicatorTextStyle,
                 pinnedMessageIndicatorIcon = pinnedMessageIndicatorIcon,
                 pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
+                messageStartMargin = messageStartMargin,
+                messageEndMargin = messageEndMargin,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
         }
 

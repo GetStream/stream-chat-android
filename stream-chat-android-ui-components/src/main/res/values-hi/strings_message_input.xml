@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">मैसेज का जवाब दें</string>
     <string name="stream_ui_message_input_hint">यहाँ कुछ लिखें</string>
     <string name="stream_ui_message_input_only_attachments_hint">एक टिप्पणी जोड़ें या भेजें</string>
+    <string name="stream_ui_message_input_slow_mode_hint">स्लो मोड ऑन</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">इंस्टेंट कमांड</string>
@@ -29,4 +30,5 @@
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">फ़ाइल अपलोड करने के लिए बहुत बड़ी है।</string>
     <string name="stream_ui_message_input_error_max_length">मैसेज की वर्ण सीमा (%1$d) पार हो गई है।</string>
+    <string name="stream_ui_message_input_error_file_large_size">फ़ाइल बहुत बड़ी है - अधिकतम %d एमबी.</string>
 </resources>

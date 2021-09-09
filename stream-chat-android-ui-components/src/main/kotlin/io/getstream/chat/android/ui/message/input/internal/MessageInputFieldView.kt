@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
@@ -74,7 +73,7 @@ internal class MessageInputFieldView : FrameLayout {
             }
         }
 
-    private var messageHint: String
+    internal var messageHint: String
         get() {
             return binding.messageEditText.hint.toString()
         }
@@ -309,9 +308,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun hasText(): Boolean = messageText.isNotBlank()
 
-    fun hasValidAttachments(): Boolean = selectedAttachments.any { metaData -> metaData.size < attachmentMaxFileSize }
-
-    fun hasContent(): Boolean = hasText() || hasValidAttachments()
+    fun hasContent(): Boolean = hasText() || selectedAttachments.isNotEmpty()
 
     private fun onMessageTextChanged() {
         resetModeIfNecessary()

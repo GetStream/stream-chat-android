@@ -18,12 +18,12 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
  * Style for [SearchResultListView].
  * Use this class together with [TransformStyle.searchResultListViewStyleTransformer] to change [SearchResultListView] styles programmatically.
  *
- * @property searchInfoBarBackground - background for search info bar. Default - [R.drawable.stream_ui_bg_gradient]
- * @property searchInfoBarTextStyle - appearance for text displayed in search info bar
- * @property emptyStateIcon - icon for empty state view. Default - [R.drawable.stream_ui_ic_search_empty]
- * @property emptyStateTextStyle - appearance for empty state text
- * @property progressBarIcon - animated progress drawable. Default - [R.drawable.stream_ui_rotating_indeterminate_progress_gradient]
- * @property messagePreviewStyle - style for single search result item
+ * @property searchInfoBarBackground Background for search info bar. Default value is [R.drawable.stream_ui_bg_gradient].
+ * @property searchInfoBarTextStyle Appearance for text displayed in search info bar.
+ * @property emptyStateIcon Icon for empty state view. Default value is [R.drawable.stream_ui_ic_search_empty].
+ * @property emptyStateTextStyle Appearance for empty state text.
+ * @property progressBarIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
+ * @property messagePreviewStyle Style for single search result item.
  */
 public data class SearchResultListViewStyle(
     @ColorInt public val backgroundColor: Int,

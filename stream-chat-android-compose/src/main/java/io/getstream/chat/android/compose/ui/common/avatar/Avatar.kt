@@ -18,12 +18,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Avatar/image that renders whatever image the [painter] provides. It allows for customization,
  * uses the 'avatar' shape from [ChatTheme.shapes] for the clipping and exposes an [onClick] action.
  *
- * @param painter - The painter for the image.
- * @param modifier - Modifier for styling.
- * @param shape - The shape of the avatar.
- * @param contentDescription - Description of the image.
- * @param onClick - OnClick action, that can be nullable.
- * */
+ * @param painter The painter for the image.
+ * @param modifier Modifier for styling.
+ * @param shape The shape of the avatar.
+ * @param contentDescription Description of the image.
+ * @param onClick OnClick action, that can be nullable.
+ */
 @Composable
 public fun Avatar(
     painter: Painter,

@@ -257,6 +257,8 @@ public class MessageListView : ConstraintLayout {
 
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
+    private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
+
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
     private lateinit var loadMoreListener: EndlessScrollListener
@@ -264,7 +266,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var channel: Channel
 
     /**
-     * If you are allowed to scroll up or not
+     * If you are allowed to scroll up or not.
      */
     private var lockScrollUp = true
 
@@ -600,6 +602,7 @@ public class MessageListView : ConstraintLayout {
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
+            showAvatarPredicate = this.showAvatarPredicate,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
@@ -763,6 +766,11 @@ public class MessageListView : ConstraintLayout {
     public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
         this.messageDateFormatter = messageDateFormatter
+    }
+
+    public fun setShowAvatarPredicate(showAvatarPredicate: ShowAvatarPredicate) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set ShowAvatarPredicate first" }
+        this.showAvatarPredicate = showAvatarPredicate
     }
 
     public fun displayNewMessages(listItem: MessageListItemWrapper) {
@@ -1214,6 +1222,10 @@ public class MessageListView : ConstraintLayout {
      */
     public fun interface MessageListItemPredicate {
         public fun predicate(item: MessageListItem): Boolean
+    }
+
+    public fun interface ShowAvatarPredicate {
+        public fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean
     }
 
     public fun interface MessageListItemTransformer {

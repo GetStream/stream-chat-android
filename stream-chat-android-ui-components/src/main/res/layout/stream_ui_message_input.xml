@@ -122,6 +122,18 @@
             tools:visibility="visible"
             />
 
+        <TextView
+            android:id="@+id/cooldownBadgeTextView"
+            style="@style/StreamUiCooldownBadgeStyle"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_tiny"
+            android:clickable="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/lastMessageTimeLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="99"
+            />
+
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatCheckBox

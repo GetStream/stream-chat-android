@@ -9,12 +9,10 @@ import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.annotation.Px
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS

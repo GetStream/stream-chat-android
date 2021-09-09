@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
+    private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             notifyListenersIfActiveNetworkAvailable()
@@ -31,7 +32,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     private var isConnected: Boolean = isConnected()
 
     @Volatile
-    private var listeners: List<NetworkStateListener> = listOf()
+    private var listeners: Set<NetworkStateListener> = setOf()
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
@@ -55,15 +56,20 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     }
 
     fun subscribe(listener: NetworkStateListener) {
-        listeners = listeners + listener
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
-        isRegistered.set(true)
+        synchronized(lock) {
+            listeners = listeners + listener
+            if (isRegistered.compareAndSet(false, true)) {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+            }
+        }
     }
 
     fun unsubscribe(listener: NetworkStateListener) {
-        listeners = (listeners - listener).also {
-            if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
-                connectivityManager.unregisterNetworkCallback(callback)
+        synchronized(lock) {
+            listeners = (listeners - listener).also {
+                if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
+                    connectivityManager.unregisterNetworkCallback(callback)
+                }
             }
         }
     }

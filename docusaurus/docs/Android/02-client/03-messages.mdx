@@ -364,25 +364,63 @@ Message search is built-in to the chat API. You can enable and/or disable the se
 The command shown below selects the channels in which John is a member. Next, it searches the messages in those channels for the keyword “'supercalifragilisticexpialidocious'”:
 
 ```kotlin
-client.searchMessages( 
-    SearchMessagesRequest( 
-        offset = 0, 
-        limit = 10, 
-        channelFilter = Filters.`in`("members", listOf("john")), 
-        messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious") 
-    ) 
-).enqueue { result -> 
-    if (result.isSuccess) { 
-        val messages: List<Message> = result.data() 
-    } else { 
-        // Handle result.error() 
-    } 
+client.searchMessages(
+    offset = 0,
+    limit = 10,
+    channelFilter = Filters.`in`("members", listOf("john")),
+    messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious")
+).enqueue { result ->
+    if (result.isSuccess) {
+        val messages: List<Message> = result.data().messages
+    } else {
+        // Handle result.error()
+    }
 }
 ```
 
 :::note
-Pagination works via the standard `limit` and `offset` parameters.
+After sending a message, it may take several minutes for the message to be returned in search results.
 :::
+
+There are two ways to paginate through search results:
+
+1. Using limit and offset
+1. Using limit and next/previous values
+
+Limit and offset will allow you to access up to 1000 results matching your query. You will not be able to sort using limit and offset. The results will instead be sorted by relevance and message ID.
+
+Next pagination will allow you to access all search results that match your query, and you will be able to sort using any filter-able fields and custom fields.
+
+Pages of sort results will be returned with next and previous strings, which tell the API where to start searching from and what sort order to use. You can supply those values as a next parameter when making a query to get a new page of results.
+
+```kotlin
+val channelFilter = Filters.`in`("members", listOf("john"))
+val messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious")
+
+// First 10 results sorted by relevance in descending order
+val page1: SearchMessagesResult = client.searchMessages(
+    channelFilter = channelFilter,
+    messageFilter = messageFilter,
+    limit = 10,
+    sort = QuerySort.desc("relevance")
+).execute().data()
+
+// Next 10 results with the same sort order embedded in the next value
+val page2: SearchMessagesResult = client.searchMessages(
+    channelFilter = channelFilter,
+    messageFilter = messageFilter,
+    limit = 10,
+    next = page1.previous
+).execute().data()
+
+// The previous 10 results
+val page1Again: SearchMessagesResult = client.searchMessages(
+    channelFilter = channelFilter,
+    messageFilter = messageFilter,
+    limit = 10,
+    next = page2.previous
+).execute().data()
+```
 
 ### Searching for Messages with Attachments
 

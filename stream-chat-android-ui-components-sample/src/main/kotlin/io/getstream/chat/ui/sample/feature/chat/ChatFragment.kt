@@ -46,9 +46,6 @@ class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val maxAttachmentFile: Int = 20
-    private var messageListSubtitle: String? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,31 +65,8 @@ class ChatFragment : Fragment() {
         binding.messageListView.setDeletedMessageListItemPredicate(DeletedMessageListItemPredicate.VisibleToAuthorOnly)
         initChatViewModel()
         initMessagesViewModel()
-        configureMessageInputView()
         initMessageInputViewModel()
         configureBackButtonHandling()
-    }
-
-    private fun configureMessageInputView() {
-        lifecycleScope.launchWhenCreated {
-            binding.messageInputView.listenForBigAttachments(
-                object : MessageInputView.BigFileSelectionListener {
-                    override fun handleBigFileSelected(hasBigFile: Boolean) {
-                        if (hasBigFile) {
-                            messageListSubtitle = binding.messagesHeaderView.getOnlineStateSubtitle()
-                            binding.messagesHeaderView.setOnlineStateSubtitle(
-                                requireContext().getString(
-                                    R.string.chat_fragment_big_attachment_subtitle,
-                                    maxAttachmentFile
-                                )
-                            )
-                        } else {
-                            messageListSubtitle?.let(binding.messagesHeaderView::setOnlineStateSubtitle)
-                        }
-                    }
-                }
-            )
-        }
     }
 
     override fun onResume() {

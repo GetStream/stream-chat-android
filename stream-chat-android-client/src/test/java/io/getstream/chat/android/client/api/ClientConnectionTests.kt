@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -23,7 +24,6 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.test.TestCoroutineExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -65,10 +65,8 @@ internal class ClientConnectionTests {
     )
     private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    private lateinit var api: GsonChatApi
+    private lateinit var api: MoshiChatApi
     private lateinit var socket: ChatSocket
-    private lateinit var retrofitApi: RetrofitApi
-    private lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
     private lateinit var logger: ChatLogger
@@ -84,19 +82,11 @@ internal class ClientConnectionTests {
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
-        retrofitApi = mock()
-        retrofitAnonymousApi = mock()
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
         initCallback = mock()
-        api = GsonChatApi(
-            retrofitApi,
-            retrofitAnonymousApi,
-            UuidGeneratorImpl(),
-            fileUploader,
-            testCoroutines.scope
-        )
+        api = mock()
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
             socketListener = invocationOnMock.getArgument(0)
@@ -114,6 +104,8 @@ internal class ClientConnectionTests {
             userStateService = userStateService,
             encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtils,
+            appContext = mock(),
+            scope = testCoroutines.scope,
         )
     }
 

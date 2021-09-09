@@ -69,12 +69,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * It shows various message options, as well as reactions, that the user can take. It also shows the
  * currently selected message in the middle of these options.
  *
- * @param reactionTypes - The types of reactions the user can use to react to messages.
- * @param messageOptions - The [buildMessageOption] the user can select to trigger on the message.
- * @param message - Selected message.
- * @param onMessageAction - Handler for any of the available message actions (options + reactions).
- * @param onDismiss - Handler when the user dismisses the UI.
- * */
+ * @param reactionTypes The types of reactions the user can use to react to messages.
+ * @param messageOptions The [buildMessageOption] the user can select to trigger on the message.
+ * @param message Selected message.
+ * @param onMessageAction Handler for any of the available message actions (options + reactions).
+ * @param onDismiss Handler when the user dismisses the UI.
+ */
 @Composable
 public fun SelectedMessageOverlay(
     reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
@@ -138,9 +138,9 @@ public fun SelectedMessageOverlay(
 /**
  * A row of selectable reactions on a message. Users can provide their own, or use the default.
  *
- * @param options - The options to show.
- * @param onReactionClick - Handler when the user clicks on any reaction.
- * */
+ * @param options The options to show.
+ * @param onReactionClick Handler when the user clicks on any reaction.
+ */
 @Composable
 internal fun ReactionOptions(
     options: List<ReactionOption>,
@@ -169,9 +169,9 @@ internal fun ReactionOptions(
 /**
  * Each reaction item in the row of reactions.
  *
- * @param option - The reaction to show.
- * @param onReactionClick - Handler when the user clicks on the reaction.
- * */
+ * @param option The reaction to show.
+ * @param onReactionClick Handler when the user clicks on the reaction.
+ */
 @Composable
 internal fun ReactionOptionItem(
     option: ReactionOption,
@@ -195,8 +195,8 @@ internal fun ReactionOptionItem(
  * The UI for a basic text message that's selected. It doesn't have all the components as a message
  * in the list, as those are not as important.
  *
- * @param message - Message to show.
- * */
+ * @param message Message to show.
+ */
 @Composable
 private fun SelectedMessage(message: Message) {
     Row(
@@ -234,10 +234,10 @@ private fun SelectedMessage(message: Message) {
 /**
  * List of options the user can choose from, when selecting a message.
  *
- * @param options - The options to show, default or user-provided.
- * @param onMessageAction - Handler when the user selects an action.
- * @param modifier - Modifier for styling.
- * */
+ * @param options The options to show, default or user-provided.
+ * @param onMessageAction Handler when the user selects an action.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun MessageOptions(
     options: List<MessageOption>,
@@ -262,9 +262,9 @@ internal fun MessageOptions(
 /**
  * Each option item in the column of options.
  *
- * @param option - The option to show.
- * @param onMessageOptionClick - Handler when the user selects the option.
- * */
+ * @param option The option to show.
+ * @param onMessageOptionClick Handler when the user selects the option.
+ */
 @Composable
 internal fun MessageOptionItem(
     option: MessageOption,
@@ -302,10 +302,10 @@ internal fun MessageOptionItem(
 /**
  * Builds the default message options we show to our users.
  *
- * @param selectedMessage - Currently selected message, used to callbacks.
- * @param user - Current user, used to expose different states for messages.
- * @param inThread - If the message is in a thread or not, to block off some options.
- * */
+ * @param selectedMessage Currently selected message, used to callbacks.
+ * @param user Current user, used to expose different states for messages.
+ * @param inThread If the message is in a thread or not, to block off some options.
+ */
 @Composable
 public fun defaultMessageOptions(
     selectedMessage: Message,

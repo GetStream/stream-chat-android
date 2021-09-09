@@ -14,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
@@ -47,6 +49,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         parseNotificationData()
@@ -66,6 +69,17 @@ class HomeFragment : Fragment() {
             }
             setOnUserAvatarClickListener {
                 binding.drawerLayout.openDrawer(GravityCompat.START)
+            }
+            if (BuildConfig.DEBUG) {
+                setOnUserAvatarLongClickListener {
+                    ToggleDialogFragment().apply {
+                        togglesChangesCommittedListener = { changedToggles ->
+                            if (changedToggles.isNotEmpty()) {
+                                activity?.recreate()
+                            }
+                        }
+                    }.show(parentFragmentManager, null)
+                }
             }
         }
     }
@@ -103,11 +117,11 @@ class HomeFragment : Fragment() {
             // disable reloading fragment when clicking again on the same tab
             setOnNavigationItemReselectedListener {}
             setBackgroundResource(R.drawable.shape_bottom_navigation_background)
-            getOrCreateBadge(R.id.channels_fragment)?.apply {
+            getOrCreateBadge(R.id.channels_fragment).apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
                 badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }
-            getOrCreateBadge(R.id.mentions_fragment)?.apply {
+            getOrCreateBadge(R.id.mentions_fragment).apply {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
                 badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }

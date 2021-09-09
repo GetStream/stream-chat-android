@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.parser2
 
+import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

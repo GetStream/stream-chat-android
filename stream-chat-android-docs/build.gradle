@@ -44,10 +44,6 @@ android {
         }
     }
 
-    sourceSets.all {
-        it.java.srcDir "src/$it.name/kotlin"
-    }
-
     lintOptions {
         abortOnError false
         xmlReport true
@@ -75,7 +71,6 @@ dependencies {
     implementation project(":stream-chat-android-pushprovider-firebase")
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
-    implementation Dependencies.kotlinStdLib
     implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging

@@ -24,12 +24,12 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
 /**
- * The ChatDomain is the main entry point for all livedata & offline operations on chat
+ * The ChatDomain is the main entry point for all livedata & offline operations on chat.
  */
 public sealed interface ChatDomain {
 
@@ -99,6 +99,11 @@ public sealed interface ChatDomain {
     public fun getVersion(): String
 
     @CheckResult
+    @Deprecated(
+        message = "Use ChatClient::removeMembers directly",
+        replaceWith = ReplaceWith("ChatClient::removeMembers"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
     // region use-case functions
@@ -113,6 +118,11 @@ public sealed interface ChatDomain {
      * @return [Call] instance with [Channel].
      */
     @CheckResult
+    @Deprecated(
+        message = "Use ChatClient::createChannel directly",
+        replaceWith = ReplaceWith("ChatClient::createChannel"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun createDistinctChannel(
         channelType: String,
         members: List<String>,
@@ -121,20 +131,20 @@ public sealed interface ChatDomain {
 
     // replaying events
     /**
-     * Adds the provided channel to the active channels and replays events for all active channels
+     * Adds the provided channel to the active channels and replays events for all active channels.
      *
-     * @return executable async [Call] responsible for obtainging list of historical [ChatEvent] objects
+     * @return Executable async [Call] responsible for obtainging list of historical [ChatEvent] objects.
      */
     @CheckResult
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     // getting controllers
     /**
-     * Returns a ChannelController for given cid
+     * Returns a ChannelController for given cid.
      *
-     * @param cid the full channel id. ie messaging:123
+     * @param cid The full channel id. ie messaging:123.
      *
-     * @return executable async [Call] responsible for obtaining [ChannelController]
+     * @return Executable async [Call] responsible for obtaining [ChannelController].
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
@@ -142,12 +152,12 @@ public sealed interface ChatDomain {
     public fun getChannelController(cid: String): Call<ChannelController>
 
     /**
-     * Watches the given channel and returns a ChannelController
+     * Watches the given channel and returns a ChannelController.
      *
-     * @param cid the full channel id. ie messaging:123
-     * @param messageLimit how many messages to load on the first request
+     * @param cid The full channel id. ie messaging:123.
+     * @param messageLimit How many messages to load on the first request.
      *
-     * @return executable async [Call] responsible for obtaining [ChannelController]
+     * @return Executable async [Call] responsible for obtaining [ChannelController].
      *
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
@@ -155,15 +165,14 @@ public sealed interface ChatDomain {
     public fun watchChannel(cid: String, messageLimit: Int): Call<ChannelController>
 
     /**
-     * Queries offline storage and the API for channels matching the filter
-     * Returns a queryChannelsController
+     * Queries offline storage and the API for channels matching the filter.
      *
-     * @param filter the filter object
-     * @param sort how to sort the channels (default is last_message_at)
-     * @param limit the number of channels to retrieve
-     * @param messageLimit how many messages to retrieve per channel
+     * @param filter The filter object.
+     * @param sort How to sort the channels (default is last_message_at).
+     * @param limit The number of channels to retrieve.
+     * @param messageLimit How many messages to retrieve per channel.
      *
-     * @return executable async [Call] responsible for obtaining [QueryChannelsController]
+     * @return Executable async [Call] responsible for obtaining [QueryChannelsController].
      *
      * @see io.getstream.chat.android.livedata.controller.QueryChannelsController
      * @see io.getstream.chat.android.client.utils.FilterObject
@@ -179,12 +188,12 @@ public sealed interface ChatDomain {
     ): Call<QueryChannelsController>
 
     /**
-     * Returns a thread controller for the given channel and message id
+     * Returns a thread controller for the given channel and message id.
      *
-     * @param cid the full channel id. ie messaging:123
-     * @param parentId the message id for the parent of this thread
+     * @param cid The full channel id. ie messaging:123.
+     * @param parentId The message id for the parent of this thread.
      *
-     * @return executable async [Call] responsible for obtaining [ThreadController]
+     * @return Executable async [Call] responsible for obtaining [ThreadController].
      *
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
@@ -193,23 +202,23 @@ public sealed interface ChatDomain {
 
     // loading more
     /**
-     * Loads older messages for the channel
+     * Loads older messages for the channel.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param messageLimit: how many new messages to load
+     * @param cid The full channel id i. e. messaging:123.
+     * @param messageLimit How many new messages to load.
      *
-     * @return executable async [Call] responsible for loading older messages in a channel
+     * @return Executable async [Call] responsible for loading older messages in a channel.
      */
     @CheckResult
     public fun loadOlderMessages(cid: String, messageLimit: Int): Call<Channel>
 
     /**
-     * Loads newer messages for the channel
+     * Loads newer messages for the channel.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param messageLimit: how many new messages to load
+     * @param cid The full channel id i. e. messaging:123.
+     * @param messageLimit How many new messages to load.
      *
-     * @return executable async [Call] responsible for loading new messages in a channel
+     * @return Executable async [Call] responsible for loading new messages in a channel.
      */
     @CheckResult
     public fun loadNewerMessages(cid: String, messageLimit: Int): Call<Channel>
@@ -217,12 +226,12 @@ public sealed interface ChatDomain {
     /**
      * Loads message for a given message id and channel id
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param messageId: the id of the message
-     * @param olderMessagesOffset: how many new messages to load before the requested message
-     * @param newerMessagesOffset: how many new messages to load after the requested message
+     * @param cid The full channel id i. e. messaging:123.
+     * @param messageId The id of the message.
+     * @param olderMessagesOffset How many new messages to load before the requested message.
+     * @param newerMessagesOffset How many new messages to load after the requested message.
      *
-     * @return executable async [Call] responsible for loading a message
+     * @return Executable async [Call] responsible for loading a message.
      */
     @CheckResult
     public fun loadMessageById(
@@ -233,14 +242,14 @@ public sealed interface ChatDomain {
     ): Call<Message>
 
     /**
-     * Load more channels for this query
+     * Load more channels for this query.
      *
-     * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
-     * @param sort the sort for the channels, by default will sort on last_message_at
+     * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
+     * @param sort the sort for the channels, by default will sort on last_message_at.
      * @param limit the number of channels to retrieve
-     * @param messageLimit how many messages to fetch per chanel
+     * @param messageLimit how many messages to fetch per channel.
      *
-     * @return executable async [Call] responsible for loading more channels
+     * @return Executable async [Call] responsible for loading more channels.
      *
      * @see io.getstream.chat.android.client.api.models.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
@@ -257,11 +266,11 @@ public sealed interface ChatDomain {
     /**
      * Load more channels for this query
      *
-     * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
-     * @param sort the sort for the channels, by default will sort on last_message_at
-     * @param messageLimit how many messages to fetch per chanel
+     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
+     * @param sort The sort for the channels, by default will sort on last_message_at.
+     * @param messageLimit How many messages to fetch per channel.
      *
-     * @return executable async [Call] responsible for loading more channels
+     * @return Executable async [Call] responsible for loading more channels.
      *
      * @see io.getstream.chat.android.client.api.models.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
@@ -275,12 +284,12 @@ public sealed interface ChatDomain {
     ): Call<List<Channel>>
 
     /**
-     * Load more channels for this query
+     * Load more channels for this query.
      *
-     * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
-     * @param sort the sort for the channels, by default will sort on last_message_at
+     * @param filter The filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin.
+     * @param sort The sort for the channels, by default will sort on last_message_at.
      *
-     * @return executable async [Call] responsible for loading more channels
+     * @return Executable async [Call] responsible for loading more channels.
      *
      * @see io.getstream.chat.android.client.api.models.FilterObject
      * @see io.getstream.chat.android.client.api.models.QuerySort
@@ -290,37 +299,37 @@ public sealed interface ChatDomain {
     public fun queryChannelsLoadMore(filter: FilterObject, sort: QuerySort<Channel>): Call<List<Channel>>
 
     /**
-     * Loads more messages for the specified thread
+     * Loads more messages for the specified thread.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param parentId: the parentId of the thread
-     * @param messageLimit: how many new messages to load
+     * @param cid The full channel id i. e. messaging:123.
+     * @param parentId The parentId of the thread.
+     * @param messageLimit How many new messages to load.
      *
-     * @return executable async [Call] responsible for loading more messages in a thread
+     * @return Executable async [Call] responsible for loading more messages in a thread.
      */
     @CheckResult
     public fun threadLoadMore(cid: String, parentId: String, messageLimit: Int): Call<List<Message>>
 
     // updating channel data
     /**
-     * Creates a new channel. Will retry according to the retry policy if it fails
+     * Creates a new channel. Will retry according to the retry policy if it fails.
+     *
+     * @param channel The channel object.
+     *
+     * @return Executable async [Call] responsible for creating a channel.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     *
-     * @param channel the channel object
-     *
-     * @return executable async [Call] responsible for creating a channel
      */
     @CheckResult
     public fun createChannel(channel: Channel): Call<Channel>
 
     /**
-     * Sends the message. Immediately adds the message to local storage
-     * API call to send the message is retried according to the retry policy specified on the chatDomain
+     * Sends the message. Immediately adds the message to local storage.
+     * API call to send the message is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to send
+     * @param message The message to send.
      *
-     * @return executable async [Call] responsible for sending a message
+     * @return Executable async [Call] responsible for sending a message.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -329,11 +338,11 @@ public sealed interface ChatDomain {
 
     /**
      * Cancels the message of "ephemeral" type. Removes the message from local storage.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to send
+     * @param message The message to send.
      *
-     * @return executable async [Call] responsible for canceling ephemeral message
+     * @return Executable async [Call] responsible for canceling ephemeral message.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -343,11 +352,11 @@ public sealed interface ChatDomain {
     /**
      * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to send
+     * @param message The message to send.
      *
-     * @return executable async [Call] responsible for shuffling Giphy image
+     * @return Executable async [Call] responsible for shuffling Giphy image.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -357,11 +366,11 @@ public sealed interface ChatDomain {
     /**
      * Sends selected giphy message to the channel. Removes the original "ephemeral" message from local storage.
      * Returns new "ephemeral" message with new giphy url.
-     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to send
+     * @param message The message to send.
      *
-     * @return executable async [Call] responsible for sending Giphy
+     * @return Executable async [Call] responsible for sending Giphy.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -369,12 +378,12 @@ public sealed interface ChatDomain {
     public fun sendGiphy(message: Message): Call<Message>
 
     /**
-     * Edits the specified message. Local storage is updated immediately
-     * The API request is retried according to the retry policy specified on the chatDomain
+     * Edits the specified message. Local storage is updated immediately.
+     * The API request is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to edit
+     * @param message The message to edit.
      *
-     * @return executable async [Call] responsible for editing a message
+     * @return Executable async [Call] responsible for editing a message.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -382,11 +391,11 @@ public sealed interface ChatDomain {
     public fun editMessage(message: Message): Call<Message>
 
     /**
-     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain
+     * Deletes the specified message, request is retried according to the retry policy specified on the chatDomain.
      *
-     * @param message the message to mark as deleted
+     * @param message The message to mark as deleted.
      *
-     * @return executable async [Call] responsible for deleting a message
+     * @return Executable async [Call] responsible for deleting a message.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -395,12 +404,13 @@ public sealed interface ChatDomain {
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
-     * API call to send the reaction is retried according to the retry policy specified on the chatDomain
-     * @param cid: the full channel id i. e. messaging:123
-     * @param reaction the reaction to add
-     * @param enforceUnique if set to true, new reaction will replace all reactions the user has on this message
+     * API call to send the reaction is retried according to the retry policy specified on the chatDomain.
      *
-     * @return executable async [Call] responsible for sending a reaction
+     * @param cid The full channel id i. e. messaging:123.
+     * @param reaction The reaction to add.
+     * @param enforceUnique If set to true, new reaction will replace all reactions the user has on this message.
+     *
+     * @return Executable async [Call] responsible for sending a reaction.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
@@ -408,34 +418,35 @@ public sealed interface ChatDomain {
     public fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction>
 
     /**
-     * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain
+     * Deletes the specified reaction, request is retried according to the retry policy specified on the chatDomain.
+     *
+     * @param cid The full channel id, ie messaging:123.
+     * @param reaction The reaction to mark as deleted.
+     *
+     * @return Executable async [Call] responsible for deleting reaction.
+     *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
-     *
-     * @param cid the full channel id, ie messaging:123
-     * @param reaction the reaction to mark as deleted
-     *
-     * @return executable async [Call] responsible for deleting reaction
      */
     @CheckResult
     public fun deleteReaction(cid: String, reaction: Reaction): Call<Message>
 
     /**
-     * Keystroke should be called whenever a user enters text into the message input
-     * It automatically calls stopTyping when the user stops typing after 5 seconds
+     * Keystroke should be called whenever a user enters text into the message input.
+     * It automatically calls stopTyping when the user stops typing after 5 seconds.
      *
-     * @param cid the full channel id i. e. messaging:123
-     * @param parentId set this field to `message.id` to indicate that typing event is happening in a thread
+     * @param cid The full channel id i. e. messaging:123.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
-     * @return executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent
+     * @return Executable async [Call] which completes with [Result] having data true when a typing event was sent, false if it wasn't sent.
      */
     @CheckResult
     public fun keystroke(cid: String, parentId: String?): Call<Boolean>
 
     /**
-     * StopTyping should be called when the user submits the text and finishes typing
+     * StopTyping should be called when the user submits the text and finishes typing.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param parentId set this field to `message.id` to indicate that typing event is happening in a thread
+     * @param cid The full channel id i. e. messaging:123.
+     * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return executable async [Call] which completes with [Result] having data equal true when a typing event was sent,
      * false if it wasn't sent.
@@ -444,11 +455,11 @@ public sealed interface ChatDomain {
     public fun stopTyping(cid: String, parentId: String? = null): Call<Boolean>
 
     /**
-     * Marks all messages of the specified channel as read
+     * Marks all messages of the specified channel as read.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
-     * @return executable async [Call] which completes with [Result] having data equal to true if the mark read event
+     * @return Executable async [Call] which completes with [Result] having data equal to true if the mark read event
      * was sent or false if there was no need to mark read (i. e. the messages are already marked as read).
      */
     @CheckResult
@@ -457,18 +468,18 @@ public sealed interface ChatDomain {
     /**
      * Marks all messages on a channel as read.
      *
-     * @return executable async [Call] responsinble for marking all messages as read
+     * @return Executable async [Call] responsible for marking all messages as read.
      */
     @CheckResult
     public fun markAllRead(): Call<Boolean>
 
     /**
-     * Hides the channel with the specified id
+     * Hides the channel with the specified id.
      *
-     * @param cid: the full channel id i. e. messaging:123
-     * @param keepHistory: boolean, if you want to keep the history of this channel or not
+     * @param cid The full channel id i. e. messaging:123.
+     * @param keepHistory Boolean, if you want to keep the history of this channel or not.
      *
-     * @return executable async [Call] responsible for hiding a channel
+     * @return Executable async [Call] responsible for hiding a channel.
      *
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */
@@ -476,31 +487,31 @@ public sealed interface ChatDomain {
     public fun hideChannel(cid: String, keepHistory: Boolean): Call<Unit>
 
     /**
-     * Shows a channel that was previously hidden
+     * Shows a channel that was previously hidden.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
-     * @return executable async [Call] responsible for hiding a channel
+     * @return Executable async [Call] responsible for hiding a channel.
      */
     @CheckResult
     public fun showChannel(cid: String): Call<Unit>
 
     /**
-     * Leaves the channel with the specified id
+     * Leaves the channel with the specified id.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
-     * @return executable async [Call] leaving a channel
+     * @return Executable async [Call] leaving a channel.
      */
     @CheckResult
     public fun leaveChannel(cid: String): Call<Unit>
 
     /**
-     * Deletes the channel with the specified id
+     * Deletes the channel with the specified id.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
-     * @return executable async [Call] deleting a channel
+     * @return Executable async [Call] deleting a channel.
      */
     @CheckResult
     public fun deleteChannel(cid: String): Call<Unit>
@@ -511,7 +522,7 @@ public sealed interface ChatDomain {
      * @param cid CID of the channel where reply state is being set.
      * @param message The message we want reply to. The null value means dismiss reply state.
      *
-     * @return executable async [Call]
+     * @return Executable async [Call].
      */
     @CheckResult
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
@@ -519,8 +530,8 @@ public sealed interface ChatDomain {
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
      *
-     * @param attachment the attachment to download
-     * @return executable async [Call] downloading attachment
+     * @param attachment The attachment to download.
+     * @return Executable async [Call] downloading attachment.
      */
     @CheckResult
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
@@ -534,7 +545,7 @@ public sealed interface ChatDomain {
      * @param userLimit The page size in the request.
      * @param userPresence Presence flag to obtain additional info such as last active date.
      *
-     * @return executable async [Call] querying users
+     * @return Executable async [Call] querying users.
      */
     @CheckResult
     public fun searchUsersByName(
@@ -545,16 +556,16 @@ public sealed interface ChatDomain {
     ): Call<List<User>>
 
     /**
-     * Query members of a channel
+     * Query members of a channel.
      *
-     * @param cid CID of the Channel whose members we are querying
-     * @param offset indicates how many items to exclude from the start of the result
-     * @param limit indicates the maximum allowed number of items in the result
-     * @param filter applied to online queries for advanced selection criteria
-     * @param sort the sort criteria applied to the result
+     * @param cid CID of the Channel whose members we are querying.
+     * @param offset Indicates how many items to exclude from the start of the result.
+     * @param limit Indicates the maximum allowed number of items in the result.
+     * @param filter Filter applied to online queries for advanced selection criteria.
+     * @param sort The sort criteria applied to the result.
      * @param members
      *
-     * @return executable async [Call] querying members
+     * @return Executable async [Call] querying members.
      */
     @CheckResult
     public fun queryMembers(
@@ -576,10 +587,6 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client)
-
-        internal fun database(db: ChatDatabase) = apply {
-            offlineChatDomainBuilder.database(db)
-        }
 
         public fun enableBackgroundSync(): Builder = apply {
             offlineChatDomainBuilder.enableBackgroundSync()
@@ -611,6 +618,10 @@ public sealed interface ChatDomain {
 
         public fun userPresenceDisabled(): Builder = apply {
             offlineChatDomainBuilder.userPresenceDisabled()
+        }
+
+        public fun uploadAttachmentsWorkerNetworkType(networkType: UploadAttachmentsNetworkType): Builder = apply {
+            offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
         }
 
         public fun build(): ChatDomain {

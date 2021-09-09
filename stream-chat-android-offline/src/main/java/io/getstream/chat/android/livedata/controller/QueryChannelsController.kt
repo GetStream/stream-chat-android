@@ -33,6 +33,13 @@ public sealed interface QueryChannelsController {
      * By default it will simply add every channel for which this event is received
      */
     public var newChannelEventFilter: (Channel, FilterObject) -> Boolean
+
+    /**
+     * When ChannelUpdatedEvent is triggered, if it is true a new query to the server is done to check if the update
+     * on the channel match the filter to be added or deleted from the list of channels
+     */
+    public var checkFilterOnChannelUpdatedEvent: Boolean
+
     /**
      * If the API call failed and we need to rerun this query
      */
@@ -71,7 +78,7 @@ public sealed interface QueryChannelsController {
     public sealed class ChannelsState {
         /** The QueryChannelsController is initialized but no query is currently running.
          * If you know that a query will be started you typically want to display a loading icon.
-         * */
+         */
         public object NoQueryActive : ChannelsState()
         /** Indicates we are loading the first page of results.
          * We are in this state if QueryChannelsController.loading is true
@@ -79,14 +86,14 @@ public sealed interface QueryChannelsController {
          *
          * @see QueryChannelsController.loadingMore
          * @see QueryChannelsController.loading
-         * */
+         */
         public object Loading : ChannelsState()
         /** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */
         public object OfflineNoResults : ChannelsState()
         /** The list of channels, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
          * @see ChatDomainImpl.online
-         * */
+         */
         public data class Result(val channels: List<Channel>) : ChannelsState()
     }
 }

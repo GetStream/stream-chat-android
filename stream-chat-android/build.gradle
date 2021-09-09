@@ -8,8 +8,8 @@ apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_VERSION = Configuration.versionName
     PUBLISH_ARTIFACT_ID = 'stream-chat-android'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
@@ -39,12 +39,6 @@ android {
         }
     }
 
-    sourceSets {
-        all {
-            it.java.srcDir "src/$it.name/kotlin"
-        }
-    }
-
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -63,7 +57,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-ui-common")
 
-    implementation Dependencies.kotlinStdLib
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport

@@ -19,7 +19,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
  * Class allowing to define set of supported reactions.
  * You can customize reactions by providing your own implementation of this class to [ChatUI.supportedReactions].
  *
- * @property reactions: Map<String, ReactionDrawable> instance. Map with keys corresponding to reaction type, and
+ * @property reactions Map<String, ReactionDrawable> instance. Map with keys corresponding to reaction type, and
  * value corresponding to [ReactionDrawable] object. By default it's initialized with standard reactions.
  *
  */
@@ -52,7 +52,7 @@ public class SupportedReactions(
     }
 
     /**
-     * Default reaction types
+     * Default reaction types.
      */
     public object DefaultReactionTypes {
         public const val LOVE: String = "love"
@@ -63,7 +63,7 @@ public class SupportedReactions(
     }
 
     /**
-     * Default reaction drawables
+     * Default reaction drawables.
      */
     private object DefaultReactionDrawables {
         fun loveDrawable(context: Context): ReactionDrawable {

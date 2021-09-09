@@ -51,13 +51,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
-        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@id/deliveryFailedIcon"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
-        app:layout_goneMarginEnd="0dp"
-        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         >
 
         <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
@@ -130,10 +128,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
         app:layout_constraintTop_toBottomOf="@+id/messageContainer"
-        app:layout_goneMarginEnd="0dp"
-        app:layout_goneMarginStart="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
         />
 
     <TextView
@@ -158,6 +154,18 @@
         app:layout_constraintEnd_toEndOf="@+id/marginEnd"
         tools:ignore="ContentDescription"
         tools:visibility="visible"
+        />
+
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarMineView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/marginEnd"
+        tools:src="@tools:sample/avatars"
         />
 
     <androidx.constraintlayout.widget.Guideline

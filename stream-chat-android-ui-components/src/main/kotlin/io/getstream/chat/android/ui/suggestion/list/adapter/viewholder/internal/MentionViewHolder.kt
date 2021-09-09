@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.internal
 
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle

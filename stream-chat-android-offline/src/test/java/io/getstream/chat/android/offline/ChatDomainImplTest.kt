@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,7 +42,7 @@ internal class ChatDomainImplTest {
             on { attachmentDao() } doReturn mock()
         }
         val handler: Handler = mock()
-        val offlineEnabled = true
+        val offlineEnabled = false
         val userPresence = true
         val recoveryEnabled = true
         sut = ChatDomainImpl(
@@ -52,7 +53,8 @@ internal class ChatDomainImplTest {
             userPresence,
             recoveryEnabled,
             false,
-            mock()
+            appContext = mock(),
+            offlinePlugin = OfflinePlugin()
         )
         sut.setUser(randomUser())
     }

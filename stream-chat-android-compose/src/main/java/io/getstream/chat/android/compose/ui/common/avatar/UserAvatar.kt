@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -14,12 +13,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * Based on the state within the [User], we either show an image or their initials.
  *
- * @param user - The user whose avatars we want to show.
- * @param modifier - Modifier for styling.
- * @param shape - The shape of the avatar.
- * @param contentDescription - The content description of the avatar.
- * @param onClick - The handler when the user clicks on the avatar.
- * */
+ * @param user The user whose avatars we want to show.
+ * @param modifier Modifier for styling.
+ * @param shape The shape of the avatar.
+ * @param contentDescription The content description of the avatar.
+ * @param onClick The handler when the user clicks on the avatar.
+ */
 @Composable
 public fun UserAvatar(
     user: User,

@@ -18,7 +18,7 @@ internal class DownloadAttachment(private val domainImpl: ChatDomainImpl) {
     /**
      * Downloads the selected attachment to the "Download" folder in the public external storage directory.
      *
-     * @param attachment the attachment to download
+     * @param attachment The attachment to download.
      */
     @CheckResult
     operator fun invoke(attachment: Attachment): Call<Unit> {

@@ -13,7 +13,7 @@ import io.getstream.chat.android.offline.ChatDomain
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
  * Currently builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
- * */
+ */
 public class MessagesViewModelFactory(
     private val context: Context,
     private val clipboardManager: ClipboardManager,

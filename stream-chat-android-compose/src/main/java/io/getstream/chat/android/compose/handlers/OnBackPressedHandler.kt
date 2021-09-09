@@ -17,9 +17,9 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
  * To use this, simply call [SystemBackPressedHandler] in any of your UI components and pass in the
  * following two parameters:
  *
- * @param isEnabled - If the handler is enabled or not.
- * @param onBackPressed - The action to execute any time the system back button is tapped.
- * */
+ * @param isEnabled If the handler is enabled or not.
+ * @param onBackPressed The action to execute any time the system back button is tapped.
+ */
 @Composable
 public fun SystemBackPressedHandler(
     isEnabled: Boolean,

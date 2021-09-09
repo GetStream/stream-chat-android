@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">Reply to message</string>
     <string name="stream_ui_message_input_hint">Write something here</string>
     <string name="stream_ui_message_input_only_attachments_hint">Add a comment or send</string>
+    <string name="stream_ui_message_input_slow_mode_hint">Slow mode ON</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">Instant Commands</string>
@@ -29,4 +30,5 @@
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">File too large</string>
     <string name="stream_ui_message_input_error_max_length">Max message length (%1$d) exceeded.</string>
+    <string name="stream_ui_message_input_error_file_large_size">File is too large - max %dMB.</string>
 </resources>

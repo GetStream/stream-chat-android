@@ -10,6 +10,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -168,6 +169,14 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     public fun setOnActionButtonClickListener(listener: ActionButtonClickListener) {
         binding.actionButton.setOnClickListener { listener.onClick() }
+    }
+
+    @InternalStreamChatApi
+    public fun setOnUserAvatarLongClickListener(listener: () -> Unit) {
+        binding.userAvatar.setOnLongClickListener {
+            listener()
+            true
+        }
     }
 
     public fun interface UserAvatarClickListener {

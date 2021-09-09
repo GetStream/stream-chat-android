@@ -89,6 +89,22 @@
         <item name="android:textColor">@color/stream_ui_white</item>
     </style>
 
+    <style name="StreamUiCooldownBadgeStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">@drawable/stream_ui_cooldown_badge_background</item>
+        <item name="android:backgroundTint">@color/stream_ui_grey</item>
+        <item name="android:minWidth">24dp</item>
+        <item name="android:minHeight">24dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/stream_ui_literal_white</item>
+    </style>
+
     <style name="StreamUiMessageOptionItem">
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -438,6 +454,10 @@
         <item name="streamUiPinnedMessageIndicatorTextStyle">normal</item>
         <item name="streamUiPinnedMessageIndicatorIcon">@drawable/stream_ui_ic_pin</item>
         <item name="streamUiPinnedMessageBackgroundColor">@color/stream_ui_highlight</item>
+
+        <!-- Margin for messages -->
+        <item name="streamUiMessageStartMargin">@dimen/stream_ui_message_viewholder_avatar_missing_margin</item>
+        <item name="streamUiMessageEndMargin">0dp</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
@@ -450,6 +470,8 @@
         <item name="streamUiMediaAttachmentMoreCountTextSize">@dimen/stream_ui_message_media_attachment_more_count_text_size</item>
         <item name="streamUiMediaAttachmentMoreCountTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
+
+        <item name="streamUiMediaAttachmentGiphyHeight">200dp</item>
     </style>
 
     <style name="StreamUi.MessageList.FileAttachment" parent="StreamUi">
@@ -477,7 +499,8 @@
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_small</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginStart">0dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_initials</item>
     </style>
@@ -728,7 +751,8 @@
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="StreamUi.AttachmentGallery" parent="StreamUiTheme">
+        <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
         <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
@@ -738,7 +762,14 @@
         <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
     </style>
 
-    <style name="StreamUi.AttachmentActivity" parent="StreamUi">
+    <style name="StreamUi.AttachmentGallery.Options">
+        <item name="streamUiAttachmentReplyEnabled">true</item>
+        <item name="streamUiShowInChatEnabled">true</item>
+        <item name="streamUiSaveImageEnabled">true</item>
+        <item name="streamUiDeleteEnabled">true</item>
+    </style>
+
+    <style name="StreamUi.AttachmentActivity" parent="StreamUiTheme">
         <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
         <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
         <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
@@ -793,7 +824,7 @@
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
     </style>
 
-    <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="StreamUi.MediaActivity" parent="StreamUiTheme">
         <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
     </style>
 
@@ -902,8 +933,9 @@
         <item name="streamUiAttachmentsFileSizeTextSize">@dimen/stream_ui_text_small</item>
         <item name="streamUiAttachmentsFileSizeTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiAttachmentsFileSizeTextStyle">bold</item>
-        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_white_snow</item>
-        <item name="streamUiFileCheckBoxSelectorDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectorTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiFileCheckBoxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiFileCheckBoxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiAttachmentsFilesEmptyStateTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiAttachmentsFilesEmptyStateStyle">normal</item>
@@ -915,6 +947,10 @@
         <item name="streamUiMessageInputCloseButtonIconDrawable">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiAttachmentSelectionBackgroundColor">@color/stream_ui_white_smoke</item>
         <item name="streamUiAttachmentSelectionAttachIcon">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiCooldownTimerTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiCooldownTimerTextStyle">bold</item>
+        <item name="streamUiCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">

@@ -60,12 +60,12 @@ import java.io.File
  * Represents the bottom bar UI that allows users to pick attachments. It allows for different options
  * and enables/disables options based on currently selected items.
  *
- * @param attachmentsPickerViewModel - ViewModel that loads the images or files and persists which
+ * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
- * @param modifier - Modifier for styling.
- * @param onAttachmentsSelected - Handler when attachments are selected and confirmed by the user.
- * @param onDismiss - Handler when the user dismisses the UI.
- * */
+ * @param modifier Modifier for styling.
+ * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
+ * @param onDismiss Handler when the user dismisses the UI.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun AttachmentsPicker(
@@ -196,8 +196,8 @@ public fun AttachmentsPicker(
  * Shows the UI if we're missing permissions to fetch data for attachments.
  * The UI explains to the user which permission is missing and why we need it.
  *
- * @param permissionState - The missing permission.
- * */
+ * @param permissionState The missing permission.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MissingPermissionContent(permissionState: PermissionState) {
@@ -257,11 +257,11 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
  * - Files
  * - Media
  *
- * @param hasPickedImages - If the user picked any images. Used to disable other options.
- * @param hasPickedFiles - If the user picked any files. Used to disable other options.
- * @param onOptionClick - Handler for clicking on any of the options, to change the shown attachments.
- * @param onSendAttachmentsClick - Handler when confirming the picked attachments.
- * */
+ * @param hasPickedImages If the user picked any images. Used to disable other options.
+ * @param hasPickedFiles If the user picked any files. Used to disable other options.
+ * @param onOptionClick Handler for clicking on any of the options, to change the shown attachments.
+ * @param onSendAttachmentsClick Handler when confirming the picked attachments.
+ */
 @Composable
 private fun AttachmentPickerOptions(
     hasPickedImages: Boolean,

@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
@@ -84,9 +85,8 @@ class ChannelListFragment : Fragment() {
             setChannelDeleteClickListener { channel ->
                 ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.deleteChannel(channel)
-                        }
+                        confirmClickListener =
+                            ConfirmationDialogFragment.ConfirmClickListener { viewModel.deleteChannel(channel) }
                     }
                     .show(parentFragmentManager, null)
             }
@@ -126,6 +126,7 @@ class ChannelListFragment : Fragment() {
         }
     }
 
+    @OptIn(InternalStreamChatApi::class)
     private fun setupOnClickListeners() {
         activity?.apply {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

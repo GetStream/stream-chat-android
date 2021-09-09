@@ -447,6 +447,12 @@ class Android {
             )
         }
 
+        fun avatarPredicate() {
+            messageListView.setShowAvatarPredicate { messageItem ->
+                messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+            }
+        }
+
         fun customMessagesFilter() {
             messageListView.setMessageListItemPredicate { messageList ->
                 // Boolean logic here

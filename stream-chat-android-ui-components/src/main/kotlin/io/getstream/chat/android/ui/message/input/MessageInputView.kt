@@ -5,8 +5,10 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.os.CountDownTimer
 import android.util.AttributeSet
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.PopupWindow
@@ -18,16 +20,20 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
+import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -38,10 +44,13 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
-import java.lang.Exception
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
@@ -73,6 +82,10 @@ public class MessageInputView : ConstraintLayout {
     private var isKeyboardListenerRegistered: Boolean = false
 
     private var maxMessageLength: Int = Integer.MAX_VALUE
+
+    private var cooldownInterval: Int = 0
+    private var cooldownTimer: CountDownTimer? = null
+    private var previousInputHint: String? = null
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -106,6 +119,9 @@ public class MessageInputView : ConstraintLayout {
 
     private var userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(emptyList())
     private var messageInputDebouncer: Debouncer? = null
+
+    private var scope: CoroutineScope? = null
+    private var bigFileSelectionListener: BigFileSelectionListener? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -252,10 +268,20 @@ public class MessageInputView : ConstraintLayout {
      *
      * @param maxMessageLength the maximum message length in characters.
      *
-     * @see [setMaxMessageLengthHandler] for more information on how to provide a custom error message
+     * @see [setMaxMessageLengthHandler] for more information on how to provide a custom error message.
      */
     public fun setMaxMessageLength(maxMessageLength: Int) {
         this.maxMessageLength = maxMessageLength
+    }
+
+    /**
+     * Sets the cooldown interval. When slow mode is enabled, users can only send messages every
+     * [cooldownInterval] time interval.
+     *
+     * @param cooldownInterval The cooldown interval in seconds.
+     */
+    public fun setCooldownInterval(cooldownInterval: Int) {
+        this.cooldownInterval = cooldownInterval
     }
 
     /**
@@ -272,12 +298,20 @@ public class MessageInputView : ConstraintLayout {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
+        scope = CoroutineScope(DispatcherProvider.Main)
+        scope?.launch {
+            binding.messageInputFieldView.hasBigAttachment.collect(::consumeHasBigFile)
+        }
     }
 
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
+        cooldownTimer?.cancel()
+        cooldownTimer = null
         hideSuggestionList()
+        scope?.cancel()
+        scope = null
         super.onDetachedFromWindow()
     }
 
@@ -305,8 +339,8 @@ public class MessageInputView : ConstraintLayout {
         refreshControlsState()
     }
 
-    public suspend fun listenForBigAttachments(listener: BigFileSelectionListener) {
-        binding.messageInputFieldView.hasBigAttachment.collect(listener::handleBigFileSelected)
+    public fun listenForBigAttachments(listener: BigFileSelectionListener) {
+        bigFileSelectionListener = listener
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -319,16 +353,65 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.sendMessageButtonEnabled.setOnClickListener {
-            onSendButtonClickListener?.onClick()
-            inputMode.let {
-                when (it) {
-                    is InputMode.Normal -> sendMessage()
-                    is InputMode.Thread -> sendThreadMessage(it.parentMessage)
-                    is InputMode.Edit -> editMessage(it.oldMessage)
-                    is InputMode.Reply -> sendMessage(it.repliedMessage)
+            if (binding.messageInputFieldView.hasBigAttachment.value) {
+                consumeHasBigFile(true)
+            } else {
+                onSendButtonClickListener?.onClick()
+                inputMode.let {
+                    when (it) {
+                        is InputMode.Normal -> sendMessage()
+                        is InputMode.Thread -> sendThreadMessage(it.parentMessage)
+                        is InputMode.Edit -> editMessage(it.oldMessage)
+                        is InputMode.Reply -> sendMessage(it.repliedMessage)
+                    }
                 }
+                binding.messageInputFieldView.clearContent()
+                startCooldownTimerIfNecessary()
             }
-            binding.messageInputFieldView.clearContent()
+        }
+    }
+
+    private fun consumeHasBigFile(hasBigFile: Boolean) {
+        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) {
+            alertBigFileSendAttempt()
+        }
+    }
+
+    private fun alertBigFileSendAttempt() {
+        Snackbar.make(this,
+            resources.getString(R.string.stream_ui_message_input_error_file_large_size,
+                messageInputViewStyle.attachmentMaxFileSize),
+            Snackbar.LENGTH_LONG)
+            .apply { anchorView = binding.sendButtonContainer }
+            .show()
+    }
+
+    /**
+     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     */
+    private fun startCooldownTimerIfNecessary() {
+        if (cooldownInterval > 0) {
+            // store the current message input hint
+            previousInputHint = binding.messageInputFieldView.messageHint
+
+            with(binding) {
+                cooldownBadgeTextView.isVisible = true
+                messageInputFieldView.messageHint = context.getString(R.string.stream_ui_message_input_slow_mode_hint)
+
+                cooldownTimer = object : CountDownTimer(cooldownInterval * 1000L, 1000) {
+
+                    override fun onTick(millisUntilFinished: Long) {
+                        val secondsRemaining = (millisUntilFinished.toFloat() / 1000).roundToInt()
+                        cooldownBadgeTextView.text = "$secondsRemaining"
+                    }
+
+                    override fun onFinish() {
+                        cooldownBadgeTextView.isVisible = false
+                        // restore the last input hint
+                        messageInputFieldView.messageHint = previousInputHint ?: ""
+                    }
+                }.start()
+            }
         }
     }
 
@@ -470,6 +553,8 @@ public class MessageInputView : ConstraintLayout {
 
         binding.separator.background = messageInputViewStyle.dividerBackground
         binding.dismissInputMode.setImageDrawable(messageInputViewStyle.dismissIconDrawable)
+        binding.cooldownBadgeTextView.setTextStyle(messageInputViewStyle.cooldownTimerTextStyle)
+        binding.cooldownBadgeTextView.background = messageInputViewStyle.commandInputBadgeBackgroundDrawable
     }
 
     /**
@@ -534,32 +619,43 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
-        if (binding.messageInputFieldView.hasValidAttachments()) {
-            sendMessageHandler.sendMessageWithAttachments(
-                binding.messageInputFieldView.messageText,
-                binding.messageInputFieldView.getAttachedFiles(),
-                messageReplyTo
-            )
-        } else {
-            sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo)
-        }
+        doSend(
+            { attachments ->
+                sendMessageHandler.sendMessageWithAttachments(
+                    binding.messageInputFieldView.messageText,
+                    attachments,
+                    messageReplyTo
+                )
+            },
+            { sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo) }
+        )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        if (binding.messageInputFieldView.hasValidAttachments()) {
+        doSend({ attachments ->
             sendMessageHandler.sendToThreadWithAttachments(
                 parentMessage,
                 binding.messageInputFieldView.messageText,
                 sendAlsoToChannel,
-                binding.messageInputFieldView.getAttachedFiles()
+                attachments
             )
+        },
+            {
+                sendMessageHandler.sendToThread(parentMessage,
+                    binding.messageInputFieldView.messageText,
+                    sendAlsoToChannel)
+            }
+        )
+    }
+
+    private fun doSend(attachmentSender: (List<Pair<File, String?>>) -> Unit, simpleSender: () -> Unit) {
+        val attachments = binding.messageInputFieldView.getAttachedFiles()
+
+        if (attachments.isNotEmpty()) {
+            attachmentSender(attachments)
         } else {
-            sendMessageHandler.sendToThread(
-                parentMessage,
-                binding.messageInputFieldView.messageText,
-                sendAlsoToChannel
-            )
+            simpleSender()
         }
     }
 
@@ -663,12 +759,12 @@ public class MessageInputView : ConstraintLayout {
     public fun interface MaxMessageLengthHandler {
 
         /**
-         * Called when message text length has changed
+         * Called when message text length has changed.
          *
-         * @param messageText the updated message text
-         * @param messageLength the updated message length
-         * @param maxMessageLength the maximum allowed message length
-         * @param maxMessageLengthExceeded true if the length of the text is greater than the maximum length.
+         * @param messageText The updated message text.
+         * @param messageLength The updated message length.
+         * @param maxMessageLength The maximum allowed message length.
+         * @param maxMessageLengthExceeded True if the length of the text is greater than the maximum length.
          */
         public fun onMessageLengthChanged(
             messageText: String,

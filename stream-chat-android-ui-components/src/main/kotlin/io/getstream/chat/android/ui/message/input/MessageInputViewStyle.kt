@@ -21,42 +21,46 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 
 private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
 
-/*
-* Style for MessageInputView
-*
-* Use this class to style MessageInputView programmatically. You can pass this class to TransformStyle.messageInputStyleTransformer
-* to change the configuration of the View.
-*
-* @constructor Create the data class with all the information necessary to customize MessageInputView
-*
-* @property attachButtonEnabled Enables/disabled the attachment button. If this parameter is set as false, the button gets invisible.
-* @property attachButtonIcon Selects the icon for the attachment button.
-* @property commandsButtonEnabled Enables/disables the commands button. If this parameter is set as false, the button gets invisible.
-* @property commandsButtonIcon Selects the icon for the commands button.
-* @property messageInputTextSize Selects the size of the text in the input edit text. Deprecated - Use messageInputTextStyle
-* @property messageInputTextColor Selects the colour of the text in the input edit text. Deprecated - Use messageInputTextStyle
-* @property messageInputHintTextColor Selects the colour of the hint text in the input edit text. Deprecated - Use messageInputTextStyle
-* @property messageInputTextStyle Select the style of the EditText of the input. Use to customise size, colour, hint, hint colour, font and style (ex: bold)
-* @property messageInputScrollbarEnabled Enables/disables scroll bar
-* @property messageInputScrollbarFadingEnabled Enables/disables enables/disables FadingEdge for the EditText of the input
-* @property sendButtonEnabled Enables/disables the button to send messages.
-* @property sendButtonEnabledIcon Sets the icon for the button to send messages.
-* @property sendButtonDisabledIcon Sets the icon for the button send messages in the disabled state
-* @property showSendAlsoToChannelCheckbox Show the checkbox to send a message to the channel when inside a thread.
-* @property commandsEnabled Enables/disables commands for the MessageInputView.
-* @property mentionsEnabled Enables/disables mentions.
-* @property backgroundColor background color of MessageInputView
-* @property editTextBackgroundDrawable background color of message input box inside MessageInputView
-* @property customCursorDrawable custom cursor of message input box inside MessageInputView
-* @property attachmentMaxFileSize the max attachment size. Be aware that currently the back end of Stream allow 20MB as
-* the max size, use this only if you use your own backend.
-* @property dividerBackground the background of the divider in the top of MessageInputView.
-* @property attachmentDialogStyle style for attachment selection dialog
-* @property commandInputCancelIcon - icon for cancel button. Default - [R.drawable.stream_ui_ic_clear]
-* @property commandInputBadgeIcon - icon inside command badge. Default - [R.drawable.stream_ui_ic_command_white]
-* @property commandInputBadgeBackgroundDrawable - background shape of command badge. Default - [R.drawable.stream_ui_shape_command_background]
-* @property commandInputBadgeTextStyle - text appearance of command name inside command badge
-*/
+/**
+ * Style for [MessageInputView].
+ *
+ * Use this class to style MessageInputView programmatically. You can pass this class to TransformStyle.messageInputStyleTransformer
+ * to change the configuration of the View.
+ *
+ * @constructor Create the data class with all the information necessary to customize MessageInputView.
+ *
+ * @property attachButtonEnabled Enables/disabled the attachment button. If this parameter is set as false, the button gets invisible.
+ * @property attachButtonIcon Selects the icon for the attachment button.
+ * @property commandsButtonEnabled Enables/disables the commands button. If this parameter is set as false, the button gets invisible.
+ * @property commandsButtonIcon Selects the icon for the commands button.
+ * @property messageInputTextSize Selects the size of the text in the input edit text. Deprecated: use messageInputTextStyle instead.
+ * @property messageInputTextColor Selects the colour of the text in the input edit text. Deprecated: use messageInputTextStyle instead.
+ * @property messageInputHintTextColor Selects the colour of the hint text in the input edit text. Deprecated: use messageInputTextStyle instead.
+ * @property messageInputTextStyle Select the style of the EditText of the input. Use to customise size, colour, hint, hint colour, font and style (ex: bold).
+ * @property messageInputScrollbarEnabled Enables/disables scroll bar.
+ * @property messageInputScrollbarFadingEnabled Enables/disables enables/disables FadingEdge for the EditText of the input.
+ * @property sendButtonEnabled Enables/disables the button to send messages.
+ * @property sendButtonEnabledIcon Sets the icon for the button to send messages.
+ * @property sendButtonDisabledIcon Sets the icon for the button send messages in the disabled state.
+ * @property showSendAlsoToChannelCheckbox Show the checkbox to send a message to the channel when inside a thread.
+ * @property commandsEnabled Enables/disables commands for the MessageInputView.
+ * @property mentionsEnabled Enables/disables mentions.
+ * @property backgroundColor Background color of MessageInputView.
+ * @property editTextBackgroundDrawable Background color of message input box inside MessageInputView.
+ * @property customCursorDrawable Custom cursor of message input box inside MessageInputView.
+ * @property attachmentMaxFileSize The max attachment size. Be aware that currently the back end of Stream allow 20MB as
+ * the max size, use this only if you use your own backend.
+ * @property dividerBackground The background of the divider in the top of MessageInputView.
+ * @property attachmentSelectionDialogStyle Style for attachment selection dialog.
+ * @property commandInputCancelIcon Icon for cancel button. Default value is [R.drawable.stream_ui_ic_clear].
+ * @property commandInputBadgeIcon Icon inside command badge. Default value is [R.drawable.stream_ui_ic_command_white].
+ * @property commandInputBadgeBackgroundDrawable Background shape of command badge. Default value is [R.drawable.stream_ui_shape_command_background].
+ * @property commandInputBadgeTextStyle Text appearance of command name inside command badge.
+ * @property cooldownTimerTextStyle Text appearance for cooldown timer text displayed over the send button
+ * @property cooldownTimerBackgroundDrawable Background drawable for cooldown timer. Default value is [R.drawable.stream_ui_cooldown_badge_background].
+ * @property fileCheckboxSelectedDrawable Background for selector of files list in selected state. Default value is [R.drawable.stream_ui_circle_blue].
+ * @property fileCheckboxDeselectedDrawable Background for selector of files list in deselected state. Default value is [R.drawable.stream_ui_ic_file_manager].
+ */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
     public val attachButtonIcon: Drawable,
@@ -90,13 +94,16 @@ public data class MessageInputViewStyle(
     public val commandInputBadgeTextStyle: TextStyle,
     public val fileNameTextStyle: TextStyle,
     public val fileSizeTextStyle: TextStyle,
-    public val fileCheckboxSelectorDrawable: Drawable,
+    public val fileCheckboxSelectedDrawable: Drawable,
+    public val fileCheckboxDeselectedDrawable: Drawable,
     @ColorInt public val fileCheckboxTextColor: Int,
     public val fileAttachmentEmptyStateTextStyle: TextStyle,
     public val mediaAttachmentEmptyStateTextStyle: TextStyle,
     public val fileAttachmentEmptyStateText: String,
     public val mediaAttachmentEmptyStateText: String,
     public val dismissIconDrawable: Drawable,
+    public val cooldownTimerTextStyle: TextStyle,
+    public val cooldownTimerBackgroundDrawable: Drawable,
 ) {
 
     public companion object {
@@ -478,11 +485,15 @@ public data class MessageInputViewStyle(
                 val fileCheckboxTextColor =
                     a.getColor(
                         R.styleable.MessageInputView_streamUiFileCheckBoxSelectorTextColor,
-                        context.getColorCompat(R.color.stream_ui_white_snow)
+                        context.getColorCompat(R.color.stream_ui_literal_white)
                     )
 
-                val fileCheckboxSelectorDrawable =
-                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectorDrawable)
+                val fileCheckboxSelectedDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxSelectedDrawable)
+                        ?: context.getDrawableCompat(R.drawable.stream_ui_circle_blue)!!
+
+                val fileCheckboxDeselectedDrawable =
+                    a.getDrawable(R.styleable.MessageInputView_streamUiFileCheckBoxDeselectedDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
                 val fileAttachmentEmptyStateTextStyle = TextStyle.Builder(a)
@@ -535,6 +546,29 @@ public data class MessageInputViewStyle(
                     a.getDrawable(R.styleable.MessageInputView_streamUiMessageInputCloseButtonIconDrawable)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
 
+                val cooldownTimerTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextSize,
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextColor,
+                        context.getColorCompat(R.color.stream_ui_literal_white)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiCooldownTimerFontAssets,
+                        R.styleable.MessageInputView_streamUiCooldownTimerFont
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiCooldownTimerTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
+                val cooldownTimerBackgroundDrawable = a.getDrawable(
+                    R.styleable.MessageInputView_streamUiCooldownTimerBackgroundDrawable,
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -569,12 +603,15 @@ public data class MessageInputViewStyle(
                     fileNameTextStyle = fileNameTextStyle,
                     fileSizeTextStyle = fileSizeTextStyle,
                     fileCheckboxTextColor = fileCheckboxTextColor,
-                    fileCheckboxSelectorDrawable = fileCheckboxSelectorDrawable,
+                    fileCheckboxSelectedDrawable = fileCheckboxSelectedDrawable,
+                    fileCheckboxDeselectedDrawable = fileCheckboxDeselectedDrawable,
                     fileAttachmentEmptyStateTextStyle = fileAttachmentEmptyStateTextStyle,
                     mediaAttachmentEmptyStateTextStyle = mediaAttachmentEmptyStateTextStyle,
                     fileAttachmentEmptyStateText = fileAttachmentEmptyStateText,
                     mediaAttachmentEmptyStateText = mediaAttachmentEmptyStateText,
                     dismissIconDrawable = dismissIconDrawable,
+                    cooldownTimerTextStyle = cooldownTimerTextStyle,
+                    cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
             }
         }

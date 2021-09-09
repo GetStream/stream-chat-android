@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Verify that all events correctly update state in room
+ * Verify that all events correctly update state in room.
  */
 @RunWith(AndroidJUnit4::class)
 internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
@@ -19,6 +19,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
         super.setup()
         runBlocking {
             chatDomainImpl.repos.insertUsers(data.userMap.values)
+            queryControllerImpl.newChannelEventFilter = { _, _ -> true }
         }
     }
 

@@ -2,10 +2,9 @@ package io.getstream.chat.android.ui.common.extensions
 
 import android.content.Context
 import androidx.annotation.StringRes
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 
@@ -15,7 +14,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
  * @param devValue The resource identifier of a fallback string if the [Channel] object lacks
  * information to construct a valid display name string.
  *
- * @return The display name of the channel
+ * @return The display name of the channel.
  */
 @JvmOverloads
 public fun Channel.getDisplayName(
@@ -31,9 +30,9 @@ public fun Channel.getDisplayName(
 
 /**
  * Returns channel's last regular or system message if exists.
- *  Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
+ * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
  *
- * @return Last message from the channel or null if it doesn't exist
+ * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(): Message? =
     messages.asSequence()

@@ -4,11 +4,10 @@ import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsers
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
@@ -22,6 +21,7 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
         unreadCountChanged = unreadCount != other.unreadCount,
+        extraDataChanged = extraData != other.extraData
     )
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
@@ -68,6 +68,14 @@ internal fun Channel.getLastMessagePreviewText(
         }
     }
 }
+
+internal const val EXTRA_DATA_MUTED: String = "mutedChannel"
+
+internal var Channel.isMuted: Boolean
+    get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false
+    set(value) {
+        extraData[EXTRA_DATA_MUTED] = value
+    }
 
 private fun getAttachmentPrefix(attachment: Attachment): String? =
     when (attachment.type) {

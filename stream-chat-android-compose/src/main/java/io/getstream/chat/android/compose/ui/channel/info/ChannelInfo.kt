@@ -56,11 +56,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Shows special UI when an item is selected.
  * It also prepares the available options for the channel, based on if we're an admin or not.
  *
- * @param selectedChannel - The channel the user selected.
- * @param user - Currently logged-in user data.
- * @param onChannelOptionClick - Handler for when the user selects a channel option.
- * @param modifier - Modifier for styling.
- * */
+ * @param selectedChannel The channel the user selected.
+ * @param user Currently logged-in user data.
+ * @param onChannelOptionClick Handler for when the user selects a channel option.
+ * @param modifier Modifier for styling.
+ * @param shape The shape of the component.
+ */
 @Composable
 public fun ChannelInfo(
     selectedChannel: Channel,
@@ -186,9 +187,9 @@ public fun ChannelInfo(
 /**
  * The UI component that shows a user avatar and user name, as a member of a channel.
  *
- * @param modifier - Modifier for styling.
- * @param member - The member data to show.
- * */
+ * @param modifier Modifier for styling.
+ * @param member The member data to show.
+ */
 @Composable
 private fun ChannelInfoUserItem(
     member: Member,
@@ -225,10 +226,10 @@ private fun ChannelInfoUserItem(
  *
  * It sets up different actions that we provide, based on user permissions.
  *
- * @param options - The list of options to show in the UI, according to user permissions.
- * @param onChannelOptionClick - Handler for when the user selects a channel action.
- * @param modifier - Modifier for styling.
- * */
+ * @param options The list of options to show in the UI, according to user permissions.
+ * @param onChannelOptionClick Handler for when the user selects a channel action.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ChannelOptions(
     options: List<ChannelOption>,
@@ -267,12 +268,12 @@ private fun ChannelOptions(
 /**
  * Default component for channel info options.
  *
- * @param title - The text title of the action.
- * @param titleColor - The color of the title.
- * @param leadingIcon - The composable that defines the leading icon for the action.
- * @param onClick - The action to perform once the user taps on any option.
- * @param modifier - Modifier for styling.
- * */
+ * @param title The text title of the action.
+ * @param titleColor The color of the title.
+ * @param leadingIcon The composable that defines the leading icon for the action.
+ * @param onClick The action to perform once the user taps on any option.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 private fun ChannelOptionItem(
     title: String,

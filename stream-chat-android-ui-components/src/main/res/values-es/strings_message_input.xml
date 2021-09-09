@@ -5,6 +5,7 @@
     <string name="stream_ui_message_input_reply">Contestar al mensje</string>
     <string name="stream_ui_message_input_hint">Escribe algo aquí</string>
     <string name="stream_ui_message_input_only_attachments_hint">Añadir un comentario o enviar</string>
+    <string name="stream_ui_message_input_slow_mode_hint">Modo lento activado</string>
 
     <!-- Commands Popup -->
     <string name="stream_ui_message_input_instant_commands">Comandos instantáneos</string>
@@ -29,4 +30,5 @@
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">Fichero demasiado grande</string>
     <string name="stream_ui_message_input_error_max_length">Tamaño máximo de mensaje (%1$d) excedido.</string>
+    <string name="stream_ui_message_input_error_file_large_size">El fichero es demasiado grande - Máximo %dMB.</string>
 </resources>

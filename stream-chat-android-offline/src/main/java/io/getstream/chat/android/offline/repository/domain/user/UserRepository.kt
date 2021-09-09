@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.repository.domain.user
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 
 internal interface UserRepository {
     suspend fun insertUsers(users: Collection<User>)

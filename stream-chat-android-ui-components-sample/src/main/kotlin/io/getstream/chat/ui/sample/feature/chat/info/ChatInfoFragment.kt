@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.ui.sample.R

@@ -13,6 +13,8 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
@@ -73,6 +75,28 @@ internal fun randomChannelDeletedEvent(
         channelType = channelType,
         channelId = channelId,
         channel = channel
+    )
+}
+
+internal fun randomNotificationChannelDeletedEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationChannelDeletedEvent {
+    return NotificationChannelDeletedEvent(
+        type = type,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
     )
 }
 
@@ -195,6 +219,28 @@ internal fun randomMemberAddedEvent(
         channelType = channelType,
         channelId = channelId,
         member = member
+    )
+}
+
+internal fun randomNotificationAddedToChannelEvent(
+    type: String = randomString(),
+    createdAt: Date = Date(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): NotificationAddedToChannelEvent {
+    return NotificationAddedToChannelEvent(
+        type = type,
+        createdAt = createdAt,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = channel,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
     )
 }
 

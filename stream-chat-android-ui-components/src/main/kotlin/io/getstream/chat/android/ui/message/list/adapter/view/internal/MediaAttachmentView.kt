@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
@@ -59,7 +60,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     }
 
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.imagePreviewUrl ?: attachment.ogUrl ?: return
+        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
@@ -68,6 +69,12 @@ internal class MediaAttachmentView : ConstraintLayout {
         val showGiphyLabel = {
             if (giphyBadgeEnabled && attachment.type == ModelType.attach_giphy) {
                 binding.giphyLabel.isVisible = true
+            }
+        }
+
+        if (attachment.type == ModelType.attach_giphy) {
+            binding.imageView.updateLayoutParams {
+                height = style.giphyHeight
             }
         }
 
@@ -122,7 +129,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             .let(this::setImageShape)
     }
 
-    fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
+    private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)

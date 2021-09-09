@@ -10,9 +10,9 @@ import io.getstream.chat.android.offline.utils.validateCid
 
 internal class MarkRead(private val domainImpl: ChatDomainImpl) {
     /**
-     * Marks the messages on the specified channel as read
+     * Marks the messages on the specified channel as read.
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
      * @return True if the mark read event was sent. False if there was no need to mark read
      *         (i. e. the messages are already marked as read).

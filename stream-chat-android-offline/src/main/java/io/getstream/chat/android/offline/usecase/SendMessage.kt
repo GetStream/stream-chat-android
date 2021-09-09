@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.utils.validateCid
 import java.io.File
@@ -15,7 +14,8 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
     /**
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
-     * @param message the message to send
+     *
+     * @param message The message to send.
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
@@ -26,7 +26,8 @@ internal class SendMessage(private val domainImpl: ChatDomainImpl) {
     /**
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
-     * @param message the message to send
+     *
+     * @param message The message to send.
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult

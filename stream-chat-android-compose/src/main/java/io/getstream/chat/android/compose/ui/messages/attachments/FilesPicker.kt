@@ -45,11 +45,11 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting
  * items and browsing for extra files.
  *
- * @param files - The files the user can pick, to be rendered in a list.
- * @param onItemSelected - Handler when the user clicks on any file item.
- * @param onBrowseFilesResult - Handler when the user clicks on the browse more files action.
- * @param modifier - Modifier for styling.
- * */
+ * @param files The files the user can pick, to be rendered in a list.
+ * @param onItemSelected Handler when the user clicks on any file item.
+ * @param onBrowseFilesResult Handler when the user clicks on the browse more files action.
+ * @param modifier Modifier for styling.
+ */
 @Composable
 internal fun FilesPicker(
     files: List<AttachmentItem>,
@@ -93,9 +93,9 @@ internal fun FilesPicker(
 /**
  * Represents a single item in the file picker list.
  *
- * @param fileItem - File to render.
- * @param onItemSelected - Handler when the item is selected.
- * */
+ * @param fileItem File to render.
+ * @param onItemSelected Handler when the item is selected.
+ */
 @Composable
 public fun FileListItem(
     fileItem: AttachmentItem,
@@ -166,7 +166,7 @@ public fun FileListItem(
  * or a thumbnail in case the file type is an image.
  *
  * @param fileItem - The item we use to show the image.
- * */
+ */
 @Composable
 public fun FileItemImage(
     fileItem: AttachmentItem,

@@ -28,18 +28,10 @@ import kotlinx.coroutines.launch
  * A state store that represents all the information required to query, filter, show and react to
  * [Channel] items in a list.
  *
- * Exposes the following state:
- *
- * @property initialFilters - The current data filter. Users can change this state using [setFilters] to
+ * @param initialSort The initial sort used for [Channel]s.
+ * @param initialFilters The current data filter. Users can change this state using [setFilters] to
  * impact which data is shown on the UI.
- *
- * @property searchQuery - The current channel query. Users can change it through
- * [setSearchQuery]. This impacts what data is shown on the UI.
- *
- * @property channelsState - The state of the ChannelsList, represented by [ChannelsState].
- *
- * @property selectedChannel - Currently selected channel, of which the users can view the info.
- * */
+ */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     public val chatDomain: ChatDomain,
@@ -50,48 +42,48 @@ public class ChannelListViewModel(
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
      * the [initialFilters] and the initial sort, but can be changed.
-     * */
+     */
     private val queryConfig = MutableStateFlow(QueryConfig(initialFilters, initialSort))
 
     /**
      * The current state of the search input. When changed, it emits a new value in a flow, which
      * queries for a new [QueryChannelsController] and loads new data.
-     * */
+     */
     private val searchQuery = MutableStateFlow("")
 
     /**
      * The current state of the channels screen. It holds all the information required to render the UI.
-     * */
+     */
     public var channelsState: ChannelsState by mutableStateOf(ChannelsState())
         private set
 
     /**
      * Currently selected channel, if any. Used to show the bottom drawer information when long
      * tapping on a list item.
-     * */
+     */
     public var selectedChannel: Channel? by mutableStateOf(null)
         private set
 
     /**
      * Currently active channel action, if any. Used to show a dialog for deleting or leaving a
      * channel/conversation.
-     * */
+     */
     public var activeChannelAction: ChannelListAction? by mutableStateOf(null)
         private set
 
     /**
      * The state of our network connection - if we're online or not.
-     * */
+     */
     public val isOnline: StateFlow<Boolean> = chatDomain.online
 
     /**
      * The state of the currently logged in user.
-     * */
+     */
     public val user: StateFlow<User?> = chatDomain.user
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
-     * */
+     */
     init {
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
@@ -120,7 +112,7 @@ public class ChannelListViewModel(
      * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
-     * */
+     */
     private suspend fun observeChannels(controller: QueryChannelsController) {
         controller.loadingMore
             .combine(controller.channelsState) { isLoadingMore, channelsState ->
@@ -150,7 +142,7 @@ public class ChannelListViewModel(
     /**
      * Changes the currently selected channel state. This updates the UI state and allows us to observe
      * the state change.
-     * */
+     */
     public fun selectChannel(channel: Channel?) {
         this.selectedChannel = channel
     }
@@ -159,7 +151,7 @@ public class ChannelListViewModel(
      * Changes the current query state. This updates the data flow and triggers another query operation.
      *
      * The new operation will hold the channels that match the new query.
-     * */
+     */
     public fun setSearchQuery(newQuery: String) {
         this.searchQuery.value = newQuery
     }
@@ -168,7 +160,7 @@ public class ChannelListViewModel(
      * Allows for the change of filters used for channel queries.
      *
      * Use this if you need to support runtime filter changes, through custom filters UI.
-     * */
+     */
     public fun setFilters(newFilters: FilterObject) {
         val currentConfig = this.queryConfig.value
 
@@ -180,7 +172,7 @@ public class ChannelListViewModel(
      * Allows for the change of the query sort used for channel queries.
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
-     * */
+     */
     public fun setQuerySort(querySort: QuerySort<Channel>) {
         val currentConfig = this.queryConfig.value
 
@@ -190,7 +182,7 @@ public class ChannelListViewModel(
 
     /**
      * Loads more data when the user reaches the end of the channels list.
-     * */
+     */
     public fun loadMore() {
         val currentConfig = queryConfig.value
         val query = searchQuery.value
@@ -210,8 +202,8 @@ public class ChannelListViewModel(
      *
      * It also removes the [selectedChannel] if the action is [Cancel].
      *
-     * @param channelListAction - The selected action.
-     * */
+     * @param channelListAction The selected action.
+     */
     public fun performChannelAction(channelListAction: ChannelListAction) {
         if (channelListAction is Cancel) {
             selectedChannel = null
@@ -228,8 +220,8 @@ public class ChannelListViewModel(
      * Deletes a channel, after the user chooses the delete [ChannelListAction]. It also removes the
      * [activeChannelAction], to remove the dialog from the UI.
      *
-     * @param channel - The channel to delete.
-     * */
+     * @param channel The channel to delete.
+     */
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
@@ -240,8 +232,8 @@ public class ChannelListViewModel(
      * Leaves a channel, after the user chooses the leave [ChannelListAction]. It also removes the
      * [activeChannelAction], to remove the dialog from the UI.
      *
-     * @param channel - The channel to leave.
-     * */
+     * @param channel The channel to leave.
+     */
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
@@ -250,7 +242,7 @@ public class ChannelListViewModel(
 
     /**
      * Dismisses the [activeChannelAction] and removes it from the UI.
-     * */
+     */
     public fun dismissChannelAction() {
         activeChannelAction = null
         selectedChannel = null

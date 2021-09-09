@@ -9,8 +9,8 @@ apply plugin: "de.mannodermaus.android-junit5"
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
-    PUBLISH_VERSION = Configuration.versionName
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-client'
+    PUBLISH_VERSION = rootVersionName
 }
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
@@ -51,6 +51,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
+                '-Xopt-in=kotlin.RequiresOptIn',
                 '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
         ]
     }
@@ -59,7 +60,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(':stream-chat-android-core')
 
-    implementation Dependencies.kotlinStdLib
     implementation Dependencies.kotlinReflect
 
     implementation Dependencies.androidxAppCompat
@@ -71,8 +71,6 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.retrofit
-    implementation Dependencies.gson
-    implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     kapt Dependencies.moshiCodegen
@@ -90,7 +88,6 @@ dependencies {
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
 
-    testImplementation Dependencies.assertj
     testImplementation Dependencies.json
     testImplementation Dependencies.kluent
     testImplementation Dependencies.truth
@@ -101,7 +98,6 @@ dependencies {
     testImplementation Dependencies.robolectric
 
     // Instrumentation tests
-    androidTestImplementation Dependencies.assertj
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit

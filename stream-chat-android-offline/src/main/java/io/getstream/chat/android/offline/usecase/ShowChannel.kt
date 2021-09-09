@@ -10,7 +10,7 @@ internal class ShowChannel(private val domainImpl: ChatDomainImpl) {
     /**
      * Shows a channel that was previously hidden
      *
-     * @param cid: the full channel id i. e. messaging:123
+     * @param cid The full channel id i. e. messaging:123.
      *
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */

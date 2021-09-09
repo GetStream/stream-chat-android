@@ -9,11 +9,11 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
@@ -30,13 +30,17 @@ import io.getstream.chat.android.client.models.UserEntity
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.users
+import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.model.SyncState
@@ -85,7 +89,6 @@ import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
-import io.getstream.chat.android.offline.utils.validateCid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.SupervisorJob
@@ -130,10 +133,10 @@ private const val CHANNEL_LIMIT = 30
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
+@OptIn(ExperimentalStreamChatApi::class)
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
-    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
-    // the userOverwrite field is here for backwards compatibility
+    @VisibleForTesting
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -141,6 +144,8 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
+    private val offlinePlugin: OfflinePlugin,
+    internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -150,6 +155,7 @@ internal class ChatDomainImpl internal constructor(
         userPresence: Boolean,
         backgroundSyncEnabled: Boolean,
         appContext: Context,
+        offlinePlugin: OfflinePlugin,
     ) : this(
         client = client,
         db = null,
@@ -158,8 +164,10 @@ internal class ChatDomainImpl internal constructor(
         recoveryEnabled = recoveryEnabled,
         userPresence = userPresence,
         backgroundSyncEnabled = backgroundSyncEnabled,
-        appContext = appContext
+        appContext = appContext,
+        offlinePlugin = offlinePlugin,
     )
+
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
 
@@ -457,11 +465,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
-        validateCid(cid)
-        val channelController = channel(cid)
-        return CoroutineCall(scope) {
-            channelController.removeMembers(*userIds)
-        }
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return client.removeMembers(channelType, channelId, userIds.toList())
     }
 
     /**
@@ -557,11 +562,14 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Channel>,
     ): QueryChannelsController =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+            val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
+            val logic = offlinePlugin.logic.queryChannels(filter, sort)
             QueryChannelsController(
                 filter,
                 sort,
-                client,
-                this
+                this,
+                mutableState,
+                logic
             )
         }
 
@@ -631,7 +639,7 @@ internal class ChatDomainImpl internal constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values
             .toList()
-            .filter { it.recoveryNeeded || recoverAll }
+            .filter { it.recoveryNeeded.value || recoverAll }
             .take(3)
         for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
@@ -973,20 +981,13 @@ internal class ChatDomainImpl internal constructor(
         channelType: String,
         members: List<String>,
         extraData: Map<String, Any>,
-    ): Call<Channel> {
-        return CoroutineCall(scope) {
-            client.createChannel(channelType, members, extraData).await().also {
-                if (it.isSuccess) {
-                    repos.insertChannel(it.data())
-                }
-            }
-        }
-    }
+    ): Call<Channel> = client.createChannel(channelType, members, extraData)
 // end region
 
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
         context(appContext)
         scope(scope)
+        database(db)
         defaultConfig(defaultConfig)
         setOfflineEnabled(false)
     }.build()

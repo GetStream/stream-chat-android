@@ -20,27 +20,27 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * Style for [ChannelListView].
  * Use this class together with [TransformStyle.channelListStyleTransformer] to change [ChannelListView] styles programmatically.
  *
- * @property optionsIcon - icon for channel's options. Default - [R.drawable.stream_ui_ic_more]
- * @property deleteIcon - icon for deleting channel option. Default - [R.drawable.stream_ui_ic_delete]
- * @property optionsEnabled - enables/disables channel's options. Enabled by default
- * @property deleteEnabled - enables/disables delete channel option. Enabled by default
- * @property swipeEnabled - enables/disables swipe on channel list item. Enabled by default
- * @property backgroundLayoutColor - background color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_smoke]
- * @property channelTitleText - appearance for channel's title, displayed in [ChannelViewHolder]
- * @property lastMessageText - appearance for last message text, displayed in [ChannelViewHolder]
- * @property lastMessageDateText - appearance for last message date text displayed in [ChannelViewHolder]
- * @property indicatorSentIcon - icon for indicating message sent status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_check_single]
- * @property indicatorReadIcon - icon for indicating message read status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_check_double]
- * @property indicatorPendingSyncIcon - icon for indicating sync pending status in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_clock]
- * @property foregroundLayoutColor - foreground color for [ChannelViewHolder]. Default - [R.color.stream_ui_white_snow]
- * @property unreadMessageCounterText - appearance for message counter text, displayed in [ChannelViewHolder]
- * @property unreadMessageCounterBackgroundColor - background color for message counter, displayed in [ChannelViewHolder]. Default - [R.color.stream_ui_accent_red]
- * @property mutedChannelIcon - icon for muted channel, displayed in [ChannelViewHolder]. Default - [R.drawable.stream_ui_ic_mute_black]
- * @property itemSeparator - items' separator. Default - [R.drawable.stream_ui_divider]
- * @property loadingView - loading view. Default - [R.layout.stream_ui_default_loading_view]
- * @property emptyStateView - empty state view. Default - [R.layout.stream_ui_channel_list_empty_state_view]
- * @property loadingMoreView - loading more view. Default - [R.layout.stream_ui_channel_list_loading_more_view]
- * @property edgeEffectColor - color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default - null.
+ * @property optionsIcon Icon for channel's options. Default value is [R.drawable.stream_ui_ic_more].
+ * @property deleteIcon Icon for deleting channel option. Default value is [R.drawable.stream_ui_ic_delete].
+ * @property optionsEnabled Enables/disables channel's options. Enabled by default
+ * @property deleteEnabled Enables/disables delete channel option. Enabled by default
+ * @property swipeEnabled Enables/disables swipe on channel list item. Enabled by default
+ * @property backgroundLayoutColor Background color for [ChannelViewHolder]. Default value is [R.color.stream_ui_white_smoke].
+ * @property channelTitleText Appearance for channel's title, displayed in [ChannelViewHolder]
+ * @property lastMessageText Appearance for last message text, displayed in [ChannelViewHolder]
+ * @property lastMessageDateText Appearance for last message date text displayed in [ChannelViewHolder]
+ * @property indicatorSentIcon Icon for indicating message sent status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_check_single].
+ * @property indicatorReadIcon Icon for indicating message read status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_check_double].
+ * @property indicatorPendingSyncIcon Icon for indicating sync pending status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_clock].
+ * @property foregroundLayoutColor Foreground color for [ChannelViewHolder]. Default value is [R.color.stream_ui_white_snow].
+ * @property unreadMessageCounterText Appearance for message counter text, displayed in [ChannelViewHolder]
+ * @property unreadMessageCounterBackgroundColor Background color for message counter, displayed in [ChannelViewHolder]. Default value is [R.color.stream_ui_accent_red].
+ * @property mutedChannelIcon Icon for muted channel, displayed in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_mute_black].
+ * @property itemSeparator Items' separator. Default value is [R.drawable.stream_ui_divider].
+ * @property loadingView Loading view. Default value is [R.layout.stream_ui_default_loading_view].
+ * @property emptyStateView Empty state view. Default value is [R.layout.stream_ui_channel_list_empty_state_view].
+ * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_channel_list_loading_more_view].
+ * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null.
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
