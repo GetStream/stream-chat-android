@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -29,7 +28,7 @@ internal interface ChatNotifications {
     fun onSetUser()
     fun setDevice(device: Device)
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
-    fun onChatEvent(event: ChatEvent)
+    fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
     fun cancelLoadDataWork()
     suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
     fun removeStoredDevice()
@@ -76,16 +75,14 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override fun onChatEvent(event: ChatEvent) {
-        if (event is NewMessageEvent) {
-            val currentUserId = ChatClient.instance().getCurrentUser()?.id
-            if (event.message.user.id == currentUserId) return
+    override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) {
+        val currentUserId = ChatClient.instance().getCurrentUser()?.id
+        if (newMessageEvent.message.user.id == currentUserId) return
 
-            logger.logD("Handling $event")
-            if (!handler.onChatEvent(event)) {
-                logger.logI("Handling $event internally")
-                handleEvent(event)
-            }
+        logger.logD("Handling $newMessageEvent")
+        if (!handler.onChatEvent(newMessageEvent)) {
+            logger.logI("Handling $newMessageEvent internally")
+            handleEvent(newMessageEvent)
         }
     }
 
@@ -220,7 +217,7 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 
-    override fun onChatEvent(event: ChatEvent) = Unit
+    override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
     override fun cancelLoadDataWork() = Unit
     override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
     override fun removeStoredDevice() = Unit
