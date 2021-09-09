@@ -100,9 +100,6 @@
     <string name="chat_group_info_error_leave_channel">Failed to leave channel</string>
     <string name="chat_group_info_error_add_member">Failed to add channel member</string>
 
-    <!-- Chat fragment -->
-    <string name="chat_fragment_big_attachment_subtitle">File too big - max %d mb</string>
-
     <!-- Pinned message list screen -->
     <string name="pinned_message_list_title">Pinned Messages</string>
 
