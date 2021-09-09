@@ -36,7 +36,7 @@
 
 ### ❌ Removed
 - Completely removed the old serialization implementation. You can no longer opt-out of using the new serialization implementation.
-- Removed the `UpdateUsersRequest` class. 
+- Removed the `UpdateUsersRequest` class.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -52,7 +52,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed theme for `AttachmentDocumentActivity`. Now it is applied: `Theme.AppCompat.DayNight.NoActionBar`
 ### ⬆️ Improved
 
 ### ✅ Added
