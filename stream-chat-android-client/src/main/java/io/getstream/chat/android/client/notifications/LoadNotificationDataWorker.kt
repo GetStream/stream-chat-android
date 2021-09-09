@@ -28,6 +28,7 @@ internal class LoadNotificationDataWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
+        val notificationId: Int = inputData.getInt(DATA_NOTIFICATION_ID, 0)
         val notificationTitle: String = inputData.getString(DATA_NOTIFICATION_TITLE)!!
         val notificationIcon: Int = inputData.getInt(DATA_NOTIFICATION_ICON, R.drawable.stream_ic_notification)
         val notificationChannelName: String = inputData.getString(DATA_NOTIFICATION_CHANNEL_NAME)!!
@@ -46,6 +47,7 @@ internal class LoadNotificationDataWorker(
                 channelId = channelId,
                 channelType = channelType,
                 messageId = messageId,
+                notificationId = notificationId,
             )
             Result.success()
         } catch (exception: IllegalStateException) {
@@ -108,6 +110,7 @@ internal class LoadNotificationDataWorker(
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
+        private const val DATA_NOTIFICATION_ID = "DATA_NOTIFICATION_ID"
         private const val DATA_NOTIFICATION_TITLE = "DATA_NOTIFICATION_TITLE"
         private const val DATA_NOTIFICATION_ICON = "DATA_NOTIFICATION_ICON"
         private const val DATA_NOTIFICATION_CHANNEL_NAME = "DATA_NOTIFICATION_CHANNEL_NAME"
@@ -121,6 +124,7 @@ internal class LoadNotificationDataWorker(
             channelId: String,
             channelType: String,
             messageId: String,
+            notificationId: Int,
             notificationChannelName: String,
             notificationIcon: Int,
             notificationTitle: String,
@@ -131,6 +135,7 @@ internal class LoadNotificationDataWorker(
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
                         DATA_MESSAGE_ID to messageId,
+                        DATA_NOTIFICATION_ID to notificationId,
                         DATA_NOTIFICATION_CHANNEL_NAME to notificationChannelName,
                         DATA_NOTIFICATION_ICON to notificationIcon,
                         DATA_NOTIFICATION_TITLE to notificationTitle,

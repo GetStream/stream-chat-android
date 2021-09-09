@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list
 
 import android.animation.LayoutTransition
 import android.app.AlertDialog
+import android.app.NotificationManager
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +29,7 @@ import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -577,7 +581,17 @@ public class MessageListView : ConstraintLayout {
         this.channel = channel
         initAdapter()
 
-        messageListViewStyle = requireStyle().copy(
+        val notificationManager = NotificationManagerCompat.from(context)
+
+        val channelNotifications = ChatClient.instance().displayedNotifications().filter { (_, channelId, _) ->
+            channelId == channel.id
+        }
+
+        channelNotifications.forEach { (messageId, _, notificationId) ->
+            notificationManager.cancel(messageId, notificationId)
+        }
+
+         messageListViewStyle = requireStyle().copy(
             replyEnabled = requireStyle().replyEnabled && channel.config.isRepliesEnabled,
             threadsEnabled = requireStyle().threadsEnabled && channel.config.isRepliesEnabled,
         )

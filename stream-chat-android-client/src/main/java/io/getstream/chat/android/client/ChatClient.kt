@@ -119,6 +119,10 @@ public class ChatClient internal constructor(
     @InternalStreamChatApi
     public val notificationHandler: ChatNotificationHandler = notifications.handler
 
+    public fun displayedNotifications(): Set<Triple<String, String, Int>> {
+        return notifications.showedNotifications()
+    }
+
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket, this)
@@ -1753,11 +1757,13 @@ public class ChatClient internal constructor(
             channelType: String,
             channelId: String,
             messageId: String,
+            notificationId: Int,
         ) {
             ensureClientInitialized().notifications.displayNotificationWithData(
                 channelId = channelId,
                 channelType = channelType,
                 messageId = messageId,
+                notificationId = notificationId,
             )
         }
 

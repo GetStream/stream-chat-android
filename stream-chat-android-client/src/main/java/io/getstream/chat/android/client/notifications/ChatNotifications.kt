@@ -31,8 +31,15 @@ internal interface ChatNotifications {
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onChatEvent(event: ChatEvent)
     fun cancelLoadDataWork()
-    suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
+    suspend fun displayNotificationWithData(
+        channelType: String,
+        channelId: String,
+        messageId: String,
+        notificationId: Int,
+    )
+
     fun removeStoredDevice()
+    fun showedNotifications(): Set<Triple<String, String, Int>>
 }
 
 internal class ChatNotificationsImpl constructor(
@@ -44,13 +51,15 @@ internal class ChatNotificationsImpl constructor(
     private val logger = ChatLogger.get("ChatNotifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
-    private val showedNotifications = mutableSetOf<String>()
+    private val showedNotifications = mutableSetOf<Triple<String, String, Int>>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             notificationManager.createNotificationChannel(handler.createNotificationChannel())
     }
+
+    override fun showedNotifications(): Set<Triple<String, String, Int>> = showedNotifications
 
     override fun onSetUser() {
         handler.onCreateDevice(::setDevice)
@@ -82,6 +91,7 @@ internal class ChatNotificationsImpl constructor(
             if (event.message.user.id == currentUserId) return
 
             logger.logD("Handling $event")
+
             if (!handler.onChatEvent(event)) {
                 logger.logI("Handling $event internally")
                 handleEvent(event)
@@ -95,12 +105,15 @@ internal class ChatNotificationsImpl constructor(
 
     private fun handlePushMessage(message: PushMessage) {
         if (!wasNotificationDisplayed(message.messageId)) {
-            showedNotifications.add(message.messageId)
+            val notificationId = System.currentTimeMillis().toInt()
+
+            showedNotifications.add(Triple(message.messageId, message.channelId, notificationId))
             LoadNotificationDataWorker.start(
                 context = context,
                 channelId = message.channelId,
                 channelType = message.channelType,
                 messageId = message.messageId,
+                notificationId = notificationId,
                 notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
                 notificationIcon = handler.config.loadNotificationDataIcon,
                 notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
@@ -110,9 +123,10 @@ internal class ChatNotificationsImpl constructor(
 
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
+        val notificationId = System.currentTimeMillis().toInt()
 
         if (!wasNotificationDisplayed(messageId)) {
-            showedNotifications.add(messageId)
+            showedNotifications.add(Triple(event.message.id, event.channelId, notificationId))
             scope.launch(DispatcherProvider.Main) {
                 val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
                 if (result.isSuccess) {
@@ -120,6 +134,7 @@ internal class ChatNotificationsImpl constructor(
                         channel = result.data(),
                         message = event.message,
                         shouldShowInForeground = true,
+                        notificationId = notificationId
                     )
                 } else {
                     showErrorNotification(
@@ -132,16 +147,20 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
+    private fun wasNotificationDisplayed(messageId: String): Boolean {
+        return showedNotifications.any { (notificationMessageId, _) ->
+            notificationMessageId == messageId
+        }
+    }
 
-    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String, notificationId: Int) {
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
         val result = getChannel.zipWith(getMessage).await()
         if (result.isSuccess) {
             val (channel, message) = result.data()
-            showNotification(channel = channel, message = message)
+            showNotification(channel = channel, message = message, notificationId = notificationId)
         } else {
             showErrorNotification(messageId = messageId, error = result.error())
         }
@@ -153,16 +172,20 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    private fun showNotification(channel: Channel, message: Message, shouldShowInForeground: Boolean = false) {
+    private fun showNotification(
+        channel: Channel,
+        message: Message,
+        shouldShowInForeground: Boolean = false,
+        notificationId: Int,
+    ) {
         logger.logD("Showing notification with loaded data")
-        val notificationId = System.currentTimeMillis().toInt()
-
         handler.getDataLoadListener()?.onLoadSuccess(channel, message)
         handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
             .let { notification ->
-                showedNotifications.add(message.id)
+                showedNotifications.add(Triple(message.id, channel.id, notificationId))
                 showNotification(
                     notificationId = notificationId,
+                    messageId = message.id,
                     notification = notification,
                     shouldShowInForeground = shouldShowInForeground,
                 )
@@ -171,10 +194,8 @@ internal class ChatNotificationsImpl constructor(
         if (handler.config.shouldGroupNotifications) {
             handler.buildNotificationGroupSummary(channel = channel, message = message).build().let { notification ->
                 showNotification(
-                    notificationId = handler.getNotificationGroupSummaryId(
-                        channelType = channel.type,
-                        channelId = channel.id,
-                    ),
+                    notificationId = notificationId,
+                    messageId = message.id,
                     notification = notification,
                     shouldShowInForeground = shouldShowInForeground,
                 )
@@ -188,6 +209,7 @@ internal class ChatNotificationsImpl constructor(
 
         showNotification(
             notificationId = System.currentTimeMillis().toInt(),
+            messageId = "",
             notification = handler.buildErrorCaseNotification(),
             shouldShowInForeground = shouldShowInForeground,
         )
@@ -195,15 +217,21 @@ internal class ChatNotificationsImpl constructor(
         if (handler.config.shouldGroupNotifications) {
             showNotification(
                 notificationId = handler.getErrorNotificationGroupSummaryId(),
+                messageId = "",
                 notification = handler.buildErrorNotificationGroupSummary(),
                 shouldShowInForeground = shouldShowInForeground,
             )
         }
     }
 
-    private fun showNotification(notificationId: Int, notification: Notification, shouldShowInForeground: Boolean) {
+    private fun showNotification(
+        notificationId: Int,
+        messageId: String,
+        notification: Notification,
+        shouldShowInForeground: Boolean,
+    ) {
         if (shouldShowInForeground || !isForeground()) {
-            notificationManager.notify(notificationId, notification)
+            notificationManager.notify(messageId, notificationId, notification)
         }
     }
 
@@ -222,6 +250,7 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
 
     override fun onChatEvent(event: ChatEvent) = Unit
     override fun cancelLoadDataWork() = Unit
-    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
+    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String, notificationId: Int) = Unit
     override fun removeStoredDevice() = Unit
+    override fun showedNotifications(): Set<Triple<String, String, Int>> = emptySet()
 }
