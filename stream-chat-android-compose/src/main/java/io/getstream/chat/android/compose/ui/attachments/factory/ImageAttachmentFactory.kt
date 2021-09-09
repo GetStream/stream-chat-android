@@ -6,10 +6,11 @@ import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentC
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * An extension of the [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
+ * An [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
  */
-public class ImageAttachmentFactory : AttachmentFactory(
+@Suppress("FunctionName")
+public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
-    content = @Composable { ImageAttachmentContent(it) }
+    content = @Composable { ImageAttachmentContent(it) },
 )
