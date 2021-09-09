@@ -43,13 +43,12 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Date
 
 @OptIn(ExperimentalPagerApi::class)
@@ -64,6 +63,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val messageId = intent?.getStringExtra(KEY_MESSAGE_ID) ?: ""
+        val attachmentPosition = intent?.getIntExtra(KEY_ATTACHMENT_POSITION, 0) ?: 0
 
         if (messageId.isBlank()) {
             throw IllegalArgumentException("Missing messageId to load images.")
@@ -73,15 +73,21 @@ public class ImagePreviewActivity : AppCompatActivity() {
             ChatTheme {
                 val message = imagePreviewViewModel.message
 
-                ImagePreviewContentWrapper(message)
+                if (message.id.isNotEmpty()) {
+                    ImagePreviewContentWrapper(message, attachmentPosition)
+                }
             }
         }
     }
 
     @Composable
-    private fun ImagePreviewContentWrapper(message: Message) {
+    private fun ImagePreviewContentWrapper(
+        message: Message,
+        initialAttachmentPosition: Int,
+    ) {
         val pagerState = rememberPagerState(
             pageCount = message.attachments.size,
+            initialPage = initialAttachmentPosition,
             initialOffscreenLimit = 2
         )
 
@@ -141,11 +147,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 color = ChatTheme.colors.textHighEmphasis
             )
 
-            Text(
-                text = SimpleDateFormat.getTimeInstance().format(message.createdAt ?: Date()),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis
-            ) // TODO format properly
+            Timestamp(date = message.updatedAt ?: message.createdAt ?: Date())
         }
     }
 
@@ -245,10 +247,12 @@ public class ImagePreviewActivity : AppCompatActivity() {
 
     public companion object {
         private const val KEY_MESSAGE_ID = "messageId"
+        private const val KEY_ATTACHMENT_POSITION = "attachmentPosition"
 
-        public fun getIntent(context: Context, messageId: String): Intent {
+        public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KEY_MESSAGE_ID, messageId)
+                putExtra(KEY_ATTACHMENT_POSITION, attachmentPosition)
             }
         }
     }

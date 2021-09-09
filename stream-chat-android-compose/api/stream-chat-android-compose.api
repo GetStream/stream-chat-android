@@ -532,7 +532,7 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 }
 
 public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePreviewActivity$Companion {
-	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;I)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {

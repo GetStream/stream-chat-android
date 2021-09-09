@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -72,9 +74,7 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    context.startActivity(ImagePreviewActivity.getIntent(context, message.id))
-                },
+                onClick = {},
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
@@ -87,7 +87,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
 
             ImageAttachmentContentItem(
                 attachment = attachment,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                messageId = message.id,
+                attachmentPosition = 0
             )
         } else {
             Column(
@@ -99,7 +101,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                     if (imageIndex < imageCount) {
                         ImageAttachmentContentItem(
                             attachment = attachments[imageIndex],
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            messageId = message.id,
+                            attachmentPosition = imageIndex
                         )
                     }
                 }
@@ -118,7 +122,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                         if (imageIndex == 3 && imageCount > 4) {
                             Box(modifier = Modifier.weight(1f)) {
                                 ImageAttachmentContentItem(
-                                    attachment = attachment
+                                    attachment = attachment,
+                                    messageId = message.id,
+                                    attachmentPosition = imageIndex
                                 )
 
                                 if (!isUploading) {
@@ -132,7 +138,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                         } else {
                             ImageAttachmentContentItem(
                                 attachment = attachment,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                messageId = message.id,
+                                attachmentPosition = imageIndex
                             )
                         }
                     }
@@ -150,12 +158,25 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
  */
 @Composable
 internal fun ImageAttachmentContentItem(
+    messageId: String,
+    attachmentPosition: Int,
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val painter = rememberImagePainter(attachment.imagePreviewUrl)
 
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = rememberRipple(),
+                onClick = {
+                    context.startActivity(ImagePreviewActivity.getIntent(context, messageId, attachmentPosition))
+                }
+            )
+    ) {
         Image(
             modifier = modifier
                 .fillMaxSize(),
