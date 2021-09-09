@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.file.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.file
+package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,7 +33,6 @@ import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.offline.ChatDomain
@@ -76,6 +75,11 @@ public fun FileAttachmentList(attachmentState: AttachmentState) {
     }
 }
 
+/**
+ * Represents each file item in the list of file attachments.
+ *
+ * @param attachment The file attachment to show.
+ */
 @Composable
 public fun FileAttachmentItem(attachment: Attachment) {
     Surface(
