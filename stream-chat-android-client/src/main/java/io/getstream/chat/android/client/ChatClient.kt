@@ -971,7 +971,7 @@ public class ChatClient internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
+        return api.queryChannel(channelType, channelId, request)
     }
 
     @CheckResult
