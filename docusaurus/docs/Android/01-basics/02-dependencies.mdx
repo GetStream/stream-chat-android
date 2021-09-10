@@ -2,11 +2,25 @@
 
 All Stream Android libraries are available from MavenCentral, with some of their transitive dependencies hosted on Jitpack. 
 
-To add Stream dependencies, update your repositories in the project level `build.gradle` file to include these two repositories:
+Before you add Stream dependencies, update your repositories in the `settings.gradle` file to include these two repositories:
 
-```groovy
+```groovy {5-6}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Or if you're using an older project setup, add these repositories in your project level `build.gradle` file:
+
+```groovy {4-5}
 allprojects {
     repositories {
+        google()
         mavenCentral()
         maven { url "https://jitpack.io" }
     }
@@ -86,18 +100,19 @@ We publish SNAPSHOT versions of our SDK, which contain the code as of the latest
 These builds may contain bugs or breaking changes that will be fixed before the next proper release. However, you can use these builds temporarily to include the latest changes from our SDK in your project before the next release happens.
 
 :::warning
-These builds should never be used in production.
+Snapshot builds are not stable. Never use them in production.
 :::
 
-To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration: 
+To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration (see at the top of this page for where to add this): 
 
 ```groovy
 maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 ```
 
+Then you can add a snapshot dependency on any of our artifacts, replacing the normal version number with a version that has a `-SNAPSHOT` postfix. 
 Our snapshot version is always one patch version ahead of the latest release we've published. If the last stable release was `X.Y.Z`, the snapshot version would be `X.Y.(Z+1)-SNAPSHOT`.
 
-You can browse our available snapshot builds [here](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/). 
+You can browse our available snapshot builds in the [Sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/), which you can also check for what the latest available snapshot version is. 
 
 :::info
 If you're using a snapshot of our Compose library, do not include `-beta` in the version name.
