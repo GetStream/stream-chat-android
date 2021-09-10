@@ -64,12 +64,14 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the bug when MessageInputView let send a message with large attachments. Such message is never sent.
+- Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
 
 ### ⬆️ Improved
 - Improved scroll of message when many gif images are present in `MessageListView`
 
 ### ✅ Added
-
+- Added scroll behaviour to `MessageListViewStyle`.
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -95,7 +97,7 @@
 - `StreamAttachment.defaultFactories()` is a function now, instead of a property.
 - Updated all default value factories to functions (e.g. StreamTypography)
 - Re-organized all attachment factories and split up code in multiple packages
--
+- Changed the `AttachmentState` `message` property name to `messageItem`
 
 ### ❌ Removed
 

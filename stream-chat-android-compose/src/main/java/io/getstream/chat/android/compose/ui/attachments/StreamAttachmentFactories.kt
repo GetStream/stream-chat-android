@@ -1,15 +1,13 @@
 package io.getstream.chat.android.compose.ui.attachments
 
 import androidx.compose.runtime.Composable
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
-import io.getstream.chat.android.compose.ui.util.hasLink
-import io.getstream.chat.android.compose.ui.util.isMedia
+import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.
@@ -33,22 +31,10 @@ public object StreamAttachmentFactories {
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
     ): List<AttachmentFactory> = listOf(
-        AttachmentFactory(
-            canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
-            content = @Composable { LinkAttachmentContent(it, linkDescriptionMaxLines) }
-        ),
-        AttachmentFactory(
-            canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
-            content = @Composable { GiphyAttachmentContent(it) }
-        ),
-        AttachmentFactory(
-            canHandle = { attachments -> attachments.all { it.isMedia() } },
-            content = @Composable { ImageAttachmentContent(it) }
-        ),
-        AttachmentFactory(
-            canHandle = { attachments -> attachments.isNotEmpty() },
-            content = @Composable { FileAttachmentContent(it) }
-        )
+        LinkAttachmentFactory(linkDescriptionMaxLines),
+        GiphyAttachmentFactory(),
+        ImageAttachmentFactory(),
+        FileAttachmentFactory(),
     )
 }
 
@@ -59,7 +45,7 @@ public object StreamAttachmentFactories {
  * @param content - Composable function that allows users to define the content the [AttachmentFactory] will build using any given
  * [AttachmentState].
  */
-public open class AttachmentFactory(
+public open class AttachmentFactory @InternalStreamChatApi constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val content: @Composable (AttachmentState) -> Unit,
 )

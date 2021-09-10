@@ -21,8 +21,10 @@ internal class MessageListScrollHelper(
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
     internal var scrollToBottomButtonEnabled: Boolean by Delegates.notNull()
 
-    private val layoutManager: LinearLayoutManager by lazy { recyclerView.layoutManager as LinearLayoutManager }
-    private val adapter: MessageListItemAdapter by lazy { recyclerView.adapter as MessageListItemAdapter }
+    private val layoutManager: LinearLayoutManager
+        get() = recyclerView.layoutManager as LinearLayoutManager
+    private val adapter: MessageListItemAdapter
+        get() = recyclerView.adapter as MessageListItemAdapter
 
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null

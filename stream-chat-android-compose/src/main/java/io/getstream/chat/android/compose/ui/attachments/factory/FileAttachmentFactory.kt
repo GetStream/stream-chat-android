@@ -5,10 +5,11 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 
 /**
- * An extension of the [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
+ * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
  */
-public class FileAttachmentFactory : AttachmentFactory(
+@Suppress("FunctionName")
+public fun FileAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.isNotEmpty() },
-    content = @Composable { FileAttachmentContent(it) }
+    content = @Composable { FileAttachmentContent(it) },
 )
