@@ -41,7 +41,6 @@ import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.None
@@ -56,7 +55,7 @@ import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.compose.state.messages.list.buildMessageOption
 import io.getstream.chat.android.compose.state.messages.reaction.ReactionOption
-import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent

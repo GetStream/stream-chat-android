@@ -61,6 +61,7 @@ dependencies {
     implementation Dependencies.androidxRecyclerview
     implementation Dependencies.androidxStartup
     implementation Dependencies.constraintLayout
+    implementation Dependencies.materialComponents
 
     api Dependencies.threeTenAbp
 
