@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.message.input.mention
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.randomString
 import io.getstream.chat.android.ui.createUser
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.internal.assertEquals
@@ -59,7 +60,7 @@ internal class DefaultUserLookupHandlerTest {
             createUser().apply { name = randomString() },
         )
 
-        val result = DefaultUserLookupHandler(users).handleUserLookup(query)
+        val result = MessageInputView.DefaultUserLookupHandler(users).handleUserLookup(query)
 
         if (expectedResult != null) {
             assertEquals(expectedResult, result)
