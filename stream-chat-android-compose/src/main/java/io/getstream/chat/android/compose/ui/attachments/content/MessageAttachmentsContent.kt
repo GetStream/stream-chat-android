@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.components
+package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -43,7 +43,7 @@ public fun MessageAttachmentsContent(
 
         val attachmentState = AttachmentState(
             modifier = Modifier.padding(4.dp),
-            message = messageItem,
+            messageItem = messageItem,
             onLongItemClick = onLongItemClick
         )
 

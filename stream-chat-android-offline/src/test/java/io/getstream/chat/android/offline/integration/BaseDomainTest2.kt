@@ -7,7 +7,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -44,6 +43,8 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -108,7 +109,7 @@ internal open class BaseDomainTest2 {
      */
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
-            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
+            result.isError.shouldBeFalse()
         }
     }
 
@@ -117,7 +118,7 @@ internal open class BaseDomainTest2 {
      */
     fun assertFailure(result: Result<*>) {
         if (!result.isError) {
-            Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
+            result.isError.shouldBeTrue()
         }
     }
 

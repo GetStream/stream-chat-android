@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel.controller
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -14,6 +13,7 @@ import io.getstream.chat.android.offline.utils.UpdateOperationCounts
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
 
     @Test
-    fun `When observing messages Should receive the correct number of events with messages`() = runBlocking {
+    fun `When observing messages Should receive the correct number of events with messages`(): Unit = runBlocking {
         val counter = DiffUtilOperationCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
@@ -34,15 +34,15 @@ internal class ChannelControllerIntegrationTest : BaseConnectedMockedTest() {
         // watching a channel, should trigger 2 updates (once for offline and another for online),
         // but there should be only 1 insert since the messages in our case are the same
         sut.watch()
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 2, changed = 0, inserted = 1))
+        counter.counts shouldBeEqualTo UpdateOperationCounts(events = 2, changed = 0, inserted = 1)
 
         // adding a message, should trigger 1 "insert" operation
         chatDomainImpl.eventHandler.handleEvent(data.newMessageFromUser2)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 3, changed = 0, inserted = 2))
+        counter.counts shouldBeEqualTo UpdateOperationCounts(events = 3, changed = 0, inserted = 2)
 
         // updating a message, should trigger 1 "changed" operation
         chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        Truth.assertThat(counter.counts).isEqualTo(UpdateOperationCounts(events = 4, changed = 1, inserted = 2))
+        counter.counts shouldBeEqualTo UpdateOperationCounts(events = 4, changed = 1, inserted = 2)
     }
 
     private class Fixture(

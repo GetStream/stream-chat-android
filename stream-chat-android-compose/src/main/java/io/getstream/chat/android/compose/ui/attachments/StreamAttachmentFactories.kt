@@ -3,11 +3,17 @@ package io.getstream.chat.android.compose.ui.attachments
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.file.FileAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.giphy.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.image.ImageAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.link.LinkAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
+/**
+ * Provides different attachment factories that build custom message content based on a given attachment.
+ *
+ * TODO - Migrate back to abstract [AttachmentFactory] and concrete implementations once https://issuetracker.google.com/issues/197727783 is fixed.
+ */
 public object StreamAttachmentFactories {
 
     /**
@@ -28,7 +34,7 @@ public object StreamAttachmentFactories {
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
-        FileAttachmentFactory()
+        FileAttachmentFactory(),
     )
 }
 
@@ -39,7 +45,7 @@ public object StreamAttachmentFactories {
  * @param content - Composable function that allows users to define the content the [AttachmentFactory] will build using any given
  * [AttachmentState].
  */
-public abstract class AttachmentFactory(
+public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val content: @Composable (AttachmentState) -> Unit,
 )

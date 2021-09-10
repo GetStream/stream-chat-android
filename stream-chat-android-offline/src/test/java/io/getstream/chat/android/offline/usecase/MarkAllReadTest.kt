@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
@@ -14,6 +13,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -51,7 +51,7 @@ internal class MarkAllReadTest {
 
             var result = markAllRead.invoke().execute()
 
-            Truth.assertThat(result.isSuccess).isTrue()
+            result.isSuccess.shouldBeTrue()
             verify(chatClient, times(1)).markAllRead()
             activeChannels.forEach {
                 verify(it).markRead()
@@ -66,7 +66,7 @@ internal class MarkAllReadTest {
 
             var result = markAllRead.invoke().execute()
 
-            Truth.assertThat(result.isSuccess).isTrue()
+            result.isSuccess.shouldBeTrue()
             verify(chatClient, times(1)).markAllRead()
             activeChannels.forEach {
                 verify(it).markRead()

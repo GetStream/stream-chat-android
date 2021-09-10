@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -12,6 +11,9 @@ import io.getstream.chat.android.test.randomDateBefore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -25,8 +27,8 @@ internal class WhenHide : BaseChannelControllerTests() {
 
         val result = sut.hide(clearHistory = false)
 
-        Truth.assertThat(response).isEqualTo(result)
-        Truth.assertThat(sut.hidden.value).isTrue()
+        response shouldBeEqualTo result
+        sut.hidden.value.shouldBeTrue()
     }
 
     @Test
@@ -37,7 +39,7 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = false)
 
-            Truth.assertThat(response).isEqualTo(result)
+            response shouldBeEqualTo result
         }
 
     @Test
@@ -48,7 +50,7 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = false)
 
-            Truth.assertThat(response).isEqualTo(result)
+            response shouldBeEqualTo result
             verify(channelClient).hide(clearHistory = false)
             verify(repos).setHiddenForChannel(cid = cid, hidden = true)
         }
@@ -61,8 +63,8 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = true)
 
-            Truth.assertThat(response).isEqualTo(result)
-            Truth.assertThat(sut.hideMessagesBefore).isNotNull()
+            response shouldBeEqualTo result
+            sut.hideMessagesBefore.shouldNotBeNull()
         }
 
     @Test
@@ -73,9 +75,9 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = true)
 
-            Truth.assertThat(response).isEqualTo(result)
+            response shouldBeEqualTo result
             verify(channelClient).hide(clearHistory = true)
-            Truth.assertThat(sut.hideMessagesBefore).isNotNull()
+            sut.hideMessagesBefore.shouldNotBeNull()
             verify(repos).setHiddenForChannel(
                 cid = cid,
                 hidden = true,
@@ -91,9 +93,9 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = true)
 
-            Truth.assertThat(response).isEqualTo(result)
+            response shouldBeEqualTo result
             verify(channelClient).hide(clearHistory = true)
-            Truth.assertThat(sut.hideMessagesBefore).isNotNull()
+            sut.hideMessagesBefore.shouldNotBeNull()
             verify(repos).deleteChannelMessagesBefore(
                 cid = cid,
                 hideMessagesBefore = sut.hideMessagesBefore!!,
@@ -117,9 +119,9 @@ internal class WhenHide : BaseChannelControllerTests() {
 
             val result = sut.hide(clearHistory = true)
 
-            Truth.assertThat(response).isEqualTo(result)
+            response shouldBeEqualTo result
             val messages = sut.unfilteredMessages.first()
-            Truth.assertThat(messages.size).isEqualTo(1)
-            Truth.assertThat(messages.any { it == messageSentAfterChannelIsCleared }).isTrue()
+            messages.size shouldBeEqualTo 1
+            messages.any { it == messageSentAfterChannelIsCleared }.shouldBeTrue()
         }
 }

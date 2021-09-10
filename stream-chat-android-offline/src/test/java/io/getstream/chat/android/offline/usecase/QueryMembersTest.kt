@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -23,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -119,7 +119,7 @@ internal class QueryMembersTest {
             emptyList()
         )
 
-        Truth.assertThat(result.data()).isEqualTo(onlineMembers)
+        result.data() shouldBeEqualTo onlineMembers
     }
 
     @Test
@@ -129,7 +129,7 @@ internal class QueryMembersTest {
         val result = queryMembers(channel.cid, 0, 0, filter, sort).execute()
 
         verify(mockRepo).updateMembersForChannel(channel.cid, onlineMembers)
-        Truth.assertThat(result.data()).isEqualTo(onlineMembers)
+        result.data() shouldBeEqualTo onlineMembers
     }
 
     @Test
@@ -140,7 +140,7 @@ internal class QueryMembersTest {
 
         verify(mockClient, never()).queryMembers(any(), any(), any(), any(), any(), any(), any())
         verify(mockRepo).selectMembersForChannel(channel.cid)
-        Truth.assertThat(result.data()).isEqualTo(offlineMembers)
+        result.data() shouldBeEqualTo offlineMembers
     }
 
     @Test
@@ -150,7 +150,7 @@ internal class QueryMembersTest {
         val limit = 2
         val result = queryMembers(channel.cid, 0, limit, filter, sort).execute()
 
-        Truth.assertThat(result.data().size).isEqualTo(limit)
+        result.data().size shouldBeEqualTo limit
     }
 
     @Test
@@ -161,8 +161,8 @@ internal class QueryMembersTest {
         val result = queryMembers(channel.cid, offset, 0, filter, sort).execute()
 
         val data = result.data()
-        Truth.assertThat(data.size).isEqualTo(offlineMembers.size - offset)
-        Truth.assertThat(data).isEqualTo(offlineMembers.drop(offset))
+        data.size shouldBeEqualTo offlineMembers.size - offset
+        data shouldBeEqualTo offlineMembers.drop(offset)
     }
 
     @Test
@@ -174,7 +174,7 @@ internal class QueryMembersTest {
         val result = queryMembers(channel.cid, offset, limit, filter, sort).execute()
 
         val data = result.data()
-        Truth.assertThat(data.size).isEqualTo(offlineMembers.size)
+        data.size shouldBeEqualTo offlineMembers.size
     }
 
     @Test
@@ -187,7 +187,7 @@ internal class QueryMembersTest {
 
         val data = result.data()
         val expectedSize = (offlineMembers.size - offset).coerceAtLeast(0)
-        Truth.assertThat(data.size).isEqualTo(expectedSize)
+        data.size shouldBeEqualTo expectedSize
     }
 
     @Test
@@ -199,7 +199,7 @@ internal class QueryMembersTest {
         val result = queryMembers(channel.cid, offset, limit, filter, sort).execute()
 
         val data = result.data()
-        Truth.assertThat(data.size).isEqualTo(offlineMembers.size)
+        data.size shouldBeEqualTo offlineMembers.size
     }
 
     @Test
@@ -212,6 +212,6 @@ internal class QueryMembersTest {
             val result = queryMembers(channel.cid, offset, limit, filter, sort).execute()
 
             val data = result.data()
-            Truth.assertThat(data.size).isEqualTo(limit)
+            data.size shouldBeEqualTo limit
         }
 }

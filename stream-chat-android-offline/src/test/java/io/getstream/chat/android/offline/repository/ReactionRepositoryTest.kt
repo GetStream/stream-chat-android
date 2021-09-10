@@ -18,9 +18,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.coInvoking
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 @ExperimentalCoroutinesApi
 internal class ReactionRepositoryTest {
@@ -55,7 +56,7 @@ internal class ReactionRepositoryTest {
     fun `Given reaction with empty messageId when it's saved in repo dao shouldn't store it to DB`() = runBlockingTest {
         val reaction = randomReaction(messageId = "", user = currentUser, type = "love")
 
-        assertThrows<IllegalArgumentException> { reactionRepo.insertReaction(reaction) }
+        coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
         verifyZeroInteractions(reactionDao)
     }
@@ -64,7 +65,7 @@ internal class ReactionRepositoryTest {
     fun `Given reaction with empty type when it's saved in repo dao shouldn't store it to DB`() = runBlockingTest {
         val reaction = randomReaction(messageId = randomString(10), user = currentUser, type = "")
 
-        assertThrows<IllegalArgumentException> { reactionRepo.insertReaction(reaction) }
+        coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
         verifyZeroInteractions(reactionDao)
     }
@@ -73,7 +74,7 @@ internal class ReactionRepositoryTest {
     fun `Given reaction with empty userId when it's saved in repo dao shouldn't store it to DB`() = runBlockingTest {
         val reaction = randomReaction(messageId = randomString(10), userId = "", type = "love")
 
-        assertThrows<IllegalArgumentException> { reactionRepo.insertReaction(reaction) }
+        coInvoking { reactionRepo.insertReaction(reaction) }.shouldThrow(IllegalArgumentException::class)
 
         verifyZeroInteractions(reactionDao)
     }

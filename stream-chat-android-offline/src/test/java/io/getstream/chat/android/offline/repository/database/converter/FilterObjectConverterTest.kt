@@ -6,7 +6,7 @@ import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
-import org.junit.Assert
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -21,7 +21,7 @@ internal class FilterObjectConverterTest {
     fun objectToStringTest(filterObject: FilterObject, expectedJson: String) {
         val result = filterObjectConverter.objectToString(filterObject)
 
-        Assert.assertEquals(expectedJson, result)
+        result shouldBeEqualTo expectedJson
     }
 
     /** [stringToObjectArguments] */
@@ -30,7 +30,7 @@ internal class FilterObjectConverterTest {
     fun stringToObjectTest(json: String, expectedFilterObject: FilterObject) {
         val result = filterObjectConverter.stringToObject(json)
 
-        Assert.assertEquals(expectedFilterObject, result)
+        result shouldBeEqualTo expectedFilterObject
     }
 
     companion object {

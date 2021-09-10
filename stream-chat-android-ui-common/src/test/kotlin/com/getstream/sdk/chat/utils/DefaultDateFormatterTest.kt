@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.utils
 
-import com.google.common.truth.Truth
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
@@ -34,7 +34,7 @@ internal class DefaultDateFormatterTest {
 
         val formattedDate = formatter.formatDate(testCase.dateToFormat)
 
-        Truth.assertThat(formattedDate).isEqualTo(testCase.expectedResult)
+        formattedDate shouldBeEqualTo testCase.expectedResult
     }
 
     @Suppress("unused")

@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.utils.TestDataHelper
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 internal class ExtraDataConverterTest {
@@ -13,7 +13,7 @@ internal class ExtraDataConverterTest {
         val converter = ExtraDataConverter()
         val output = converter.mapToString(null)
         val converted = converter.stringToMap(output)
-        Truth.assertThat(converted).isEqualTo(mutableMapOf<String, Any>())
+        converted shouldBeEqualTo mutableMapOf()
     }
 
     @Test
@@ -21,6 +21,6 @@ internal class ExtraDataConverterTest {
         val converter = ExtraDataConverter()
         val output = converter.mapToString(data.extraData1)
         val converted = converter.stringToMap(output)
-        Truth.assertThat(converted).isEqualTo(data.extraData1)
+        converted shouldBeEqualTo data.extraData1
     }
 }

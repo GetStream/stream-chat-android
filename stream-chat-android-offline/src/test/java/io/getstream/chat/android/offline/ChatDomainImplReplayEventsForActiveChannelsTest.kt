@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -18,6 +17,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
@@ -38,7 +38,7 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
 
             sut.replayEvents(cid)
 
-            Truth.assertThat(sut.isActiveChannel(cid)).isTrue()
+            sut.isActiveChannel(cid).shouldBeTrue()
         }
 
     @Test

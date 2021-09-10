@@ -44,7 +44,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.ui.attachments.components.FileAttachmentImage
+import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
