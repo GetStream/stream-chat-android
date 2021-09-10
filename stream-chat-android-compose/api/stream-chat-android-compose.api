@@ -326,20 +326,8 @@ public final class io/getstream/chat/android/compose/state/messages/reaction/Rea
 
 public class io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
 	public static final field $stable I
-	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;)V
 	public final fun getCanHandle ()Lkotlin/jvm/functions/Function1;
 	public final fun getContent ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/attachments/ComposableSingletons$StreamAttachmentFactoriesKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/ComposableSingletons$StreamAttachmentFactoriesKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function3;
-	public static field lambda-2 Lkotlin/jvm/functions/Function3;
-	public static field lambda-3 Lkotlin/jvm/functions/Function3;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories {
@@ -399,24 +387,20 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
-	public static final field $stable I
-	public fun <init> ()V
+public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactoryKt {
+	public static final fun FileAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
-	public static final field $stable I
-	public fun <init> ()V
+public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyAttachmentFactoryKt {
+	public static final fun GiphyAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/ImageAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
-	public static final field $stable I
-	public fun <init> ()V
+public final class io/getstream/chat/android/compose/ui/attachments/factory/ImageAttachmentFactoryKt {
+	public static final fun ImageAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/LinkAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
-	public static final field $stable I
-	public fun <init> (I)V
+public final class io/getstream/chat/android/compose/ui/attachments/factory/LinkAttachmentFactoryKt {
+	public static final fun LinkAttachmentFactory (I)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/ChannelsScreenKt {
