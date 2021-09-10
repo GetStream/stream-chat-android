@@ -39,10 +39,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
@@ -52,12 +54,13 @@ import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPo
 import io.getstream.chat.android.compose.state.messages.items.Middle
 import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.items.Top
-import io.getstream.chat.android.compose.ui.attachments.components.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import java.util.Date
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -87,6 +90,7 @@ public fun DefaultMessageContainer(
 
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
+    val isUploading = message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }
     val ownsMessage = messageItem.isMine
 
     val messageCardColor =
@@ -159,7 +163,7 @@ public fun DefaultMessageContainer(
                     shape = bubbleShape,
                     color = messageCardColor,
                     content = {
-                        if (message.deletedAt != null) {
+                        if (isDeleted) {
                             DeletedMessageContent()
                         } else {
                             Column {
@@ -173,8 +177,13 @@ public fun DefaultMessageContainer(
                     }
                 )
 
-                if (isDeleted && ownsMessage) {
-                    DeletedMessageFooter(
+                if (isUploading) {
+                    UploadingFooter(
+                        modifier = Modifier.align(End),
+                        message = message
+                    )
+                } else if (isDeleted && ownsMessage) {
+                    OwnedMessageVisibilityContent(
                         modifier = Modifier,
                         message = message
                     )
@@ -496,6 +505,36 @@ internal fun DeletedMessageContent(
 }
 
 /**
+ * A footer indicating the current upload progress - how many items have been uploaded and what the total number of items
+ * is.
+ *
+ * @param message The message to show the content of.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun UploadingFooter(
+    message: Message,
+    modifier: Modifier = Modifier,
+) {
+    val attachments = message.attachments
+
+    val uploadedCount = attachments.count { it.uploadState == Attachment.UploadState.Success }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = End
+    ) {
+        OwnedMessageVisibilityContent(message = message)
+
+        Text(
+            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount, attachments.size),
+            style = ChatTheme.typography.body,
+            textAlign = TextAlign.End
+        )
+    }
+}
+
+/**
  * Default message footer, which contains either [ThreadParticipants] or the default footer, which
  * holds the sender name and the timestamp.
  *
@@ -530,13 +569,13 @@ internal fun MessageFooter(
 }
 
 /**
- * Shows the deleted message footer, which holds the timestamp, or
+ * Shows the content that lets the user know that only they can see the message.
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
  */
 @Composable
-private fun DeletedMessageFooter(
+private fun OwnedMessageVisibilityContent(
     message: Message,
     modifier: Modifier = Modifier,
 ) {
@@ -557,7 +596,7 @@ private fun DeletedMessageFooter(
 
         Timestamp(
             modifier = Modifier.padding(8.dp),
-            date = message.updatedAt ?: message.createdAt
+            date = message.updatedAt ?: message.createdAt ?: Date()
         )
     }
 }
