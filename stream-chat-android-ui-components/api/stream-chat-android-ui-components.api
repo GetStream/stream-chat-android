@@ -1089,6 +1089,14 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$C
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/MessageInputView$ChatMode;
 }
 
+public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;)V
+	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getUsers ()Ljava/util/List;
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setUsers (Ljava/util/List;)V
+}
+
 public abstract class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
 }
 
@@ -1340,12 +1348,8 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 }
 
-public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
-	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;)V
-	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getUsers ()Ljava/util/List;
-	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun setUsers (Ljava/util/List;)V
+public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandlerKt {
+	public static final fun searchUsers (Ljava/util/List;Ljava/lang/String;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/ui/message/input/transliteration/DefaultStreamTransliterator : io/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator {
