@@ -154,7 +154,6 @@ internal class ChatNotificationsImpl constructor(
         logger.logD("Showing notification with loaded data")
         val notificationId = System.currentTimeMillis().toInt()
 
-        handler.getDataLoadListener()?.onLoadSuccess(channel, message)
         handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
             .let { notification ->
                 showedMessages.add(message.id)
@@ -181,7 +180,6 @@ internal class ChatNotificationsImpl constructor(
 
     private fun showErrorNotification(messageId: String, error: ChatError, shouldShowInForeground: Boolean = false) {
         logger.logE("Error loading required data: ${error.message}", error)
-        handler.getDataLoadListener()?.onLoadFail(messageId, error)
 
         showNotification(
             notificationId = System.currentTimeMillis().toInt(),

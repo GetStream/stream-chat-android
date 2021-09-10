@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.notifications.handler
 
 import android.app.Notification
@@ -54,6 +56,11 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return null
     }
 
+    @Deprecated(
+        message = "It is not used anymore, you will be notify to build the notification instead",
+        replaceWith = ReplaceWith(""),
+        level = DeprecationLevel.ERROR,
+    )
     public open fun getDataLoadListener(): NotificationLoadDataListener? {
         return null
     }
