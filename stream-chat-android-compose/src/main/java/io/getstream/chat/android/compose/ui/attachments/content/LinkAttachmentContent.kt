@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.link
+package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Intent
 import android.net.Uri
