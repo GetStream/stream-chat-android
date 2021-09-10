@@ -68,7 +68,7 @@
 - Fixed bug related to `ScrollHelper` when `MessageListView` is initialised more than once.
 
 ### ⬆️ Improved
-- The search for mentions now includes transliteration, diacritics removal, and ignore typos. To use transliteration, pass the id of the desired alphabets to `DefaultUserLookupHandler` and set it using `MessageInputView.setUserLookupHandler`. It uses https://unicode-org.github.io/icu/userguide/icu4j/ for transliteration
+- The search for mentions now includes transliteration, diacritics removal, and ignore typos. To use transliteration, pass the id of the desired alphabets to `DefaultStreamTransliterator`, add it to DefaultUserLookupHandler and set it using `MessageInputView.setUserLookupHandler`. Transliteration works only for android API 29. If you like to add your own transliteration use https://unicode-org.github.io/icu/userguide/icu4j/.
 - Improved scroll of message when many gif images are present in `MessageListView`
 
 ### ✅ Added
