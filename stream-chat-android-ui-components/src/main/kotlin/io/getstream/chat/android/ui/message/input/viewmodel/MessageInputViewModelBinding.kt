@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.DIRECT_CHAT
 import io.getstream.chat.android.ui.message.input.MessageInputView.ChatMode.GROUP_CHAT
-import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
 import java.io.File
 
 /**
@@ -21,7 +20,7 @@ import java.io.File
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
-    val handler = DefaultUserLookupHandler(emptyList())
+    val handler = MessageInputView.DefaultUserLookupHandler(emptyList())
     view.setUserLookupHandler(handler)
     members.observe(lifecycleOwner) { members ->
         handler.users = members.map(Member::user)

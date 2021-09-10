@@ -38,7 +38,9 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
-import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.message.input.mention.searchUsers
+import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
+import io.getstream.chat.android.ui.message.input.transliteration.StreamTransliterator
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListController
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListView
 import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
@@ -795,5 +797,21 @@ public class MessageInputView : ConstraintLayout {
          * @return List of users as result of lookup.
          */
         public suspend fun handleUserLookup(query: String): List<User>
+    }
+
+    /**
+     * Default implementation for MessageInputView.UserLookupHandler. This class ignores diacritics and upper case.
+     * Tt uses levenshtein approximation so typos are included in the search. It is possible to choose a transliteration
+     * in the class to conversions between languages are possible. It uses https://unicode-org.github.io/icu/userguide/icu4j/
+     * for transliteration
+     */
+    public class DefaultUserLookupHandler(
+        public var users: List<User>,
+        private var streamTransliterator: StreamTransliterator = DefaultStreamTransliterator(),
+    ) : UserLookupHandler {
+
+        override suspend fun handleUserLookup(query: String): List<User> {
+            return searchUsers(users, query, streamTransliterator)
+        }
     }
 }

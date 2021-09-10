@@ -57,7 +57,6 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.input.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -240,7 +239,7 @@ class Android {
         }
 
         fun transliterationSupport(users: List<User>) {
-            val defaultUserLookupHandler = DefaultUserLookupHandler(
+            val defaultUserLookupHandler = MessageInputView.DefaultUserLookupHandler(
                 users,
                 DefaultStreamTransliterator("Cyrl-Latn")
             )
