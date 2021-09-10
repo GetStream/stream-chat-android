@@ -1,10 +1,11 @@
 package io.getstream.chat.android.client.parser2
 
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class UpstreamUserDtoAdapterTest {
     private val parser = MoshiChatParser()
@@ -12,19 +13,19 @@ internal class UpstreamUserDtoAdapterTest {
     @Test
     fun `Serialize JSON user with custom fields`() {
         val jsonString = parser.toJson(UserDtoTestData.upstreamUser)
-        assertThat(jsonString).isEqualTo(UserDtoTestData.upstreamJson)
+        jsonString shouldBeEqualTo UserDtoTestData.upstreamJson
     }
 
     @Test
     fun `Serialize JSON user without custom fields`() {
         val jsonString = parser.toJson(UserDtoTestData.upstreamUserWithoutExtraData)
-        assertThat(jsonString).isEqualTo(UserDtoTestData.upstreamJsonWithoutExtraData)
+        jsonString shouldBeEqualTo UserDtoTestData.upstreamJsonWithoutExtraData
     }
 
     @Test
     fun `Can't parse upstream user`() {
-        assertThrows<RuntimeException> {
+        invoking {
             parser.fromJson(UserDtoTestData.upstreamJson, UpstreamUserDto::class.java)
-        }
+        }.shouldThrow(RuntimeException::class)
     }
 }

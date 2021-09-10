@@ -12,7 +12,7 @@ import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import okio.buffer
 import okio.source
-import org.junit.jupiter.api.Assertions
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Date
@@ -58,9 +58,8 @@ internal class ChannelExtensionsTest {
             thirdChannel
         ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
-        Assertions.assertTrue {
-            result1.first() == secondChannel && result1.last() == firstChannel
-        }
+        result1.first() shouldBeEqualTo secondChannel
+        result1.last() shouldBeEqualTo firstChannel
     }
 
     @Test
@@ -83,8 +82,7 @@ internal class ChannelExtensionsTest {
             thirdChannel
         ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
-        Assertions.assertTrue {
-            result1.first() == firstChannel && result1.last() == secondChannel
-        }
+        result1.first() shouldBeEqualTo firstChannel
+        result1.last() shouldBeEqualTo secondChannel
     }
 }

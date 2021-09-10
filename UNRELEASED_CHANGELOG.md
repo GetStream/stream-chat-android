@@ -52,7 +52,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed theme for `AttachmentDocumentActivity`. Now it is applied: `Theme.AppCompat.DayNight.NoActionBar`
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -90,12 +90,15 @@
 - Added a way to customize the default line limit for link descriptions
 
 ### ✅ Added
+- Added an uploading indicator to files and images
+- Images being uploaded are now preloaded from the system
+- Upload indicators show the upload progress and how much data is left to send
 
 ### ⚠️ Changed
 - `StreamAttachment.defaultFactories()` is a function now, instead of a property.
 - Updated all default value factories to functions (e.g. StreamTypography)
 - Re-organized all attachment factories and split up code in multiple packages
--
+- Changed the `AttachmentState` `message` property name to `messageItem`
 
 ### ❌ Removed
 

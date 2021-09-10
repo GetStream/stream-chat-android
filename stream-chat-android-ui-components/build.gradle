@@ -91,5 +91,4 @@ dependencies {
     testRuntimeOnly Dependencies.junitVintageEngine
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.truth
 }

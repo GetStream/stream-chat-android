@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
@@ -9,6 +8,9 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldContainAll
+import org.amshove.kluent.shouldNotBe
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -16,7 +18,7 @@ import org.junit.runner.RunWith
 internal class EditMessageUseCaseTest : BaseDomainTest2() {
 
     @Test
-    fun `edit message use case full example`() = runBlocking {
+    fun `edit message use case full example`(): Unit = runBlocking {
         // TODO: this test is slow for unknown reasons
         val originalMessage = data.createMessage()
 
@@ -26,7 +28,7 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
 
         var messages = channelControllerImpl.messages.value
         val lastMessage = messages.last()
-        Truth.assertThat(lastMessage.id).isEqualTo(originalMessage.id)
+        lastMessage.id shouldBeEqualTo originalMessage.id
 
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
@@ -37,10 +39,10 @@ internal class EditMessageUseCaseTest : BaseDomainTest2() {
         assertSuccess(result2)
         messages = channelControllerImpl.messages.value
         val liveLastMessage = messages.last()
-        Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
-        Truth.assertThat(liveLastMessage.extraData).containsAtLeastEntriesIn(updatedMessage.extraData)
-        Truth.assertThat(liveLastMessage.extraData["plaid"]).isEqualTo(true)
+        liveLastMessage.id shouldBeEqualTo originalMessage.id
+        liveLastMessage.extraData shouldContainAll updatedMessage.extraData
+        liveLastMessage.extraData["plaid"] shouldBeEqualTo true
         // verify it's not the same object (since that breaks diffUtils)
-        Truth.assertThat(liveLastMessage === updatedMessage).isFalse()
+        liveLastMessage shouldNotBe updatedMessage
     }
 }

@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.offline.randomChannel
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest

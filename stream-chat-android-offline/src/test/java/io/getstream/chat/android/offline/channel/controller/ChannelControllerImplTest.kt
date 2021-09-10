@@ -16,7 +16,6 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.shouldBeEqualTo
@@ -114,14 +113,14 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
 
         val result = channelController.toChannel()
 
-        assertEquals(expectedResult.id, result.id)
-        assertEquals(expectedResult.type, result.type)
-        assertEquals(expectedResult.cid, result.cid)
+        result.id shouldBeEqualTo expectedResult.id
+        result.type shouldBeEqualTo expectedResult.type
+        result.cid shouldBeEqualTo expectedResult.cid
 
-        assertEquals(result.messages, emptyList<Message>())
-        assertEquals(result.watchers, emptyList<User>())
-        assertEquals(result.members, emptyList<Member>())
-        assertEquals(result.messages, emptyList<Message>())
+        emptyList<Message>() shouldBeEqualTo result.messages
+        emptyList<User>() shouldBeEqualTo result.watchers
+        emptyList<Member>() shouldBeEqualTo result.members
+        emptyList<Message>() shouldBeEqualTo result.messages
     }
 
     @Test

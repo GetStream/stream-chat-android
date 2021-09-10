@@ -61,6 +61,7 @@ dependencies {
     implementation Dependencies.androidxRecyclerview
     implementation Dependencies.androidxStartup
     implementation Dependencies.constraintLayout
+    implementation Dependencies.materialComponents
 
     api Dependencies.threeTenAbp
 
@@ -85,6 +86,5 @@ dependencies {
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.truth
     testImplementation Dependencies.coroutinesTest
 }

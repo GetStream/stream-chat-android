@@ -1,12 +1,13 @@
 package io.getstream.chat.android.client.utils.observable
 
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 
 internal class FakeSocketService(
     val eventsCollector: MutableList<ChatEvent> = mutableListOf()
@@ -52,10 +53,10 @@ internal class FakeSocketService(
     }
 
     fun verifyConnectionUserId(userId: String) {
-        assertThat(connectionUserId).isEqualTo(userId)
+        connectionUserId shouldBeEqualTo userId
     }
 
     fun verifyNoConnectionUserId() {
-        assertThat(connectionUserId).isNull()
+        connectionUserId.shouldBeNull()
     }
 }

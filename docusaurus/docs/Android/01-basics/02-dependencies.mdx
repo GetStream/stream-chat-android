@@ -2,11 +2,25 @@
 
 All Stream Android libraries are available from MavenCentral, with some of their transitive dependencies hosted on Jitpack. 
 
-To add Stream dependencies, update your repositories in the project level `build.gradle` file to include these two repositories:
+Before you add Stream dependencies, update your repositories in the `settings.gradle` file to include these two repositories:
 
-```groovy
+```groovy {5-6}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Or if you're using an older project setup, add these repositories in your project level `build.gradle` file:
+
+```groovy {4-5}
 allprojects {
     repositories {
+        google()
         mavenCentral()
         maven { url "https://jitpack.io" }
     }
@@ -16,6 +30,8 @@ allprojects {
 Check the [Releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version and the changelog.
 
 [![Latest version badge](https://img.shields.io/github/v/release/GetStream/stream-chat-android)](https://github.com/GetStream/stream-chat-android/releases)
+
+## Available Artifacts
 
 ### Client
 
@@ -61,6 +77,43 @@ dependencies {
 }
 ```
 
+:::info
 Note that the Compose SDK's version still has a `-beta` postfix in it.
+:::
 
 Adding the Compose UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+## Versioning
+
+Our Android libraries do **not** follow semantic versioning.
+
+We increase the minor version whenever breaking changes are introduced. Patch releases only contain smaller fixes and improvements.
+
+You can keep track of all the changes in the Stream Android libraries via the [GitHub releases page](https://github.com/GetStream/stream-chat-android/releases), and you can also find the release notes of all past releases in our [CHANGELOG file](https://github.com/GetStream/stream-chat-android/blob/main/CHANGELOG.md). These will always highlight breaking changes.
+
+We also maintain a separate document, [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md), which lists deprecated constructs in the SDK, with their expected time of further deprecations and eventual removal.
+
+## Snapshot Builds
+
+We publish SNAPSHOT versions of our SDK, which contain the code as of the latest commit on [the `develop` branch](https://github.com/GetStream/stream-chat-android/tree/develop).
+
+These builds may contain bugs or breaking changes that will be fixed before the next proper release. However, you can use these builds temporarily to include the latest changes from our SDK in your project before the next release happens.
+
+:::warning
+Snapshot builds are not stable. Never use them in production.
+:::
+
+To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration (see at the top of this page for where to add this): 
+
+```groovy
+maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+```
+
+Then you can add a snapshot dependency on any of our artifacts, replacing the normal version number with a version that has a `-SNAPSHOT` postfix. 
+Our snapshot version is always one patch version ahead of the latest release we've published. If the last stable release was `X.Y.Z`, the snapshot version would be `X.Y.(Z+1)-SNAPSHOT`.
+
+You can browse our available snapshot builds in the [Sonatype snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/), which you can also check for what the latest available snapshot version is. 
+
+:::info
+If you're using a snapshot of our Compose library, do not include `-beta` in the version name.
+:::

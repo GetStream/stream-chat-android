@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -14,6 +13,8 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -47,8 +48,8 @@ internal class QueryChannelsTest {
 
         val result = queryChannels.invoke(anyFilter, QuerySort()).execute()
 
-        Truth.assertThat(result.data()).isInstanceOf(QueryChannelsController::class.java)
-        Truth.assertThat(result.isSuccess).isTrue()
+        result.data().shouldBeInstanceOf<QueryChannelsController>()
+        result.isSuccess.shouldBeTrue()
     }
 
     @Test
