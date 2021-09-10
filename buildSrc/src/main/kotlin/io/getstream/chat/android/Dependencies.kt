@@ -3,8 +3,6 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.0.1"
-    internal const val R8_TOOLS = "3.0.65"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.7.1.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.3.1"
@@ -181,7 +179,6 @@ object Dependencies {
     const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
     const val okhttpMockWebserver = "com.squareup.okhttp3:mockwebserver:${Versions.OKHTTP}"
     const val photoview = "com.github.chrisbanes:PhotoView:${Versions.PHOTOVIEW}"
-    const val r8Tools = "com.android.tools:r8:${Versions.R8_TOOLS}"
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT}"
     const val retrofitMoshiConverter = "com.squareup.retrofit2:converter-moshi:${Versions.RETROFIT}"
     const val robolectric = "org.robolectric:robolectric:${Versions.ROBOLECTRIC}"
