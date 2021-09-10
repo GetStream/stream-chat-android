@@ -254,8 +254,11 @@ messageInputView.setUserLookupHandler(defaultUserLookupHandler)
 ```
 
 ### Transliteration
-You can add transliteration to `DefaultUserLookupHandler` by setting the desired id for transliteration. This class only supports transliteration prior to API 29 (Android Q) and it will not apply transliteration for APIs smaller than this. 
-
+You can add transliteration to `DefaultUserLookupHandler` by setting the desired id for transliteration inside `DefaultStreamTransliterator` and passing it to `DefaultUserLookupHandler` constructor.
+ 
+:::note
+`DefaultStreamTransliterator` only supports transliteration prior to API 29 (Android Q) and it will not apply transliteration for APIs smaller than this. 
+:::
 ```
 val defaultUserLookupHandler = DefaultUserLookupHandler(
     users,
