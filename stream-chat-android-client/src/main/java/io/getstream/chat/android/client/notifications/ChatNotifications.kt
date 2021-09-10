@@ -43,7 +43,7 @@ internal class ChatNotificationsImpl constructor(
     private val logger = ChatLogger.get("ChatNotifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
-    private val showedNotifications = mutableSetOf<String>()
+    private val showedMessages = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     init {
@@ -92,7 +92,7 @@ internal class ChatNotificationsImpl constructor(
 
     private fun handlePushMessage(message: PushMessage) {
         if (!wasNotificationDisplayed(message.messageId)) {
-            showedNotifications.add(message.messageId)
+            showedMessages.add(message.messageId)
             LoadNotificationDataWorker.start(
                 context = context,
                 channelId = message.channelId,
@@ -109,7 +109,7 @@ internal class ChatNotificationsImpl constructor(
         val messageId = event.message.id
 
         if (!wasNotificationDisplayed(messageId)) {
-            showedNotifications.add(messageId)
+            showedMessages.add(messageId)
             scope.launch(DispatcherProvider.Main) {
                 val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
                 if (result.isSuccess) {
@@ -129,7 +129,7 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
+    private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
     override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
         val getMessage = client.getMessage(messageId)
@@ -157,7 +157,7 @@ internal class ChatNotificationsImpl constructor(
         handler.getDataLoadListener()?.onLoadSuccess(channel, message)
         handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
             .let { notification ->
-                showedNotifications.add(message.id)
+                showedMessages.add(message.id)
                 showNotification(
                     notificationId = notificationId,
                     notification = notification,
