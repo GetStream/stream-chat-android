@@ -1,16 +1,9 @@
 package io.getstream.chat.android.client.notifications
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -35,7 +28,6 @@ internal interface ChatNotifications {
 
 internal class ChatNotificationsImpl constructor(
     override val handler: ChatNotificationHandler,
-    private val client: ChatApi,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
@@ -69,7 +61,6 @@ internal class ChatNotificationsImpl constructor(
         pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
 
         if (!handler.onPushMessage(message)) {
-            if (isForeground()) return
             handlePushMessage(message)
         }
     }
@@ -90,110 +81,39 @@ internal class ChatNotificationsImpl constructor(
     }
 
     private fun handlePushMessage(message: PushMessage) {
-        if (!wasNotificationDisplayed(message.messageId)) {
-            showedMessages.add(message.messageId)
-            LoadNotificationDataWorker.start(
-                context = context,
-                channelId = message.channelId,
-                channelType = message.channelType,
-                messageId = message.messageId,
-                notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
-                notificationIcon = handler.config.loadNotificationDataIcon,
-                notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
-            )
-        }
+        obtainNotifactionData(message.channelId, message.channelType, message.messageId)
+    }
+
+    private fun obtainNotifactionData(channelId: String, channelType: String, messageId: String) {
+        LoadNotificationDataWorker.start(
+            context = context,
+            channelId = channelId,
+            channelType = channelType,
+            messageId = messageId,
+            notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
+            notificationIcon = handler.config.loadNotificationDataIcon,
+            notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
+        )
     }
 
     private fun handleEvent(event: NewMessageEvent) {
-        val messageId = event.message.id
-
-        if (!wasNotificationDisplayed(messageId)) {
-            showedMessages.add(messageId)
-            scope.launch(DispatcherProvider.Main) {
-                val result = client.queryChannel(event.channelType, event.channelId, QueryChannelRequest()).await()
-                if (result.isSuccess) {
-                    showNotification(
-                        channel = result.data(),
-                        message = event.message,
-                        shouldShowInForeground = true,
-                    )
-                } else {
-                    showErrorNotification(
-                        messageId = event.message.id,
-                        error = result.error(),
-                        shouldShowInForeground = true,
-                    )
-                }
-            }
-        }
+        obtainNotifactionData(event.channelId, event.channelType, event.message.id)
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
     override fun displayNotification(channel: Channel, message: Message) {
-        showNotification(channel, message)
+        logger.logD("Showing notification with loaded data")
+        if (!wasNotificationDisplayed(message.id)) {
+            showedMessages.add(message.id)
+            handler.showNotification(channel, message)
+        }
     }
 
     override fun removeStoredDevice() {
         scope.launch {
             pushTokenUpdateHandler.removeStoredDevice()
         }
-    }
-
-    private fun showNotification(channel: Channel, message: Message, shouldShowInForeground: Boolean = false) {
-        logger.logD("Showing notification with loaded data")
-        val notificationId = System.currentTimeMillis().toInt()
-
-        handler.buildNotification(notificationId = notificationId, channel = channel, message = message).build()
-            .let { notification ->
-                showedMessages.add(message.id)
-                showNotification(
-                    notificationId = notificationId,
-                    notification = notification,
-                    shouldShowInForeground = shouldShowInForeground,
-                )
-            }
-
-        if (handler.config.shouldGroupNotifications) {
-            handler.buildNotificationGroupSummary(channel = channel, message = message).build().let { notification ->
-                showNotification(
-                    notificationId = handler.getNotificationGroupSummaryId(
-                        channelType = channel.type,
-                        channelId = channel.id,
-                    ),
-                    notification = notification,
-                    shouldShowInForeground = shouldShowInForeground,
-                )
-            }
-        }
-    }
-
-    private fun showErrorNotification(messageId: String, error: ChatError, shouldShowInForeground: Boolean = false) {
-        logger.logE("Error loading required data: ${error.message}", error)
-
-        showNotification(
-            notificationId = System.currentTimeMillis().toInt(),
-            notification = handler.buildErrorCaseNotification(),
-            shouldShowInForeground = shouldShowInForeground,
-        )
-
-        if (handler.config.shouldGroupNotifications) {
-            showNotification(
-                notificationId = handler.getErrorNotificationGroupSummaryId(),
-                notification = handler.buildErrorNotificationGroupSummary(),
-                shouldShowInForeground = shouldShowInForeground,
-            )
-        }
-    }
-
-    private fun showNotification(notificationId: Int, notification: Notification, shouldShowInForeground: Boolean) {
-        if (shouldShowInForeground || !isForeground()) {
-            notificationManager.notify(notificationId, notification)
-        }
-    }
-
-    private fun isForeground(): Boolean {
-        return ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     }
 }
 

@@ -32,6 +32,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public val config: NotificationConfig = NotificationConfig(),
 ) {
 
+    private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+
     /**
      * Handles showing notification after receiving [NewMessageEvent] from other users.
      * Default implementation loads necessary data and displays notification even if app is in foreground.
@@ -109,6 +111,12 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             groupKey = getErrorNotificationGroupKey(),
             intent = getErrorCaseIntent(),
         ).build()
+    }
+
+    public open fun showNotification(channel: Channel, message: Message) {
+        val notificationId: Int = System.nanoTime().toInt()
+        showNotification(notificationId, buildNotification(notificationId, channel, message).build())
+        showNotification(getNotificationGroupSummaryId(channel.type, channel.id), buildNotificationGroupSummary(channel, message).build())
     }
 
     public open fun buildNotification(
@@ -197,6 +205,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
+    private fun showNotification(notificationId: Int, notification: Notification) {
+        notificationManager.notify(notificationId, notification)
+    }
+
     private fun getNotificationBuilder(
         contentTitle: String,
         contentText: String,
@@ -220,11 +232,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setShowWhen(true)
             .setContentIntent(contentIntent)
-            .apply {
-                if (config.shouldGroupNotifications) {
-                    setGroup(groupKey)
-                }
-            }
+            .setGroup(groupKey)
     }
 
     private fun getReadAction(pendingIntent: PendingIntent): NotificationCompat.Action {

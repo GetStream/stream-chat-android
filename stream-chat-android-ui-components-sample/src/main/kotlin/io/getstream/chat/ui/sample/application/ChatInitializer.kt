@@ -19,7 +19,6 @@ class ChatInitializer(private val context: Context) {
             NotificationConfig(
                 smallIcon = R.drawable.ic_chat_bubble,
                 loadNotificationDataIcon = R.drawable.ic_chat_bubble,
-                shouldGroupNotifications = true,
                 pushDeviceGenerators = listOf(FirebasePushDeviceGenerator()),
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)

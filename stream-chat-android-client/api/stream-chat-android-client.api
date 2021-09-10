@@ -2758,6 +2758,7 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onPushMessage (Lio/getstream/chat/android/client/models/PushMessage;)Z
+	public fun showNotification (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
