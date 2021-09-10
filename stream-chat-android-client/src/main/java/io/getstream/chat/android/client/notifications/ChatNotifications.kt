@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -30,7 +29,7 @@ internal interface ChatNotifications {
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
     fun cancelLoadDataWork()
-    suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String)
+    fun displayNotification(channel: Channel, message: Message)
     fun removeStoredDevice()
 }
 
@@ -131,17 +130,8 @@ internal class ChatNotificationsImpl constructor(
 
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
-    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) {
-        val getMessage = client.getMessage(messageId)
-        val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
-
-        val result = getChannel.zipWith(getMessage).await()
-        if (result.isSuccess) {
-            val (channel, message) = result.data()
-            showNotification(channel = channel, message = message)
-        } else {
-            showErrorNotification(messageId = messageId, error = result.error())
-        }
+    override fun displayNotification(channel: Channel, message: Message) {
+        showNotification(channel, message)
     }
 
     override fun removeStoredDevice() {
@@ -217,6 +207,6 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
 
     override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
     override fun cancelLoadDataWork() = Unit
-    override suspend fun displayNotificationWithData(channelType: String, channelId: String, messageId: String) = Unit
+    override fun displayNotification(channel: Channel, message: Message) = Unit
     override fun removeStoredDevice() = Unit
 }
