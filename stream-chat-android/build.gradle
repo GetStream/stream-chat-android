@@ -82,7 +82,6 @@ dependencies {
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
 
-    testImplementation Dependencies.truth
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.androidxArchCoreTest

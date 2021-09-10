@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -27,6 +26,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -74,8 +75,8 @@ internal class WhenQuery {
 
         val result = sut.query()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isEqualTo(dbChannels)
+        result.isSuccess.shouldBeTrue()
+        result.data() shouldBeEqualTo dbChannels
     }
 
     @Test
@@ -95,8 +96,8 @@ internal class WhenQuery {
 
             val result = sut.query()
 
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(networkChannels)
+            result.isSuccess.shouldBeTrue()
+            result.data() shouldBeEqualTo networkChannels
         }
 
     @Test
@@ -119,7 +120,7 @@ internal class WhenQuery {
 
             sut.query()
 
-            Truth.assertThat(sut.channels.value).isEqualTo(listOf(dbChannel2, dbChannel1))
+            sut.channels.value shouldBeEqualTo listOf(dbChannel2, dbChannel1)
         }
 
     @Test
@@ -143,7 +144,7 @@ internal class WhenQuery {
 
             sut.query()
 
-            Truth.assertThat(sut.channels.value).isEqualTo(listOf(networkChannel2, networkChannel1))
+            sut.channels.value shouldBeEqualTo listOf(networkChannel2, networkChannel1)
         }
 
     private class Fixture {

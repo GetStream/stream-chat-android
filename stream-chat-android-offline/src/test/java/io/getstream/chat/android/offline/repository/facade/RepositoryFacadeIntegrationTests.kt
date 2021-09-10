@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.offline.randomChannelInfo
 import io.getstream.chat.android.offline.randomMessage
@@ -9,6 +8,10 @@ import io.getstream.chat.android.offline.randomReaction
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date
@@ -17,22 +20,23 @@ import java.util.Date
 internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
 
     @Test
-    fun `Given a message in the database When persisting the updated message Should store the update`() = runBlocking {
-        val id = randomString()
-        val originalMessage = randomMessage(id = id)
-        val updatedText = randomString()
-        val updatedMessage = originalMessage.copy(text = updatedText)
+    fun `Given a message in the database When persisting the updated message Should store the update`(): Unit =
+        runBlocking {
+            val id = randomString()
+            val originalMessage = randomMessage(id = id)
+            val updatedText = randomString()
+            val updatedMessage = originalMessage.copy(text = updatedText)
 
-        repositoryFacade.insertMessages(listOf(originalMessage), cache = false)
-        repositoryFacade.insertMessages(listOf(updatedMessage), cache = false)
-        val result = repositoryFacade.selectMessage(id)
+            repositoryFacade.insertMessages(listOf(originalMessage), cache = false)
+            repositoryFacade.insertMessages(listOf(updatedMessage), cache = false)
+            val result = repositoryFacade.selectMessage(id)
 
-        Truth.assertThat(result).isNotNull()
-        Truth.assertThat(result!!.text).isEqualTo(updatedText)
-    }
+            result.shouldNotBeNull()
+            result.text shouldBeEqualTo updatedText
+        }
 
     @Test
-    fun `Given a message When persisting the message Should store required fields`() = runBlocking {
+    fun `Given a message When persisting the message Should store required fields`(): Unit = runBlocking {
         val message = randomMessage(
             user = randomUser(
                 // ignoring fields that are not persisted on purpose
@@ -51,12 +55,12 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
         repositoryFacade.insertMessages(listOf(message), cache = false)
         val result = repositoryFacade.selectMessage(message.id)
 
-        Truth.assertThat(result).isNotNull()
-        Truth.assertThat(result).isEqualTo(message)
+        result.shouldNotBeNull()
+        result shouldBeEqualTo message
     }
 
     @Test
-    fun `Given a message with theirs reaction When querying message Should return massage without own reactions`() =
+    fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit =
         runBlocking {
             val messageId = randomString()
             val theirsUser = randomUser(
@@ -82,13 +86,13 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 
-            Truth.assertThat(result).isNotNull()
-            Truth.assertThat(result!!.latestReactions).isEqualTo(mutableListOf(theirsReaction))
-            Truth.assertThat(result!!.ownReactions).isEmpty()
+            result.shouldNotBeNull()
+            result.latestReactions shouldBeEqualTo mutableListOf(theirsReaction)
+            result.ownReactions.shouldBeEmpty()
         }
 
     @Test
-    fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`() =
+    fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`(): Unit =
         runBlocking {
             val messageId = randomString()
             val mineDeletedReaction = randomReaction(
@@ -107,9 +111,9 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 
-            Truth.assertThat(result).isNotNull()
-            Truth.assertThat(result!!.latestReactions).isEmpty()
-            Truth.assertThat(result!!.ownReactions).isEmpty()
+            result.shouldNotBeNull()
+            result.latestReactions.shouldBeEmpty()
+            result.ownReactions.shouldBeEmpty()
         }
 
     @Test
@@ -120,11 +124,11 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 
-            Truth.assertThat(result?.channelInfo).isNull()
+            result?.channelInfo.shouldBeNull()
         }
 
     @Test
-    fun `Given a message with channel info When querying message Should return message with the same channel info`() =
+    fun `Given a message with channel info When querying message Should return message with the same channel info`(): Unit =
         runBlocking {
             val channelInfo = randomChannelInfo()
             val message = randomMessage(channelInfo = channelInfo)
@@ -132,6 +136,6 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             repositoryFacade.insertMessages(listOf(message), cache = false)
             val result = repositoryFacade.selectMessage(message.id)
 
-            Truth.assertThat(result?.channelInfo).isEqualTo(channelInfo)
+            result?.channelInfo shouldBeEqualTo channelInfo
         }
 }

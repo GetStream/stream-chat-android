@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.message.messagesendingservice
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -29,6 +28,10 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldNotBeEmpty
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 
 internal class WhenSendNewMessage {
@@ -48,13 +51,13 @@ internal class WhenSendNewMessage {
 
             val result = sut.sendNewMessage(message)
 
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data().cid).isEqualTo("cid1")
-            Truth.assertThat(result.data().id).isNotEmpty()
-            Truth.assertThat(result.data().type).isEqualTo("regular")
-            Truth.assertThat(result.data().text).isEqualTo("text123")
-            Truth.assertThat(result.data().createdLocallyAt).isNotNull()
-            Truth.assertThat(result.data().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+            result.isSuccess.shouldBeTrue()
+            result.data().cid shouldBeEqualTo "cid1"
+            result.data().id.shouldNotBeEmpty()
+            result.data().type shouldBeEqualTo "regular"
+            result.data().text shouldBeEqualTo "text123"
+            result.data().createdLocallyAt.shouldNotBeNull()
+            result.data().syncStatus shouldBeEqualTo SyncStatus.SYNC_NEEDED
         }
 
     @Test
@@ -109,8 +112,8 @@ internal class WhenSendNewMessage {
 
             val result = sut.sendNewMessage(message)
 
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(networkMessage)
+            result.isSuccess
+            result.data() shouldBeEqualTo networkMessage
         }
 
     @Test

@@ -2,14 +2,17 @@ package io.getstream.chat.android.offline
 
 import android.content.Context
 import android.os.Handler
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldNotBeEmpty
+import org.amshove.kluent.shouldNotBeNull
+import org.amshove.kluent.shouldNotContain
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class IdGenerationDomainTest {
 
@@ -36,8 +39,8 @@ internal class IdGenerationDomainTest {
 
     @Test
     fun `Given ChatDomainImpl with no currentUser When generateMessageId() called Should throw`() {
-        assertThrows<NullPointerException> { chatDomainImpl.user.value!! }
-        assertThrows<NullPointerException> { chatDomainImpl.generateMessageId() }
+        invoking { chatDomainImpl.user.value!! }.shouldThrow(NullPointerException::class)
+        invoking { chatDomainImpl.generateMessageId() }.shouldThrow(NullPointerException::class)
     }
 
     @Test
@@ -46,7 +49,7 @@ internal class IdGenerationDomainTest {
 
         val messageId = chatDomainImpl.generateMessageId()
 
-        Truth.assertThat(messageId).isNotEmpty()
+        messageId.shouldNotBeEmpty()
     }
 
     @Test
@@ -56,7 +59,7 @@ internal class IdGenerationDomainTest {
         val idMap = sortedSetOf<String>()
         (0..1000000).forEach {
             val messageId = chatDomainImpl.generateMessageId()
-            Truth.assertThat(idMap).doesNotContain(messageId)
+            idMap shouldNotContain messageId
             idMap.add(messageId)
         }
     }
@@ -64,6 +67,6 @@ internal class IdGenerationDomainTest {
     private fun setCurrentUser() {
         chatDomainImpl.offlineEnabled = false
         chatDomainImpl.setUser(currentUserFake)
-        Truth.assertThat(chatDomainImpl.user.value).isNotNull()
+        chatDomainImpl.user.value.shouldNotBeNull()
     }
 }

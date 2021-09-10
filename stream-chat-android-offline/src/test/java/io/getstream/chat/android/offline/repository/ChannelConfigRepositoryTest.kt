@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.repository
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -17,6 +16,8 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.Channel
 import io.getstream.chat.android.offline.repository.domain.channelconfig.ChannelConfigRepositoryImpl
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Test
 
@@ -50,8 +51,8 @@ internal class ChannelConfigRepositoryTest {
 
         val result = sut.selectChannelConfig("messaging")
 
-        Truth.assertThat(result).isNotNull()
-        Truth.assertThat(result!!.config.name).isEqualTo("configName")
+        result.shouldNotBeNull()
+        result.config.name shouldBeEqualTo "configName"
     }
 
     @Test
@@ -83,7 +84,7 @@ internal class ChannelConfigRepositoryTest {
 
         val result = sut.selectChannelConfig("messaging")
 
-        Truth.assertThat(result).isEqualTo(config)
+        result shouldBeEqualTo config
     }
 
     @Test
@@ -94,8 +95,8 @@ internal class ChannelConfigRepositoryTest {
 
         sut.cacheChannelConfigs()
 
-        Truth.assertThat(sut.selectChannelConfig("type1")!!.config.name).isEqualTo("name1")
-        Truth.assertThat(sut.selectChannelConfig("type2")!!.config.name).isEqualTo("name2")
+        sut.selectChannelConfig("type1")!!.config.name shouldBeEqualTo "name1"
+        sut.selectChannelConfig("type2")!!.config.name shouldBeEqualTo "name2"
     }
 
     private fun createChannelConfigEntity(type: String, name: String): ChannelConfigEntity {

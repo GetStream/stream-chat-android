@@ -9,8 +9,9 @@ import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.randomString
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 
 internal class WhenReconnectSocket : BaseChatClientTest() {
@@ -65,14 +66,14 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     fun `Given disconnected connection state And anonymous pending state Should throw exception`() {
         val sut = Fixture().givenDisconnectedConnectionState().givenAnonymousPendingState().get()
 
-        assertThrows<IllegalStateException> { sut.reconnectSocket() }
+        invoking { sut.reconnectSocket() }.shouldThrow(IllegalStateException::class)
     }
 
     @Test
     fun `Given disconnected connection state And user not set state Should throw exception`() {
         val sut = Fixture().givenDisconnectedConnectionState().givenUserNotSetState().get()
 
-        assertThrows<IllegalStateException> { sut.reconnectSocket() }
+        invoking { sut.reconnectSocket() }.shouldThrow(IllegalStateException::class)
     }
 
     inner class Fixture {

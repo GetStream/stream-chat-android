@@ -1,6 +1,6 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import com.google.common.truth.Truth
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 internal class ListConverterTest {
@@ -10,7 +10,7 @@ internal class ListConverterTest {
     fun stringListNull() {
         val output = converter.stringListToString(null)
         val converted = converter.stringToStringList(output)
-        Truth.assertThat(converted).isEqualTo(listOf<String>())
+        converted shouldBeEqualTo listOf()
     }
 
     @Test
@@ -18,6 +18,6 @@ internal class ListConverterTest {
         val input = listOf("a", "b")
         val output = converter.stringListToString(input)
         val converted = converter.stringToStringList(output)
-        Truth.assertThat(converted!!).isEqualTo(input)
+        converted!! shouldBeEqualTo input
     }
 }
