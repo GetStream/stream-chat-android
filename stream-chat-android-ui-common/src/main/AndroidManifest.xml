@@ -14,7 +14,8 @@
     </queries>
 
     <application>
-        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity" />
+        <activity android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
 
         <provider
             android:name="com.getstream.sdk.chat.StreamFileProvider"
