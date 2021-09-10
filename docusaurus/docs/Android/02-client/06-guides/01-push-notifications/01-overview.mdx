@@ -64,7 +64,7 @@ class MyNotificationHandler(context: Context, notificationConfig: NotificationCo
 
 You extended the `ChatNotificationHandler` to provide a custom implementation, and added an override for `getNewMessageIntent()`. This function allows you to intercept a notification and build a custom `Intent` that can point to any `Activity` in your app. You can also add custom data to the `Intent` if you need it.
 
-Now that you've created a custom handler, you need to pass it into the `ChatClient.Builder`:
+Now that you've created a custom handler, you need to pass it into the `ChatClient.Builder` when initializing the Stream Android SDK:
 
 ```kotlin {4}
 val notificationHandler = MyNotificationHandler(context, notificationsConfig)
@@ -102,7 +102,7 @@ class MyNotificationHandler(context: Context, notificationConfig: NotificationCo
 
 Within `buildNotification()` you receive the `notificationId` and the `Channel` and `Message` that this notification came from. You can use the `NotificationCompat.Builder()` to customize the notification appearance and default values and behaviour.
 
-Finally, once you're done, pass in the `ChatNotificationHandler` into the `ChatClient.Builder`:
+Finally, pass in the `ChatNotificationHandler` implementation to the `ChatClient.Builder` when initializing the Stream Android SDK:
 
 ```kotlin {4}
 val notificationHandler = MyNotificationHandler(context, notificationConfig)
