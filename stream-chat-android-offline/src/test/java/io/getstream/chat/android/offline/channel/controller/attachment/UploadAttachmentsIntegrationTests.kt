@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
@@ -26,6 +25,8 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,36 +71,35 @@ internal class UploadAttachmentsIntegrationTests : BaseRepositoryFacadeIntegrati
     }
 
     @Test
-    fun `Given a message with attachments When upload fails Should store the correct upload state`() = runBlocking {
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-        val message = randomMessage(attachments = attachments)
-        mockFileUploadsFailure(files)
+    fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
+        runBlocking {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+            val message = randomMessage(attachments = attachments)
+            mockFileUploadsFailure(files)
 
-        channelController.uploadAttachments(message)
+            channelController.uploadAttachments(message)
 
-        val persistedMessage = repositoryFacade.selectMessage(message.id)!!
-        Truth.assertThat(persistedMessage.attachments.size).isEqualTo(attachments.size)
-        Truth.assertThat(
-            persistedMessage.attachments.all { it.uploadState is Attachment.UploadState.Failed }
-        ).isTrue()
-    }
+            val persistedMessage = repositoryFacade.selectMessage(message.id)!!
+            persistedMessage.attachments.size shouldBeEqualTo attachments.size
+            persistedMessage.attachments.all { it.uploadState is Attachment.UploadState.Failed }.shouldBeTrue()
+        }
 
     @Test
-    fun `Given a message with attachments When upload succeeds Should store the correct upload state`() = runBlocking {
-        val attachments = randomAttachmentsWithFile().toMutableList()
-        val files: List<File> = attachments.map { it.upload!! }
-        val message = randomMessage(attachments = attachments)
-        mockFileUploadsSuccess(files)
+    fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
+        runBlocking {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+            val message = randomMessage(attachments = attachments)
+            mockFileUploadsSuccess(files)
 
-        channelController.uploadAttachments(message)
+            channelController.uploadAttachments(message)
 
-        val persistedMessage = repositoryFacade.selectMessage(message.id)!!
-        Truth.assertThat(persistedMessage.attachments.size).isEqualTo(attachments.size)
-        Truth.assertThat(
-            persistedMessage.attachments.all { it.uploadState == Attachment.UploadState.Success }
-        ).isTrue()
-    }
+            val persistedMessage = repositoryFacade.selectMessage(message.id)!!
+            persistedMessage.attachments.size shouldBeEqualTo attachments.size
+
+            persistedMessage.attachments.all { it.uploadState == Attachment.UploadState.Success }.shouldBeTrue()
+        }
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {

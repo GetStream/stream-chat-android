@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.utils
 
 import com.getstream.sdk.chat.utils.StorageHelper.Companion.FILE_NAME_PREFIX
 import io.getstream.chat.android.test.randomString
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 public class StringUtilsTest {
@@ -14,7 +14,7 @@ public class StringUtilsTest {
 
         val result = StringUtils.removeTimePrefix("${FILE_NAME_PREFIX}${dateFormat}_$fileName", dateFormat)
 
-        assertEquals(fileName, result)
+        result shouldBeEqualTo fileName
     }
 
     @Test
@@ -24,7 +24,7 @@ public class StringUtilsTest {
 
         val result = StringUtils.removeTimePrefix(randomString, dateFormat)
 
-        assertEquals(randomString, result)
+        result shouldBeEqualTo randomString
     }
 
     @Test
@@ -34,6 +34,6 @@ public class StringUtilsTest {
 
         val result = StringUtils.removeTimePrefix("${FILE_NAME_PREFIX}${dateFormat}_$fileName", dateFormat)
 
-        assertEquals(fileName, result)
+        result shouldBeEqualTo fileName
     }
 }

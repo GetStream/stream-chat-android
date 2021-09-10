@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -15,7 +14,11 @@ import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -42,16 +45,16 @@ internal class LoadNewerMessagesTest {
 
     @Test
     fun `Given empty cid When invoke Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "", messageLimit = randomInt())
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
     fun `Given inappropriate formatted cid When invoke Should throw exception`() {
-        assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "cid", messageLimit = randomInt())
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
@@ -79,8 +82,8 @@ internal class LoadNewerMessagesTest {
 
         val result = sut.invoke(cid = cid, messageLimit = messageLimit).execute()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isEqualTo(channelMock)
+        result.isSuccess.shouldBeTrue()
+        result.data() shouldBeEqualTo channelMock
     }
 
     @Test
@@ -95,7 +98,7 @@ internal class LoadNewerMessagesTest {
 
         val result = sut.invoke(cid = cid, messageLimit = messageLimit).execute()
 
-        Truth.assertThat(result.isSuccess).isFalse()
-        Truth.assertThat(result.error()).isEqualTo(errorMock)
+        result.isSuccess.shouldBeFalse()
+        result.error() shouldBeEqualTo errorMock
     }
 }

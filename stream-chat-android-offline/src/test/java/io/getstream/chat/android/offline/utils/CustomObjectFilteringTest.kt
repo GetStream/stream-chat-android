@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.utils
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.Channel
@@ -17,6 +16,7 @@ import io.getstream.chat.android.test.randomIntBetween
 import io.getstream.chat.android.test.randomLong
 import io.getstream.chat.android.test.randomLongBetween
 import io.getstream.chat.android.test.randomString
+import org.amshove.kluent.shouldContainSame
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -33,7 +33,7 @@ internal class CustomObjectFilteringTest {
     ) {
         val result = customObjectList.filter(filterObject)
 
-        Truth.assertThat(result).containsExactlyElementsIn(expectedListOfObject)
+        result shouldContainSame expectedListOfObject
     }
 
     companion object {

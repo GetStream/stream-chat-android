@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -35,6 +34,9 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -91,7 +93,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(userStartWatchingEvent)
 
-        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(newDate)
+        channelController.toChannel().lastMessageAt shouldBeEqualTo newDate
     }
 
     // New message event
@@ -110,11 +112,11 @@ internal class WhenHandleEvent {
         channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
+        channelController.messages.value shouldBeEqualTo listOf(message)
         // Unread count should not be propagated, because it is a message form the same user
-        Truth.assertThat(channelController.unreadCount.value).isEqualTo(0)
+        channelController.unreadCount.value shouldBeEqualTo 0
         // Last message is updated
-        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(Date(1000L))
+        channelController.toChannel().lastMessageAt shouldBeEqualTo Date(1000L)
     }
 
     @Test
@@ -132,13 +134,13 @@ internal class WhenHandleEvent {
         channelController.handleEvent(newMessageEvent)
 
         // Message is propagated
-        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
+        channelController.messages.value shouldBeEqualTo listOf(message)
 
         // Unread count should be propagated, because it is a message form another user
-        Truth.assertThat(channelController.unreadCount.value).isEqualTo(1)
+        channelController.unreadCount.value shouldBeEqualTo 1
 
         // Last message is updated
-        Truth.assertThat(channelController.toChannel().lastMessageAt).isEqualTo(createdAt)
+        channelController.toChannel().lastMessageAt shouldBeEqualTo createdAt
     }
 
     // Message update
@@ -156,7 +158,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        Truth.assertThat(channelController.messages.value.first()).isEqualTo(message)
+        channelController.messages.value.first() shouldBeEqualTo message
     }
 
     @Test
@@ -193,8 +195,8 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(messageUpdateEvent)
 
-        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(recentMessage))
-        Truth.assertThat(channelController.messages.value).isNotEqualTo(listOf(oldMessage))
+        channelController.messages.value shouldBeEqualTo listOf(recentMessage)
+        channelController.messages.value shouldNotBeEqualTo listOf(oldMessage)
     }
 
     // Member added event
@@ -206,7 +208,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(memberAddedEvent)
 
-        Truth.assertThat(channelController.members.value).isEqualTo(listOf(member))
+        channelController.members.value shouldBeEqualTo listOf(member)
     }
 
     // Typing events
@@ -221,13 +223,13 @@ internal class WhenHandleEvent {
 
         channelController.run {
             handleEvent(typingStartEvent1)
-            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1))
+            typing.value.users shouldBeEqualTo listOf(user1)
 
             handleEvent(typingStartEvent2)
-            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1, user2))
+            typing.value.users shouldBeEqualTo listOf(user1, user2)
 
             handleEvent(typingStopEvent)
-            Truth.assertThat(typing.value.users).isEqualTo(listOf(user1))
+            typing.value.users shouldBeEqualTo listOf(user1)
         }
     }
 
@@ -238,8 +240,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(readEvent)
 
-        Truth.assertThat(channelController.reads.value)
-            .isEqualTo(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+        channelController.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
     }
 
     // Read event notification
@@ -249,8 +250,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(readEvent)
 
-        Truth.assertThat(channelController.reads.value)
-            .isEqualTo(listOf(ChannelUserRead(readEvent.user, readEvent.createdAt)))
+        channelController.reads.value shouldBeEqualTo listOf(ChannelUserRead(readEvent.user, readEvent.createdAt))
     }
 
     // Reaction event
@@ -266,7 +266,7 @@ internal class WhenHandleEvent {
         channelController.handleEvent(reactionEvent)
 
         // Message is propagated
-        Truth.assertThat(channelController.messages.value).isEqualTo(listOf(message))
+        channelController.messages.value shouldBeEqualTo listOf(message)
     }
 
     // Channel deleted event
@@ -276,7 +276,7 @@ internal class WhenHandleEvent {
 
         channelController.handleEvent(deleteChannelEvent)
 
-        Truth.assertThat(channelController.messages.value).isEmpty()
+        channelController.messages.value.shouldBeEmpty()
     }
 
     @Test
@@ -289,8 +289,8 @@ internal class WhenHandleEvent {
         channelController.handleEvent(deleteChannelEvent)
 
         val channelFlowValue = channelController.channelData.value
-        Truth.assertThat(channelFlowValue.channelId).isEqualTo(channel.id)
-        Truth.assertThat(channelFlowValue.deletedAt).isEqualTo(deleteChannelEvent.createdAt)
+        channelFlowValue.channelId shouldBeEqualTo channel.id
+        channelFlowValue.deletedAt shouldBeEqualTo deleteChannelEvent.createdAt
     }
 
     private companion object {

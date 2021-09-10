@@ -50,4 +50,6 @@
     <string name="stream_compose_channel_list_untitled_channel">Channel without name</string>
     <string name="stream_compose_channel_list_you">You</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
+    <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
+    <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
 </resources>
