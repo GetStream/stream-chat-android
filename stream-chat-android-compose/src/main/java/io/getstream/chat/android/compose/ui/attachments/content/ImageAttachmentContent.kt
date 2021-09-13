@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.attachments.image
+package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
@@ -34,7 +35,8 @@ import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * Builds an image attachment message, which can be composed of several images.
+ * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
+ * currently uploading images.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
@@ -42,6 +44,23 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {
+    val message = attachmentState.messageItem.message
+
+    if (message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }) {
+        FileUploadContent(attachmentState = attachmentState)
+    } else {
+        ImageAttachmentGallery(attachmentState = attachmentState)
+    }
+}
+
+/**
+ * Represents the image attachment gallery content.
+ *
+ * @param attachmentState The state of this attachment.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
     val context = LocalContext.current
@@ -64,15 +83,11 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
         val imageCount = attachments.size
 
         if (imageCount == 1) {
-            val painter = rememberImagePainter(attachments.first().imagePreviewUrl)
+            val attachment = attachments.first()
 
-            Image(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
+            ImageAttachmentContentItem(
+                attachment = attachment,
+                modifier = Modifier.weight(1f)
             )
         } else {
             Column(
@@ -82,15 +97,9 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
             ) {
                 for (imageIndex in 0..3 step 2) {
                     if (imageIndex < imageCount) {
-                        val painter = rememberImagePainter(attachments[imageIndex].imagePreviewUrl)
-
-                        Image(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                            painter = painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
+                        ImageAttachmentContentItem(
+                            attachment = attachments[imageIndex],
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
@@ -103,52 +112,90 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
             ) {
                 for (imageIndex in 1..4 step 2) {
                     if (imageIndex < imageCount) {
-                        val painter = rememberImagePainter(attachments[imageIndex].imagePreviewUrl)
+                        val attachment = attachments[imageIndex]
+                        val isUploading = attachment.uploadState == Attachment.UploadState.InProgress
 
                         if (imageIndex == 3 && imageCount > 4) {
                             Box(modifier = Modifier.weight(1f)) {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    painter = painter,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
+                                ImageAttachmentContentItem(
+                                    attachment = attachment
                                 )
 
-                                val remainingImagesCount = imageCount - (imageIndex + 1)
-
-                                Surface(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    color = ChatTheme.colors.overlay
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .wrapContentSize()
-                                            .align(Alignment.Center),
-                                        text = stringResource(
-                                            id = R.string.stream_compose_remaining_images_count,
-                                            remainingImagesCount
-                                        ),
-                                        color = ChatTheme.colors.barsBackground,
-                                        style = ChatTheme.typography.title1,
-                                        textAlign = TextAlign.Center
+                                if (!isUploading) {
+                                    ImageAttachmentViewMoreOverlay(
+                                        imageCount = imageCount,
+                                        imageIndex = imageIndex,
+                                        modifier = Modifier.align(Alignment.Center)
                                     )
                                 }
                             }
                         } else {
-                            Image(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxWidth(),
-                                painter = painter,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
+                            ImageAttachmentContentItem(
+                                attachment = attachment,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * Represents each image item in the attachment gallery.
+ *
+ * @param attachment Image attachment data to show.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun ImageAttachmentContentItem(
+    attachment: Attachment,
+    modifier: Modifier = Modifier,
+) {
+    val painter = rememberImagePainter(attachment.imagePreviewUrl)
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        Image(
+            modifier = modifier
+                .fillMaxSize(),
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+/**
+ * Represents an overlay that's shown on the last image in the image attachment item gallery.
+ *
+ * @param imageCount The number of total images.
+ * @param imageIndex The current image index.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun ImageAttachmentViewMoreOverlay(
+    imageCount: Int,
+    imageIndex: Int,
+    modifier: Modifier = Modifier,
+) {
+    val remainingImagesCount = imageCount - (imageIndex + 1)
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize(),
+        color = ChatTheme.colors.overlay
+    ) {
+        Text(
+            modifier = modifier
+                .wrapContentSize(),
+            text = stringResource(
+                id = R.string.stream_compose_remaining_images_count,
+                remainingImagesCount
+            ),
+            color = ChatTheme.colors.barsBackground,
+            style = ChatTheme.typography.title1,
+            textAlign = TextAlign.Center
+        )
     }
 }

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline
 
 import android.content.Context
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -26,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 
 internal class ChatDomainImplCreateChannelTest {
@@ -218,7 +218,7 @@ internal class ChatDomainImplCreateChannelTest {
 
             val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
 
-            Truth.assertThat(result.isError).isTrue()
+            result.isError.shouldBeTrue()
             verify(repositoryFacade, never()).insertChannel(any())
             verify(repositoryFacade, never()).insertChannels(any())
         }

@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineRule
-import org.junit.Assert
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
@@ -24,6 +24,6 @@ internal class CallTests {
                 mutableList.add(4)
             }
 
-        Assert.assertEquals(listOf(1, 2, 3, 4), mutableList)
+        mutableList shouldBeEqualTo listOf(1, 2, 3, 4)
     }
 }
