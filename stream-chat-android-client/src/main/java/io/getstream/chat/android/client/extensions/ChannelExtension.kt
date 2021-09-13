@@ -15,5 +15,12 @@ public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
 public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mute -> mute.channel.cid == cid }
 
 @InternalStreamChatApi
-public fun Channel.getUsersExcludingCurrent(): List<User> =
-    members.map { it.user }.filterNot { it.id == ChatClient.instance().getCurrentUser()?.id ?: "" }
+public fun Channel.getUsersExcludingCurrent(): List<User> {
+    val users = members.map { it.user }
+    val currentUserId = ChatClient.instance().getCurrentUser()?.id
+    return if (currentUserId != null) {
+        users.filterNot { it.id == currentUserId }
+    } else {
+        users
+    }
+}
