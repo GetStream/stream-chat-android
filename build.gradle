@@ -27,7 +27,7 @@ buildscript {
         classpath Dependencies.gradleNexusPublishPlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
-        classpath 'com.github.leandroborgesferreira:dag-command:1.5.3'
+        classpath Dependencies.dagCommand
     }
 }
 
