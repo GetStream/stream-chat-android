@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -21,6 +20,7 @@ import io.getstream.chat.android.offline.utils.waitForSetUser
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 
@@ -96,7 +96,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                     Companion.data.user1,
                     Companion.data.user1Token
                 )
-                Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
+                Companion.client!!.isSocketConnected().shouldBeTrue()
             }
 
             client = Companion.client!!
@@ -112,9 +112,9 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
-            Truth.assertThat(client.isSocketConnected()).isTrue()
+            client.isSocketConnected().shouldBeTrue()
 
-            Truth.assertThat(chatDomainImpl.isOnline()).isTrue()
+            chatDomainImpl.isOnline().shouldBeTrue()
         }
     }
 

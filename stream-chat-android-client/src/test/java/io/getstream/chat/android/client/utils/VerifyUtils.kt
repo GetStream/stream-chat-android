@@ -1,17 +1,20 @@
 package io.getstream.chat.android.client.utils
 
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldBeTrue
 
 internal fun <T : Any> verifyError(result: Result<T>, statusCode: Int) {
-    assertThat(result.isSuccess).isFalse()
-    assertThat(result.error()).isInstanceOf(ChatNetworkError::class.java)
+    result.isSuccess.shouldBeFalse()
+    result.error().shouldBeInstanceOf<ChatNetworkError>()
 
     val error = result.error() as ChatNetworkError
-    assertThat(error.statusCode).isEqualTo(statusCode)
+    error.statusCode shouldBeEqualTo statusCode
 }
 
 internal fun <T : Any> verifySuccess(result: Result<T>, equalsTo: T) {
-    assertThat(result.isSuccess).isTrue()
-    assertThat(result.data()).isEqualTo(equalsTo)
+    result.isSuccess.shouldBeTrue()
+    result.data() shouldBeEqualTo equalsTo
 }

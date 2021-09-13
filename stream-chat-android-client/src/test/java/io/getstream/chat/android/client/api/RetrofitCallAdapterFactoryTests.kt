@@ -1,18 +1,22 @@
 package io.getstream.chat.android.client.api
 
-import com.google.common.reflect.TypeToken
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser2.MoshiChatParser
-import junit.framework.Assert.fail
 import okhttp3.mockwebserver.MockWebServer
+import org.amshove.kluent.fail
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
+import kotlin.reflect.javaType
+import kotlin.reflect.typeOf
 
+@OptIn(ExperimentalStdlibApi::class)
 internal class RetrofitCallAdapterFactoryTests {
 
     @Rule
@@ -34,34 +38,34 @@ internal class RetrofitCallAdapterFactoryTests {
     fun `When returning raw call Then should throw an exception`() {
         try {
             factory[RetrofitCall::class.java, emptyArray(), retrofit]
-            fail()
+            fail("Assertion failed")
         } catch (e: IllegalArgumentException) {
-            assertThat(e).hasMessageThat().matches("Call return type must be parameterized as Call<Foo>")
+            e.message shouldBeEqualTo "Call return type must be parameterized as Call<Foo>"
         }
     }
 
     @Test
     fun `When returning raw response type Then adapter should have the same response type`() {
-        val typeToken: Type = object : TypeToken<RetrofitCall<String>>() {}.type
-        val callAdapter = factory[typeToken, emptyArray(), retrofit]
+        val type: Type = typeOf<RetrofitCall<String>>().javaType
+        val callAdapter = factory[type, emptyArray(), retrofit]
 
-        assertThat(callAdapter).isNotNull()
-        assertThat(callAdapter!!.responseType())
-            .isEqualTo(object : TypeToken<String>() {}.type)
+        callAdapter.shouldNotBeNull()
+        callAdapter.responseType() shouldBeEqualTo typeOf<String>().javaType
     }
 
     @Test
     fun `When returning generic response type Then adapter should have the same response type`() {
-        val typeToken = object : TypeToken<RetrofitCall<List<String>>>() {}.type
-        val callAdapter = factory[typeToken, emptyArray(), retrofit]
+        val type = typeOf<RetrofitCall<List<String>>>().javaType
+        val callAdapter = factory[type, emptyArray(), retrofit]
 
-        assertThat(callAdapter!!.responseType())
-            .isEqualTo(object : TypeToken<List<String>>() {}.type)
+        callAdapter.shouldNotBeNull()
+
+        callAdapter.responseType() shouldBeEqualTo typeOf<List<String>>().javaType
     }
 
     @Test
     fun `When returning different type Then should return null`() {
         val adapter = factory[String::class.java, emptyArray(), retrofit]
-        assertThat(adapter).isNull()
+        adapter.shouldBeNull()
     }
 }

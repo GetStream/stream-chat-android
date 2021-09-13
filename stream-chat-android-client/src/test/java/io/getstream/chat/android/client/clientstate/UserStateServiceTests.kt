@@ -1,8 +1,9 @@
 package io.getstream.chat.android.client.clientstate
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.models.User
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 
 internal class UserStateServiceTests {
@@ -14,8 +15,8 @@ internal class UserStateServiceTests {
 
         sut.onSetUser(user)
 
-        Truth.assertThat(sut.state).isInstanceOf(UserState.UserSet::class.java)
-        Truth.assertThat(sut.state.userOrError()).isEqualTo(user)
+        sut.state.shouldBeInstanceOf<UserState.UserSet>()
+        sut.state.userOrError() shouldBeEqualTo user
     }
 
     @Test
@@ -26,8 +27,8 @@ internal class UserStateServiceTests {
 
         sut.onUserUpdated(user2)
 
-        Truth.assertThat(sut.state).isInstanceOf(UserState.UserSet::class.java)
-        Truth.assertThat(sut.state.userOrError()).isEqualTo(user2)
+        sut.state.shouldBeInstanceOf<UserState.UserSet>()
+        sut.state.userOrError() shouldBeEqualTo user2
     }
 
     @Test
@@ -36,7 +37,7 @@ internal class UserStateServiceTests {
 
         sut.onLogout()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -45,7 +46,7 @@ internal class UserStateServiceTests {
 
         sut.onLogout()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -54,7 +55,7 @@ internal class UserStateServiceTests {
 
         sut.onLogout()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -63,7 +64,7 @@ internal class UserStateServiceTests {
 
         sut.onSetAnonymous()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.Anonymous.Pending)
+        sut.state shouldBeEqualTo UserState.Anonymous.Pending
     }
 
     @Test
@@ -72,7 +73,7 @@ internal class UserStateServiceTests {
 
         sut.onSocketUnrecoverableError()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -81,7 +82,7 @@ internal class UserStateServiceTests {
 
         sut.onSocketUnrecoverableError()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -90,7 +91,7 @@ internal class UserStateServiceTests {
 
         sut.onSocketUnrecoverableError()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -99,7 +100,7 @@ internal class UserStateServiceTests {
 
         sut.onLogout()
 
-        Truth.assertThat(sut.state).isEqualTo(UserState.NotSet)
+        sut.state shouldBeEqualTo UserState.NotSet
     }
 
     @Test
@@ -109,7 +110,7 @@ internal class UserStateServiceTests {
 
         sut.onUserUpdated(user)
 
-        Truth.assertThat(sut.state).isInstanceOf(UserState.Anonymous.AnonymousUserSet::class.java)
+        sut.state.shouldBeInstanceOf<UserState.Anonymous.AnonymousUserSet>()
     }
 
     private class Fixture {

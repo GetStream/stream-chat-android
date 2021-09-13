@@ -4,8 +4,8 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomInt
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 public class ProgressTrackerTest {
@@ -22,7 +22,7 @@ public class ProgressTrackerTest {
 
         tracker.setProgress(progressValue)
 
-        assertEquals(progressValue, currentProgress.value)
+        currentProgress.value shouldBeEqualTo progressValue
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ProgressTrackerTest {
         progressValueList.forEach { value ->
             tracker.setProgress(value)
 
-            assertEquals(value, currentProgress.first())
+            currentProgress.first() shouldBeEqualTo value
         }
     }
 }

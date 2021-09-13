@@ -1,7 +1,7 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 internal class SyncStatusConverterTest {
@@ -13,7 +13,7 @@ internal class SyncStatusConverterTest {
             val converter = SyncStatusConverter()
             val output = converter.syncStatusToString(option)
             val converted = converter.stringToSyncStatus(output)
-            Truth.assertThat(converted).isEqualTo(option)
+            converted shouldBeEqualTo option
         }
     }
 }

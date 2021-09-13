@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -35,6 +34,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldContain
+import org.amshove.kluent.shouldNotContain
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
@@ -176,7 +177,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -193,7 +194,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -209,7 +210,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -226,7 +227,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -243,7 +244,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -262,7 +263,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -280,7 +281,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -299,7 +300,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -316,7 +317,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationChannelDeletedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -333,7 +334,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelDeletedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -351,7 +352,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -367,7 +368,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 }
 

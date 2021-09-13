@@ -2,7 +2,6 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
@@ -23,6 +22,7 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Ignore
@@ -107,8 +107,8 @@ internal class AttachmentUploaderTests {
                 uploadState = Attachment.UploadState.Success
             )
             val result = sut.uploadAttachment(channelType, channelId, attachment)
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
+            result.isSuccess.shouldBeTrue()
+            result.data() shouldBeEqualTo expectedAttachment
         }
     }
 
@@ -142,8 +142,8 @@ internal class AttachmentUploaderTests {
                 }
             )
 
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
+            result.isSuccess.shouldBeTrue()
+            result.data() shouldBeEqualTo expectedAttachment
         }
     }
 
@@ -169,10 +169,10 @@ internal class AttachmentUploaderTests {
             }
         )
 
-        Truth.assertThat(result.isSuccess).isTrue()
+        result.isSuccess.shouldBeTrue()
         val uploadedAttachment = result.data()
 
-        Truth.assertThat(uploadedAttachment.extraData).isEqualTo(extra)
+        uploadedAttachment.extraData shouldBeEqualTo extra
     }
 
     private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> {

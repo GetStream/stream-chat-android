@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api.interceptor
 
-import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.FakeResponse.Body
@@ -10,7 +9,9 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
-import org.junit.Assert.assertThrows
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldThrow
 import org.junit.Test
 
 internal class TokenAuthInterceptorTests {
@@ -23,11 +24,11 @@ internal class TokenAuthInterceptorTests {
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(200)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        assertThat(exception.streamCode).isEqualTo(ChatErrorCode.UNDEFINED_TOKEN.code)
+        exceptionResult.exception.streamCode shouldBeEqualTo ChatErrorCode.UNDEFINED_TOKEN.code
     }
 
     @Test
@@ -35,11 +36,11 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager("token")
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(500)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        assertThat(exception.statusCode).isEqualTo(500)
+        exceptionResult.exception.statusCode shouldBeEqualTo 500
     }
 
     @Test
@@ -51,7 +52,7 @@ internal class TokenAuthInterceptorTests {
 
         val headerValue = response.request.headers[TokenAuthInterceptor.AUTH_HEADER]
 
-        assertThat(headerValue).isEqualTo(token)
+        headerValue shouldBeEqualTo token
     }
 
     @Test
@@ -61,11 +62,11 @@ internal class TokenAuthInterceptorTests {
         val tm = FakeTokenManager(invalidHeader)
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = assertThrows(ChatRequestError::class.java) {
+        val exceptionResult = invoking {
             interceptor.intercept(FakeChain(FakeResponse(200)))
-        }
+        } shouldThrow (ChatRequestError::class)
 
-        assertThat(exception.streamCode).isEqualTo(ChatErrorCode.INVALID_TOKEN.code)
+        exceptionResult.exception.streamCode shouldBeEqualTo ChatErrorCode.INVALID_TOKEN.code
     }
 
     @Test

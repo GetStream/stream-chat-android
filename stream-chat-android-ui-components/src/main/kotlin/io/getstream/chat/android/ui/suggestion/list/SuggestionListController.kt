@@ -55,7 +55,8 @@ public class SuggestionListController(
     }
 
     public fun showAvailableCommands() {
-        currentSuggestions = Suggestions.CommandSuggestions(commands).takeIf { commandsEnabled } ?: Suggestions.EmptySuggestions
+        currentSuggestions =
+            Suggestions.CommandSuggestions(commands).takeIf { commandsEnabled } ?: Suggestions.EmptySuggestions
     }
 
     public fun hideSuggestionList() {

@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.parser2
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.events.ChatEvent
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -14,6 +14,6 @@ internal class MoshiChatParserTest {
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArguments")
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
         val parsedEvent = parser.fromJson(eventData, ChatEvent::class.java)
-        Truth.assertThat(parsedEvent).isEqualTo(expectedEvent)
+        parsedEvent shouldBeEqualTo expectedEvent
     }
 }

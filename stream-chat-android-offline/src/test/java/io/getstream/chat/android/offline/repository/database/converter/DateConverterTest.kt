@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
-import com.google.common.truth.Truth
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.Test
 import java.util.Date
 
@@ -10,7 +11,7 @@ internal class DateConverterTest {
         val converter = DateConverter()
         val output = converter.dateToTimestamp(null)
         val converted = converter.fromTimestamp(output)
-        Truth.assertThat(converted).isNull()
+        converted.shouldBeNull()
     }
 
     @Test
@@ -19,6 +20,6 @@ internal class DateConverterTest {
         val date = Date()
         val output = converter.dateToTimestamp(date)
         val converted = converter.fromTimestamp(output)
-        Truth.assertThat(converted!!).isEqualTo(date)
+        converted!! shouldBeEqualTo date
     }
 }

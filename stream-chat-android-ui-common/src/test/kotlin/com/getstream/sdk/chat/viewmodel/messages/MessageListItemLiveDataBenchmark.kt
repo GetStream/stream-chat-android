@@ -6,12 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.randomUser
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.test.getOrAwaitValue
+import org.amshove.kluent.shouldBeLessThan
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -67,7 +67,7 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing typing information 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(25)
+        duration shouldBeLessThan 25
     }
 
     @Test
@@ -85,7 +85,7 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing read information 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(50)
+        duration shouldBeLessThan 50
     }
 
     @Test
@@ -102,6 +102,6 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         println("changing messages 100 times on a message list with ${items.size} items took $duration milliseconds")
-        Truth.assertThat(duration).isLessThan(250)
+        duration shouldBeLessThan 250
     }
 }

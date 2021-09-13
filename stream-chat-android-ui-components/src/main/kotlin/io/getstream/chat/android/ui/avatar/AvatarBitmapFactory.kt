@@ -9,7 +9,7 @@ import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.annotation.Px
 import com.getstream.sdk.chat.images.StreamImageLoader
-import io.getstream.chat.android.client.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
@@ -258,7 +258,7 @@ public open class AvatarBitmapFactory(private val context: Context) {
         buildString {
             append(channel.name)
             append(channel.image)
-            channel.getUsers()
+            channel.getUsersExcludingCurrent()
                 .take(4)
                 .forEach {
                     append(it.name)
