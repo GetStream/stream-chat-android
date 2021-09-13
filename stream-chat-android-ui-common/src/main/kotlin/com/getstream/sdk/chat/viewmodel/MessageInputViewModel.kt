@@ -22,7 +22,7 @@ import java.io.File
  */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
-    private val chatDomain: ChatDomain = ChatDomain.instance()
+    private val chatDomain: ChatDomain = ChatDomain.instance(),
 ) : ViewModel() {
     private var activeThread = MutableLiveData<Message?>()
     private val _maxMessageLength = MediatorLiveData<Int>()
@@ -47,13 +47,15 @@ public class MessageInputViewModel @JvmOverloads constructor(
         chatDomain.watchChannel(cid, 0).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
-                _channel.addSource(channelController.offlineChannelData) { _channel.value = channelController.toChannel() }
+                _channel.addSource(channelController.offlineChannelData) {
+                    _channel.value = channelController.toChannel()
+                }
                 _maxMessageLength.addSource(_channel) { _maxMessageLength.value = it.config.maxMessageLength }
                 _cooldownInterval.addSource(_channel) { _cooldownInterval.value = it.cooldown }
                 _commands.addSource(_channel) { _commands.value = it.config.commands }
                 _isDirectMessage.addSource(
-                    _channel.combineWith(chatDomain.user) { channel, user ->
-                        channel?.isDirectMessaging(user?.id ?: "") ?: true
+                    _channel.combineWith(chatDomain.user) { channel, _ ->
+                        channel?.isDirectMessaging() ?: true
                     }
                 ) { _isDirectMessage.value = it }
 
@@ -95,7 +97,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public fun sendMessageWithAttachments(
         messageText: String,
         attachmentsWithMimeTypes: List<Pair<File, String?>>,
-        messageTransformer: Message.() -> Unit = { }
+        messageTransformer: Message.() -> Unit = { },
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
         val attachments = attachmentsWithMimeTypes.map { (file, mimeType) ->

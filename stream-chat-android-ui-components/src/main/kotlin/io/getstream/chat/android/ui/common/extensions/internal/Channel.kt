@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.common.extensions.isSystem
 internal fun Channel.diff(other: Channel): ChannelListPayloadDiff =
     ChannelListPayloadDiff(
         nameChanged = name != other.name,
-        avatarViewChanged = getUsers() != other.getUsers(),
+        avatarViewChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent(),
         readStateChanged = read != other.read,
         lastMessageChanged = getLastMessage() != other.getLastMessage(),
         unreadCountChanged = unreadCount != other.unreadCount,
