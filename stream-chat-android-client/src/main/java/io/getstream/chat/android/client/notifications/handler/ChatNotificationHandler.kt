@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
@@ -130,28 +129,8 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {
-            addAction(
-                getReadAction(
-                    prepareActionPendingIntent(
-                        notificationId,
-                        message.id,
-                        channel.id,
-                        channel.type,
-                        NotificationMessageReceiver.ACTION_READ,
-                    )
-                )
-            )
-            addAction(
-                getReplyAction(
-                    prepareActionPendingIntent(
-                        notificationId,
-                        message.id,
-                        channel.id,
-                        channel.type,
-                        NotificationMessageReceiver.ACTION_REPLY,
-                    )
-                )
-            )
+            addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
+            addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
         }
     }
 
@@ -233,54 +212,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .setShowWhen(true)
             .setContentIntent(contentIntent)
             .setGroup(groupKey)
-    }
-
-    private fun getReadAction(pendingIntent: PendingIntent): NotificationCompat.Action {
-        return NotificationCompat.Action.Builder(
-            android.R.drawable.ic_menu_view,
-            context.getString(R.string.stream_chat_notification_read),
-            pendingIntent,
-        ).build()
-    }
-
-    private fun getReplyAction(replyPendingIntent: PendingIntent): NotificationCompat.Action {
-        val remoteInput =
-            RemoteInput.Builder(NotificationMessageReceiver.KEY_TEXT_REPLY)
-                .setLabel(context.getString(R.string.stream_chat_notification_type_hint))
-                .build()
-        return NotificationCompat.Action.Builder(
-            android.R.drawable.ic_menu_send,
-            context.getString(R.string.stream_chat_notification_reply),
-            replyPendingIntent
-        )
-            .addRemoteInput(remoteInput)
-            .setAllowGeneratedReplies(true)
-            .build()
-    }
-
-    private fun prepareActionPendingIntent(
-        notificationId: Int,
-        messageId: String,
-        channelId: String,
-        type: String,
-        actionType: String,
-    ): PendingIntent {
-        val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
-
-        notifyIntent.apply {
-            putExtra(NotificationMessageReceiver.KEY_NOTIFICATION_ID, notificationId)
-            putExtra(NotificationMessageReceiver.KEY_MESSAGE_ID, messageId)
-            putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, channelId)
-            putExtra(NotificationMessageReceiver.KEY_CHANNEL_TYPE, type)
-            action = actionType
-        }
-
-        return PendingIntent.getBroadcast(
-            context,
-            0,
-            notifyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT,
-        )
     }
 
     internal fun onCreateDevice(onDeviceCreated: (device: Device) -> Unit) {

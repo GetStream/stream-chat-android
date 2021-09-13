@@ -1,24 +1,106 @@
 package io.getstream.chat.android.client.receivers
 
-import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.safeLet
+import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
     companion object {
-        const val ACTION_READ = "com.getstream.sdk.chat.READ"
-        const val ACTION_REPLY = "com.getstream.sdk.chat.REPLY"
-        const val KEY_NOTIFICATION_ID = "notification_id"
-        const val KEY_MESSAGE_ID = "message_id"
-        const val KEY_CHANNEL_ID = "id"
-        const val KEY_CHANNEL_TYPE = "type"
-        const val KEY_TEXT_REPLY = "text_reply"
+        private const val ACTION_READ = "com.getstream.sdk.chat.READ"
+        private const val ACTION_REPLY = "com.getstream.sdk.chat.REPLY"
+        private const val ACTION_DISMISS = "com.getstream.sdk.chat.DISMISS"
+        private const val KEY_NOTIFICATION_ID = "notification_id"
+        private const val KEY_MESSAGE_ID = "message_id"
+        private const val KEY_CHANNEL_ID = "id"
+        private const val KEY_CHANNEL_TYPE = "type"
+        private const val KEY_TEXT_REPLY = "text_reply"
+
+        private fun createReplyPendingIntent(
+            context: Context,
+            notificationId: Int,
+            channel: Channel,
+        ): PendingIntent =
+            PendingIntent.getBroadcast(
+                context,
+                0,
+                createNotifyIntent(context, notificationId, ACTION_REPLY).apply {
+                    putExtra(KEY_CHANNEL_ID, channel.id)
+                    putExtra(KEY_CHANNEL_TYPE, channel.type)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+
+        private fun createReadPendingIntent(
+            context: Context,
+            notificationId: Int,
+            channel: Channel,
+            message: Message,
+        ): PendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            createNotifyIntent(context, notificationId, ACTION_READ).apply {
+                putExtra(KEY_CHANNEL_ID, channel.id)
+                putExtra(KEY_CHANNEL_TYPE, channel.type)
+                putExtra(KEY_MESSAGE_ID, message.id)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+
+        internal fun createDismissPendingIntent(
+            context: Context,
+            notificationId: Int,
+        ): PendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            createNotifyIntent(context, notificationId, ACTION_DISMISS),
+            PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+
+        internal fun createReadAction(
+            context: Context,
+            notificationId: Int,
+            channel: Channel,
+            message: Message,
+        ): NotificationCompat.Action {
+            return NotificationCompat.Action.Builder(
+                android.R.drawable.ic_menu_view,
+                context.getString(R.string.stream_chat_notification_read),
+                createReadPendingIntent(context, notificationId, channel, message),
+            ).build()
+        }
+
+        internal fun createReplyAction(
+            context: Context,
+            notificationId: Int,
+            channel: Channel,
+        ): NotificationCompat.Action {
+            val remoteInput =
+                RemoteInput.Builder(KEY_TEXT_REPLY)
+                    .setLabel(context.getString(R.string.stream_chat_notification_type_hint))
+                    .build()
+            return NotificationCompat.Action.Builder(
+                android.R.drawable.ic_menu_send,
+                context.getString(R.string.stream_chat_notification_reply),
+                createReplyPendingIntent(context, notificationId, channel)
+            )
+                .addRemoteInput(remoteInput)
+                .setAllowGeneratedReplies(true)
+                .build()
+        }
+
+        private fun createNotifyIntent(context: Context, notificationId: Int, action: String) =
+            Intent(context, NotificationMessageReceiver::class.java).apply {
+                putExtra(KEY_NOTIFICATION_ID, notificationId)
+                this.action = action
+            }
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
