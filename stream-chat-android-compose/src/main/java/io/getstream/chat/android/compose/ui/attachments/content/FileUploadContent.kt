@@ -93,7 +93,7 @@ public fun FileUploadItem(attachment: Attachment) {
 
                 val uploadProgress by tracker.currentProgress().collectAsState()
                 val isComplete by tracker.isComplete().collectAsState()
-                val maxValue = tracker.maxValue
+                val maxValue = attachment.upload?.length() ?: tracker.maxValue
 
                 if (!isComplete) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -101,7 +101,7 @@ public fun FileUploadItem(attachment: Attachment) {
 
                         Spacer(modifier = Modifier.size(8.dp))
 
-                        val uploadedSize = (uploadProgress / 100F * tracker.maxValue).toLong()
+                        val uploadedSize = (uploadProgress / 100F * maxValue).toLong()
                         Text(
                             text = stringResource(
                                 id = R.string.stream_compose_upload_progress,
