@@ -1718,6 +1718,11 @@ public class ChatClient internal constructor(
             )
         }
 
+        @Throws(IllegalStateException::class)
+        internal fun dismissNotification(notificationId: Int) {
+            ensureClientInitialized().notifications.onDismissNotification(notificationId)
+        }
+
         /**
          * Sets device.
          * Be sure to initialize ChatClient before calling this method!

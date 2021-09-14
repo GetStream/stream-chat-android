@@ -121,7 +121,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 }
             }
         }
-        cancelNotification(context, intent?.getIntExtra(KEY_NOTIFICATION_ID, 0))
+        intent?.getIntExtra(KEY_NOTIFICATION_ID, 0)?.let(::cancelNotification)
     }
 
     private fun markAsRead(messageId: String?, channelId: String?, channelType: String?) {
@@ -157,15 +157,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ).enqueue()
     }
 
-    private fun cancelNotification(
-        context: Context?,
-        notificationId: Int?,
-    ) {
-        safeLet(
-            context?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager,
-            notificationId
-        ) { notificationManager, id ->
-            notificationManager.cancel(id)
-        }
+    private fun cancelNotification(notificationId: Int) {
+        ChatClient.dismissNotification(notificationId)
     }
 }

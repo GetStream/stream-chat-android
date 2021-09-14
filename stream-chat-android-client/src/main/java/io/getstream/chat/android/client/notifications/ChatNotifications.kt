@@ -24,6 +24,7 @@ internal interface ChatNotifications {
     fun cancelLoadDataWork()
     fun displayNotification(channel: Channel, message: Message)
     fun removeStoredDevice()
+    fun onDismissNotification(notificationId: Int)
 }
 
 internal class ChatNotificationsImpl constructor(
@@ -80,6 +81,10 @@ internal class ChatNotificationsImpl constructor(
         LoadNotificationDataWorker.cancel(context)
     }
 
+    override fun onDismissNotification(notificationId: Int) {
+        handler.onDismissNotification(notificationId)
+    }
+
     private fun handlePushMessage(message: PushMessage) {
         obtainNotifactionData(message.channelId, message.channelType, message.messageId)
     }
@@ -129,4 +134,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun cancelLoadDataWork() = Unit
     override fun displayNotification(channel: Channel, message: Message) = Unit
     override fun removeStoredDevice() = Unit
+    override fun onDismissNotification(notificationId: Int) = Unit
 }

@@ -31,6 +31,9 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public val config: NotificationConfig = NotificationConfig(),
 ) {
 
+    private val notificationIdToNotificationSummaryMap: MutableMap<Int, Int> = mutableMapOf()
+    private val notificationIdByNotificationSummaryMap: MutableMap<Int, Set<Int>> = mutableMapOf()
+
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     /**
@@ -114,8 +117,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     public open fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
+        val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
+        addNotificationId(notificationId, notificationSummaryId)
         showNotification(notificationId, buildNotification(notificationId, channel, message).build())
-        showNotification(getNotificationGroupSummaryId(channel.type, channel.id), buildNotificationGroupSummary(channel, message).build())
+        showNotification(notificationSummaryId, buildNotificationGroupSummary(channel, message).build())
     }
 
     public open fun buildNotification(
@@ -131,6 +136,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).apply {
             addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
             addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
+            setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId))
         }
     }
 
@@ -227,6 +233,26 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     private fun Channel.getMemberNamesWithoutCurrentUser(): String? = getUsersExcludingCurrent()
         .joinToString { it.name }
         .takeIf { it.isNotEmpty() }
+
+    internal fun onDismissNotification(notificationId: Int) {
+        val notificationSummaryId = notificationIdToNotificationSummaryMap[notificationId]
+        removeNotificationId(notificationId)
+        notificationManager.cancel(notificationId)
+        if (notificationSummaryId != null && notificationIdByNotificationSummaryMap[notificationSummaryId].isNullOrEmpty()) {
+            notificationManager.cancel(notificationSummaryId)
+        }
+    }
+
+    private fun addNotificationId(notificationId: Int, notificationSummaryId: Int) {
+        notificationIdToNotificationSummaryMap[notificationId] = notificationSummaryId
+        notificationIdByNotificationSummaryMap[notificationSummaryId] = (notificationIdByNotificationSummaryMap.getOrElse(notificationSummaryId) { setOf() } + notificationId)
+    }
+
+    private fun removeNotificationId(notificationId: Int) {
+        notificationIdToNotificationSummaryMap.remove(notificationId)?.let { notificationSummaryId ->
+            notificationIdByNotificationSummaryMap[notificationSummaryId] = (notificationIdByNotificationSummaryMap.getOrElse(notificationSummaryId) { setOf() } - notificationId)
+        }
+    }
 
     private companion object {
         private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"
