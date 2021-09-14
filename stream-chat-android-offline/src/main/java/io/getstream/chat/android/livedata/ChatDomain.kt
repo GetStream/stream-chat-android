@@ -400,7 +400,7 @@ public sealed interface ChatDomain {
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     @CheckResult
-    public fun deleteMessage(message: Message): Call<Message>
+    public fun deleteMessage(message: Message, hard: Boolean = false): Call<Message>
 
     /**
      * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.

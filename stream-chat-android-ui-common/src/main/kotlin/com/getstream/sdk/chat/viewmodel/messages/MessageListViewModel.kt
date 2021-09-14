@@ -196,7 +196,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                domain.deleteMessage(event.message).enqueue()
+                domain.deleteMessage(event.message, true).enqueue()
             }
             is Event.FlagMessage -> {
                 client.flagMessage(event.message.id).enqueue { result ->

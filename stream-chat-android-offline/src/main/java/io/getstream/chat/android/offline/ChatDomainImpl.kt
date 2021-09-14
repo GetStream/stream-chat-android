@@ -929,7 +929,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
-    override fun deleteMessage(message: Message): Call<Message> = DeleteMessage(this).invoke(message)
+    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> = DeleteMessage(this).invoke(message, hard)
 
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         SendReaction(this).invoke(cid, reaction, enforceUnique)
