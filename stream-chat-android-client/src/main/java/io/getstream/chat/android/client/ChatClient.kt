@@ -13,6 +13,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -85,6 +86,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
@@ -1570,6 +1572,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var apiLogInterceptor: Interceptor = HttpLoggingInterceptor()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1603,6 +1606,10 @@ public class ChatClient internal constructor(
 
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
+        }
+
+        public fun apiLoggerInterceptor(interceptor: Interceptor): Builder = apply {
+            apiLogInterceptor = interceptor
         }
 
         public fun baseUrl(value: String): Builder {
@@ -1659,7 +1666,14 @@ public class ChatClient internal constructor(
             )
 
             val module =
-                ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)
+                ChatModule(appContext,
+                    config,
+                    notificationsHandler,
+                    fileUploader,
+                    tokenManager,
+                    callbackExecutor,
+                    apiLogInterceptor
+                )
 
             val result = ChatClient(
                 config,
