@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isUploading
 import java.util.Date
 
 /**
@@ -90,7 +91,7 @@ public fun DefaultMessageContainer(
 
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
-    val isUploading = message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }
+    val isUploading = message.attachments.any { it.isUploading() }
     val ownsMessage = messageItem.isMine
 
     val messageCardColor =
