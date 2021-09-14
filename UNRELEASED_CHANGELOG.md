@@ -81,6 +81,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed a bug where the Message list flickered when sending new messages
+- Fixed a few bugs where some attachments had upload state and weren't file/image uploads
 
 ### ⬆️ Improved
 - Improved the Message list scrolling behavior and scroll to bottom actions
@@ -93,6 +94,7 @@
 - Added an uploading indicator to files and images
 - Images being uploaded are now preloaded from the system
 - Upload indicators show the upload progress and how much data is left to send
+- Added UploadAttachmentFactory that handles attachment uploads
 
 ### ⚠️ Changed
 - `StreamAttachment.defaultFactories()` is a function now, instead of a property.
