@@ -36,7 +36,7 @@ public object StreamAttachmentFactories {
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
-        FileAttachmentFactory()
+        FileAttachmentFactory(),
     )
 }
 

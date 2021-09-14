@@ -100,11 +100,12 @@ public fun FileUploadItem(attachment: Attachment) {
 
                         Spacer(modifier = Modifier.size(8.dp))
 
+                        val uploadedSize = (uploadProgress / 100F * tracker.maxValue).toLong()
                         Text(
                             text = stringResource(
                                 id = R.string.stream_compose_upload_progress,
-                                MediaStringUtil.convertFileSizeByteCount(uploadProgress.toLong()),
-                                MediaStringUtil.convertFileSizeByteCount(maxValue)
+                                MediaStringUtil.convertFileSizeByteCount(uploadedSize),
+                                MediaStringUtil.convertFileSizeByteCount(maxValue),
                             ),
                             style = ChatTheme.typography.footnote,
                             color = ChatTheme.colors.textLowEmphasis
