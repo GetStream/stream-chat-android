@@ -38,6 +38,11 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
+ * Width of file attachments.
+ */
+internal val FILE_ATTACHMENT_WIDTH = 250.dp
+
+/**
  * Builds a file attachment message which shows a list of files.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
@@ -51,7 +56,7 @@ public fun FileAttachmentContent(attachmentState: AttachmentState) {
     Column(
         modifier = modifier
             .wrapContentHeight()
-            .width(200.dp)
+            .width(FILE_ATTACHMENT_WIDTH)
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(attachment = attachment)

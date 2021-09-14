@@ -42,7 +42,7 @@ public fun FileUploadContent(attachmentState: AttachmentState) {
     Column(
         modifier = modifier
             .wrapContentHeight()
-            .width(200.dp)
+            .width(FILE_ATTACHMENT_WIDTH)
     ) {
         for (attachment in message.attachments) {
             FileUploadItem(attachment = attachment)
