@@ -29,7 +29,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteDevice (Lio/getstream/chat/android/client/models/Device;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -604,7 +605,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun delete ()Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteFile (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteImage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
-	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disableSlowMode ()Lio/getstream/chat/android/client/call/Call;
 	public final fun enableSlowMode (I)Lio/getstream/chat/android/client/call/Call;
