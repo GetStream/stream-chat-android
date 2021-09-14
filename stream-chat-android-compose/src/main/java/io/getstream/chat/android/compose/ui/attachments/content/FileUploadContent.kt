@@ -57,9 +57,6 @@ public fun FileUploadContent(attachmentState: AttachmentState) {
  */
 @Composable
 public fun FileUploadItem(attachment: Attachment) {
-    val isUploading = attachment.uploadState == Attachment.UploadState.InProgress
-    val uploadId = attachment.uploadId
-
     Surface(
         modifier = Modifier
             .padding(2.dp)
@@ -90,11 +87,15 @@ public fun FileUploadItem(attachment: Attachment) {
                     color = ChatTheme.colors.textHighEmphasis
                 )
 
-                if (isUploading && uploadId != null) {
-                    val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
-                    val uploadProgress by tracker.currentProgress().collectAsState()
-                    val maxValue = tracker.maxValue
+                val uploadId = requireNotNull(attachment.uploadId)
 
+                val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+
+                val uploadProgress by tracker.currentProgress().collectAsState()
+                val isComplete by tracker.isComplete().collectAsState()
+                val maxValue = tracker.maxValue
+
+                if (!isComplete) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         LoadingView(modifier = Modifier.size(12.dp))
 
@@ -113,7 +114,7 @@ public fun FileUploadItem(attachment: Attachment) {
                     }
                 } else {
                     Text(
-                        text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                        text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis
                     )
