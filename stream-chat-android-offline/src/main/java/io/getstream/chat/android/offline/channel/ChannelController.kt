@@ -614,7 +614,7 @@ public class ChannelController internal constructor(
 
         newMessage.attachments.forEach { attachment ->
             attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress
+            attachment.uploadState = Attachment.UploadState.InProgress(0)
         }
 
         newMessage.type = getMessageType(message)
@@ -669,7 +669,13 @@ public class ChannelController internal constructor(
             message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
                 .map { attachment ->
                     AttachmentUploader(client)
-                        .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
+                        .uploadAttachment(
+                            channelType,
+                            channelId,
+                            attachment,
+                            attachmentTransformer,
+                            ProgressCallbackImpl(message.id, attachment.uploadId!!)
+                        )
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
                 }.toMutableList()
@@ -686,6 +692,19 @@ public class ChannelController internal constructor(
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             domainImpl.repos.deleteChannelMessage(message)
             domainImpl.repos.insertMessage(message)
+        }
+    }
+
+    private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+        val message = _messages.value[messageId]
+        if (message != null) {
+            val attachment = message.attachments.firstOrNull { it.uploadId == uploadId }
+            if (attachment != null) {
+                val newAttachments = message.attachments - attachment + attachment.copy(uploadState = newState)
+                val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
+                val newMessages = _messages.value + (updatedMessage.id to updatedMessage)
+                _messages.value = newMessages
+            }
         }
     }
 
@@ -1496,6 +1515,20 @@ public class ChannelController internal constructor(
          * @see ChatDomainImpl.online
          */
         public data class Result(val messages: List<Message>) : MessagesState()
+    }
+
+    internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) : ProgressCallback {
+        override fun onSuccess(file: String) {
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
+        }
+
+        override fun onError(error: ChatError) {
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
+        }
+
+        override fun onProgress(progress: Long) {
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.InProgress(progress))
+        }
     }
 
     internal companion object {

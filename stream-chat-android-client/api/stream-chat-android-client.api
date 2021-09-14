@@ -1954,7 +1954,14 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 }
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$InProgress : io/getstream/chat/android/client/models/Attachment$UploadState {
-	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public fun <init> (J)V
+	public final fun component1 ()J
+	public final fun copy (J)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;JILjava/lang/Object;)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrentProgress ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$Success : io/getstream/chat/android/client/models/Attachment$UploadState {
@@ -2863,10 +2870,6 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
-}
-
-public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {
-	public static final fun toProgressCallback (Lio/getstream/chat/android/client/uploader/ProgressTracker;)Lio/getstream/chat/android/client/utils/ProgressCallback;
 }
 
 public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes {

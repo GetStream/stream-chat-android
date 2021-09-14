@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
@@ -22,10 +19,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
@@ -97,22 +90,23 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupUploads(data: MessageListItem.MessageItem) {
-        val uploadIdList: List<String> = data.message.attachments
-            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
-            .mapNotNull(Attachment::uploadId)
-
-        val needUpload = uploadIdList.isNotEmpty()
-
-        if (needUpload) {
-            clearScope()
-            val scope = CoroutineScope(DispatcherProvider.Main)
-            this.scope = scope
-
-            scope.launch {
-                trackFilesSent(context, uploadIdList, binding.sentFiles)
+        val totalAttachmentsCount = data.message.attachments.size
+        var uploadedAttachmentsCount = 0
+        data.message.attachments.forEach {
+            if (it.uploadState == Attachment.UploadState.Success) {
+                uploadedAttachmentsCount++
             }
+        }
+        if (uploadedAttachmentsCount == totalAttachmentsCount) {
+            binding.sentFiles.text =
+                context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
         } else {
-            binding.sentFiles.isVisible = false
+            binding.sentFiles.text =
+                context.getString(
+                    R.string.stream_ui_message_list_attachment_uploading,
+                    uploadedAttachmentsCount,
+                    totalAttachmentsCount
+                )
         }
     }
 
@@ -130,7 +124,7 @@ internal class TextAndAttachmentsViewHolder(
             uploadIdList: List<String>,
             sentFilesView: TextView,
         ) {
-            val filesSent = 0
+            /*val filesSent = 0
             val totalFiles = uploadIdList.size
 
             sentFilesView.isVisible = true
@@ -155,7 +149,7 @@ internal class TextAndAttachmentsViewHolder(
                             totalFiles
                         )
                 }
-            }
+            }*/
         }
     }
 }

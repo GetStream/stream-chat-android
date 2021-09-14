@@ -66,7 +66,7 @@ private fun Attachment.UploadState.toEntity(): UploadStateEntity {
 
 private fun UploadStateEntity.toModel(): Attachment.UploadState = when (this.statusCode) {
     UPLOAD_STATE_SUCCESS -> Attachment.UploadState.Success
-    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress
+    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0)
     UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(ChatError(message = this.errorMessage))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
 }

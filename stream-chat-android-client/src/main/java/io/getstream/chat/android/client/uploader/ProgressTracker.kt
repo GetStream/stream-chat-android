@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client.uploader
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,18 +23,4 @@ public class ProgressTracker {
     }
 
     public fun isComplete(): StateFlow<Boolean> = isComplete
-}
-
-public fun ProgressTracker.toProgressCallback(): ProgressCallback {
-    return object : ProgressCallback {
-        override fun onSuccess(file: String) {
-            setComplete(true)
-        }
-
-        override fun onError(error: ChatError) {}
-
-        override fun onProgress(progress: Long) {
-            setProgress(progress.toInt())
-        }
-    }
 }

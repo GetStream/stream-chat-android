@@ -41,7 +41,7 @@ public data class Attachment(
 ) : CustomObject {
 
     public sealed class UploadState {
-        public object InProgress : UploadState()
+        public data class InProgress(val currentProgress: Long) : UploadState()
         public object Success : UploadState()
         public data class Failed(val error: ChatError) : UploadState()
     }

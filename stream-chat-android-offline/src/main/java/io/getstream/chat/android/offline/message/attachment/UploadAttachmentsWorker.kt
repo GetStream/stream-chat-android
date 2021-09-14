@@ -32,7 +32,7 @@ internal class UploadAttachmentsWorker(private val appContext: Context) {
                 Result.success(Unit)
             } else {
                 val hasPendingAttachment = message.attachments.any { attachment ->
-                    attachment.uploadState == Attachment.UploadState.InProgress
+                    attachment.uploadState == Attachment.UploadState.InProgress(0)
                 }
 
                 if (!hasPendingAttachment) {
