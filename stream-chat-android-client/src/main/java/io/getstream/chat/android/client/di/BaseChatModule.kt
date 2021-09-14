@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.Executor
@@ -54,6 +55,7 @@ internal open class BaseChatModule(
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
+    private val loggingInterceptor: Interceptor = HttpLoggingInterceptor()
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
@@ -146,6 +148,7 @@ internal open class BaseChatModule(
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(loggingInterceptor)
             .addInterceptor(
                 TokenAuthInterceptor(
                     tokenManager,
