@@ -35,8 +35,7 @@ import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
- * currently uploading images.
+ * Builds an image attachment message, which can be composed of several images in a gallery.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
@@ -44,23 +43,6 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {
-    val message = attachmentState.messageItem.message
-
-    if (message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }) {
-        FileUploadContent(attachmentState = attachmentState)
-    } else {
-        ImageAttachmentGallery(attachmentState = attachmentState)
-    }
-}
-
-/**
- * Represents the image attachment gallery content.
- *
- * @param attachmentState The state of this attachment.
- */
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
     val (modifier, messageItem, onLongItemClick) = attachmentState
     val (message, _) = messageItem
     val context = LocalContext.current

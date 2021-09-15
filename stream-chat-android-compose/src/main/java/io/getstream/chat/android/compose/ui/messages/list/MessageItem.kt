@@ -25,6 +25,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
@@ -44,9 +46,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
@@ -60,6 +63,9 @@ import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isUploading
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import java.util.Date
 
 /**
@@ -90,7 +96,7 @@ public fun DefaultMessageContainer(
 
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
-    val isUploading = message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }
+    val isUploading = message.attachments.any { it.isUploading() }
     val ownsMessage = messageItem.isMine
 
     val messageCardColor =
@@ -518,7 +524,10 @@ public fun UploadingFooter(
 ) {
     val attachments = message.attachments
 
-    val uploadedCount = attachments.count { it.uploadState == Attachment.UploadState.Success }
+    val uploadStates: List<StateFlow<Boolean>> = attachments
+        .mapNotNull { it.uploadId }
+        .map { uploadId -> ProgressTrackerFactory.getOrCreate(uploadId).isComplete() }
+    val uploadedCount: Int by combine(uploadStates) { values -> values.count { it } }.collectAsState(initial = 0)
 
     Column(
         modifier = modifier,
