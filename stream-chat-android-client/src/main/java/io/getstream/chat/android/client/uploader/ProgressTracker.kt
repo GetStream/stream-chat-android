@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.uploader
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -25,7 +24,7 @@ public class ProgressTracker {
         this.isComplete.value = isComplete
     }
 
-    public fun isComplete(): Flow<Boolean> = isComplete
+    public fun isComplete(): StateFlow<Boolean> = isComplete
 }
 
 public fun ProgressTracker.toProgressCallback(): ProgressCallback {

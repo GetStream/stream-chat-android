@@ -253,7 +253,7 @@ internal fun MessageInputFileAttachments(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top)
     ) {
-        items(attachments) { file ->
+        items(attachments) { attachment ->
             Surface(
                 modifier = Modifier.padding(1.dp),
                 color = ChatTheme.colors.appBackground,
@@ -267,7 +267,7 @@ internal fun MessageInputFileAttachments(
                         .padding(vertical = 8.dp, horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    FileAttachmentImage(attachment = file)
+                    FileAttachmentImage(attachment = attachment)
 
                     Column(
                         modifier = Modifier
@@ -277,18 +277,23 @@ internal fun MessageInputFileAttachments(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = file.title ?: file.name ?: "",
+                            text = attachment.title ?: attachment.name ?: "",
                             style = ChatTheme.typography.bodyBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = ChatTheme.colors.textHighEmphasis
                         )
 
-                        Text(
-                            text = MediaStringUtil.convertFileSizeByteCount(file.fileSize.toLong()),
-                            style = ChatTheme.typography.footnote,
-                            color = ChatTheme.colors.textLowEmphasis
-                        )
+                        val fileSize = attachment.upload?.length()?.let { length ->
+                            MediaStringUtil.convertFileSizeByteCount(length)
+                        }
+                        if (fileSize != null) {
+                            Text(
+                                text = fileSize,
+                                style = ChatTheme.typography.footnote,
+                                color = ChatTheme.colors.textLowEmphasis
+                            )
+                        }
                     }
 
                     Icon(
@@ -297,7 +302,7 @@ internal fun MessageInputFileAttachments(
                             .clickable(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
-                                onClick = { onAttachmentRemoved(file) }
+                                onClick = { onAttachmentRemoved(attachment) }
                             ),
                         imageVector = Icons.Default.Cancel,
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),

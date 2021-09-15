@@ -42,7 +42,7 @@ public fun FileUploadContent(attachmentState: AttachmentState) {
     Column(
         modifier = modifier
             .wrapContentHeight()
-            .width(200.dp)
+            .width(FILE_ATTACHMENT_WIDTH)
     ) {
         for (attachment in message.attachments) {
             FileUploadItem(attachment = attachment)
@@ -57,9 +57,6 @@ public fun FileUploadContent(attachmentState: AttachmentState) {
  */
 @Composable
 public fun FileUploadItem(attachment: Attachment) {
-    val isUploading = attachment.uploadState == Attachment.UploadState.InProgress
-    val uploadId = attachment.uploadId
-
     Surface(
         modifier = Modifier
             .padding(2.dp)
@@ -90,17 +87,21 @@ public fun FileUploadItem(attachment: Attachment) {
                     color = ChatTheme.colors.textHighEmphasis
                 )
 
-                if (isUploading && uploadId != null) {
-                    val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
-                    val uploadProgress by tracker.currentProgress().collectAsState()
-                    val maxValue = tracker.maxValue
+                val uploadId = requireNotNull(attachment.uploadId)
 
+                val tracker = ProgressTrackerFactory.getOrCreate(uploadId)
+
+                val uploadProgress by tracker.currentProgress().collectAsState()
+                val isComplete by tracker.isComplete().collectAsState()
+                val maxValue = attachment.upload?.length() ?: tracker.maxValue
+
+                if (!isComplete) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         LoadingView(modifier = Modifier.size(12.dp))
 
                         Spacer(modifier = Modifier.size(8.dp))
 
-                        val uploadedSize = (uploadProgress / 100F * tracker.maxValue).toLong()
+                        val uploadedSize = (uploadProgress / 100F * maxValue).toLong()
                         Text(
                             text = stringResource(
                                 id = R.string.stream_compose_upload_progress,
@@ -113,7 +114,7 @@ public fun FileUploadItem(attachment: Attachment) {
                     }
                 } else {
                     Text(
-                        text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                        text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis
                     )
