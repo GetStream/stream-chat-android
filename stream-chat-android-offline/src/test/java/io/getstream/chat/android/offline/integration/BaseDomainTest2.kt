@@ -28,8 +28,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -151,19 +149,11 @@ internal open class BaseDomainTest2 {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
-            on { queryChannelsInternal(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
-            on { plugins } doReturn OfflinePlugin(
-                Config(
-                    backgroundSyncEnabled = true,
-                    userPresence = true,
-                    persistenceEnabled = true
-                )
-            ).let(::listOf)
         }
         whenever(client.connectUser(any(), any<String>())) doAnswer {
             TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
@@ -195,7 +185,6 @@ internal open class BaseDomainTest2 {
             .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()
-        ChatDomain.instance = chatDomainImpl
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
