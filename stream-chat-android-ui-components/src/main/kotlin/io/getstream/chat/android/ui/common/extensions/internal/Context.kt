@@ -63,18 +63,22 @@ internal val Context.streamThemeInflater: LayoutInflater
 
 internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): Context {
     val typedValue = TypedValue()
-    val configuredContext = configureUiMode(uiMode)
 
     return when {
-        configuredContext.theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> configuredContext
-        configuredContext.theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
-            ContextThemeWrapper(configuredContext, typedValue.resourceId)
-        else -> ContextThemeWrapper(configuredContext, R.style.StreamUiTheme)
+        this.theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) ->
+            ContextThemeWrapper(this, R.style.StreamUiEmptyTheme)
+        this.theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
+            ContextThemeWrapper(this, typedValue.resourceId)
+        else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
+    }.apply {
+        applyOverrideConfiguration(
+            Configuration().apply { systemUiMode(uiMode)?.let { this.uiMode = it }}
+        )
     }
 }
 
-private fun Context.configureUiMode(uiMode: UiMode): Context = when (uiMode) {
-    UiMode.LIGHT -> createConfigurationContext(resources.configuration.apply { this.uiMode = Configuration.UI_MODE_NIGHT_NO })
-    UiMode.DARK -> createConfigurationContext(resources.configuration.apply { this.uiMode = Configuration.UI_MODE_NIGHT_YES })
-    UiMode.SYSTEM -> this
+private fun systemUiMode(uiMode: UiMode) = when (uiMode) {
+    UiMode.LIGHT -> Configuration.UI_MODE_NIGHT_NO
+    UiMode.DARK -> Configuration.UI_MODE_NIGHT_YES
+    UiMode.SYSTEM -> null
 }
