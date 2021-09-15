@@ -38,36 +38,25 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
- * Builds a file attachment message which shows a list of files or those files being uploaded.
+ * Width of file attachments.
+ */
+internal val FILE_ATTACHMENT_WIDTH = 250.dp
+
+/**
+ * Builds a file attachment message which shows a list of files.
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  */
 @Composable
 public fun FileAttachmentContent(attachmentState: AttachmentState) {
-    val message = attachmentState.messageItem.message
-
-    if (message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }) {
-        FileUploadContent(attachmentState = attachmentState)
-    } else {
-        FileAttachmentList(attachmentState = attachmentState)
-    }
-}
-
-/**
- * Represents the file attachment list of files that are already uploaded.
- *
- * @param attachmentState The state of this attachment.
- */
-@Composable
-public fun FileAttachmentList(attachmentState: AttachmentState) {
     val (modifier, messageItem, _) = attachmentState
     val (message, _) = messageItem
 
     Column(
         modifier = modifier
             .wrapContentHeight()
-            .width(200.dp)
+            .width(FILE_ATTACHMENT_WIDTH)
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(attachment = attachment)

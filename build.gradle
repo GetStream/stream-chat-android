@@ -46,9 +46,6 @@ allprojects {
                 includeModule("com.github.chrisbanes", "PhotoView")
                 includeModule("com.github.duanhong169", "drawabletoolbox")
 
-                // https://github.com/mrmike/Ok2Curl/issues/60
-                includeModule("com.github.mrmike", "ok2curl")
-
                 // https://github.com/brianwernick/ExoMedia/issues/723
                 includeModule("com.github.brianwernick", "ExoMedia")
 

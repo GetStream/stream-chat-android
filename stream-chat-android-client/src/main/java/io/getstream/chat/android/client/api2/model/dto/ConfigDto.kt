@@ -7,7 +7,7 @@ import java.util.Date
 internal data class ConfigDto(
     val created_at: Date?,
     val updated_at: Date?,
-    val name: String,
+    val name: String?,
     val typing_events: Boolean,
     val read_events: Boolean,
     val connect_events: Boolean,
