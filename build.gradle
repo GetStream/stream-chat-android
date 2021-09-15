@@ -61,7 +61,7 @@ allprojects {
 
 dagCommand {
     filter = "all"
-    defaultBranch = "origin/develop"
+    defaultBranch = "develop"
     outputType = "json"
     printModulesInfo = true
 }
