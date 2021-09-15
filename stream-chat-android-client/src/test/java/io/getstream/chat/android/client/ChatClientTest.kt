@@ -80,8 +80,6 @@ internal class ChatClientTest {
             userStateService = userStateService,
             encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtils,
-            appContext = mock(),
-            scope = testCoroutines.scope,
         ).apply {
             connectUser(user, token).enqueue()
         }
