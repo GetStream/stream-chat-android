@@ -803,7 +803,7 @@ public class ChatClient internal constructor(
      */
     @Deprecated(
         message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public fun getMessagesWithAttachments(
