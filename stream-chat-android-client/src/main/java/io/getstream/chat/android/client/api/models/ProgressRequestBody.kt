@@ -16,6 +16,7 @@ internal class ProgressRequestBody(
     private val callback: ProgressCallback
 ) : RequestBody() {
 
+    private val handler = Handler(Looper.getMainLooper())
     private var writeCount: Int = 0
 
     override fun contentType(): MediaType = file.getMediaType()
@@ -28,25 +29,29 @@ internal class ProgressRequestBody(
         val total = file.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var uploaded = 0L
+
         FileInputStream(file).use { fis ->
             var read: Int
-            val handler = Handler(Looper.getMainLooper())
             while (fis.read(buffer).also { read = it } != -1) {
-                /**
-                 * Only do progress updates if we've already
-                 * ignored enough writes of this body.
-                 */
-                if (writeCount >= PROGRESS_UPDATES_TO_SKIP) {
-                    handler.post {
-                        callback.onProgress((100 * uploaded / total))
-                    }
-                }
-                uploaded += read.toLong()
                 sink.write(buffer, 0, read)
+                uploaded += read.toLong()
+                withCallback { onProgress((100 * uploaded / total)) }
             }
         }
 
         writeCount++
+    }
+
+    /**
+     * Only do progress updates if we've already
+     * ignored enough writes of this body.
+     */
+    private inline fun withCallback(crossinline actions: ProgressCallback.() -> Unit) {
+        if (writeCount >= PROGRESS_UPDATES_TO_SKIP) {
+            handler.post {
+                callback.actions()
+            }
+        }
     }
 
     companion object {
