@@ -10,6 +10,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: SelectedKtlintPlugin
 apply plugin: SelectedUnitTestsPlugin
+apply plugin: 'com.github.leandroborgesferreira.dag-command'
 
 buildscript {
     repositories {
@@ -58,8 +59,6 @@ allprojects {
     }
 }
 
-apply plugin: 'com.github.leandroborgesferreira.dag-command'
-
 dagCommand {
     filter = "all"
     defaultBranch = "origin/develop"
@@ -67,12 +66,12 @@ dagCommand {
     printModulesInfo = true
 }
 
-ktlintSelected {
+selectedKtlint {
     changeModulesPath = "./build/dag-command/affected-modules.json"
     outputPath = "kt-selected-command.sh"
 }
 
-testDebugSelected {
+selectedTestDebug {
     changeModulesPath = "./build/dag-command/affected-modules.json"
     outputPath = "unit-tests-selected-command.sh"
 }
