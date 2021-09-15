@@ -24,6 +24,7 @@ open class SelectedKtlintTask : DefaultTask() {
             writer.write(command)
         }
 
+        println("Command generated: $command")
         println("Command written in: ${config.outputPath}")
     }
 }

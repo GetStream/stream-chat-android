@@ -4,8 +4,5 @@ import java.io.File
 import java.io.Writer
 
 fun writeFile(filePath: String, writeFunc: (Writer) -> Unit) {
-    File(filePath)
-        .writer()
-        .buffered()
-        .use(writeFunc)
+    File(filePath).printWriter().use(writeFunc)
 }

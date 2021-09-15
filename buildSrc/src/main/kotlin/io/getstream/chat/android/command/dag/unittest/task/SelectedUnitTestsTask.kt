@@ -1,6 +1,5 @@
 package io.getstream.chat.android.command.dag.unittest.task
 
-import io.getstream.chat.android.command.dag.ktlint.task.ktlintCommand
 import io.getstream.chat.android.command.dag.parseModules
 import io.getstream.chat.android.command.dag.unittest.filter.unitTestCommand
 import io.getstream.chat.android.command.dag.unittest.plugin.UnitTestsCommandExtesion
@@ -17,12 +16,13 @@ open class SelectedUnitTestsTask : DefaultTask() {
 
     @TaskAction
     private fun command() {
-        val command = parseModules(File(config.changeModulesPath)).unitTestCommand()
+        val command = parseModules(File(config.changeModulesPath)).unitTestCommand(project)
 
         writeFile(config.outputPath) { writer ->
             writer.write(command)
         }
-        
+
+        println("Command generated: $command")
         println("Command written in: ${config.outputPath}")
     }
 }
