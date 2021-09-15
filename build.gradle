@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.dag.ktlint.plugin.SelectedKtlintPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -62,6 +63,8 @@ dagCommand {
     outputType = "json"
     printModulesInfo = true
 }
+
+apply plugin: SelectedKtlintPlugin
 
 task clean(type: Delete) {
     delete rootProject.buildDir
