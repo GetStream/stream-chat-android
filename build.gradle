@@ -7,6 +7,7 @@ apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
+apply plugin: SelectedKtlintPlugin
 
 buildscript {
     repositories {
@@ -64,7 +65,10 @@ dagCommand {
     printModulesInfo = true
 }
 
-apply plugin: SelectedKtlintPlugin
+ktlintSelected {
+    changeModulesPath = "./build/dag-command/affected-modules.json"
+    outputPath = "kt-selected-command.sh"
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
