@@ -11,7 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-open class SelectedKtlint : DefaultTask() {
+open class SelectedKtlintTask : DefaultTask() {
 
     @Input
     lateinit var config: KtCommandExtesion

@@ -1,0 +1,1 @@
+./gradlew stream-chat-android-offline:testDebug stream-chat-android-ui-common:testDebug stream-chat-android:testDebug stream-chat-android-ui-components:testDebug

@@ -1,5 +1,6 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.dag.ktlint.plugin.SelectedKtlintPlugin
+import io.getstream.chat.android.command.dag.unittest.plugin.SelectedUnitTestsPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -8,6 +9,7 @@ apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: SelectedKtlintPlugin
+apply plugin: SelectedUnitTestsPlugin
 
 buildscript {
     repositories {
@@ -68,6 +70,11 @@ dagCommand {
 ktlintSelected {
     changeModulesPath = "./build/dag-command/affected-modules.json"
     outputPath = "kt-selected-command.sh"
+}
+
+testDebugSelected {
+    changeModulesPath = "./build/dag-command/affected-modules.json"
+    outputPath = "unit-tests-selected-command.sh"
 }
 
 task clean(type: Delete) {

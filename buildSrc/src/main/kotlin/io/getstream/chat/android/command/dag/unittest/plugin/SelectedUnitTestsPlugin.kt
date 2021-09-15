@@ -1,6 +1,6 @@
-package io.getstream.chat.android.command.dag.ktlint.plugin
+package io.getstream.chat.android.command.dag.unittest.plugin
 
-import io.getstream.chat.android.command.dag.ktlint.task.SelectedKtlintTask
+import io.getstream.chat.android.command.dag.unittest.task.SelectedUnitTestsTask
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -10,15 +10,16 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-private const val CONFIG_CLOJURE_NAME = "ktlintSelected"
-private const val COMMAND_NAME = "ktlint-selected"
+private const val CONFIG_CLOJURE_NAME = "testDebugSelected"
+private const val COMMAND_NAME = "test-debug-selected"
 
-class SelectedKtlintPlugin : Plugin<Project> {
+class SelectedUnitTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        val extension: KtCommandExtesion = project.extensions.create(CONFIG_CLOJURE_NAME, KtCommandExtesion::class.java)
+        val extension: UnitTestsCommandExtesion =
+            project.extensions.create(CONFIG_CLOJURE_NAME, UnitTestsCommandExtesion::class.java)
 
-        project.tasks.registerExt<SelectedKtlintTask>(COMMAND_NAME, Action {
+        project.tasks.registerExt<SelectedUnitTestsTask>(COMMAND_NAME, Action {
             this.config = extension
         })
     }
