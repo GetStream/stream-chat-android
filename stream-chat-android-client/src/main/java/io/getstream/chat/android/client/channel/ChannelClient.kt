@@ -249,6 +249,7 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
+    @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
         return client.deleteMessage(messageId, hard)
     }
