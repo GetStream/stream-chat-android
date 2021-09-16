@@ -14,6 +14,7 @@ open class SelectedUnitTestsTask : DefaultTask() {
     @Input
     lateinit var config: UnitTestsCommandExtesion
 
+    @ExperimentalStdlibApi
     @TaskAction
     private fun command() {
         val changedModulesFile = File(config.changeModulesPath)

@@ -12,8 +12,8 @@ fun parseModules(modulesFile: File): List<String> {
         ?: emptyList()
 }
 
-fun List<String>.generateGradleCommand(commandFunction: (String) -> String): String {
-    val command = joinToString(separator = " ") { module -> "$module:${commandFunction(module)}" }
+fun <T> List<T>.generateGradleCommand(commandFunction: (T) -> String): String {
+    val command = joinToString(separator = " ", transform = commandFunction)
 
     return "./gradlew $command"
 }

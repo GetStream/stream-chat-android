@@ -16,6 +16,7 @@ open class SelectedKtlintTask : DefaultTask() {
     @Input
     lateinit var config: KtCommandExtesion
 
+    @ExperimentalStdlibApi
     @TaskAction
     private fun command() {
         val changedModulesFile = File(config.changeModulesPath)
@@ -33,4 +34,4 @@ open class SelectedKtlintTask : DefaultTask() {
 }
 
 fun List<String>.ktlintCommand(project: Project): String =
-    filterKtlintModules(project.subprojects).generateGradleCommand { "ktlintCheck" }
+    filterKtlintModules(project.subprojects).generateGradleCommand { module -> "$module:ktlintCheck" }
