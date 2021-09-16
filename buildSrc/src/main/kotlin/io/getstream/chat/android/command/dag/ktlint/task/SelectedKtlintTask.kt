@@ -5,7 +5,6 @@ import io.getstream.chat.android.command.dag.ktlint.filter.filterKtlintModules
 import io.getstream.chat.android.command.dag.ktlint.plugin.KtCommandExtesion
 import io.getstream.chat.android.command.utils.parseModules
 import io.getstream.chat.android.command.utils.changeModuleFileDoesNotExistInPath
-import io.getstream.chat.android.command.utils.writeFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -26,8 +25,7 @@ open class SelectedKtlintTask : DefaultTask() {
         }
 
         val command = parseModules(changedModulesFile).ktlintCommand(project)
-
-        writeFile(config.outputPath) { writer -> writer.write(command) }
+        File(config.outputPath).writeText(command)
 
         println("Command generated: $command")
         println("Command written in: ${config.outputPath}")

@@ -4,7 +4,6 @@ import io.getstream.chat.android.command.utils.parseModules
 import io.getstream.chat.android.command.dag.unittest.filter.unitTestCommand
 import io.getstream.chat.android.command.dag.unittest.plugin.UnitTestsCommandExtesion
 import io.getstream.chat.android.command.utils.changeModuleFileDoesNotExistInPath
-import io.getstream.chat.android.command.utils.writeFile
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -24,10 +23,7 @@ open class SelectedUnitTestsTask : DefaultTask() {
         }
 
         val command = parseModules(changedModulesFile).unitTestCommand(project)
-
-        writeFile(config.outputPath) { writer ->
-            writer.write(command)
-        }
+        File(config.outputPath).writeText(command)
 
         println("Command generated: $command")
         println("Command written in: ${config.outputPath}")
