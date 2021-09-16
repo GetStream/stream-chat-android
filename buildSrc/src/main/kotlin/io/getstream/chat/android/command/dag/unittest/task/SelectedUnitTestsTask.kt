@@ -1,6 +1,6 @@
 package io.getstream.chat.android.command.dag.unittest.task
 
-import io.getstream.chat.android.command.dag.parseModules
+import io.getstream.chat.android.command.utils.parseModules
 import io.getstream.chat.android.command.dag.unittest.filter.unitTestCommand
 import io.getstream.chat.android.command.dag.unittest.plugin.UnitTestsCommandExtesion
 import io.getstream.chat.android.command.utils.changeModuleFileDoesNotExistInPath

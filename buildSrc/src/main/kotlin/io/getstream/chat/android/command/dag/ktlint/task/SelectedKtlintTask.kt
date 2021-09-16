@@ -1,9 +1,9 @@
 package io.getstream.chat.android.command.dag.ktlint.task
 
-import io.getstream.chat.android.command.dag.generateGradleCommand
+import io.getstream.chat.android.command.utils.generateGradleCommand
 import io.getstream.chat.android.command.dag.ktlint.filter.filterKtlintModules
 import io.getstream.chat.android.command.dag.ktlint.plugin.KtCommandExtesion
-import io.getstream.chat.android.command.dag.parseModules
+import io.getstream.chat.android.command.utils.parseModules
 import io.getstream.chat.android.command.utils.changeModuleFileDoesNotExistInPath
 import io.getstream.chat.android.command.utils.writeFile
 import org.gradle.api.DefaultTask

@@ -1,6 +1,6 @@
 package io.getstream.chat.android.command.dag.unittest.filter
 
-import io.getstream.chat.android.command.dag.generateGradleCommand
+import io.getstream.chat.android.command.utils.generateGradleCommand
 import org.gradle.api.Project
 
 fun List<String>.unitTestCommand(rootProject: Project): String {
@@ -13,8 +13,10 @@ private fun List<String>.filterUnitTestableModules(rootProject: Project): List<S
     return filter(ktlintModules::contains)
 }
 
-private fun Project.unitTestsModules() : List<Project> {
+private fun Project.unitTestsModules(): List<Project> {
     return subprojects.filter { project -> project.hasUnitTest() }
 }
 
-private fun Project.hasUnitTest(): Boolean = this.tasks.any { task -> task.name == "testDebugUnitTest" }
+private fun Project.hasUnitTest(): Boolean = this.tasks.any { task ->
+    task.name == "testDebugUnitTest" || task.name == "test"
+}
