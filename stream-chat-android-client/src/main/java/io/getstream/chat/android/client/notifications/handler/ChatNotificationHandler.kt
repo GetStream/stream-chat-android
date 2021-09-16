@@ -8,10 +8,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.content.edit
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
@@ -31,9 +33,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public val config: NotificationConfig = NotificationConfig(),
 ) {
 
-    private val notificationIdToNotificationSummaryMap: MutableMap<Int, Int> = mutableMapOf()
-    private val notificationIdByNotificationSummaryMap: MutableMap<Int, Set<Int>> = mutableMapOf()
-
+    private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     /**
@@ -235,26 +235,46 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         .takeIf { it.isNotEmpty() }
 
     internal fun onDismissNotification(notificationId: Int) {
-        val notificationSummaryId = notificationIdToNotificationSummaryMap[notificationId]
+        val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
         removeNotificationId(notificationId)
         notificationManager.cancel(notificationId)
-        if (notificationSummaryId != null && notificationIdByNotificationSummaryMap[notificationSummaryId].isNullOrEmpty()) {
+        if (getAssociatedNotificationIds(notificationSummaryId).isNullOrEmpty()) {
             notificationManager.cancel(notificationSummaryId)
         }
     }
 
     private fun addNotificationId(notificationId: Int, notificationSummaryId: Int) {
-        notificationIdToNotificationSummaryMap[notificationId] = notificationSummaryId
-        notificationIdByNotificationSummaryMap[notificationSummaryId] = (notificationIdByNotificationSummaryMap.getOrElse(notificationSummaryId) { setOf() } + notificationId)
-    }
-
-    private fun removeNotificationId(notificationId: Int) {
-        notificationIdToNotificationSummaryMap.remove(notificationId)?.let { notificationSummaryId ->
-            notificationIdByNotificationSummaryMap[notificationSummaryId] = (notificationIdByNotificationSummaryMap.getOrElse(notificationSummaryId) { setOf() } - notificationId)
+        sharedPreferences.edit {
+            putInt(getNotificationIdKey(notificationId), notificationSummaryId)
+            putStringSet(
+                getNotificationSummaryIdKey(notificationSummaryId),
+                (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map { it.toString() }.toSet()
+            )
         }
     }
 
+    private fun removeNotificationId(notificationId: Int) {
+        sharedPreferences.edit {
+            val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
+            remove(getNotificationIdKey(notificationId))
+            putStringSet(
+                getNotificationSummaryIdKey(notificationSummaryId),
+                (getAssociatedNotificationIds(notificationSummaryId) - notificationId).map { it.toString() }.toSet()
+            )
+        }
+    }
+
+    private fun getAssociatedNotificationSummaryId(notificationId: Int): Int = sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
+    private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> =
+        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty().map { it.toInt() }.toSet()
+
+    private fun getNotificationIdKey(notificationId: Int) = KEY_PREFIX_NOTIFICATION_ID + notificationId
+    private fun getNotificationSummaryIdKey(notificationSummaryId: Int) = KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
+
     private companion object {
         private const val ERROR_NOTIFICATION_GROUP_KEY = "error_notification_group_key"
+        private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
+        private const val KEY_PREFIX_NOTIFICATION_ID = "nId-"
+        private const val KEY_PREFIX_NOTIFICATION_SUMMARY_ID = "nSId-"
     }
 }
