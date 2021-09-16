@@ -519,6 +519,7 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
+    @JvmOverloads
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()

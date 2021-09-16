@@ -931,6 +931,8 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteMessage(message: Message, hard: Boolean): Call<Message> = DeleteMessage(this).invoke(message, hard)
 
+    override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
+
     override fun sendReaction(cid: String, reaction: Reaction, enforceUnique: Boolean): Call<Reaction> =
         SendReaction(this).invoke(cid, reaction, enforceUnique)
 

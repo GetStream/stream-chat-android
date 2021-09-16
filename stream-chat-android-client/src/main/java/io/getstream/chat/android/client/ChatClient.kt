@@ -872,6 +872,7 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
         return api.deleteMessage(messageId, hard)
     }
