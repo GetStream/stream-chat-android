@@ -396,6 +396,7 @@ public sealed interface ChatDomain {
      * @param message The message to mark as deleted.
      *
      * @return Executable async [Call] responsible for deleting a message.
+     * @param hard Use to hard delete the message (delete in backend). CAN'T BE UNDONE.
      *
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
