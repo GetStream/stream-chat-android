@@ -151,7 +151,7 @@ internal class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(MESSAGE))
 
-        verify(domain).deleteMessage(MESSAGE)
+        verify(domain).deleteMessage(MESSAGE, false)
     }
 
     @Test
