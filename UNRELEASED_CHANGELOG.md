@@ -33,7 +33,7 @@
 
 ### ⚠️ Changed
 - Deprecated `Channel#name`, `Channel#image`, `User#name`, `Ues#image` extension properties. Use class members instead.
-- 🚨 Breaking change: Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
+- Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
 
 ### ❌ Removed
 - Completely removed the old serialization implementation. You can no longer opt-out of using the new serialization implementation.
