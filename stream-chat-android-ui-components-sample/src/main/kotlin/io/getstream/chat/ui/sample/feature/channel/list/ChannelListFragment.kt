@@ -85,8 +85,9 @@ class ChannelListFragment : Fragment() {
             setChannelDeleteClickListener { channel ->
                 ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
                     .apply {
-                        confirmClickListener =
-                            ConfirmationDialogFragment.ConfirmClickListener { viewModel.deleteChannel(channel) }
+                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                            viewModel.deleteChannel(channel)
+                        }
                     }
                     .show(parentFragmentManager, null)
             }

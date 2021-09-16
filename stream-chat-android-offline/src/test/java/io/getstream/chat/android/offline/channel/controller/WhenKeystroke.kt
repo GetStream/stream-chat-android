@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel.controller
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
@@ -15,6 +14,9 @@ import io.getstream.chat.android.offline.randomConfig
 import io.getstream.chat.android.test.TestCall
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 
 internal class WhenKeystroke : BaseChannelControllerTests() {
@@ -25,8 +27,8 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         val result = sut.keystroke(null)
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isFalse()
+        result.isSuccess.shouldBeTrue()
+        result.data().shouldBeFalse()
     }
 
     @Test
@@ -61,8 +63,8 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         val result = sut.keystroke(null)
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isTrue()
+        result.isSuccess.shouldBeTrue()
+        result.data().shouldBeTrue()
     }
 
     @Test
@@ -74,8 +76,8 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         val result = sut.keystroke(null)
 
-        Truth.assertThat(result.isSuccess).isFalse()
-        Truth.assertThat(result.error()).isNotNull()
+        result.isSuccess.shouldBeFalse()
+        result.error().shouldNotBeNull()
     }
 
     @Test
@@ -84,8 +86,8 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
         val result = sut.keystroke(null)
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isFalse()
+        result.isSuccess.shouldBeTrue()
+        result.data().shouldBeFalse()
         verify(chatClient, never()).channel(channelType, channelId)
     }
 

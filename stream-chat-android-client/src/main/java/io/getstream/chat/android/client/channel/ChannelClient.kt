@@ -670,7 +670,7 @@ public class ChannelClient internal constructor(
 
     @Deprecated(
         message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public fun getMessagesWithAttachments(offset: Int, limit: Int, type: String): Call<List<Message>> =

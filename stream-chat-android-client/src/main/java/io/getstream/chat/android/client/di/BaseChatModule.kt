@@ -69,7 +69,7 @@ internal open class BaseChatModule(
         StreamFileUploader(buildRetrofitCdnApi())
     }
 
-    val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
+    private val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
     val queryChannelsPostponeHelper: QueryChannelsPostponeHelper by lazy {

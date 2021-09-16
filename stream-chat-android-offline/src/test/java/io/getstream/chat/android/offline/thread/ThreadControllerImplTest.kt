@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.thread
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
@@ -14,6 +13,7 @@ import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,7 +47,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
 
             // verify we see the correct 2 messages
             val expectedMessages = listOf(threadMessage, threadReply)
-            Truth.assertThat(messages).isEqualTo(expectedMessages)
+            messages shouldBeEqualTo expectedMessages
         }
 
     @Test
@@ -59,7 +59,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
 
         // verify we see the correct 3 messages
         val expectedMessages = listOf(threadMessage, threadReply, threadReply2)
-        Truth.assertThat(messages).isEqualTo(expectedMessages)
+        messages shouldBeEqualTo expectedMessages
     }
 
     @Test
@@ -71,7 +71,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
 
             // verify we see the correct message
             val expectedMessages = listOf(threadMessage)
-            Truth.assertThat(messages).isEqualTo(expectedMessages)
+            messages shouldBeEqualTo expectedMessages
         }
 
     @Test
@@ -88,7 +88,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
         // verify that loading is false and end reached is true
         val loading = threadController.loadingOlderMessages.value
         val endReached = threadController.endOfOlderMessages.value
-        Truth.assertThat(loading).isEqualTo(false)
-        Truth.assertThat(endReached).isEqualTo(true)
+        loading shouldBeEqualTo false
+        endReached shouldBeEqualTo true
     }
 }

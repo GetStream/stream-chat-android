@@ -1,9 +1,9 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -15,8 +15,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
@@ -27,6 +25,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -47,6 +47,29 @@ internal class WhenQuery {
     }
 
     @Test
+    fun `Given DB with query channels Should invoke selectAndEnrichChannels in ChatDomain`() = runBlockingTest {
+        val user: User = randomUser()
+
+        val chatDomainImpl: ChatDomainImpl = mock {
+            on(it.user) doReturn MutableStateFlow(user)
+        }
+        val sut = Fixture()
+            .givenChatDomain(chatDomainImpl)
+            .givenFailedNetworkRequest()
+            .givenQueryChannelsSpec(
+                QueryChannelsSpec(
+                    Filters.neutral(),
+                    cids = setOf("cid1", "cid2")
+                )
+            )
+            .get()
+
+        sut.query()
+
+        verify(chatDomainImpl).selectAndEnrichChannels(eq(listOf("cid1", "cid2")), any())
+    }
+
+    @Test
     fun `Should request channels to chat client`() = runBlockingTest {
         val chatClient = mock<ChatClient>()
         val sut = Fixture()
@@ -56,7 +79,7 @@ internal class WhenQuery {
 
         sut.query()
 
-        verify(chatClient).queryChannelsInternal(any())
+        verify(chatClient).queryChannels(any())
     }
 
     @Test
@@ -74,8 +97,8 @@ internal class WhenQuery {
 
         val result = sut.query()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isEqualTo(dbChannels)
+        result.isSuccess.shouldBeTrue()
+        result.data() shouldBeEqualTo dbChannels
     }
 
     @Test
@@ -95,8 +118,8 @@ internal class WhenQuery {
 
             val result = sut.query()
 
-            Truth.assertThat(result.isSuccess).isTrue()
-            Truth.assertThat(result.data()).isEqualTo(networkChannels)
+            result.isSuccess.shouldBeTrue()
+            result.data() shouldBeEqualTo networkChannels
         }
 
     @Test
@@ -119,7 +142,7 @@ internal class WhenQuery {
 
             sut.query()
 
-            Truth.assertThat(sut.channels.value).isEqualTo(listOf(dbChannel2, dbChannel1))
+            sut.channels.value shouldBeEqualTo listOf(dbChannel2, dbChannel1)
         }
 
     @Test
@@ -143,7 +166,7 @@ internal class WhenQuery {
 
             sut.query()
 
-            Truth.assertThat(sut.channels.value).isEqualTo(listOf(networkChannel2, networkChannel1))
+            sut.channels.value shouldBeEqualTo listOf(networkChannel2, networkChannel1)
         }
 
     private class Fixture {
@@ -175,7 +198,7 @@ internal class WhenQuery {
         }
 
         fun givenFailedNetworkRequest() = apply {
-            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(Result(mock()))
+            whenever(chatClient.queryChannels(any())) doReturn TestCall(Result(mock()))
         }
 
         suspend fun givenQueryChannelsSpec(queryChannelsSpec: QueryChannelsSpec) = apply {
@@ -196,11 +219,11 @@ internal class WhenQuery {
                     on { toChannel() } doReturn channel
                 }
             }
-            whenever(repositories.selectChannels(any(), any())) doReturn dbChannels
+            whenever(chatDomainImpl.selectAndEnrichChannels(any(), any())) doReturn dbChannels
         }
 
         fun givenNetworkChannels(channels: List<Channel>) = apply {
-            whenever(chatClient.queryChannelsInternal(any())) doReturn channels.asCall()
+            whenever(chatClient.queryChannels(any())) doReturn channels.asCall()
 
             whenever(chatDomainImpl.channel(any<String>())) doAnswer { invocationOnMock ->
                 val cid = invocationOnMock.arguments[0] as String
@@ -219,17 +242,8 @@ internal class WhenQuery {
         fun get(): QueryChannelsController {
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repositories
-            whenever(chatDomainImpl.client) doReturn chatClient
-            val filter = Filters.neutral()
-            val mutableState = QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
 
-            return QueryChannelsController(
-                filter,
-                querySort,
-                chatDomainImpl,
-                mutableState,
-                QueryChannelsLogic(mutableState, chatDomainImpl),
-            )
+            return QueryChannelsController(Filters.neutral(), querySort, chatClient, chatDomainImpl)
         }
     }
 }

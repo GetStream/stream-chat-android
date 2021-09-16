@@ -7,7 +7,8 @@ import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFa
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.
@@ -31,6 +32,7 @@ public object StreamAttachmentFactories {
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
     ): List<AttachmentFactory> = listOf(
+        UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(),
         ImageAttachmentFactory(),
@@ -45,7 +47,7 @@ public object StreamAttachmentFactories {
  * @param content - Composable function that allows users to define the content the [AttachmentFactory] will build using any given
  * [AttachmentState].
  */
-public open class AttachmentFactory @InternalStreamChatApi constructor(
+public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
     public val content: @Composable (AttachmentState) -> Unit,
 )

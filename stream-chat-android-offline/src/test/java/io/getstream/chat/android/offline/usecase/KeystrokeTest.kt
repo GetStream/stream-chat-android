@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.usecase
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
@@ -14,7 +13,9 @@ import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Assertions
+import org.amshove.kluent.invoking
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -32,16 +33,16 @@ internal class KeystrokeTest {
 
     @Test
     fun `Given empty cid When invoke Should throw exception`() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "")
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
     fun `Given inappropriate formatted cid When invoke Should throw exception`() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        invoking {
             sut.invoke(cid = "31dse1")
-        }
+        }.shouldThrow(IllegalArgumentException::class)
     }
 
     @Test
@@ -64,7 +65,7 @@ internal class KeystrokeTest {
 
         val result = sut.invoke(cid = randomCID(), parentId = null).execute()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data()).isTrue()
+        result.isSuccess.shouldBeTrue()
+        result.data().shouldBeTrue()
     }
 }

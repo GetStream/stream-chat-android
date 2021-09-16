@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
@@ -14,6 +13,9 @@ import io.getstream.chat.android.test.failedCall
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,8 +43,8 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
         val messages2 = channelState.messages.value
 
-        Truth.assertThat(messages2).isNotEqualTo(messages1)
-        Truth.assertThat(messages2.last()).isEqualTo(newMessage)
+        messages2 shouldNotBeEqualTo messages1
+        messages2.last() shouldBeEqualTo newMessage
     }
 
     @Test
@@ -53,8 +55,8 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
         val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        Truth.assertThat(result.isSuccess).isTrue()
-        Truth.assertThat(result.data().cid).isEqualTo(desiredCid)
+        result.isSuccess.shouldBeTrue()
+        result.data().cid shouldBeEqualTo desiredCid
     }
 
     @Test
@@ -71,6 +73,6 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
         // Now backend fails, so the cache request must work for a successful result.
         val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
 
-        Truth.assertThat(result.isSuccess).isTrue()
+        result.isSuccess.shouldBeTrue()
     }
 }

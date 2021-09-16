@@ -72,7 +72,6 @@ dependencies {
 
     testImplementation Dependencies.json
     testImplementation Dependencies.kluent
-    testImplementation Dependencies.truth
     testImplementation Dependencies.kfixture
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin

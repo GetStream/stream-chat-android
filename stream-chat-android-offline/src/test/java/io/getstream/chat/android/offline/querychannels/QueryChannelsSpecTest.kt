@@ -1,7 +1,8 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Filters
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Test
 
 internal class QueryChannelsSpecTest {
@@ -26,8 +27,8 @@ internal class QueryChannelsSpecTest {
             ),
         )
         // verify that 1 and 2 are equal
-        Truth.assertThat(query2.id).isEqualTo(query.id)
+        query2.id shouldBeEqualTo query.id
         // verify that 3 is not equal to 2
-        Truth.assertThat(query2.id).isNotEqualTo(query3.id)
+        query2.id shouldNotBeEqualTo query3.id
     }
 }

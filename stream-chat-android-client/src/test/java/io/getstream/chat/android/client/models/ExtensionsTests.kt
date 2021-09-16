@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.models
 
-import com.google.common.truth.Truth.assertThat
+import org.amshove.kluent.shouldBeEmpty
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.Test
 
 internal class ExtensionsTests {
@@ -14,70 +16,68 @@ internal class ExtensionsTests {
     @Test
     fun userPropertyFields() {
         val user = User()
-        assertThat(user.name).isEmpty()
-        assertThat(user.extraData[nameField]).isNull()
+        user.name.shouldBeEmpty()
+        user.extraData[nameField].shouldBeNull()
 
-        assertThat(user.image).isEmpty()
-        assertThat(user.extraData[imageField]).isNull()
+        user.image.shouldBeEmpty()
+        user.extraData[imageField].shouldBeNull()
 
         user.name = nameValue
         user.image = imageValue
 
-        assertThat(user.name).isEqualTo(nameValue)
-        assertThat(user.extraData[nameField]).isEqualTo(nameValue)
+        user.name shouldBeEqualTo nameValue
+        user.extraData[nameField] shouldBeEqualTo nameValue
 
-        assertThat(user.image).isEqualTo(imageValue)
-        assertThat(user.extraData[imageField]).isEqualTo(imageValue)
+        user.image shouldBeEqualTo imageValue
+        user.extraData[imageField] shouldBeEqualTo imageValue
     }
 
     @Test
     fun channelPropertyFields() {
         val channel = Channel()
-        assertThat(channel.name).isEmpty()
-        assertThat(channel.extraData[nameField]).isNull()
+        channel.name.shouldBeEmpty()
+        channel.extraData[nameField].shouldBeNull()
 
-        assertThat(channel.image).isEmpty()
-        assertThat(channel.extraData[imageField]).isNull()
+        channel.image.shouldBeEmpty()
+        channel.extraData[imageField].shouldBeNull()
 
         channel.name = nameValue
         channel.image = imageValue
 
-        assertThat(channel.name).isEqualTo(nameValue)
-        assertThat(channel.extraData[nameField]).isEqualTo(nameValue)
+        channel.name shouldBeEqualTo nameValue
+        channel.extraData[nameField] shouldBeEqualTo nameValue
 
-        assertThat(channel.image).isEqualTo(imageValue)
-        assertThat(channel.extraData[imageField]).isEqualTo(imageValue)
+        channel.image shouldBeEqualTo imageValue
+        channel.extraData[imageField] shouldBeEqualTo imageValue
     }
 
     @Test
     fun getExternalFieldTest() {
         val user = User()
-        assertThat(getExternalField(user, nameField)).isEmpty()
+        getExternalField(user, nameField).shouldBeEmpty()
 
         user.name = nameValue
-        assertThat(getExternalField(user, nameField)).isEqualTo(nameValue)
+        getExternalField(user, nameField) shouldBeEqualTo nameValue
 
         user.extraData[nameField] = nonStringValue
-        assertThat(getExternalField(user, nameField)).isEmpty()
+        getExternalField(user, nameField).shouldBeEmpty()
     }
 
     @Test
     fun noUnread() {
-        assertThat(Channel().getUnreadMessagesCount()).isEqualTo(0)
+        Channel().getUnreadMessagesCount() shouldBeEqualTo 0
     }
 
     @Test
     fun totalUnread() {
-        assertThat(Channel(read = listOf(getRead(10))).getUnreadMessagesCount()).isEqualTo(10)
+        Channel(read = listOf(getRead(10))).getUnreadMessagesCount() shouldBeEqualTo 10
 
-        assertThat(
-            Channel(
-                read = listOf(
-                    getRead(10),
-                    getRead(10)
-                )
-            ).getUnreadMessagesCount()
-        ).isEqualTo(20)
+        Channel(
+            read = listOf(
+                getRead(10),
+                getRead(10)
+            )
+        ).getUnreadMessagesCount() shouldBeEqualTo 20
     }
 
     @Test
@@ -95,9 +95,9 @@ internal class ExtensionsTests {
             )
         )
 
-        assertThat(channel.getUnreadMessagesCount()).isEqualTo(unreadUserA + unreadUserB)
-        assertThat(channel.getUnreadMessagesCount(userA)).isEqualTo(unreadUserA)
-        assertThat(channel.getUnreadMessagesCount(userB)).isEqualTo(unreadUserB)
+        channel.getUnreadMessagesCount() shouldBeEqualTo unreadUserA + unreadUserB
+        channel.getUnreadMessagesCount(userA) shouldBeEqualTo unreadUserA
+        channel.getUnreadMessagesCount(userB) shouldBeEqualTo unreadUserB
     }
 
     private fun getRead(unreadCount: Int, userId: String = ""): ChannelUserRead {

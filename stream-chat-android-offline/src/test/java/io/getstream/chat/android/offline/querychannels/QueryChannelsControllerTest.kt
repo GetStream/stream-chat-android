@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.querychannels
 
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -11,13 +10,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
@@ -35,6 +30,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldContain
+import org.amshove.kluent.shouldNotContain
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
@@ -176,7 +173,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -193,7 +190,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -209,7 +206,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -226,7 +223,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -243,7 +240,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -262,7 +259,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -280,7 +277,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 
     @Test
@@ -299,7 +296,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelUpdatedByUserEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -316,7 +313,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationChannelDeletedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -333,7 +330,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomChannelDeletedEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -351,7 +348,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).doesNotContain(channel.cid)
+            queryController.queryChannelsSpec.cids shouldNotContain channel.cid
         }
 
     @Test
@@ -367,7 +364,7 @@ internal class QueryChannelsControllerTest {
 
             queryController.handleEvent(randomNotificationAddedToChannelEvent(channel = channel))
 
-            Truth.assertThat(queryController.queryChannelsSpec.cids).contains(channel.cid)
+            queryController.queryChannelsSpec.cids shouldContain channel.cid
         }
 }
 
@@ -423,17 +420,8 @@ private class Fixture {
         initialCids.add(channel.cid)
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
-    fun get(): QueryChannelsController {
-        val filter = Filters.neutral()
-        val mutableState = QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
-        return QueryChannelsController(
-            filter,
-            querySort,
-            chatDomainImpl,
-            mutableState,
-            QueryChannelsLogic(mutableState, chatDomainImpl),
-        ).apply {
+    fun get(): QueryChannelsController =
+        QueryChannelsController(mock(), querySort, chatClient, chatDomainImpl).apply {
             newChannelEventFilter = { channel, _ ->
                 if (currentUser == null) {
                     true
@@ -444,5 +432,4 @@ private class Fixture {
             checkFilterOnChannelUpdatedEvent = this@Fixture.checkFilterOnChannelUpdatedEvent
             queryChannelsSpec.cids = initialCids
         }
-    }
 }

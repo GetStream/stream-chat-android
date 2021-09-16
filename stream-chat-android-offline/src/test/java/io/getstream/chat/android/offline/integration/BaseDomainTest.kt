@@ -9,12 +9,12 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.work.Configuration
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -22,10 +22,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -33,20 +33,22 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
 import io.getstream.chat.android.offline.utils.TestDataHelper
+import io.getstream.chat.android.offline.utils.TestLoggerHandler
+import io.getstream.chat.android.offline.utils.waitForSetUser
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -64,32 +66,19 @@ internal open class BaseDomainTest {
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
-    private val offlineEnabled = true
-    private val userPresence = true
-    private val recoveryEnabled = false
-    private val backgroundSyncEnabled = false
-    private val offlinePlugin = OfflinePlugin(
-        Config(
-            backgroundSyncEnabled = backgroundSyncEnabled,
-            userPresence = userPresence,
-            persistenceEnabled = offlineEnabled
-        )
-    )
-
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
-            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
+            result.isError.shouldBeFalse()
         }
     }
 
     fun assertFailure(result: Result<*>) {
         if (!result.isError) {
-            Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
+            result.isError.shouldBeTrue()
         }
     }
 
     var data = TestDataHelper()
-    protected val currentUser = data.user1
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -97,7 +86,7 @@ internal open class BaseDomainTest {
     @get:Rule
     val testCoroutines = TestCoroutineRule()
 
-    protected fun setupWorkManager() {
+    fun setupWorkManager() {
         val config = Configuration.Builder()
             // Set log level to Log.DEBUG to make it easier to debug
             .setMinimumLoggingLevel(Log.DEBUG)
@@ -113,13 +102,22 @@ internal open class BaseDomainTest {
     @CallSuper
     open fun setup() {
         client = createDisconnectedMockClient()
-        setupChatDomain(client)
+        setupChatDomain(client, false)
     }
 
     @After
     open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
         db.close()
+    }
+
+    fun createClient(): ChatClient {
+        val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
+        return ChatClient.Builder(data.apiKey, getApplicationContext())
+            // TODO Review if we need it
+            // .logLevel(logLevel)
+            .loggerHandler(TestLoggerHandler())
+            .build()
     }
 
     fun createDisconnectedMockClient(): ChatClient {
@@ -165,6 +163,9 @@ internal open class BaseDomainTest {
     }
 
     fun createConnectedMockClient(): ChatClient {
+
+        val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
+
         val result = Result(listOf(data.channel1))
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
@@ -176,31 +177,42 @@ internal open class BaseDomainTest {
         }
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
-
-        return mock<ChatClient> {
-            on { subscribe(any()) } doReturn object : Disposable {
-                override val isDisposed: Boolean = true
-                override fun dispose() = Unit
+        val client = mock<ChatClient> {
+            on { subscribe(any()) } doAnswer { invocation ->
+                val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
+                listener.onEvent(connectedEvent)
+                object : Disposable {
+                    override val isDisposed: Boolean = true
+                    override fun dispose() {}
+                }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
-            on { sendReaction(any<Reaction>(), any()) } doReturn TestCall(
+            on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
-            on { connectUser(any(), any<String>()) } doAnswer {
-                TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
-            }
-            on { plugins } doReturn listOf(offlinePlugin)
         }
+        whenever(client.connectUser(any(), any<String>())) doAnswer {
+            TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
+        }
+        return client
     }
 
-    fun setupChatDomain(client: ChatClient, user: User? = null) = runBlocking {
+    fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
+
+        if (setUser) {
+            waitForSetUser(client, data.user1, data.user1Token)
+        }
+
         db = createRoomDB(testCoroutines.dispatcher)
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
-
+        val offlineEnabled = true
+        val userPresence = true
+        val recoveryEnabled = false
+        val backgroundSyncEnabled = false
         chatDomainImpl = ChatDomainImpl(
             client,
             db,
@@ -209,22 +221,17 @@ internal open class BaseDomainTest {
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
-            context,
-            offlinePlugin = offlinePlugin,
+            context
         )
+        chatDomainImpl.setUser(data.user1)
         chatDomainImpl.scope = testCoroutines.scope
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
-        ChatDomain.instance = chatDomainImpl
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
                 println("error event$it")
             }
-        }
-
-        if (user != null) {
-            chatDomainImpl.setUser(user)
         }
 
         chatDomainImpl.repos.insertChannelConfig(ChannelConfig("messaging", data.config1))

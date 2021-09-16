@@ -3,15 +3,11 @@ package io.getstream.chat.android.offline.integration
 import android.content.Context
 import android.os.Handler
 import androidx.test.core.app.ApplicationProvider
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.utils.NoRetryPolicy
@@ -21,6 +17,7 @@ import io.getstream.chat.android.offline.utils.waitForSetUser
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 
@@ -50,15 +47,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val userPresence = true
         val recoveryEnabled = false
         val backgroundSyncEnabled = false
-
-        val plugin = OfflinePlugin(
-            Config(
-                backgroundSyncEnabled = backgroundSyncEnabled,
-                userPresence = userPresence,
-                persistenceEnabled = offlineEnabled
-            )
-        )
-
         chatDomainImpl = ChatDomainImpl(
             client,
             db,
@@ -67,8 +55,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             userPresence,
             recoveryEnabled,
             backgroundSyncEnabled,
-            context,
-            offlinePlugin = plugin,
+            context
         )
         chatDomain = chatDomainImpl
         chatDomainImpl.retryPolicy = NoRetryPolicy()
@@ -78,13 +65,11 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 println("error event$it")
             }
         }
-        ChatDomain.instance = chatDomainImpl
         return chatDomainImpl
     }
 
     @Before
     override fun setup() {
-        setupWorkManager()
         runBlocking {
             if (Companion.client == null) {
                 // do one time setup here
@@ -96,7 +81,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
                     Companion.data.user1,
                     Companion.data.user1Token
                 )
-                Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
+                Companion.client!!.isSocketConnected().shouldBeTrue()
             }
 
             client = Companion.client!!
@@ -112,9 +97,9 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
             queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
-            Truth.assertThat(client.isSocketConnected()).isTrue()
+            client.isSocketConnected().shouldBeTrue()
 
-            Truth.assertThat(chatDomainImpl.isOnline()).isTrue()
+            chatDomainImpl.isOnline().shouldBeTrue()
         }
     }
 
