@@ -64,12 +64,12 @@ dagCommand {
 }
 
 selectedKtlint {
-    changeModulesPath = "./build/dag-command/affected-modules.json"
+    changeModulesPath = "${rootProject.buildDir}/dag-command/affected-modules.json"
     outputPath = "kt-selected-command.sh"
 }
 
 selectedTestDebug {
-    changeModulesPath = "./build/dag-command/affected-modules.json"
+    changeModulesPath = "${rootProject.buildDir}/dag-command/affected-modules.json"
     outputPath = "unit-tests-selected-command.sh"
 }
 
