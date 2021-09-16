@@ -1,11 +1,15 @@
 package com.getstream.sdk.chat.utils.extensions
 
-import io.getstream.chat.android.client.extensions.getUsers
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.ChatDomain
 
 @InternalStreamChatApi
-public fun Channel.isDirectMessaging(currentUserId: String = currentUserId()): Boolean = getUsers(currentUserId).size == 1
+public fun Channel.isDirectMessaging(): Boolean {
+    return members.size == 2 && includesCurrentUser()
+}
 
-private fun currentUserId(): String = ChatDomain.instance().user.value?.id ?: ""
+private fun Channel.includesCurrentUser(): Boolean {
+    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
+    return members.any { it.user.id == currentUserId }
+}

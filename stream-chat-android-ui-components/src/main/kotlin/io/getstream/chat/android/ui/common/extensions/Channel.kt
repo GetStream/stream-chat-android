@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.common.extensions
 
 import android.content.Context
 import androidx.annotation.StringRes
-import io.getstream.chat.android.client.extensions.getUsers
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
@@ -22,7 +22,7 @@ public fun Channel.getDisplayName(
     @StringRes devValue: Int = R.string.stream_ui_channel_list_untitled_channel,
 ): String {
     return name.takeIf { it.isNotEmpty() }
-        ?: getUsers()
+        ?: getUsersExcludingCurrent()
             .joinToString { it.name }
             .takeIf { it.isNotEmpty() }
         ?: context.getString(devValue)

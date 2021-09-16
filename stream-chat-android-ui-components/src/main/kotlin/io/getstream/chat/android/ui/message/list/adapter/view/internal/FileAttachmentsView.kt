@@ -234,7 +234,6 @@ private class FileAttachmentViewHolder(
                 val progress = tracker.currentProgress()
                 val completion = tracker.isComplete()
                 val totalValue = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0)
-                val progressCorrection = tracker.maxValue / 100F
 
                 val fileProgress = progress.combine(completion, ::Pair)
 
@@ -243,14 +242,14 @@ private class FileAttachmentViewHolder(
 
                 scope?.launch {
                     fileProgress.collect { (progress, isComplete) ->
+                        val uploadedBytes = (progress / 100F * tracker.maxValue).toLong()
                         updateProgress(
                             context,
                             fileSizeView,
                             binding.progressBar,
                             attachment,
-                            progress,
+                            uploadedBytes,
                             isComplete,
-                            progressCorrection,
                             totalValue
                         )
                     }
@@ -273,13 +272,12 @@ private class FileAttachmentViewHolder(
             fileSizeView: TextView,
             progressBar: ProgressBar,
             attachment: Attachment,
-            progress: Int,
+            uploadedBytes: Long,
             isComplete: Boolean,
-            progressCorrection: Float,
             targetValue: String,
         ) {
             if (!isComplete) {
-                val nominalProgress = MediaStringUtil.convertFileSizeByteCount((progress * progressCorrection).toLong())
+                val nominalProgress = MediaStringUtil.convertFileSizeByteCount(uploadedBytes)
 
                 fileSizeView.text =
                     context.getString(

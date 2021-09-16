@@ -10,13 +10,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
-import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
 import io.getstream.chat.android.offline.randomChannelUpdatedByUserEvent
@@ -424,17 +420,8 @@ private class Fixture {
         initialCids.add(channel.cid)
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
-    fun get(): QueryChannelsController {
-        val filter = Filters.neutral()
-        val mutableState = QueryChannelsMutableState(filter, querySort, chatDomainImpl.scope)
-        return QueryChannelsController(
-            filter,
-            querySort,
-            chatDomainImpl,
-            mutableState,
-            QueryChannelsLogic(mutableState, chatDomainImpl),
-        ).apply {
+    fun get(): QueryChannelsController =
+        QueryChannelsController(mock(), querySort, chatClient, chatDomainImpl).apply {
             newChannelEventFilter = { channel, _ ->
                 if (currentUser == null) {
                     true
@@ -445,5 +432,4 @@ private class Fixture {
             checkFilterOnChannelUpdatedEvent = this@Fixture.checkFilterOnChannelUpdatedEvent
             queryChannelsSpec.cids = initialCids
         }
-    }
 }

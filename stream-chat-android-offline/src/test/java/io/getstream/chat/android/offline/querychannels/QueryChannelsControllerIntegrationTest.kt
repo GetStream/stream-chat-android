@@ -2,9 +2,6 @@ package io.getstream.chat.android.offline.querychannels
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
@@ -14,7 +11,6 @@ import io.getstream.chat.android.offline.integration.BaseConnectedMockedTest
 import io.getstream.chat.android.offline.utils.ChannelDiffCallback
 import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.offline.utils.UpdateOperationCounts
-import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -68,7 +64,6 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 val query = QueryChannelsSpec(filter).apply { cids = setOf(channel.cid) }
                 chatDomainImpl.repos.insertChannel(channel)
                 chatDomainImpl.repos.insertQueryChannels(query)
-                whenever(chatDomainImpl.client.queryChannelsInternal(any())) doReturn listOf(channel).asCall()
             }
             return this
         }

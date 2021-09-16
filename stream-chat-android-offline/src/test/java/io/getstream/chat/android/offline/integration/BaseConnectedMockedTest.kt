@@ -11,9 +11,8 @@ import org.junit.Before
 internal open class BaseConnectedMockedTest : BaseDomainTest() {
     @Before
     override fun setup() {
-        setupWorkManager()
         client = createConnectedMockClient()
-        setupChatDomain(client, currentUser)
+        setupChatDomain(client, true)
         chatDomainImpl.setOnline()
     }
 
