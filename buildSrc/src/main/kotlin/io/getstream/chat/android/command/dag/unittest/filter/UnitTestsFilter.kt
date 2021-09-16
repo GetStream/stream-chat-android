@@ -11,10 +11,7 @@ fun List<String>.unitTestCommand(rootProject: Project): String {
 
 private fun List<String>.filterUnitTestableModules(rootProject: Project): List<Pair<String, TestType>> {
     val ktlintModules = rootProject.subprojects
-        .filter { project ->
-            val canRunTests = project.hasAndroidUnitTest() || (project.hasUnitTest() && !project.isApplication())
-            canRunTests && this.contains(project.name)
-        }
+        .filter { project -> project.hasUnitTest() && this.contains(project.name) }
         .map { project ->
             val testType = if (project.tasks.any { task -> task.name == "testDebugUnitTest" }) {
                 TestType.ANDROID_LIBRARY_TEST
@@ -28,14 +25,6 @@ private fun List<String>.filterUnitTestableModules(rootProject: Project): List<P
     return ktlintModules
 }
 
-private fun Project.hasAndroidUnitTest(): Boolean = this.tasks.any { task ->
-    task.name == "testDebugUnitTest"
-}
-
 private fun Project.hasUnitTest(): Boolean = this.tasks.any { task ->
-    task.name == "test"
+    task.name == "testDebugUnitTest" || task.name == "test"
 }
-
-private fun Project.isApplication(): Boolean = this.plugins.hasPlugin("com.android.application")
-
-
