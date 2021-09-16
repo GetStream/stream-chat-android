@@ -8,7 +8,7 @@ internal fun ConfigDto.toDomain(): Config =
     Config(
         createdAt = created_at,
         updatedAt = updated_at,
-        name = name,
+        name = name ?: "",
         typingEventsEnabled = typing_events,
         readEventsEnabled = read_events,
         connectEventsEnabled = connect_events,

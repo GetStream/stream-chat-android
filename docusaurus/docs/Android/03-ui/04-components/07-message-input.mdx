@@ -247,10 +247,9 @@ This produces the following result:
 ## Changing Mention Search
 It is possible to change the search method in the mention list. The default class: `DefaultUserLookupHandler` removes diacritics and uses levenstein distance to include similar words in the results.
 
-```
+```kotlin
 val defaultUserLookupHandler = DefaultUserLookupHandler(users)
 messageInputView.setUserLookupHandler(defaultUserLookupHandler)
-
 ```
 
 ### Transliteration
@@ -259,7 +258,7 @@ You can add transliteration to `DefaultUserLookupHandler` by setting the desired
 :::note
 `DefaultStreamTransliterator` only supports transliteration prior to API 29 (Android Q) and it will not apply transliteration for APIs smaller than this. 
 :::
-```
+```kotlin
 val defaultUserLookupHandler = DefaultUserLookupHandler(
     users,
     DefaultStreamTransliterator("Cyrl-Latn")
