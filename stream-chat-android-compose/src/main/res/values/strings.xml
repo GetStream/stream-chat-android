@@ -33,8 +33,7 @@
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
     <string name="stream_compose_thread_footnote">Thread Reply</string>
     <string name="stream_compose_download">Download</string>
-    <string name="stream_compose_share">Share</string>
-    <string name="stream_compose_photos">Photos</string>
+
     <string name="stream_compose_image_order">%1$d of %2$d</string>
     <string name="stream_compose_delete_conversation_text">Do you want to delete the channel %1$s</string>
     <string name="stream_compose_leave_group_text">Do you want to leave the %1$s group?</string>
@@ -52,4 +51,13 @@
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
     <string name="stream_compose_upload_file_count">Uploading %1$d / %2$d …</string>
+
+    <!--  Image Preview  -->
+    <string name="stream_compose_image_options">Image options</string>
+    <string name="stream_compose_image_preview_reply">Reply</string>
+    <string name="stream_compose_image_preview_show_in_chat">Show in chat</string>
+    <string name="stream_compose_image_preview_save_image">Save image</string>
+    <string name="stream_compose_image_preview_delete">Delete</string>
+    <string name="stream_compose_image_preview_share">Share</string>
+    <string name="stream_compose_image_preview_photos">Photos</string>
 </resources>

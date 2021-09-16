@@ -23,8 +23,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.state.messages.list.Delete
+import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.ui.common.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -138,6 +140,22 @@ public fun MessagesScreen(
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(Thread(message))
                     listViewModel.openMessageThread(message)
+                },
+                onImagePreviewResult = { result ->
+                    when (result?.resultType) {
+                        ImagePreviewResultType.QUOTE -> {
+                            val message = listViewModel.getMessageWithId(result.messageId)
+
+                            if (message != null) {
+                                composerViewModel.performMessageAction(Reply(message))
+                            }
+                        }
+
+                        ImagePreviewResultType.SHOW_IN_CHAT -> {
+                            listViewModel.focusMessage(result.messageId)
+                        }
+                        else -> Unit
+                    }
                 }
             )
         }

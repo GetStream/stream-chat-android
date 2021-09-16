@@ -36,6 +36,7 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.thread.ThreadController
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -589,5 +590,67 @@ public class MessageListViewModel(
     public fun clearNewMessageState() {
         threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
         messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
+    }
+
+    /**
+     * Sets the focused message to be the message with the given ID, after which it removes it from
+     * focus with a delay.
+     *
+     * @param messageId The ID of the message.
+     */
+    public fun focusMessage(messageId: String) {
+        val messages = currentMessagesState.messageItems.map {
+            if (it.message.id == messageId) {
+                it.copy(isFocused = true)
+            } else {
+                it
+            }
+        }
+
+        viewModelScope.launch {
+            updateMessages(messages)
+            delay(2000)
+            removeMessageFocus(messageId)
+        }
+    }
+
+    /**
+     * Removes the focus flag from the message with the given ID.
+     *
+     * @param messageId The ID of the message.
+     */
+    private fun removeMessageFocus(messageId: String) {
+        val messages = currentMessagesState.messageItems.map {
+            if (it.message.id == messageId) {
+                it.copy(isFocused = false)
+            } else {
+                it
+            }
+        }
+
+        updateMessages(messages)
+    }
+
+    /**
+     * Updates the current message state with new messages.
+     *
+     * @param messages The list of new message items.
+     */
+    private fun updateMessages(messages: List<MessageItem>) {
+        if (isInThread) {
+            this.threadMessagesState = threadMessagesState.copy(messageItems = messages)
+        } else {
+            this.messagesState = messagesState.copy(messageItems = messages)
+        }
+    }
+
+    /**
+     * Returns a message with the given ID from the [currentMessagesState].
+     *
+     * @param messageId The ID of the selected message.
+     * @return The [Message] with the ID, if it exists.
+     */
+    public fun getMessageWithId(messageId: String): Message? {
+        return currentMessagesState.messageItems.firstOrNull { it.message.id == messageId }?.message
     }
 }

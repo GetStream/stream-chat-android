@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -25,6 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
@@ -48,6 +50,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
@@ -77,6 +80,7 @@ import java.util.Date
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ * @param onImagePreviewResult Handler when the user selects the option to scroll to and focus an image in the list.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -85,13 +89,13 @@ public fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
-    val (message, position, parentMessageId) = messageItem
+    val (message, position, parentMessageId, ownsMessage, isFocused) = messageItem
 
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
     val isUploading = message.attachments.any { it.uploadState == Attachment.UploadState.InProgress }
-    val ownsMessage = messageItem.isMine
 
     val messageCardColor =
         if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
@@ -111,10 +115,13 @@ public fun DefaultMessageContainer(
         )
     }
 
+    val backgroundColor by animateColorAsState(if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .background(color = backgroundColor),
         contentAlignment = if (ownsMessage) CenterEnd else CenterStart
     ) {
         Row(
@@ -167,7 +174,11 @@ public fun DefaultMessageContainer(
                             DeletedMessageContent()
                         } else {
                             Column {
-                                MessageAttachmentsContent(messageItem = messageItem, onLongItemClick = onLongItemClick)
+                                MessageAttachmentsContent(
+                                    messageItem = messageItem,
+                                    onLongItemClick = onLongItemClick,
+                                    onImagePreviewResult = onImagePreviewResult,
+                                )
 
                                 if (message.text.isNotEmpty()) {
                                     DefaultMessageContent(message = message)
@@ -470,7 +481,10 @@ internal fun QuotedMessage(
             shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {
-                    MessageAttachmentsContent(messageItem = MessageItem(message, None), onLongItemClick = {})
+                    MessageAttachmentsContent(
+                        messageItem = MessageItem(message, None),
+                        onLongItemClick = {}
+                    )
 
                     if (message.text.isNotEmpty()) {
                         MessageText(message = message)

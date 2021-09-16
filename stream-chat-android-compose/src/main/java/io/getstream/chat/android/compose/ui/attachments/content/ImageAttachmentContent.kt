@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -22,16 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
+import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
@@ -63,9 +65,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
-    val (modifier, messageItem, onLongItemClick) = attachmentState
+    val (modifier, messageItem, onLongItemClick, onImagePreviewResult) = attachmentState
     val (message, _) = messageItem
-    val context = LocalContext.current
 
     Row(
         modifier
@@ -88,8 +89,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
             ImageAttachmentContentItem(
                 attachment = attachment,
                 modifier = Modifier.weight(1f),
-                messageId = message.id,
-                attachmentPosition = 0
+                message = message,
+                attachmentPosition = 0,
+                onImagePreviewResult = onImagePreviewResult
             )
         } else {
             Column(
@@ -102,8 +104,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                         ImageAttachmentContentItem(
                             attachment = attachments[imageIndex],
                             modifier = Modifier.weight(1f),
-                            messageId = message.id,
-                            attachmentPosition = imageIndex
+                            message = message,
+                            attachmentPosition = imageIndex,
+                            onImagePreviewResult = onImagePreviewResult
                         )
                     }
                 }
@@ -123,8 +126,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                             Box(modifier = Modifier.weight(1f)) {
                                 ImageAttachmentContentItem(
                                     attachment = attachment,
-                                    messageId = message.id,
-                                    attachmentPosition = imageIndex
+                                    message = message,
+                                    attachmentPosition = imageIndex,
+                                    onImagePreviewResult = onImagePreviewResult
                                 )
 
                                 if (!isUploading) {
@@ -139,8 +143,9 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
                             ImageAttachmentContentItem(
                                 attachment = attachment,
                                 modifier = Modifier.weight(1f),
-                                messageId = message.id,
-                                attachmentPosition = imageIndex
+                                message = message,
+                                attachmentPosition = imageIndex,
+                                onImagePreviewResult = onImagePreviewResult
                             )
                         }
                     }
@@ -158,13 +163,18 @@ public fun ImageAttachmentGallery(attachmentState: AttachmentState) {
  */
 @Composable
 internal fun ImageAttachmentContentItem(
-    messageId: String,
+    message: Message,
     attachmentPosition: Int,
     attachment: Attachment,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val painter = rememberImagePainter(attachment.imagePreviewUrl)
+
+    val imagePreviewLauncher = rememberLauncherForActivityResult(
+        contract = ImagePreviewContract(),
+        onResult = { result -> onImagePreviewResult(result) }
+    )
 
     Box(
         modifier = modifier
@@ -172,9 +182,7 @@ internal fun ImageAttachmentContentItem(
             .clickable(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
-                onClick = {
-                    context.startActivity(ImagePreviewActivity.getIntent(context, messageId, attachmentPosition))
-                }
+                onClick = { imagePreviewLauncher.launch(message.id to attachmentPosition) }
             )
     ) {
         Image(
