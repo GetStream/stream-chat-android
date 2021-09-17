@@ -4,7 +4,7 @@
 # name of the fields of the classes being used by QuerySort, change, the sort won't work as expected.
 -keep class io.getstream.chat.android.client.models.** { *; }
 
-# CustomObject can't be minified because we check for extraData using reflection in
+# ExtraDataDto can't be minified because we check for extraData using reflection in
 # io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter. If the name of extraData
 # is changed, we will have problem with serialization.
--keep class * extends io.getstream.chat.android.client.models.CustomObject
+-keep class * extends io.getstream.chat.android.client.api2.model.dto.ExtraDataDto { *; }
