@@ -169,6 +169,7 @@ public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuil
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {
+	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun handlePushMessage (Lio/getstream/chat/android/client/models/PushMessage;)V
 	public final fun instance ()Lio/getstream/chat/android/client/ChatClient;
