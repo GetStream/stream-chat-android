@@ -728,7 +728,7 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithoutAttachments() + retryMessagesWithAttachments()
+        return retryMessagesWithSyncedAttachments() + retryMessagesWithAttachments()
     }
 
     private suspend fun retryMessagesWithAttachments(): List<Message> {
@@ -745,7 +745,7 @@ internal class ChatDomainImpl internal constructor(
         return retriedMessages
     }
 
-    private suspend fun retryMessagesWithoutAttachments(): List<Message> {
+    private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
         val messages = repos.selectMessagesSyncNeeded()
         require(
             messages.all {
