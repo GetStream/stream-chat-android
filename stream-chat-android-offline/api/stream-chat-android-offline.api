@@ -13,6 +13,7 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun createDistinctChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -93,6 +94,7 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Companion {
 }
 
 public final class io/getstream/chat/android/livedata/ChatDomain$DefaultImpls {
+	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryChannels$default (Lio/getstream/chat/android/livedata/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/livedata/ChatDomain;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/livedata/ChatDomain;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -227,6 +229,7 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun createDistinctChannel (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public abstract fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun deleteReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun downloadAttachment (Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -307,6 +310,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$Companion {
 }
 
 public final class io/getstream/chat/android/offline/ChatDomain$DefaultImpls {
+	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryChannels$default (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
