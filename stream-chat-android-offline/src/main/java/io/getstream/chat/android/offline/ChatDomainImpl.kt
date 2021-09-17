@@ -745,6 +745,12 @@ internal class ChatDomainImpl internal constructor(
         return retriedMessages
     }
 
+    /**
+     * Retries messages with [SyncStatus.SYNC_NEEDED] status.
+     * Messages to retry should have all attachments synchronized or don't have them at all.
+     *
+     * @throws IllegalArgumentException when message contains non-synchronized attachments
+     */
     private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
         val messages = repos.selectMessagesSyncNeeded()
         require(
