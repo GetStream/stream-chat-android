@@ -253,6 +253,13 @@ public class ChannelClient internal constructor(
         return client.deleteMessage(messageId)
     }
 
+    /**
+     * Sends the message to the given channel.
+     *
+     * @param message Message object
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
     @CheckResult
     public fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
@@ -670,7 +677,7 @@ public class ChannelClient internal constructor(
 
     @Deprecated(
         message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public fun getMessagesWithAttachments(offset: Int, limit: Int, type: String): Call<List<Message>> =
