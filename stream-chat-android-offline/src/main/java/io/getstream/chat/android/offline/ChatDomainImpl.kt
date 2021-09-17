@@ -445,6 +445,11 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.keys().toList()
     }
 
+    @VisibleForTesting
+    fun addActiveChannel(cid: String, channelController: ChannelController) {
+        activeChannelMapImpl[cid] = channelController
+    }
+
     fun setChannelUnreadCount(newCount: Int) {
         _channelUnreadCount.value = newCount
     }
