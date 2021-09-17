@@ -26,4 +26,4 @@ internal data class AttachmentDto(
     val url: String?,
 
     val extraData: Map<String, Any>,
-)
+) : ExtraDataDto

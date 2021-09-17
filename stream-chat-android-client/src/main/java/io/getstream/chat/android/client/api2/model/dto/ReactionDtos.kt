@@ -18,7 +18,7 @@ internal data class UpstreamReactionDto(
     val user_id: String,
 
     val extraData: Map<String, Any>,
-)
+): ExtraDataDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter] for
@@ -35,4 +35,4 @@ internal data class DownstreamReactionDto(
     val user_id: String,
 
     val extraData: Map<String, Any>,
-)
+): ExtraDataDto
