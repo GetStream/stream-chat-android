@@ -25,6 +25,7 @@ internal interface ChatNotifications {
     fun displayNotification(channel: Channel, message: Message)
     fun removeStoredDevice()
     fun onDismissNotification(notificationId: Int)
+    fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 internal class ChatNotificationsImpl constructor(
@@ -85,6 +86,14 @@ internal class ChatNotificationsImpl constructor(
         handler.onDismissNotification(notificationId)
     }
 
+    /**
+     * Dismiss notification associated to the [channelType] and [channelId] received on the params
+     *
+     */
+    override fun dismissChannelNotifications(channelType: String, channelId: String) {
+        handler.dismissChannelNotifications(channelType, channelId)
+    }
+
     private fun handlePushMessage(message: PushMessage) {
         obtainNotifactionData(message.channelId, message.channelType, message.messageId)
     }
@@ -135,4 +144,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun displayNotification(channel: Channel, message: Message) = Unit
     override fun removeStoredDevice() = Unit
     override fun onDismissNotification(notificationId: Int) = Unit
+    override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }
