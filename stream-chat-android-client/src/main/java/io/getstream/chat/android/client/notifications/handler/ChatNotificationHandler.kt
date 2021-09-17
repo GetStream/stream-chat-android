@@ -185,6 +185,13 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
+    /**
+     * Dismiss notifications from a given [channelType] and [channelId]
+     */
+    public open fun dismissChannelNotifications(channelType: String, channelId: String) {
+        dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
+    }
+
     public open fun getErrorCaseIntent(): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
@@ -232,6 +239,15 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     private fun Channel.getMemberNamesWithoutCurrentUser(): String? = getUsersExcludingCurrent()
         .joinToString { it.name }
         .takeIf { it.isNotEmpty() }
+
+    private fun dismissSummaryNotification(notificationSummaryId: Int) {
+        getAssociatedNotificationIds(notificationSummaryId).forEach {
+            notificationManager.cancel(it)
+            removeNotificationId(it)
+        }
+        notificationManager.cancel(notificationSummaryId)
+        sharedPreferences.edit { remove(getNotificationSummaryIdKey(notificationSummaryId)) }
+    }
 
     internal fun onDismissNotification(notificationId: Int) {
         val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
