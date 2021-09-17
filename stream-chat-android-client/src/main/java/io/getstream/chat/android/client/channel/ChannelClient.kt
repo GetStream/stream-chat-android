@@ -254,6 +254,13 @@ public class ChannelClient internal constructor(
         return client.deleteMessage(messageId, hard)
     }
 
+    /**
+     * Sends the message to the given channel.
+     *
+     * @param message Message object
+     *
+     * @return Executable async [Call] responsible for sending a message.
+     */
     @CheckResult
     public fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
