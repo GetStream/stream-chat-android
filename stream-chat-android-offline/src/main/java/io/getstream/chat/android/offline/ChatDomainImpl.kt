@@ -751,7 +751,7 @@ internal class ChatDomainImpl internal constructor(
             messages.all {
                 it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
             }
-        ) { "Logical error. Messages without synchronized attachments should have another sync status!" }
+        ) { "Logical error. Messages with non-synchronized attachments should have another sync status!" }
 
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
