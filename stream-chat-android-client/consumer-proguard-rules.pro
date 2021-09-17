@@ -1,6 +1,6 @@
 ## Stream Chat Android Client Proguard Rules
 
-# Classes that are using with QuerySort can't be monified, because QuerySort uses reflection. If the
+# Classes that are using with QuerySort can't be minified, because QuerySort uses reflection. If the
 # name of the fields of the classes being used by QuerySort, change, the sort won't work as expected.
 -keep class io.getstream.chat.android.client.models.** { *; }
 
