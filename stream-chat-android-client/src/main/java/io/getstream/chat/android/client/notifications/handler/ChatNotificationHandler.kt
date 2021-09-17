@@ -248,7 +248,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             putInt(getNotificationIdKey(notificationId), notificationSummaryId)
             putStringSet(
                 getNotificationSummaryIdKey(notificationSummaryId),
-                (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map { it.toString() }.toSet()
+                (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map(Int::toString).toSet()
             )
         }
     }
@@ -259,14 +259,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             remove(getNotificationIdKey(notificationId))
             putStringSet(
                 getNotificationSummaryIdKey(notificationSummaryId),
-                (getAssociatedNotificationIds(notificationSummaryId) - notificationId).map { it.toString() }.toSet()
+                (getAssociatedNotificationIds(notificationSummaryId) - notificationId).map(Int::toString).toSet()
             )
         }
     }
 
     private fun getAssociatedNotificationSummaryId(notificationId: Int): Int = sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
     private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> =
-        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty().map { it.toInt() }.toSet()
+        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty().map(String::toInt).toSet()
 
     private fun getNotificationIdKey(notificationId: Int) = KEY_PREFIX_NOTIFICATION_ID + notificationId
     private fun getNotificationSummaryIdKey(notificationSummaryId: Int) = KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
