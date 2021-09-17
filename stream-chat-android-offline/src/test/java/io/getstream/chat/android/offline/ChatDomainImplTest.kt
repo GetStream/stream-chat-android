@@ -48,11 +48,20 @@ internal class ChatDomainImplTest {
                 syncStatus = SyncStatus.SYNC_NEEDED,
                 attachments = mutableListOf(randomAttachment { uploadState = Attachment.UploadState.Success }),
             )
+            val client = mock<ChatClient> {
+                on { it.channel(any()) } doAnswer {
+                    mock {
+                        on { deleteMessage(any(), any()) } doAnswer {
+                            TestCall(Result.success(syncNeededMessageWithSuccessAttachment))
+                        }
+                    }
+                }
+            }
             val repositoryFacade = mock<RepositoryFacade> {
                 onBlocking { selectMessagesSyncNeeded() } doReturn listOf(syncNeededMessageWithSuccessAttachment)
                 onBlocking { selectMessagesWaitForAttachments() } doReturn emptyList()
             }
-            val sut = Fixture()
+            val sut = Fixture(client)
                 .withRepositoryFacade(repositoryFacade)
                 .withActiveChannel(cid = syncNeededMessageWithSuccessAttachment.cid, channelController = mock())
                 .get()
