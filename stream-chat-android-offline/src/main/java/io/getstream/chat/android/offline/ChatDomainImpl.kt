@@ -161,6 +161,7 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext
     )
+
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
 
@@ -746,7 +747,11 @@ internal class ChatDomainImpl internal constructor(
 
     private suspend fun retryMessagesWithoutAttachments(): List<Message> {
         val messages = repos.selectMessagesSyncNeeded()
-        require(messages.all { it.attachments.isEmpty() }) { "Logical error. Messages with attachments should have another sync status!" }
+        require(
+            messages.all {
+                it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
+            }
+        ) { "Logical error. Messages without synchronized attachments should have another sync status!" }
 
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
@@ -924,7 +929,8 @@ internal class ChatDomainImpl internal constructor(
 
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
-    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> = DeleteMessage(this).invoke(message, hard)
+    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
+        DeleteMessage(this).invoke(message, hard)
 
     override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
