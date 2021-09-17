@@ -28,7 +28,6 @@ internal fun Message.toDto(): UpstreamMessageDto =
         silent = silent,
         text = text,
         thread_participants = threadParticipants.map(User::toDto),
-        user = user.toDto(),
         extraData = extraData,
     )
 

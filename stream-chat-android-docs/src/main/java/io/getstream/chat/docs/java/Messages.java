@@ -109,7 +109,7 @@ public class Messages {
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=java#delete-a-message">Delete A Message</a>
          */
         public void deleteAMessage() {
-            channelClient.deleteMessage("message-id").enqueue(result -> {
+            channelClient.deleteMessage("message-id", false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Message deletedMessage = result.data();
                 } else {

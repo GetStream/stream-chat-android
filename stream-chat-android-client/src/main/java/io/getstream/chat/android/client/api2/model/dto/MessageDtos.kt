@@ -26,7 +26,6 @@ internal data class UpstreamMessageDto(
     val silent: Boolean,
     val text: String,
     val thread_participants: List<UpstreamUserDto>,
-    val user: UpstreamUserDto,
 
     val extraData: Map<String, Any>,
 )

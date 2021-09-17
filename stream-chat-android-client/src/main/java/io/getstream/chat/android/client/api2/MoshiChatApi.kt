@@ -140,10 +140,11 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun deleteMessage(messageId: String): Call<Message> {
+    override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
             connectionId = connectionId,
+            hard = hard
         ).map { response -> response.message.toDomain() }
     }
 
