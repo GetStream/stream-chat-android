@@ -17,7 +17,7 @@ internal data class UpstreamUserDto(
     val teams: List<String>,
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter] for
@@ -42,7 +42,7 @@ internal data class DownstreamUserDto(
     val channel_mutes: List<DownstreamChannelMuteDto>?,
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto
 
 @JsonClass(generateAdapter = true)
 internal data class PartialUpdateUserDto(
