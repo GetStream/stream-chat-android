@@ -28,7 +28,7 @@ internal data class UpstreamMessageDto(
     val thread_participants: List<UpstreamUserDto>,
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter] for
@@ -68,4 +68,4 @@ internal data class DownstreamMessageDto(
     val user: DownstreamUserDto,
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto

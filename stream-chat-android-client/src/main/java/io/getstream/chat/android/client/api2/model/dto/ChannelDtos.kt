@@ -26,7 +26,7 @@ internal data class UpstreamChannelDto(
     val pinned_messages: List<UpstreamMessageDto>,
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamChannelDto(
@@ -51,4 +51,4 @@ internal data class DownstreamChannelDto(
     val pinned_messages: List<DownstreamMessageDto> = emptyList(),
 
     val extraData: Map<String, Any>,
-): ExtraDataDto
+) : ExtraDataDto
