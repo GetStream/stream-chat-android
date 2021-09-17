@@ -1728,6 +1728,18 @@ public class ChatClient internal constructor(
             )
         }
 
+        /**
+         * Dismiss notifications from a given [channelType] and [channelId]
+         * Dismiss process will be handled internally unless user overrrides [ChatNotificationHandler.dismissChannelNotifications]
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
+        @Throws(IllegalStateException::class)
+        public fun dismissChannelNotifications(channelType: String, channelId: String) {
+            ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
+        }
+
         @Throws(IllegalStateException::class)
         internal fun dismissNotification(notificationId: Int) {
             ensureClientInitialized().notifications.onDismissNotification(notificationId)
