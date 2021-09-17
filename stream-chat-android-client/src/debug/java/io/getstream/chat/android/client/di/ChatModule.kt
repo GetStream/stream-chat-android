@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
@@ -25,7 +24,8 @@ internal class ChatModule(
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
     loggingInterceptor: Interceptor,
-) : BaseChatModule(appContext,
+) : BaseChatModule(
+    appContext,
     config,
     notificationsHandler,
     uploader,
