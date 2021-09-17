@@ -15,13 +15,13 @@ internal class DeleteMessage(private val domainImpl: ChatDomainImpl) {
      * @see io.getstream.chat.android.offline.utils.RetryPolicy
      */
     @CheckResult
-    operator fun invoke(message: Message): Call<Message> {
+    operator fun invoke(message: Message, hard: Boolean = false): Call<Message> {
         val cid = message.cid
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
         return CoroutineCall(domainImpl.scope) {
-            channelController.deleteMessage(message)
+            channelController.deleteMessage(message, hard)
         }
     }
 }
