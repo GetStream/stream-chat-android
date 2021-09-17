@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
 
 ### ⬆️ Improved
 
