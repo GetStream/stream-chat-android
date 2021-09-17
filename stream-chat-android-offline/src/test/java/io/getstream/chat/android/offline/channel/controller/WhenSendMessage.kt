@@ -92,7 +92,7 @@ internal class WhenSendMessage {
 
         mockFileUploadsFailure(files)
 
-        channelController.sendMessage(Message(attachments = attachments), mock())
+        channelController.sendMessage(Message(attachments = attachments))
 
         verify(channelClient).sendMessage(
             argThat { message ->

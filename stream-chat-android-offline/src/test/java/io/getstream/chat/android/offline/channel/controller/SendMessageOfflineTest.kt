@@ -50,7 +50,7 @@ internal class SendMessageOfflineTest {
 
         val message = randomMessage(cid = "channelType:channelId", parentId = null)
         // the message is only created locally
-        sut.sendMessage(message, mock())
+        sut.sendMessage(message)
         // the message should still show up after invocation
         sut.watch()
 
