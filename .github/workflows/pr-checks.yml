@@ -23,6 +23,24 @@ jobs:
       - name: ktlint
         run: ./gradlew ktlintCheck
 
+  selected_lint:
+    name: selected_ktlint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 11
+      - name: Parse changed modules ktlint command
+        run: ./gradlew dag-command selected-ktlint
+      - name: Change permission for command
+        run: chmod +x kt-selected-command.sh
+      - name: Run selected ktlint command
+        run: ./kt-selected-command.sh
+
   api_check:
     name: API check
     runs-on: ubuntu-18.04
