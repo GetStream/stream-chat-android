@@ -4,6 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.15 ⌛ | Some attributes are not needed anymore |
+| `NotificationLoadDataListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.15 ⌛ | This class is not used anymore, you will be asked to build your notification |
 | `ChatClient#searchMessages` <br/>*client* | 2021.09.15<br/>4.18.0 | 2021.10.15 ⌛ | 2021.11.15 ⌛ | Use the `ChatClient#searchMessages` method with unwrapped parameters instead |
 | `ChatDomain#createDistinctChannel` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.15 ⌛ | 2021.11.15 ⌛ | Use ChatClient::createChannel directly |
 | `ChatDomain#removeMembers` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.15 ⌛ | 2021.11.15 ⌛ | Use ChatClient::removeMembers directly |

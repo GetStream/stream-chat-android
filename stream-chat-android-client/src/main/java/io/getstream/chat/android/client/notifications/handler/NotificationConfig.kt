@@ -14,7 +14,10 @@ public data class NotificationConfig(
     val notificationGroupSummaryContentText: Int = R.string.stream_chat_notification_group_summary_content_text,
     val errorNotificationGroupSummaryTitle: Int = R.string.stream_chat_error_notification_group_summary_content_text,
     val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
-    val shouldGroupNotifications: Boolean = false,
+    @Deprecated(
+        message = "Notifications are grouped by channel by default. This behavior can be changed by handling the notification",
+        level = DeprecationLevel.WARNING,
+    ) val shouldGroupNotifications: Boolean = false,
     val pushNotificationsEnabled: Boolean = true,
     val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
 )

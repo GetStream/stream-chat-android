@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -22,14 +21,6 @@ internal class QueryChannelsPostponeHelper(
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT,
 ) {
-
-    internal fun queryChannel(
-        channelType: String,
-        channelId: String,
-        request: QueryChannelRequest,
-    ): Call<Channel> = CoroutineCall(coroutineScope) {
-        doSafeJob { api.queryChannel(channelType, channelId, request) }.await()
-    }
 
     internal fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> = CoroutineCall(coroutineScope) {
         doSafeJob { api.queryChannels(request) }.await()
