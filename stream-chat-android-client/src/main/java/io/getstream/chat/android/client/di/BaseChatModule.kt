@@ -58,9 +58,7 @@ internal open class BaseChatModule(
 
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
-    private val defaultNotifications by lazy {
-        buildNotification(notificationsHandler, api())
-    }
+    private val defaultNotifications by lazy { buildNotification(notificationsHandler) }
     private val defaultApi by lazy { buildApi() }
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
@@ -102,10 +100,9 @@ internal open class BaseChatModule(
 
     private fun buildNotification(
         handler: ChatNotificationHandler,
-        api: ChatApi,
     ): ChatNotifications {
         return if (handler.config.pushNotificationsEnabled) {
-            ChatNotificationsImpl(handler, api, appContext)
+            ChatNotificationsImpl(handler, appContext)
         } else {
             NoOpChatNotifications(handler)
         }

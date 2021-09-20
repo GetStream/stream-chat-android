@@ -15,6 +15,9 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.logger.ChatLogger
 
 internal class LoadNotificationDataWorker(
@@ -42,12 +45,19 @@ internal class LoadNotificationDataWorker(
         )
 
         return try {
-            ChatClient.displayNotificationWithData(
-                channelId = channelId,
-                channelType = channelType,
-                messageId = messageId,
-            )
-            Result.success()
+            val client: ChatClient = ChatClient.instance()
+            val getMessage = client.getMessage(messageId)
+            val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
+
+            val result = getChannel.zipWith(getMessage).await()
+            if (result.isSuccess) {
+                val (channel, message) = result.data()
+                ChatClient.displayNotification(channel = channel, message = message)
+                Result.success()
+            } else {
+                logger.logE("Error while loading notification data: ${result.error()}")
+                Result.failure()
+            }
         } catch (exception: IllegalStateException) {
             logger.logE("Error while loading notification data: ${exception.message}")
             Result.failure()
