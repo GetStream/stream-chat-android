@@ -40,7 +40,9 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Parse changed modules unit_tests command
-        run: ./gradlew dag-command selected-test-debug
+        run: ./gradlew dag-command
+      - name: generate command for seleted unit tests
+        run: ./gradlew selected-test-debug
       - name: Change permission for command
         run: chmod +x unit-tests-selected-command.sh
       - name: Run selected unit_tests command
