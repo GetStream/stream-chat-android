@@ -59,7 +59,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             notificationId: Int,
         ): PendingIntent = PendingIntent.getBroadcast(
             context,
-            notificationId ,
+            notificationId,
             createNotifyIntent(context, notificationId, ACTION_DISMISS),
             PendingIntent.FLAG_UPDATE_CURRENT,
         )
