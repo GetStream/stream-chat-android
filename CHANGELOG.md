@@ -82,6 +82,7 @@
 - Images being uploaded are now preloaded from the system
 - Upload indicators show the upload progress and how much data is left to send
 - Added more image options to the ImagePreviewActivity such as download, delete, reply to message...
+- Added an Image Gallery feature to the ImagePreviewActivity where users can browse all the images
 
 ### ⚠️ Changed
 - `StreamAttachment.defaultFactories()` is a function now, instead of a property.
