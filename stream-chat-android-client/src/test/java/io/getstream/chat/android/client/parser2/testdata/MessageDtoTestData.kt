@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -174,14 +173,6 @@ internal object MessageDtoTestData {
           "silent": false,
           "text": "text",
           "thread_participants": [],
-          "user": {
-            "banned": false,
-            "id": "",
-            "invisible": false,
-            "role": "",
-            "devices": [],
-            "teams": []
-          },
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -204,15 +195,6 @@ internal object MessageDtoTestData {
         html = "html",
         parent_id = null,
         command = null,
-        user = UpstreamUserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            devices = emptyList(),
-            teams = emptyList(),
-            extraData = emptyMap()
-        ),
         silent = false,
         shadowed = false,
         extraData = mapOf(
@@ -255,15 +237,7 @@ internal object MessageDtoTestData {
           "show_in_channel": false,
           "silent": false,
           "text": "",
-          "thread_participants": [],
-          "user": {
-            "banned": false,
-            "id": "",
-            "invisible": false,
-            "role": "",
-            "devices": [],
-            "teams": []
-          }
+          "thread_participants": []
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -272,15 +246,6 @@ internal object MessageDtoTestData {
         html = "",
         parent_id = null,
         command = null,
-        user = UpstreamUserDto(
-            banned = false,
-            id = "",
-            invisible = false,
-            role = "",
-            devices = emptyList(),
-            teams = emptyList(),
-            extraData = emptyMap()
-        ),
         silent = false,
         shadowed = false,
         extraData = emptyMap(),

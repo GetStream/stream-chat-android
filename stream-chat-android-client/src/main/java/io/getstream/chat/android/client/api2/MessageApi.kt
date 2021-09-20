@@ -54,6 +54,7 @@ internal interface MessageApi {
     @DELETE("/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
+        @Query(QueryParams.HARD_DELETE) hard: Boolean?,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<MessageResponse>
 
