@@ -86,7 +86,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew stream-chat-android:testDebugUnitTest stream-chat-android-client:testDebugUnitTest stream-chat-android-compose:testDebugUnitTest stream-chat-android-compose-sample:testDebugUnitTest stream-chat-android-docs:testDebugUnitTest stream-chat-android-offline:testDebugUnitTest stream-chat-android-pushprovider-firebase:testDebugUnitTest stream-chat-android-sample:test stream-chat-android-ui-common:testDebugUnitTest stream-chat-android-ui-components:testDebugUnitTest stream-chat-android-ui-components-sample:test
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
