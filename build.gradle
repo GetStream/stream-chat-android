@@ -1,4 +1,6 @@
 import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.dag.ktlint.plugin.SelectedKtlintPlugin
+import io.getstream.chat.android.command.dag.unittest.plugin.SelectedUnitTestsPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -6,6 +8,9 @@ apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
+apply plugin: SelectedKtlintPlugin
+apply plugin: SelectedUnitTestsPlugin
+apply plugin: 'com.github.leandroborgesferreira.dag-command'
 
 buildscript {
     repositories {
@@ -27,6 +32,7 @@ buildscript {
         classpath Dependencies.gradleNexusPublishPlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
+        classpath Dependencies.dagCommand
     }
 }
 
@@ -48,6 +54,23 @@ allprojects {
             }
         }
     }
+}
+
+dagCommand {
+    filter = "all"
+    defaultBranch = System.getenv('GITHUB_HEAD_REF') ?: "develop"
+    outputType = "json"
+    printModulesInfo = true
+}
+
+selectedKtlint {
+    changeModulesPath = "${rootProject.buildDir}/dag-command/affected-modules.json"
+    outputPath = "kt-selected-command.sh"
+}
+
+selectedTestDebug {
+    changeModulesPath = "${rootProject.buildDir}/dag-command/affected-modules.json"
+    outputPath = "unit-tests-selected-command.sh"
 }
 
 task clean(type: Delete) {

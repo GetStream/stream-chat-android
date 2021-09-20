@@ -853,6 +853,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;IZLio/getstream/chat/android/compose/handlers/ClipboardHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun clearNewMessageState ()V
 	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun deleteMessage (Lio/getstream/chat/android/client/models/Message;Z)V
+	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)V
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/compose/state/messages/list/MessageAction;)V
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
