@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,12 +35,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
@@ -52,12 +58,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,6 +82,7 @@ import com.google.accompanist.pager.rememberPagerState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.Delete
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewAction
@@ -84,6 +93,7 @@ import io.getstream.chat.android.compose.state.imagepreview.Reply
 import io.getstream.chat.android.compose.state.imagepreview.SaveImage
 import io.getstream.chat.android.compose.state.imagepreview.ShowInChat
 import io.getstream.chat.android.compose.ui.common.Timestamp
+import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
@@ -171,6 +181,20 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     modifier = Modifier.animateEnterExit(
                         enter = slideInVertically(),
                         exit = slideOutVertically()
+                    )
+                )
+            }
+
+            AnimatedVisibility(
+                visible = imagePreviewViewModel.isShowingGallery,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                ImageGallery(
+                    pagerState = pagerState,
+                    modifier = Modifier.animateEnterExit(
+                        enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
+                        exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
                     )
                 )
             }
@@ -268,6 +292,13 @@ public class ImagePreviewActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * The image options menu, used to perform different actions for the currently active image.
+     *
+     * @param options The options available for the image.
+     * @param pagerState The state of the pager, used to fetch the current image.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     private fun ImagePreviewOptions(
         options: List<ImagePreviewOption>,
@@ -316,9 +347,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * Represents each item in the image options menu that the user can pick.
      *
      * @param imagePreviewOption The option information to show.
+     * @param pagerState The state of the pager, used to handle selected actions.
      */
     @Composable
-    public fun ImagePreviewOptionItem(
+    private fun ImagePreviewOptionItem(
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
     ) {
@@ -502,15 +534,19 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     color = ChatTheme.colors.textHighEmphasis
                 )
 
-                // TODO we need to open a gallery of images here
-//                Icon(
-//                    modifier = Modifier
-//                        .align(Alignment.CenterEnd)
-//                        .padding(8.dp),
-//                    imageVector = Icons.Default.Apps,
-//                    contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
-//                    tint = ChatTheme.colors.textHighEmphasis
-//                )
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(8.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(),
+                            onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = true) }
+                        ),
+                    imageVector = Icons.Default.Apps,
+                    contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
+                    tint = ChatTheme.colors.textHighEmphasis
+                )
             }
         }
     }
@@ -605,11 +641,157 @@ public class ImagePreviewActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Represents the image gallery where the user can browse all images and quickly jump to them.
+     *
+     * @param pagerState The state of the pager, used to navigate to specific images.
+     * @param modifier Modifier for styling.
+     */
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun ImageGallery(
+        pagerState: PagerState,
+        modifier: Modifier = Modifier,
+    ) {
+        val message = imagePreviewViewModel.message
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ChatTheme.colors.overlay)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = false) }
+                )
+        ) {
+            Surface(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { }
+                    ),
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                elevation = 4.dp,
+                color = ChatTheme.colors.barsBackground
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+
+                    ImageGalleryHeader()
+
+                    LazyVerticalGrid(
+                        cells = GridCells.Fixed(COLUMN_COUNT),
+                        content = {
+                            itemsIndexed(message.attachments) { index, attachment ->
+                                ImageGalleryItem(index, attachment, message.user, pagerState)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * Represents the header of [ImageGallery] that allows the user to dismiss the component.
+     */
+    @Composable
+    private fun ImageGalleryHeader() {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(8.dp)
+                    .clickable(
+                        indication = rememberRipple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = false) }
+                    ),
+                imageVector = Icons.Default.Cancel,
+                contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                tint = ChatTheme.colors.textHighEmphasis
+            )
+
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.stream_compose_image_preview_photos),
+                style = ChatTheme.typography.title3Bold,
+                color = ChatTheme.colors.textHighEmphasis
+            )
+        }
+    }
+
+    /**
+     * Represents each item in the [ImageGallery].
+     *
+     * @param index The index of the item.
+     * @param attachment The attachment data used to load the item image.
+     * @param user The user who sent the image.
+     * @param pagerState The state of the pager, used to navigate to items when the user selects them.
+     */
+    @Composable
+    private fun ImageGalleryItem(
+        index: Int,
+        attachment: Attachment,
+        user: User,
+        pagerState: PagerState,
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clickable {
+                    coroutineScope.launch {
+                        imagePreviewViewModel.toggleGallery(isShowingGallery = false)
+                        pagerState.animateScrollToPage(index)
+                    }
+                }
+        ) {
+            val painter = rememberImagePainter(attachment.imagePreviewUrl)
+
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+
+            UserAvatar(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(8.dp)
+                    .size(24.dp),
+                user = user
+            )
+        }
+    }
+
     public companion object {
+        /**
+         * The column count used for the image gallery.
+         */
+        private const val COLUMN_COUNT = 3
+
+        /**
+         * Keys required for the input and output data.
+         */
         private const val KEY_MESSAGE_ID: String = "messageId"
         private const val KEY_ATTACHMENT_POSITION: String = "attachmentPosition"
         public const val KEY_IMAGE_PREVIEW_RESULT: String = "imagePreviewResult"
 
+        /**
+         * Used to build an [Intent] to start the [ImagePreviewActivity] with the required data.
+         *
+         * @param context The context to start the activity with.
+         * @param messageId The ID of the message to explore the images of.
+         * @param attachmentPosition The initial position of the clicked image.
+         */
         public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KEY_MESSAGE_ID, messageId)

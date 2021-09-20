@@ -38,6 +38,12 @@ public class ImagePreviewViewModel(
         private set
 
     /**
+     * Shows or hides the image gallery menu in the UI.
+     */
+    public var isShowingGallery: Boolean by mutableStateOf(false)
+        private set
+
+    /**
      * Loads the message data, which then updates the UI state to shows images.
      */
     init {
@@ -55,6 +61,10 @@ public class ImagePreviewViewModel(
      */
     public fun toggleImageOptions(isShowingOptions: Boolean) {
         this.isShowingOptions = isShowingOptions
+    }
+
+    public fun toggleGallery(isShowingGallery: Boolean) {
+        this.isShowingGallery = isShowingGallery
     }
 
     /**

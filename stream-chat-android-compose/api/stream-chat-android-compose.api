@@ -591,7 +591,6 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 	public static final field Companion Lio/getstream/chat/android/compose/ui/imagepreview/ImagePreviewActivity$Companion;
 	public static final field KEY_IMAGE_PREVIEW_RESULT Ljava/lang/String;
 	public fun <init> ()V
-	public final fun ImagePreviewOptionItem (Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewOption;Lcom/google/accompanist/pager/PagerState;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePreviewActivity$Companion {
@@ -880,7 +879,9 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isShowingGallery ()Z
 	public final fun isShowingOptions ()Z
+	public final fun toggleGallery (Z)V
 	public final fun toggleImageOptions (Z)V
 }
 
