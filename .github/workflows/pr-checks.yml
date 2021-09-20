@@ -35,7 +35,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: pull develop
-        run: git pull origin develop
+        run: git pull origin develop --allow-unrelated-histories
       - name: Parse changed modules unit_tests command
         run: ./gradlew dag-command selected-test-debug
       - name: Change permission for command
