@@ -58,7 +58,7 @@ allprojects {
 
 dagCommand {
     filter = "all"
-    defaultBranch = System.getenv('GITHUB_HEAD_REF') ?: "develop"
+    defaultBranch = System.getenv('GITHUB_BASE_REF') ?: "develop"
     outputType = "json"
     printModulesInfo = true
 }
