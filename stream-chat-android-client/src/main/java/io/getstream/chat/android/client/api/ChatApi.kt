@@ -104,7 +104,7 @@ internal interface ChatApi {
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
 
     @CheckResult
-    fun deleteMessage(messageId: String): Call<Message>
+    fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message>
 
     @CheckResult
     fun sendAction(request: SendActionRequest): Call<Message>
