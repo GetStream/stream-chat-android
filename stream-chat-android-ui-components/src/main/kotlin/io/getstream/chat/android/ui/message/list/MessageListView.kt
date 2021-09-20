@@ -545,6 +545,11 @@ public class MessageListView : ConstraintLayout {
         super.onDetachedFromWindow()
     }
 
+    /**
+     * Used to indicate that the message list is loading more messages.
+     *
+     * @param loadingMore True if the list the next page of messages is loading.
+     */
     public fun setLoadingMore(loadingMore: Boolean) {
         if (loadingMore) {
             loadMoreListener.disablePagination()
@@ -553,6 +558,12 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
+    /**
+     * Scrolls the list to the target message and highlights it. Only works if the target message
+     * is already present in the list.
+     *
+     * @param message The message to scroll to and highlight.
+     */
     public fun scrollToMessage(message: Message) {
         scrollHelper.scrollToMessage(message)
     }
@@ -573,6 +584,11 @@ public class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.adapter = adapter
     }
 
+    /**
+     * Initializes the message list view with the [Channel] object.
+     *
+     * @param channel The channel object.
+     */
     public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
@@ -617,9 +633,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * @param view will be added to the view hierarchy of [MessageListView] and managed by it.
+     * Sets the view to be displayed when the message list is loading.
+     *
+     * @param view Will be added to the view hierarchy of [MessageListView] and managed by it.
      * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
+     * @param layoutParams Defines how the view will be situated inside its container [ViewGroup].
      */
     @JvmOverloads
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
@@ -628,18 +646,26 @@ public class MessageListView : ConstraintLayout {
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
+    /**
+     * Shows the loading view.
+     */
     public fun showLoadingView() {
         loadingViewContainer.isVisible = true
     }
 
+    /**
+     * Hides the loading view.
+     */
     public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
     }
 
     /**
-     * @param view will be added to the view hierarchy of [MessageListView] and managed by it.
+     * Sets the view to be displayed when the message list is empty.
+     *
+     * @param view Will be added to the view hierarchy of [MessageListView] and managed by it.
      * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside its container [ViewGroup].
+     * @param layoutParams Defines how the view will be situated inside its container [ViewGroup].
      */
     @JvmOverloads
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
@@ -648,22 +674,44 @@ public class MessageListView : ConstraintLayout {
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
+    /**
+     * Shows the empty view.
+     */
     public fun showEmptyStateView() {
         emptyStateViewContainer.isVisible = true
     }
 
+    /**
+     * Hides the empty view.
+     */
     public fun hideEmptyStateView() {
         emptyStateViewContainer.isVisible = false
     }
 
+    /**
+     * Shows a error for one of the reasons defined in [MessageListViewModel.ErrorEvent].
+     *
+     * @param errorEvent The error event containing information about the error.
+     */
     public fun showError(errorEvent: MessageListViewModel.ErrorEvent) {
         errorEventHandler.onErrorEvent(errorEvent)
     }
 
+    /**
+     * Used to control whether the message list is scrolled to the bottom when new messages arrive
+     * or the unread count badge is incremented instead.
+     *
+     * @param newMessagesBehaviour The behavior to be used when new messages are added to the list.
+     */
     public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
         scrollHelper.alwaysScrollToBottom = newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
     }
 
+    /**
+     * Enables or disables the scroll to bottom button.
+     *
+     * @param scrollToBottomButtonEnabled True if scroll to bottom button should be displayed.
+     */
     public fun setScrollToBottomButtonEnabled(scrollToBottomButtonEnabled: Boolean) {
         scrollHelper.scrollToBottomButtonEnabled = scrollToBottomButtonEnabled
     }
@@ -687,7 +735,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Enables or disables the message delete confirmation showing
+     * Enables or disables the message delete confirmation showing.
      *
      * @param enabled True if deleting a message is enabled, false otherwise.
      */
@@ -758,30 +806,69 @@ public class MessageListView : ConstraintLayout {
         messageListViewStyle = requireStyle().copy(replyEnabled = enabled)
     }
 
+    /**
+     * Allows clients to set a custom implementation of [MessageListItemViewHolderFactory]. Use this
+     * method if you want completely custom views for the message list items.
+     *
+     * @param messageListItemViewHolderFactory The custom factory to be used when generating item ViewHolders.
+     */
     public fun setMessageViewHolderFactory(messageListItemViewHolderFactory: MessageListItemViewHolderFactory) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set MessageViewHolderFactory first"
+        }
         this.messageListItemViewHolderFactory = messageListItemViewHolderFactory
     }
 
+    /**
+     * Allows clients to set a custom implementation of [DateFormatter] to format the message date.
+     *
+     * @param messageDateFormatter The formatter that is used to format the message date.
+     */
     public fun setMessageDateFormatter(messageDateFormatter: DateFormatter) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set DateFormatter first" }
         this.messageDateFormatter = messageDateFormatter
     }
 
+    /**
+     * Used to control the visibility of the user avatar for a particular message list item.
+     *
+     * @param showAvatarPredicate The predicate that checks if the avatar should be shown.
+     */
     public fun setShowAvatarPredicate(showAvatarPredicate: ShowAvatarPredicate) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized; please set ShowAvatarPredicate first" }
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized; please set ShowAvatarPredicate first"
+        }
         this.showAvatarPredicate = showAvatarPredicate
     }
 
-    public fun displayNewMessages(listItem: MessageListItemWrapper) {
-        buffer.enqueueData(listItem)
+    /**
+     * Shows the message list items.
+     *
+     * @param messageListItemWrapper The object containing all the information required to render
+     * the message list.
+     */
+    public fun displayNewMessages(messageListItemWrapper: MessageListItemWrapper) {
+        buffer.enqueueData(messageListItemWrapper)
     }
 
+    /**
+     * Allows applying a filter condition to the message list before it is rendered.
+     *
+     * @param messageListItemPredicate The predicate used to filter the list of [MessageListItem].
+     */
     public fun setMessageListItemPredicate(messageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set MessageListItemPredicate first"
+        }
         this.messageListItemPredicate = messageListItemPredicate
     }
 
+    /**
+     * Allows to transform the message list data before it is rendered on the screen.
+     *
+     * @param messageListItemTransformer The transformer used to modify the message list item.
+     *
+     */
     public fun setMessageItemTransformer(messageListItemTransformer: MessageListItemTransformer) {
         this.messageListItemTransformer = messageListItemTransformer
     }
@@ -794,12 +881,22 @@ public class MessageListView : ConstraintLayout {
      * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
      */
     public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageListItemPredicate first" }
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set MessageListItemPredicate first"
+        }
         this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
     }
 
+    /**
+     * Allows clients to set a custom implementation of [AttachmentViewFactory]. Use this
+     * method to create a custom content view for the message attachments.
+     *§
+     * @param attachmentViewFactory The custom view factory for attachments.
+     */
     public fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
-        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewFactory first" }
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set AttachmentViewFactory first"
+        }
         this.attachmentViewFactory = attachmentViewFactory
     }
 
@@ -812,7 +909,7 @@ public class MessageListView : ConstraintLayout {
      * Be sure invoke this method after this view laid out on layout and already initialized, otherwise you'll get an
      * exception.
      *
-     * @return [MessageListViewStyle] instance associated with this [MessageListView].
+     * @return The instance of [MessageListViewStyle] associated with this [MessageListView].
      */
     public fun requireStyle(): MessageListViewStyle {
         return checkNotNull(messageListViewStyle) {
@@ -988,98 +1085,220 @@ public class MessageListView : ConstraintLayout {
     //endregion
 
     //region Handler setters
+
+    /**
+     * Sets the handler used when the end region is reached.
+     *
+     * @param endRegionReachedHandler The handler to use.
+     */
     public fun setEndRegionReachedHandler(endRegionReachedHandler: EndRegionReachedHandler) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
 
+    /**
+     * Sets the handler used when the last message is read.
+     *
+     * @param lastMessageReadHandler The handler to use.
+     */
     public fun setLastMessageReadHandler(lastMessageReadHandler: LastMessageReadHandler) {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
+    /**
+     * Sets the handler used to let the message input know when we are editing a message.
+     *
+     * @param messageEditHandler The handler to use.
+     */
     public fun setMessageEditHandler(messageEditHandler: MessageEditHandler) {
         this.messageEditHandler = messageEditHandler
     }
 
+    /**
+     * Sets the handler used when the the message is going to be deleted.
+     *
+     * @param messageDeleteHandler The handler to use.
+     */
     public fun setMessageDeleteHandler(messageDeleteHandler: MessageDeleteHandler) {
         this.messageDeleteHandler = messageDeleteHandler
     }
 
+    /**
+     * Sets the handler used when a new thread for the message is started.
+     *
+     * @param threadStartHandler The handler to use.
+     */
     public fun setThreadStartHandler(threadStartHandler: ThreadStartHandler) {
         this.threadStartHandler = threadStartHandler
     }
 
+    /**
+     * Sets the handler used when the message is going to be flagged.
+     *
+     * @param messageFlagHandler The handler to use.
+     */
     public fun setMessageFlagHandler(messageFlagHandler: MessageFlagHandler) {
         this.messageFlagHandler = messageFlagHandler
     }
 
+    /**
+     * Sets the handler used to handle flag message result.
+     *
+     * @param flagMessageResultHandler The handler to use.
+     */
     public fun setFlagMessageResultHandler(flagMessageResultHandler: FlagMessageResultHandler) {
         this.flagMessageResultHandler = flagMessageResultHandler
     }
 
+    /**
+     * Sets the handler used to handle when the message is going to be pinned.
+     *
+     * @param messagePinHandler The handler to use.
+     */
     public fun setMessagePinHandler(messagePinHandler: MessagePinHandler) {
         this.messagePinHandler = messagePinHandler
     }
 
+    /**
+     * Sets the handler used to handle when the message is going to be unpinned.
+     *
+     * @param messageUnpinHandler The handler to use.
+     */
     public fun setMessageUnpinHandler(messageUnpinHandler: MessageUnpinHandler) {
         this.messageUnpinHandler = messageUnpinHandler
     }
 
+    /**
+     * Sets the handler used when giphy action is going to be performed.
+     *
+     * @param giphySendHandler The handler to use.
+     */
     public fun setGiphySendHandler(giphySendHandler: GiphySendHandler) {
         this.giphySendHandler = giphySendHandler
     }
 
+    /**
+     * Sets the handler used when the failed message is going to be retried.
+     *
+     * @param messageRetryHandler The handler to use.
+     */
     public fun setMessageRetryHandler(messageRetryHandler: MessageRetryHandler) {
         this.messageRetryHandler = messageRetryHandler
     }
 
+    /**
+     * Sets the handler used when a reaction for the message is going to be send.
+     *
+     * @param messageReactionHandler The handler to use.
+     */
     public fun setMessageReactionHandler(messageReactionHandler: MessageReactionHandler) {
         this.messageReactionHandler = messageReactionHandler
     }
 
+    /**
+     * Sets the handler used when the user is going to be muted.
+     *
+     * @param userMuteHandler The handler to use.
+     */
     public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
         this.userMuteHandler = userMuteHandler
     }
 
+    /**
+     * Sets the handler used when the user is going to be unmuted.
+     *
+     * @param userUnmuteHandler The handler to use.
+     */
     public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
         this.userUnmuteHandler = userUnmuteHandler
     }
 
+    /**
+     * Sets the handler used when the user is going to be blocked in the channel.
+     *
+     * @param userBlockHandler The handler to use.
+     */
     public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
         this.userBlockHandler = userBlockHandler
     }
 
+    /**
+     * Sets the handler used when the message is going to be replied in the channel.
+     *
+     * @param messageReplyHandler The handler to use.
+     */
     public fun setMessageReplyHandler(messageReplyHandler: MessageReplyHandler) {
         this.messageReplyHandler = messageReplyHandler
     }
 
+    /**
+     * Sets the handler used when the attachment is going to be downloaded.
+     *
+     * @param attachmentDownloadHandler The handler to use.
+     */
     public fun setAttachmentDownloadHandler(attachmentDownloadHandler: AttachmentDownloadHandler) {
         this.attachmentDownloadHandler = attachmentDownloadHandler
     }
 
+    /**
+     * Sets the handler used to confirm that the message is going to be deleted.
+     *
+     * @param confirmDeleteMessageHandler The handler to use.
+     */
     public fun setConfirmDeleteMessageHandler(confirmDeleteMessageHandler: ConfirmDeleteMessageHandler) {
         this.confirmDeleteMessageHandler = confirmDeleteMessageHandler
     }
 
+    /**
+     * Sets the handler used to confirm that the message is going to be flagged.
+     *
+     * @param confirmFlagMessageHandler The handler to use.
+     */
     public fun setConfirmFlagMessageHandler(confirmFlagMessageHandler: ConfirmFlagMessageHandler) {
         this.confirmFlagMessageHandler = confirmFlagMessageHandler
     }
 
+    /**
+     * Sets the handler used when replying to an attachment from the gallery screen.
+     *
+     * @param handler The handler to use.
+     */
     public fun setAttachmentReplyOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentReplyOptionHandler) {
         this._attachmentReplyOptionHandler = handler
     }
 
+    /**
+     * Sets the handler used when navigating to a message from the gallery screen.
+     *
+     * @param handler The handler to use.
+     */
     public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
 
+    /**
+     * Sets the handler used when downloading an attachment from the gallery screen.
+     *
+     * @param handler The handler to use.
+     */
     public fun setDownloadOptionHandler(handler: AttachmentGalleryActivity.AttachmentDownloadOptionHandler) {
         this._attachmentDownloadOptionHandler = handler
     }
 
+    /**
+     * Sets the handler used when deleting an attachment from the gallery screen.
+     *
+     * @param handler The handler to use.
+     */
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
 
+
+    /**
+     * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].
+     *
+     * @param handler The handler to use.
+     */
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
         this.errorEventHandler = handler
     }
@@ -1217,8 +1436,8 @@ public class MessageListView : ConstraintLayout {
     //endregion
 
     /**
-     * Predicate object with a filter condition for MessageListItem. Used to filter a list of MessageListItem
-     * before applying it to MessageListView.
+     * Predicate object with a filter condition for MessageListItem. Used to filter a list of
+     * MessageListItem before applying it to MessageListView.
      */
     public fun interface MessageListItemPredicate {
         public fun predicate(item: MessageListItem): Boolean
