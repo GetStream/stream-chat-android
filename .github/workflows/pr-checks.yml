@@ -24,7 +24,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
   selected_lint:
-    name: selected_ktlint
+    name: selected_unit_tests
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
@@ -34,12 +34,12 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-      - name: Parse changed modules ktlint command
-        run: ./gradlew dag-command selected-ktlint
+      - name: Parse changed modules unit_tests command
+        run: ./gradlew dag-command selected-test-debug
       - name: Change permission for command
-        run: chmod +x kt-selected-command.sh
-      - name: Run selected ktlint command
-        run: ./kt-selected-command.sh
+        run: chmod +x unit-tests-selected-command.sh
+      - name: Run selected unit_tests command
+        run: ./unit-tests-selected-command.sh
 
   api_check:
     name: API check
