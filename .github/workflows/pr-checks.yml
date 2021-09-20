@@ -27,6 +27,10 @@ jobs:
     name: selected_unit_tests
     runs-on: ubuntu-18.04
     steps:
+      - name: Check out develop
+        uses: actions/checkout@v2
+          with:
+            ref: develop
       - name: Check out code
         uses: actions/checkout@v2
       - name: Set up JDK 11
