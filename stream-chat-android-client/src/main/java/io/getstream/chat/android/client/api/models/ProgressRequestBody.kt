@@ -47,7 +47,7 @@ internal class ProgressRequestBody(
      * ignored enough writes of this body.
      */
     private inline fun withCallback(crossinline actions: ProgressCallback.() -> Unit) {
-        if (writeCount >= PROGRESS_UPDATES_TO_SKIP) {
+        if (writeCount >= progressUpdatesToSkip) {
             handler.post {
                 callback.actions()
             }
@@ -60,12 +60,12 @@ internal class ProgressRequestBody(
         /**
          * A number of writes to ignore (not issue progress updates for).
          *
-         * This accounts for the [HttpLoggingInterceptor] and [CurlInterceptor] configured in
-         * [BaseChatModule] that will trigger writing the body into their logs.
+         * This accounts for the interceptors potentially added in [BaseChatModule] that will
+         * trigger writing the body into their logs.
          *
          * We don't want to issue progress updates for these writes, only the real write that's
          * going out to the network that happens after these.
          */
-        private const val PROGRESS_UPDATES_TO_SKIP = 2
+        var progressUpdatesToSkip = 0
     }
 }
