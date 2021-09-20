@@ -1358,7 +1358,7 @@ public class ChannelController internal constructor(
         return Result(messageToBeEdited)
     }
 
-    internal suspend fun deleteMessage(message: Message): Result<Message> {
+    internal suspend fun deleteMessage(message: Message, hard: Boolean = false): Result<Message> {
         val online = domainImpl.isOnline()
         val messageToBeDeleted = message.copy(deletedAt = Date())
         messageToBeDeleted.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
@@ -1371,7 +1371,7 @@ public class ChannelController internal constructor(
 
         if (online) {
             val runnable = {
-                client.deleteMessage(messageToBeDeleted.id)
+                client.deleteMessage(messageToBeDeleted.id, hard)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {

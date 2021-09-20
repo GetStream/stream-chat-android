@@ -85,12 +85,14 @@ internal class ChannelControllerImpl(private val channelControllerStateFlow: Cha
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> =
         channelControllerStateFlow.deleteReaction(reaction)
+
     override fun getMessage(messageId: String): Message? = channelControllerStateFlow.getMessage(messageId)
     override fun clean() = channelControllerStateFlow.clean()
     internal fun handleEvent(event: ChatEvent) = channelControllerStateFlow.handleEvent(event)
 
     suspend fun editMessage(message: Message): Result<Message> = channelControllerStateFlow.editMessage(message)
-    suspend fun deleteMessage(message: Message): Result<Message> = channelControllerStateFlow.deleteMessage(message)
+    suspend fun deleteMessage(message: Message, hard: Boolean = false): Result<Message> =
+        channelControllerStateFlow.deleteMessage(message, hard)
 
     override fun toChannel(): Channel = channelControllerStateFlow.toChannel()
 

@@ -140,10 +140,11 @@ internal class MoshiChatApi(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun deleteMessage(messageId: String): Call<Message> {
+    override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
             connectionId = connectionId,
+            hard = if (hard) true else null
         ).map { response -> response.message.toDomain() }
     }
 
@@ -717,7 +718,7 @@ internal class MoshiChatApi(
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySort<Message>?
+        sort: QuerySort<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
             filter_conditions = channelFilter.toMap(),

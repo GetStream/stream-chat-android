@@ -520,11 +520,12 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
-    public fun deleteMessage(message: Message) {
+    @JvmOverloads
+    public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageActions = messageActions - messageActions.filterIsInstance<Delete>()
         removeOverlay()
 
-        chatDomain.deleteMessage(message).enqueue()
+        chatDomain.deleteMessage(message, hard).enqueue()
     }
 
     /**
