@@ -62,7 +62,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 
     @Deprecated(
         message = "It is not used anymore, you will be notify to build the notification instead",
-        replaceWith = ReplaceWith(""),
         level = DeprecationLevel.ERROR,
     )
     public open fun getDataLoadListener(): NotificationLoadDataListener? {
