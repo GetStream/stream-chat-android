@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api
 import android.os.Handler
 import android.os.Looper
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.RetrofitCallBlah
 import io.getstream.chat.android.client.parser.ChatParser
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
@@ -21,7 +21,7 @@ internal class RetrofitCallAdapterFactory private constructor(
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): CallAdapter<*, *>? {
-        if (getRawType(returnType) != RetrofitCall::class.java) {
+        if (getRawType(returnType) != RetrofitCallBlah::class.java) {
             return null
         }
         if (returnType !is ParameterizedType) {
@@ -53,7 +53,7 @@ internal class RetrofitCallAdapter<T : Any>(
 ) : CallAdapter<T, Call<T>> {
 
     override fun adapt(call: retrofit2.Call<T>): Call<T> {
-        return RetrofitCall(call, parser, callbackExecutor)
+        return RetrofitCallBlah(call, parser, callbackExecutor)
     }
 
     override fun responseType(): Type = responseType

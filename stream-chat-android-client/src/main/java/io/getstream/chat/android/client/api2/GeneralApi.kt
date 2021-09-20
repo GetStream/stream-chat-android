@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
-import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.RetrofitCallBlah
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,23 +19,23 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface GeneralApi {
     @OPTIONS("/connect")
-    fun warmUp(): RetrofitCall<ResponseBody>
+    fun warmUp(): RetrofitCallBlah<ResponseBody>
 
     @POST("/sync")
     fun getSyncHistory(
         @Body body: SyncHistoryRequest,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<SyncHistoryResponse>
+    ): RetrofitCallBlah<SyncHistoryResponse>
 
     @GET("/search")
     fun searchMessages(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
-    ): RetrofitCall<SearchMessagesResponse>
+    ): RetrofitCallBlah<SearchMessagesResponse>
 
     @GET("/members")
     fun queryMembers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
-    ): RetrofitCall<QueryMembersResponse>
+    ): RetrofitCallBlah<QueryMembersResponse>
 }

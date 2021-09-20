@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.RetrofitCallBlah
 import okhttp3.MultipartBody
 import retrofit2.http.DELETE
 import retrofit2.http.Multipart
@@ -20,7 +20,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCallBlah<UploadFileResponse>
 
     @Multipart
     @POST("/channels/{type}/{id}/file")
@@ -29,7 +29,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCallBlah<UploadFileResponse>
 
     @DELETE("/channels/{type}/{id}/file")
     fun deleteFile(
@@ -37,7 +37,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("url") url: String,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCallBlah<CompletableResponse>
 
     @DELETE("/channels/{type}/{id}/image")
     fun deleteImage(
@@ -45,5 +45,5 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("url") url: String,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCallBlah<CompletableResponse>
 }

@@ -11,7 +11,7 @@ import retrofit2.Response
 import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class RetrofitCall<T : Any>(
+internal class RetrofitCallBlah<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser,
     private val callbackExecutor: Executor

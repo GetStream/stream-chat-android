@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.RetrofitCallBlah
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import okhttp3.mockwebserver.MockWebServer
 import org.amshove.kluent.fail
@@ -17,7 +17,7 @@ import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 
 @OptIn(ExperimentalStdlibApi::class)
-internal class RetrofitCallAdapterFactoryTests {
+internal class RetrofitCallBlahAdapterFactoryTests {
 
     @Rule
     @JvmField
@@ -37,7 +37,7 @@ internal class RetrofitCallAdapterFactoryTests {
     @Test
     fun `When returning raw call Then should throw an exception`() {
         try {
-            factory[RetrofitCall::class.java, emptyArray(), retrofit]
+            factory[RetrofitCallBlah::class.java, emptyArray(), retrofit]
             fail("Assertion failed")
         } catch (e: IllegalArgumentException) {
             e.message shouldBeEqualTo "Call return type must be parameterized as Call<Foo>"
@@ -46,7 +46,7 @@ internal class RetrofitCallAdapterFactoryTests {
 
     @Test
     fun `When returning raw response type Then adapter should have the same response type`() {
-        val type: Type = typeOf<RetrofitCall<String>>().javaType
+        val type: Type = typeOf<RetrofitCallBlah<String>>().javaType
         val callAdapter = factory[type, emptyArray(), retrofit]
 
         callAdapter.shouldNotBeNull()
@@ -55,7 +55,7 @@ internal class RetrofitCallAdapterFactoryTests {
 
     @Test
     fun `When returning generic response type Then adapter should have the same response type`() {
-        val type = typeOf<RetrofitCall<List<String>>>().javaType
+        val type = typeOf<RetrofitCallBlah<List<String>>>().javaType
         val callAdapter = factory[type, emptyArray(), retrofit]
 
         callAdapter.shouldNotBeNull()

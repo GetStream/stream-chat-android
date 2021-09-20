@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
-import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.call.RetrofitCallBlah
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -20,18 +20,18 @@ internal interface UserApi {
     fun updateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersRequest,
-    ): RetrofitCall<UpdateUsersResponse>
+    ): RetrofitCallBlah<UpdateUsersResponse>
 
     @PATCH("/users")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun partialUpdateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: PartialUpdateUsersRequest,
-    ): RetrofitCall<UpdateUsersResponse>
+    ): RetrofitCallBlah<UpdateUsersResponse>
 
     @GET("/users")
     fun queryUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
-    ): RetrofitCall<UsersResponse>
+    ): RetrofitCallBlah<UsersResponse>
 }
