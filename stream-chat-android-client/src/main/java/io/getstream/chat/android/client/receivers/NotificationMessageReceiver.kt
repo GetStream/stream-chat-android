@@ -30,7 +30,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
-                0,
+                notificationId,
                 createNotifyIntent(context, notificationId, ACTION_REPLY).apply {
                     putExtra(KEY_CHANNEL_ID, channel.id)
                     putExtra(KEY_CHANNEL_TYPE, channel.type)
@@ -45,7 +45,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             message: Message,
         ): PendingIntent = PendingIntent.getBroadcast(
             context,
-            0,
+            notificationId,
             createNotifyIntent(context, notificationId, ACTION_READ).apply {
                 putExtra(KEY_CHANNEL_ID, channel.id)
                 putExtra(KEY_CHANNEL_TYPE, channel.type)
@@ -59,7 +59,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             notificationId: Int,
         ): PendingIntent = PendingIntent.getBroadcast(
             context,
-            0,
+            notificationId ,
             createNotifyIntent(context, notificationId, ACTION_DISMISS),
             PendingIntent.FLAG_UPDATE_CURRENT,
         )
