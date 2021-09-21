@@ -161,6 +161,7 @@ internal class ChatDomainImpl internal constructor(
         backgroundSyncEnabled = backgroundSyncEnabled,
         appContext = appContext
     )
+
     // Synchronizing ::retryFailedEntities execution since it is called from multiple places. The shared resource is DB.stream_chat_message table.
     private val entitiesRetryMutex = Mutex()
 
@@ -445,6 +446,11 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.keys().toList()
     }
 
+    @VisibleForTesting
+    fun addActiveChannel(cid: String, channelController: ChannelController) {
+        activeChannelMapImpl[cid] = channelController
+    }
+
     fun setChannelUnreadCount(newCount: Int) {
         _channelUnreadCount.value = newCount
     }
@@ -722,10 +728,13 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithoutAttachments() + retryMessagesWithAttachments()
+        return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
     }
 
-    private suspend fun retryMessagesWithAttachments(): List<Message> {
+    /**
+     * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
+     */
+    private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
         val retriedMessages = repos.selectMessagesWaitForAttachments()
 
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
@@ -739,9 +748,19 @@ internal class ChatDomainImpl internal constructor(
         return retriedMessages
     }
 
-    private suspend fun retryMessagesWithoutAttachments(): List<Message> {
+    /**
+     * Retries messages with [SyncStatus.SYNC_NEEDED] status.
+     * Messages to retry should have all attachments synchronized or don't have them at all.
+     *
+     * @throws IllegalArgumentException when message contains non-synchronized attachments
+     */
+    private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
         val messages = repos.selectMessagesSyncNeeded()
-        require(messages.all { it.attachments.isEmpty() }) { "Logical error. Messages with attachments should have another sync status!" }
+        require(
+            messages.all {
+                it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
+            }
+        ) { "Logical error. Messages with non-synchronized attachments should have another sync status!" }
 
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
@@ -919,7 +938,8 @@ internal class ChatDomainImpl internal constructor(
 
     override fun editMessage(message: Message): Call<Message> = EditMessage(this).invoke(message)
 
-    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> = DeleteMessage(this).invoke(message, hard)
+    override fun deleteMessage(message: Message, hard: Boolean): Call<Message> =
+        DeleteMessage(this).invoke(message, hard)
 
     override fun deleteMessage(message: Message): Call<Message> = deleteMessage(message, false)
 
