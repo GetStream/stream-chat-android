@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.MutableLiveData
+import com.getstream.sdk.chat.MockChatClientBuilder
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
@@ -61,7 +62,7 @@ private val THREAD_MESSAGES = createMessageList {
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListViewModelTest {
     private val domain: ChatDomain = mock()
-    private val client: ChatClient = mock()
+    private val client: ChatClient = MockChatClientBuilder().build()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val watchChannelCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
