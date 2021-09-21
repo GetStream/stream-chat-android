@@ -26,8 +26,10 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
+- Fixed sending custom attachments without files to upload
 
 ### ⬆️ Improved
+- Custom attachment types are now preserved after file uploads
 
 ### ✅ Added
 
