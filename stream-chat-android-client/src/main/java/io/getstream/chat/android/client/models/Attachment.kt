@@ -22,6 +22,13 @@ public data class Attachment(
     var name: String? = null,
     var fallback: String? = null,
 
+    /**
+     * The local file to upload when the attachment is sent. The [url] property
+     * will be populated with the URL of the uploaded file when done.
+     *
+     * Leaving this property empty means that there is no file to upload for
+     * this attachment.
+     */
     @Transient
     var upload: File? = null,
 
