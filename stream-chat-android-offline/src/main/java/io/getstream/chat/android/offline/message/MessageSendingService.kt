@@ -42,14 +42,23 @@ internal class MessageSendingService(
                     enrichWithCid(channelController.cid)
                 }
                 user = requireNotNull(domainImpl.user.value)
-                attachments.forEach { attachment ->
+
+                val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
+                attachmentsToUpload.forEach { attachment ->
                     attachment.uploadId = generateUploadId()
                     attachment.uploadState = Attachment.UploadState.InProgress
                 }
+                nonFileAttachments.forEach { attachment ->
+                    attachment.uploadState = Attachment.UploadState.Success
+                }
+
                 type = getMessageType(message)
                 createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
-                syncStatus =
-                    if (hasAttachments()) SyncStatus.AWAITING_ATTACHMENTS else if (domainImpl.isOnline()) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
+                syncStatus = when {
+                    attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
+                    domainImpl.isOnline() -> SyncStatus.IN_PROGRESS
+                    else -> SyncStatus.SYNC_NEEDED
+                }
             }
         ).onSuccess { newMessage ->
             // Update flow in channel controller
