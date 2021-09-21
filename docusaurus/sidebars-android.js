@@ -26,6 +26,10 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'client/guides/sending-custom-attachments',
+                },
+                {
+                  type: 'doc',
                   id: 'client/guides/working-with-offline',
                 },
             ]

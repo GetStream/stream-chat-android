@@ -75,8 +75,12 @@ internal class AttachmentUploader(
             mimeType = mimeType,
             url = url,
             uploadState = Attachment.UploadState.Success,
-            type = attachmentType.toString(),
         ).apply {
+            // If attachment type was not set, set it based on this value
+            // determined by the MIME type guessed from the file's extension
+            if (type == null) {
+                type = attachmentType.toString()
+            }
             if (attachmentType == AttachmentType.IMAGE) {
                 imageUrl = url
             } else {
