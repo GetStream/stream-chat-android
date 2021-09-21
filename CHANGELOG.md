@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a method to dismiss all notifications from a channel
 
 ### ⚠️ Changed
 
@@ -68,6 +69,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation
 
 ### ⚠️ Changed
 
@@ -80,6 +82,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation
 
 ### ⚠️ Changed
 
