@@ -2,7 +2,6 @@
 
 package io.getstream.chat.android.ui.message.list.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
@@ -65,7 +64,6 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
                 } else {
                     view.hideEmptyStateView()
                 }
-                Log.i("MessageListViewBinding", "${state.messageListItem}")
                 view.displayNewMessages(state.messageListItem)
                 view.hideLoadingView()
             }

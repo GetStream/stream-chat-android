@@ -1,6 +1,5 @@
 package io.getstream.chat.android.offline.channel
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -641,10 +640,10 @@ public class ChannelController internal constructor(
         domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
 
         return if (online) {
-            Log.i("ChannelController", "sendMessage: called")
-
             // upload attachments
             if (hasAttachments) {
+                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+
                 newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
 
                 uploadStatusMessage?.let { cancelEphemeralMessage(it) }

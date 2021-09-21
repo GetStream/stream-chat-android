@@ -138,6 +138,4 @@ dependencies {
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
-
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
