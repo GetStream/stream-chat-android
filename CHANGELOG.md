@@ -143,6 +143,7 @@
 - Improved the way we build items in the Message list
 - Added line limit to link attachment descriptions
 - Added a way to customize the default line limit for link descriptions
+- Improved the `MessageListHeader` with more customization options
 
 ### ✅ Added
 - Added an uploading indicator to files and images
@@ -155,6 +156,8 @@
 - Updated all default value factories to functions (e.g. StreamTypography)
 - Re-organized all attachment factories and split up code in multiple packages
 - Changed the `AttachmentState` `message` property name to `messageItem`
+- Added a `Channel` parameter to the `MessagesScreen`'s `onHeaderActionClick` lambda
+- Changed the way the `MessageListHeader` is structured by adding slot components
 
 # August 30th, 2021 - 4.17.2
 ## stream-chat-android-ui-client
