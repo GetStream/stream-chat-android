@@ -1557,7 +1557,7 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    public class Builder(private val apiKey: String, private val appContext: Context) {
+    public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
@@ -1642,7 +1642,7 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public fun build(): ChatClient {
+        public override fun buildChatClient(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -1673,11 +1673,17 @@ public class ChatClient internal constructor(
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
             )
-
-            instance = result
-
             return result
         }
+    }
+
+    public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
+
+        public fun build(): ChatClient = buildChatClient().also {
+            instance = it
+        }
+
+        public abstract fun buildChatClient(): ChatClient
     }
 
     public companion object {
