@@ -99,7 +99,7 @@ public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications,
+    @InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,

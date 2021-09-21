@@ -99,6 +99,7 @@ internal class MessageListViewModelTest {
         whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
+        whenever(channelController.toChannel()) doReturn createChannel()
         whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
@@ -109,6 +110,7 @@ internal class MessageListViewModelTest {
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flagMessage(any())) doReturn flagCall
+        whenever(client.notifications) doReturn mock()
 
         messages.value = MESSAGES
         reads.value = listOf(CHANNEL_USER_READ)
