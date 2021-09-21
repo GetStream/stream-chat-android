@@ -728,10 +728,13 @@ internal class ChatDomainImpl internal constructor(
 
     @VisibleForTesting
     internal suspend fun retryMessages(): List<Message> {
-        return retryMessagesWithSyncedAttachments() + retryMessagesWithAttachments()
+        return retryMessagesWithSyncedAttachments() + retryMessagesWithPendingAttachments()
     }
 
-    private suspend fun retryMessagesWithAttachments(): List<Message> {
+    /**
+     * Retries messages with [SyncStatus.AWAITING_ATTACHMENTS] status.
+     */
+    private suspend fun retryMessagesWithPendingAttachments(): List<Message> {
         val retriedMessages = repos.selectMessagesWaitForAttachments()
 
         val (failedMessages, needToBeSync) = retriedMessages.partition { message ->
