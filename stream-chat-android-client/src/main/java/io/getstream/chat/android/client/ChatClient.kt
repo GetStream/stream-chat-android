@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
@@ -130,9 +131,6 @@ public class ChatClient internal constructor(
 
     init {
         eventsObservable.subscribe { event ->
-
-            notifications.onChatEvent(event)
-
             when (event) {
                 is ConnectedEvent -> {
                     val user = event.me
@@ -155,6 +153,9 @@ public class ChatClient internal constructor(
                             socketStateService.onSocketUnrecoverableError()
                         }
                     }.exhaustive
+                }
+                is NewMessageEvent -> {
+                    notifications.onNewMessageEvent(event)
                 }
             }
         }
@@ -980,7 +981,7 @@ public class ChatClient internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> {
-        return queryChannelsPostponeHelper.queryChannel(channelType, channelId, request)
+        return api.queryChannel(channelType, channelId, request)
     }
 
     @CheckResult
@@ -1717,16 +1718,19 @@ public class ChatClient internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal suspend fun displayNotificationWithData(
-            channelType: String,
-            channelId: String,
-            messageId: String,
+        internal fun displayNotification(
+            channel: Channel,
+            message: Message,
         ) {
-            ensureClientInitialized().notifications.displayNotificationWithData(
-                channelId = channelId,
-                channelType = channelType,
-                messageId = messageId,
+            ensureClientInitialized().notifications.displayNotification(
+                channel = channel,
+                message = message,
             )
+        }
+
+        @Throws(IllegalStateException::class)
+        internal fun dismissNotification(notificationId: Int) {
+            ensureClientInitialized().notifications.onDismissNotification(notificationId)
         }
 
         /**
