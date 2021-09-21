@@ -31,7 +31,6 @@ internal class AttachmentUploader(
         } else {
             client.sendFile(channelType, channelId, file, progressCallback).await()
         }
-
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                 file = file,
@@ -46,11 +45,12 @@ internal class AttachmentUploader(
                     it
                 }
             }
-
             attachment.uploadState = Attachment.UploadState.Success
+            progressCallback.onSuccess(file.absolutePath)
             Result(augmentedAttachment)
         } else {
             attachment.uploadState = Attachment.UploadState.Failed(result.error())
+            progressCallback.onError(result.error())
             Result(result.error())
         }
     }

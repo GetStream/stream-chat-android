@@ -203,7 +203,9 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(item)
             fileTitle.text = item.getDisplayableName()
 
-            if (item.uploadState is Attachment.UploadState.InProgress) {
+            if (item.uploadState is Attachment.UploadState.InProgress ||
+                (item.uploadState is Attachment.UploadState.Success && item.fileSize == 0)
+            ) {
                 actionButton.setImageDrawable(null)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {

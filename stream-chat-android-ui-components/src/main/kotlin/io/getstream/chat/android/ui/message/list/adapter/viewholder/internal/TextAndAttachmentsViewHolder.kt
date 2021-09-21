@@ -1,8 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
-import android.content.Context
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
@@ -91,20 +89,15 @@ internal class TextAndAttachmentsViewHolder(
 
     private fun setupUploads(data: MessageListItem.MessageItem) {
         val totalAttachmentsCount = data.message.attachments.size
-        var uploadedAttachmentsCount = 0
-        data.message.attachments.forEach {
-            if (it.uploadState == Attachment.UploadState.Success) {
-                uploadedAttachmentsCount++
-            }
-        }
-        if (uploadedAttachmentsCount == totalAttachmentsCount) {
-            binding.sentFiles.text =
-                context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
+        var completedAttachmentsCount =
+            data.message.attachments.filter { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }.size
+        if (completedAttachmentsCount == totalAttachmentsCount) {
+            binding.sentFiles.isVisible = false
         } else {
             binding.sentFiles.text =
                 context.getString(
                     R.string.stream_ui_message_list_attachment_uploading,
-                    uploadedAttachmentsCount,
+                    completedAttachmentsCount,
                     totalAttachmentsCount
                 )
         }
@@ -116,40 +109,5 @@ internal class TextAndAttachmentsViewHolder(
 
     override fun onAttachedToWindow() {
         setupUploads(data)
-    }
-
-    private companion object {
-        private suspend fun trackFilesSent(
-            context: Context,
-            uploadIdList: List<String>,
-            sentFilesView: TextView,
-        ) {
-            /*val filesSent = 0
-            val totalFiles = uploadIdList.size
-
-            sentFilesView.isVisible = true
-            sentFilesView.text =
-                context.getString(R.string.stream_ui_message_list_attachment_uploading, filesSent, totalFiles)
-
-            val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
-                ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
-            }
-
-            combine(completionFlows) { isCompleteArray ->
-                isCompleteArray.count { isComplete -> isComplete }
-            }.collect { completedCount ->
-                if (completedCount == totalFiles) {
-                    sentFilesView.text =
-                        context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
-                } else {
-                    sentFilesView.text =
-                        context.getString(
-                            R.string.stream_ui_message_list_attachment_uploading,
-                            completedCount,
-                            totalFiles
-                        )
-                }
-            }*/
-        }
     }
 }
