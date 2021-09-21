@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MultipartBody
 import retrofit2.http.DELETE
 import retrofit2.http.Multipart
@@ -10,6 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Tag
 
 @AuthenticatedApi
 internal interface RetrofitCdnApi {
@@ -20,6 +22,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<UploadFileResponse>
 
     @Multipart
@@ -29,6 +32,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Tag progressCallback: ProgressCallback?
     ): RetrofitCall<UploadFileResponse>
 
     @DELETE("/channels/{type}/{id}/file")
