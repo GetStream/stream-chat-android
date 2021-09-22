@@ -65,7 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- Fixed bug in first page with cache usage. When no results were returned, `QueryChannelsController` behaved as the first page.
 ### ⬆️ Improved
 
 ### ✅ Added
