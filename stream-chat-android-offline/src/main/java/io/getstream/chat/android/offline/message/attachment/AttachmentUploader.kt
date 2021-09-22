@@ -18,7 +18,7 @@ internal class AttachmentUploader(
         channelId: String,
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
-        progressCallback: ProgressCallback
+        progressCallback: ProgressCallback? = null
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
@@ -46,11 +46,11 @@ internal class AttachmentUploader(
                 }
             }
             attachment.uploadState = Attachment.UploadState.Success
-            progressCallback.onSuccess(file.absolutePath)
+            progressCallback?.onSuccess(file.absolutePath)
             Result(augmentedAttachment)
         } else {
             attachment.uploadState = Attachment.UploadState.Failed(result.error())
-            progressCallback.onError(result.error())
+            progressCallback?.onError(result.error())
             Result(result.error())
         }
     }
