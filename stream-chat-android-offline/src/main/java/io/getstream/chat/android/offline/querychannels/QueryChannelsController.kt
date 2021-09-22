@@ -59,6 +59,7 @@ public class QueryChannelsController internal constructor(
     ) : this(filter, sort, client, domain as ChatDomainImpl)
 
     private var channelOffset = INITIAL_CHANNEL_OFFSET
+    public var isFirstRequest: Boolean = true
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
         client.queryChannels(
             QueryChannelsRequest(
@@ -246,7 +247,9 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val loading = if (pagination.isFirstPage) {
+        val firstPage = isFirstRequest
+
+        val loading = if (isFirstRequest) {
             _loading
         } else {
             _loadingMore
@@ -270,11 +273,18 @@ public class QueryChannelsController internal constructor(
         val channels = queryOfflineJob.await()?.also { offlineChannels ->
             addChannels(offlineChannels)
             loading.value = offlineChannels.isEmpty()
+
+            if (offlineChannels.isNotEmpty() && isFirstRequest) {
+                isFirstRequest = false
+            }
         }
 
         val output: Result<List<Channel>> = queryOnlineJob.await().let { onlineResult ->
             if (onlineResult.isSuccess) {
-                onlineResult.also { updateOnlineChannels(it.data(), pagination.isFirstPage) }
+                onlineResult.also {
+                    isFirstRequest = false
+                    updateOnlineChannels(it.data(), firstPage)
+                }
             } else {
                 channels?.let(::Result) ?: onlineResult
             }
@@ -296,12 +306,12 @@ public class QueryChannelsController internal constructor(
                 INITIAL_CHANNEL_OFFSET,
                 channelLimit,
                 messageLimit,
-                memberLimit,
+                memberLimit
             )
         )
     }
 
-    internal suspend fun updateOnlineChannel(channel: Channel) = updateOnlineChannels(listOf(channel), false)
+    internal suspend fun updateOnlineChannel(channel: Channel) = updateOnlineChannels(listOf(channel), isFirstRequest)
 
     /**
      * Updates the state on the channelController based on the channel object we received from the API.

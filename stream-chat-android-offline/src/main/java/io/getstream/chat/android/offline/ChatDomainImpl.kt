@@ -639,7 +639,7 @@ internal class ChatDomainImpl internal constructor(
             .take(3)
         for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
-                QuerySort<Channel>(),
+                QuerySort(),
                 INITIAL_CHANNEL_OFFSET,
                 CHANNEL_LIMIT,
                 MESSAGE_LIMIT,
@@ -647,7 +647,7 @@ internal class ChatDomainImpl internal constructor(
             )
             val response = queryChannelController.runQueryOnline(pagination)
             if (response.isSuccess) {
-                queryChannelController.updateOnlineChannels(response.data(), pagination.isFirstPage)
+                queryChannelController.updateOnlineChannels(response.data(), queryChannelController.isFirstRequest)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
