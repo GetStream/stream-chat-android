@@ -114,7 +114,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).build()
     }
 
-    public open fun showNotification(channel: Channel, message: Message) {
+    internal fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
@@ -188,7 +188,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     /**
      * Dismiss notifications from a given [channelType] and [channelId]
      */
-    public open fun dismissChannelNotifications(channelType: String, channelId: String) {
+    internal fun dismissChannelNotifications(channelType: String, channelId: String) {
         dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
     }
 
