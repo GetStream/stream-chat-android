@@ -23,3 +23,5 @@
 -keep class * extends androidx.fragment.app.Fragment{}
 -keepnames class * extends android.os.Parcelable
 -keepnames class * extends java.io.Serializable
+
+-keep class io.getstream.chat.ui.sample.feature.chat.info.UserData  { *; }
