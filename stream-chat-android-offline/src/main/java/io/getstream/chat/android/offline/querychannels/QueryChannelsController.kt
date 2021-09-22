@@ -60,6 +60,8 @@ public class QueryChannelsController internal constructor(
 
     private var channelOffset = INITIAL_CHANNEL_OFFSET
     public var isFirstRequest: Boolean = true
+        private set
+    
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
         client.queryChannels(
             QueryChannelsRequest(

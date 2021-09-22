@@ -443,6 +443,7 @@ public final class io/getstream/chat/android/offline/querychannels/QueryChannels
 	public final fun getNewChannelEventFilter ()Lkotlin/jvm/functions/Function3;
 	public final fun getRecoveryNeeded ()Z
 	public final fun getSort ()Lio/getstream/chat/android/client/api/models/QuerySort;
+	public final fun isFirstRequest ()Z
 	public final fun query (IIILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun query$default (Lio/getstream/chat/android/offline/querychannels/QueryChannelsController;IIILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun refreshChannel (Ljava/lang/String;)V
