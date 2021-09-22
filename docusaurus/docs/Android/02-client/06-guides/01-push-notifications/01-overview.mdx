@@ -111,3 +111,7 @@ ChatClient.Builder("api-key", context)
     .notifications(notificationHandler)
     .build()
 ```
+
+### Dismissing notifications
+Our UI Artifacts dismiss notifications related with a channel as far as an user navigate to the channel conversation.
+But if you need to manually dismiss them by some reason, you can call `ChatClient::dismissChannelNotifications` method
