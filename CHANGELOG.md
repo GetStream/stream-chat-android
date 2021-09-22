@@ -78,6 +78,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the Compose framework version
+- Updated the Accompanist library version
 
 ### ✅ Added
 
