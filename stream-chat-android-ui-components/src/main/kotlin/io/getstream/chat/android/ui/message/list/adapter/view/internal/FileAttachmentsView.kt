@@ -249,30 +249,5 @@ private class FileAttachmentViewHolder(
     private companion object {
         private val CORNER_SIZE_PX = 12.dpToPxPrecise()
         private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
-
-        private fun updateProgress(
-            context: Context,
-            fileSizeView: TextView,
-            progressBar: ProgressBar,
-            attachment: Attachment,
-            uploadedBytes: Long,
-            isComplete: Boolean,
-            targetValue: String,
-        ) {
-            if (!isComplete) {
-                val nominalProgress = MediaStringUtil.convertFileSizeByteCount(uploadedBytes)
-
-                fileSizeView.text =
-                    context.getString(
-                        R.string.stream_ui_message_list_attachment_upload_progress,
-                        nominalProgress,
-                        targetValue
-                    )
-            } else {
-                progressBar.isVisible = false
-                fileSizeView.text =
-                    attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
-            }
-        }
     }
 }

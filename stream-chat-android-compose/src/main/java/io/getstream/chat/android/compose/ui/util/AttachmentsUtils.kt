@@ -23,4 +23,4 @@ internal fun Attachment.hasLink(): Boolean = titleLink != null || ogUrl != null
  * @return If the attachment is currently being uploaded to the server.
  */
 internal fun Attachment.isUploading(): Boolean =
-    uploadState == Attachment.UploadState.InProgress && upload != null && uploadId != null
+    uploadState is Attachment.UploadState.InProgress && upload != null && uploadId != null

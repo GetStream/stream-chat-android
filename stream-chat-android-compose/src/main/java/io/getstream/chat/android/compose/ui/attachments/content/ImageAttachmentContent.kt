@@ -95,7 +95,7 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                 for (imageIndex in 1..4 step 2) {
                     if (imageIndex < imageCount) {
                         val attachment = attachments[imageIndex]
-                        val isUploading = attachment.uploadState == Attachment.UploadState.InProgress
+                        val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
 
                         if (imageIndex == 3 && imageCount > 4) {
                             Box(modifier = Modifier.weight(1f)) {
