@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-import android.os.Handler
-import android.os.Looper
 import io.getstream.chat.android.client.di.BaseChatModule
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -16,7 +14,6 @@ internal class ProgressRequestBody(
     private val callback: ProgressCallback
 ) : RequestBody() {
 
-    private val handler = Handler(Looper.getMainLooper())
     private var writeCount: Int = 0
 
     override fun contentType(): MediaType = file.getMediaType()
@@ -48,9 +45,7 @@ internal class ProgressRequestBody(
      */
     private inline fun withCallback(crossinline actions: ProgressCallback.() -> Unit) {
         if (writeCount >= progressUpdatesToSkip) {
-            handler.post {
-                callback.actions()
-            }
+            callback.actions()
         }
     }
 
