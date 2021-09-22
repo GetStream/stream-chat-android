@@ -16,7 +16,6 @@ jobs:
           token: ${{ github.token }}
           daysUntilClose: 7
           responseRequiredLabel: waiting for response
-          responseRequiredColor: D28960
           closeComment: >
             This issue has been automatically closed because there has been no response
             to our request from the original author.
