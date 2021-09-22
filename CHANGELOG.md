@@ -80,6 +80,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.2)
+- Updated the Accompanist library version (0.18.0)
 
 ### ✅ Added
 - Notifications are dismissed after the user go into the channel conversation when you are using `MessageList`

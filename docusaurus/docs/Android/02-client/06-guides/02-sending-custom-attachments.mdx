@@ -30,7 +30,7 @@ Let's see how you can create an `Attachment`.
 
 ### Create an Attachment Without Files
 
-If your attachment is just plain data (for example, location coordinates), and requires no file to be transferred, you can create and send it the following way:
+If your attachment is just plain data (for example, location coordinates), and requires no file to be transferred, you can create and send it in the following way:
 
 ```kotlin
 val attachment = Attachment(
@@ -42,7 +42,7 @@ val attachment = Attachment(
 )
 ```
 
-1. Setting a custom value for the `type` of the attachment makes it easy to identify the custom attachment on the receiving side to render it in the Message Líist.
+1. Setting a custom value for the `type` of the attachment makes it easy to identify the custom attachment on the receiving side to render it in the Message List.
 2. The `extraData` Map allows you to add arbitrary pieces of data to the attachment. In this example, we use this to add a pair of location coordinates.
 
 ### Create an Attachment With Files
