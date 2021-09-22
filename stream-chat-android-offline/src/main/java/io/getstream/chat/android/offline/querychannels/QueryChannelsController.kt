@@ -61,7 +61,7 @@ public class QueryChannelsController internal constructor(
     private var channelOffset = INITIAL_CHANNEL_OFFSET
     public var isFirstRequest: Boolean = true
         private set
-    
+
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
         client.queryChannels(
             QueryChannelsRequest(
@@ -143,8 +143,10 @@ public class QueryChannelsController internal constructor(
             is NotificationAddedToChannelEvent -> updateQueryChannelSpec(event.channel)
             is ChannelDeletedEvent -> removeChannel(event.channel.cid)
             is NotificationChannelDeletedEvent -> removeChannel(event.channel.cid)
-            is ChannelUpdatedByUserEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
-            is ChannelUpdatedEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
+            is ChannelUpdatedByUserEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }
+                ?.let { updateQueryChannelSpec(it) }
+            is ChannelUpdatedEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }
+                ?.let { updateQueryChannelSpec(it) }
         }
 
         if (event is MarkAllReadEvent) {
