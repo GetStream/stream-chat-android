@@ -1735,9 +1735,11 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Dismiss notifications from a given [channelType] and [channelId]
-         * Dismiss process will be handled internally unless user overrrides [ChatNotificationHandler.dismissChannelNotifications]
+         * Dismiss notifications from a given [channelType] and [channelId].
          * Be sure to initialize ChatClient before calling this method!
+         *
+         * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+         * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
          *
          * @throws IllegalStateException if called before initializing ChatClient
          */

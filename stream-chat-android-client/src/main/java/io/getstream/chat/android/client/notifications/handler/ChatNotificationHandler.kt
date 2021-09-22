@@ -186,7 +186,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     /**
-     * Dismiss notifications from a given [channelType] and [channelId]
+     * Dismiss notifications from a given [channelType] and [channelId].
+     *
+     * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+     * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
      */
     internal fun dismissChannelNotifications(channelType: String, channelId: String) {
         dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
