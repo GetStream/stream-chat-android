@@ -47,7 +47,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew stream-chat-android-core:test testDebug testDemoDebugUnitTest --stacktrace
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
