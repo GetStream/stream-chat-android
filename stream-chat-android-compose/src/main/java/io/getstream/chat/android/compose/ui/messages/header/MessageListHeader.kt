@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessageMode
 import io.getstream.chat.android.compose.state.messages.Normal
+import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
@@ -125,11 +126,10 @@ public fun DefaultMessageHeaderTitle(
     onHeaderActionClick: (Channel) -> Unit = {},
     isNetworkAvailable: Boolean = true,
 ) {
-    val channelName = channel.getDisplayName()
 
     val title = when (messageMode) {
-        Normal -> channelName
-        else -> stringResource(id = R.string.stream_compose_thread_title)
+        Normal -> channel.getDisplayName()
+        is Thread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
     val subtitle = when (messageMode) {
@@ -138,7 +138,7 @@ public fun DefaultMessageHeaderTitle(
             channel.memberCount,
             channel.members.count { it.user.online }
         )
-        else -> stringResource(id = R.string.stream_compose_thread_subtitle, channelName)
+        is Thread -> stringResource(id = R.string.stream_compose_thread_subtitle, channel.getDisplayName())
     }
 
     Column(
