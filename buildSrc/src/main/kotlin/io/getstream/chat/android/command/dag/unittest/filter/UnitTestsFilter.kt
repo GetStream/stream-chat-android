@@ -13,10 +13,16 @@ private fun List<String>.filterUnitTestableModules(rootProject: Project): List<P
     val ktlintModules = rootProject.subprojects
         .filter { project -> project.hasUnitTest() && this.contains(project.name) }
         .map { project ->
-            val testType = if (project.tasks.any { task -> task.name == "testDebugUnitTest" }) {
-                TestType.ANDROID_LIBRARY_TEST
-            } else {
-                TestType.JAVA_LIBRARY_TEST
+            val testType = when {
+                project.tasks.any { task -> task.name == "testDebugUnitTest" } -> {
+                    TestType.ANDROID_LIBRARY_TEST
+                }
+
+                project.tasks.any { task -> task.name == "testDemoDebugUnitTest" } -> {
+                    TestType.APPLICATION_TEST
+                }
+
+                else -> TestType.JAVA_LIBRARY_TEST
             }
 
             project.name to testType
