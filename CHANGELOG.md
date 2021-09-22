@@ -54,7 +54,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed bug with light mode.
 ### ⬆️ Improved
 
 ### ✅ Added
