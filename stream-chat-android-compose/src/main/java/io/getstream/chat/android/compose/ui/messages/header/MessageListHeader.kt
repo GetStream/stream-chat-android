@@ -36,7 +36,7 @@ import io.getstream.chat.android.compose.ui.util.getDisplayName
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
  * This allows the user to fully govern how the [MessageListHeader] behaves, by passing in all the
- * data that's required to display it and drive its actions.
+ * data that's required to display it and drive its actions, as well as customize the slot APIs.
  *
  * @param channel Channel info to display.
  * @param currentUser The current user, required for different UI states.
@@ -70,7 +70,7 @@ public fun MessageListHeader(
 
     titleContent: @Composable RowScope.() -> Unit = {
         DefaultMessageHeaderTitle(
-            modifier = Modifier.weight(6f),
+            modifier = Modifier.weight(1f),
             channel = channel,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
@@ -125,21 +125,20 @@ public fun DefaultMessageHeaderTitle(
     onHeaderActionClick: (Channel) -> Unit = {},
     isNetworkAvailable: Boolean = true,
 ) {
-    val memberCount = channel.memberCount
-    val onlineCount = channel.members.count { it.user.online }
-
     val channelName = channel.getDisplayName()
 
-    val title = if (messageMode == Normal) {
-        channelName
-    } else {
-        stringResource(id = R.string.stream_compose_thread_title)
+    val title = when (messageMode) {
+        Normal -> channelName
+        else -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
-    val subtitle = if (messageMode == Normal) {
-        stringResource(id = R.string.stream_compose_channel_members, memberCount, onlineCount)
-    } else {
-        stringResource(id = R.string.stream_compose_thread_subtitle, channelName)
+    val subtitle = when (messageMode) {
+        Normal -> stringResource(
+            id = R.string.stream_compose_channel_members,
+            channel.memberCount,
+            channel.members.count { it.user.online }
+        )
+        else -> stringResource(id = R.string.stream_compose_thread_subtitle, channelName)
     }
 
     Column(
