@@ -79,7 +79,7 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress },
+                    randomAttachment { uploadState = Attachment.UploadState.InProgress(10) },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )

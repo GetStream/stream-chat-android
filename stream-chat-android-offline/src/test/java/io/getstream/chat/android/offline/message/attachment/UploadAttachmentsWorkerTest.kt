@@ -40,7 +40,7 @@ internal class UploadAttachmentsWorkerTest {
 
     private val attachmentsPending = mutableListOf(
         randomAttachment {
-            this.uploadState = Attachment.UploadState.InProgress
+            this.uploadState = Attachment.UploadState.InProgress(0)
         }
     )
 
