@@ -89,7 +89,10 @@ internal class ChatNotificationsImpl constructor(
     }
 
     /**
-     * Dismiss notification associated to the [channelType] and [channelId] received on the params
+     * Dismiss notification associated to the [channelType] and [channelId] received on the params.
+     *
+     * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+     * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
      *
      */
     override fun dismissChannelNotifications(channelType: String, channelId: String) {
