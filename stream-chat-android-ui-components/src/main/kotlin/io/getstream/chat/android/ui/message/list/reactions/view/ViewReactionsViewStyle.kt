@@ -8,14 +8,26 @@ import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
 public data class ViewReactionsViewStyle(
+    @Deprecated(
+        message  = "Use bubbleBorderColorMine instead",
+        replaceWith = ReplaceWith("bubbleBorderColorMine"),
+        level = DeprecationLevel.WARNING,
+    )
     @ColorInt public val bubbleBorderColor: Int,
+    @ColorInt public val bubbleBorderColorMine: Int,
+    @ColorInt public val bubbleBorderColorTheirs: Int?,
     @ColorInt public val bubbleColorMine: Int,
     @ColorInt public val bubbleColorTheirs: Int,
+    @Px public val bubbleBorderWidthMine: Float,
+    @Px public val bubbleBorderWidthTheirs: Float?,
     @Px public val totalHeight: Int,
     @Px public val horizontalPadding: Int,
     @Px public val itemSize: Int,
@@ -29,10 +41,21 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleOffset: Int,
 ) {
 
+    //TODO Remove after removing bubbleBorderColor
+    @ColorInt
+    internal fun getBubbleBorderColorMine(): Int {
+        return if (bubbleBorderColor != DEFAULT_BUBBLE_BORDER_COLOR_MINE) {
+            bubbleBorderColor
+        } else {
+            bubbleBorderColorMine
+        }
+    }
+
     internal companion object {
-        private val DEFAULT_BUBBLE_BORDER_COLOR = R.color.stream_ui_grey_whisper
+        private val DEFAULT_BUBBLE_BORDER_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_THEIRS = R.color.stream_ui_grey_gainsboro
+        private val DEFAULT_BUBBLE_BORDER_WIDTH_MINE = 1.dpToPx() * 1.5f
 
         operator fun invoke(context: Context, attrs: AttributeSet?): ViewReactionsViewStyle {
             context.obtainStyledAttributes(
@@ -42,7 +65,10 @@ public data class ViewReactionsViewStyle(
                 0,
             ).use { a ->
                 return Builder(a, context)
-                    .bubbleBorderColor(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorMine)
+                    .bubbleBorderColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorMine)
+                    .bubbleBorderColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderColorTheirs)
+                    .bubbleBorderWidthMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthMine)
+                    .bubbleBorderWidthTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleBorderWidthTheirs)
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
                     .build()
@@ -55,7 +81,13 @@ public data class ViewReactionsViewStyle(
             @ColorInt
             private var bubbleColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE)
             @ColorInt
-            private var bubbleBorderColor: Int = context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR)
+            private var bubbleBorderColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR_MINE)
+            @ColorInt
+            private var bubbleBorderColorTheirs: Int? = null
+            @Px
+            private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
+            @Px
+            private var bubbleBorderWidthTheirs: Float? = null
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
                 bubbleColorTheirs =
@@ -67,9 +99,21 @@ public data class ViewReactionsViewStyle(
                     array.getColor(mineBubbleColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE))
             }
 
-            fun bubbleBorderColor(@StyleableRes bubbleBorderColorAttribute: Int) = apply {
-                bubbleBorderColor =
-                    array.getColor(bubbleBorderColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR))
+            fun bubbleBorderColorMine(@StyleableRes bubbleBorderColorAttribute: Int) = apply {
+                bubbleBorderColorMine =
+                    array.getColor(bubbleBorderColorAttribute, context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR_MINE))
+            }
+
+            fun bubbleBorderColorTheirs(@StyleableRes bubbleBorderColorAttribute: Int) = apply {
+                bubbleBorderColorTheirs = array.getColorOrNull(bubbleBorderColorAttribute)
+            }
+
+            fun bubbleBorderWidthMine(@StyleableRes bubbleBorderWidthAttribute: Int) = apply {
+                bubbleBorderWidthMine = array.getDimension(bubbleBorderWidthAttribute, DEFAULT_BUBBLE_BORDER_WIDTH_MINE)
+            }
+
+            fun bubbleBorderWidthTheirs(@StyleableRes bubbleBorderWidthAttribute: Int) = apply {
+                bubbleBorderWidthTheirs = array.getDimensionOrNull(bubbleBorderWidthAttribute)
             }
 
             fun build(): ViewReactionsViewStyle {
@@ -97,7 +141,11 @@ public data class ViewReactionsViewStyle(
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
 
                 return ViewReactionsViewStyle(
-                    bubbleBorderColor = bubbleBorderColor,
+                    bubbleBorderColor = bubbleBorderColorMine,
+                    bubbleBorderColorMine = bubbleBorderColorMine,
+                    bubbleBorderColorTheirs = bubbleBorderColorTheirs,
+                    bubbleBorderWidthMine = bubbleBorderWidthMine,
+                    bubbleBorderWidthTheirs = bubbleBorderWidthTheirs,
                     bubbleColorMine = bubbleColorMine,
                     bubbleColorTheirs = bubbleColorTheirs,
                     totalHeight = totalHeight,
