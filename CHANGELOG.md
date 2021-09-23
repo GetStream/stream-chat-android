@@ -70,6 +70,7 @@
 
 ### ✅ Added
 - Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
+- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
 
 ### ⚠️ Changed
 
