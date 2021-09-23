@@ -5,7 +5,9 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
+import okhttp3.Interceptor
 import java.util.concurrent.Executor
+
 
 /**
  * Release variant of [BaseChatModule].
@@ -17,4 +19,5 @@ internal class ChatModule(
     uploader: FileUploader?,
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
-) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor)
+    loggingInterceptor: Interceptor,
+) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor, loggingInterceptor)
