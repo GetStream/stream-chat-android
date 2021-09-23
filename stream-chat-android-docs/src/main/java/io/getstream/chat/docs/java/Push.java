@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
+import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate;
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
 import io.getstream.chat.docs.R;
@@ -122,12 +123,7 @@ public class Push {
             public void onNewToken(@NotNull String token) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setDevice(
-                            new Device(
-                                    "push-provider-token",
-                                    PushProvider.FIREBASE
-                            )
-                    );
+                    FirebaseMessagingDelegate.registerFirebaseToken(token);
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -136,13 +132,11 @@ public class Push {
             @Override
             public void onMessageReceived(@NotNull  RemoteMessage message) {
                 try {
-                    // Handle RemoteMessage and convert it to a PushMessage to sent back to Stream
-                    PushMessage pushMessage = new PushMessage(
-                            message.getData().get("message_id"),
-                            message.getData().get("channel_id"),
-                            message.getData().get("channel_type")
-                    );
-                    ChatClient.handlePushMessage(pushMessage);
+                    if(FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                        // RemoteMessage was from Stream and it is already processed
+                    } else {
+                        // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+                    }
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -178,31 +172,6 @@ public class Push {
             return intent;
         }
     }
-
-    // Todo: We need to update this documentation when the new way to handle Push Notifications in the LLC is ready.
-    /**
-     * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=java#handling-notifications-from-multiple-backend-services">Handling notifications from multiple backend services</a>
-     */
-//    class CustomFirebaseMessagingService extends FirebaseMessagingService {
-//        private PushMessageSyncHandler pushDataSyncHandler = new PushMessageSyncHandler(this);
-//
-//        @Override
-//        public void onNewToken(String token) {
-//            // update device's token on Stream backend
-//            pushDataSyncHandler.onNewToken(token);
-//        }
-//
-//        @Override
-//        public void onMessageReceived(RemoteMessage message) {
-//            if (pushDataSyncHandler.isStreamMessage(message)) {
-//                // handle RemoteMessage sent from Stream backend
-//                pushDataSyncHandler.syncMessages(message);
-//            } else {
-//                // handle RemoteMessage from other source
-//            }
-//            stopSelf();
-//        }
-//    }
 
     /**
      * @see <a href="https://getstream.io/chat/docs/push_devices/?language=java">Device</a>
