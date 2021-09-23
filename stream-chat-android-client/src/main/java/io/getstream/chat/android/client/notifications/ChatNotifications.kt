@@ -23,9 +23,8 @@ public interface ChatNotifications {
     public fun setDevice(device: Device)
     public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
-    public fun cancelLoadDataWork()
+    public fun onLogout()
     public fun displayNotification(channel: Channel, message: Message)
-    public fun removeStoredDevice()
     public fun onDismissNotification(notificationId: Int)
     public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
@@ -80,7 +79,13 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override fun cancelLoadDataWork() {
+    override fun onLogout() {
+        handler.dismissAllNotifications()
+        removeStoredDevice()
+        cancelLoadDataWork()
+    }
+
+    private fun cancelLoadDataWork() {
         LoadNotificationDataWorker.cancel(context)
     }
 
@@ -129,7 +134,7 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override fun removeStoredDevice() {
+    private fun removeStoredDevice() {
         scope.launch {
             pushTokenUpdateHandler.removeStoredDevice()
         }
@@ -145,9 +150,8 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     ) = Unit
 
     override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
-    override fun cancelLoadDataWork() = Unit
+    override fun onLogout() = Unit
     override fun displayNotification(channel: Channel, message: Message) = Unit
-    override fun removeStoredDevice() = Unit
     override fun onDismissNotification(notificationId: Int) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }
