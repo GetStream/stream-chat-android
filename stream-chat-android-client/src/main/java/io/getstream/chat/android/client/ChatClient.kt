@@ -673,7 +673,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
-        notifications.removeStoredDevice()
+        notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             userStateService.state.userOrError().let { user ->
@@ -684,7 +684,6 @@ public class ChatClient internal constructor(
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
-        notifications.cancelLoadDataWork()
         encryptedUserConfigStorage.clear()
         lifecycleObserver.dispose()
     }

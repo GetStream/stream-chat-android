@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
