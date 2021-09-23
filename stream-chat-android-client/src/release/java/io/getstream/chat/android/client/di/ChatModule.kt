@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.Interceptor
 import java.util.concurrent.Executor
 
-
 /**
  * Release variant of [BaseChatModule].
  */
@@ -20,4 +19,12 @@ internal class ChatModule(
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
     loggingInterceptor: Interceptor,
-) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor, loggingInterceptor)
+) : BaseChatModule(
+    appContext,
+    config,
+    notificationsHandler,
+    uploader,
+    tokenManager,
+    callbackExecutor,
+    loggingInterceptor
+)
