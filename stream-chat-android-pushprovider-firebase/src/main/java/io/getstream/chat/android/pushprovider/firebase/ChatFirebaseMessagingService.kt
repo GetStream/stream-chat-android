@@ -31,4 +31,3 @@ internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
         private const val TAG = "Chat:"
     }
 }
-
