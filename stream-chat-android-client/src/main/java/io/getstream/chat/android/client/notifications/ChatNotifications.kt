@@ -11,20 +11,23 @@ import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-internal interface ChatNotifications {
-    val handler: ChatNotificationHandler
-    fun onSetUser()
-    fun setDevice(device: Device)
-    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
-    fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
-    fun cancelLoadDataWork()
-    fun displayNotification(channel: Channel, message: Message)
-    fun removeStoredDevice()
-    fun onDismissNotification(notificationId: Int)
+@InternalStreamChatApi
+public interface ChatNotifications {
+    public val handler: ChatNotificationHandler
+    public fun onSetUser()
+    public fun setDevice(device: Device)
+    public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
+    public fun cancelLoadDataWork()
+    public fun displayNotification(channel: Channel, message: Message)
+    public fun removeStoredDevice()
+    public fun onDismissNotification(notificationId: Int)
+    public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 internal class ChatNotificationsImpl constructor(
@@ -85,6 +88,17 @@ internal class ChatNotificationsImpl constructor(
         handler.onDismissNotification(notificationId)
     }
 
+    /**
+     * Dismiss notification associated to the [channelType] and [channelId] received on the params.
+     *
+     * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+     * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
+     *
+     */
+    override fun dismissChannelNotifications(channelType: String, channelId: String) {
+        handler.dismissChannelNotifications(channelType, channelId)
+    }
+
     private fun handlePushMessage(message: PushMessage) {
         obtainNotifactionData(message.channelId, message.channelType, message.messageId)
     }
@@ -135,4 +149,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun displayNotification(channel: Channel, message: Message) = Unit
     override fun removeStoredDevice() = Unit
     override fun onDismissNotification(notificationId: Int) = Unit
+    override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }

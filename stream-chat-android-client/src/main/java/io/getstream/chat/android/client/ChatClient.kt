@@ -99,7 +99,7 @@ public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications,
+    @InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
@@ -1732,6 +1732,20 @@ public class ChatClient internal constructor(
                 channel = channel,
                 message = message,
             )
+        }
+
+        /**
+         * Dismiss notifications from a given [channelType] and [channelId].
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+         * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
+         *
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
+        @Throws(IllegalStateException::class)
+        public fun dismissChannelNotifications(channelType: String, channelId: String) {
+            ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
         }
 
         @Throws(IllegalStateException::class)

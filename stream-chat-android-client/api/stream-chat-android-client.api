@@ -53,6 +53,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getNotificationHandler ()Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;
+	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
 	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -169,6 +170,7 @@ public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuil
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {
+	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun handlePushMessage (Lio/getstream/chat/android/client/models/PushMessage;)V
 	public final fun instance ()Lio/getstream/chat/android/client/ChatClient;
@@ -2767,7 +2769,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onPushMessage (Lio/getstream/chat/android/client/models/PushMessage;)Z
-	public fun showNotification (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {

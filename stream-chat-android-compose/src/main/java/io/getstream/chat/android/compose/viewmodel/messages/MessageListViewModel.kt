@@ -206,7 +206,10 @@ public class MessageListViewModel(
                         newState
                     }
                     lastLoadedMessage = newLastMessage
-                    setChanel(controller.toChannel())
+                    controller.toChannel().let { channel ->
+                        ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
+                        setChanel(channel)
+                    }
                 }
         }
     }
