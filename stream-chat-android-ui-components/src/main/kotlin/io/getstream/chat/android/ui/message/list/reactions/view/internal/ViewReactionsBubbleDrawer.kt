@@ -19,7 +19,7 @@ internal class ViewReactionsBubbleDrawer(
         style = Paint.Style.FILL
     }
     private val bubbleStrokePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = viewReactionsViewStyle.getBubbleBorderColorMine()
+        color = viewReactionsViewStyle.bubbleBorderColor ?: viewReactionsViewStyle.bubbleBorderColorMine
         strokeWidth = viewReactionsViewStyle.bubbleBorderWidthMine
         style = Paint.Style.STROKE
     }
@@ -72,15 +72,7 @@ internal class ViewReactionsBubbleDrawer(
         viewReactionsViewStyle.bubbleBorderColorTheirs != null && viewReactionsViewStyle.bubbleBorderWidthTheirs != null
 
     private fun createBubbleRoundRectPath(): Path {
-        val strokeOffset: Float = if (isMyMessage) {
-            viewReactionsViewStyle.bubbleBorderWidthMine / 2
-        } else {
-            if (shouldDrawTheirsBorder()) {
-                viewReactionsViewStyle.bubbleBorderWidthTheirs!! / 2
-            } else {
-                0f
-            }
-        }
+        val strokeOffset = getStrokeOffset()
         return Path().apply {
             addRoundRect(
                 strokeOffset,
@@ -91,6 +83,20 @@ internal class ViewReactionsBubbleDrawer(
                 viewReactionsViewStyle.bubbleRadius.toFloat(),
                 Path.Direction.CW
             )
+        }
+    }
+
+    private fun getStrokeOffset(): Float {
+        return when {
+            isMyMessage -> {
+                viewReactionsViewStyle.bubbleBorderWidthMine / 2
+            }
+            shouldDrawTheirsBorder() -> {
+                viewReactionsViewStyle.bubbleBorderWidthTheirs!! / 2
+            }
+            else -> {
+                0f
+            }
         }
     }
 
@@ -110,7 +116,7 @@ internal class ViewReactionsBubbleDrawer(
             addCircle(
                 calculateBubbleCenterX(viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.smallTailBubbleCy.toFloat(),
-                viewReactionsViewStyle.smallTailBubbleRadius.toFloat(),
+                viewReactionsViewStyle.smallTailBubbleRadius.toFloat() - getStrokeOffset(),
                 Path.Direction.CW
             )
         }

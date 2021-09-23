@@ -21,7 +21,7 @@ public data class ViewReactionsViewStyle(
         replaceWith = ReplaceWith("bubbleBorderColorMine"),
         level = DeprecationLevel.WARNING,
     )
-    @ColorInt public val bubbleBorderColor: Int,
+    @ColorInt public val bubbleBorderColor: Int?,
     @ColorInt public val bubbleBorderColorMine: Int,
     @ColorInt public val bubbleBorderColorTheirs: Int?,
     @ColorInt public val bubbleColorMine: Int,
@@ -40,16 +40,6 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
 ) {
-
-    //TODO Remove after removing bubbleBorderColor
-    @ColorInt
-    internal fun getBubbleBorderColorMine(): Int {
-        return if (bubbleBorderColor != DEFAULT_BUBBLE_BORDER_COLOR_MINE) {
-            bubbleBorderColor
-        } else {
-            bubbleBorderColorMine
-        }
-    }
 
     internal companion object {
         private val DEFAULT_BUBBLE_BORDER_COLOR_MINE = R.color.stream_ui_grey_whisper
@@ -141,7 +131,7 @@ public data class ViewReactionsViewStyle(
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
 
                 return ViewReactionsViewStyle(
-                    bubbleBorderColor = bubbleBorderColorMine,
+                    bubbleBorderColor = null,
                     bubbleBorderColorMine = bubbleBorderColorMine,
                     bubbleBorderColorTheirs = bubbleBorderColorTheirs,
                     bubbleBorderWidthMine = bubbleBorderWidthMine,
@@ -158,7 +148,7 @@ public data class ViewReactionsViewStyle(
                     largeTailBubbleOffset = largeTailBubbleOffset,
                     smallTailBubbleCy = smallTailBubbleCy,
                     smallTailBubbleRadius = smallTailBubbleRadius,
-                    smallTailBubbleOffset = smallTailBubbleOffset
+                    smallTailBubbleOffset = smallTailBubbleOffset,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
             }
         }
