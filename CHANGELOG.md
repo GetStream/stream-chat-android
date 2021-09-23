@@ -97,6 +97,23 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Created `FirebaseMessagingDelegate` that help you to build your own `FirebaseMessagingService` implementation
+```
+class MyFirebaseMessagingService() {
+     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        if(FirebaseMessagingDelegate.handleRemoteMessage(remoteMessage)) {
+            // RemoteMessage was from Stream and it is already processed
+        } else {
+            [...]
+        }
+    }
+
+    override fun onNewToken(token: String) {
+        FirebaseMessagingDelegate.registerFirebaseToken(token)
+        [...]
+    } 
+}
+```
 
 ### ⚠️ Changed
 
