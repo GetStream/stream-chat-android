@@ -7,5 +7,11 @@
         <attr name="streamUiReactionsBubbleColorTheirs" />
         <!-- Border color of the reactions bubble for the message sent by the current user -->
         <attr name="streamUiReactionsBubbleBorderColorMine" format="color|reference" />
+        <!-- Border color of the reactions bubble for the message sent by another user -->
+        <attr name="streamUiReactionsBubbleBorderColorTheirs" format="color|reference" />
+        <!-- Border width of the reactions bubble for the message sent by the current user -->
+        <attr name="streamUiReactionsBubbleBorderWidthMine" format="dimension|reference" />
+        <!-- Border width of the reactions bubble for the message sent by another user -->
+        <attr name="streamUiReactionsBubbleBorderWidthTheirs" format="dimension|reference" />
     </declare-styleable>
 </resources>

@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.docs.MainActivity
 
@@ -74,12 +75,7 @@ class Push(val context: Context, val client: ChatClient) {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    ChatClient.setDevice(
-                        Device(
-                            token = token,
-                            pushProvider = PushProvider.FIREBASE,
-                        )
-                    )
+                    FirebaseMessagingDelegate.registerFirebaseToken(token)
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -87,13 +83,11 @@ class Push(val context: Context, val client: ChatClient) {
 
             override fun onMessageReceived(message: RemoteMessage) {
                 try {
-                    // Handle RemoteMessage and convert it to a PushMessage to sent back to Stream
-                    val pushMessage = PushMessage(
-                        channelId = message.data["channel_id"]!!,
-                        messageId = message.data["message_id"]!!,
-                        channelType = message.data["channel_type"]!!,
-                    )
-                    ChatClient.handlePushMessage(pushMessage)
+                    if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                        // RemoteMessage was from Stream and it is already processed
+                    } else {
+                        // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+                    }
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
