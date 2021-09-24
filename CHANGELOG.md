@@ -98,23 +98,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Created `FirebaseMessagingDelegate` that help you to build your own `FirebaseMessagingService` implementation
-```
-class MyFirebaseMessagingService() {
-     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        if(FirebaseMessagingDelegate.handleRemoteMessage(remoteMessage)) {
-            // RemoteMessage was from Stream and it is already processed
-        } else {
-            [...]
-        }
-    }
-
-    override fun onNewToken(token: String) {
-        FirebaseMessagingDelegate.registerFirebaseToken(token)
-        [...]
-    } 
-}
-```
+- Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
 
 ### ⚠️ Changed
 
