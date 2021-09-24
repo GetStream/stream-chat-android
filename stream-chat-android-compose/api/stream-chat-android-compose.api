@@ -530,7 +530,7 @@ public final class io/getstream/chat/android/compose/ui/imagepreview/ImagePrevie
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Ljava/lang/String;IZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessagesScreen (Ljava/lang/String;IZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
@@ -588,7 +588,8 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/compon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;ZLio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;ZLandroidx/compose/runtime/Composer;II)V
+	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt {
