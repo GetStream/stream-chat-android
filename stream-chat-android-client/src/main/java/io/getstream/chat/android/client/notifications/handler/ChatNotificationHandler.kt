@@ -195,6 +195,13 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
     }
 
+    /**
+     * Dismiss all notifications.
+     */
+    internal fun dismissAllNotifications() {
+        getNotificationSummaryIds().forEach(::dismissSummaryNotification)
+    }
+
     public open fun getErrorCaseIntent(): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
@@ -265,6 +272,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         sharedPreferences.edit {
             putInt(getNotificationIdKey(notificationId), notificationSummaryId)
             putStringSet(
+                KEY_NOTIFICATION_SUMMARY_IDS,
+                (getNotificationSummaryIds() + notificationSummaryId).map(Int::toString).toSet()
+            )
+            putStringSet(
                 getNotificationSummaryIdKey(notificationSummaryId),
                 (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map(Int::toString).toSet()
             )
@@ -282,6 +293,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
+    private fun getNotificationSummaryIds(): Set<Int> = sharedPreferences.getStringSet(KEY_NOTIFICATION_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
     private fun getAssociatedNotificationSummaryId(notificationId: Int): Int = sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
     private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> =
         sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty().map(String::toInt).toSet()
@@ -294,5 +306,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_PREFIX_NOTIFICATION_ID = "nId-"
         private const val KEY_PREFIX_NOTIFICATION_SUMMARY_ID = "nSId-"
+        private const val KEY_NOTIFICATION_SUMMARY_IDS = "notification_summary_ids"
     }
 }

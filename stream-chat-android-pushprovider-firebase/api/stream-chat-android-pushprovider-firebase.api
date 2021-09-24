@@ -6,6 +6,12 @@ public final class io/getstream/chat/android/pushprovider/firebase/BuildConfig {
 	public fun <init> ()V
 }
 
+public final class io/getstream/chat/android/pushprovider/firebase/FirebaseMessagingDelegate {
+	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/firebase/FirebaseMessagingDelegate;
+	public static final fun handleRemoteMessage (Lcom/google/firebase/messaging/RemoteMessage;)Z
+	public static final fun registerFirebaseToken (Ljava/lang/String;)V
+}
+
 public final class io/getstream/chat/android/pushprovider/firebase/FirebasePushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public fun <init> ()V
 	public fun <init> (Lcom/google/firebase/messaging/FirebaseMessaging;)V
