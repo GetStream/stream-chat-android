@@ -99,7 +99,7 @@ public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications,
+    @InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
@@ -673,7 +673,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
-        notifications.removeStoredDevice()
+        notifications.onLogout()
         // fire a handler here that the chatDomain and chatUI can use
         runCatching {
             userStateService.state.userOrError().let { user ->
@@ -684,7 +684,6 @@ public class ChatClient internal constructor(
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
-        notifications.cancelLoadDataWork()
         encryptedUserConfigStorage.clear()
         lifecycleObserver.dispose()
     }
@@ -1557,7 +1556,7 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    public class Builder(private val apiKey: String, private val appContext: Context) {
+    public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
@@ -1642,7 +1641,7 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public fun build(): ChatClient {
+        public override fun buildChatClient(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -1673,11 +1672,17 @@ public class ChatClient internal constructor(
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
             )
-
-            instance = result
-
             return result
         }
+    }
+
+    public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
+
+        public fun build(): ChatClient = buildChatClient().also {
+            instance = it
+        }
+
+        public abstract fun buildChatClient(): ChatClient
     }
 
     public companion object {
@@ -1726,6 +1731,20 @@ public class ChatClient internal constructor(
                 channel = channel,
                 message = message,
             )
+        }
+
+        /**
+         * Dismiss notifications from a given [channelType] and [channelId].
+         * Be sure to initialize ChatClient before calling this method!
+         *
+         * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+         * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
+         *
+         * @throws IllegalStateException if called before initializing ChatClient
+         */
+        @Throws(IllegalStateException::class)
+        public fun dismissChannelNotifications(channelType: String, channelId: String) {
+            ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
         }
 
         @Throws(IllegalStateException::class)

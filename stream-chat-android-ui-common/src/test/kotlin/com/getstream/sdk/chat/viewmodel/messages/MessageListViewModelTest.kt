@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.MutableLiveData
+import com.getstream.sdk.chat.MockChatClientBuilder
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
@@ -61,7 +62,7 @@ private val THREAD_MESSAGES = createMessageList {
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class MessageListViewModelTest {
     private val domain: ChatDomain = mock()
-    private val client: ChatClient = mock()
+    private val client: ChatClient = MockChatClientBuilder().build()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val watchChannelCall = TestCall(channelControllerResult)
     private val channelController: ChannelController = mock()
@@ -98,6 +99,7 @@ internal class MessageListViewModelTest {
         whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
+        whenever(channelController.toChannel()) doReturn createChannel()
         whenever(domain.threadLoadMore(any(), any(), any())) doReturn threadLoadMoreCall
         whenever(threadLoadMoreResult.isSuccess) doReturn true
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
@@ -108,6 +110,7 @@ internal class MessageListViewModelTest {
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flagMessage(any())) doReturn flagCall
+        whenever(client.notifications) doReturn mock()
 
         messages.value = MESSAGES
         reads.value = listOf(CHANNEL_USER_READ)

@@ -111,3 +111,9 @@ ChatClient.Builder("api-key", context)
     .notifications(notificationHandler)
     .build()
 ```
+
+### Dismissing notifications
+Our `MessageListView` component dismisses notifications related to a `Channel` as far as a user navigates to the channel conversation.
+If you need to manually dismiss them manually (for example you are using a custom `MessageListiew` component) you can call `ChatClient::dismissChannelNotifications` method providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications.
+
+Notifications are automatically dismissed when the user logout the SDK.

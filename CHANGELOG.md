@@ -17,6 +17,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
@@ -68,6 +70,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
 
 ### ⚠️ Changed
 
@@ -78,8 +81,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.2)
+- Updated the Accompanist library version (0.18.0)
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageList`
 
 ### ⚠️ Changed
 
