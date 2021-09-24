@@ -59,7 +59,7 @@ public class QueryChannelsController internal constructor(
     ) : this(filter, sort, client, domain as ChatDomainImpl)
 
     private var channelOffset = INITIAL_CHANNEL_OFFSET
-    public var isFirstRequest: Boolean = true
+    internal var isFirstRequest: Boolean = true
         private set
 
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
