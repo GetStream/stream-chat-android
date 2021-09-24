@@ -5,25 +5,32 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
-import kotlin.jvm.Throws
 
+/**
+ * Helper class for delegating Firebase push messages to the Stream Chat SDK.
+ */
 public object FirebaseMessagingDelegate {
 
     /**
      * Handles [remoteMessage] from Firebase.
-     * If the [remoteMessage] wasn't sent from Stream Server and doesn't contain needed data return false to notify you this remoteMessage need to be handled by you.
+     * If the [remoteMessage] wasn't sent from the Stream Server and doesn't contain the needed data,
+     * return false to notify you that this remoteMessage needs to be handled by you.
      *
-     * @param remoteMessage to be handled.
-     * @return True if the [remoteMessage] was sent from Stream Server and has been handled internally.
+     * @param remoteMessage The message to be handled.
+     * @return True if the [remoteMessage] was sent from the Stream Server and has been handled.
      *
-     * @throws IllegalStateException if called before initializing ChatClient.
+     * @throws IllegalStateException If called before initializing ChatClient.
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun handleRemoteMessage(remoteMessage: RemoteMessage): Boolean =
-        remoteMessage.takeIf { it.isValid() }
-            ?.toPushMessage()
-            ?.run(ChatClient::handlePushMessage) != null
+    public fun handleRemoteMessage(remoteMessage: RemoteMessage): Boolean {
+        if (!remoteMessage.isValid()) {
+            return false
+        }
+
+        ChatClient.handlePushMessage(remoteMessage.toPushMessage())
+        return true
+    }
 
     /**
      * Register new Firebase Token.
@@ -44,15 +51,12 @@ public object FirebaseMessagingDelegate {
     }
 }
 
-@Throws(IllegalStateException::class)
-private fun RemoteMessage.toPushMessage() = when (isValid()) {
-    true -> PushMessage(
-        channelId = data["channel_id"]!!,
-        messageId = data["message_id"]!!,
-        channelType = data["channel_type"]!!,
+private fun RemoteMessage.toPushMessage() =
+    PushMessage(
+        channelId = data.getValue("channel_id"),
+        messageId = data.getValue("message_id"),
+        channelType = data.getValue("channel_type"),
     )
-    else -> throw IllegalStateException("RemoteMessage doesn't contains needed data")
-}
 
 private fun RemoteMessage.isValid() =
     !data["channel_id"].isNullOrBlank() &&
