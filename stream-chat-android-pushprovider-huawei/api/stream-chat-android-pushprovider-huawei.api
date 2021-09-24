@@ -6,6 +6,12 @@ public final class io/getstream/chat/android/pushprovider/huawei/BuildConfig {
 	public fun <init> ()V
 }
 
+public final class io/getstream/chat/android/pushprovider/huawei/HuaweiMessagingDelegate {
+	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/huawei/HuaweiMessagingDelegate;
+	public static final fun handleRemoteMessage (Lcom/huawei/hms/push/RemoteMessage;)Z
+	public static final fun registerHuaweiToken (Ljava/lang/String;)V
+}
+
 public final class io/getstream/chat/android/pushprovider/huawei/HuaweiPushDeviceGenerator : io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
 	public fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
