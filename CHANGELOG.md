@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
@@ -70,6 +71,7 @@
 
 ### ✅ Added
 - Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
+- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
 
 ### ⚠️ Changed
 
@@ -97,6 +99,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
 
 ### ⚠️ Changed
 
