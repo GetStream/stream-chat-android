@@ -17,6 +17,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
@@ -68,6 +70,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
+- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
 
 ### ⚠️ Changed
 
@@ -78,6 +82,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.2)
+- Updated the Accompanist library version (0.18.0)
 
 ### ✅ Added
 - Added an uploading indicator to files and images
@@ -85,6 +91,7 @@
 - Upload indicators show the upload progress and how much data is left to send
 - Added more image options to the ImagePreviewActivity such as download, delete, reply to message...
 - Added an Image Gallery feature to the ImagePreviewActivity where users can browse all the images
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageList`
 
 ### ⚠️ Changed
 - `StreamAttachment.defaultFactories()` is a function now, instead of a property.
@@ -103,6 +110,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
 
 ### ⚠️ Changed
 
@@ -154,6 +162,7 @@
 - Improved the way we build items in the Message list
 - Added line limit to link attachment descriptions
 - Added a way to customize the default line limit for link descriptions
+- Improved the `MessageListHeader` with more customization options
 
 ### ✅ Added
 - Added an uploading indicator to files and images
@@ -166,6 +175,8 @@
 - Updated all default value factories to functions (e.g. StreamTypography)
 - Re-organized all attachment factories and split up code in multiple packages
 - Changed the `AttachmentState` `message` property name to `messageItem`
+- Added a `Channel` parameter to the `MessagesScreen`'s `onHeaderActionClick` lambda
+- Changed the way the `MessageListHeader` is structured by adding slot components
 
 # August 30th, 2021 - 4.17.2
 ## stream-chat-android-ui-client

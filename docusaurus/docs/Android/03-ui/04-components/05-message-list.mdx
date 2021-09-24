@@ -88,6 +88,12 @@ messageListView.setThreadStartHandler { message: Message ->
 messageListView.setMessageFlagHandler { message: Message ->
    // Handle when message is going to be flagged
 }
+messageListView.setMessagePinHandler { message: Message ->
+    // Handle when message is going to be pinned
+}
+messageListView.setMessageUnpinHandler { message: Message ->
+    // Handle when message is going to be unpinned
+}
 messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
     // Handle when some giphyAction is going to be performed
 }

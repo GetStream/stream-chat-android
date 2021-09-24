@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
@@ -63,7 +64,7 @@ public fun MessagesScreen(
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: () -> Unit = {},
+    onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
     val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
 

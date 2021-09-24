@@ -43,7 +43,7 @@ The `MessagesScreenComponent` exposes two actions, as per the signature:
 fun MessagesScreen(
     ..., // State
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: () -> Unit = {},
+    onHeaderActionClick: (Channel) -> Unit = {},
 )
 ```
 
@@ -62,7 +62,7 @@ Here's an example of setting up custom behavior for the user tapping on the back
                 MessagesScreen(
                     ..., // State
                     onBackPressed = { finish() }, // Navigation handler
-                    onHeaderActionClick = {
+                    onHeaderActionClick = { channel ->
                         // Show conversation info
                     },
                 )

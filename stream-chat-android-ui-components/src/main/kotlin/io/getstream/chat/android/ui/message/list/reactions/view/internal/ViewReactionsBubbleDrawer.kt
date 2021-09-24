@@ -7,10 +7,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
 
 internal class ViewReactionsBubbleDrawer(
-    private val viewReactionsViewStyle: ViewReactionsViewStyle
+    private val viewReactionsViewStyle: ViewReactionsViewStyle,
 ) {
-
-    private val bubbleStrokeWidth: Float = 1.dpToPx() * 1.5f
 
     private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = viewReactionsViewStyle.bubbleColorTheirs
@@ -21,9 +19,20 @@ internal class ViewReactionsBubbleDrawer(
         style = Paint.Style.FILL
     }
     private val bubbleStrokePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = viewReactionsViewStyle.bubbleBorderColor
-        strokeWidth = bubbleStrokeWidth
+        color = viewReactionsViewStyle.bubbleBorderColor ?: viewReactionsViewStyle.bubbleBorderColorMine
+        strokeWidth = viewReactionsViewStyle.bubbleBorderWidthMine
         style = Paint.Style.STROKE
+    }
+
+    private val bubbleStrokePaintTheirs by lazy {
+        check(shouldDrawTheirsBorder()) {
+            "You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"
+        }
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = viewReactionsViewStyle.bubbleBorderColorTheirs!!
+            strokeWidth = viewReactionsViewStyle.bubbleBorderWidthTheirs!!
+            style = Paint.Style.STROKE
+        }
     }
 
     private var bubbleWidth: Int = 0
@@ -35,7 +44,7 @@ internal class ViewReactionsBubbleDrawer(
         bubbleWidth: Int,
         isMyMessage: Boolean,
         isSingleReaction: Boolean,
-        inverseBubbleStyle: Boolean = false
+        inverseBubbleStyle: Boolean = false,
     ) {
         this.isMyMessage = isMyMessage
         this.bubbleWidth = bubbleWidth
@@ -53,15 +62,17 @@ internal class ViewReactionsBubbleDrawer(
             canvas.drawPath(path, bubbleStrokePaintMine)
         } else {
             canvas.drawPath(path, bubblePaintTheirs)
+            if (shouldDrawTheirsBorder()) {
+                canvas.drawPath(path, bubbleStrokePaintTheirs)
+            }
         }
     }
 
+    private fun shouldDrawTheirsBorder(): Boolean =
+        viewReactionsViewStyle.bubbleBorderColorTheirs != null && viewReactionsViewStyle.bubbleBorderWidthTheirs != null
+
     private fun createBubbleRoundRectPath(): Path {
-        val strokeOffset: Float = if (isMyMessage) {
-            bubbleStrokeWidth / 2
-        } else {
-            0f
-        }
+        val strokeOffset = getStrokeOffset()
         return Path().apply {
             addRoundRect(
                 strokeOffset,
@@ -72,6 +83,20 @@ internal class ViewReactionsBubbleDrawer(
                 viewReactionsViewStyle.bubbleRadius.toFloat(),
                 Path.Direction.CW
             )
+        }
+    }
+
+    private fun getStrokeOffset(): Float {
+        return when {
+            isMyMessage -> {
+                viewReactionsViewStyle.bubbleBorderWidthMine / 2
+            }
+            shouldDrawTheirsBorder() -> {
+                viewReactionsViewStyle.bubbleBorderWidthTheirs!! / 2
+            }
+            else -> {
+                0f
+            }
         }
     }
 
@@ -91,7 +116,7 @@ internal class ViewReactionsBubbleDrawer(
             addCircle(
                 calculateBubbleCenterX(viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.smallTailBubbleCy.toFloat(),
-                viewReactionsViewStyle.smallTailBubbleRadius.toFloat(),
+                viewReactionsViewStyle.smallTailBubbleRadius.toFloat() - getStrokeOffset(),
                 Path.Direction.CW
             )
         }
