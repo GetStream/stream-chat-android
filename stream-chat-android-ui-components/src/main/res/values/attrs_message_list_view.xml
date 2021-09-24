@@ -192,6 +192,9 @@
         <attr name="streamUiMessageReactionsBubbleColorMine" format="color" />
         <attr name="streamUiMessageReactionsBubbleColorTheirs" format="color" />
         <attr name="streamUiMessageReactionsBubbleBorderColorMine" format="color|reference" />
+        <attr name="streamUiMessageReactionsBubbleBorderColorTheirs" format="color|reference" />
+        <attr name="streamUiMessageReactionsBubbleBorderWidthMine" format="dimension|reference" />
+        <attr name="streamUiMessageReactionsBubbleBorderWidthTheirs" format="dimension|reference" />
 
         <!-- Message edit reactions view style -->
         <attr name="streamUiEditReactionsBubbleColorMine" format="color" />
