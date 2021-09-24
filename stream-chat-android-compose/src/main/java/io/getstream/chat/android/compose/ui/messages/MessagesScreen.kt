@@ -62,7 +62,7 @@ public fun MessagesScreen(
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (Channel) -> Unit = {},
+    onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
     val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
 
