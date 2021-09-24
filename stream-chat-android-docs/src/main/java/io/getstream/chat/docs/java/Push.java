@@ -132,7 +132,7 @@ public class Push {
             @Override
             public void onMessageReceived(@NotNull  RemoteMessage message) {
                 try {
-                    if(FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                    if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
                         // RemoteMessage was from Stream and it is already processed
                     } else {
                         // RemoteMessage wasn't sent from Stream and it needs to be handled by you

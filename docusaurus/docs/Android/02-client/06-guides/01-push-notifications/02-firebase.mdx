@@ -65,9 +65,9 @@ That's all you have to do to integrate our Firebase push provider artifact!
 
 The Stream Firebase push provider artifact includes an implementation of `FirebaseMessagingService` that will send new Firebase tokens and incoming push messages to the Stream SDK.
 
-If you're also using Firebase notifications for other things in your app, you can use your own custom service instead. This should make the following calls to the `ChatClient.setDevice` and `ChatClient.handlePushMessage` methods:
+If you're also using Firebase notifications for other things in your app, you can use your own custom service instead. This should make the following calls to the `FirebaseMessagingDelegate` class:
 
-```kotlin {6-11,20-25}
+```kotlin {6,14}
 class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
@@ -81,13 +81,13 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
-            if(FirebaseMessagingDelegate.handleRemoteMessage(remoteMessage)) {
+            if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
                 // RemoteMessage was from Stream and it is already processed
             } else {
-                [...]
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
             }
-        } catch (exception: Exception) {
-            // ChatClient was not initialized or the data is missing
+        } catch (IllegalStateException exception) {
+            // ChatClient was not initialized
         }
     }
 }
