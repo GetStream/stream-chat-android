@@ -62,7 +62,7 @@ internal class FileAttachmentViewHolder(
 
     private fun setupBackground() {
         val shapeAppearanceModel = ShapeAppearanceModel.Builder()
-            .setAllCorners(CornerFamily.ROUNDED, 5.toFloat())
+            .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
             .build()
         val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
         bgShapeDrawable.apply {
@@ -119,7 +119,7 @@ internal class FileAttachmentViewHolder(
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
             }
 
-            // binding.progressBar.indeterminateDrawable = style.progressBarDrawable
+            binding.progressBar.indeterminateDrawable = style.progressBarDrawable
             binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
 
             subscribeForProgressIfNeeded(item)
