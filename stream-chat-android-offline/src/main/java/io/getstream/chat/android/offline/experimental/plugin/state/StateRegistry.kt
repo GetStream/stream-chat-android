@@ -27,4 +27,8 @@ public class StateRegistry {
             QueryChannelsMutableState(filter, sort, scope)
         }
     }
+
+    public fun clear() {
+        queryChannels.clear()
+    }
 }
