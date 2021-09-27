@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.api.RetrofitCdnApi
-import io.getstream.chat.android.client.api.models.ProgressRequestBody
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -23,14 +22,15 @@ internal class StreamFileUploader(
         file: File,
         callback: ProgressCallback,
     ): Result<String> {
-        val body = ProgressRequestBody(file, callback)
+        val body = file.asRequestBody(file.getMediaType())
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
         return retrofitCdnApi.sendFile(
-            channelType,
-            channelId,
-            part,
-            connectionId
+            channelType = channelType,
+            channelId = channelId,
+            file = part,
+            connectionId = connectionId,
+            progressCallback = callback,
         ).execute().map { it.file }
     }
 
@@ -41,17 +41,15 @@ internal class StreamFileUploader(
         connectionId: String,
         file: File,
     ): Result<String> {
-        val part = MultipartBody.Part.createFormData(
-            "file",
-            file.name,
-            file.asRequestBody(file.getMediaType())
-        )
+        val body = file.asRequestBody(file.getMediaType())
+        val part = MultipartBody.Part.createFormData("file", file.name, body)
 
         return retrofitCdnApi.sendFile(
-            channelType,
-            channelId,
-            part,
-            connectionId
+            channelType = channelType,
+            channelId = channelId,
+            file = part,
+            connectionId = connectionId,
+            progressCallback = null,
         ).execute().map { it.file }
     }
 
@@ -63,16 +61,16 @@ internal class StreamFileUploader(
         file: File,
         callback: ProgressCallback,
     ): Result<String> {
-        val body = ProgressRequestBody(file, callback)
+        val body = file.asRequestBody(file.getMediaType())
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
-        return retrofitCdnApi
-            .sendImage(
-                channelType,
-                channelId,
-                part,
-                connectionId
-            ).execute().map { it.file }
+        return retrofitCdnApi.sendImage(
+            channelType = channelType,
+            channelId = channelId,
+            file = part,
+            connectionId = connectionId,
+            progressCallback = callback,
+        ).execute().map { it.file }
     }
 
     override fun sendImage(
@@ -82,17 +80,15 @@ internal class StreamFileUploader(
         connectionId: String,
         file: File,
     ): Result<String> {
-        val part = MultipartBody.Part.createFormData(
-            "file",
-            file.name,
-            file.asRequestBody(file.getMediaType())
-        )
+        val body = file.asRequestBody(file.getMediaType())
+        val part = MultipartBody.Part.createFormData("file", file.name, body)
 
         return retrofitCdnApi.sendImage(
-            channelType,
-            channelId,
-            part,
-            connectionId
+            channelType = channelType,
+            channelId = channelId,
+            file = part,
+            connectionId = connectionId,
+            progressCallback = null,
         ).execute().map { it.file }
     }
 
@@ -103,9 +99,12 @@ internal class StreamFileUploader(
         connectionId: String,
         url: String,
     ): Result<Unit> {
-        return retrofitCdnApi.deleteFile(channelType, channelId, connectionId, url)
-            .execute()
-            .toUnitResult()
+        return retrofitCdnApi.deleteFile(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+            url = url
+        ).execute().toUnitResult()
     }
 
     override fun deleteImage(
@@ -115,8 +114,11 @@ internal class StreamFileUploader(
         connectionId: String,
         url: String,
     ): Result<Unit> {
-        return retrofitCdnApi.deleteImage(channelType, channelId, connectionId, url)
-            .execute()
-            .toUnitResult()
+        return retrofitCdnApi.deleteImage(
+            channelType = channelType,
+            channelId = channelId,
+            connectionId = connectionId,
+            url = url
+        ).execute().toUnitResult()
     }
 }
