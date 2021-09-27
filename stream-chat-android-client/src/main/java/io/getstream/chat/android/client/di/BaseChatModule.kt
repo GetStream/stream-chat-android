@@ -12,8 +12,8 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
 import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
 import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
+import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
-import io.getstream.chat.android.client.api.models.ProgressRequestBody
 import io.getstream.chat.android.client.api2.ChannelApi
 import io.getstream.chat.android.client.api2.DeviceApi
 import io.getstream.chat.android.client.api2.GeneralApi
@@ -154,9 +154,6 @@ internal open class BaseChatModule(
                             logger().logI("CURL", message)
                         }
                     )
-                    // Ignore the writes triggered by the two above interceptors
-                    // when issuing progress updates
-                    ProgressRequestBody.progressUpdatesToSkip = 2
                 }
             }
             .addInterceptor(
@@ -166,6 +163,7 @@ internal open class BaseChatModule(
                     getAnonymousProvider(config, isAnonymousApi)
                 )
             )
+            .addNetworkInterceptor(ProgressInterceptor())
     }
 
     private fun getAnonymousProvider(
