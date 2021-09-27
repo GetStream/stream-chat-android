@@ -20,13 +20,11 @@ internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
 }
 
 internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean {
-    return messageFilterDirection == null
+    return channelOffset == 0
 }
 
 internal fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Boolean {
     return (isFirstPage() && messageLimit > 1) || (isNotFirstPage() && messageLimit > 0)
 }
 
-internal fun AnyChannelPaginationRequest.isNotFirstPage(): Boolean {
-    return !isFirstPage()
-}
+internal fun AnyChannelPaginationRequest.isNotFirstPage(): Boolean = isFirstPage().not()

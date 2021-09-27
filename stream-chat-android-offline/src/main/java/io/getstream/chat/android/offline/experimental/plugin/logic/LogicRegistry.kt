@@ -32,4 +32,8 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     fun queryChannel(): QueryChannelLogic = QueryChannelLogic(chatDomain)
+
+    fun clear() {
+        queryChannels.clear()
+    }
 }
