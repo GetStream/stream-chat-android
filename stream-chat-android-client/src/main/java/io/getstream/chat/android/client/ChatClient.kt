@@ -108,10 +108,6 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
 ) {
-
-    @InternalStreamChatApi
-    public val notificationHandler: ChatNotificationHandler = notifications.handler
-
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket, this)
