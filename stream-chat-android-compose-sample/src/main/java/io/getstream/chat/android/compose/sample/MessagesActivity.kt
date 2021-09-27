@@ -31,7 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.Thread
+import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -111,6 +113,21 @@ class MessagesActivity : AppCompatActivity() {
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(Thread(message))
                         listViewModel.openMessageThread(message)
+                    },
+                    onImagePreviewResult = { result ->
+                        when (result?.resultType) {
+                            ImagePreviewResultType.QUOTE -> {
+                                val message = listViewModel.getMessageWithId(result.messageId)
+
+                                if (message != null) {
+                                    composerViewModel.performMessageAction(Reply(message))
+                                }
+                            }
+
+                            ImagePreviewResultType.SHOW_IN_CHAT -> {
+                            }
+                            null -> Unit
+                        }
                     }
                 )
             }
