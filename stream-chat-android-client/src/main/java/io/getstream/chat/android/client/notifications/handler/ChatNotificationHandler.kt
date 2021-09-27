@@ -144,7 +144,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).apply {
             addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
             addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
-            setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId))
+            setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId, channel))
         }
     }
 
@@ -266,15 +266,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
         notificationManager.cancel(notificationSummaryId)
         sharedPreferences.edit { remove(getNotificationSummaryIdKey(notificationSummaryId)) }
-    }
-
-    internal fun onDismissNotification(notificationId: Int) {
-        val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
-        removeNotificationId(notificationId)
-        notificationManager.cancel(notificationId)
-        if (getAssociatedNotificationIds(notificationSummaryId).isNullOrEmpty()) {
-            notificationManager.cancel(notificationSummaryId)
-        }
     }
 
     private fun addNotificationId(notificationId: Int, notificationSummaryId: Int) {

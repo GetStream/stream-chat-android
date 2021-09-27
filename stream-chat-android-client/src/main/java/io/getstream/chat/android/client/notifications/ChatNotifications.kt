@@ -23,7 +23,6 @@ public interface ChatNotifications {
     public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
     public fun onLogout()
     public fun displayNotification(channel: Channel, message: Message)
-    public fun onDismissNotification(notificationId: Int)
     public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
@@ -80,10 +79,6 @@ internal class ChatNotificationsImpl constructor(
 
     private fun cancelLoadDataWork() {
         LoadNotificationDataWorker.cancel(context)
-    }
-
-    override fun onDismissNotification(notificationId: Int) {
-        handler.onDismissNotification(notificationId)
     }
 
     /**
@@ -145,6 +140,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
     override fun onLogout() = Unit
     override fun displayNotification(channel: Channel, message: Message) = Unit
-    override fun onDismissNotification(notificationId: Int) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }
