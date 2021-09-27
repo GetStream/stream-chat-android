@@ -67,7 +67,6 @@ internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): C
     val originalConfig = resources.configuration
 
     return when {
-        this.theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
         this.theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
             ContextThemeWrapper(this, typedValue.resourceId).uiMode(originalConfig, uiMode)
         else -> ContextThemeWrapper(this, R.style.StreamUiTheme).uiMode(originalConfig, uiMode)

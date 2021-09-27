@@ -201,7 +201,6 @@
     </style>
     
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiValidTheme">true</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
