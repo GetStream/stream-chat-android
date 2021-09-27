@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.parser
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
+import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
@@ -181,6 +182,7 @@ internal object EventArguments {
     private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)
     private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)
     private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, channel)
+    private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, null, channel)
     private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
     private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)
@@ -226,6 +228,7 @@ internal object EventArguments {
 
     private fun eventArguments() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
+        Arguments.of(createChannelTruncatedServerSideEventStringJson(), channelTruncatedServerSideEvent),
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
         Arguments.of(createChannelUpdatedByUserEventStringJson(), channelUpdatedByUserEvent),
         Arguments.of(createChannelVisibleEventStringJson(), channelVisibleEvent),

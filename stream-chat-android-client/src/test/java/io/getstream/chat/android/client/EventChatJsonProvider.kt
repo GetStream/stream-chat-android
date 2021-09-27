@@ -36,6 +36,17 @@ internal fun createChannelTruncatedEventStringJson() =
         """.trimIndent()
     )
 
+internal fun createChannelTruncatedServerSideEventStringJson() =
+    createChatEventStringJson(
+        "channel.truncated",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "channel": ${createChannelJsonString()}
+        """.trimIndent()
+    )
+
 internal fun createChannelUpdatedEventStringJson() =
     createChatEventStringJson(
         "channel.updated",
