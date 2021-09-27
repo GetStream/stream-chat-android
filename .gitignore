@@ -89,6 +89,7 @@ lint/tmp/
 !/.idea/codeInsightSettings.xml
 !/.idea/codeStyles/
 !/.idea/inspectionProfiles/
+!/.idea/scopes/
 .DS_Store
 /build
 /captures
