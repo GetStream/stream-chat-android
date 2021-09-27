@@ -335,6 +335,7 @@ internal class ChatDomainImpl internal constructor(
         setChannelUnreadCount(me.unreadChannels)
 
         setBanned(me.banned)
+        getActiveQueries().forEach { queryChannelsController -> queryChannelsController.updateMutedChannels(me.channelMutes) }
     }
 
     internal suspend fun storeSyncState(): SyncState? {

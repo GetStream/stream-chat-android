@@ -129,6 +129,10 @@ public class QueryChannelsController internal constructor(
         }
     }
 
+    internal fun updateMutedChannels(mutedChannels: List<ChannelMute>) {
+        _mutedChannelIds.value = mutedChannels.map { it.channel.id }
+    }
+
     internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
