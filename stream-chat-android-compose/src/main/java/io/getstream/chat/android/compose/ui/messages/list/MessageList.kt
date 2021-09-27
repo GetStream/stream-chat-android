@@ -31,6 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
@@ -55,6 +57,7 @@ import kotlin.math.abs
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param itemContent Composable that represents each message item in a list. By default, we provide
@@ -70,6 +73,11 @@ public fun MessageList(
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
     onLastVisibleMessageChanged: (MessageItem) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
+        if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
+            viewModel.focusMessage(it.messageId)
+        }
+    },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (MessageItem) -> Unit = {
@@ -77,6 +85,7 @@ public fun MessageList(
             messageItem = it,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult,
         )
     },
 ) {
@@ -87,6 +96,7 @@ public fun MessageList(
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onScrollToBottom = onScrollToBottom,
+        onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         loadingContent = loadingContent,
         emptyContent = emptyContent
@@ -97,13 +107,14 @@ public fun MessageList(
  * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
- * @param modifier Modifier for styling.
  * @param currentState The state of the component, represented by [MessagesState].
+ * @param modifier Modifier for styling.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom Handler when the user scrolls to the bottom.
- * @param onLongItemClick Handler for when the user long taps on an item.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
+ * @param onLongItemClick Handler for when the user long taps on an item.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param itemContent Composable that represents each item in the list, that the user can override
@@ -118,6 +129,7 @@ public fun MessageList(
     onScrollToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
     itemContent: @Composable (MessageItem) -> Unit = {
@@ -125,6 +137,7 @@ public fun MessageList(
             messageItem = it,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult
         )
     },
 ) {
@@ -206,6 +219,13 @@ public fun Messages(
                             .padding(8.dp)
                     )
                 }
+            }
+        }
+        val focusedItemIndex = messages.indexOfFirst { it.isFocused }
+
+        if (focusedItemIndex != -1) {
+            coroutineScope.launch {
+                currentListState.scrollToItem(focusedItemIndex)
             }
         }
 

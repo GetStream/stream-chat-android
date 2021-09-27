@@ -3,6 +3,9 @@ package io.getstream.chat.android.compose.ui.messages.list
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -51,6 +54,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.Bottom
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
@@ -69,6 +73,11 @@ import kotlinx.coroutines.flow.combine
 import java.util.Date
 
 /**
+ * Represents the time the highlight fade out transition will take.
+ */
+public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+
+/**
  * The default message container for all messages in the Conversation/Messages screen.
  *
  * It shows the avatar and the message details, which can have a header (reactions), the content which
@@ -83,6 +92,7 @@ import java.util.Date
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -91,13 +101,13 @@ public fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onThreadClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
-    val (message, position, parentMessageId) = messageItem
+    val (message, position, parentMessageId, ownsMessage, isFocused) = messageItem
 
     val isDeleted = message.deletedAt != null
     val hasThread = message.threadParticipants.isNotEmpty()
     val isUploading = message.attachments.any { it.isUploading() }
-    val ownsMessage = messageItem.isMine
 
     val messageCardColor =
         if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
@@ -117,10 +127,19 @@ public fun DefaultMessageContainer(
         )
     }
 
+    val backgroundColorAnimationDuration =
+        if (isFocused) AnimationConstants.DefaultDurationMillis else HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground,
+        animationSpec = tween(durationMillis = backgroundColorAnimationDuration)
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .background(color = backgroundColor),
         contentAlignment = if (ownsMessage) CenterEnd else CenterStart
     ) {
         Row(
@@ -173,7 +192,11 @@ public fun DefaultMessageContainer(
                             DeletedMessageContent()
                         } else {
                             Column {
-                                MessageAttachmentsContent(messageItem = messageItem, onLongItemClick = onLongItemClick)
+                                MessageAttachmentsContent(
+                                    messageItem = messageItem,
+                                    onLongItemClick = onLongItemClick,
+                                    onImagePreviewResult = onImagePreviewResult,
+                                )
 
                                 if (message.text.isNotEmpty()) {
                                     DefaultMessageContent(message = message)
@@ -476,7 +499,13 @@ internal fun QuotedMessage(
             shape = ChatTheme.shapes.otherMessageBubble, color = ChatTheme.colors.barsBackground,
             content = {
                 Column {
-                    MessageAttachmentsContent(messageItem = MessageItem(message, None), onLongItemClick = {})
+                    MessageAttachmentsContent(
+                        messageItem = MessageItem(
+                            message = message,
+                            groupPosition = None
+                        ),
+                        onLongItemClick = {}
+                    )
 
                     if (message.text.isNotEmpty()) {
                         MessageText(message = message)
