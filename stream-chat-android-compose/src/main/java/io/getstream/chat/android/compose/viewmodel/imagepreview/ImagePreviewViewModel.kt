@@ -68,7 +68,9 @@ public class ImagePreviewViewModel(
     }
 
     /**
-     * Deletes the current image from the message we're observing. Updates
+     * Deletes the current image from the message we're observing. This will in turn update the UI accordingly.
+     *
+     * @param currentImage The image attachment to remove from the message we're updating.
      */
     public fun deleteCurrentImage(currentImage: Attachment) {
         val imageUrl = currentImage.assetUrl ?: currentImage.imageUrl

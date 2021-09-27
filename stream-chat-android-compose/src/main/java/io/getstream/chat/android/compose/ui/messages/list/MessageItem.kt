@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -71,6 +73,11 @@ import kotlinx.coroutines.flow.combine
 import java.util.Date
 
 /**
+ * Represents the time the highlight fade out transition will take.
+ */
+public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+
+/**
  * The default message container for all messages in the Conversation/Messages screen.
  *
  * It shows the avatar and the message details, which can have a header (reactions), the content which
@@ -85,7 +92,7 @@ import java.util.Date
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
- * @param onImagePreviewResult Handler when the user selects the option to scroll to and focus an image in the list.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -120,7 +127,13 @@ public fun DefaultMessageContainer(
         )
     }
 
-    val backgroundColor by animateColorAsState(if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground)
+    val backgroundColorAnimationDuration =
+        if (isFocused) AnimationConstants.DefaultDurationMillis else HIGHLIGHT_FADE_OUT_DURATION_MILLIS
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isFocused) ChatTheme.colors.highlight else ChatTheme.colors.appBackground,
+        animationSpec = tween(durationMillis = backgroundColorAnimationDuration)
+    )
 
     Box(
         modifier = Modifier
@@ -487,7 +500,10 @@ internal fun QuotedMessage(
             content = {
                 Column {
                     MessageAttachmentsContent(
-                        messageItem = MessageItem(message, None),
+                        messageItem = MessageItem(
+                            message = message,
+                            groupPosition = None
+                        ),
                         onLongItemClick = {}
                     )
 

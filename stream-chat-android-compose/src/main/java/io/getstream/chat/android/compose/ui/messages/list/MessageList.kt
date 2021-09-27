@@ -57,7 +57,7 @@ import kotlin.math.abs
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
- * @param onImagePreviewResult Handler when the user selects the option to scroll to and focus a given image in the chat.
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param itemContent Composable that represents each message item in a list. By default, we provide
@@ -114,7 +114,7 @@ public fun MessageList(
  * @param onScrollToBottom Handler when the user scrolls to the bottom.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
- * @param onImagePreviewResult Handler when the user selects the option to scroll to and focus a given image in the chat
+ * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param itemContent Composable that represents each item in the list, that the user can override
@@ -221,11 +221,9 @@ public fun Messages(
                 }
             }
         }
-        val focusedItem = messages.firstOrNull { it.isFocused }
+        val focusedItemIndex = messages.indexOfFirst { it.isFocused }
 
-        if (focusedItem != null) {
-            val focusedItemIndex = messages.indexOf(focusedItem)
-
+        if (focusedItemIndex != -1) {
             coroutineScope.launch {
                 currentListState.scrollToItem(focusedItemIndex)
             }

@@ -16,9 +16,9 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * Represents the content that's shown in message attachments. We decide if we need to show link previews or other
  * attachments.
  *
- * @param messageItem - The message that contains the attachments.
- * @param onLongItemClick - Handler for long item taps on this content.
- * @param onImagePreviewResult Handler when the user selects the option to scroll to and focus an image in the list.
+ * @param messageItem The message that contains the attachments.
+ * @param onLongItemClick Handler for long item taps on this content.
+ * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
  */
 @Composable
 public fun MessageAttachmentsContent(

@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * @param iconColor The color of the icon.
  * @param action The action this option represents.
  */
-public data class ImagePreviewOption(
-    public val title: String,
-    public val titleColor: Color,
-    public val icon: ImageVector,
-    public val iconColor: Color,
-    public val action: ImagePreviewAction,
+internal data class ImagePreviewOption(
+    internal val title: String,
+    internal val titleColor: Color,
+    internal val icon: ImageVector,
+    internal val iconColor: Color,
+    internal val action: ImagePreviewAction,
 )

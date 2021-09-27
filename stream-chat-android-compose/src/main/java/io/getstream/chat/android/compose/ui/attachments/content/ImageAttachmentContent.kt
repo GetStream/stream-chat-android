@@ -42,7 +42,7 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
  * currently uploading images.
  *
- * @param attachmentState - The state of the attachment, holding the root modifier, the message
+ * @param attachmentState The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -165,7 +165,14 @@ internal fun ImageAttachmentContentItem(
             .clickable(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
-                onClick = { imagePreviewLauncher.launch(message.id to attachmentPosition) }
+                onClick = {
+                    imagePreviewLauncher.launch(
+                        ImagePreviewContract.Input(
+                            messageId = message.id,
+                            initialPosition = attachmentPosition
+                        )
+                    )
+                }
             )
     ) {
         Image(

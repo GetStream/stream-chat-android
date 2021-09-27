@@ -126,7 +126,7 @@ class MessagesActivity : AppCompatActivity() {
 
                             ImagePreviewResultType.SHOW_IN_CHAT -> {
                             }
-                            else -> Unit
+                            null -> Unit
                         }
                     }
                 )

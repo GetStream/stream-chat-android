@@ -1,6 +1,8 @@
 package io.getstream.chat.android.compose.state.imagepreview
 
 import android.os.Parcelable
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType.QUOTE
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType.SHOW_IN_CHAT
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -9,7 +11,7 @@ import kotlinx.parcelize.Parcelize
  * @param messageId The ID of the message that we've selected.
  */
 @Parcelize
-public open class ImagePreviewResult(
+public class ImagePreviewResult(
     public val messageId: String,
     public val resultType: ImagePreviewResultType,
 ) : Parcelable

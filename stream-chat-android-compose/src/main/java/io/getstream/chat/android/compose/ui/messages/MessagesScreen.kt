@@ -155,7 +155,7 @@ public fun MessagesScreen(
                         ImagePreviewResultType.SHOW_IN_CHAT -> {
                             listViewModel.focusMessage(result.messageId)
                         }
-                        else -> Unit
+                        null -> Unit
                     }
                 }
             )
