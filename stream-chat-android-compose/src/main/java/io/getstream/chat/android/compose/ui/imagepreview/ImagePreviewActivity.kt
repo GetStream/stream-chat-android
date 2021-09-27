@@ -155,7 +155,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
         initialAttachmentPosition: Int,
     ) {
         val pageCount = message.attachments.size
-        val startingPosition = if (initialAttachmentPosition >= pageCount) 0 else initialAttachmentPosition
+        val startingPosition = if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
 
         val pagerState = rememberPagerState(
             pageCount = pageCount,
