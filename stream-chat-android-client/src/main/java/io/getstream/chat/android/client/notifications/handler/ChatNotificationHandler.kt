@@ -34,7 +34,13 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
 ) {
 
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
-    private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val notificationManager: NotificationManager by lazy {
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                it.createNotificationChannel(createNotificationChannel())
+            }
+        }
+    }
 
     /**
      * Handles showing notification after receiving [NewMessageEvent] from other users.

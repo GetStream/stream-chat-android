@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client.notifications
 
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -38,12 +36,6 @@ internal class ChatNotificationsImpl constructor(
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
-    private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-
-    init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            notificationManager.createNotificationChannel(handler.createNotificationChannel())
-    }
 
     override fun onSetUser() {
         handler.onCreateDevice(::setDevice)
