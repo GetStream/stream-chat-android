@@ -15,9 +15,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
-import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentAdapterFactory
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -34,7 +34,7 @@ internal class TextAndAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
-    style: FileAttachmentViewStyle,
+    private val attachmentAdapterFactory: AttachmentAdapterFactory,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -44,7 +44,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private val adapter = FileAttachmentsAdapter({}, {}, {}, style)
+    private lateinit var adapter: FileAttachmentsAdapter
 
     init {
         binding.run {
@@ -69,8 +69,6 @@ internal class TextAndAttachmentsViewHolder(
                 longClickTarget = root,
                 onLinkClicked = listeners.linkClickListener::onLinkClick
             )
-            attachmentsRecycler.layoutManager = LinearLayoutManager(context)
-            attachmentsRecycler.adapter = adapter
         }
     }
 
@@ -85,6 +83,12 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
+        adapter = attachmentAdapterFactory.adapter(data.message.attachments)
+        binding.run {
+            attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+            attachmentsRecycler.adapter = adapter
+        }
+
         adapter.setItems(data.message.attachments)
     }
 

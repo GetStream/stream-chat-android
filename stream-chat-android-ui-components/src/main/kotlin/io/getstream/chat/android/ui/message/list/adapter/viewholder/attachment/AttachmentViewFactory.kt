@@ -7,14 +7,12 @@ import android.widget.LinearLayout
 import androidx.core.view.setPadding
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
@@ -153,9 +151,7 @@ public open class AttachmentViewFactory {
             attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
             }
-            // attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
-            //     layoutParams = DEFAULT_LAYOUT_PARAMS
-            // }
+
             else -> error("Unsupported case for attachment view factory!")
         }
     }
@@ -182,7 +178,6 @@ public open class AttachmentViewFactory {
 
         private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
         private val LINK_VIEW_PADDING = 8.dpToPx()
-        private val FILE_ATTACHMENT_VIEW_PADDING = 4.dpToPx()
 
         private val DEFAULT_LAYOUT_PARAMS =
             ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
