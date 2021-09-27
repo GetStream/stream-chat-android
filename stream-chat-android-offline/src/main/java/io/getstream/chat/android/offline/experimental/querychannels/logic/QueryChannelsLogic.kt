@@ -17,7 +17,6 @@ import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.offline.request.isFirstPage
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 
