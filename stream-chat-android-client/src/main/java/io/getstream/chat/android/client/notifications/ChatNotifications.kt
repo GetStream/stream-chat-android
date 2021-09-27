@@ -38,7 +38,8 @@ internal class ChatNotificationsImpl constructor(
     private val showedMessages = mutableSetOf<String>()
 
     override fun onSetUser() {
-        handler.onCreateDevice(::setDevice)
+        handler.config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+            ?.asyncGenerateDevice(::setDevice)
     }
 
     override fun setDevice(device: Device) {
