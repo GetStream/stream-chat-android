@@ -52,15 +52,12 @@ public object HuaweiMessagingDelegate {
     }
 }
 
-@Throws(IllegalStateException::class)
-private fun RemoteMessage.toPushMessage() = when (isValid()) {
-    true -> PushMessage(
+private fun RemoteMessage.toPushMessage() =
+    PushMessage(
         channelId = dataOfMap["channel_id"]!!,
         messageId = dataOfMap["message_id"]!!,
         channelType = dataOfMap["channel_type"]!!,
     )
-    else -> throw IllegalStateException("RemoteMessage doesn't contains needed data")
-}
 
 private fun RemoteMessage.isValid() =
     !dataOfMap["channel_id"].isNullOrBlank() &&
