@@ -46,6 +46,11 @@ public class OfflinePlugin(private val config: Config) : Plugin {
         request: QueryChannelRequest,
     ): Unit = logic.queryChannel().onQueryChannelResult(result, channelType, channelId, request)
 
+    internal fun clear() {
+        logic.clear()
+        state.clear()
+    }
+
     public companion object {
         public const val MODULE_NAME: String = "Offline"
     }
