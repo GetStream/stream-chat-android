@@ -66,6 +66,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -1562,7 +1563,7 @@ public class ChatClient internal constructor(
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler =
+        private var notificationsHandler: NotificationHandler =
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
@@ -1577,7 +1578,7 @@ public class ChatClient internal constructor(
             return this
         }
 
-        public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+        public fun notifications(notificationsHandler: NotificationHandler): Builder {
             this.notificationsHandler = notificationsHandler
             return this
         }

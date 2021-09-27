@@ -160,7 +160,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
@@ -2745,7 +2745,7 @@ public abstract interface class io/getstream/chat/android/client/notifications/N
 	public abstract fun onLoadSuccess (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public class io/getstream/chat/android/client/notifications/handler/ChatNotificationHandler {
+public class io/getstream/chat/android/client/notifications/handler/ChatNotificationHandler : io/getstream/chat/android/client/notifications/handler/NotificationHandler {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)V
 	public synthetic fun <init> (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2754,7 +2754,9 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun buildNotification (ILio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)Landroidx/core/app/NotificationCompat$Builder;
 	public fun buildNotificationGroupSummary (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)Landroidx/core/app/NotificationCompat$Builder;
 	public fun createNotificationChannel ()Landroid/app/NotificationChannel;
-	public final fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public fun dismissAllNotifications ()V
+	public fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	protected final fun getContext ()Landroid/content/Context;
 	public fun getDataLoadListener ()Lio/getstream/chat/android/client/notifications/NotificationLoadDataListener;
 	public fun getDeviceRegisteredListener ()Lio/getstream/chat/android/client/notifications/DeviceRegisteredListener;
@@ -2770,6 +2772,7 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun getNotificationGroupSummaryId (Ljava/lang/String;Ljava/lang/String;)I
 	public fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public fun onPushMessage (Lio/getstream/chat/android/client/models/PushMessage;)Z
+	public fun showNotification (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {

@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,
-    private val notificationsHandler: ChatNotificationHandler,
+    private val notificationsHandler: NotificationHandler,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
@@ -101,7 +101,7 @@ internal open class BaseChatModule(
     //endregion
 
     private fun buildNotification(
-        handler: ChatNotificationHandler,
+        handler: NotificationHandler,
     ): ChatNotifications {
         return if (handler.config.pushNotificationsEnabled) {
             ChatNotificationsImpl(handler, appContext)
