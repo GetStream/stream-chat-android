@@ -66,7 +66,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -1571,8 +1573,7 @@ public class ChatClient internal constructor(
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: NotificationHandler =
-            ChatNotificationHandler(appContext)
+        private var notificationsHandler: NotificationHandler? = null
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
@@ -1747,11 +1748,11 @@ public class ChatClient internal constructor(
                 ChatModule(
                     appContext,
                     config,
-                    notificationsHandler,
+                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext, NotificationConfig()),
                     fileUploader,
                     tokenManager,
                     callbackExecutor,
-                    customOkHttpClient
+                    customOkHttpClient,
                 )
 
             val result = ChatClient(
