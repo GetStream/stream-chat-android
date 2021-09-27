@@ -8,12 +8,8 @@ import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushProvider
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 
-internal class PushTokenUpdateHandler(
-    context: Context,
-    private val handler: ChatNotificationHandler,
-) {
+internal class PushTokenUpdateHandler(context: Context) {
     private val logger = ChatLogger.get("ChatNotifications")
 
     private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(
@@ -48,10 +44,8 @@ internal class PushTokenUpdateHandler(
             val result = ChatClient.instance().addDevice(device).await()
             if (result.isSuccess) {
                 this.userPushToken = userPushToken
-                handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
                 logger.logI("Device registered with token ${device.token} (${device.pushProvider.key})")
             } else {
-                handler.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
                 logger.logE("Error registering device ${result.error().message}")
             }
         }
