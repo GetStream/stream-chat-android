@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
@@ -145,14 +146,15 @@ internal class ChatDomainImplTest {
         private val recoveryEnabled = true
 
         private val chatDomainImpl = ChatDomainImpl(
-            client,
-            db,
-            handler,
-            offlineEnabled,
-            userPresence,
-            recoveryEnabled,
-            false,
-            mock(),
+            client = client,
+            db = db,
+            mainHandler = handler,
+            offlineEnabled = offlineEnabled,
+            userPresence = userPresence,
+            recoveryEnabled = recoveryEnabled,
+            backgroundSyncEnabled = false,
+            appContext = mock(),
+            offlinePlugin = OfflinePlugin()
         ).also {
             it.setUser(randomUser())
         }

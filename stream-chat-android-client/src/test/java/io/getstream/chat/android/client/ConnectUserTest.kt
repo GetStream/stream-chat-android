@@ -21,6 +21,8 @@ internal class ConnectUserTest {
         socketStateService = mock(),
         queryChannelsPostponeHelper = mock(),
         encryptedUserConfigStorage = mock(),
+        appContext = mock(),
+        scope = mock(),
     )
 
     @Test

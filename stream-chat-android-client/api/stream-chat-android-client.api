@@ -54,6 +54,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getNotificationHandler ()Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;
 	public final fun getNotifications ()Lio/getstream/chat/android/client/notifications/ChatNotifications;
+	public final fun getPlugins ()Ljava/util/Collection;
 	public final fun getPreSetUserListeners ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -162,6 +163,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/ChatNotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withPlugin (Lio/getstream/chat/android/client/experimental/plugin/Plugin;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
 public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
@@ -1776,6 +1778,32 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/Plugin : io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun init (Landroid/content/Context;Lio/getstream/chat/android/client/ChatClient;)V
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/Plugin$DefaultImpls {
+	public static fun onMessageSendRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onMessageSendResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade : io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade$DefaultImpls {
+	public static fun onMessageSendRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onMessageSendResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener {
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1784,6 +1812,26 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener$DefaultImpls {
 	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener {
+	public abstract fun onQueryChannelsRequest (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener$DefaultImpls {
+	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelsListener;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener {
+	public abstract fun onMessageSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener$DefaultImpls {
+	public static fun onMessageSendRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onMessageSendResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/SendMessageListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
