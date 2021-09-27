@@ -29,6 +29,7 @@
 ### 🐞 Fixed
 - Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
 - Fixed sending custom attachments without files to upload
+- Fixed deserialization issues when parsing `ChannelTruncatedEvent` and `MessageDeletedEvent` events with an absent user.
 
 ### ⬆️ Improved
 - Custom attachment types are now preserved after file uploads
