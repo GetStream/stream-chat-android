@@ -210,6 +210,7 @@ public data class MessageDeletedEvent(
     override val channelType: String,
     override val channelId: String,
     override val message: Message,
+    val hardDelete: Boolean,
 ) : CidEvent(), HasMessage
 
 /**

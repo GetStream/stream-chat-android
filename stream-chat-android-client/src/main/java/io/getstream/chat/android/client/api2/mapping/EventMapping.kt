@@ -278,6 +278,7 @@ private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent {
         channelType = channel_type,
         channelId = channel_id,
         message = message.toDomain(),
+        hardDelete = hard_delete ?: false,
     )
 }
 

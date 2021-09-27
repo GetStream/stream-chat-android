@@ -35,6 +35,7 @@
 - Custom attachment types are now preserved after file uploads
 
 ### ✅ Added
+- Added `hardDelete` field to `MessageDeletedEvent`.
 
 ### ⚠️ Changed
 - Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
