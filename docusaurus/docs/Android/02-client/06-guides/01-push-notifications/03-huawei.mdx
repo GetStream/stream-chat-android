@@ -1,4 +1,4 @@
-# Huawei
+# Huawei Push Kit
 
 This is the guide for using [Huawei Push Kit](https://developer.huawei.com/consumer/en/hms/huawei-pushkit/) to receive notifications from Stream Chat.
 
@@ -27,14 +27,13 @@ Scroll down and enable the _Huawei_ switch. Paste your _App ID_ and _App secret_
 That's the server-side setup done. You can now receive Stream's push notifications on the client side.
 
 ## Receiving Notifications in the Client
-Stream Chat's Android SDK ships an artifact that allows quick integration of Huawei Push Kit messages. To use it follow the next steps:
 
 Start by [adding Huawei to your Android project](https://developer.huawei.com/consumer/en/doc/development/AppGallery-connect-Guides/agc-get-started-android-0000001058210705). You only need to set up the Huawei Push Kit dependencies and add a _agconnect-services.json_ file to your project source directory.
-Next, add the following dependency to your app's `build.gradle` file:
+
+Stream Chat's Android SDK ships an artifact that allows quick integration of Huawei Push Kit messages. Add the following dependency to your app's `build.gradle` file:
 
 ```groovy
 repositories {
-    // huawei maven
     maven { url 'https://developer.huawei.com/repo/' }
 }
 
