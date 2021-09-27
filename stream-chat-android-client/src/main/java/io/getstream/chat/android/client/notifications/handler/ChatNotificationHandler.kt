@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
@@ -249,11 +248,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .setShowWhen(true)
             .setContentIntent(contentIntent)
             .setGroup(groupKey)
-    }
-
-    internal fun onCreateDevice(onDeviceCreated: (device: Device) -> Unit) {
-        config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
-            ?.asyncGenerateDevice(onDeviceCreated)
     }
 
     private fun Channel.getNotificationContentTitle(): String =
