@@ -177,25 +177,6 @@ public open class AttachmentViewFactory {
         showAttachments(attachments)
     }
 
-    // private fun setupFileAttachmentsView(
-    //     fileAttachmentsView: FileAttachmentsView,
-    //     attachments: List<Attachment>,
-    //     listeners: MessageListListenerContainer,
-    //     message: Message,
-    // ) = fileAttachmentsView.run {
-    //     setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-    //     attachmentLongClickListener = AttachmentLongClickListener {
-    //         listeners.messageLongClickListener.onMessageLongClick(message)
-    //     }
-    //     attachmentClickListener = AttachmentClickListener {
-    //         listeners.attachmentClickListener.onAttachmentClick(message, it)
-    //     }
-    //     attachmentDownloadClickListener = AttachmentDownloadClickListener {
-    //         listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-    //     }
-    //     setAttachments(attachments)
-    // }
-
     private companion object {
         private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)
 
