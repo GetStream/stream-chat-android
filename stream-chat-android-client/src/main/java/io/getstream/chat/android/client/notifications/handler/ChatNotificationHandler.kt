@@ -15,11 +15,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
@@ -29,8 +27,8 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
  */
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    public val config: NotificationConfig = NotificationConfig(),
-) {
+    public override val config: NotificationConfig = NotificationConfig(),
+) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
     private val notificationManager: NotificationManager by lazy {
@@ -39,26 +37,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
                 it.createNotificationChannel(createNotificationChannel())
             }
         }
-    }
-
-    /**
-     * Handles showing notification after receiving [NewMessageEvent] from other users.
-     * Default implementation loads necessary data and displays notification even if app is in foreground.
-     *
-     * @return False if notification should be handled internally.
-     */
-    public open fun onChatEvent(event: NewMessageEvent): Boolean {
-        return true
-    }
-
-    /**
-     * Handles showing notification after receiving [PushMessage].
-     * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
-     *
-     * @return False if remote message should be handled internally.
-     */
-    public open fun onPushMessage(message: PushMessage): Boolean {
-        return false
     }
 
     @Deprecated(
@@ -123,7 +101,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).build()
     }
 
-    internal fun showNotification(channel: Channel, message: Message) {
+    public override fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
@@ -200,14 +178,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
      * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
      * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
      */
-    internal fun dismissChannelNotifications(channelType: String, channelId: String) {
+    override fun dismissChannelNotifications(channelType: String, channelId: String) {
         dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
     }
 
     /**
      * Dismiss all notifications.
      */
-    internal fun dismissAllNotifications() {
+    override fun dismissAllNotifications() {
         getNotificationSummaryIds().forEach(::dismissSummaryNotification)
     }
 

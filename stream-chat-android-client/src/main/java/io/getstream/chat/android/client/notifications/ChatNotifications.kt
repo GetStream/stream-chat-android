@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @InternalStreamChatApi
 public interface ChatNotifications {
-    public val handler: ChatNotificationHandler
+    public val handler: NotificationHandler
     public fun onSetUser()
     public fun setDevice(device: Device)
     public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
@@ -27,7 +27,7 @@ public interface ChatNotifications {
 }
 
 internal class ChatNotificationsImpl constructor(
-    override val handler: ChatNotificationHandler,
+    override val handler: NotificationHandler,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
@@ -129,7 +129,7 @@ internal class ChatNotificationsImpl constructor(
     }
 }
 
-internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
+internal class NoOpChatNotifications(override val handler: NotificationHandler) : ChatNotifications {
     override fun onSetUser() = Unit
     override fun setDevice(device: Device) = Unit
     override fun onPushMessage(
