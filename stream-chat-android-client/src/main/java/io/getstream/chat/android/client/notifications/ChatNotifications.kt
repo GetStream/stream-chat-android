@@ -36,7 +36,7 @@ internal class ChatNotificationsImpl constructor(
 ) : ChatNotifications {
     private val logger = ChatLogger.get("ChatNotifications")
 
-    private val pushTokenUpdateHandler = PushTokenUpdateHandler(context, handler)
+    private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
     private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 

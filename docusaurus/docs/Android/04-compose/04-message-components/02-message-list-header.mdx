@@ -1,12 +1,9 @@
 # MessageListHeader
 
-The `MessageListHeader` component is a clean, stateless component, that doesn't require a `ViewModel`. It consists of three elements:
+The `MessageListHeader` component is a clean, stateless component, that doesn't require a `ViewModel`. It allows you to customize the data, design style, action
+handlers and the internal components that represent the leading and trailing actions and the title content.
 
-* `BackButton`: Displays the back arrow icon and lets the user navigate to the previous screen.
-* Header title: Shows either more information about the channel, or a `NetworkLoadingView`, based on whether the network is available or not.
-* `Avatar`: Shows the channel or conversation image.
-
-Let's see how to use this in your UI.
+Let's see how to use it in your UI.
 
 ## Usage
 
@@ -54,8 +51,8 @@ The `MessageListHeader` exposes two actions, as per the signature:
 @Composable
 fun MessageListHeader(
     ..., // State
-    onBackPressed: () -> Unit,
-    onHeaderActionClick: () -> Unit,
+    onBackPressed: () -> Unit = {},
+    onHeaderActionClick: (Channel) -> Unit = {},
 )
 ```
 
@@ -76,7 +73,8 @@ To customize these actions, simply use the `MessageListHeader` with the rest of 
                     onBackPressed = { finish() },
                     onHeaderActionClick = { 
                       // Show your custom UI
-                    })
+                    }
+                )
 
                 // Rest of your UI
             }
@@ -95,9 +93,9 @@ As the component is fully state-dependent, you can customize the data it shows, 
 fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
-    isNetworkAvailable: Boolean,
-    messageMode: MessageMode,
-    modifier: Modifier = Modifier,
+    isNetworkAvailable: Boolean = true,
+    messageMode: MessageMode = Normal,
+    ..., // content
     ... // actions
 )
 ```
@@ -106,8 +104,46 @@ fun MessageListHeader(
 * `currentUser`: Currently logged in user, used to differentiate it from other users, when loading the channel image.
 * `isNetworkAvailable`: Used to switch between the `NetworkLoadingView` and the member count text.
 * `messageMode`: Used to determine the header title. If we're in a thread, we show a title saying who the owner of the parent message is.
-* `modifier`: Applied to the root component of the header. Useful for padding and height.
 
-These will change what data is displayed in the header. 
+These will change what data is displayed in the header.
 
+You can also customize the content of the header, using the following parameters:
+
+```kotlin
+@Composable
+fun MessageListHeader(
+    leadingContent: @Composable RowScope.() -> Unit = {
+        BackButton(
+            modifier = Modifier
+                .size(36.dp),
+            imageVector = Icons.Default.ArrowBack,
+            onBackPressed = onBackPressed,
+        )
+    },
+
+    titleContent: @Composable RowScope.() -> Unit = {
+        DefaultMessageHeaderTitle(
+            modifier = Modifier.weight(6f),
+            channel = channel,
+            messageMode = messageMode,
+            onHeaderActionClick = onHeaderActionClick,
+            isNetworkAvailable = isNetworkAvailable
+        )
+    },
+    trailingContent: @Composable RowScope.() -> Unit = {
+        ChannelAvatar(
+            modifier = Modifier.size(36.dp),
+            channel = channel,
+            currentUser = currentUser,
+            contentDescription = channel.name,
+        )
+    },
+)
+```
+
+* `leadingContent`: Represents the leading content part of the header. By default the `BackButton`.
+* `titleContent`: Represents the core and center part of the header. Shows either more information about the channel using a `DefaultMessageHeaderTitle`, or a `NetworkLoadingView`, based on whether the network is available or not.
+* `trailingContent`: Represents the content at the end of the header. By default the 'ChannelAvatar'.
+
+You can override each of these parameters that represent different slots in the header.
 <!-- TODO WIP PAGE If you want to build a fully custom header, read our [Building Custom Screens](../07-guides/06-building-custom-screens.mdx) guide. -->
