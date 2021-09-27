@@ -120,6 +120,18 @@ internal fun createMessageDeletedEventStringJson() =
         """.trimIndent()
     )
 
+internal fun createMessageDeletedServerSideEventStringJson() =
+    createChatEventStringJson(
+        "message.deleted",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "message": ${createMessageJsonString()},
+            "hard_delete": true
+        """.trimIndent()
+    )
+
 internal fun createMessageReadEventStringJson() =
     createChatEventStringJson(
         "message.read",

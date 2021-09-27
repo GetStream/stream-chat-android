@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.createMemberAddedEventStringJson
 import io.getstream.chat.android.client.createMemberRemovedEventStringJson
 import io.getstream.chat.android.client.createMemberUpdatedEventStringJson
 import io.getstream.chat.android.client.createMessageDeletedEventStringJson
+import io.getstream.chat.android.client.createMessageDeletedServerSideEventStringJson
 import io.getstream.chat.android.client.createMessageReadEventStringJson
 import io.getstream.chat.android.client.createMessageUpdatedEventStringJson
 import io.getstream.chat.android.client.createNewMessageEventStringJson
@@ -187,6 +188,7 @@ internal object EventArguments {
     private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId)
     private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)
     private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message)
+    private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message)
     private val messageReadEvent = MessageReadEvent(EventType.MESSAGE_READ, date, user, cid, channelType, channelId)
     private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)
@@ -231,6 +233,7 @@ internal object EventArguments {
         Arguments.of(createMemberRemovedEventStringJson(), memberRemovedEvent),
         Arguments.of(createMemberUpdatedEventStringJson(), memberUpdatedEvent),
         Arguments.of(createMessageDeletedEventStringJson(), messageDeletedEvent),
+        Arguments.of(createMessageDeletedServerSideEventStringJson(), messageDeletedServerSideEvent),
         Arguments.of(createMessageReadEventStringJson(), messageReadEvent),
         Arguments.of(createMessageUpdatedEventStringJson(), messageUpdatedEvent),
         Arguments.of(createNotificationAddedToChannelEventStringJson(), notificationAddedToChannelEvent),
