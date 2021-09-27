@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -14,11 +15,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
-import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -27,13 +27,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
+//Put the adapter of attachments here!!
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
-    private val attachmentViewFactory: AttachmentViewFactory,
-    private val style: MessageListItemStyle,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -42,6 +41,8 @@ internal class TextAndAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     private var scope: CoroutineScope? = null
+
+    private val adapter = FileAttachmentsAdapter({}, {}, {})
 
     init {
         binding.run {
@@ -66,6 +67,8 @@ internal class TextAndAttachmentsViewHolder(
                 longClickTarget = root,
                 onLinkClicked = listeners.linkClickListener::onLinkClick
             )
+            attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+            attachmentsRecycler.adapter = adapter
         }
     }
 
@@ -80,10 +83,7 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        with(binding.attachmentsContainer) {
-            removeAllViews()
-            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
-        }
+        adapter.setItems(data.message.attachments)
     }
 
     private fun clearScope() {

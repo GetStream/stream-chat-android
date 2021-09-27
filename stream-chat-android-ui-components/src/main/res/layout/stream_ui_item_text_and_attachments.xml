@@ -66,11 +66,18 @@
             android:visibility="gone"
             />
 
+        <!-- Put a recycler view here!! -->
         <LinearLayout
             android:id="@+id/attachmentsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attachmentsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             />
 
         <TextView

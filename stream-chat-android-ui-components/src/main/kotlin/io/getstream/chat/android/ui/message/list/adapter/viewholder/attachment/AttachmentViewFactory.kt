@@ -16,7 +16,6 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 
@@ -111,7 +110,7 @@ public open class AttachmentViewFactory {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
                 is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
-                is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
+                // is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
     }
@@ -154,9 +153,9 @@ public open class AttachmentViewFactory {
             attachments.isMedia() -> MediaAttachmentsGroupView(context).apply {
                 layoutParams = DEFAULT_LAYOUT_PARAMS
             }
-            attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
-                layoutParams = DEFAULT_LAYOUT_PARAMS
-            }
+            // attachments.isNotEmpty() -> FileAttachmentsView(context).apply {
+            //     layoutParams = DEFAULT_LAYOUT_PARAMS
+            // }
             else -> error("Unsupported case for attachment view factory!")
         }
     }
@@ -178,24 +177,24 @@ public open class AttachmentViewFactory {
         showAttachments(attachments)
     }
 
-    private fun setupFileAttachmentsView(
-        fileAttachmentsView: FileAttachmentsView,
-        attachments: List<Attachment>,
-        listeners: MessageListListenerContainer,
-        message: Message,
-    ) = fileAttachmentsView.run {
-        setPadding(FILE_ATTACHMENT_VIEW_PADDING)
-        attachmentLongClickListener = AttachmentLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(message)
-        }
-        attachmentClickListener = AttachmentClickListener {
-            listeners.attachmentClickListener.onAttachmentClick(message, it)
-        }
-        attachmentDownloadClickListener = AttachmentDownloadClickListener {
-            listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
-        }
-        setAttachments(attachments)
-    }
+    // private fun setupFileAttachmentsView(
+    //     fileAttachmentsView: FileAttachmentsView,
+    //     attachments: List<Attachment>,
+    //     listeners: MessageListListenerContainer,
+    //     message: Message,
+    // ) = fileAttachmentsView.run {
+    //     setPadding(FILE_ATTACHMENT_VIEW_PADDING)
+    //     attachmentLongClickListener = AttachmentLongClickListener {
+    //         listeners.messageLongClickListener.onMessageLongClick(message)
+    //     }
+    //     attachmentClickListener = AttachmentClickListener {
+    //         listeners.attachmentClickListener.onAttachmentClick(message, it)
+    //     }
+    //     attachmentDownloadClickListener = AttachmentDownloadClickListener {
+    //         listeners.attachmentDownloadClickListener.onAttachmentDownloadClick(it)
+    //     }
+    //     setAttachments(attachments)
+    // }
 
     private companion object {
         private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)

@@ -108,8 +108,8 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
-            attachmentViewFactory,
-            style
+            // attachmentViewFactory,
+            // style
         )
     }
 
