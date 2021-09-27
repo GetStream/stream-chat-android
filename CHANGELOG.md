@@ -86,9 +86,20 @@
 - Updated the Accompanist library version (0.18.0)
 
 ### ✅ Added
+- Added an uploading indicator to files and images
+- Images being uploaded are now preloaded from the system
+- Upload indicators show the upload progress and how much data is left to send
+- Added more image options to the ImagePreviewActivity such as download, delete, reply to message...
+- Added an Image Gallery feature to the ImagePreviewActivity where users can browse all the images
 - Notifications are dismissed after the user go into the channel conversation when you are using `MessageList`
 
 ### ⚠️ Changed
+- `StreamAttachment.defaultFactories()` is a function now, instead of a property.
+- Updated all default value factories to functions (e.g. StreamTypography)
+- Re-organized all attachment factories and split up code in multiple packages
+- Changed the `AttachmentState` `message` property name to `messageItem`
+- Added an `isFocused` property to `MessageItem`
+- Added an `onImagePreviewResult` callback/parameter to various Messages screen components
 
 ### ❌ Removed
 
