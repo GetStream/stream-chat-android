@@ -2813,6 +2813,20 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/notifications/handler/NotificationHandler {
+	public abstract fun dismissAllNotifications ()V
+	public abstract fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun getConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
+	public abstract fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
+	public abstract fun onPushMessage (Lio/getstream/chat/android/client/models/PushMessage;)Z
+	public abstract fun showNotification (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/client/notifications/handler/NotificationHandler$DefaultImpls {
+	public static fun onChatEvent (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
+	public static fun onPushMessage (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/models/PushMessage;)Z
+}
+
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
 	public abstract fun asyncGenerateDevice (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun isValidForThisDevice (Landroid/content/Context;)Z
