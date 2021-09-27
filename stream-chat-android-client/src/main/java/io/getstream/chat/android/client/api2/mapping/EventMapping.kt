@@ -184,7 +184,7 @@ private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent {
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        user = user.toDomain(),
+        user = user?.toDomain(),
         channel = channel.toDomain(),
     )
 }
@@ -273,7 +273,7 @@ private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent {
     return MessageDeletedEvent(
         type = type,
         createdAt = created_at,
-        user = user.toDomain(),
+        user = user?.toDomain(),
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
