@@ -106,7 +106,7 @@ internal open class BaseChatModule(
         return if (handler.config.pushNotificationsEnabled) {
             ChatNotificationsImpl(handler, appContext)
         } else {
-            NoOpChatNotifications(handler)
+            NoOpChatNotifications
         }
     }
 
