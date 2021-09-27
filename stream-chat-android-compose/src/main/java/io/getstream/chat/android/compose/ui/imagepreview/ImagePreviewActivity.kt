@@ -45,12 +45,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PanoramaFishEye
-import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -66,6 +61,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -132,6 +128,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
         setContent {
             ChatTheme {
                 val message = imagePreviewViewModel.message
+
+                if (message.deletedAt != null) {
+                    finish()
+                    return@ChatTheme
+                }
 
                 if (message.id.isNotEmpty()) {
                     ImagePreviewContentWrapper(message, attachmentPosition)
@@ -227,7 +228,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) { finish() },
-                    imageVector = Icons.Default.Cancel,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_close),
                     contentDescription = stringResource(id = R.string.stream_compose_cancel),
                     tint = ChatTheme.colors.textHighEmphasis
                 )
@@ -374,7 +375,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             Icon(
                 modifier = Modifier
                     .size(18.dp),
-                imageVector = imagePreviewOption.icon,
+                painter = imagePreviewOption.iconPainter,
                 tint = imagePreviewOption.iconColor,
                 contentDescription = imagePreviewOption.title
             )
@@ -445,52 +446,54 @@ public class ImagePreviewActivity : AppCompatActivity() {
      */
     @Composable
     private fun ImagePreviewContent(pagerState: PagerState, attachments: List<Attachment>) {
+        if (attachments.isEmpty()) {
+            finish()
+            return
+        }
+
         HorizontalPager(modifier = Modifier.background(ChatTheme.colors.appBackground), state = pagerState) { page ->
+            val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
 
-            if (attachments.isNotEmpty()) {
-                val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
+            var currentScale by remember { mutableStateOf(1f) }
 
-                var currentScale by remember { mutableStateOf(1f) }
+            val transformableState = rememberTransformableState { zoomChange, _, _ ->
+                val newScale = (currentScale * zoomChange)
+                    .coerceAtLeast(1f)
+                    .coerceAtMost(3f)
 
-                val transformableState = rememberTransformableState { zoomChange, _, _ ->
-                    val newScale = (currentScale * zoomChange)
-                        .coerceAtLeast(1f)
-                        .coerceAtMost(3f)
+                currentScale = newScale
+            }
 
-                    currentScale = newScale
-                }
+            val scale by animateFloatAsState(targetValue = currentScale)
 
-                val scale by animateFloatAsState(targetValue = currentScale)
-
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clipToBounds()
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale
-                        )
-                        .transformable(state = transformableState)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    val newScale = when {
-                                        currentScale == 3f -> 1f
-                                        currentScale >= 2f -> 3f
-                                        else -> 2f
-                                    }
-
-                                    currentScale = newScale
+            Image(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clipToBounds()
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale
+                    )
+                    .transformable(state = transformableState)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                val newScale = when {
+                                    currentScale == 3f -> 1f
+                                    currentScale >= 2f -> 3f
+                                    else -> 2f
                                 }
-                            )
-                        },
-                    painter = painter,
-                    contentDescription = null
-                )
 
-                if (pagerState.currentPage != page) {
-                    currentScale = 1f
-                }
+                                currentScale = newScale
+                            }
+                        )
+                    },
+                painter = painter,
+                contentDescription = null
+            )
+
+            if (pagerState.currentPage != page) {
+                currentScale = 1f
             }
         }
     }
@@ -565,14 +568,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
             ImagePreviewOption(
                 title = stringResource(id = R.string.stream_compose_image_preview_reply),
                 titleColor = ChatTheme.colors.textHighEmphasis,
-                icon = Icons.Default.Reply,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_reply),
                 iconColor = ChatTheme.colors.textHighEmphasis,
                 action = Reply(message)
             ),
             ImagePreviewOption(
                 title = stringResource(id = R.string.stream_compose_image_preview_show_in_chat),
                 titleColor = ChatTheme.colors.textHighEmphasis,
-                icon = Icons.Default.PanoramaFishEye,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_show_in_chat),
                 iconColor = ChatTheme.colors.textHighEmphasis,
                 action = ShowInChat(message)
             ),
@@ -580,7 +583,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             ImagePreviewOption(
                 title = stringResource(id = R.string.stream_compose_image_preview_save_image),
                 titleColor = ChatTheme.colors.textHighEmphasis,
-                icon = Icons.Default.Download,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_download),
                 iconColor = ChatTheme.colors.textHighEmphasis,
                 action = SaveImage(message)
             )
@@ -591,7 +594,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 ImagePreviewOption(
                     title = stringResource(id = R.string.stream_compose_image_preview_delete),
                     titleColor = ChatTheme.colors.errorAccent,
-                    icon = Icons.Default.Delete,
+                    iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                     iconColor = ChatTheme.colors.errorAccent,
                     action = Delete(message)
                 )
@@ -711,7 +714,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = { imagePreviewViewModel.toggleGallery(isShowingGallery = false) }
                     ),
-                imageVector = Icons.Default.Cancel,
+                painter = painterResource(id = R.drawable.stream_compose_ic_close),
                 contentDescription = stringResource(id = R.string.stream_compose_cancel),
                 tint = ChatTheme.colors.textHighEmphasis
             )

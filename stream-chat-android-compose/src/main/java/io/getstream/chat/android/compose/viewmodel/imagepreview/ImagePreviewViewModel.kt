@@ -68,18 +68,31 @@ public class ImagePreviewViewModel(
     }
 
     /**
-     * Deletes the current image from the message we're observing. This will in turn update the UI accordingly.
+     * Deletes the current image from the message we're observing, if possible.
+     *
+     * This will in turn update the UI accordingly or finish this screen in case there are no more images to show.
      *
      * @param currentImage The image attachment to remove from the message we're updating.
      */
     public fun deleteCurrentImage(currentImage: Attachment) {
-        val imageUrl = currentImage.assetUrl ?: currentImage.imageUrl
-        val message = message
+        val attachments = message.attachments
+        val numberOfAttachments = attachments.size
 
-        message.attachments.removeAll {
-            it.assetUrl == imageUrl || it.imageUrl == imageUrl
+        if (message.text.isNotEmpty() || numberOfAttachments > 1) {
+            val imageUrl = currentImage.assetUrl ?: currentImage.imageUrl
+            val message = message
+
+            attachments.removeAll {
+                it.assetUrl == imageUrl || it.imageUrl == imageUrl
+            }
+
+            chatDomain.editMessage(message).enqueue()
+        } else if (message.text.isEmpty() && numberOfAttachments == 1) {
+            chatDomain.deleteMessage(message).enqueue { result ->
+                if (result.isSuccess) {
+                    message = result.data()
+                }
+            }
         }
-
-        chatDomain.editMessage(message).enqueue()
     }
 }
