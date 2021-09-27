@@ -17,7 +17,7 @@ internal class FileAttachmentsAdapter(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    // private val style: FileAttachmentViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
@@ -29,7 +29,7 @@ internal class FileAttachmentsAdapter(
                     attachmentClickListener,
                     attachmentLongClickListener,
                     attachmentDownloadClickListener,
-                    // style,
+                    style,
                 )
             }
     }

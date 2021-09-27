@@ -109,7 +109,7 @@ public open class MessageListItemViewHolderFactory {
             listenerContainer,
             markdown,
             // attachmentViewFactory,
-            // style
+            style.fileAttachmentStyle
         )
     }
 

@@ -15,6 +15,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
+import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
@@ -33,6 +34,7 @@ internal class TextAndAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
+    style: FileAttachmentViewStyle,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -42,7 +44,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private val adapter = FileAttachmentsAdapter({}, {}, {})
+    private val adapter = FileAttachmentsAdapter({}, {}, {}, style)
 
     init {
         binding.run {

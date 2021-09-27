@@ -1,6 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -18,7 +19,9 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
+import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -33,7 +36,7 @@ internal class FileAttachmentViewHolder(
     private val attachmentClickListener: AttachmentClickListener,
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
-    // private val style: FileAttachmentViewStyle,
+    private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
     private var attachment: Attachment? = null
 
@@ -63,9 +66,9 @@ internal class FileAttachmentViewHolder(
             .build()
         val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
         bgShapeDrawable.apply {
-            // fillColor = ColorStateList.valueOf(style.backgroundColor)
-            // strokeColor = ColorStateList.valueOf(style.strokeColor)
-            // strokeWidth = style.strokeWidth.toFloat()
+            fillColor = ColorStateList.valueOf(style.backgroundColor)
+            strokeColor = ColorStateList.valueOf(style.strokeColor)
+            strokeWidth = style.strokeWidth.toFloat()
         }
 
         binding.root.background = bgShapeDrawable
@@ -99,8 +102,8 @@ internal class FileAttachmentViewHolder(
         this.attachment = item
 
         binding.apply {
-            // fileTitle.setTextStyle(style.titleTextStyle)
-            // fileSize.setTextStyle(style.fileSizeTextStyle)
+            fileTitle.setTextStyle(style.titleTextStyle)
+            fileSize.setTextStyle(style.fileSizeTextStyle)
 
             fileTypeIcon.loadAttachmentThumb(item)
             fileTitle.text = item.getDisplayableName()
@@ -109,10 +112,10 @@ internal class FileAttachmentViewHolder(
                 actionButton.setImageDrawable(null)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
-                // actionButton.setImageDrawable(style.failedAttachmentIcon)
+                actionButton.setImageDrawable(style.failedAttachmentIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else {
-                // actionButton.setImageDrawable(style.actionButtonIcon)
+                actionButton.setImageDrawable(style.actionButtonIcon)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
             }
 
