@@ -5,6 +5,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create new artifact to integrate Huawei Push Kit with Stream. You will need to add  `stream-chat-android-pushprovider-huawei` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei) for further details.
+
 
 ### ⚠️ Changed
 
@@ -103,7 +105,6 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
 
@@ -111,6 +112,18 @@
 
 ### ✅ Added
 - Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added a `HuaweiMessagingDelegate` class to simplify custom implementations of `HmsMessageService` that forward messages to the SDK. See [Using a Custom Huawei Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei#using-a-custom-huawei-messaging-service) for more details.
 
 ### ⚠️ Changed
 
