@@ -56,6 +56,10 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return false
     }
 
+    @Deprecated(
+        message = "It is not used anymore",
+        level = DeprecationLevel.ERROR,
+    )
     public open fun getDeviceRegisteredListener(): DeviceRegisteredListener? {
         return null
     }
