@@ -1,7 +1,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.attachments
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
+import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
@@ -14,14 +14,11 @@ internal class AttachmentAdapterFactory(
     private val style: FileAttachmentViewStyle,
 ) {
 
-    fun adapter(attachments: List<Attachment>): FileAttachmentsAdapter {
+    fun adapter(attachmentsGroup: AttachmentGroup):  SimpleListAdapter<AttachmentGroup, out SimpleListAdapter.ViewHolder<AttachmentGroup>> {
+        val attachments = attachmentsGroup.attachments
+
         return when {
-            attachments.isMedia() -> FileAttachmentsAdapter(
-                attachmentClickListener,
-                attachmentLongClickListener,
-                attachmentDownloadClickListener,
-                style
-            )
+            attachments.isMedia() -> MediaAttachmentsAdapter()
 
             attachments.isNotEmpty() -> FileAttachmentsAdapter(
                 attachmentClickListener,

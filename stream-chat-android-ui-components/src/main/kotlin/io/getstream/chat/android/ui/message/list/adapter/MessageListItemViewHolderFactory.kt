@@ -38,9 +38,6 @@ public open class MessageListItemViewHolderFactory {
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
 
-    protected lateinit var attachmentViewFactory: AttachmentViewFactory
-        private set
-
     private lateinit var style: MessageListItemStyle
 
     private lateinit var messageReplyStyle: MessageReplyStyle
@@ -49,10 +46,6 @@ public open class MessageListItemViewHolderFactory {
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
-    }
-
-    internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
-        this.attachmentViewFactory = attachmentViewFactory
     }
 
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {

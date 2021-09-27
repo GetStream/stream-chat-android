@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
+import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -37,7 +38,7 @@ internal class FileAttachmentViewHolder(
     private val attachmentLongClickListener: AttachmentLongClickListener,
     private val attachmentDownloadClickListener: AttachmentDownloadClickListener,
     private val style: FileAttachmentViewStyle,
-) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
+) : SimpleListAdapter.ViewHolder<AttachmentGroup>(binding.root) {
     private var attachment: Attachment? = null
 
     private var scope: CoroutineScope? = null
@@ -98,31 +99,33 @@ internal class FileAttachmentViewHolder(
         }
     }
 
-    override fun bind(item: Attachment) {
-        this.attachment = item
+    override fun bind(item: AttachmentGroup) {
+        val attachment = item.attachments.first()
+
+        this.attachment = item.attachments.first()
 
         binding.apply {
             fileTitle.setTextStyle(style.titleTextStyle)
             fileSize.setTextStyle(style.fileSizeTextStyle)
 
-            fileTypeIcon.loadAttachmentThumb(item)
-            fileTitle.text = item.getDisplayableName()
+            fileTypeIcon.loadAttachmentThumb(attachment)
+            fileTitle.text = attachment.getDisplayableName()
 
-            if (item.uploadState == Attachment.UploadState.InProgress) {
+            if (attachment.uploadState == Attachment.UploadState.InProgress) {
                 actionButton.setImageDrawable(null)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
-            } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
+            } else if (attachment.uploadState is Attachment.UploadState.Failed || attachment.fileSize == 0) {
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L)
             } else {
                 actionButton.setImageDrawable(style.actionButtonIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong())
             }
 
             binding.progressBar.indeterminateDrawable = style.progressBarDrawable
-            binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
+            binding.progressBar.isVisible = attachment.uploadState is Attachment.UploadState.InProgress
 
-            subscribeForProgressIfNeeded(item)
+            subscribeForProgressIfNeeded(attachment)
             setupBackground()
         }
     }

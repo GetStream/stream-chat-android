@@ -11,14 +11,16 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentAdapterFactory
-import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
+import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +30,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-//Put the adapter of attachments here!!
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
@@ -44,7 +45,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private lateinit var adapter: FileAttachmentsAdapter
+    private lateinit var adapter: SimpleListAdapter<AttachmentGroup, out SimpleListAdapter.ViewHolder<AttachmentGroup>>
 
     init {
         binding.run {
@@ -83,13 +84,22 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        adapter = attachmentAdapterFactory.adapter(data.message.attachments)
+        adapter = attachmentAdapterFactory.adapter(AttachmentGroup(data.message.attachments))
         binding.run {
             attachmentsRecycler.layoutManager = LinearLayoutManager(context)
             attachmentsRecycler.adapter = adapter
         }
 
-        adapter.setItems(data.message.attachments)
+        //Fix this with a different base adapter for AttachmentGroup
+        val attachmentGroups = if (data.message.attachments.isMedia()) {
+            listOf(AttachmentGroup(data.message.attachments))
+        } else {
+            data.message.attachments.map { attachment ->
+                AttachmentGroup(listOf(attachment))
+            }
+        }
+
+        adapter.setItems(attachmentGroups)
     }
 
     private fun clearScope() {

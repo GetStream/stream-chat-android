@@ -443,10 +443,10 @@ public class Messages {
 
         private MessageListView messageListView;
 
-        public void setAttachmentFactory() {
-            AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
-            messageListView.setAttachmentViewFactory(attachmentViewFactory);
-        }
+//        public void setAttachmentFactory() {
+//            AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
+//            messageListView.setAttachmentViewFactory(attachmentViewFactory);
+//        }
 
         private class MyAttachmentViewFactory extends AttachmentViewFactory {
 
