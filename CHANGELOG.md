@@ -5,6 +5,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create new artifact to integrate Huawei Push Kit with Stream. You will need to add  `stream-chat-android-pushprovider-huawei` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei) for further details.
+
 
 ### ⚠️ Changed
 
@@ -17,6 +19,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
@@ -27,11 +31,13 @@
 ### 🐞 Fixed
 - Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
 - Fixed sending custom attachments without files to upload
+- Fixed deserialization issues when parsing `ChannelTruncatedEvent` and `MessageDeletedEvent` events with an absent user.
 
 ### ⬆️ Improved
 - Custom attachment types are now preserved after file uploads
 
 ### ✅ Added
+- Added `hardDelete` field to `MessageDeletedEvent`.
 
 ### ⚠️ Changed
 - Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
@@ -52,7 +58,8 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed bug with light mode.
+- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your applcation theme instead. 
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -68,6 +75,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
+- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
 
 ### ⚠️ Changed
 
@@ -78,13 +87,26 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.2)
+- Updated the Accompanist library version (0.18.0)
 
 ### ✅ Added
+- Added an uploading indicator to files and images
+- Images being uploaded are now preloaded from the system
+- Upload indicators show the upload progress and how much data is left to send
+- Added more image options to the ImagePreviewActivity such as download, delete, reply to message...
+- Added an Image Gallery feature to the ImagePreviewActivity where users can browse all the images
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageList`
 
 ### ⚠️ Changed
+- `StreamAttachment.defaultFactories()` is a function now, instead of a property.
+- Updated all default value factories to functions (e.g. StreamTypography)
+- Re-organized all attachment factories and split up code in multiple packages
+- Changed the `AttachmentState` `message` property name to `messageItem`
+- Added an `isFocused` property to `MessageItem`
+- Added an `onImagePreviewResult` callback/parameter to various Messages screen components
 
 ### ❌ Removed
-
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
@@ -92,6 +114,19 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added a `HuaweiMessagingDelegate` class to simplify custom implementations of `HmsMessageService` that forward messages to the SDK. See [Using a Custom Huawei Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei#using-a-custom-huawei-messaging-service) for more details.
 
 ### ⚠️ Changed
 
@@ -143,6 +178,7 @@
 - Improved the way we build items in the Message list
 - Added line limit to link attachment descriptions
 - Added a way to customize the default line limit for link descriptions
+- Improved the `MessageListHeader` with more customization options
 
 ### ✅ Added
 - Added an uploading indicator to files and images
@@ -155,6 +191,8 @@
 - Updated all default value factories to functions (e.g. StreamTypography)
 - Re-organized all attachment factories and split up code in multiple packages
 - Changed the `AttachmentState` `message` property name to `messageItem`
+- Added a `Channel` parameter to the `MessagesScreen`'s `onHeaderActionClick` lambda
+- Changed the way the `MessageListHeader` is structured by adding slot components
 
 # August 30th, 2021 - 4.17.2
 ## stream-chat-android-ui-client

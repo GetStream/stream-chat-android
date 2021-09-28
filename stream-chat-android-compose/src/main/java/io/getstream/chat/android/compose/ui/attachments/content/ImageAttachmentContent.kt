@@ -1,7 +1,9 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -14,38 +16,40 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewActivity
+import io.getstream.chat.android.compose.ui.imagepreview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.hasLink
 import io.getstream.chat.android.compose.ui.util.isMedia
 
 /**
- * Builds an image attachment message, which can be composed of several images in a gallery.
+ * Builds an image attachment message, which can be composed of several images or will show an upload state if we're
+ * currently uploading images.
  *
- * @param attachmentState - The state of the attachment, holding the root modifier, the message
+ * @param attachmentState The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(attachmentState: AttachmentState) {
-    val (modifier, messageItem, onLongItemClick) = attachmentState
+    val (modifier, messageItem, onLongItemClick, onImagePreviewResult) = attachmentState
     val (message, _) = messageItem
-    val context = LocalContext.current
 
     Row(
         modifier
@@ -54,9 +58,7 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    context.startActivity(ImagePreviewActivity.getIntent(context, message.id))
-                },
+                onClick = {},
                 onLongClick = { onLongItemClick(message) }
             )
     ) {
@@ -69,7 +71,10 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
 
             ImageAttachmentContentItem(
                 attachment = attachment,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                message = message,
+                attachmentPosition = 0,
+                onImagePreviewResult = onImagePreviewResult
             )
         } else {
             Column(
@@ -81,7 +86,10 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                     if (imageIndex < imageCount) {
                         ImageAttachmentContentItem(
                             attachment = attachments[imageIndex],
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            message = message,
+                            attachmentPosition = imageIndex,
+                            onImagePreviewResult = onImagePreviewResult
                         )
                     }
                 }
@@ -100,7 +108,10 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                         if (imageIndex == 3 && imageCount > 4) {
                             Box(modifier = Modifier.weight(1f)) {
                                 ImageAttachmentContentItem(
-                                    attachment = attachment
+                                    attachment = attachment,
+                                    message = message,
+                                    attachmentPosition = imageIndex,
+                                    onImagePreviewResult = onImagePreviewResult
                                 )
 
                                 if (!isUploading) {
@@ -114,7 +125,10 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                         } else {
                             ImageAttachmentContentItem(
                                 attachment = attachment,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                message = message,
+                                attachmentPosition = imageIndex,
+                                onImagePreviewResult = onImagePreviewResult
                             )
                         }
                     }
@@ -132,12 +146,35 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
  */
 @Composable
 internal fun ImageAttachmentContentItem(
+    message: Message,
+    attachmentPosition: Int,
     attachment: Attachment,
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val painter = rememberImagePainter(attachment.imagePreviewUrl)
 
-    Box(modifier = modifier.fillMaxWidth()) {
+    val imagePreviewLauncher = rememberLauncherForActivityResult(
+        contract = ImagePreviewContract(),
+        onResult = { result -> onImagePreviewResult(result) }
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = rememberRipple(),
+                onClick = {
+                    imagePreviewLauncher.launch(
+                        ImagePreviewContract.Input(
+                            messageId = message.id,
+                            initialPosition = attachmentPosition
+                        )
+                    )
+                }
+            )
+    ) {
         Image(
             modifier = modifier
                 .fillMaxSize(),

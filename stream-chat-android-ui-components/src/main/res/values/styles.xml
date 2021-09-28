@@ -199,11 +199,8 @@
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/stream_ui_text_color_primary</item>
     </style>
-
-    <style name="StreamUiEmptyTheme" />
-
+    
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiValidTheme">true</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
@@ -753,7 +750,7 @@
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery" parent="StreamUiTheme">
+    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
         <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
         <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
@@ -762,6 +759,7 @@
         <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
         <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
         <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
+        <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
     <style name="StreamUi.AttachmentGallery.Options">
@@ -771,10 +769,11 @@
         <item name="streamUiDeleteEnabled">true</item>
     </style>
 
-    <style name="StreamUi.AttachmentActivity" parent="StreamUiTheme">
+    <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
         <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
         <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
+        <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity.ProgressBar" parent="StreamUi">
@@ -826,8 +825,9 @@
         <item name="android:src">@drawable/stream_ui_ic_grid_menu</item>
     </style>
 
-    <style name="StreamUi.MediaActivity" parent="StreamUiTheme">
+    <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
+        <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
     <style name="StreamUi.MediaActivity.Icon" parent="StreamUi">
@@ -969,9 +969,10 @@
         <item name="streamUiPinnedMessageListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUiTheme.ChannelListScreen" parent="@style/StreamUiTheme">
+    <style name="StreamUiTheme.ChannelListScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiChannelActionsDialogStyle">@style/StreamUi.ChannelListScreen.ActionsDialog</item>
         <item name="streamUiChannelListHeaderStyle">@style/StreamUi.ChannelListScreen.ChannelListHeader</item>
+        <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
     <style name="StreamUi.ChannelListScreen.ActionsDialog" parent="StreamUi.ChannelList.ActionsDialog">

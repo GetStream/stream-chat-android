@@ -1,4 +1,4 @@
-# Firebase
+# Firebase Cloud Messaging
 
 This page shows you how to receive Stream Chat push notifications using [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging).
 
@@ -65,20 +65,15 @@ That's all you have to do to integrate our Firebase push provider artifact!
 
 The Stream Firebase push provider artifact includes an implementation of `FirebaseMessagingService` that will send new Firebase tokens and incoming push messages to the Stream SDK.
 
-If you're also using Firebase notifications for other things in your app, you can use your own custom service instead. This should make the following calls to the `ChatClient.setDevice` and `ChatClient.handlePushMessage` methods:
+If you're also using Firebase notifications for other things in your app, you can use your own custom service instead. This should make the following calls to the `FirebaseMessagingDelegate` class:
 
-```kotlin {6-11,20-25}
+```kotlin {6,14}
 class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
         try {
-            ChatClient.setDevice(
-                Device(
-                    token = token,
-                    pushProvider = PushProvider.FIREBASE,
-                )
-            )
+            FirebaseMessagingDelegate.registerFirebaseToken(token)
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -86,15 +81,13 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
-            // Check if the message from Firebase contains needed data and generate a PushMessage instance
-            val pushMessage = PushMessage(
-                channelId = data["channel_id"]!!,
-                messageId = data["message_id"]!!,
-                channelType = data["channel_type"]!!,
-            )
-            ChatClient.handlePushMessage(pushMessage)
-        } catch (exception: Exception) {
-            // ChatClient was not initialized or the data is missing
+            if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                // RemoteMessage was from Stream and it is already processed
+            } else {
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+            }
+        } catch (IllegalStateException exception) {
+            // ChatClient was not initialized
         }
     }
 }

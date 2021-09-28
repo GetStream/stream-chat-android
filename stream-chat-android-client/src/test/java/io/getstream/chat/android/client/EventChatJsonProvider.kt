@@ -36,6 +36,17 @@ internal fun createChannelTruncatedEventStringJson() =
         """.trimIndent()
     )
 
+internal fun createChannelTruncatedServerSideEventStringJson() =
+    createChatEventStringJson(
+        "channel.truncated",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "channel": ${createChannelJsonString()}
+        """.trimIndent()
+    )
+
 internal fun createChannelUpdatedEventStringJson() =
     createChatEventStringJson(
         "channel.updated",
@@ -117,6 +128,18 @@ internal fun createMessageDeletedEventStringJson() =
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "message": ${createMessageJsonString()}
+        """.trimIndent()
+    )
+
+internal fun createMessageDeletedServerSideEventStringJson() =
+    createChatEventStringJson(
+        "message.deleted",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "message": ${createMessageJsonString()},
+            "hard_delete": true
         """.trimIndent()
     )
 

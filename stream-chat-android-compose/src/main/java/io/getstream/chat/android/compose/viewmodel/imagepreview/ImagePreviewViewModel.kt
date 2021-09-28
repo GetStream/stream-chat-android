@@ -5,17 +5,42 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * ViewModel responsible for loading and showing the images of a selected message.
  */
 public class ImagePreviewViewModel(
     private val chatClient: ChatClient,
-    private val messageId: String
+    private val chatDomain: ChatDomain,
+    private val messageId: String,
 ) : ViewModel() {
 
+    /**
+     * The currently logged in user.
+     */
+    public val user: StateFlow<User?> = chatDomain.user
+
+    /**
+     * Represents the message that we observe to show the UI data.
+     */
     public var message: Message by mutableStateOf(Message())
+        private set
+
+    /**
+     * Shows or hides the image options menu and overlay in the UI.
+     */
+    public var isShowingOptions: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * Shows or hides the image gallery menu in the UI.
+     */
+    public var isShowingGallery: Boolean by mutableStateOf(false)
         private set
 
     /**
@@ -25,6 +50,48 @@ public class ImagePreviewViewModel(
         chatClient.getMessage(messageId).enqueue { result ->
             if (result.isSuccess) {
                 this.message = result.data()
+            }
+        }
+    }
+
+    /**
+     * Toggles if we're showing the image options menu.
+     *
+     * @param isShowingOptions If we need to show or hide the options.
+     */
+    public fun toggleImageOptions(isShowingOptions: Boolean) {
+        this.isShowingOptions = isShowingOptions
+    }
+
+    public fun toggleGallery(isShowingGallery: Boolean) {
+        this.isShowingGallery = isShowingGallery
+    }
+
+    /**
+     * Deletes the current image from the message we're observing, if possible.
+     *
+     * This will in turn update the UI accordingly or finish this screen in case there are no more images to show.
+     *
+     * @param currentImage The image attachment to remove from the message we're updating.
+     */
+    public fun deleteCurrentImage(currentImage: Attachment) {
+        val attachments = message.attachments
+        val numberOfAttachments = attachments.size
+
+        if (message.text.isNotEmpty() || numberOfAttachments > 1) {
+            val imageUrl = currentImage.assetUrl ?: currentImage.imageUrl
+            val message = message
+
+            attachments.removeAll {
+                it.assetUrl == imageUrl || it.imageUrl == imageUrl
+            }
+
+            chatDomain.editMessage(message).enqueue()
+        } else if (message.text.isEmpty() && numberOfAttachments == 1) {
+            chatDomain.deleteMessage(message).enqueue { result ->
+                if (result.isSuccess) {
+                    message = result.data()
+                }
             }
         }
     }

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Library modules" pattern="src[stream-chat-android.stream-chat-android-core]:*..*||src[stream-chat-android.stream-chat-android]:*..*||src[stream-chat-android.stream-chat-android-client]:*..*||src[stream-chat-android.stream-chat-android-ui-components]:*..*||src[stream-chat-android.stream-chat-android-pushprovider-firebase]:*..*||src[stream-chat-android.stream-chat-android-pushprovider-huawei]:*..*||src[stream-chat-android.stream-chat-android-offline]:*..*||src[stream-chat-android.stream-chat-android-ui-common]:*..*||src[stream-chat-android.stream-chat-android-compose]:*..*" />
+</component>

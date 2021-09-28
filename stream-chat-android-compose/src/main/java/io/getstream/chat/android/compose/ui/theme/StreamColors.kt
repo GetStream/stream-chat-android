@@ -20,6 +20,7 @@ import io.getstream.chat.android.compose.R
  * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
  * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
  * @param infoAccent Used for the online status.
+ * @param highlight Used for message highlights.
  */
 public data class StreamColors(
     public val textHighEmphasis: Color,
@@ -34,6 +35,7 @@ public data class StreamColors(
     public val primaryAccent: Color,
     public val errorAccent: Color,
     public val infoAccent: Color,
+    public val highlight: Color,
 ) {
 
     public companion object {
@@ -53,9 +55,10 @@ public data class StreamColors(
             barsBackground = colorResource(R.color.stream_compose_bars_background),
             linkBackground = colorResource(R.color.stream_compose_link_background),
             overlay = colorResource(R.color.stream_compose_overlay),
-            primaryAccent = colorResource(id = R.color.stream_compose_primary_accent),
+            primaryAccent = colorResource(R.color.stream_compose_primary_accent),
             errorAccent = colorResource(R.color.stream_compose_error_accent),
             infoAccent = colorResource(R.color.stream_compose_info_accent),
+            highlight = colorResource(R.color.stream_compose_highlight),
         )
 
         /**
@@ -74,9 +77,10 @@ public data class StreamColors(
             barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
             linkBackground = colorResource(R.color.stream_compose_link_background_dark),
             overlay = colorResource(R.color.stream_compose_overlay_dark),
-            primaryAccent = colorResource(id = R.color.stream_compose_primary_accent_dark),
+            primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
             errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
             infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
+            highlight = colorResource(R.color.stream_compose_highlight_dark),
         )
     }
 }

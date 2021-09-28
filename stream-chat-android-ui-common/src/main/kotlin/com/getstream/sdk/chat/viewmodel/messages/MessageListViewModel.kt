@@ -96,6 +96,9 @@ public class MessageListViewModel @JvmOverloads constructor(
         domain.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
             if (channelControllerResult.isSuccess) {
                 val channelController = channelControllerResult.data()
+                channelController.toChannel().let { channel ->
+                    ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
+                }
                 _channel.addSource(channelController.offlineChannelData) {
                     _channel.value = channelController.toChannel()
                     // Channel should be propagated only once because it's used to initialize MessageListView

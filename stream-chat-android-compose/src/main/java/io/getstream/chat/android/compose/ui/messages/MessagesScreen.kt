@@ -21,10 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.state.messages.list.Delete
+import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.ui.common.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -61,7 +64,7 @@ public fun MessagesScreen(
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: () -> Unit = {},
+    onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
     val factory = buildViewModelFactory(LocalContext.current, channelId, enforceUniqueReactions, messageLimit)
 
@@ -138,6 +141,22 @@ public fun MessagesScreen(
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(Thread(message))
                     listViewModel.openMessageThread(message)
+                },
+                onImagePreviewResult = { result ->
+                    when (result?.resultType) {
+                        ImagePreviewResultType.QUOTE -> {
+                            val message = listViewModel.getMessageWithId(result.messageId)
+
+                            if (message != null) {
+                                composerViewModel.performMessageAction(Reply(message))
+                            }
+                        }
+
+                        ImagePreviewResultType.SHOW_IN_CHAT -> {
+                            listViewModel.focusMessage(result.messageId)
+                        }
+                        null -> Unit
+                    }
                 }
             )
         }

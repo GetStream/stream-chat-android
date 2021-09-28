@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -129,6 +128,10 @@ public class QueryChannelsController internal constructor(
         }
     }
 
+    internal fun updateMutedChannels(mutedChannels: List<ChannelMute>) {
+        _mutedChannelIds.value = mutedChannels.map { it.channel.id }
+    }
+
     internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
@@ -146,10 +149,6 @@ public class QueryChannelsController internal constructor(
 
         if (event is MarkAllReadEvent) {
             refreshAllChannels()
-        }
-
-        if (event is NotificationChannelMutesUpdatedEvent) {
-            _mutedChannelIds.value = event.me.channelMutes.toChannelsId()
         }
 
         if (event is CidEvent) {
