@@ -58,7 +58,8 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Fixed bug with light mode.
+- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your applcation theme instead. 
 ### ⬆️ Improved
 
 ### ✅ Added
