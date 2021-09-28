@@ -10,7 +10,8 @@ private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 internal fun getMessageType(message: Message): String {
     val hasAttachments = message.attachments.isNotEmpty()
     val hasAttachmentsToUpload = message.attachments.any { attachment ->
-        attachment.uploadState is Attachment.UploadState.InProgress
+        attachment.uploadState is Attachment.UploadState.InProgress ||
+            attachment.uploadState is Attachment.UploadState.Idle
     }
 
     return if (COMMAND_PATTERN.matcher(message.text).find() || (hasAttachments && hasAttachmentsToUpload)) {
