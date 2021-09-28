@@ -3,6 +3,14 @@ package io.getstream.chat.android.compose.ui.messages
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +65,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun MessagesScreen(
     channelId: String,
@@ -173,12 +182,26 @@ public fun MessagesScreen(
             )
         }
 
-        if (isShowingAttachments) {
+        AnimatedVisibility(
+            visible = isShowingAttachments,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
+        ) {
             AttachmentsPicker(
                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .height(350.dp),
+                    .height(350.dp)
+                    .animateEnterExit(
+                        enter = slideInVertically(
+                            initialOffsetY = { height -> height },
+                            animationSpec = tween()
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { height -> height },
+                            animationSpec = tween()
+                        )
+                    ),
                 onAttachmentsSelected = { attachments ->
                     attachmentsPickerViewModel.changeAttachmentState(false)
                     composerViewModel.addSelectedAttachments(attachments)
