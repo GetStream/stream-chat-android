@@ -1610,7 +1610,7 @@ public class ChatClient internal constructor(
             warmUp = false
         }
 
-        public fun customOkHttpClient(okHttpClient: OkHttpClient): Builder = apply {
+        public fun okHttpClient(okHttpClient: OkHttpClient): Builder = apply {
             this.customOkHttpClient = okHttpClient
         }
 
