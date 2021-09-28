@@ -87,6 +87,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
@@ -1572,7 +1573,8 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-        private var apiLogInterceptor: Interceptor = HttpLoggingInterceptor()
+        private var customOkHttpClient: OkHttpClient? = null
+        private var httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1608,9 +1610,14 @@ public class ChatClient internal constructor(
             warmUp = false
         }
 
-        public fun apiLoggerInterceptor(interceptor: Interceptor): Builder = apply {
-            apiLogInterceptor = interceptor
+        public fun customOkHttpClient(okHttpClient: OkHttpClient): Builder = apply {
+            this.customOkHttpClient = okHttpClient
         }
+
+        public fun customizeOkHttpClient(httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder): Builder =
+            apply {
+                this.httpClientConfig = httpClientConfig
+            }
 
         public fun baseUrl(value: String): Builder {
             var baseUrl = value
@@ -1673,7 +1680,8 @@ public class ChatClient internal constructor(
                     fileUploader,
                     tokenManager,
                     callbackExecutor,
-                    apiLogInterceptor
+                    customOkHttpClient,
+                    httpClientConfig
                 )
 
             val result = ChatClient(
