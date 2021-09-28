@@ -13,7 +13,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -86,7 +85,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
