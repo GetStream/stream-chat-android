@@ -31,11 +31,13 @@
 ### 🐞 Fixed
 - Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
 - Fixed sending custom attachments without files to upload
+- Fixed deserialization issues when parsing `ChannelTruncatedEvent` and `MessageDeletedEvent` events with an absent user.
 
 ### ⬆️ Improved
 - Custom attachment types are now preserved after file uploads
 
 ### ✅ Added
+- Added `hardDelete` field to `MessageDeletedEvent`.
 
 ### ⚠️ Changed
 - Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
