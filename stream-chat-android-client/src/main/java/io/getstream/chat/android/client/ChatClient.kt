@@ -1594,12 +1594,13 @@ public class ChatClient internal constructor(
             return this
         }
 
-        @Deprecated("Use customizeOkHttpClient to set the timeouts")
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
         }
 
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
@@ -1612,11 +1613,6 @@ public class ChatClient internal constructor(
         public fun customOkHttpClient(okHttpClient: OkHttpClient): Builder = apply {
             this.customOkHttpClient = okHttpClient
         }
-
-        public fun customizeOkHttpClient(httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder): Builder =
-            apply {
-                this.httpClientConfig = httpClientConfig
-            }
 
         public fun baseUrl(value: String): Builder {
             var baseUrl = value
