@@ -17,8 +17,8 @@ To receive push notifications from Stream Chat, you'll need to:
 
 We support the following providers:
 
-- [Firebase](./02-firebase.mdx)
-- Huawei Push Kit (Coming soon, stay tuned!)
+- [Firebase Cloud Messaging](./02-firebase.mdx)
+- [Huawei Push Kit](./03-huawei.mdx)
 - Mi Push (Coming soon, stay tuned!)
 
 We ship an individual artifact for each of these to make client-side integration with their service quick and simple. See their individual documentation pages linked above for details.
@@ -113,7 +113,13 @@ ChatClient.Builder("api-key", context)
 ```
 
 ### Dismissing notifications
-Our `MessageListView` component dismisses notifications related to a `Channel` as far as a user navigates to the channel conversation.
-If you need to manually dismiss them manually (for example you are using a custom `MessageListiew` component) you can call `ChatClient::dismissChannelNotifications` method providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications.
 
-Notifications are automatically dismissed when the user logout the SDK.
+Our [`MessageListView`](../../../03-ui/04-components/05-message-list.mdx) UI component and [`MessageList`](../../../04-compose/04-message-components/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
+
+If you need to dismiss them manually (for example, if you are using a custom `MessageListiew` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
+
+```kotlin
+ChatClient.dismissChannelNotifications("messaging", "general")
+```
+
+Notifications are also automatically dismissed when the user logs out from the SDK.
