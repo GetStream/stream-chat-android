@@ -1596,6 +1596,7 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @Deprecated("Use customizeOkHttpClient to set the timeouts")
         public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
