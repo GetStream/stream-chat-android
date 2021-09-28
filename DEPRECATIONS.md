@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ProgressCallback#onProgress(Long)` <br/>*client* | 2021.09.28<br/> | 2021.10.28<br/>⌛ | 2021.11.28 ⌛ | This function is not used anymore. Use `ProgressCallback#onProgress(Long, Long)` |
 | `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | This class is not used anymore |
 | `ViewReactionsViewStyle#bubbleBorderColor` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | 2021.10.26 ⌛ | Use bubbleBorderColorMine instead  |
 | `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | Some attributes are not needed anymore |
