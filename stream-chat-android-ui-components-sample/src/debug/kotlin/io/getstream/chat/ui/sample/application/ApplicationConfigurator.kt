@@ -12,6 +12,9 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 object ApplicationConfigurator {
+
+    const val HUAWEI_APP_ID = "104598359"
+
     @OptIn(InternalStreamChatApi::class)
     fun configureApp(application: Application) {
         SoLoader.init(application, false)
