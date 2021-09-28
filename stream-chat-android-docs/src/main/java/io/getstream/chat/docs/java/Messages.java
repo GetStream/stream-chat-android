@@ -172,6 +172,10 @@ public class Messages {
                 public void onProgress(long progress) {
                     // You can render the uploading progress here
                 }
+                @Override
+                public void onProgress(long bytesUploaded, long totalLength) {
+                    // You can render the uploading progress here
+                }
             }).enqueue(); // No callback passed to enqueue, as we'll get notified above anyway
         }
 

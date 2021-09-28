@@ -188,8 +188,11 @@ private class FileAttachmentViewHolder(
     }
 
     private fun subscribeForProgressIfNeeded(attachment: Attachment) {
-        if (attachment.uploadState is Attachment.UploadState.InProgress) {
-            handleInProgressAttachment(binding.fileSize)
+        if (attachment.uploadState is Attachment.UploadState.Idle) {
+            handleInProgressAttachment(binding.fileSize, 0L, attachment.upload?.length() ?: 0)
+        } else if (attachment.uploadState is Attachment.UploadState.InProgress) {
+            val uploadState = attachment.uploadState as Attachment.UploadState.InProgress
+            handleInProgressAttachment(binding.fileSize, uploadState.bytesRead, uploadState.totalBytes)
         }
     }
 
@@ -224,21 +227,15 @@ private class FileAttachmentViewHolder(
         }
     }
 
-    private fun handleInProgressAttachment(fileSizeView: TextView) {
-        attachment?.let { attachment ->
-            val uploadState = (attachment.uploadState as Attachment.UploadState.InProgress)
-            val progress = uploadState.currentProgress
-            val fileLength = attachment.upload?.length() ?: 0
-            val totalValue = MediaStringUtil.convertFileSizeByteCount(fileLength)
-            val nominalProgress = progress * fileLength / 100f
+    private fun handleInProgressAttachment(fileSizeView: TextView, bytesRead: Long, totalBytes: Long) {
+        val totalValue = MediaStringUtil.convertFileSizeByteCount(totalBytes)
 
-            fileSizeView.text =
-                context.getString(
-                    R.string.stream_ui_message_list_attachment_upload_progress,
-                    MediaStringUtil.convertFileSizeByteCount(nominalProgress.toLong()),
-                    totalValue
-                )
-        }
+        fileSizeView.text =
+            context.getString(
+                R.string.stream_ui_message_list_attachment_upload_progress,
+                MediaStringUtil.convertFileSizeByteCount(bytesRead),
+                totalValue
+            )
     }
 
     override fun unbind() {

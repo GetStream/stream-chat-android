@@ -1953,13 +1953,19 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/models/Attachment$UploadState$Idle : io/getstream/chat/android/client/models/Attachment$UploadState {
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Idle;
+}
+
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$InProgress : io/getstream/chat/android/client/models/Attachment$UploadState {
-	public fun <init> (J)V
+	public fun <init> (JJ)V
 	public final fun component1 ()J
-	public final fun copy (J)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;JILjava/lang/Object;)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public final fun component2 ()J
+	public final fun copy (JJ)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;JJILjava/lang/Object;)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCurrentProgress ()J
+	public final fun getBytesRead ()J
+	public final fun getTotalBytes ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2880,7 +2886,12 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (J)V
+	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/utils/ProgressCallback$DefaultImpls {
+	public static fun onProgress (Lio/getstream/chat/android/client/utils/ProgressCallback;JJ)V
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {

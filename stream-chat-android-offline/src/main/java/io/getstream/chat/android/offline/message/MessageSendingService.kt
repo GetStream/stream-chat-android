@@ -46,7 +46,7 @@ internal class MessageSendingService(
                 val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
                 attachmentsToUpload.forEach { attachment ->
                     attachment.uploadId = generateUploadId()
-                    attachment.uploadState = Attachment.UploadState.InProgress(0)
+                    attachment.uploadState = Attachment.UploadState.Idle
                 }
                 nonFileAttachments.forEach { attachment ->
                     attachment.uploadState = Attachment.UploadState.Success

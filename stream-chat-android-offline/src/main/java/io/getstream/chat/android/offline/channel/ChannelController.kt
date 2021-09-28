@@ -614,7 +614,7 @@ public class ChannelController internal constructor(
 
         newMessage.attachments.forEach { attachment ->
             attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress(0)
+            attachment.uploadState = Attachment.UploadState.Idle
         }
 
         newMessage.type = getMessageType(message)
@@ -1529,8 +1529,14 @@ public class ChannelController internal constructor(
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 
-        override fun onProgress(progress: Long) {
-            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.InProgress(progress))
+        override fun onProgress(progress: Long) = Unit
+
+        override fun onProgress(bytesUploaded: Long, totalLength: Long) {
+            updateAttachmentUploadState(
+                messageId,
+                uploadId,
+                Attachment.UploadState.InProgress(bytesUploaded, totalLength)
+            )
         }
     }
 

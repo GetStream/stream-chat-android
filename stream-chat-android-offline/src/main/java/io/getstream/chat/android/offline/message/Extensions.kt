@@ -43,4 +43,7 @@ internal fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
 internal fun Message.hasAttachments(): Boolean = attachments.isNotEmpty()
 
 internal fun Message.hasPendingAttachments(): Boolean =
-    attachments.any { it.uploadState is Attachment.UploadState.InProgress }
+    attachments.any {
+        it.uploadState is Attachment.UploadState.InProgress ||
+            it.uploadState is Attachment.UploadState.Idle
+    }

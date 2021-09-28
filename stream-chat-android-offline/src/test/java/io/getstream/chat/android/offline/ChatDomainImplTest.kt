@@ -14,6 +14,7 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -79,7 +80,7 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress(10) },
+                    randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )

@@ -28,5 +28,20 @@ public interface ProgressCallback {
      *
      * @param progress value between 0 - 100 (percentage of total attachment size)
      */
+    @Deprecated(
+        message = "onProgress with percentage progress is deprecated. Use onProgress(bytesUploaded: Long, totalLength: Long) instead.",
+        replaceWith = ReplaceWith("onProgress(bytesUploaded: Long, totalLength: Long)"),
+        level = DeprecationLevel.WARNING
+    )
     public fun onProgress(progress: Long)
+
+    /**
+     * Called when the attachment upload is in progress.
+     *
+     * @param bytesUploaded count of bytes uploaded.
+     * @param totalLength total bytes count of attachment.
+     */
+    public fun onProgress(bytesUploaded: Long, totalLength: Long) {
+        onProgress((100 * bytesUploaded) / totalLength)
+    }
 }

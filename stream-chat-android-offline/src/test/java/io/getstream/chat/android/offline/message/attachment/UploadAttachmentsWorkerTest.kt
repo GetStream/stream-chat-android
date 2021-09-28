@@ -15,6 +15,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.test.positiveRandomLong
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,7 @@ internal class UploadAttachmentsWorkerTest {
 
     private val attachmentsPending = mutableListOf(
         randomAttachment {
-            this.uploadState = Attachment.UploadState.InProgress(0)
+            this.uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30)
         }
     )
 

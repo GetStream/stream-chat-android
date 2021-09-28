@@ -32,7 +32,7 @@ internal class ProgressRequestBody(
             while (fis.read(buffer).also { read = it } != -1) {
                 sink.write(buffer, 0, read)
                 uploaded += read.toLong()
-                withCallback { onProgress((100 * uploaded / total)) }
+                withCallback { onProgress(uploaded, total) }
             }
         }
 
