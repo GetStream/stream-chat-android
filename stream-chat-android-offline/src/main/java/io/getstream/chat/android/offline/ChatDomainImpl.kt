@@ -647,7 +647,7 @@ internal class ChatDomainImpl internal constructor(
             )
             val response = queryChannelController.runQueryOnline(pagination)
             if (response.isSuccess) {
-                queryChannelController.updateOnlineChannels(response.data(), queryChannelController.isFirstRequest)
+                queryChannelController.updateOnlineChannels(response.data(), true)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
