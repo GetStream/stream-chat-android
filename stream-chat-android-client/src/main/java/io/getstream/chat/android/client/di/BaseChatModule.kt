@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
 import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
-import io.getstream.chat.android.client.api.interceptor.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.interceptor.ProgressInterceptor
 import io.getstream.chat.android.client.api.interceptor.TokenAuthInterceptor
 import io.getstream.chat.android.client.api2.ChannelApi
@@ -42,7 +41,6 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.Executor
@@ -55,7 +53,8 @@ internal open class BaseChatModule(
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
-    private val loggingInterceptor: Interceptor = HttpLoggingInterceptor()
+    private val customOkHttpClient: OkHttpClient? = null,
+    private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
@@ -130,7 +129,7 @@ internal open class BaseChatModule(
     }
 
     // Create Builders from a single client to share threadpools
-    private val baseClient: OkHttpClient by lazy { OkHttpClient() }
+    private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
     private fun baseClientBuilder(): OkHttpClient.Builder =
         baseClient.newBuilder().followRedirects(false)
 
@@ -148,7 +147,7 @@ internal open class BaseChatModule(
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
-            .addInterceptor(loggingInterceptor)
+            .let(httpClientConfig)
             .addInterceptor(
                 TokenAuthInterceptor(
                     tokenManager,
