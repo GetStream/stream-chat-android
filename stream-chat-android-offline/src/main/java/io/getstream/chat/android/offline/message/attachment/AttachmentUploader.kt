@@ -45,8 +45,8 @@ internal class AttachmentUploader(
                     it
                 }
             }
-            attachment.uploadState = Attachment.UploadState.Success
-            progressCallback?.onSuccess(file.absolutePath)
+            augmentedAttachment.uploadState = Attachment.UploadState.Success
+            progressCallback?.onSuccess(augmentedAttachment.url)
             Result(augmentedAttachment)
         } else {
             attachment.uploadState = Attachment.UploadState.Failed(result.error())

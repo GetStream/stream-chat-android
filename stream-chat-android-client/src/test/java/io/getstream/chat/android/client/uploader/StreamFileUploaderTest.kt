@@ -32,7 +32,7 @@ internal class StreamFileUploaderTest {
     private val url = "url"
 
     private val progressCallback = object : ProgressCallback {
-        override fun onSuccess(file: String) = Unit
+        override fun onSuccess(attachmentUrl: String) = Unit
 
         override fun onError(error: ChatError) = Unit
 

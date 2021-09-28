@@ -688,7 +688,6 @@ public class ChannelController internal constructor(
             }.toMutableList()
         }.also {
             message.attachments = it
-
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             domainImpl.repos.deleteChannelMessage(message)
             domainImpl.repos.insertMessage(message)
@@ -698,11 +697,14 @@ public class ChannelController internal constructor(
     private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
         val message = _messages.value[messageId]
         if (message != null) {
-            val attachment = message.attachments.firstOrNull { it.uploadId == uploadId }
-            if (attachment != null) {
-                val newAttachments = message.attachments - attachment + attachment.copy(uploadState = newState)
-                val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-                val newMessages = _messages.value + (updatedMessage.id to updatedMessage)
+            val attachments = message.attachments.toMutableList()
+            val attachmentIdx = attachments.indexOfFirst { it.uploadId == uploadId }
+            if (attachmentIdx > -1) {
+                val attachment = attachments.removeAt(attachmentIdx)
+                val updatedAttachment = attachment.copy(uploadState = newState)
+                attachments.add(attachmentIdx, updatedAttachment)
+                val newMessage = message.copy(attachments = attachments)
+                val newMessages = _messages.value + (newMessage.id to newMessage)
                 _messages.value = newMessages
             }
         }
@@ -1517,8 +1519,9 @@ public class ChannelController internal constructor(
         public data class Result(val messages: List<Message>) : MessagesState()
     }
 
-    internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) : ProgressCallback {
-        override fun onSuccess(file: String) {
+    internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) :
+        ProgressCallback {
+        override fun onSuccess(attachmentUrl: String?) {
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
