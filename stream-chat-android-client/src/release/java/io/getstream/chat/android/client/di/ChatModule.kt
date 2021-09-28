@@ -18,7 +18,8 @@ internal class ChatModule(
     uploader: FileUploader?,
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
-    loggingInterceptor: Interceptor,
+    customOkHttpClient: OkHttpClient?,
+    httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder,
 ) : BaseChatModule(
     appContext,
     config,
@@ -26,5 +27,6 @@ internal class ChatModule(
     uploader,
     tokenManager,
     callbackExecutor,
-    loggingInterceptor
+    customOkHttpClient,
+    httpClientConfig
 )
