@@ -1675,8 +1675,7 @@ public class ChatClient internal constructor(
                     fileUploader,
                     tokenManager,
                     callbackExecutor,
-                    customOkHttpClient,
-                    httpClientConfig
+                    customOkHttpClient
                 )
 
             val result = ChatClient(
