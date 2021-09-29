@@ -5,8 +5,8 @@ import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 
-internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
-    var itemList: MutableList<T> = mutableListOf()
+public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
+    public var itemList: MutableList<T> = mutableListOf()
 
     final override fun getItemCount(): Int = itemList.size
 
@@ -14,13 +14,13 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         holder.bind(itemList[position])
     }
 
-    fun setItems(items: List<T>) {
+    public fun setItems(items: List<T>) {
         this.itemList.clear()
         this.itemList.addAll(items)
         notifyDataSetChanged()
     }
 
-    fun removeItem(item: T) {
+    public fun removeItem(item: T) {
         val index = itemList.indexOf(item)
         if (index != -1) {
             itemList.remove(item)
@@ -28,7 +28,7 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         }
     }
 
-    fun clear() {
+    public fun clear() {
         itemList.clear()
         notifyDataSetChanged()
     }
@@ -39,11 +39,11 @@ internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHo
         holder.unbind()
     }
 
-    abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val context: Context = itemView.context
+    public abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        public val context: Context = itemView.context
 
-        abstract fun bind(item: T)
+        public abstract fun bind(item: T)
 
-        open fun unbind() {}
+        public open fun unbind() {}
     }
 }

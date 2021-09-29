@@ -86,6 +86,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
@@ -599,6 +600,14 @@ public class MessageListView : ConstraintLayout {
         )
     }
 
+    private fun defaultMessageListItemViewHolderFactory(): MessageListItemViewHolderFactory {
+        return MessageListItemViewHolderFactory().apply {
+            setAttachmentViewHolderFactory(
+                AttachmentViewHolderFactoryImpl({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
+            )
+        }
+    }
+
     private fun initAdapter() {
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
@@ -611,7 +620,7 @@ public class MessageListView : ConstraintLayout {
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = defaultMessageListItemViewHolderFactory()
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -1291,7 +1300,6 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
-
 
     /**
      * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].

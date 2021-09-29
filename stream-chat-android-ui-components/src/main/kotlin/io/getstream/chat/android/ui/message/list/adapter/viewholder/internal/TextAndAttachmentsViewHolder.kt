@@ -14,14 +14,14 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentAdapterFactory
 import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
+import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -35,7 +35,7 @@ internal class TextAndAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
-    private val attachmentAdapterFactory: AttachmentAdapterFactory,
+    private val attachmentViewHolderFactory: AttachmentViewHolderFactory,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -45,7 +45,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private lateinit var adapter: SimpleListAdapter<AttachmentGroup, out SimpleListAdapter.ViewHolder<AttachmentGroup>>
+    private lateinit var adapter: FileAttachmentsAdapter
 
     init {
         binding.run {
@@ -84,7 +84,10 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        adapter = attachmentAdapterFactory.adapter(AttachmentGroup(data.message.attachments))
+        attachmentViewHolderFactory.setUp(data.message.attachments)
+        adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
+
+        // adapter = attachmentViewHolderFactory.adapter(AttachmentGroup(data.message.attachments))
         binding.run {
             attachmentsRecycler.layoutManager = LinearLayoutManager(context)
             attachmentsRecycler.adapter = adapter

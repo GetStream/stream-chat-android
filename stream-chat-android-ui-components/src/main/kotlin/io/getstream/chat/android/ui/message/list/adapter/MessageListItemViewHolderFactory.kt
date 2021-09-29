@@ -19,9 +19,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
-import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentAdapterFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ErrorMessageViewHolder
@@ -44,6 +43,8 @@ public open class MessageListItemViewHolderFactory {
 
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
+    private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
     }
@@ -58,6 +59,10 @@ public open class MessageListItemViewHolderFactory {
 
     internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {
         this.giphyViewHolderStyle = style
+    }
+
+    internal fun setAttachmentViewHolderFactory(attachmentAdapterFactory: AttachmentViewHolderFactory) {
+        this.attachmentViewHolderFactory = attachmentAdapterFactory
     }
 
     private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
@@ -102,7 +107,7 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
-            AttachmentAdapterFactory({}, {}, {}, style.fileAttachmentStyle)
+            attachmentViewHolderFactory
         )
     }
 
