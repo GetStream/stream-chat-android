@@ -108,7 +108,6 @@ public open class AttachmentViewFactory {
         return createAttachmentsView(attachments, parent.context).also {
             when (it) {
                 is MediaAttachmentsGroupView -> setupMediaAttachmentView(it, attachments, listeners, data)
-                // is FileAttachmentsView -> setupFileAttachmentsView(it, attachments, listeners, data.message)
             }
         }
     }

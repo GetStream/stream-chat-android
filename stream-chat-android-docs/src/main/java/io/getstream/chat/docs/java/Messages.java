@@ -443,11 +443,6 @@ public class Messages {
 
         private MessageListView messageListView;
 
-//        public void setAttachmentFactory() {
-//            AttachmentViewFactory attachmentViewFactory = new CustomAttachmentViewFactory();
-//            messageListView.setAttachmentViewFactory(attachmentViewFactory);
-//        }
-
         private class MyAttachmentViewFactory extends AttachmentViewFactory {
 
             private static final String MY_URL_ADDRESS = "https://myurl.com";
