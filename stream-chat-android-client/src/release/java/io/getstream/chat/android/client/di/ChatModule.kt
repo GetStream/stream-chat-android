@@ -19,7 +19,8 @@ internal class ChatModule(
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
     customOkHttpClient: OkHttpClient?,
-) : BaseChatModule(appContext,
+) : BaseChatModule(
+    appContext,
     config,
     notificationsHandler,
     uploader,

@@ -22,7 +22,7 @@ internal class ChatModule(
     uploader: FileUploader?,
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
-    customOkHttpClient: OkHttpClient?
+    customOkHttpClient: OkHttpClient?,
 ) : BaseChatModule(
     appContext,
     config,
