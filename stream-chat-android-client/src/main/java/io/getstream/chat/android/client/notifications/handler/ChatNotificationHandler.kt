@@ -28,6 +28,8 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
     public override val config: NotificationConfig = NotificationConfig(),
+    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
+        { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! },
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
@@ -168,9 +170,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         messageId: String,
         channelType: String,
         channelId: String,
-    ): Intent {
-        return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
-    }
+    ): Intent = newMessageIntent(messageId, channelType, channelId)
 
     /**
      * Dismiss notifications from a given [channelType] and [channelId].
