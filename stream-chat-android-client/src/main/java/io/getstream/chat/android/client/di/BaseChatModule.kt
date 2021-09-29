@@ -141,10 +141,15 @@ internal open class BaseChatModule(
         isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
         return baseClientBuilder()
+            .apply {
+                if (baseClient != customOkHttpClient) {
+                    connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                    writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                    readTimeout(timeout, TimeUnit.MILLISECONDS)
+                }
+            }
             // timeouts
-            .connectTimeout(timeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
-            .readTimeout(timeout, TimeUnit.MILLISECONDS)
+
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
