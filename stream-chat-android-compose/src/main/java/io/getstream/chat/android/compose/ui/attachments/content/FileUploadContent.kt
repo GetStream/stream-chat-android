@@ -105,9 +105,19 @@ public fun FileUploadItem(attachment: Attachment) {
     }
 }
 
+/**
+ * Displays the progress information of a file upload, showing how many
+ * [uploadedBytes] are completed out of [totalBytes].
+ *
+ * @param uploadedBytes The amount of bytes already transferred.
+ * @param totalBytes The total size of the file being uploaded.
+ */
 @Composable
 private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         LoadingView(modifier = Modifier.size(12.dp))
 
         Spacer(modifier = Modifier.size(8.dp))
