@@ -22,7 +22,7 @@ public fun ChannelListViewModel.bindView(
     lifecycleOwner: LifecycleOwner,
 ) {
     state.observe(lifecycleOwner) { channelState ->
-        if (channelState.isLoading && channelState.channels.isEmpty()) {
+        if (channelState.isLoading) {
             view.showLoadingView()
         } else {
             view.hideLoadingView()

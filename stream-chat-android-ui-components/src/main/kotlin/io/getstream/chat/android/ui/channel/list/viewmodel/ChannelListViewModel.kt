@@ -69,7 +69,7 @@ public class ChannelListViewModel(
                 val queryChannelsController = queryChannelsControllerResult.data()
 
                 val channelState = queryChannelsController.channelsState.map { channelState ->
-                    handleChannelState(channelState, queryChannelsController.mutedChannelIds.value, stateMerger.value)
+                    handleChannelState(channelState, queryChannelsController.mutedChannelIds.value)
                 }.asLiveData()
 
                 stateMerger.addSource(channelState) { state -> stateMerger.value = state }
@@ -97,12 +97,11 @@ public class ChannelListViewModel(
     private fun handleChannelState(
         channelState: QueryChannelsController.ChannelsState,
         channelMutesIds: List<String>,
-        currentState: State?
     ): State {
         return when (channelState) {
             is QueryChannelsController.ChannelsState.NoQueryActive,
             is QueryChannelsController.ChannelsState.Loading,
-            -> State(isLoading = true, currentState?.channels ?: emptyList())
+            -> State(isLoading = true, emptyList())
             is QueryChannelsController.ChannelsState.OfflineNoResults -> State(
                 isLoading = false,
                 channels = emptyList(),
