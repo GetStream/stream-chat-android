@@ -69,6 +69,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the experience of creating the MessagesViewModelFactory with default arguments
 
 ### ✅ Added
 
