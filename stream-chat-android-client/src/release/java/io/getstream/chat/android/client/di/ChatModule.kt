@@ -19,14 +19,11 @@ internal class ChatModule(
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
     customOkHttpClient: OkHttpClient?,
-    httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder,
-) : BaseChatModule(
-    appContext,
+) : BaseChatModule(appContext,
     config,
     notificationsHandler,
     uploader,
     tokenManager,
     callbackExecutor,
-    customOkHttpClient,
-    httpClientConfig
+    customOkHttpClient
 )
