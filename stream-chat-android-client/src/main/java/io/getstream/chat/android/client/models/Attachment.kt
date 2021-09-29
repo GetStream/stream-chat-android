@@ -55,12 +55,12 @@ public data class Attachment(
         public data class InProgress(val bytesRead: Long, val totalBytes: Long) : UploadState()
 
         /**
-         * When the attachment is uploaded successfully, it turns the state into Success.
+         * State indicating that the attachment was uploaded successfully
          */
         public object Success : UploadState()
 
         /**
-         * When the attachment upload fails, it's upload state become Failed having a reason of failue.
+         * State indicating that the attachment upload failed.
          */
         public data class Failed(val error: ChatError) : UploadState()
     }
