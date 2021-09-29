@@ -90,7 +90,7 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupUploads(data: MessageListItem.MessageItem) {
         val totalAttachmentsCount = data.message.attachments.size
         var completedAttachmentsCount =
-            data.message.attachments.filter { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }.size
+            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
         if (completedAttachmentsCount == totalAttachmentsCount) {
             binding.sentFiles.isVisible = false
         } else {
