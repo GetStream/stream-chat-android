@@ -1,0 +1,50 @@
+name: Diffuse
+on: [pull_request]
+
+env:
+  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
+  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
+  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
+  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+
+jobs:
+  # Checkout develop branch and build
+  build-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: develop
+      - name: Build Develop
+        run: ./gradlew :stream-chat-android-client:assembleRelease && mv stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release.aar stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-develop.aar
+      - name: Upload AAR
+        uses: actions/upload-artifact@v1
+        with:
+          name: libs
+          path: stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-develop.aar
+
+  # Checkout PR branch and build
+  build-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build PR
+        run: ./gradlew :stream-chat-android-client:assembleRelease && mv stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release.aar stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-pr.aar
+      - name: Upload AAR
+        uses: actions/upload-artifact@v1
+        with:
+          name: libs
+          path: stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-pr.aar
+
+  # Execute Diffuse only when the two AARs are built successfully
+  diffuse:
+    needs: [build-develop, build-pr]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download AAR
+        uses: actions/download-artifact@v1
+        with:
+          name: libs
+      - name: Execute Diffuse
+        run: java -jar scripts/diffuse.jar diff --aar libs/stream-chat-android-client-release-develop.aar libs/stream-chat-android-client-release-pr.aar
