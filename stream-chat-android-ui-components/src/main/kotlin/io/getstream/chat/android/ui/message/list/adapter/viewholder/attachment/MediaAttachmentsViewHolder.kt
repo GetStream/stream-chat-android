@@ -1,14 +1,14 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
 import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 
 internal class MediaAttachmentsViewHolder(
-    private val view: MediaAttachmentsGroupView
-): SimpleListAdapter.ViewHolder<AttachmentGroup>(view.rootView) {
+    private val binding: StreamUiItemImageAttachmentBinding,
+): SimpleListAdapter.ViewHolder<AttachmentGroup>(binding.root) {
 
     override fun bind(item: AttachmentGroup) {
-        view.showAttachments(item.attachments)
+        binding.mediaAttachmentView.showAttachments(item.attachments)
     }
 }
