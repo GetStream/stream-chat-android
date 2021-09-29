@@ -622,7 +622,6 @@ public class MessageListView : ConstraintLayout {
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
-        // messageListItemViewHolderFactory.setAttachmentViewFactory(this.attachmentViewFactory)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
 

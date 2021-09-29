@@ -65,7 +65,7 @@
             android:layout_marginTop="8dp"
             android:visibility="gone"
             />
-        
+
         <LinearLayout
             android:id="@+id/attachmentsContainer"
             android:layout_width="match_parent"

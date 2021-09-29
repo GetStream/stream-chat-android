@@ -54,7 +54,6 @@ public open class AttachmentViewFactory {
                 parent
             )
             links.isNotEmpty() -> createLinkContent(links.first(), data.isMine, listeners, style, parent)
-            // attachments.isNotEmpty() -> createAttachmentsContent(data, listeners, attachments, parent)
             giphy.isNotEmpty() -> createAttachmentsContent(data, listeners, giphy, parent)
             else -> error("Can't create content view for the empty attachments collection")
         }
