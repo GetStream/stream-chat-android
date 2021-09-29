@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
  */
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    public override val config: NotificationConfig = NotificationConfig(),
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
         { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! },
 ) : NotificationHandler {
@@ -83,17 +82,25 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    public open fun getNotificationChannelId(): String = context.getString(config.notificationChannelId)
+    public open fun getNotificationChannelId(): String = context.getString(R.string.stream_chat_notification_channel_id)
+    public open fun getNotificationChannelName(): String = context.getString(R.string.stream_chat_notification_channel_name)
 
-    public open fun getNotificationChannelName(): String =
-        context.getString(config.notificationChannelName)
+    @Deprecated(
+        message = "It is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
+    public open fun getErrorCaseNotificationTitle(): String = ""
 
-    public open fun getErrorCaseNotificationTitle(): String =
-        context.getString(config.errorCaseNotificationTitle)
+    @Deprecated(
+        message = "It is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
+    public open fun getErrorCaseNotificationContent(): String = ""
 
-    public open fun getErrorCaseNotificationContent(): String =
-        context.getString(config.errorCaseNotificationContent)
-
+    @Deprecated(
+        message = "Notification error is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
     public open fun buildErrorCaseNotification(): Notification {
         return getNotificationBuilder(
             contentTitle = getErrorCaseNotificationTitle(),
@@ -131,7 +138,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
     public open fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
-            contentText = context.getString(config.notificationGroupSummaryContentText),
+            contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {
@@ -139,10 +146,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
+    @Deprecated(
+        message = "Notification error is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
     public open fun buildErrorNotificationGroupSummary(): Notification {
         return getNotificationBuilder(
-            contentTitle = context.getString(config.errorNotificationGroupSummaryTitle),
-            contentText = context.getString(config.errorNotificationGroupSummaryContentText),
+            contentTitle = "",
+            contentText = "",
             groupKey = getErrorNotificationGroupKey(),
             getErrorCaseIntent(),
         ).apply {
@@ -213,7 +224,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         return NotificationCompat.Builder(context, getNotificationChannelId())
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true)
-            .setSmallIcon(config.smallIcon)
+            .setSmallIcon(R.drawable.stream_ic_notification)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
