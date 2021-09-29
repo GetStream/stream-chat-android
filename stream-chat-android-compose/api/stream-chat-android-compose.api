@@ -505,7 +505,7 @@ public final class io/getstream/chat/android/compose/ui/common/LoadingViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/MessageBubbleKt {
-	public static final fun MessageBubble-euL9pac (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageBubble-yWKOrZg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/NetworkLoadingViewKt {
