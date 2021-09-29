@@ -96,7 +96,7 @@ public fun SelectedMessageOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay.copy(alpha = 0.7f))
+            .background(ChatTheme.colors.overlay)
             .clickable(
                 onClick = onDismiss,
                 indication = null,
