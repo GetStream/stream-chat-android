@@ -1572,7 +1572,6 @@ public class ChatClient internal constructor(
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
-        private var httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
