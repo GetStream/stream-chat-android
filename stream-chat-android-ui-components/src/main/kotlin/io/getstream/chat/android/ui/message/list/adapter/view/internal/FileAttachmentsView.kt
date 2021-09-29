@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -188,10 +187,10 @@ private class FileAttachmentViewHolder(
     }
 
     private fun subscribeForProgressIfNeeded(attachment: Attachment) {
-        if (attachment.uploadState is Attachment.UploadState.Idle) {
+        val uploadState = attachment.uploadState
+        if (uploadState is Attachment.UploadState.Idle) {
             handleInProgressAttachment(binding.fileSize, 0L, attachment.upload?.length() ?: 0)
-        } else if (attachment.uploadState is Attachment.UploadState.InProgress) {
-            val uploadState = attachment.uploadState as Attachment.UploadState.InProgress
+        } else if (uploadState is Attachment.UploadState.InProgress) {
             handleInProgressAttachment(binding.fileSize, uploadState.bytesRead, uploadState.totalBytes)
         }
     }
