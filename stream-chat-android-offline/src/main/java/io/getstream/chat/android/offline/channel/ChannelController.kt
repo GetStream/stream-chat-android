@@ -697,11 +697,11 @@ public class ChannelController internal constructor(
     private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
         val message = _messages.value[messageId]
         if (message != null) {
-            val newAttachments = message.attachments.fold(emptyList<Attachment>()) { acc, item ->
-                if (item.uploadId == uploadId) {
-                    acc + item.copy(uploadState = newState)
+            val newAttachments = message.attachments.map { attachment ->
+                if (attachment.uploadId == uploadId) {
+                    attachment.copy(uploadState = newState)
                 } else {
-                    acc + item
+                    attachment
                 }
             }
             val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
