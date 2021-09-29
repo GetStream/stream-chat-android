@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -36,6 +37,7 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewHolderFactory: AttachmentViewHolderFactory,
+    private val recycledViewPool: RecyclerView.RecycledViewPool,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -87,9 +89,9 @@ internal class TextAndAttachmentsViewHolder(
         attachmentViewHolderFactory.setUp(data.message.attachments)
         adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
 
-        // adapter = attachmentViewHolderFactory.adapter(AttachmentGroup(data.message.attachments))
         binding.run {
             attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+            attachmentsRecycler.setRecycledViewPool(recycledViewPool)
             attachmentsRecycler.adapter = adapter
         }
 

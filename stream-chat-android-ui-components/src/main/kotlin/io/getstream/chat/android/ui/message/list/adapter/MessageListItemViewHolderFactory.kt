@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
@@ -44,6 +45,8 @@ public open class MessageListItemViewHolderFactory {
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+
+    internal var attachmentsRecycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
@@ -107,7 +110,8 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
-            attachmentViewHolderFactory
+            attachmentViewHolderFactory,
+            attachmentsRecycledViewPool
         )
     }
 
