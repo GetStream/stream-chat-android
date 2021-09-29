@@ -74,6 +74,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved overlays in all components, to match the same design and opacity
+- Added smaller animations to the AttachmentPicker in the MessagesScreen
 
 ### ✅ Added
 
