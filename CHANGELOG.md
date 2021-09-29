@@ -27,8 +27,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the possibility to add your own instance of OkHttpClient with `ChatClient.customOkHttpClient`.
-- Added the possibility to customize OkHttpClient with `ChatClient.customizeOkHttpClient`
+- Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
+
 ### ⚠️ Changed
 
 ### ❌ Removed
