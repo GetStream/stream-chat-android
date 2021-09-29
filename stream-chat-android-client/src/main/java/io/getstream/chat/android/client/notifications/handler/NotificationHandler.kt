@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 
 public interface NotificationHandler {
-    public val config: NotificationConfig
 
     /**
      * Handles showing notification after receiving [NewMessageEvent] from other users.

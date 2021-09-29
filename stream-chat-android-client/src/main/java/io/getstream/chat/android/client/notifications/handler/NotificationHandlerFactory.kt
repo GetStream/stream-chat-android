@@ -8,11 +8,11 @@ public object NotificationHandlerFactory {
 
     public var newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null
 
-    public fun createNotificationHandler(context: Context, notificationConfig: NotificationConfig): NotificationHandler {
+    public fun createNotificationHandler(context: Context): NotificationHandler {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            MessagingStyleNotificationHandler(context, notificationConfig, getNewMessageIntent(context))
+            MessagingStyleNotificationHandler(context, getNewMessageIntent(context))
         } else {
-            ChatNotificationHandler(context, notificationConfig, getNewMessageIntent(context))
+            ChatNotificationHandler(context, getNewMessageIntent(context))
         }
     }
 

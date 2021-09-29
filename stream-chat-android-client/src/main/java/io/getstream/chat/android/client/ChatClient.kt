@@ -1574,6 +1574,7 @@ public class ChatClient internal constructor(
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: NotificationHandler? = null
+        private var notificationConfig: NotificationConfig = NotificationConfig()
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
@@ -1617,9 +1618,13 @@ public class ChatClient internal constructor(
          *
          * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
          */
-        public fun notifications(notificationsHandler: NotificationHandler): Builder {
+        @JvmOverloads
+        public fun notifications(
+            notificationConfig: NotificationConfig,
+            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+        ): Builder = apply {
+            this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
-            return this
         }
 
         /**
@@ -1748,7 +1753,8 @@ public class ChatClient internal constructor(
                 ChatModule(
                     appContext,
                     config,
-                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext, NotificationConfig()),
+                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
+                    notificationConfig,
                     fileUploader,
                     tokenManager,
                     callbackExecutor,

@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,7 @@ public interface ChatNotifications {
 
 internal class ChatNotificationsImpl constructor(
     private val handler: NotificationHandler,
+    private val pushDeviceGenerators: List<PushDeviceGenerator>,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
@@ -36,7 +38,7 @@ internal class ChatNotificationsImpl constructor(
     private val showedMessages = mutableSetOf<String>()
 
     override fun onSetUser() {
-        handler.config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+        pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.asyncGenerateDevice(::setDevice)
     }
 
@@ -101,9 +103,6 @@ internal class ChatNotificationsImpl constructor(
             channelId = channelId,
             channelType = channelType,
             messageId = messageId,
-            notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
-            notificationIcon = handler.config.loadNotificationDataIcon,
-            notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
         )
     }
 

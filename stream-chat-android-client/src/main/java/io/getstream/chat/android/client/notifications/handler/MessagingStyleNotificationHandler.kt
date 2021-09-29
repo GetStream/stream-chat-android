@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -21,7 +22,6 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.M)
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
-    override val config: NotificationConfig,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
         { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! }
 ) : NotificationHandler {
@@ -45,7 +45,7 @@ internal class MessagingStyleNotificationHandler(
         )
         val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
         val notification = NotificationCompat.Builder(context, getNotificationChannelId())
-            .setSmallIcon(config.smallIcon)
+            .setSmallIcon(R.drawable.stream_ic_notification)
             .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage()))
             .setContentIntent(contentPendingIntent)
             .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
@@ -100,12 +100,12 @@ internal class MessagingStyleNotificationHandler(
     private fun createNotificationChannel(): NotificationChannel {
         return NotificationChannel(
             getNotificationChannelId(),
-            context.getString(config.notificationChannelName),
+            context.getString(R.string.stream_chat_notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT,
         )
     }
 
-    private fun getNotificationChannelId() = context.getString(config.notificationChannelId)
+    private fun getNotificationChannelId() = context.getString(R.string.stream_chat_notification_channel_id)
     private companion object {
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"
