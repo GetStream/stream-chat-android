@@ -5,7 +5,6 @@
 
     <!--Themes attributes-->
     <declare-styleable name="StreamUiStyleable">
-        <attr name="streamUiValidTheme" format="boolean" />
         <attr name="streamUiTheme" format="reference" />
         <attr name="streamUiMessageListStyle" format="reference" />
         <attr name="streamUiMessageListMediaAttachmentStyle" format="reference" />

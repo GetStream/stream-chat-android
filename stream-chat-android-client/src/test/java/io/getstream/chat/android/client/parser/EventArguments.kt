@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.parser
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
+import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
@@ -17,6 +18,7 @@ import io.getstream.chat.android.client.createMemberAddedEventStringJson
 import io.getstream.chat.android.client.createMemberRemovedEventStringJson
 import io.getstream.chat.android.client.createMemberUpdatedEventStringJson
 import io.getstream.chat.android.client.createMessageDeletedEventStringJson
+import io.getstream.chat.android.client.createMessageDeletedServerSideEventStringJson
 import io.getstream.chat.android.client.createMessageReadEventStringJson
 import io.getstream.chat.android.client.createMessageUpdatedEventStringJson
 import io.getstream.chat.android.client.createNewMessageEventStringJson
@@ -180,13 +182,15 @@ internal object EventArguments {
     private val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, date, cid, channelType, channelId, channel, user)
     private val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, date, cid, channelType, channelId, user, clearHistory = true)
     private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, channel)
+    private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, null, channel)
     private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
     private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)
     private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)
     private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId)
     private val memberUpdatedEvent = MemberUpdatedEvent(EventType.MEMBER_UPDATED, date, user, cid, channelType, channelId, member)
-    private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message)
+    private val messageDeletedEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, user, cid, channelType, channelId, message, hardDelete = false)
+    private val messageDeletedServerSideEvent = MessageDeletedEvent(EventType.MESSAGE_DELETED, date, null, cid, channelType, channelId, message, hardDelete = true)
     private val messageReadEvent = MessageReadEvent(EventType.MESSAGE_READ, date, user, cid, channelType, channelId)
     private val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, date, user, cid, channelType, channelId, message)
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, date, cid, channelType, channelId, channel, totalUnreadCount, unreadChannels)
@@ -224,6 +228,7 @@ internal object EventArguments {
 
     private fun eventArguments() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
+        Arguments.of(createChannelTruncatedServerSideEventStringJson(), channelTruncatedServerSideEvent),
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
         Arguments.of(createChannelUpdatedByUserEventStringJson(), channelUpdatedByUserEvent),
         Arguments.of(createChannelVisibleEventStringJson(), channelVisibleEvent),
@@ -231,6 +236,7 @@ internal object EventArguments {
         Arguments.of(createMemberRemovedEventStringJson(), memberRemovedEvent),
         Arguments.of(createMemberUpdatedEventStringJson(), memberUpdatedEvent),
         Arguments.of(createMessageDeletedEventStringJson(), messageDeletedEvent),
+        Arguments.of(createMessageDeletedServerSideEventStringJson(), messageDeletedServerSideEvent),
         Arguments.of(createMessageReadEventStringJson(), messageReadEvent),
         Arguments.of(createMessageUpdatedEventStringJson(), messageUpdatedEvent),
         Arguments.of(createNotificationAddedToChannelEventStringJson(), notificationAddedToChannelEvent),

@@ -37,7 +37,7 @@ internal data class DownstreamUserDto(
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
     val unread_count: Int = 0,
-    val mutes: List<DownstreamMuteDto> = emptyList(),
+    val mutes: List<DownstreamMuteDto>?,
     val teams: List<String> = emptyList(),
     val channel_mutes: List<DownstreamChannelMuteDto>?,
 

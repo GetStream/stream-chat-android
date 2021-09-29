@@ -14,15 +14,12 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 
 /**
@@ -71,12 +68,8 @@ public class ChannelListViewModel(
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
 
-                val channelState = chatDomain.user.filterNotNull().flatMapConcat { currentUser ->
-                    queryChannelsController.channelsState.map { channelState ->
-                        channelState to currentUser
-                    }
-                }.map { (channelState, currentUser) ->
-                    handleChannelState(channelState, currentUser)
+                val channelState = queryChannelsController.channelsState.map { channelState ->
+                    handleChannelState(channelState, queryChannelsController.mutedChannelIds.value)
                 }.asLiveData()
 
                 stateMerger.addSource(channelState) { state -> stateMerger.value = state }
@@ -103,7 +96,7 @@ public class ChannelListViewModel(
 
     private fun handleChannelState(
         channelState: QueryChannelsController.ChannelsState,
-        currentUser: User,
+        channelMutesIds: List<String>,
     ): State {
         return when (channelState) {
             is QueryChannelsController.ChannelsState.NoQueryActive,
@@ -116,10 +109,7 @@ public class ChannelListViewModel(
             is QueryChannelsController.ChannelsState.Result ->
                 State(
                     isLoading = false,
-                    channels = parseMutedChannels(
-                        channelState.channels,
-                        currentUser.channelMutes.map { channelMute -> channelMute.channel.id }
-                    ),
+                    channels = parseMutedChannels(channelState.channels, channelMutesIds),
                 )
         }
     }

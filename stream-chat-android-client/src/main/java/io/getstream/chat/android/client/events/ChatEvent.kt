@@ -109,9 +109,9 @@ public data class ChannelTruncatedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
-    override val user: User,
+    val user: User?,
     override val channel: Channel,
-) : CidEvent(), UserEvent, HasChannel
+) : CidEvent(), HasChannel
 
 /**
  * Triggered when a channel is updated. Could contain system [message].
@@ -205,12 +205,13 @@ public data class MemberUpdatedEvent(
 public data class MessageDeletedEvent(
     override val type: String,
     override val createdAt: Date,
-    override val user: User,
+    val user: User?,
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
     override val message: Message,
-) : CidEvent(), UserEvent, HasMessage
+    val hardDelete: Boolean,
+) : CidEvent(), HasMessage
 
 /**
  * Triggered when a channel is marked as read
