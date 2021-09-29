@@ -245,7 +245,7 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val loading = if (pagination.isFirstPage) {
+        val loading = if (_channels.value.isEmpty()) {
             _loading
         } else {
             _loadingMore
@@ -306,14 +306,14 @@ public class QueryChannelsController internal constructor(
      * Updates the state on the channelController based on the channel object we received from the API.
      *
      * @param channels The list of channels to update.
-     * @param isFirstPage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
+     * @param isFirstOnlinePage If it's the first page we set/replace the list of results. if it's not the first page we add to the list.
      *
      */
     internal suspend fun updateOnlineChannels(
         channels: List<Channel>,
-        isFirstPage: Boolean,
+        isFirstOnlinePage: Boolean,
     ) {
-        if (isFirstPage) {
+        if (isFirstOnlinePage) {
             (_channels.value - channels.map { it.cid }).values
                 .filterNot { newChannelEventFilter(it, filter) }
                 .map { it.cid }
