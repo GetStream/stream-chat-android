@@ -67,12 +67,20 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
+- General improvements in the Attachments API and the way we build different attachments
+- Allowed for better long clicks on attachments
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Removed AttachmentPicker option when editing messages
+- Removed Attachment previews when editing messages with attachments
+- Improved the ease of use of the AttachmentState API by keeping it state & actions only
+- Moved the `modifier` parameter outside of the AttachmentState to the AttachmentFactory
+- Updated Attachments to hold `Message` items instead of `MessageItem`s
 
 ### ❌ Removed
 
