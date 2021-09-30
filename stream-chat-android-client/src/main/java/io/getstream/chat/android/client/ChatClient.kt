@@ -1615,6 +1615,8 @@ public class ChatClient internal constructor(
          *
          * Use this to configure parameters like timeout values, or to
          * add interceptors to process all network requests.
+         *
+         * @param okHttpClient The client to use for API calls.
          */
         public fun okHttpClient(okHttpClient: OkHttpClient): Builder = apply {
             this.customOkHttpClient = okHttpClient
