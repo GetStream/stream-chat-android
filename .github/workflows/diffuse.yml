@@ -16,12 +16,12 @@ jobs:
         with:
           ref: develop
       - name: Build Develop
-        run: ./gradlew :stream-chat-android-client:assembleRelease && mv stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release.aar stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-develop.aar
+        run: ./gradlew :stream-chat-android-ui-components:assembleRelease && mv stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release.aar stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release-develop.aar
       - name: Upload AAR
         uses: actions/upload-artifact@v1
         with:
           name: libs
-          path: stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-develop.aar
+          path: stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release-develop.aar
 
   # Checkout PR branch and build
   build-pr:
@@ -29,12 +29,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build PR
-        run: ./gradlew :stream-chat-android-client:assembleRelease && mv stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release.aar stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-pr.aar
+        run: ./gradlew :stream-chat-android-ui-components:assembleRelease && mv stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release.aar stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release-pr.aar
       - name: Upload AAR
         uses: actions/upload-artifact@v1
         with:
           name: libs
-          path: stream-chat-android-client/build/outputs/aar/stream-chat-android-client-release-pr.aar
+          path: stream-chat-android-ui-components/build/outputs/aar/stream-chat-android-ui-components-release-pr.aar
 
   # Execute Diffuse only when the two AARs are built successfully
   diffuse:
@@ -47,4 +47,4 @@ jobs:
         with:
           name: libs
       - name: Execute Diffuse
-        run: java -jar scripts/diffuse.jar diff --aar libs/stream-chat-android-client-release-develop.aar libs/stream-chat-android-client-release-pr.aar
+        run: java -jar scripts/diffuse.jar diff --aar libs/stream-chat-android-ui-components-release-develop.aar libs/stream-chat-android-ui-components-release-pr.aar
