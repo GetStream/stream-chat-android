@@ -476,8 +476,8 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initRecyclerView() {
-        layoutManager = LinearLayoutManager(context).apply {
-            stackFromEnd = true
+        if (!::layoutManager.isInitialized) {
+            layoutManager = LinearLayoutManager(context)
         }
 
         binding.chatMessagesRV.apply {
@@ -630,6 +630,16 @@ public class MessageListView : ConstraintLayout {
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
+    }
+
+    /**
+     * Set a custom layout manager for MessageListView. This can be used to change orientation of messages.
+     *
+     * @param layoutManager
+     */
+    public fun setCustomLinearLayoutManager(layoutManager: LinearLayoutManager) {
+        this.layoutManager = layoutManager
+        binding.chatMessagesRV.layoutManager = this.layoutManager
     }
 
     /**
