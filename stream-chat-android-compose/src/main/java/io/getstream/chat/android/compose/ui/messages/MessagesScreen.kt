@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.ui.messages
 
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
@@ -40,7 +38,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -209,6 +206,7 @@ public fun MessagesScreen(
  *
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
+ * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
  */
 private fun buildViewModelFactory(
@@ -217,15 +215,10 @@ private fun buildViewModelFactory(
     enforceUniqueReactions: Boolean,
     messageLimit: Int,
 ): MessagesViewModelFactory {
-    val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-
     return MessagesViewModelFactory(
-        context,
-        clipboardManager,
-        ChatClient.instance(),
-        ChatDomain.instance(),
-        channelId,
-        enforceUniqueReactions,
-        messageLimit
+        context = context,
+        channelId = channelId,
+        enforceUniqueReactions = enforceUniqueReactions,
+        messageLimit = messageLimit
     )
 }

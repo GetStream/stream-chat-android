@@ -72,6 +72,7 @@
 ### ⬆️ Improved
 - General improvements in the Attachments API and the way we build different attachments
 - Allowed for better long clicks on attachments
+- Improved the experience of creating the MessagesViewModelFactory with default arguments
 
 ### ✅ Added
 
