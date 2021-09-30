@@ -1546,6 +1546,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
+	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
 	public final fun setDeletedMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
