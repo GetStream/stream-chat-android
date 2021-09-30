@@ -505,7 +505,7 @@ public final class io/getstream/chat/android/compose/ui/common/LoadingViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/MessageBubbleKt {
-	public static final fun MessageBubble-euL9pac (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageBubble-yWKOrZg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/NetworkLoadingViewKt {
@@ -929,7 +929,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Landroid/content/ClipboardManager;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;ZI)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;ZI)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;ZIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

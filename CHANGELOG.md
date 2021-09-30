@@ -12,29 +12,21 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
-- Notifications are dismissed after the user logout the SDK
 
 ### ⚠️ Changed
 
 ### ❌ Removed
 
-
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
-- Fixed sending custom attachments without files to upload
-- Fixed deserialization issues when parsing `ChannelTruncatedEvent` and `MessageDeletedEvent` events with an absent user.
 
 ### ⬆️ Improved
-- Custom attachment types are now preserved after file uploads
 
 ### ✅ Added
 - Added `hardDelete` field to `MessageDeletedEvent`.
@@ -59,11 +51,9 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fixed bug with light mode.
-- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your applcation theme instead. 
+
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -71,7 +61,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -79,17 +68,81 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
-- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
 
 ### ⚠️ Changed
 
 ### ❌ Removed
 
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 
+### ⬆️ Improved
+- Improved the experience of creating the MessagesViewModelFactory with default arguments
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# September 15th, 2021 - 4.19.0
+## Common changes for all artifacts
+### ✅ Added
+- Create new artifact to integrate Huawei Push Kit with Stream. You will need to add  `stream-chat-android-pushprovider-huawei` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei) for further details.
+
+## stream-chat-android
+### ✅ Added
+- Added a method to dismiss all notifications from a channel. It is handled internally from the SDK but you are able to dismiss channel notification at whatever time calling `ChatClient::dismissChannelNotifications`
+- Notifications are dismissed after the user logout the SDK
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed sending messages using `ChatClient::sendMessage` without explicitly specifying the sender user id.
+- Fixed sending custom attachments without files to upload
+- Fixed deserialization issues when parsing `ChannelTruncatedEvent` and `MessageDeletedEvent` events with an absent user.
+
+### ⬆️ Improved
+- Custom attachment types are now preserved after file uploads
+
+### ✅ Added
+- Added `hardDelete` field to `MessageDeletedEvent`.
+
+### ⚠️ Changed
+- Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed bug with light mode.
+- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your applcation theme instead.
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Notifications are dismissed after the user go into the channel conversation when you are using `MessageListView`
+- Added `bubbleBorderColorMine`, `bubbleBorderColorTheirs`, `bubbleBorderWidthMine`, `bubbleBorderWidthTheirs` to `ViewReactionsViewStyle` for customizing reactions` border
+
+## stream-chat-android-compose
 ### ⬆️ Improved
 - Updated the Compose framework version (1.0.2)
 - Updated the Accompanist library version (0.18.0)
@@ -113,28 +166,12 @@
 ### ❌ Removed
 
 ## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added a `FirebaseMessagingDelegate` class to simplify custom implementations of `FirebaseMessagingService` that forward messages to the SDK. See [Using a Custom Firebase Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service) for more details.
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added a `HuaweiMessagingDelegate` class to simplify custom implementations of `HmsMessageService` that forward messages to the SDK. See [Using a Custom Huawei Messaging Service](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei#using-a-custom-huawei-messaging-service) for more details.
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 15th, 2021 - 4.18.0
 ## stream-chat-android-client
@@ -212,8 +249,8 @@
 ## Common changes for all artifacts
 ### ⬆️ Improved
 - Now we provide SNAPSHOT versions of our SDK for every commit arrives to the `develop` branch.
-They shouldn't be used for a production release because they could contains some known bugs or breaking changes that will be fixed before a normal version is released, but you can use them to fetch last changes from our SDK
-To use them you need add a new maven repository to your `build.gradle` file and use the SNAPSHOT.
+  They shouldn't be used for a production release because they could contains some known bugs or breaking changes that will be fixed before a normal version is released, but you can use them to fetch last changes from our SDK
+  To use them you need add a new maven repository to your `build.gradle` file and use the SNAPSHOT.
 ```
  maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 ```
@@ -282,7 +319,7 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
   - `ChannelListActivity` - thin wrapper around `ChannelListFragment`
   - `MessageListFragment` - message list screen which internally contains `MessageListHeaderView`, `MessageListView`, `MessageInputView`.
   - `MessageListActivity` - thin wrapper around `MessageListFragment`
-  Check [ChannelListScreen](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-screen/) and [MessageListScreen](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-screen/) docs for further details.
+    Check [ChannelListScreen](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-screen/) and [MessageListScreen](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-screen/) docs for further details.
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -318,7 +355,7 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
   - Japanese
   - Korean
   - Spanish
- You can disable them by explicitly setting `resConfigs` inside `build.gradle` file. Check our [docs](https://getstream.io/chat/docs/sdk/android/ui/guides/custom-translations/) for further details.
+    You can disable them by explicitly setting `resConfigs` inside `build.gradle` file. Check our [docs](https://getstream.io/chat/docs/sdk/android/ui/guides/custom-translations/) for further details.
 ### ⚠️ Changed
 - 🚨 Breaking change: Firebase dependencies have been extracted from our SDK. If you want to continue working with Firebase Push Notification you need to add `stream-chat-android-pushprovider-firebase` artifact to your App
   Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/) for further details.
@@ -367,7 +404,7 @@ Giving that our last SDK version is `X.Y.Z`, the SNAPSHOT version would be `X.Y.
   - Added `MessageListView::setMessagePinHandler` and `MessageListView::setMessageUnpinHandler` methods to provide custom handlers for aforementioned button
   - Added `PinnedMessageListView` to display a list of pinned messages. The view is supposed to be used with `PinnedMessageListViewModel` and `PinnedMessageListViewModelFactory`
 - Possibility to transform MessageItems before the are displayed in the screen.
-Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
+  Use the `MessageListView.setMessageItemTransformer` for make the necessary transformation. This example makes groups of messages if they were created less than one hour apart:
 ```
 binding.messageListView.setMessageItemTransformer { list ->
   list.mapIndexed { i, messageItem ->
@@ -406,9 +443,9 @@ binding.messageListView.setMessageItemTransformer { list ->
 
 ### ⚠️ Changed
 - 🚨 Breaking change: the deleted `MessageListItem.MessageItem` elements are now displayed by default to all the users. This default behavior can be customized using `MessageListView::setDeletedMessageListItemPredicate` function. This function takes an instance of `MessageListItemPredicate`. You can pass one of the following objects:
-    * `DeletedMessageListItemPredicate.VisibleToEveryone`
-    * `DeletedMessageListItemPredicate.NotVisibleToAnyone`
-    * or `DeletedMessageListItemPredicate.VisibleToAuthorOnly`
+  * `DeletedMessageListItemPredicate.VisibleToEveryone`
+  * `DeletedMessageListItemPredicate.NotVisibleToAnyone`
+  * or `DeletedMessageListItemPredicate.VisibleToAuthorOnly`
     Alternatively you can pass your custom implementation by implementing the `MessageListItemPredicate` interface if you need to customize it more deeply.
 
 ## stream-chat-android-compose
@@ -582,97 +619,97 @@ in your Manifest file:
   - `streamUiTypingIndicatorUsersTextSize`, `streamUiTypingIndicatorUsersTextColor`, `streamUiTypingIndicatorUsersTextFont`, `streamUiTypingIndicatorUsersTextFontAssets`, `streamUiTypingIndicatorUsersTextStyle` attributes to customize typing users text
 - Added possibility to customize `TypingIndicatorView` style via `TransformStyle.typingIndicatorViewStyleTransformer`
 - Added new properties allowing customizing `MessageInputView` using `MessageInputViewStyle` and `AttachmentSelectionDialogStyle`:
-    - `MessageInputViewStyle.fileNameTextStyle`
-    - `MessageInputViewStyle.fileSizeTextStyle`
-    - `MessageInputViewStyle.fileCheckboxSelectorDrawable`
-    - `MessageInputViewStyle.fileCheckboxTextColor`
-    - `MessageInputViewStyle.fileAttachmentEmptyStateTextStyle`
-    - `MessageInputViewStyle.mediaAttachmentEmptyStateTextStyle`
-    - `MessageInputViewStyle.fileAttachmentEmptyStateText`
-    - `MessageInputViewStyle.mediaAttachmentEmptyStateText`
-    - `MessageInputViewStyle.dismissIconDrawable`
-    - `AttachmentSelectionDialogStyle.allowAccessToGalleryText`
-    - `AttachmentSelectionDialogStyle.allowAccessToFilesText`
-    - `AttachmentSelectionDialogStyle.allowAccessToCameraText`
-    - `AttachmentSelectionDialogStyle.allowAccessToGalleryIcon`
-    - `AttachmentSelectionDialogStyle.allowAccessToFilesIcon`
-    - `AttachmentSelectionDialogStyle.allowAccessToCameraIcon`
-    - `AttachmentSelectionDialogStyle.grantPermissionsTextStyle`
-    - `AttachmentSelectionDialogStyle.recentFilesTextStyle`
-    - `AttachmentSelectionDialogStyle.recentFilesText`
-    - `AttachmentSelectionDialogStyle.fileManagerIcon`
-    - `AttachmentSelectionDialogStyle.videoDurationTextStyle`
-    - `AttachmentSelectionDialogStyle.videoIconDrawable`
-    - `AttachmentSelectionDialogStyle.videoIconVisible`
-    - `AttachmentSelectionDialogStyle.videoLengthLabelVisible`
+  - `MessageInputViewStyle.fileNameTextStyle`
+  - `MessageInputViewStyle.fileSizeTextStyle`
+  - `MessageInputViewStyle.fileCheckboxSelectorDrawable`
+  - `MessageInputViewStyle.fileCheckboxTextColor`
+  - `MessageInputViewStyle.fileAttachmentEmptyStateTextStyle`
+  - `MessageInputViewStyle.mediaAttachmentEmptyStateTextStyle`
+  - `MessageInputViewStyle.fileAttachmentEmptyStateText`
+  - `MessageInputViewStyle.mediaAttachmentEmptyStateText`
+  - `MessageInputViewStyle.dismissIconDrawable`
+  - `AttachmentSelectionDialogStyle.allowAccessToGalleryText`
+  - `AttachmentSelectionDialogStyle.allowAccessToFilesText`
+  - `AttachmentSelectionDialogStyle.allowAccessToCameraText`
+  - `AttachmentSelectionDialogStyle.allowAccessToGalleryIcon`
+  - `AttachmentSelectionDialogStyle.allowAccessToFilesIcon`
+  - `AttachmentSelectionDialogStyle.allowAccessToCameraIcon`
+  - `AttachmentSelectionDialogStyle.grantPermissionsTextStyle`
+  - `AttachmentSelectionDialogStyle.recentFilesTextStyle`
+  - `AttachmentSelectionDialogStyle.recentFilesText`
+  - `AttachmentSelectionDialogStyle.fileManagerIcon`
+  - `AttachmentSelectionDialogStyle.videoDurationTextStyle`
+  - `AttachmentSelectionDialogStyle.videoIconDrawable`
+  - `AttachmentSelectionDialogStyle.videoIconVisible`
+  - `AttachmentSelectionDialogStyle.videoLengthLabelVisible`
 - Added `StreamUi.MessageInputView` theme allowing to customize all of the `MessageInputViewStyle` properties:
-    - streamUiAttachButtonEnabled
-    - streamUiAttachButtonIcon
-    - streamUiLightningButtonEnabled
-    - streamUiLightningButtonIcon
-    - streamUiMessageInputTextSize
-    - streamUiMessageInputTextColor
-    - streamUiMessageInputHintTextColor
-    - streamUiMessageInputScrollbarEnabled
-    - streamUiMessageInputScrollbarFadingEnabled
-    - streamUiSendButtonEnabled
-    - streamUiSendButtonEnabledIcon
-    - streamUiSendButtonDisabledIcon
-    - streamUiShowSendAlsoToChannelCheckbox
-    - streamUiSendAlsoToChannelCheckboxGroupChatText
-    - streamUiSendAlsoToChannelCheckboxDirectChatText
-    - streamUiSendAlsoToChannelCheckboxTextSize
-    - streamUiSendAlsoToChannelCheckboxTextColor
-    - streamUiSendAlsoToChannelCheckboxTextStyle
-    - streamUiMentionsEnabled
-    - streamUiMessageInputTextStyle
-    - streamUiMessageInputHintText
-    - streamUiCommandsEnabled
-    - streamUiMessageInputEditTextBackgroundDrawable
-    - streamUiMessageInputDividerBackgroundDrawable
-    - streamUiPictureAttachmentIcon
-    - streamUiFileAttachmentIcon
-    - streamUiCameraAttachmentIcon
-    - streamUiAllowAccessToCameraIcon
-    - streamUiAllowAccessToFilesIcon
-    - streamUiAllowAccessToGalleryIcon
-    - streamUiAllowAccessToGalleryText
-    - streamUiAllowAccessToFilesText
-    - streamUiAllowAccessToCameraText
-    - streamUiGrantPermissionsTextSize
-    - streamUiGrantPermissionsTextColor
-    - streamUiGrantPermissionsTextStyle
-    - streamUiAttachmentsRecentFilesTextSize
-    - streamUiAttachmentsRecentFilesTextColor
-    - streamUiAttachmentsRecentFilesTextStyle
-    - streamUiAttachmentsRecentFilesText
-    - streamUiAttachmentsFileManagerIcon
-    - streamUiAttachmentVideoLogoIcon
-    - streamUiAttachmentVideoLengthVisible
-    - streamUiAttachmentVideoIconVisible
-    - streamUiCommandInputCancelIcon
-    - streamUiCommandInputBadgeBackgroundDrawable
-    - streamUiCommandInputBadgeIcon
-    - streamUiCommandInputBadgeTextSize
-    - streamUiCommandInputBadgeTextColor
-    - streamUiCommandInputBadgeStyle
-    - streamUiAttachmentsFileNameTextSize
-    - streamUiAttachmentsFileNameTextColor
-    - streamUiAttachmentsFileNameTextStyle
-    - streamUiAttachmentsFileSizeTextSize
-    - streamUiAttachmentsFileSizeTextColor
-    - streamUiAttachmentsFileSizeTextStyle
-    - streamUiFileCheckBoxSelectorTextColor
-    - streamUiFileCheckBoxSelectorDrawable
-    - streamUiAttachmentsFilesEmptyStateTextSize
-    - streamUiAttachmentsFilesEmptyStateTextColor
-    - streamUiAttachmentsFilesEmptyStateStyle
-    - streamUiAttachmentsMediaEmptyStateTextSize
-    - streamUiAttachmentsMediaEmptyStateTextColor
-    - streamUiAttachmentsMediaEmptyStateStyle
-    - streamUiAttachmentsFilesEmptyStateText
-    - streamUiAttachmentsMediaEmptyStateText
-    - streamUiMessageInputCloseButtonIconDrawable
+  - streamUiAttachButtonEnabled
+  - streamUiAttachButtonIcon
+  - streamUiLightningButtonEnabled
+  - streamUiLightningButtonIcon
+  - streamUiMessageInputTextSize
+  - streamUiMessageInputTextColor
+  - streamUiMessageInputHintTextColor
+  - streamUiMessageInputScrollbarEnabled
+  - streamUiMessageInputScrollbarFadingEnabled
+  - streamUiSendButtonEnabled
+  - streamUiSendButtonEnabledIcon
+  - streamUiSendButtonDisabledIcon
+  - streamUiShowSendAlsoToChannelCheckbox
+  - streamUiSendAlsoToChannelCheckboxGroupChatText
+  - streamUiSendAlsoToChannelCheckboxDirectChatText
+  - streamUiSendAlsoToChannelCheckboxTextSize
+  - streamUiSendAlsoToChannelCheckboxTextColor
+  - streamUiSendAlsoToChannelCheckboxTextStyle
+  - streamUiMentionsEnabled
+  - streamUiMessageInputTextStyle
+  - streamUiMessageInputHintText
+  - streamUiCommandsEnabled
+  - streamUiMessageInputEditTextBackgroundDrawable
+  - streamUiMessageInputDividerBackgroundDrawable
+  - streamUiPictureAttachmentIcon
+  - streamUiFileAttachmentIcon
+  - streamUiCameraAttachmentIcon
+  - streamUiAllowAccessToCameraIcon
+  - streamUiAllowAccessToFilesIcon
+  - streamUiAllowAccessToGalleryIcon
+  - streamUiAllowAccessToGalleryText
+  - streamUiAllowAccessToFilesText
+  - streamUiAllowAccessToCameraText
+  - streamUiGrantPermissionsTextSize
+  - streamUiGrantPermissionsTextColor
+  - streamUiGrantPermissionsTextStyle
+  - streamUiAttachmentsRecentFilesTextSize
+  - streamUiAttachmentsRecentFilesTextColor
+  - streamUiAttachmentsRecentFilesTextStyle
+  - streamUiAttachmentsRecentFilesText
+  - streamUiAttachmentsFileManagerIcon
+  - streamUiAttachmentVideoLogoIcon
+  - streamUiAttachmentVideoLengthVisible
+  - streamUiAttachmentVideoIconVisible
+  - streamUiCommandInputCancelIcon
+  - streamUiCommandInputBadgeBackgroundDrawable
+  - streamUiCommandInputBadgeIcon
+  - streamUiCommandInputBadgeTextSize
+  - streamUiCommandInputBadgeTextColor
+  - streamUiCommandInputBadgeStyle
+  - streamUiAttachmentsFileNameTextSize
+  - streamUiAttachmentsFileNameTextColor
+  - streamUiAttachmentsFileNameTextStyle
+  - streamUiAttachmentsFileSizeTextSize
+  - streamUiAttachmentsFileSizeTextColor
+  - streamUiAttachmentsFileSizeTextStyle
+  - streamUiFileCheckBoxSelectorTextColor
+  - streamUiFileCheckBoxSelectorDrawable
+  - streamUiAttachmentsFilesEmptyStateTextSize
+  - streamUiAttachmentsFilesEmptyStateTextColor
+  - streamUiAttachmentsFilesEmptyStateStyle
+  - streamUiAttachmentsMediaEmptyStateTextSize
+  - streamUiAttachmentsMediaEmptyStateTextColor
+  - streamUiAttachmentsMediaEmptyStateStyle
+  - streamUiAttachmentsFilesEmptyStateText
+  - streamUiAttachmentsMediaEmptyStateText
+  - streamUiMessageInputCloseButtonIconDrawable
 - Added `streamUiMessageListFileAttachmentStyle` theme attribute to customize the appearance of file attachments within messages.
 
 ### ⚠️ Changed
@@ -743,8 +780,8 @@ in your Manifest file:
 - 🚨 Breaking change: removed `MessageListItemStyle.threadsEnabled` property. You should use only the `MessageListViewStyle.threadsEnabled` instead. E.g. The following code will disable both _Thread reply_ message option and _Thread reply_ footnote view visible below the message list item:
 ```kotlin
         TransformStyle.messageListStyleTransformer = StyleTransformer {
-            it.copy(threadsEnabled = false)
-        }
+  it.copy(threadsEnabled = false)
+}
 ```
 
 # July 1st, 2021 - 4.13.0
@@ -767,24 +804,24 @@ in your Manifest file:
 ## stream-chat-android-ui-components
 ### ✅ Added
 - Added new attributes to `MessageInputView` allowing to customize the style of input field during command input:
-    - `streamUiCommandInputBadgeTextSize`, `streamUiCommandInputBadgeTextColor`, `streamUiCommandInputBadgeFontAssets`, `streamUiCommandInputBadgeFont`, `streamUiCommandInputBadgeStyle` attributes to customize the text appearance of command name inside command badge
-    - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
-    - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
-    - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
+  - `streamUiCommandInputBadgeTextSize`, `streamUiCommandInputBadgeTextColor`, `streamUiCommandInputBadgeFontAssets`, `streamUiCommandInputBadgeFont`, `streamUiCommandInputBadgeStyle` attributes to customize the text appearance of command name inside command badge
+  - `streamUiCommandInputCancelIcon` attribute to customize the icon for cancel button
+  - `streamUiCommandInputBadgeIcon` attribute to customize the icon inside command badge
+  - `streamUiCommandInputBadgeBackgroundDrawable` attribute to customize the background shape of command badge
 - Added possibility to customize `MessageListHeaderView` style via `streamUiMessageListHeaderStyle` theme attribute and via `TransformStyle.messageListHeaderStyleTransformer`.
 - Added new attributes to `MessageInputView`:
-    - `streamUiCommandIcon` attribute to customize the command icon displayed for each command item in the suggestion list popup
-    - `streamUiLightningIcon` attribute to customize the lightning icon displayed in the top left corner of the suggestion list popup
+  - `streamUiCommandIcon` attribute to customize the command icon displayed for each command item in the suggestion list popup
+  - `streamUiLightningIcon` attribute to customize the lightning icon displayed in the top left corner of the suggestion list popup
 - Added support for customizing `SearchInputView`
-    - Added `SearchInputViewStyle` class allowing customization using `TransformStyle` API
-    - Added XML attrs for `SearchInputView`:
-         - `streamUiSearchInputViewHintText`
-         - `streamUiSearchInputViewSearchIcon`
-         - `streamUiSearchInputViewClearInputIcon`
-         - `streamUiSearchInputViewBackground`
-         - `streamUiSearchInputViewTextColor`
-         - `streamUiSearchInputViewHintColor`
-         - `streamUiSearchInputViewTextSize`
+  - Added `SearchInputViewStyle` class allowing customization using `TransformStyle` API
+  - Added XML attrs for `SearchInputView`:
+    - `streamUiSearchInputViewHintText`
+    - `streamUiSearchInputViewSearchIcon`
+    - `streamUiSearchInputViewClearInputIcon`
+    - `streamUiSearchInputViewBackground`
+    - `streamUiSearchInputViewTextColor`
+    - `streamUiSearchInputViewHintColor`
+    - `streamUiSearchInputViewTextSize`
 - Added `ChatUi#imageHeadersProvider` to allow adding custom headers to image requests
 
 ### ⚠️ Changed
@@ -843,7 +880,7 @@ in your Manifest file:
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixing the save of pictures from AttachmentGalleryActivity. When external storage
-permission is not granted, now it asks for it.
+  permission is not granted, now it asks for it.
 ### ⬆️ Improved
 - Added default implementation of "Leave channel" click listener to `ChannelListViewModelBinding`
 
@@ -889,7 +926,7 @@ permission is not granted, now it asks for it.
   - `moreCountOverlayColor` - attribute to customize the color of "more count" semi-transparent overlay
   - `moreCountTextStyle` - attribute to customize text appearance of more count text
 - Added `MessageReplyStyle` class allowing to customize MessageReply item view on MessageListView.
-Customization can be done using `TransformStyle` API or XML attributes of `MessageListView`:
+  Customization can be done using `TransformStyle` API or XML attributes of `MessageListView`:
   - `streamUiMessageReplyBackgroundColorMine`
   - `streamUiMessageReplyBackgroundColorTheirs`
   - `streamUiMessageReplyTextSizeMine`
@@ -951,17 +988,17 @@ Customization can be done using `TransformStyle` API or XML attributes of `Messa
 
 ### ⬆️ Improved
 - Improved handling push notifications:
-    - Added `ChatClient.handleRemoteMessage` for remote message handling
-    - Added `ChatClient.setFirebaseToken` for setting Firebase token
-    - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
-    - Deprecated `ChatClient.onMessageReceived`
-    - Deprecated `ChatClient.onNewTokenReceived`
-    - Changed `ChatNotificationHandler::buildNotification` signature - it now receives `Channel` and `Message` and returns `NotificationCompat.Builder` for better customization
-    - Deprecated `ChatNotificationHandler.getSmallIcon`
-    - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
-    - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
-    - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
-    - Changed `ChatNotificationHandler::onChatEvent` - it now doesn't handle events by default and receives `NewMessageEvent` instead of generic `ChatEvent`
+  - Added `ChatClient.handleRemoteMessage` for remote message handling
+  - Added `ChatClient.setFirebaseToken` for setting Firebase token
+  - Added `NotificationConfig::pushNotificationsEnabled` for disabling push notifications
+  - Deprecated `ChatClient.onMessageReceived`
+  - Deprecated `ChatClient.onNewTokenReceived`
+  - Changed `ChatNotificationHandler::buildNotification` signature - it now receives `Channel` and `Message` and returns `NotificationCompat.Builder` for better customization
+  - Deprecated `ChatNotificationHandler.getSmallIcon`
+  - Deprecated `ChatNotificationHandler.getFirebaseMessageIdKey`
+  - Deprecated `ChatNotificationHandler.getFirebaseChannelIdKey`
+  - Deprecated `ChatNotificationHandler.getFirebaseChannelTypeKey`
+  - Changed `ChatNotificationHandler::onChatEvent` - it now doesn't handle events by default and receives `NewMessageEvent` instead of generic `ChatEvent`
 - Improved error description provided by `ChatClient::sendImage`, `ChatClient::sendFile`, `ChannelClient::sendImage` and `ChannelClient::sendFile` methods if upload fails.
 
 ### ✅ Added
@@ -969,11 +1006,11 @@ Customization can be done using `TransformStyle` API or XML attributes of `Messa
 - Added `DisconnectCause` to `DisconnectedEvent`
 - Added method `SocketListener::onDisconnected(cause: DisconnectCause)`
 - Added possibility to group notifications:
-    - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
-    - If enabled, by default notifications are grouped by Channel's cid
-    - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
+  - Notifications grouping is disabled by default and can be enabled using `NotificationConfig::shouldGroupNotifications`
+  - If enabled, by default notifications are grouped by Channel's cid
+  - Notifications grouping can be configured using `ChatNotificationHandler` and `NotificationConfig`
 - Added `ChatNotificationHandler::getFirebaseMessaging()` method in place of `ChatNotificationHandler::getFirebaseInstanceId()`.
-It should be used now to fetch Firebase token in the following way: `handler.getFirebaseMessaging()?.token?.addOnCompleteListener {...}`.
+  It should be used now to fetch Firebase token in the following way: `handler.getFirebaseMessaging()?.token?.addOnCompleteListener {...}`.
 - Added `Message.attachmentsSyncStatus: SyncStatus` property.
 
 ### ⚠️ Changed
@@ -993,9 +1030,9 @@ Fixed bug when for some video attachments activity with media player wasn't show
 
 ### ⚠️ Changed
 - Swipe options of `ChannelListView` component:
-    - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it.
+  - "Channel more" option is now not shown by default because we are not able to provide generic, default implementation for it.
     If you want to make this option visible, you need to set `app:streamUiChannelOptionsEnabled="true"` explicitly to `io.getstream.chat.android.ui.channel.list.ChannelListView` component.
-    - "Channel delete" option has now default implementation. Clicking on the "delete" icon shows AlertDialog asking to confirm Channel deletion operation.
+  - "Channel delete" option has now default implementation. Clicking on the "delete" icon shows AlertDialog asking to confirm Channel deletion operation.
 
 # May 11th, 2021 - 4.10.0
 ## stream-chat-android-client
@@ -1015,9 +1052,9 @@ Fixed bug when for some video attachments activity with media player wasn't show
 
 ### ⚠️ Changed
 - **The client now uses a new serialization implementation by default**, which was [previously](https://github.com/GetStream/stream-chat-android/releases/tag/4.8.0) available as an opt-in API.
-    - This new implementation is more performant and greatly improves type safety in the networking code of the SDK.
-    - If you experience any issues after upgrading to this version of the SDK, you can call `useNewSerialization(false)` when building your `ChatClient` to revert to using the old implementation. Note however that we'll be removing the old implementation soon, so please report any issues found.
-    - To check if the new implementation is causing any failures in your app, enable error logging on `ChatClient` with the `logLevel` method, and look for the `NEW_SERIALIZATION_ERROR` tag in your logs while using the SDK.
+  - This new implementation is more performant and greatly improves type safety in the networking code of the SDK.
+  - If you experience any issues after upgrading to this version of the SDK, you can call `useNewSerialization(false)` when building your `ChatClient` to revert to using the old implementation. Note however that we'll be removing the old implementation soon, so please report any issues found.
+  - To check if the new implementation is causing any failures in your app, enable error logging on `ChatClient` with the `logLevel` method, and look for the `NEW_SERIALIZATION_ERROR` tag in your logs while using the SDK.
 - Made the `user` field in `channel.hidden` and `notification.invite_accepter` events non nullable.
 - Updated channels state after `NotificationInviteRejectedEvent` or `NotificationInviteAcceptedEvent` is received
 
@@ -1107,24 +1144,24 @@ Fixed bug when for some video attachments activity with media player wasn't show
 Customization of icons in Attachment selection dialog
 you can use:
 - app:streamUiPictureAttachmentIcon
-Change the icon for the first item in the list of icons
+  Change the icon for the first item in the list of icons
 - app:streamUiPictureAttachmentIconTint
-Change the tint color for icon of picture selection
+  Change the tint color for icon of picture selection
 - app:streamUiFileAttachmentIcon
-Change the icon for the second item in the list of icons
+  Change the icon for the second item in the list of icons
 - app:streamUiFileAttachmentIconTint
-Change the tint color for icon of file selection
+  Change the tint color for icon of file selection
 - app:streamUiCameraAttachmentIcon
-Change the icon for the third item in the list of icons
+  Change the icon for the third item in the list of icons
 - app:streamUiCameraAttachmentIconTint
-Change the tint color for icon of camera selection
+  Change the tint color for icon of camera selection
 - Added support for error messages
 - Added attrs to `MessageListView` that allow to customize error message text style:
-    * `streamUiErrorMessageTextSize`
-    * `streamUiErrorMessageTextColor`
-    * `streamUiErrorMessageTextFont`
-    * `streamUiErrorMessageTextFontAssets`
-    * `streamUiErrorMessageTextStyle`
+  * `streamUiErrorMessageTextSize`
+  * `streamUiErrorMessageTextColor`
+  * `streamUiErrorMessageTextFont`
+  * `streamUiErrorMessageTextFontAssets`
+  * `streamUiErrorMessageTextStyle`
 
 # April 21th, 2021 - 4.9.0
 ## Common changes for all artifacts
@@ -1218,47 +1255,47 @@ It is possible to customize the color and the drawable of the icon.
 - Setting external SuggestionListView is no longer necessary to display suggestions popup
 ### ✅ Added
 - Added `ChatUI.supportedReactions: SupportedReactions` property, also introduced `SupportedReactions`, and `ReactionDrawable` class.
-It allows defining a set of supported reactions by passing a `Map<String, ReactionDrawable>` in constructor. `ReactionDrawable` is a wrapping class holding two `Drawable` instances - for active and inactive reaction states.
+  It allows defining a set of supported reactions by passing a `Map<String, ReactionDrawable>` in constructor. `ReactionDrawable` is a wrapping class holding two `Drawable` instances - for active and inactive reaction states.
 - Added methods and attrs to `MessageListView` that allow to customize visibility of message options:
-    * `MessageListView::setDeleteMessageConfirmationEnabled`
-    * `MessageListView::setCopyMessageEnabled`
-    * `MessageListView::setBlockUserEnabled`
-    * `MessageListView::setMuteUserEnabled`
-    * `MessageListView::setMessageFlagEnabled`
-    * `MessageListView::setReactionsEnabled`
-    * `MessageListView::setRepliesEnabled`
-    * `MessageListView::setThreadsEnabled`
-    * `MessageListView.streamUiFlagMessageOptionEnabled`
-    * `MessageListView.streamUiMuteUserOptionEnabled`
-    * `MessageListView.streamUiBlockUserOptionEnabled`
-    * `MessageListView.streamUiCopyMessageActionEnabled`
+  * `MessageListView::setDeleteMessageConfirmationEnabled`
+  * `MessageListView::setCopyMessageEnabled`
+  * `MessageListView::setBlockUserEnabled`
+  * `MessageListView::setMuteUserEnabled`
+  * `MessageListView::setMessageFlagEnabled`
+  * `MessageListView::setReactionsEnabled`
+  * `MessageListView::setRepliesEnabled`
+  * `MessageListView::setThreadsEnabled`
+  * `MessageListView.streamUiFlagMessageOptionEnabled`
+  * `MessageListView.streamUiMuteUserOptionEnabled`
+  * `MessageListView.streamUiBlockUserOptionEnabled`
+  * `MessageListView.streamUiCopyMessageActionEnabled`
 - Added confirmation dialog for flagging message option:
   * Added `MessageListView::flagMessageConfirmationEnabled` attribute
 - Added `MessageListView::setFlagMessageResultHandler` which allows to handle flag message result
 - Added support for system messages
 - Added attrs to `MessageListView` that allow to customize system message text style:
-    * `streamUiSystemMessageTextSize`
-    * `streamUiSystemMessageTextColor`
-    * `streamUiSystemMessageTextFont`
-    * `streamUiSystemMessageTextFontAssets`
-    * `streamUiSystemMessageTextStyle`
+  * `streamUiSystemMessageTextSize`
+  * `streamUiSystemMessageTextColor`
+  * `streamUiSystemMessageTextFont`
+  * `streamUiSystemMessageTextFontAssets`
+  * `streamUiSystemMessageTextStyle`
 - Added attrs to `MessageListView` that allow to customize message option text style:
-      * `streamUiMessageOptionsTextSize`
-      * `streamUiMessageOptionsTextColor`
-      * `streamUiMessageOptionsTextFont`
-      * `streamUiMessageOptionsTextFontAssets`
-      * `streamUiMessageOptionsTextStyle`
+  * `streamUiMessageOptionsTextSize`
+  * `streamUiMessageOptionsTextColor`
+  * `streamUiMessageOptionsTextFont`
+  * `streamUiMessageOptionsTextFontAssets`
+  * `streamUiMessageOptionsTextStyle`
 - Added attrs to `MessageListView` that allow to customize user reactions title text style:
-      * `streamUiUserReactionsTitleTextSize`
-      * `streamUiUserReactionsTitleTextColor`
-      * `streamUiUserReactionsTitleTextFont`
-      * `streamUiUserReactionsTitleTextFontAssets`
-      * `streamUiUserReactionsTitleTextStyle`
+  * `streamUiUserReactionsTitleTextSize`
+  * `streamUiUserReactionsTitleTextColor`
+  * `streamUiUserReactionsTitleTextFont`
+  * `streamUiUserReactionsTitleTextFontAssets`
+  * `streamUiUserReactionsTitleTextStyle`
 - Added attrs to `MessageListView` that allow to customize colors of message options background, user reactions card background, overlay dim color and warning actions color:
-      * `streamUiMessageOptionBackgroundColor`
-      * `streamUiUserReactionsBackgroundColor`
-      * `streamUiOptionsOverlayDimColor`
-      * `streamUiWarningActionsTintColor`
+  * `streamUiMessageOptionBackgroundColor`
+  * `streamUiUserReactionsBackgroundColor`
+  * `streamUiOptionsOverlayDimColor`
+  * `streamUiWarningActionsTintColor`
 - Added `ChatUI.mimeTypeIconProvider: MimeTypeIconProvider` property which allows to customize file attachment icons.
 
 ### ⚠️ Changed
@@ -1341,9 +1378,9 @@ It is possible now to configure the max size of the file upload using
 
 ### ✅ Added
 - **Added a brand new serialization implementation, available as an opt-in API for now.** This can be enabled by making a `useNewSerialization(true)` call on the `ChatClient.Builder`.
-    - This new implementation will be more performant and greatly improve type safety in the networking code of the SDK.
-    - The old implementation remains the default for now, while we're making sure the new one is bug-free.
-    - We recommend that you opt-in to the new implementation and test your app with it, so that you can report any issues early and we can get them fixed before a general rollout.
+  - This new implementation will be more performant and greatly improve type safety in the networking code of the SDK.
+  - The old implementation remains the default for now, while we're making sure the new one is bug-free.
+  - We recommend that you opt-in to the new implementation and test your app with it, so that you can report any issues early and we can get them fixed before a general rollout.
 - Added `unflagMessage(messageId)` and `unflagUser(userId)` methods to `ChatClient`
 - Added support for querying banned users - added `ChatClient::queryBannedUsers` and `ChannelClient::queryBannedUsers`
 - Added `uploadsEnabled`, `urlEnrichmentEnabled`, `customEventsEnabled`, `pushNotificationsEnabled`, `messageRetention`, `automodBehavior` and `blocklistBehavior` fields to channel config
@@ -1394,20 +1431,20 @@ It is possible now to configure the max size of the file upload using
 - Add the default font field to `TextStyle`
 - Add new method `ChatFonts::setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface)`
 - Add attributes for `MessageListView` in order to customize styles of:
-    - Mine message text
-    - Theirs message text
-    - User name text in footer of Message
-    - Message date in footer of Message
-    - Thread replies counter in footer of Message
-    - Link title text
-    - Link description text
-    - Date separator text
-    - Deleted message text and background
-    - Reactions style in list view and in options view
-    - Indicator icons in footer of Message
-    - Unread count badge on scroll to bottom button
-    - Message stroke width and color for mine and theirs types
-It is now possible to customize the following attributes for `ChannelListView`:
+  - Mine message text
+  - Theirs message text
+  - User name text in footer of Message
+  - Message date in footer of Message
+  - Thread replies counter in footer of Message
+  - Link title text
+  - Link description text
+  - Date separator text
+  - Deleted message text and background
+  - Reactions style in list view and in options view
+  - Indicator icons in footer of Message
+  - Unread count badge on scroll to bottom button
+  - Message stroke width and color for mine and theirs types
+    It is now possible to customize the following attributes for `ChannelListView`:
 - `streamUiChannelOptionsIcon` - customize options icon
 - `streamUiChannelDeleteIcon` - customize delete icon
 - `streamUiChannelOptionsEnabled` - hide/show options icon
@@ -1487,7 +1524,7 @@ It is now possible to customize the following attributes for `ChannelListView`:
 ## stream-chat-android-ui-common
 ### ⚠️ Changed
 - Message options list changed colour for dark version. The colour is a little lighters
-now, what makes it easier to see.
+  now, what makes it easier to see.
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -1514,8 +1551,8 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
 
 ## stream-chat-android
 - Add `streamMessageActionButtonsTextSize`, `streamMessageActionButtonsTextColor`, `streamMessageActionButtonsTextFont`,
- `streamMessageActionButtonsTextFontAssets`, `streamMessageActionButtonsTextStyle`, `streamMessageActionButtonsIconTint`
- attributes to `MessageListView`
+  `streamMessageActionButtonsTextFontAssets`, `streamMessageActionButtonsTextStyle`, `streamMessageActionButtonsIconTint`
+  attributes to `MessageListView`
 - Add `ChannelHeaderViewModel::resetThread` method and make `ChannelHeaderViewModel::setActiveThread` message parameter non-nullable
 - Fix ReadIndicator state
 - Using `MessageListView#setViewHolderFactory` is now an error - use `setMessageViewHolderFactory` instead
@@ -1537,8 +1574,8 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
 - Introduce `PushMessageSyncHandler` class
 
 - Add UseCase for querying members (`chatDomain.useCases.queryMembers(..., ...).execute()`).
-    - If we're online, it executes a remote call through the ChatClient
-    - If we're offline, it pulls members from the database for the given channel
+  - If we're online, it executes a remote call through the ChatClient
+  - If we're offline, it pulls members from the database for the given channel
 - Mark the `SendMessageWithAttachmentsImpl` use case an error
 
 ## stream-chat-android-ui-common
@@ -1549,9 +1586,9 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
 # Feb 15th, 2021 - 4.5.5
 ## Common changes for all artifacts
 - Updated project dependencies
-    - Kotlin 1.4.30
-    - Stable AndroidX releases: LiveData 2.3.0, Activity 1.2.0, Fragment 1.3.0
-    - For the full list of dependency version changes, see [this PR](https://github.com/GetStream/stream-chat-android/pull/1383)
+  - Kotlin 1.4.30
+  - Stable AndroidX releases: LiveData 2.3.0, Activity 1.2.0, Fragment 1.3.0
+  - For the full list of dependency version changes, see [this PR](https://github.com/GetStream/stream-chat-android/pull/1383)
 
 ## stream-chat-android
 - Add `streamInputAttachmentsMenuBackground` and `streamInputSuggestionsBackground` attributes to `MessageInputView`
@@ -1574,18 +1611,18 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
 
 ## stream-chat-android-client
 - **setUser deprecation**
-    - The `setUser`, `setGuestUser`, and `setAnonymousUser` methods on `ChatClient` are now deprecated.
-    - Prefer to use the `connectUser` (`connectGuestUser`, `connectAnonymousUser`) methods instead, which return `Call` objects.
-    - If you want the same async behaviour as with the old methods, use `client.setUser(user, token).enqueue { /* Handle result */ }`.
+  - The `setUser`, `setGuestUser`, and `setAnonymousUser` methods on `ChatClient` are now deprecated.
+  - Prefer to use the `connectUser` (`connectGuestUser`, `connectAnonymousUser`) methods instead, which return `Call` objects.
+  - If you want the same async behaviour as with the old methods, use `client.setUser(user, token).enqueue { /* Handle result */ }`.
 - Add support for typing events in threads:
-    - Add `parentId` to `TypingStartEvent` and `TypingStopEvent`
-    - Add `parentId` to ``ChannelClient::keystroke` and `ChannelClient::stopTyping`
+  - Add `parentId` to `TypingStartEvent` and `TypingStopEvent`
+  - Add `parentId` to ``ChannelClient::keystroke` and `ChannelClient::stopTyping`
 - `ChatClient::sendFile` and `ChatClient::sendImage` each now have just one definition with `ProgressCallback` as an optional parameter. These methods both return `Call<String>`, allowing for sync/async execution, and error handling. The old overloads that were asynchronous and returned no value/error have been removed.
 - `FileUploader::sendFile` and `FileUploader::sendImages` variations with `ProgressCallback` are no longer async with no return type. Now they are synchronous with `String?` as return type
 
 ## stream-chat-android-offline
 - Add support for typing events in threads:
-    - Add `parentId` to `Keystroke` and `StopTyping` use cases
+  - Add `parentId` to `Keystroke` and `StopTyping` use cases
 
 ## stream-chat-android-ui-common
 - Add a new `isMessageRead` flag to the `MessageListItem.MessageItem` class, which indicates
@@ -1596,16 +1633,16 @@ implementation "io.getstream:stream-chat-android-ui-components:4.6.0"
 ## stream-chat-android-client
 - Use proper data on `ChatClient::reconnectSocket` to reconnect normal/anonymous user
 - Add `enforceUnique` parameter to `ChatClient::sendReaction` and `ChannelClient::sendReaction` methods .
-If reaction is sent with `enforceUnique` set to true, new reaction will replace all reactions the user has on this message.
+  If reaction is sent with `enforceUnique` set to true, new reaction will replace all reactions the user has on this message.
 - Add suspending `setUserAndAwait` extension for `ChatClient`
 - Replace chat event listener Kotlin functions with ChatEventListener functional interface in order to promote
-a better integration experience for Java clients. Old methods that use the Kotlin function have been deprecated.
-Deprecated interfaces, such as ChannelController, have not been updated. ChannelClient, which inherits from ChannelController
-for the sake of backwards compatibility, has been updated.
+  a better integration experience for Java clients. Old methods that use the Kotlin function have been deprecated.
+  Deprecated interfaces, such as ChannelController, have not been updated. ChannelClient, which inherits from ChannelController
+  for the sake of backwards compatibility, has been updated.
 
 ## stream-chat-android-offline
 - Add `enforceUnique` parameter to `SendReaction` use case. If reaction is sent with `enforceUnique` set to true,
- new reaction will replace all reactions the user has on this message.
+  new reaction will replace all reactions the user has on this message.
 - Fix updating `Message::ownReactions` and `Message:latestReactions` after sending or deleting reaction - add missing `userId` to `Reaction`
 - Fix Load Thread Replies process
 
@@ -1627,9 +1664,9 @@ for the sake of backwards compatibility, has been updated.
 - Create `ChatClient::getMessagesWithAttachments` to filter message with attachments
 - Create `ChannelClient::getMessagesWithAttachments` to filter message with attachments
 - Add support for pinned messages:
-    - Add `pinMessage` and `unpinMessage` methods `ChatClient` and `ChannelClient`
-    - Add `Channel::pinnedMessages` property
-    - Add `Message:pinned`, `Message::pinnedAt`, `Message::pinExpires`, and `Message:pinnedBy` properties
+  - Add `pinMessage` and `unpinMessage` methods `ChatClient` and `ChannelClient`
+  - Add `Channel::pinnedMessages` property
+  - Add `Message:pinned`, `Message::pinnedAt`, `Message::pinExpires`, and `Message:pinnedBy` properties
 
 # Jan 7th, 2021 - 4.5.0
 ## stream-chat-android
@@ -1641,7 +1678,7 @@ for the sake of backwards compatibility, has been updated.
 - Add a `channel` property to `notification.message_new` events
 - Fix deleting channel error
 - 🚨 Breaking change: ChatClient::unmuteUser, ChatClient::unmuteCurrentUser,
-ChannelClient::unmuteUser, and ChannelClient::unmuteCurrentUser now return Unit instead of Mute
+  ChannelClient::unmuteUser, and ChannelClient::unmuteCurrentUser now return Unit instead of Mute
 
 ## stream-chat-android-offline
 - Add LeaveChannel use case
@@ -1693,7 +1730,7 @@ ChannelClient::unmuteUser, and ChannelClient::unmuteCurrentUser now return Unit 
 - Improve Channel List Diff
 - Add new attrs to `MessageInputView`: `streamInputScrollbarEnabled`, `streamInputScrollbarFadingEnabled`
 - Add API for setting custom message date formatter in MessageListView via `setMessageDateFormatter(DateFormatter)`
-    - 24 vs 12 hr controlled by user's System settings.
+  - 24 vs 12 hr controlled by user's System settings.
 
 ## stream-chat-android-client
 - Add `ChatClient::isValidRemoteMessage` method to know if a RemoteMessage is valid for Stream
@@ -1752,14 +1789,14 @@ We are going to release 4.4.5 with the features introduced by 4.4.3 as soon as t
 - Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependencies
 - Replace Glide with Coil - SDK doesn't depend on Glide anymore.
 - Remove `BaseStyle` class and extract its properties into `AvatarStyle` and `ReadStateStyle`.
-    - Use composition with `AvatarStyle` and `ReadStateStyle` instead of inheriting from `BaseStyle`.
-    - Convert to kotlin: `ReadStateView`, `MessageListViewStyle`
+  - Use composition with `AvatarStyle` and `ReadStateStyle` instead of inheriting from `BaseStyle`.
+  - Convert to kotlin: `ReadStateView`, `MessageListViewStyle`
 - Add `streamShowSendAlsoToChannelCheckbox` attr to `MessageInputView` controlling visibility of "send also to channel" checkbox
 - The sample app no longer uses Koin for dependency injection
 - Add `streamCopyMessageActionEnabled`, `streamFlagMessageActionEnabled`, and `streamStartThreadMessageActionEnabled` attrs to `MessageListView`
 - Validate message text length in MessageInputView.
-    - Add property `MessageInputView.maxMessageLength: Int` and show warning once the char limit is exceeded
-    - Expose `MessageInputViewModel.maxMessageLength: Int` informing about text length limit of the Channel
+  - Add property `MessageInputView.maxMessageLength: Int` and show warning once the char limit is exceeded
+  - Expose `MessageInputViewModel.maxMessageLength: Int` informing about text length limit of the Channel
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
@@ -1771,18 +1808,18 @@ We are going to release 4.4.5 with the features introduced by 4.4.3 as soon as t
 - Update `channelUnreadCount` when user is connected
 - Fix bug when channels could be shown without names
 - Added support for marking all channels as read for the current user.
-    - Can be accessed via `ChatDomain`'s use cases (`chatDomain.useCases.markAllRead()...`).
+  - Can be accessed via `ChatDomain`'s use cases (`chatDomain.useCases.markAllRead()...`).
 - Fix bug when local channels could be sorted not properly
 - Typing events can be all tracked with `ChatDomain.typingUpdates`
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
 - Updated dependencies to latest versions (AGP 4.1, OkHttp 4.9, Coroutines 1.3.9, ExoPlayer 2.12.1, etc.)
-    - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
+  - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
 - Revamped `Call` implementations
-    - The `Call2` type has been removed, the libraries now all use the same `Call` instead for all APIs
-    - `Call` now guarantees callbacks to happen on the main thread
-    - Coroutine users can now `await()` a `Call` easily with a provided extension
+  - The `Call2` type has been removed, the libraries now all use the same `Call` instead for all APIs
+  - `Call` now guarantees callbacks to happen on the main thread
+  - Coroutine users can now `await()` a `Call` easily with a provided extension
 
 ## stream-chat-android
 - Add empty state views to channel list view and message list view components
@@ -2178,7 +2215,7 @@ We recommend using one of these alternatives:
 
 # 1.9.0 - Mon 22 June 2020 (stream-chat-android-client)
 - Fix search message request body
-🚨 Breaking change:
+  🚨 Breaking change:
 - client.searchMessages signature has been changed: query removed, added channel filter
 
 # 1.8.1 - Thu 18 June 2020 (stream-chat-android-client)
@@ -2267,7 +2304,7 @@ Livedata now supports all events exposed by the chat API. The 3 new events are:
 - Channel truncated
 - Notification channel truncated
 - Channel Deleted
-This release also improves how new channels are created.
+  This release also improves how new channels are created.
 
 # May 23rd, 2020 - 0.4.8 (stream-chat-android-offline)
 - NotificationMessageNew doesn't specify event.message.cid, this was causing issues with offline storage. The test suite has been updated and the issue is now resolved. Also see: GetStream/stream-chat-android#490
