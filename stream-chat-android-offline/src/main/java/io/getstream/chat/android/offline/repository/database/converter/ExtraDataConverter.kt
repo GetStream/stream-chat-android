@@ -5,18 +5,18 @@ import com.squareup.moshi.adapter
 
 internal class ExtraDataConverter {
     @OptIn(ExperimentalStdlibApi::class)
-    private val adapter = moshi.adapter<MutableMap<String, Any>>()
+    private val adapter = moshi.adapter<Map<String, Any>>()
 
     @TypeConverter
-    fun stringToMap(data: String?): MutableMap<String, Any>? {
+    fun stringToMap(data: String?): Map<String, Any>? {
         if (data.isNullOrEmpty() || data == "null") {
-            return mutableMapOf()
+            return emptyMap()
         }
         return adapter.fromJson(data)
     }
 
     @TypeConverter
-    fun mapToString(someObjects: MutableMap<String, Any>?): String {
+    fun mapToString(someObjects: Map<String, Any>?): String? {
         if (someObjects == null) {
             return "{}"
         }
