@@ -66,6 +66,7 @@ internal class MessageRepositoryImpl(
                 Pagination.LESS_THAN -> {
                     return messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
                 }
+                null -> TODO("Is this just invalid?")
             }
         }
         return messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
