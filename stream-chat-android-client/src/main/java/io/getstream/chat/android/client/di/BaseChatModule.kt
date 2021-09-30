@@ -146,6 +146,13 @@ internal open class BaseChatModule(
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(
+                TokenAuthInterceptor(
+                    tokenManager,
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
+            )
             .apply {
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
@@ -156,13 +163,6 @@ internal open class BaseChatModule(
                     )
                 }
             }
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
-            )
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
