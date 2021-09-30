@@ -6,7 +6,6 @@
 - `ProgressTrackerFactory` and `ProgressTracker` is no more used and the attachment uploaded state is updated instead.
 
 ### ✅ Added
-- Create new artifact to integrate Huawei Push Kit with Stream. You will need to add  `stream-chat-android-pushprovider-huawei` artifact to your App. Check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/huawei) for further details.
 
 ### ⚠️ Changed
 
@@ -29,12 +28,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `hardDelete` field to `MessageDeletedEvent`.
 - 🚨 Breaking change: A new `Idle` state is added to `Attachment.UploadState`.
 - Added a new callback function `onProgress(bytesUploaded: Long, totalLength: Long)` in `ProgressCallback`.
 
 ### ⚠️ Changed
-- Now it is possible to hard delete messages. Insert a flag `hard = true` in the `ChatClient.deleteMessage` and it will be deleted in the backend. **This action can't be undone!**
 - 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesRead: Long` and `totalBytes: Long` instead of object.
 
 ### ❌ Removed
