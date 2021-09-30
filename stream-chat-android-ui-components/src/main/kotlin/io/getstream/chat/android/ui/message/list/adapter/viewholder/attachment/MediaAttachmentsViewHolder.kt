@@ -11,4 +11,8 @@ internal class MediaAttachmentsViewHolder(
     override fun bind(item: AttachmentGroup) {
         binding.mediaAttachmentView.showAttachments(item.attachments)
     }
+
+    override fun unbind() {
+        super.unbind()
+    }
 }
