@@ -1609,6 +1609,13 @@ public class ChatClient internal constructor(
             warmUp = false
         }
 
+        /**
+         * Sets a custom [OkHttpClient] that will be used by the client to
+         * perform API calls to Stream.
+         *
+         * Use this to configure parameters like timeout values, or to
+         * add interceptors to process all network requests.
+         */
         public fun okHttpClient(okHttpClient: OkHttpClient): Builder = apply {
             this.customOkHttpClient = okHttpClient
         }
