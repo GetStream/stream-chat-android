@@ -5,6 +5,10 @@ on:
     branches:
       - develop
 
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+  
 jobs:
   publish:
     name: Snapshot build and publish

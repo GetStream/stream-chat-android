@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   push_docusaurus:
     name: Publish docusaurus docs
