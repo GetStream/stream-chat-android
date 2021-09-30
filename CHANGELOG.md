@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Do our SDK compile-friendly with TargetSDK 31
 
 ### ✅ Added
 
