@@ -4,6 +4,10 @@ on:
   release:
     types: [released]
 
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build_ui_components_sample_app:
     name: Build and push to S3
