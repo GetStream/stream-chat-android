@@ -51,7 +51,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./script/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
