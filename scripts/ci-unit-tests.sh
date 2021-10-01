@@ -1,6 +1,6 @@
 command_file="unit-tests-command.sh"
 
-./gradlew dag-command selected-test-debug && \
+./gradlew test-debug && \
 chmod +x $command_file && \
 ./$command_file
 
