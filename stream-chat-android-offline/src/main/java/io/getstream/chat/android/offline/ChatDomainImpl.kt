@@ -359,6 +359,7 @@ internal class ChatDomainImpl internal constructor(
         clearState()
         offlineSyncFirebaseMessagingHandler.cancel(appContext)
         activeChannelMapImpl.values.forEach(ChannelController::cancelJobs)
+        eventHandler.clear()
     }
 
     override fun getVersion(): String {
