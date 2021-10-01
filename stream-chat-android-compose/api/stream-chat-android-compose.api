@@ -222,12 +222,19 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/Bottom : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
+public final class io/getstream/chat/android/compose/state/messages/items/DateSeparator : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/Bottom;
+	public fun <init> (Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDate ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/MessageItem {
+public final class io/getstream/chat/android/compose/state/messages/items/MessageItem : io/getstream/chat/android/compose/state/messages/items/MessageListItem {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZ)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition;Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -252,19 +259,28 @@ public abstract class io/getstream/chat/android/compose/state/messages/items/Mes
 	public static final field $stable I
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/Middle : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
+public final class io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Bottom : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/Middle;
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Bottom;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/None : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
+public final class io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Middle : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/None;
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Middle;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/items/Top : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
+public final class io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$None : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/Top;
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$None;
+}
+
+public final class io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Top : io/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/items/MessageItemGroupPosition$Top;
+}
+
+public abstract class io/getstream/chat/android/compose/state/messages/items/MessageListItem {
+	public static final field $stable I
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/Copy : io/getstream/chat/android/compose/state/messages/list/MessageAction {
@@ -641,6 +657,8 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 public final class io/getstream/chat/android/compose/ui/messages/list/MessageItemKt {
 	public static final field HIGHLIGHT_FADE_OUT_DURATION_MILLIS I
 	public static final fun DefaultMessageContainer (Lio/getstream/chat/android/compose/state/messages/items/MessageItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageItem (Lio/getstream/chat/android/compose/state/messages/items/MessageListItem;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageDateSeparator (Lio/getstream/chat/android/compose/state/messages/items/DateSeparator;Landroidx/compose/runtime/Composer;I)V
 	public static final fun UploadingFooter (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 

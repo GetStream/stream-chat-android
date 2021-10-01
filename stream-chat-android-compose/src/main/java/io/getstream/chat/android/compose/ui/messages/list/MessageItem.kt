@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.text.format.DateUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
@@ -32,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -55,12 +58,14 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
-import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
-import io.getstream.chat.android.compose.state.messages.items.Middle
-import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -76,6 +81,53 @@ import java.util.Date
  * Represents the time the highlight fade out transition will take.
  */
 public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+
+@Composable
+public fun DefaultMessageItem(
+    messageListItem: MessageListItem,
+    onLongItemClick: (Message) -> Unit,
+    modifier: Modifier = Modifier,
+    onThreadClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    when (messageListItem) {
+        is DateSeparator -> MessageDateSeparator(messageListItem)
+        is MessageItem -> DefaultMessageContainer(
+            modifier = modifier,
+            messageItem = messageListItem,
+            onLongItemClick = onLongItemClick,
+            onThreadClick = onThreadClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    }
+}
+
+@Composable
+public fun MessageDateSeparator(
+    dateSeparator: DateSeparator,
+) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Surface(
+            modifier = Modifier
+                .align(Center)
+                .padding(vertical = 8.dp),
+            color = ChatTheme.colors.barsBackground,
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+                text = DateUtils.getRelativeTimeSpanString(
+                    dateSeparator.date.time,
+                    System.currentTimeMillis(),
+                    DateUtils.DAY_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_RELATIVE
+                ).toString(),
+                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.body
+            )
+        }
+    }
+}
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.

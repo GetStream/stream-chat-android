@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultTy
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.ui.common.EmptyView
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -80,12 +81,12 @@ public fun MessageList(
     },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
-    itemContent: @Composable (MessageItem) -> Unit = {
-        DefaultMessageContainer(
-            messageItem = it,
-            onThreadClick = onThreadClick,
+    itemContent: @Composable (MessageListItem) -> Unit = {
+        DefaultMessageItem(
+            messageListItem = it,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onThreadClick = onThreadClick,
+            onImagePreviewResult = onImagePreviewResult
         )
     },
 ) {
@@ -132,11 +133,11 @@ public fun MessageList(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
-    itemContent: @Composable (MessageItem) -> Unit = {
-        DefaultMessageContainer(
-            messageItem = it,
-            onThreadClick = onThreadClick,
+    itemContent: @Composable (MessageListItem) -> Unit = {
+        DefaultMessageItem(
+            messageListItem = it,
             onLongItemClick = onLongItemClick,
+            onThreadClick = onThreadClick,
             onImagePreviewResult = onImagePreviewResult
         )
     },
@@ -179,7 +180,7 @@ public fun Messages(
     onLastVisibleMessageChanged: (MessageItem) -> Unit,
     onScrollToBottom: () -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable (MessageItem) -> Unit,
+    itemContent: @Composable (MessageListItem) -> Unit,
 ) {
     val (_, isLoadingMore, endOfMessages, messages, _, _, newMessageState, parentMessageId) = messagesState
     val state = rememberLazyListState()
@@ -196,10 +197,17 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            itemsIndexed(messages, key = { _, item -> item.message.id }) { index, item ->
+            itemsIndexed(
+                messages,
+                key = { _, item ->
+                    if (item is MessageItem) item.message.id else item.toString()
+                }
+            ) { index, item ->
                 itemContent(item)
 
-                onLastVisibleMessageChanged(item)
+                if (item is MessageItem) {
+                    onLastVisibleMessageChanged(item)
+                }
 
                 if (index == 0 && currentListState.isScrollInProgress) {
                     onScrollToBottom()
@@ -221,7 +229,7 @@ public fun Messages(
                 }
             }
         }
-        val focusedItemIndex = messages.indexOfFirst { it.isFocused }
+        val focusedItemIndex = messages.indexOfFirst { it is MessageItem && it.isFocused }
 
         if (focusedItemIndex != -1) {
             coroutineScope.launch {
