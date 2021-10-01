@@ -27,6 +27,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
 
 ### ⚠️ Changed
 

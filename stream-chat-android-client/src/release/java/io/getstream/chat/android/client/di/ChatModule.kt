@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
+import okhttp3.OkHttpClient
 import java.util.concurrent.Executor
 
 /**
@@ -17,4 +18,13 @@ internal class ChatModule(
     uploader: FileUploader?,
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
-) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor)
+    customOkHttpClient: OkHttpClient?,
+) : BaseChatModule(
+    appContext,
+    config,
+    notificationsHandler,
+    uploader,
+    tokenManager,
+    callbackExecutor,
+    customOkHttpClient
+)
