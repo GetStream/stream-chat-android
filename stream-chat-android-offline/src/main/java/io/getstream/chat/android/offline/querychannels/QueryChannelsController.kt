@@ -145,6 +145,7 @@ public class QueryChannelsController internal constructor(
             is NotificationChannelDeletedEvent -> removeChannel(event.channel.cid)
             is ChannelUpdatedByUserEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
             is ChannelUpdatedEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
+            else -> Unit // Ignore other events
         }
 
         if (event is MarkAllReadEvent) {
