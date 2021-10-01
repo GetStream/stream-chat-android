@@ -4,6 +4,7 @@
 
 ### ⬆️ Improved
 - Upgraded Kotlin version to 1.5.30
+- Make our SDK compile-friendly with TargetSDK 31
 
 ### ✅ Added
 
