@@ -31,6 +31,7 @@ internal class ProgressRequestBody(
             uploaded += byteCount
 
             callback.onProgress(uploaded, total)
+            callback.onProgress((100 * uploaded) / total) // Invoked for backwards compatibility.
         }
     }
 }

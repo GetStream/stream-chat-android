@@ -37,7 +37,7 @@ internal class StreamFileUploaderTest {
 
         override fun onError(error: ChatError) = Unit
 
-        override fun onProgress(progress: Long) = Unit
+        override fun onProgress(bytesUploaded: Long, totalLength: Long) = Unit
     }
 
     private lateinit var retrofitCdnApi: RetrofitCdnApi

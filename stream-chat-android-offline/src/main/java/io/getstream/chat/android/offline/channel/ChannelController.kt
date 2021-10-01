@@ -1529,8 +1529,6 @@ public class ChannelController internal constructor(
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 
-        override fun onProgress(progress: Long) = Unit
-
         override fun onProgress(bytesUploaded: Long, totalLength: Long) {
             updateAttachmentUploadState(
                 messageId,
