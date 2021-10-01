@@ -71,6 +71,8 @@
 - Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
+- Improved overlays in all components, to match the same design and opacity
+- Added smaller animations to the AttachmentPicker in the MessagesScreen
 - General improvements in the Attachments API and the way we build different attachments
 - Allowed for better long clicks on attachments
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
