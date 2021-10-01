@@ -37,11 +37,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.list.Edit
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.Reply
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
@@ -139,7 +140,7 @@ public fun MessageInput(
                     Spacer(modifier = Modifier.size(16.dp))
                 }
 
-                if (attachments.isNotEmpty()) {
+                if (attachments.isNotEmpty() && activeAction !is Edit) {
                     MessageInputAttachments(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -202,7 +203,7 @@ internal fun MessageInputImageAttachments(
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
     ) {
         items(attachments) { image ->
-            val painter = rememberImagePainter(data = image.upload?.toUri())
+            val painter = rememberImagePainter(data = image.upload ?: image.imagePreviewUrl)
             Box(
                 modifier = Modifier
                     .size(95.dp)

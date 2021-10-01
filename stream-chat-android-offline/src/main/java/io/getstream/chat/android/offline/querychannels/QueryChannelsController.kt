@@ -245,7 +245,7 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val loading = if (pagination.isFirstPage) {
+        val loading = if (_channels.value.isEmpty()) {
             _loading
         } else {
             _loadingMore

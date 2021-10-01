@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.sample
 
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.state.messages.list.Reply
@@ -46,19 +44,13 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 
 class MessagesActivity : AppCompatActivity() {
 
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager,
-            chatClient = ChatClient.instance(),
-            chatDomain = ChatDomain.instance(),
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            enforceUniqueReactions = true,
-            messageLimit = 30
         )
     }
 

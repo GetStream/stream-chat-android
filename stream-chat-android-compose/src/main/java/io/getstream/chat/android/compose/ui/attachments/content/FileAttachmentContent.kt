@@ -1,7 +1,9 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,15 +50,24 @@ internal val FILE_ATTACHMENT_WIDTH = 250.dp
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun FileAttachmentContent(attachmentState: AttachmentState) {
-    val (modifier, messageItem, _) = attachmentState
-    val (message, _) = messageItem
+public fun FileAttachmentContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val (message, onLongItemClick) = attachmentState
 
     Column(
         modifier = modifier
             .wrapContentHeight()
             .width(FILE_ATTACHMENT_WIDTH)
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {},
+                onLongClick = { onLongItemClick(message) }
+            )
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(attachment = attachment)
