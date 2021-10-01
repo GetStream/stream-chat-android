@@ -1559,7 +1559,7 @@ public class ChatClient internal constructor(
 
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
-        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 30_000L
         private var cdnTimeout = 30_000L
