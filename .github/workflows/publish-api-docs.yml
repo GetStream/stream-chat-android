@@ -4,10 +4,6 @@ on:
   release:
     types: [released]
 
-concurrency:
-  group: ${{ github.head_ref }}
-  cancel-in-progress: true
-
 jobs:
   publish:
     name: Dokka docs
