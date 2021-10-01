@@ -3,7 +3,6 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -47,9 +46,11 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun ImageAttachmentContent(attachmentState: AttachmentState) {
-    val (modifier, messageItem, onLongItemClick, onImagePreviewResult) = attachmentState
-    val (message, _) = messageItem
+public fun ImageAttachmentContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val (message, onLongItemClick, onImagePreviewResult) = attachmentState
 
     Row(
         modifier
@@ -74,7 +75,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                 modifier = Modifier.weight(1f),
                 message = message,
                 attachmentPosition = 0,
-                onImagePreviewResult = onImagePreviewResult
+                onImagePreviewResult = onImagePreviewResult,
+                onLongItemClick = onLongItemClick
             )
         } else {
             Column(
@@ -89,7 +91,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                             modifier = Modifier.weight(1f),
                             message = message,
                             attachmentPosition = imageIndex,
-                            onImagePreviewResult = onImagePreviewResult
+                            onImagePreviewResult = onImagePreviewResult,
+                            onLongItemClick = onLongItemClick
                         )
                     }
                 }
@@ -111,7 +114,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                                     attachment = attachment,
                                     message = message,
                                     attachmentPosition = imageIndex,
-                                    onImagePreviewResult = onImagePreviewResult
+                                    onImagePreviewResult = onImagePreviewResult,
+                                    onLongItemClick = onLongItemClick
                                 )
 
                                 if (!isUploading) {
@@ -128,7 +132,8 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
                                 modifier = Modifier.weight(1f),
                                 message = message,
                                 attachmentPosition = imageIndex,
-                                onImagePreviewResult = onImagePreviewResult
+                                onImagePreviewResult = onImagePreviewResult,
+                                onLongItemClick = onLongItemClick
                             )
                         }
                     }
@@ -144,12 +149,14 @@ public fun ImageAttachmentContent(attachmentState: AttachmentState) {
  * @param attachment Image attachment data to show.
  * @param modifier Modifier for styling.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ImageAttachmentContentItem(
     message: Message,
     attachmentPosition: Int,
     attachment: Attachment,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val painter = rememberImagePainter(attachment.imagePreviewUrl)
@@ -162,7 +169,7 @@ internal fun ImageAttachmentContentItem(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(
+            .combinedClickable(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
@@ -172,7 +179,8 @@ internal fun ImageAttachmentContentItem(
                             initialPosition = attachmentPosition
                         )
                     )
-                }
+                },
+                onLongClick = { onLongItemClick(message) }
             )
     ) {
         Image(

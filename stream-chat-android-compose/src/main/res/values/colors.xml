@@ -9,7 +9,7 @@
     <color name="stream_compose_app_background">#F7F7F8</color>
     <color name="stream_compose_bars_background">#FFFFFF</color>
     <color name="stream_compose_link_background">#E9F1FF</color>
-    <color name="stream_compose_overlay">#33000000</color>
+    <color name="stream_compose_overlay">#80000000</color>
     <color name="stream_compose_primary_accent">#006CFF</color>
     <color name="stream_compose_error_accent">#FF3742</color>
     <color name="stream_compose_info_accent">#20E070</color>
