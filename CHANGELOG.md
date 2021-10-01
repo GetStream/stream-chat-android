@@ -11,7 +11,7 @@
 - Attachment#uploadState is now updated in real-time during uploads.
 
 ### ❌ Removed
-- Removed/deprecated `ProgressTrackerFactory` and `ProgressTracker`
+- Removed `ProgressTrackerFactory` and `ProgressTracker` in favour of new progress tracking implementation.
 
 ## stream-chat-android
 ### 🐞 Fixed
@@ -37,7 +37,6 @@
 - 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
 
 ### ❌ Removed
-- 🚨 Breaking change: `ProgressTracker.toProgressCallback()` has been removed in favour of new progress tracking implementation.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed

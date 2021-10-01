@@ -2900,7 +2900,7 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 }
 
 public final class io/getstream/chat/android/client/utils/ProgressCallback$DefaultImpls {
-	public static fun onProgress (Lio/getstream/chat/android/client/utils/ProgressCallback;JJ)V
+	public static fun onProgress (Lio/getstream/chat/android/client/utils/ProgressCallback;J)V
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {
