@@ -90,7 +90,9 @@ internal class TextAndAttachmentsViewHolder(
         adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
 
         binding.run {
-            attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+            attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
+                recycleChildrenOnDetach = true
+            }
             attachmentsRecycler.setRecycledViewPool(recycledViewPool)
             attachmentsRecycler.adapter = adapter
         }
