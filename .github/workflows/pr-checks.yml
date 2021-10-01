@@ -79,7 +79,11 @@ jobs:
         with:
           key-prefix: gradle-test
       - name: Unit tests
-        run: ./script/ci-unit-tests.sh
+        run: |
+          ./gradlew test-debug
+          chmod +x unit-tests-selected-command.sh
+          ./unit-tests-selected-command.sh
+          rm unit-tests-selected-command.sh
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
