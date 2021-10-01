@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.offline.request.hasFilter
 import java.util.Date
 
 internal interface MessageRepository {
@@ -46,30 +45,31 @@ internal class MessageRepositoryImpl(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
     ): List<MessageEntity> {
-        if (pagination != null && pagination.hasFilter()) {
+        val messageFilterDirection = pagination?.messageFilterDirection
+        return if (messageFilterDirection != null) {
             // handle the differences between gt, gte, lt and lte
             val message = messageDao.select(pagination.messageFilterValue)
             if (message?.messageInnerEntity?.createdAt == null) return listOf()
             val messageLimit = pagination.messageLimit
             val messageTime = message.messageInnerEntity.createdAt
 
-            when (pagination.messageFilterDirection) {
+            when (messageFilterDirection) {
                 Pagination.GREATER_THAN_OR_EQUAL -> {
-                    return messageDao.messagesForChannelEqualOrNewerThan(cid, messageLimit, messageTime)
+                    messageDao.messagesForChannelEqualOrNewerThan(cid, messageLimit, messageTime)
                 }
                 Pagination.GREATER_THAN -> {
-                    return messageDao.messagesForChannelNewerThan(cid, messageLimit, messageTime)
+                    messageDao.messagesForChannelNewerThan(cid, messageLimit, messageTime)
                 }
                 Pagination.LESS_THAN_OR_EQUAL -> {
-                    return messageDao.messagesForChannelEqualOrOlderThan(cid, messageLimit, messageTime)
+                    messageDao.messagesForChannelEqualOrOlderThan(cid, messageLimit, messageTime)
                 }
                 Pagination.LESS_THAN -> {
-                    return messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
+                    messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
                 }
-                null -> TODO("Is this just invalid?")
             }
+        } else {
+            messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
         }
-        return messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
     }
 
     override suspend fun selectMessages(messageIds: List<String>): List<Message> {
