@@ -8,6 +8,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
 
 ### ❌ Removed
 
