@@ -155,8 +155,8 @@ class Messages(
             channelClient.sendFile(
                 anyOtherFile,
                 object : ProgressCallback {
-                    override fun onSuccess(attachmentUrl: String?) {
-                        val fileUrl = attachmentUrl
+                    override fun onSuccess(url: String?) {
+                        val fileUrl = url
                     }
 
                     override fun onError(error: ChatError) {

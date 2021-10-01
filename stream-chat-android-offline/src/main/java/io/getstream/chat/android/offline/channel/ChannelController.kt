@@ -1521,7 +1521,7 @@ public class ChannelController internal constructor(
 
     internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) :
         ProgressCallback {
-        override fun onSuccess(attachmentUrl: String?) {
+        override fun onSuccess(url: String?) {
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 

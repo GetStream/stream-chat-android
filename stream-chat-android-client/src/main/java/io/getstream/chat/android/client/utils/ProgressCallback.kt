@@ -8,9 +8,9 @@ import io.getstream.chat.android.client.errors.ChatError
 public interface ProgressCallback {
 
     /**
-     * Called when the attachment is uploaded successfully with an [attachmentUrl].
+     * Called when the attachment is uploaded successfully with an [url].
      */
-    public fun onSuccess(attachmentUrl: String?)
+    public fun onSuccess(url: String?)
 
     /**
      * Called when the attachment could not be uploaded due to cancellation, network problem or timeout etc with an [error].
