@@ -1973,7 +1973,7 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 	public final fun copy (JJ)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;JJILjava/lang/Object;)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBytesRead ()J
+	public final fun getBytesUploaded ()J
 	public final fun getTotalBytes ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

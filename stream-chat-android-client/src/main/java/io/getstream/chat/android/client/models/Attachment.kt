@@ -52,7 +52,7 @@ public data class Attachment(
         /**
          * State representing attachment upload progress.
          */
-        public data class InProgress(val bytesRead: Long, val totalBytes: Long) : UploadState()
+        public data class InProgress(val bytesUploaded: Long, val totalBytes: Long) : UploadState()
 
         /**
          * State indicating that the attachment was uploaded successfully

@@ -90,7 +90,7 @@ public fun FileUploadItem(attachment: Attachment) {
                         ProgressInfo(uploadedBytes = 0L, totalBytes = attachment.upload?.length() ?: 0L)
                     }
                     is InProgress -> {
-                        ProgressInfo(uploadedBytes = uploadState.bytesRead, totalBytes = uploadState.totalBytes)
+                        ProgressInfo(uploadedBytes = uploadState.bytesUploaded, totalBytes = uploadState.totalBytes)
                     }
                     else -> {
                         Text(

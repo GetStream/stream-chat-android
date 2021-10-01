@@ -191,7 +191,7 @@ private class FileAttachmentViewHolder(
         if (uploadState is Attachment.UploadState.Idle) {
             handleInProgressAttachment(binding.fileSize, 0L, attachment.upload?.length() ?: 0)
         } else if (uploadState is Attachment.UploadState.InProgress) {
-            handleInProgressAttachment(binding.fileSize, uploadState.bytesRead, uploadState.totalBytes)
+            handleInProgressAttachment(binding.fileSize, uploadState.bytesUploaded, uploadState.totalBytes)
         }
     }
 
