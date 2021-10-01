@@ -61,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageListView::addOnScrollListener` and `MessageListView::removeOnScrollListener` methods to the `MessageListView` to listen to scroll events of the inner message list.
 
 ### ⚠️ Changed
 
