@@ -23,6 +23,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
 - `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead. 
