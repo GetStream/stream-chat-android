@@ -24,6 +24,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
 
