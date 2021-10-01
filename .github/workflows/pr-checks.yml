@@ -81,9 +81,9 @@ jobs:
       - name: Unit tests
         run: |
           ./gradlew test-debug
-          chmod +x unit-tests-selected-command.sh
-          ./unit-tests-selected-command.sh
-          rm unit-tests-selected-command.sh
+          chmod +x unit-tests-command.sh
+          ./unit-tests-command.sh
+          rm unit-tests-command.sh
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
