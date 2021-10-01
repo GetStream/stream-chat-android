@@ -42,8 +42,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.None
 import io.getstream.chat.android.compose.state.messages.list.Copy
 import io.getstream.chat.android.compose.state.messages.list.Delete
 import io.getstream.chat.android.compose.state.messages.list.Edit
@@ -218,7 +216,7 @@ private fun SelectedMessage(message: Message) {
                     DeletedMessageContent()
                 } else {
                     Column {
-                        MessageAttachmentsContent(messageItem = MessageItem(message, None), onLongItemClick = {})
+                        MessageAttachmentsContent(message = message, onLongItemClick = {})
 
                         if (message.text.isNotEmpty()) {
                             DefaultMessageContent(message = message)
