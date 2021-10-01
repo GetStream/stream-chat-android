@@ -12,8 +12,8 @@ private const val COMMAND_NAME = "selected-test-debug"
 class SelectedUnitTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        val extension: UnitTestsCommandExtesion =
-            project.extensions.create(CONFIG_CLOJURE_NAME, UnitTestsCommandExtesion::class.java)
+        val extension: SelectedUnitTestsCommandExtension =
+            project.extensions.create(CONFIG_CLOJURE_NAME, SelectedUnitTestsCommandExtension::class.java)
 
         project.tasks.registerExt<SelectedUnitTestsTask>(COMMAND_NAME) {
             this.config = extension

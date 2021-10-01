@@ -5,7 +5,7 @@ import io.getstream.chat.android.command.utils.generateGradleCommand
 import org.gradle.api.Project
 import java.io.File
 
-fun List<String>.unitTestCommand(rootProject: Project): String {
+fun List<String>.selectedUnitTestCommand(rootProject: Project): String {
     val modulesWithTest = filterModulesWithTests()
 
     return filterUnitTestableModules(rootProject)

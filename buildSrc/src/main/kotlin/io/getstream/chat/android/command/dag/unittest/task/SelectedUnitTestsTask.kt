@@ -1,8 +1,8 @@
 package io.getstream.chat.android.command.dag.unittest.task
 
 import io.getstream.chat.android.command.utils.parseModules
-import io.getstream.chat.android.command.dag.unittest.filter.unitTestCommand
-import io.getstream.chat.android.command.dag.unittest.plugin.UnitTestsCommandExtesion
+import io.getstream.chat.android.command.dag.unittest.filter.selectedUnitTestCommand
+import io.getstream.chat.android.command.dag.unittest.plugin.SelectedUnitTestsCommandExtension
 import io.getstream.chat.android.command.utils.changeModuleFileDoesNotExistInPath
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -12,7 +12,7 @@ import java.io.File
 open class SelectedUnitTestsTask : DefaultTask() {
 
     @Input
-    lateinit var config: UnitTestsCommandExtesion
+    lateinit var config: SelectedUnitTestsCommandExtension
 
     @ExperimentalStdlibApi
     @TaskAction
@@ -23,7 +23,7 @@ open class SelectedUnitTestsTask : DefaultTask() {
             changeModuleFileDoesNotExistInPath(config.changeModulesPath)
         }
 
-        val command = parseModules(changedModulesFile).unitTestCommand(project)
+        val command = parseModules(changedModulesFile).selectedUnitTestCommand(project)
         File(config.outputPath).writeText(command)
 
         println("Command generated: $command")
