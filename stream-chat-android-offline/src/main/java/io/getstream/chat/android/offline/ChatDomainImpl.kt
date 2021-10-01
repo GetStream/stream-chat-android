@@ -641,7 +641,7 @@ internal class ChatDomainImpl internal constructor(
             .take(3)
         for (queryChannelController in queriesToRetry) {
             val pagination = QueryChannelsPaginationRequest(
-                QuerySort(),
+                queryChannelController.sort,
                 INITIAL_CHANNEL_OFFSET,
                 CHANNEL_LIMIT,
                 MESSAGE_LIMIT,
