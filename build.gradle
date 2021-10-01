@@ -1,6 +1,7 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.dag.ktlint.plugin.SelectedKtlintPlugin
 import io.getstream.chat.android.command.dag.unittest.plugin.SelectedUnitTestsPlugin
+import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -10,6 +11,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: SelectedKtlintPlugin
 apply plugin: SelectedUnitTestsPlugin
+apply plugin: VersionBumpPlugin
 apply plugin: 'com.github.leandroborgesferreira.dag-command'
 
 buildscript {
