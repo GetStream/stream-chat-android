@@ -753,6 +753,8 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 - Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
 
+<!-- end of unreleased -->
+
 # September 15th, 2021 - 4.19.0
 ## Common changes for all artifacts
 ### ✅ Added
