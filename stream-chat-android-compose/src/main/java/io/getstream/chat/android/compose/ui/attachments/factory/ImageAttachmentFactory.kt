@@ -12,5 +12,10 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 @Suppress("FunctionName")
 public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
-    content = @Composable { ImageAttachmentContent(it) },
+    content = @Composable { modifier, state ->
+        ImageAttachmentContent(
+            modifier = modifier,
+            attachmentState = state
+        )
+    },
 )

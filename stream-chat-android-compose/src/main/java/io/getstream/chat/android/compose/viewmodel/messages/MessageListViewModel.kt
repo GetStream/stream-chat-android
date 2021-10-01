@@ -209,7 +209,7 @@ public class MessageListViewModel(
                     lastLoadedMessage = newLastMessage
                     controller.toChannel().let { channel ->
                         ChatClient.dismissChannelNotifications(channelType = channel.type, channelId = channel.id)
-                        setChanel(channel)
+                        setCurrentChannel(channel)
                     }
                 }
         }
@@ -218,7 +218,7 @@ public class MessageListViewModel(
     /**
      * Sets the current channel, used to show info in the UI.
      */
-    private fun setChanel(channel: Channel) {
+    private fun setCurrentChannel(channel: Channel) {
         this.channel = channel
     }
 

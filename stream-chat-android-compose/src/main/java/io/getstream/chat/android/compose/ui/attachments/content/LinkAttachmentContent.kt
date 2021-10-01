@@ -45,9 +45,9 @@ import io.getstream.chat.android.compose.ui.util.hasLink
 public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
+    modifier: Modifier = Modifier,
 ) {
-    val (modifier, messageItem, onLongItemClick) = attachmentState
-    val (message, _) = messageItem
+    val (message, onLongItemClick) = attachmentState
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && it.type != ModelType.attach_giphy }

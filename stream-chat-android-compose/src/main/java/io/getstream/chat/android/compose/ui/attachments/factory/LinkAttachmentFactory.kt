@@ -17,5 +17,11 @@ public fun LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
-    content = @Composable { LinkAttachmentContent(it, linkDescriptionMaxLines) },
+    content = @Composable { modifier, state ->
+        LinkAttachmentContent(
+            modifier = modifier,
+            attachmentState = state,
+            linkDescriptionMaxLines = linkDescriptionMaxLines
+        )
+    },
 )
