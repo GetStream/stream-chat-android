@@ -7,8 +7,6 @@ fun hasBreakingChange(file: File): Boolean {
 
     file.useLines { lines ->
         lines.forEach { line ->
-            println(line)
-
             if (line.contains("<!-- end of unreleased -->"))
                 return hasBreakingChange
 
