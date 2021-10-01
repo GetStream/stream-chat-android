@@ -2,6 +2,7 @@ import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Versions
 import io.getstream.chat.android.command.release.plugin.ReleasePlugin
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
+import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
@@ -11,6 +12,8 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
+apply plugin: VersionBumpPlugin
+
 
 buildscript {
     repositories {
