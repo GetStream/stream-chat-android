@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.util.Log
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -40,11 +41,15 @@ internal class GiphyViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
+
         applyStyle()
-        data.message
-            .attachments
-            .firstOrNull()
-            ?.let(binding.mediaAttachmentView::showAttachment)
+
+        if (diff?.attachments == true) {
+            data.message
+                .attachments
+                .firstOrNull()
+                ?.let(binding.mediaAttachmentView::showAttachment)
+        }
 
         binding.giphyQueryTextView.text = data.message
             .text
