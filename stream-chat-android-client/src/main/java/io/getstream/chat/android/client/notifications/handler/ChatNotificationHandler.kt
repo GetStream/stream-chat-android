@@ -25,6 +25,9 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 /**
  * Class responsible for handling chat notifications.
  */
+@Deprecated(
+    message = "This class will be used internally on future versions and won't be accesible, you need to implement your own [NotificationHandler]"
+)
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =

@@ -25,6 +25,7 @@
 
 ### ⚠️ Changed
 - Some properties of `NotificationConfig` has been deprecated, check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section
+- `ChatNotificationhandler` class has been deprecated, you need to use `NotificationHandler` now. Check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section.
 
 ### ❌ Removed
 
