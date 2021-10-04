@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
@@ -20,12 +21,20 @@ public class UserReactionsView : FrameLayout {
 
     private val binding = StreamUiUserReactionsViewBinding.inflate(streamThemeInflater, this, true)
 
-    private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter()
+    private val userReactionsAdapter: UserReactionAdapter = UserReactionAdapter {
+        userReactionClickListener?.onUserReactionClick(it.user, it.reaction)
+    }
     private val gridLayoutManager: GridLayoutManager
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper())
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
+    private var userReactionClickListener: UserReactionClickListener? = null
+
+    public constructor(context: Context) : this(context, null, 0)
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context.createStreamThemeWrapper(),
+        attrs,
+        defStyleAttr
+    )
 
     init {
         binding.recyclerView.adapter = userReactionsAdapter
@@ -35,6 +44,10 @@ public class UserReactionsView : FrameLayout {
     public fun setMessage(message: Message, currentUser: User) {
         bindTitle(message)
         bindReactionList(message, currentUser)
+    }
+
+    public fun setOnUserReactionClickListener(userReactionClickListener: UserReactionClickListener) {
+        this.userReactionClickListener = userReactionClickListener
     }
 
     internal fun configure(messageListViewStyle: MessageListViewStyle) {
@@ -69,6 +82,10 @@ public class UserReactionsView : FrameLayout {
 
         gridLayoutManager.spanCount = userReactionItems.size.coerceAtMost(MAX_COLUMNS_COUNT)
         userReactionsAdapter.submitList(userReactionItems)
+    }
+
+    public fun interface UserReactionClickListener {
+        public fun onUserReactionClick(user: User, reaction: Reaction)
     }
 
     private companion object {

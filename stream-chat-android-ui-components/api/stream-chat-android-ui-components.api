@@ -1595,6 +1595,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserBlockHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserBlockHandler;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;)V
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
+	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
@@ -1745,6 +1746,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler {
 	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler {
@@ -2121,6 +2126,10 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView$UserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
 }
 
 public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
