@@ -4,8 +4,8 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| ChatClient#cdnTimeout | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | 2021.11.09 ⌛ | Use ChatClient.okHttpClient() to set the timeouts  |
-| ChatClient#baseTimeout | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | 2021.11.09 ⌛ | Use ChatClient.okHttpClient() to set the timeouts  |
+| `ChatClient#cdnUrl`  <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.12 | 2021.11.09 ⌛ | Use `ChatClient.fileUploader()` to add custom file uploading logic instead  |
+| `ChatClient#cdnTimeout` and `ChatClient#baseTimeout` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | 2021.11.09 ⌛ | Use `ChatClient.okHttpClient()` to set the timeouts instead |
 | `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | This class is not used anymore |
 | `ViewReactionsViewStyle#bubbleBorderColor` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | 2021.10.26 ⌛ | Use bubbleBorderColorMine instead  |
 | `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | Some attributes are not needed anymore |

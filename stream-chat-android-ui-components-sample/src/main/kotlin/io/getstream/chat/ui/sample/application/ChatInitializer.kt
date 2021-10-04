@@ -5,14 +5,12 @@ import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
 
-@OptIn(InternalStreamChatApi::class)
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
