@@ -52,6 +52,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed PDF attachments previews
 
 ### ⬆️ Improved
 

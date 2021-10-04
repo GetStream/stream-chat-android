@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-
+  
 jobs:
   publish:
     name: Snapshot build and publish
