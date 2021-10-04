@@ -16,6 +16,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
  * @param sort How to sort the channels, defaults to last_updated.
  * @param limit How many channels to return.
  * @param messageLimit The number of messages to fetch for each channel.
+ * @param newChannelEventFilter Determines if the channel should be added to the list after receiving NotificationAddedToChannelEvent, ChannelUpdatedByUserEvent, or ChannelUpdatedEvent
  *
  * @see Filters
  * @see QuerySort
@@ -25,6 +26,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
+    private var newChannelEventFilter: ((Channel, FilterObject) -> Boolean)? = null,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {
@@ -32,6 +34,13 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return ChannelListViewModel(ChatDomain.instance(), filter, sort, limit, messageLimit) as T
+        return ChannelListViewModel(
+            ChatDomain.instance(),
+            filter,
+            sort,
+            limit,
+            messageLimit,
+            newChannelEventFilter,
+        ) as T
     }
 }

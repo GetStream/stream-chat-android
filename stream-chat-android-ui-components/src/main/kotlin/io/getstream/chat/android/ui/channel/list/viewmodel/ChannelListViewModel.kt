@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.ChatDomain
@@ -21,6 +22,7 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.ChannelListView].
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.map
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
+ * @param newChannelEventFilter Determines if the channel should be added to the list after receiving NotificationAddedToChannelEvent, ChannelUpdatedByUserEvent, or ChannelUpdatedEvent
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
@@ -39,6 +42,7 @@ public class ChannelListViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
+    private val newChannelEventFilter: ((Channel, FilterObject) -> Boolean)? = null,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -67,6 +71,13 @@ public class ChannelListViewModel(
         chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
+
+                newChannelEventFilter?.let { channelEventFilter ->
+                    queryChannelsController.checkFilterOnChannelUpdatedEvent = true
+                    queryChannelsController.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
+                        withContext(DispatcherProvider.IO) { channelEventFilter(channel, filterObject) }
+                    }
+                }
 
                 val channelState = queryChannelsController.channelsState.map { channelState ->
                     handleChannelState(channelState, queryChannelsController.mutedChannelIds.value)
