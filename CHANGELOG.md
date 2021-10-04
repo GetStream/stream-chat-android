@@ -62,6 +62,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Removed full screen loading view when loading more message items on the `SearchResultListView`.
 
 ### ✅ Added
 
