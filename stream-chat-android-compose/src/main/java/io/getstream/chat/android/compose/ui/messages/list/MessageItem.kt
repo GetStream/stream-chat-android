@@ -82,11 +82,22 @@ import java.util.Date
  */
 public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
 
+/**
+ * Represents the default message item that's shown for each item in the list.
+ *
+ * Detects if we're dealing with a [DateSeparator] or a [MessageItem] and shows the required UI.
+ *
+ * @param messageListItem The item that holds the data.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onThreadClick Handler when the user taps on a thread in a message item.
+ * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
+ */
 @Composable
 public fun DefaultMessageItem(
     messageListItem: MessageListItem,
-    onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
 ) {
@@ -102,16 +113,20 @@ public fun DefaultMessageItem(
     }
 }
 
+/**
+ * Represents a date separator item that shows whenever messages are too far apart in time.
+ *
+ * @param dateSeparator The data used to show the separator text.
+ */
 @Composable
 public fun MessageDateSeparator(
     dateSeparator: DateSeparator,
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Center) {
         Surface(
             modifier = Modifier
-                .align(Center)
                 .padding(vertical = 8.dp),
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.overlayDark,
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
@@ -122,7 +137,7 @@ public fun MessageDateSeparator(
                     DateUtils.DAY_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE
                 ).toString(),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.barsBackground,
                 style = ChatTheme.typography.body
             )
         }

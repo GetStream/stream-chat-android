@@ -72,7 +72,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
-    onLastVisibleMessageChanged: (MessageItem) -> Unit = { viewModel.updateLastSeenMessage(it) },
+    onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
         if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
@@ -96,7 +96,7 @@ public fun MessageList(
         onMessagesStartReached = onMessagesStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
-        onScrollToBottom = onScrollToBottom,
+        onScrolledToBottom = onScrollToBottom,
         onImagePreviewResult = onImagePreviewResult,
         itemContent = itemContent,
         loadingContent = loadingContent,
@@ -112,7 +112,7 @@ public fun MessageList(
  * @param modifier Modifier for styling.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrollToBottom Handler when the user scrolls to the bottom.
+ * @param onScrolledToBottom Handler when the user scrolls to the bottom.
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
@@ -126,8 +126,8 @@ public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
     onMessagesStartReached: () -> Unit = {},
-    onLastVisibleMessageChanged: (MessageItem) -> Unit = {},
-    onScrollToBottom: () -> Unit = {},
+    onLastVisibleMessageChanged: (Message) -> Unit = {},
+    onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
@@ -151,7 +151,7 @@ public fun MessageList(
             messagesState = currentState,
             onMessagesStartReached = onMessagesStartReached,
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-            onScrollToBottom = onScrollToBottom,
+            onScrolledToBottom = onScrolledToBottom,
             itemContent = itemContent
         )
         else -> emptyContent()
@@ -169,7 +169,7 @@ public fun MessageList(
  * and if we've reached the end of the list.
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message changes.
- * @param onScrollToBottom Handler when the user reaches the bottom of the list.
+ * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
  * @param itemContent Composable that represents the item that displays each message.
  * @param modifier Modifier for styling.
  */
@@ -177,8 +177,8 @@ public fun MessageList(
 public fun Messages(
     messagesState: MessagesState,
     onMessagesStartReached: () -> Unit,
-    onLastVisibleMessageChanged: (MessageItem) -> Unit,
-    onScrollToBottom: () -> Unit,
+    onLastVisibleMessageChanged: (Message) -> Unit,
+    onScrolledToBottom: () -> Unit,
     modifier: Modifier = Modifier,
     itemContent: @Composable (MessageListItem) -> Unit,
 ) {
@@ -206,11 +206,11 @@ public fun Messages(
                 itemContent(item)
 
                 if (item is MessageItem) {
-                    onLastVisibleMessageChanged(item)
+                    onLastVisibleMessageChanged(item.message)
                 }
 
                 if (index == 0 && currentListState.isScrollInProgress) {
-                    onScrollToBottom()
+                    onScrolledToBottom()
                 }
 
                 if (!endOfMessages && index == messages.lastIndex && messages.isNotEmpty() && currentListState.isScrollInProgress) {
@@ -247,7 +247,7 @@ public fun Messages(
                 currentListState.animateScrollToItem(0)
             }
 
-            abs(firstVisibleItemIndex) >= 1 -> {
+            abs(firstVisibleItemIndex) >= 2 -> {
                 MessagesScrollingOption(messagesState.unreadCount) {
                     coroutineScope.launch {
                         if (firstVisibleItemIndex > 5) {

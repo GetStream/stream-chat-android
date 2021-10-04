@@ -81,8 +81,11 @@
 - General improvements in the Attachments API and the way we build different attachments
 - Allowed for better long clicks on attachments
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
+- Improved logic for updating the `lastSeenMessage` for fewer calculations
 
 ### ✅ Added
+- Added DateSeparator items to Messages to group up messages by their creation date
+- Added an `overlayDark` color for date separators and similar UI components
 
 ### ⚠️ Changed
 - Removed AttachmentPicker option when editing messages
@@ -90,6 +93,9 @@
 - Improved the ease of use of the AttachmentState API by keeping it state & actions only
 - Moved the `modifier` parameter outside of the AttachmentState to the AttachmentFactory
 - Updated Attachments to hold `Message` items instead of `MessageItem`s
+- Changed the type of the `onLastVisibleMessageChanged` parameter to `Message` for ease of use
+- Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
+- Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 
 ### ❌ Removed
 

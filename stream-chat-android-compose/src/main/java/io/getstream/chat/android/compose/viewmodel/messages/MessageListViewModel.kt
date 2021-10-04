@@ -134,12 +134,12 @@ public class MessageListViewModel(
     /**
      * Represents the latest message we've seen in the channel.
      */
-    private var lastSeenChannelMessage: MessageItem? by mutableStateOf(null)
+    private var lastSeenChannelMessage: Message? by mutableStateOf(null)
 
     /**
      * Represents the latest message we've seen in the active thread.
      */
-    private var lastSeenThreadMessage: MessageItem? by mutableStateOf(null)
+    private var lastSeenThreadMessage: Message? by mutableStateOf(null)
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -292,11 +292,11 @@ public class MessageListViewModel(
      * @param lastSeenMessage - The last message we saw in the list.
      * @return [Int] list position of the last message we've seen.
      */
-    private fun getLastSeenMessagePosition(lastSeenMessage: MessageItem?): Int {
+    private fun getLastSeenMessagePosition(lastSeenMessage: Message?): Int {
         if (lastSeenMessage == null) return 0
 
         return currentMessagesState.messageItems.indexOfFirst {
-            it is MessageItem && it.message.id == lastSeenMessage.message.id
+            it is MessageItem && it.message.id == lastSeenMessage.id
         }
     }
 
@@ -304,18 +304,20 @@ public class MessageListViewModel(
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
      * time the data loads and whenever we see a message that's newer than the current last seen message.
      *
-     * @param currentMessage The message that is currently seen by the user.
+     * @param message The message that is currently seen by the user.
      */
-    public fun updateLastSeenMessage(currentMessage: MessageItem) {
+    public fun updateLastSeenMessage(message: Message) {
         val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
 
         if (lastSeenMessage == null) {
-            updateLastSeenMessageState(currentMessage)
+            updateLastSeenMessageState(message)
             return
         }
 
-        val lastSeenMessageDate = lastSeenMessage.message.createdAt ?: Date()
-        val currentMessageDate = currentMessage.message.createdAt ?: Date()
+        if (message.id == lastSeenMessage.id) return
+
+        val lastSeenMessageDate = message.createdAt ?: Date()
+        val currentMessageDate = message.createdAt ?: Date()
 
         if (currentMessageDate < lastSeenMessageDate) {
             return
@@ -323,12 +325,12 @@ public class MessageListViewModel(
         val messages = currentMessagesState.messageItems
 
         val currentMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == currentMessage.message.id }
+            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
         val lastSeenMessagePosition =
-            messages.indexOfFirst { it is MessageItem && it.message.id == lastSeenMessage.message.id }
+            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
 
         if (currentMessagePosition < lastSeenMessagePosition) {
-            updateLastSeenMessageState(currentMessage)
+            updateLastSeenMessageState(message)
         }
     }
 
@@ -337,7 +339,7 @@ public class MessageListViewModel(
      *
      * @param currentMessage The current message the user sees.
      */
-    private fun updateLastSeenMessageState(currentMessage: MessageItem) {
+    private fun updateLastSeenMessageState(currentMessage: Message) {
         if (isInThread) {
             lastSeenThreadMessage = currentMessage
 
