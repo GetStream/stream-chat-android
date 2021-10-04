@@ -1558,6 +1558,12 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
+    /**
+     * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
+     *
+     * @param apiKey The API key of your Stream Chat app obtained from the [Stream Dashboard](https://dashboard.getstream.io/).
+     * @param appContext The application [Context].
+     */
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var baseUrl: String = "chat.stream-io-api.com"
@@ -1574,21 +1580,61 @@ public class ChatClient internal constructor(
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
 
+        /**
+         * Sets the log level to be used by the client.
+         *
+         * See [ChatLogLevel] for details about the available options.
+         *
+         * We strongly recommend using [ChatLogLevel.NOTHING] in production builds,
+         * which produces no logs.
+         *
+         * @param level The log level to use.
+         */
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
             return this
         }
 
+        /**
+         * Sets a [ChatLoggerHandler] instance that will receive log events from the SDK.
+         *
+         * Use this to forward SDK events to your own logging solutions.
+         *
+         * See the FirebaseLogger class in the UI Components sample app for an example implementation.
+         *
+         * @param loggerHandler Your custom [ChatLoggerHandler] implementation.
+         */
         public fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
             return this
         }
 
+        /**
+         * Sets a custom [ChatNotificationHandler] that the SDK will use to handle everything
+         * around push notifications. Create your own subclass and override methods to customize
+         * notification appearance and behavior.
+         *
+         * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
+         * documentation for more information.
+         *
+         * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
+         */
         public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
             this.notificationsHandler = notificationsHandler
             return this
         }
 
+        /**
+         * Sets a custom file uploader implementation that will be used by the client
+         * to upload files and images.
+         *
+         * The default implementation uses Stream's own CDN to store these files,
+         * which has a 20 MB upload size limit.
+         *
+         * For more info, see [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
+         *
+         * @param fileUploader Your custom implementation of [FileUploader].
+         */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
             return this
@@ -1606,6 +1652,13 @@ public class ChatClient internal constructor(
             return this
         }
 
+        /**
+         * By default, ChatClient performs a dummy HTTP call to the Stream API
+         * when a user is set to initialize the HTTP connection and make subsequent
+         * requests reusing this connection execute faster.
+         *
+         * Calling this method disables this connection warm-up behavior.
+         */
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
         }
@@ -1623,6 +1676,18 @@ public class ChatClient internal constructor(
             this.customOkHttpClient = okHttpClient
         }
 
+        /**
+         * Sets the base URL to be used by the client.
+         *
+         * By default, this is the URL of Stream's [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
+         * which provides low latency regardless of which region your Stream
+         * app is hosted in.
+         *
+         * You should only change this URL if you're on dedicated Stream
+         * Chat infrastructure.
+         *
+         * @param value The base URL to use.
+         */
         public fun baseUrl(value: String): Builder {
             var baseUrl = value
             if (baseUrl.startsWith("https://")) {
@@ -1703,7 +1768,10 @@ public class ChatClient internal constructor(
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
-
+        /**
+         * Create a [ChatClient] instance based on the current configuration
+         * of the [Builder].
+         */
         public fun build(): ChatClient = buildChatClient().also {
             instance = it
         }
