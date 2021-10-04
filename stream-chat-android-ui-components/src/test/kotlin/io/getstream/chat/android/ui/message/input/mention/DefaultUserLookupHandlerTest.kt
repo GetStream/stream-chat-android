@@ -70,6 +70,6 @@ internal class DefaultUserLookupHandlerTest {
     }
 
     private fun randomStringWithout(query: String): String {
-        return generateSequence { randomString() }.first { string -> query !in string }
+        return generateSequence { randomString() }.first { string -> !string.contains(query, ignoreCase = true) }
     }
 }
