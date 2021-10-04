@@ -22,16 +22,7 @@ internal class ChatModule(
     uploader: FileUploader?,
     tokenManager: TokenManager,
     callbackExecutor: Executor?,
-    customOkHttpClient: OkHttpClient?,
-) : BaseChatModule(
-    appContext,
-    config,
-    notificationsHandler,
-    uploader,
-    tokenManager,
-    callbackExecutor,
-    customOkHttpClient,
-) {
+) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager, callbackExecutor) {
 
     override fun clientBuilder(
         timeout: Long,
