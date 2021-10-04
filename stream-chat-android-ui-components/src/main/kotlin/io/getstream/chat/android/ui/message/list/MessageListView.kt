@@ -550,7 +550,7 @@ public class MessageListView : ConstraintLayout {
      *
      * @return The inner [RecyclerView] with messages.
      */
-    public fun getInnerMessageList(): RecyclerView {
+    public fun getRecyclerView(): RecyclerView {
         return binding.chatMessagesRV
     }
 

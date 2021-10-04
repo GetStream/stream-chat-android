@@ -68,7 +68,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageListView::getInnerMessageList` method which exposes the inner `RecyclerView` with message list items. 
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
 
 ### ⚠️ Changed
 
