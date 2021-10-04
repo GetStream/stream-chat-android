@@ -13,7 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
@@ -544,26 +543,6 @@ public class MessageListView : ConstraintLayout {
         }
         attachmentGalleryDestination.unregister()
         super.onDetachedFromWindow()
-    }
-
-    /**
-     * Add a listener that will be notified of any changes in scroll state or position. The listener
-     * is added to the inner [RecyclerView] that is used to display a list of message list items.
-     *
-     * @param listener The listener to register.
-     */
-    public fun addOnScrollListener(listener: RecyclerView.OnScrollListener) {
-        binding.chatMessagesRV.addOnScrollListener(listener)
-    }
-
-    /**
-     * Removes a listener that was notified of any changes in scroll state or position. The listener
-     * is removed from the inner [RecyclerView] that is used to display a list of message list items.
-     *
-     * @param listener The listener to unregister.
-     */
-    public fun removeOnScrollListener(listener: RecyclerView.OnScrollListener) {
-        binding.chatMessagesRV.removeOnScrollListener(listener)
     }
 
     /**

@@ -1528,14 +1528,12 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun addOnScrollListener (Landroidx/recyclerview/widget/RecyclerView$OnScrollListener;)V
 	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
 	public final fun getInnerMessageList ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun removeOnScrollListener (Landroidx/recyclerview/widget/RecyclerView$OnScrollListener;)V
 	public final fun requireStyle ()Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 	public final fun scrollToMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAttachmentClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener;)V

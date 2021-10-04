@@ -68,7 +68,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageListView::addOnScrollListener` and `MessageListView::removeOnScrollListener` methods to the `MessageListView` to listen to scroll events of the inner message list.
+- Added `MessageListView::getInnerMessageList` method which exposes the inner `RecyclerView` with message list items. 
 
 ### ⚠️ Changed
 
