@@ -29,7 +29,7 @@
 
 ### ⬆️ Improved
 - Added KDocs for `ChatClient.Builder` methods.
-- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead. 
+- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead.
 
 ### ✅ Added
 - Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
@@ -65,7 +65,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
-
+- Updating attachments view holder only when att
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 
