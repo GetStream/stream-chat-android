@@ -56,8 +56,8 @@ internal class DefaultUserLookupHandlerTest {
 
         val users = listOf(
             user1,
-            createUser().apply { name = randomString() },
-            createUser().apply { name = randomString() },
+            createUser().apply { name = randomStringWithout(query) },
+            createUser().apply { name = randomStringWithout(query) },
         )
 
         val result = MessageInputView.DefaultUserLookupHandler(users).handleUserLookup(query)
@@ -67,5 +67,9 @@ internal class DefaultUserLookupHandlerTest {
         } else {
             assertEquals(listOf(user1), result)
         }
+    }
+
+    private fun randomStringWithout(query: String): String {
+        return generateSequence { randomString() }.first { string -> query !in string }
     }
 }
