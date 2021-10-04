@@ -20,7 +20,7 @@
 ### ✅ Added
 - Push Notification uses `MessagingStyle` on devices with API Version 23+
 - Push Notification configuration has been simplified, check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customizing-push-notifications) to see how it works
-- `NotificationHandler` interface allows you to implement your own Push Notification logic show/remove notifications
+- `NotificationHandler` interface allows you to implement your own Push Notification logic show/remove notifications. It is the new interface you need to use if you were using `ChatNotificationHandler` previously
 - `NotificationHandlerFactory` help you to use our default `NotificationHandler` implementations
 
 ### ⚠️ Changed
