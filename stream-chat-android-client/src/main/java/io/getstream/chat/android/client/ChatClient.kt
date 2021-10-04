@@ -1616,6 +1616,8 @@ public class ChatClient internal constructor(
          * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
          * documentation for more information.
          *
+         *
+         * @param notificationConfig Config push notification.
          * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
          */
         @JvmOverloads
