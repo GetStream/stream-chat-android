@@ -1703,6 +1703,11 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @Deprecated(
+            message = "Do not use this method for file upload customization. Instead, implement the FileUploader interface and use the fileUploader method of this builder.",
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("this.fileUploader(CustomFileUploader())")
+        )
         public fun cdnUrl(value: String): Builder {
             var cdnUrl = value
             if (cdnUrl.startsWith("https://")) {
