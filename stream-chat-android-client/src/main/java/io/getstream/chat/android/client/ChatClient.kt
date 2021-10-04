@@ -100,7 +100,7 @@ public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    @InternalStreamChatApi public val notifications: ChatNotifications,
+    @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
@@ -158,6 +158,7 @@ public class ChatClient internal constructor(
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
                 }
+                else -> Unit // Ignore other events
             }
         }
         logger.logI("Initialised: " + getVersion())
