@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -393,6 +394,9 @@ public class MessageListView : ConstraintLayout {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
                     }
+                    setUserReactionClickHandler { message, user, reaction ->
+                        userReactionClickListener.onUserReactionClick(message, user, reaction)
+                    }
                 }
                     .show(it, MessageOptionsDialogFragment.TAG)
             }
@@ -406,6 +410,9 @@ public class MessageListView : ConstraintLayout {
         ChatUI.navigator.navigate(WebLinkDestination(context, url))
     }
     private val DEFAULT_ENTER_THREAD_LISTENER = EnterThreadListener {
+        // Empty
+    }
+    private val DEFAULT_USER_REACTION_CLICK_LISTENER = UserReactionClickListener { _, _, _ ->
         // Empty
     }
 
@@ -422,6 +429,7 @@ public class MessageListView : ConstraintLayout {
         linkClickListener = DEFAULT_LINK_CLICK_LISTENER,
     )
     private var enterThreadListener = DEFAULT_ENTER_THREAD_LISTENER
+    private var userReactionClickListener = DEFAULT_USER_REACTION_CLICK_LISTENER
 
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
@@ -1101,6 +1109,15 @@ public class MessageListView : ConstraintLayout {
     public fun setEnterThreadListener(enterThreadListener: EnterThreadListener?) {
         this.enterThreadListener = enterThreadListener ?: DEFAULT_ENTER_THREAD_LISTENER
     }
+
+    /**
+     * Sets the click listener to be used when a reaction left by a user is clicked on the message options overlay.
+     *
+     * @param userReactionClickListener The listener to use. If null, the default will be used instead.
+     */
+    public fun setUserReactionClickListener(userReactionClickListener: UserReactionClickListener?) {
+        this.userReactionClickListener = userReactionClickListener ?: DEFAULT_USER_REACTION_CLICK_LISTENER
+    }
     //endregion
 
     //region Handler setters
@@ -1365,6 +1382,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ReactionViewClickListener {
         public fun onReactionViewClick(message: Message)
+    }
+
+    public fun interface UserReactionClickListener {
+        public fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
     }
     //endregion
 
