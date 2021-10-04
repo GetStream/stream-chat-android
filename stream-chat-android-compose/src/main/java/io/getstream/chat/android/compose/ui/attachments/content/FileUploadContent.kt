@@ -33,9 +33,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param attachmentState The state of this attachment.
  */
 @Composable
-public fun FileUploadContent(attachmentState: AttachmentState) {
-    val (modifier, messageItem, _) = attachmentState
-    val (message, _) = messageItem
+public fun FileUploadContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
+    val message = attachmentState.message
 
     Column(
         modifier = modifier

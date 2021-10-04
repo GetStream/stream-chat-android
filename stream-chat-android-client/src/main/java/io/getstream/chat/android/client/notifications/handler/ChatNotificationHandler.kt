@@ -220,11 +220,16 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         groupKey: String,
         intent: Intent,
     ): NotificationCompat.Builder {
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
         val contentIntent = PendingIntent.getActivity(
             context,
             getRequestCode(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            flags,
         )
 
         return NotificationCompat.Builder(context, getNotificationChannelId())

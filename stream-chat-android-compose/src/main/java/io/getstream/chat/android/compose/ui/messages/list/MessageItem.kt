@@ -189,7 +189,7 @@ public fun DefaultMessageContainer(
                         } else {
                             Column {
                                 MessageAttachmentsContent(
-                                    messageItem = messageItem,
+                                    message = messageItem.message,
                                     onLongItemClick = onLongItemClick,
                                     onImagePreviewResult = onImagePreviewResult,
                                 )
@@ -496,10 +496,7 @@ internal fun QuotedMessage(
             content = {
                 Column {
                     MessageAttachmentsContent(
-                        messageItem = MessageItem(
-                            message = message,
-                            groupPosition = None
-                        ),
+                        message = message,
                         onLongItemClick = {}
                     )
 

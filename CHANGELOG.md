@@ -3,6 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgraded Kotlin version to 1.5.30
+- Make our SDK compile-friendly with TargetSDK 31
 
 ### ✅ Added
 
@@ -26,12 +28,14 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - 🚨 Breaking change: A new `Idle` state is added to `Attachment.UploadState`.
 - Added a new callback function `onProgress(bytesUploaded: Long, totalLength: Long)` in `ProgressCallback`.
+- Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
@@ -73,13 +77,25 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.3)
+- Updated the Accompanist libraries version (0.19.0)
+- Improved overlays in all components, to match the same design and opacity
+- Added smaller animations to the AttachmentPicker in the MessagesScreen
+- General improvements in the Attachments API and the way we build different attachments
+- Allowed for better long clicks on attachments
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Removed AttachmentPicker option when editing messages
+- Removed Attachment previews when editing messages with attachments
+- Improved the ease of use of the AttachmentState API by keeping it state & actions only
+- Moved the `modifier` parameter outside of the AttachmentState to the AttachmentFactory
+- Updated Attachments to hold `Message` items instead of `MessageItem`s
 
 ### ❌ Removed
 
