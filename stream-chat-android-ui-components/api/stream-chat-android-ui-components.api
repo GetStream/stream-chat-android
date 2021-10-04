@@ -1530,6 +1530,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
+	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V

@@ -3,6 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgraded Kotlin version to 1.5.30
+- Make our SDK compile-friendly with TargetSDK 31
 
 ### ✅ Added
 
@@ -23,13 +25,17 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
+- Added KDocs for `ChatClient.Builder` methods.
+- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead. 
 
 ### ✅ Added
 - Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
 
 ### ⚠️ Changed
+- Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
 ### ❌ Removed
 
@@ -46,6 +52,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed PDF attachments previews
 
 ### ⬆️ Improved
 
@@ -61,6 +68,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
 
 ### ⚠️ Changed
 
@@ -71,6 +79,8 @@
 - Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.3)
+- Updated the Accompanist libraries version (0.19.0)
 - Improved overlays in all components, to match the same design and opacity
 - Added smaller animations to the AttachmentPicker in the MessagesScreen
 - General improvements in the Attachments API and the way we build different attachments

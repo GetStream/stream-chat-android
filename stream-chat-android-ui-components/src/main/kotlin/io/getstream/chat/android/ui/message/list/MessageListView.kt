@@ -546,6 +546,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Returns the inner [RecyclerView] that is used to display a list of message list items.
+     *
+     * @return The inner [RecyclerView] with messages.
+     */
+    public fun getRecyclerView(): RecyclerView {
+        return binding.chatMessagesRV
+    }
+
+    /**
      * Used to indicate that the message list is loading more messages.
      *
      * @param loadingMore True if the list the next page of messages is loading.
@@ -1292,7 +1301,6 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
-
 
     /**
      * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].

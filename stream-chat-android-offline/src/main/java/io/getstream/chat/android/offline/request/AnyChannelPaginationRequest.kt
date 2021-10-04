@@ -19,10 +19,6 @@ internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
     var watcherOffset: Int = 0
 }
 
-internal fun AnyChannelPaginationRequest.hasFilter(): Boolean {
-    return messageFilterDirection != null
-}
-
 internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean {
     return messageFilterDirection == null
 }
@@ -33,12 +29,4 @@ internal fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Bool
 
 internal fun AnyChannelPaginationRequest.isNotFirstPage(): Boolean {
     return !isFirstPage()
-}
-
-internal fun AnyChannelPaginationRequest.isFilteringNewerMessages(): Boolean {
-    return (messageFilterDirection != null && (messageFilterDirection == Pagination.GREATER_THAN_OR_EQUAL || messageFilterDirection == Pagination.GREATER_THAN))
-}
-
-internal fun AnyChannelPaginationRequest.isFilteringOlderMessages(): Boolean {
-    return (messageFilterDirection != null && (messageFilterDirection == Pagination.LESS_THAN || messageFilterDirection == Pagination.LESS_THAN_OR_EQUAL))
 }
