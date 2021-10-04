@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
+import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
 
@@ -28,8 +29,8 @@ class ChatInitializer(private val context: Context) {
         val notificationConfig =
             NotificationConfig(
                 pushDeviceGenerators = listOf(
-                    // HuaweiPushDeviceGenerator(context, ApplicationConfigurator.HUAWEI_APP_ID),
-                    FirebasePushDeviceGenerator()
+                    FirebasePushDeviceGenerator(),
+                    HuaweiPushDeviceGenerator(context, ApplicationConfigurator.HUAWEI_APP_ID),
                 ),
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
