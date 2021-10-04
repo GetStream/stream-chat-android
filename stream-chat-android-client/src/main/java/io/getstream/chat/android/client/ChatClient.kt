@@ -1729,7 +1729,13 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public override fun buildChatClient(): ChatClient {
+        @InternalStreamChatApi
+        @Deprecated(
+            message = "It shouldn't be used outside of SDK code. Created for testing purposes",
+            replaceWith = ReplaceWith("this.build()"),
+            level = DeprecationLevel.ERROR
+        )
+        override fun internalBuild(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -1777,11 +1783,12 @@ public class ChatClient internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = buildChatClient().also {
+        public fun build(): ChatClient = internalBuild().also {
             instance = it
         }
 
-        public abstract fun buildChatClient(): ChatClient
+        @InternalStreamChatApi
+        public abstract fun internalBuild(): ChatClient
     }
 
     public companion object {
