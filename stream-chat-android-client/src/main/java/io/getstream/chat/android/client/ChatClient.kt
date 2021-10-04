@@ -4,6 +4,7 @@ package io.getstream.chat.android.client
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
@@ -1740,6 +1741,8 @@ public class ChatClient internal constructor(
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
+
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]") }
 
             val config = ChatClientConfig(
                 apiKey = apiKey,
