@@ -66,11 +66,12 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when att
+- Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed in then.
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 
 ### ✅ Added
-- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
 
 ### ⚠️ Changed
 
