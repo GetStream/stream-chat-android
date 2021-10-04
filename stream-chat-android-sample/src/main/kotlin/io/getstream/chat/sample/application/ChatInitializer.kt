@@ -20,7 +20,7 @@ class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
-        NotificationHandlerFactory.newMessageIntent = {
+        val notificationHandler = NotificationHandlerFactory(newMessageIntent = {
                 messageId: String,
                 channelType: String,
                 channelId: String
@@ -31,7 +31,7 @@ class ChatInitializer(private val context: Context) {
                 putExtra(EXTRA_MESSAGE_ID, messageId)
 
             }
-        }
+        }).createNotificationHandler(context)
         val notificationConfig =
             NotificationConfig(
                 smallIcon = R.drawable.ic_chat_bubble,
@@ -40,7 +40,7 @@ class ChatInitializer(private val context: Context) {
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
-            .notifications(notificationConfig)
+            .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .build()
 

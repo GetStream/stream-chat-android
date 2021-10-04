@@ -1621,7 +1621,7 @@ public class ChatClient internal constructor(
         @JvmOverloads
         public fun notifications(
             notificationConfig: NotificationConfig,
-            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+            notificationsHandler: NotificationHandler = NotificationHandlerFactory().createNotificationHandler(context = appContext),
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
@@ -1753,7 +1753,7 @@ public class ChatClient internal constructor(
                 ChatModule(
                     appContext,
                     config,
-                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
+                    notificationsHandler ?: NotificationHandlerFactory().createNotificationHandler(appContext),
                     notificationConfig,
                     fileUploader,
                     tokenManager,
