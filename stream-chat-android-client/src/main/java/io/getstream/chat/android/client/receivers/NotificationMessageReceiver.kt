@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
@@ -23,6 +24,20 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         private const val KEY_CHANNEL_TYPE = "type"
         private const val KEY_TEXT_REPLY = "text_reply"
 
+        private val IMMUTABLE_PENDING_INTENT_FLAGS =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+
+        private val MUTABLE_PENDING_INTENT_FLAGS =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+
         private fun createReplyPendingIntent(
             context: Context,
             notificationId: Int,
@@ -35,7 +50,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                     putExtra(KEY_CHANNEL_ID, channel.id)
                     putExtra(KEY_CHANNEL_TYPE, channel.type)
                 },
-                PendingIntent.FLAG_UPDATE_CURRENT,
+                MUTABLE_PENDING_INTENT_FLAGS,
             )
 
         private fun createReadPendingIntent(
@@ -51,7 +66,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 putExtra(KEY_CHANNEL_TYPE, channel.type)
                 putExtra(KEY_MESSAGE_ID, message.id)
             },
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            IMMUTABLE_PENDING_INTENT_FLAGS,
         )
 
         internal fun createDismissPendingIntent(
@@ -61,7 +76,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             context,
             notificationId,
             createNotifyIntent(context, notificationId, ACTION_DISMISS),
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            IMMUTABLE_PENDING_INTENT_FLAGS,
         )
 
         internal fun createReadAction(

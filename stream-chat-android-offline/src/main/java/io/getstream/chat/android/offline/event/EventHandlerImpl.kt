@@ -105,6 +105,7 @@ internal class EventHandlerImpl(
                         domainImpl.retryFailedEntities()
                     }
                 }
+                else -> Unit // Ignore other events
             }
         }
     }
@@ -389,6 +390,7 @@ internal class EventHandlerImpl(
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                else -> Unit // Ignore other events
             }
         }
     }

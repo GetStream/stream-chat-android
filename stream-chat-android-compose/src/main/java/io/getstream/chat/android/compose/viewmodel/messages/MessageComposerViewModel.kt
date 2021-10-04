@@ -102,6 +102,7 @@ public class MessageComposerViewModel(
             }
             is Edit -> {
                 this.input = messageAction.message.text
+                this.selectedAttachments = messageAction.message.attachments
                 messageActions = messageActions + messageAction
             }
             else -> {
@@ -116,6 +117,7 @@ public class MessageComposerViewModel(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInput("")
+            this.selectedAttachments = emptyList()
         }
 
         this.messageActions = emptySet()
@@ -129,7 +131,15 @@ public class MessageComposerViewModel(
      * @param attachments The attachments to store and show in the composer.
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
-        this.selectedAttachments = attachments
+        val newAttachments = (this.selectedAttachments + attachments).distinctBy {
+            if (it.name != null) {
+                it.name
+            } else {
+                it
+            }
+        }
+
+        this.selectedAttachments = newAttachments
     }
 
     /**

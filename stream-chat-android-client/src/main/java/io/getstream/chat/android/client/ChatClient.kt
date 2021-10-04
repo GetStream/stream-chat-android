@@ -85,6 +85,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
@@ -99,7 +100,7 @@ public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    @InternalStreamChatApi public val notifications: ChatNotifications,
+    @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
@@ -157,6 +158,7 @@ public class ChatClient internal constructor(
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
                 }
+                else -> Unit // Ignore other events
             }
         }
         logger.logI("Initialised: " + getVersion())
@@ -1558,7 +1560,7 @@ public class ChatClient internal constructor(
 
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
-        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 30_000L
         private var cdnTimeout = 30_000L
@@ -1570,6 +1572,7 @@ public class ChatClient internal constructor(
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var customOkHttpClient: OkHttpClient? = null
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -1591,11 +1594,13 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
         }
 
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
@@ -1603,6 +1608,19 @@ public class ChatClient internal constructor(
 
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
+        }
+
+        /**
+         * Sets a custom [OkHttpClient] that will be used by the client to
+         * perform API calls to Stream.
+         *
+         * Use this to configure parameters like timeout values, or to
+         * add interceptors to process all network requests.
+         *
+         * @param okHttpClient The client to use for API calls.
+         */
+        public fun okHttpClient(okHttpClient: OkHttpClient): Builder = apply {
+            this.customOkHttpClient = okHttpClient
         }
 
         public fun baseUrl(value: String): Builder {
@@ -1659,7 +1677,15 @@ public class ChatClient internal constructor(
             )
 
             val module =
-                ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)
+                ChatModule(
+                    appContext,
+                    config,
+                    notificationsHandler,
+                    fileUploader,
+                    tokenManager,
+                    callbackExecutor,
+                    customOkHttpClient
+                )
 
             val result = ChatClient(
                 config,

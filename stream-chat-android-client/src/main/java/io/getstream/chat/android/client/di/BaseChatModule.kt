@@ -54,6 +54,8 @@ internal open class BaseChatModule(
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
+    private val customOkHttpClient: OkHttpClient? = null,
+    private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
@@ -128,7 +130,7 @@ internal open class BaseChatModule(
     }
 
     // Create Builders from a single client to share threadpools
-    private val baseClient: OkHttpClient by lazy { OkHttpClient() }
+    private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
     private fun baseClientBuilder(): OkHttpClient.Builder =
         baseClient.newBuilder().followRedirects(false)
 
@@ -139,13 +141,26 @@ internal open class BaseChatModule(
         isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
         return baseClientBuilder()
+            .apply {
+                if (baseClient != customOkHttpClient) {
+                    connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                    writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                    readTimeout(timeout, TimeUnit.MILLISECONDS)
+                }
+            }
             // timeouts
-            .connectTimeout(timeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
-            .readTimeout(timeout, TimeUnit.MILLISECONDS)
+
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .let(httpClientConfig)
+            .addInterceptor(
+                TokenAuthInterceptor(
+                    tokenManager,
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
+            )
             .apply {
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
@@ -156,13 +171,6 @@ internal open class BaseChatModule(
                     )
                 }
             }
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
-            )
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
