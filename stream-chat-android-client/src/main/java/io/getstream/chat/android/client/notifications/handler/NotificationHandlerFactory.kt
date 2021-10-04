@@ -6,7 +6,7 @@ import android.os.Build
 
 public class NotificationHandlerFactory(
     public val newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null
-){
+) {
 
     /**
      * Method that create a [NotificationHandler].
