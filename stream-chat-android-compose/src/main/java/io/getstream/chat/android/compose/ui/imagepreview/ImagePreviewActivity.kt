@@ -154,14 +154,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
         message: Message,
         initialAttachmentPosition: Int,
     ) {
-        val pageCount = message.attachments.size
-        val startingPosition = if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
+        val startingPosition =
+            if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
 
-        val pagerState = rememberPagerState(
-            pageCount = pageCount,
-            initialPage = startingPosition,
-            initialOffscreenLimit = 2
-        )
+        val pagerState = rememberPagerState(initialPage = startingPosition)
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
@@ -441,17 +437,24 @@ public class ImagePreviewActivity : AppCompatActivity() {
     /**
      * Renders a horizontal pager that shows images and allows the user to swipe them and zoom in.
      *
-     * @param pagerState The state of the pager, that represents the page count and the current page.
-     * @param attachments The attachments to show.
+     * @param pagerState The state of the content pager.
+     * @param attachments The attachments to show within the pager.
      */
     @Composable
-    private fun ImagePreviewContent(pagerState: PagerState, attachments: List<Attachment>) {
+    private fun ImagePreviewContent(
+        pagerState: PagerState,
+        attachments: List<Attachment>,
+    ) {
         if (attachments.isEmpty()) {
             finish()
             return
         }
 
-        HorizontalPager(modifier = Modifier.background(ChatTheme.colors.appBackground), state = pagerState) { page ->
+        HorizontalPager(
+            modifier = Modifier.background(ChatTheme.colors.appBackground),
+            state = pagerState,
+            count = attachments.size
+        ) { page ->
             val painter = rememberImagePainter(data = attachments[page].imagePreviewUrl)
 
             var currentScale by remember { mutableStateOf(1f) }

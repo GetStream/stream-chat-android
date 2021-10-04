@@ -3,6 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgraded Kotlin version to 1.5.30
+- Make our SDK compile-friendly with TargetSDK 31
 
 ### ✅ Added
 
@@ -23,6 +25,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
 
@@ -71,6 +74,8 @@
 - Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
+- Updated the Compose framework version (1.0.3)
+- Updated the Accompanist libraries version (0.19.0)
 - Improved overlays in all components, to match the same design and opacity
 - Added smaller animations to the AttachmentPicker in the MessagesScreen
 - General improvements in the Attachments API and the way we build different attachments
