@@ -64,8 +64,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug related to scroll of messages.
 
 ### ⬆️ Improved
+- Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 
 ### ✅ Added
 - Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
