@@ -39,11 +39,12 @@ internal data class AttachmentEntity(
     val name: String?,
     val fallback: String?,
     val uploadFilePath: String?,
-    @Embedded val uploadState: UploadStateEntity?,
     val extraData: Map<String, Any>,
 ) {
     @PrimaryKey
     var id: Int = hashCode()
+    @Embedded
+    var uploadState: UploadStateEntity? = null
 }
 
 internal data class UploadStateEntity(val statusCode: Int, val errorMessage: String?) {

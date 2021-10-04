@@ -26,9 +26,10 @@ internal fun Attachment.toEntity(messageId: String): AttachmentEntity = Attachme
     name = name,
     fallback = fallback,
     uploadFilePath = upload?.absolutePath,
-    uploadState = uploadState?.toEntity(),
     extraData = extraData,
-)
+).also {
+    it.uploadState = uploadState?.toEntity()
+}
 
 internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     authorName = authorName,

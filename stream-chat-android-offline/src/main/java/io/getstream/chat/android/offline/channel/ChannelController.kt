@@ -602,11 +602,17 @@ public class ChannelController internal constructor(
                 }
                 it
             }.toMutableList()
-        }.also {
-            message.attachments = it
+        }.also { attachments ->
+            message.attachments = attachments
+            // TODO refactor this place. A lot of side effects happening here.
+            //  We should extract it to entity that will handle logic of uploading only.
+            if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
+                message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+            }
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             domainImpl.repos.deleteChannelMessage(message)
             domainImpl.repos.insertMessage(message)
+            upsertMessage(message)
         }
     }
 
