@@ -74,6 +74,7 @@
 
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
+- Removed full screen loading view when loading more message items on the `SearchResultListView`.
 
 ### ✅ Added
 - Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
