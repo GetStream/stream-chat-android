@@ -17,11 +17,9 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController.C
 internal class QueryChannelsControllerImpl(private val queryChannels: QueryChannelsControllerStateFlow) :
     QueryChannelsController {
 
-    override val filter: FilterObject
-        get() = queryChannels.filter
+    override val filter: FilterObject by queryChannels::filter
 
-    override val sort: QuerySort<Channel>
-        get() = queryChannels.sort
+    override val sort: QuerySort<Channel> by queryChannels::sort
 
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
         get() = { channel, filter -> runBlocking { queryChannels.newChannelEventFilter(channel, filter) } }
@@ -31,15 +29,15 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
             }
         }
 
-    override var checkFilterOnChannelUpdatedEvent: Boolean = false
+    override var checkFilterOnChannelUpdatedEvent: Boolean by queryChannels::checkFilterOnChannelUpdatedEvent
     override var recoveryNeeded: Boolean
         get() = queryChannels.recoveryNeeded.value
         set(value) {
             queryChannels.recoveryNeeded.value = value
         }
-    val queryChannelsSpec: QueryChannelsSpec = queryChannels.queryChannelsSpec
+    val queryChannelsSpec: QueryChannelsSpec by queryChannels::queryChannelsSpec
 
-    override var channelEventsHandler: ChannelEventsHandler? = queryChannels.channelEventsHandler
+    override var channelEventsHandler: ChannelEventsHandler? by queryChannels::channelEventsHandler
 
     override val endOfChannels: LiveData<Boolean> = queryChannels.endOfChannels.asLiveData()
 

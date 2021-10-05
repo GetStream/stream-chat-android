@@ -214,6 +214,7 @@ internal open class BaseDomainTest {
             offlinePlugin = offlinePlugin,
         )
         chatDomainImpl.scope = testCoroutines.scope
+        offlinePlugin.initState(chatDomainImpl, client)
         chatDomainImpl.retryPolicy = NoRetryPolicy()
         chatDomain = chatDomainImpl
         ChatDomain.instance = chatDomainImpl

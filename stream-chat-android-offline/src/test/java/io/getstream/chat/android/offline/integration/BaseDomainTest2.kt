@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -54,6 +55,7 @@ import java.util.concurrent.Executors
 /**
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
+@ExperimentalStreamChatApi
 internal open class BaseDomainTest2 {
 
     /** a realistic set of chat data, please only add to this, don't update */
@@ -79,6 +81,8 @@ internal open class BaseDomainTest2 {
 
     /** a mock for the channel client */
     lateinit var channelClientMock: ChannelClient
+
+    lateinit var offlinePlugin: OfflinePlugin
 
     private lateinit var db: ChatDatabase
 
@@ -140,6 +144,8 @@ internal open class BaseDomainTest2 {
         }
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
+        offlinePlugin =
+            OfflinePlugin(Config(backgroundSyncEnabled = true, userPresence = true, persistenceEnabled = true))
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
@@ -157,13 +163,7 @@ internal open class BaseDomainTest2 {
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
                 Result(data.reaction1)
             )
-            on { plugins } doReturn OfflinePlugin(
-                Config(
-                    backgroundSyncEnabled = true,
-                    userPresence = true,
-                    persistenceEnabled = true
-                )
-            ).let(::listOf)
+            on { plugins } doReturn listOf(offlinePlugin)
         }
         whenever(client.connectUser(any(), any<String>())) doAnswer {
             TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
@@ -196,6 +196,8 @@ internal open class BaseDomainTest2 {
             .userPresenceEnabled()
             .buildImpl()
         ChatDomain.instance = chatDomainImpl
+
+        offlinePlugin.initState(chatDomainImpl, client)
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error

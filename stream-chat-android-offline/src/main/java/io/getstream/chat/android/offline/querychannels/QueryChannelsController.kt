@@ -49,9 +49,9 @@ public class QueryChannelsController internal constructor(
     public var channelEventsHandler: ChannelEventsHandler? = null
 
     // TODO deprecate
-    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = mutableState.newChannelEventFilter
+    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
     // TODO deprecate
-    public var checkFilterOnChannelUpdatedEvent: Boolean = mutableState.checkFilterOnChannelUpdatedEvent
+    public var checkFilterOnChannelUpdatedEvent: Boolean by mutableState::checkFilterOnChannelUpdatedEvent
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
