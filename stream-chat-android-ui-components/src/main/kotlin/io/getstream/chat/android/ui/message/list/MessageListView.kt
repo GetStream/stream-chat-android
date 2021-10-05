@@ -476,8 +476,8 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initRecyclerView() {
-        layoutManager = LinearLayoutManager(context).apply {
-            stackFromEnd = true
+        if (!::layoutManager.isInitialized) {
+            layoutManager = LinearLayoutManager(context)
         }
 
         binding.chatMessagesRV.apply {
@@ -543,6 +543,15 @@ public class MessageListView : ConstraintLayout {
         }
         attachmentGalleryDestination.unregister()
         super.onDetachedFromWindow()
+    }
+
+    /**
+     * Returns the inner [RecyclerView] that is used to display a list of message list items.
+     *
+     * @return The inner [RecyclerView] with messages.
+     */
+    public fun getRecyclerView(): RecyclerView {
+        return binding.chatMessagesRV
     }
 
     /**
@@ -630,6 +639,16 @@ public class MessageListView : ConstraintLayout {
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
+    }
+
+    /**
+     * Set a custom layout manager for MessageListView. This can be used to change orientation of messages.
+     *
+     * @param layoutManager
+     */
+    public fun setCustomLinearLayoutManager(layoutManager: LinearLayoutManager) {
+        this.layoutManager = layoutManager
+        binding.chatMessagesRV.layoutManager = this.layoutManager
     }
 
     /**
@@ -1292,7 +1311,6 @@ public class MessageListView : ConstraintLayout {
     public fun setAttachmentDeleteOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentDeleteOptionHandler) {
         this._attachmentDeleteOptionHandler = handler
     }
-
 
     /**
      * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].

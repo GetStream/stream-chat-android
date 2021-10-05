@@ -18,8 +18,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Push Notification uses `MessagingStyle` on devices with API Version 23+
+- Push Notification configuration has been simplified, check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customizing-push-notifications) to see how it works
+- `NotificationHandler` interface allows you to implement your own Push Notification logic show/remove notifications. It is the new interface you need to use if you were using `ChatNotificationHandler` previously
+- `NotificationHandlerFactory` help you to use our default `NotificationHandler` implementations
 
 ### ⚠️ Changed
+- Some properties of `NotificationConfig` has been deprecated, check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section
+- `ChatNotificationhandler` class has been deprecated, you need to use `NotificationHandler` now. Check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section.
 
 ### ❌ Removed
 
@@ -28,11 +34,14 @@
 - Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
+- Added KDocs for `ChatClient.Builder` methods.
+- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead. 
 
 ### ✅ Added
 - Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
 
 ### ⚠️ Changed
+- Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
 ### ❌ Removed
 
@@ -49,6 +58,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed PDF attachments previews
 
 ### ⬆️ Improved
 
@@ -60,11 +70,14 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug related to scroll of messages.
 
 ### ⬆️ Improved
+- Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
 
 ### ✅ Added
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
 
 ### ⚠️ Changed
 
