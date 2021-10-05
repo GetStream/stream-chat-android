@@ -1384,7 +1384,18 @@ public class MessageListView : ConstraintLayout {
         public fun onReactionViewClick(message: Message)
     }
 
+    /**
+     * Interface definition for a callback to be invoked when a user reaction is clicked on the message
+     * options overlay.
+     */
     public fun interface UserReactionClickListener {
+        /**
+         * Called when a reaction left by a user is clicked.
+         *
+         * @param message The message the reaction was left for.
+         * @param user The user who reacted to the message.
+         * @param reaction The reaction object.
+         */
         public fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
     }
     //endregion

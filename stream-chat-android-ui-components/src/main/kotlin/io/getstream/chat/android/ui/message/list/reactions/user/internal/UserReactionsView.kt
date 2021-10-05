@@ -46,7 +46,7 @@ public class UserReactionsView : FrameLayout {
         bindReactionList(message, currentUser)
     }
 
-    public fun setOnUserReactionClickListener(userReactionClickListener: UserReactionClickListener) {
+    internal fun setOnUserReactionClickListener(userReactionClickListener: UserReactionClickListener) {
         this.userReactionClickListener = userReactionClickListener
     }
 
@@ -84,8 +84,8 @@ public class UserReactionsView : FrameLayout {
         userReactionsAdapter.submitList(userReactionItems)
     }
 
-    public fun interface UserReactionClickListener {
-        public fun onUserReactionClick(user: User, reaction: Reaction)
+    internal fun interface UserReactionClickListener {
+        fun onUserReactionClick(user: User, reaction: Reaction)
     }
 
     private companion object {

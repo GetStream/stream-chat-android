@@ -2129,10 +2129,6 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 public final class io/getstream/chat/android/ui/message/list/reactions/edit/EditReactionsViewStyle$Companion {
 }
 
-public abstract interface class io/getstream/chat/android/ui/message/list/reactions/user/internal/UserReactionsView$UserReactionClickListener {
-	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
-}
-
 public final class io/getstream/chat/android/ui/message/list/reactions/view/ViewReactionsViewStyle {
 	public fun <init> (Ljava/lang/Integer;ILjava/lang/Integer;IIFLjava/lang/Float;IIIIIIIIIII)V
 	public final fun component1 ()Ljava/lang/Integer;
