@@ -4,26 +4,29 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
-public class NotificationHandlerFactory(
-    public val newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null
-) {
+public object NotificationHandlerFactory {
 
     /**
      * Method that create a [NotificationHandler].
      *
      * @param context The [Context] to build the [NotificationHandler] with.
+     * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
      */
-    public fun createNotificationHandler(context: Context): NotificationHandler {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            MessagingStyleNotificationHandler(context, getNewMessageIntent(context))
-        } else {
-            ChatNotificationHandler(context, getNewMessageIntent(context))
+    public fun createNotificationHandler(
+        context: Context,
+        newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null
+    ): NotificationHandler {
+        (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                MessagingStyleNotificationHandler(context, it)
+            } else {
+                ChatNotificationHandler(context, it)
+            }
         }
     }
 
-    private fun getNewMessageIntent(context: Context): (messageId: String, channelType: String, channelId: String) -> Intent {
-        return newMessageIntent
-            ?: { _, _, _ -> createDefaultNewMessageIntent(context) }
+    private fun getDefaultNewMessageIntentFun(context: Context): (messageId: String, channelType: String, channelId: String) -> Intent {
+        return { _, _, _ -> createDefaultNewMessageIntent(context) }
     }
 
     private fun createDefaultNewMessageIntent(context: Context): Intent =

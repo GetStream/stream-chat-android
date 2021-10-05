@@ -19,13 +19,16 @@ class ChatInitializer(private val context: Context) {
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)
-        val notificationHandler = NotificationHandlerFactory(newMessageIntent = {
-                messageId: String,
-                channelType: String,
-                channelId: String,
-            ->
-            HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
-        }).createNotificationHandler(context)
+        val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
+            context = context,
+            newMessageIntent = {
+                    messageId: String,
+                    channelType: String,
+                    channelId: String,
+                ->
+                HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
+            }
+        )
         val notificationConfig =
             NotificationConfig(
                 pushDeviceGenerators = listOf(

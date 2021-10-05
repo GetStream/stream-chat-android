@@ -2830,11 +2830,9 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory {
-	public fun <init> ()V
-	public fun <init> (Lkotlin/jvm/functions/Function3;)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun createNotificationHandler (Landroid/content/Context;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public final fun getNewMessageIntent ()Lkotlin/jvm/functions/Function3;
+	public static final field INSTANCE Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;
+	public final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;Landroid/content/Context;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
