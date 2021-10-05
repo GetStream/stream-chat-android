@@ -31,18 +31,8 @@ internal class LoadNotificationDataWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
-        val notificationTitle: String = inputData.getString(DATA_NOTIFICATION_TITLE)!!
-        val notificationIcon: Int = inputData.getInt(DATA_NOTIFICATION_ICON, R.drawable.stream_ic_notification)
-        val notificationChannelName: String = inputData.getString(DATA_NOTIFICATION_CHANNEL_NAME)!!
 
-        setForeground(
-            createForegroundInfo(
-                notificationChannelId = LOAD_NOTIFICATION_DATA_CHANNEL_ID,
-                notificationChannelName = notificationChannelName,
-                notificationIcon = notificationIcon,
-                notificationTitle = notificationTitle,
-            )
-        )
+        setForeground(createForegroundInfo())
 
         return try {
             val client: ChatClient = ChatClient.instance()
@@ -64,37 +54,25 @@ internal class LoadNotificationDataWorker(
         }
     }
 
-    private fun createForegroundInfo(
-        notificationChannelId: String,
-        notificationIcon: Int,
-        notificationTitle: String,
-        notificationChannelName: String,
-    ): ForegroundInfo {
+    private fun createForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             NOTIFICATION_ID,
             createForegroundNotification(
-                notificationChannelId = notificationChannelId,
-                notificationChannelName = notificationChannelName,
-                notificationIcon = notificationIcon,
-                notificationTitle = notificationTitle,
+                notificationChannelId = context.getString(R.string.stream_chat_notification_channel_id),
+                notificationChannelName = context.getString(R.string.stream_chat_notification_channel_name),
             ),
         )
     }
 
     private fun createForegroundNotification(
         notificationChannelId: String,
-        notificationIcon: Int,
-        notificationTitle: String,
         notificationChannelName: String,
     ): Notification {
-        createSyncNotificationChannel(
-            notificationChannelId = notificationChannelId,
-            notificationChannelName = notificationChannelName,
-        )
+        createSyncNotificationChannel(notificationChannelId, notificationChannelName)
         return NotificationCompat.Builder(context, notificationChannelId)
             .setAutoCancel(true)
-            .setSmallIcon(notificationIcon)
-            .setContentTitle(notificationTitle)
+            .setSmallIcon(R.drawable.stream_ic_notification)
+            .setContentTitle(context.getString(R.string.stream_chat_load_notification_data_title))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
@@ -118,32 +96,22 @@ internal class LoadNotificationDataWorker(
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
-        private const val DATA_NOTIFICATION_TITLE = "DATA_NOTIFICATION_TITLE"
-        private const val DATA_NOTIFICATION_ICON = "DATA_NOTIFICATION_ICON"
-        private const val DATA_NOTIFICATION_CHANNEL_NAME = "DATA_NOTIFICATION_CHANNEL_NAME"
 
         private const val NOTIFICATION_ID = 1
-        private const val LOAD_NOTIFICATION_DATA_CHANNEL_ID = "load_notification_data_channel_id"
         private const val LOAD_NOTIFICATION_DATA_WORK_NAME = "LOAD_NOTIFICATION_DATA_WORK_NAME"
 
         fun start(
             context: Context,
             channelId: String,
             channelType: String,
-            messageId: String,
-            notificationChannelName: String,
-            notificationIcon: Int,
-            notificationTitle: String,
+            messageId: String
         ) {
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
-                        DATA_MESSAGE_ID to messageId,
-                        DATA_NOTIFICATION_CHANNEL_NAME to notificationChannelName,
-                        DATA_NOTIFICATION_ICON to notificationIcon,
-                        DATA_NOTIFICATION_TITLE to notificationTitle,
+                        DATA_MESSAGE_ID to messageId
                     )
                 )
                 .build()

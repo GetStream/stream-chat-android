@@ -91,10 +91,10 @@ public class Push {
                     pushDeviceGenerators
             );
 
-            MyNotificationHandler notificationHandler = new MyNotificationHandler(context, notificationsConfig);
+            MyNotificationHandler notificationHandler = new MyNotificationHandler(context);
 
             new ChatClient.Builder("{{ api_key }}", context)
-                    .notifications(notificationHandler)
+                    .notifications(notificationsConfig, notificationHandler)
                     .build();
         }
 
@@ -103,8 +103,8 @@ public class Push {
          */
         class CustomChatNotificationHandler extends ChatNotificationHandler {
 
-            public CustomChatNotificationHandler(@NotNull Context context, @NotNull NotificationConfig config) {
-                super(context, config);
+            public CustomChatNotificationHandler(@NotNull Context context) {
+                super(context);
             }
 
             @Override
@@ -154,8 +154,8 @@ public class Push {
         final static String EXTRA_CHANNEL_TYPE = "extra_channel_type";
         final static String EXTRA_MESSAGE_ID = "extra_message_id";
 
-        public MyNotificationHandler(@NotNull Context context, @NotNull NotificationConfig config) {
-            super(context, config);
+        public MyNotificationHandler(@NotNull Context context) {
+            super(context);
         }
 
         @NotNull

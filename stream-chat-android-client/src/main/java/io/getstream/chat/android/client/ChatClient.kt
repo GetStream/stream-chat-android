@@ -66,6 +66,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -108,10 +111,6 @@ public class ChatClient internal constructor(
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
 ) {
-
-    @InternalStreamChatApi
-    public val notificationHandler: ChatNotificationHandler = notifications.handler
-
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket, this)
@@ -1574,8 +1573,8 @@ public class ChatClient internal constructor(
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler =
-            ChatNotificationHandler(appContext)
+        private var notificationsHandler: NotificationHandler? = null
+        private var notificationConfig: NotificationConfig = NotificationConfig()
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
@@ -1617,11 +1616,17 @@ public class ChatClient internal constructor(
          * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
          * documentation for more information.
          *
+         *
+         * @param notificationConfig Config push notification.
          * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
          */
-        public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+        @JvmOverloads
+        public fun notifications(
+            notificationConfig: NotificationConfig,
+            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+        ): Builder = apply {
+            this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
-            return this
         }
 
         /**
@@ -1750,11 +1755,12 @@ public class ChatClient internal constructor(
                 ChatModule(
                     appContext,
                     config,
-                    notificationsHandler,
+                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
+                    notificationConfig,
                     fileUploader,
                     tokenManager,
                     callbackExecutor,
-                    customOkHttpClient
+                    customOkHttpClient,
                 )
 
             val result = ChatClient(
@@ -1844,11 +1850,6 @@ public class ChatClient internal constructor(
         @Throws(IllegalStateException::class)
         public fun dismissChannelNotifications(channelType: String, channelId: String) {
             ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
-        }
-
-        @Throws(IllegalStateException::class)
-        internal fun dismissNotification(notificationId: Int) {
-            ensureClientInitialized().notifications.onDismissNotification(notificationId)
         }
 
         /**
