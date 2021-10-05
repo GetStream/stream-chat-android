@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 
 /**
@@ -32,13 +33,18 @@ public sealed interface QueryChannelsController {
      * Return true to add the channel, return false to ignore it.
      * By default it will simply add every channel for which this event is received
      */
+    // TODO deprecate
     public var newChannelEventFilter: (Channel, FilterObject) -> Boolean
 
     /**
      * When ChannelUpdatedEvent is triggered, if it is true a new query to the server is done to check if the update
      * on the channel match the filter to be added or deleted from the list of channels
      */
+    // TODO deprecate
     public var checkFilterOnChannelUpdatedEvent: Boolean
+
+    // TODO add docs
+    public var channelEventsHandler: ChannelEventsHandler?
 
     /**
      * If the API call failed and we need to rerun this query

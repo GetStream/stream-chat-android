@@ -17,7 +17,7 @@ public fun interface ChannelEventsHandler {
      * @param event Event that contains particular channel. See more [HasChannel]
      * @return [EventHandlingResult] Result of handling.
      */
-    public fun onChannelEvent(event: HasChannel): EventHandlingResult
+    public suspend fun onChannelEvent(event: HasChannel): EventHandlingResult
 }
 
 /**
@@ -39,11 +39,11 @@ public enum class EventHandlingResult {
 }
 
 public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
-    public abstract fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult
-    public abstract fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult
-    public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult
+    public abstract suspend fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult
+    public abstract suspend fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult
+    public abstract suspend fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult
 
-    override fun onChannelEvent(event: HasChannel): EventHandlingResult {
+    override suspend fun onChannelEvent(event: HasChannel): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> onNotificationAddedToChannelEvent(event)
             is ChannelDeletedEvent -> EventHandlingResult.REMOVE

@@ -1,10 +1,13 @@
 package io.getstream.chat.android.offline.experimental.querychannels.state
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
+import io.getstream.chat.android.offline.querychannels.DefaultChannelEventsHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 internal class QueryChannelsMutableState(
     override val filter: FilterObject,
     override val sort: QuerySort<Channel>,
+    client: ChatClient,
     scope: CoroutineScope,
 ) : QueryChannelsState {
 
@@ -33,6 +37,15 @@ internal class QueryChannelsMutableState(
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
     internal val recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
+
+    internal var defaultChannelEventsHandler: DefaultChannelEventsHandler = DefaultChannelEventsHandler(client, filter)
+    override var checkFilterOnChannelUpdatedEvent: Boolean = defaultChannelEventsHandler.checkFilterOnChannelUpdatedEvent
+    override var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = defaultChannelEventsHandler.newChannelEventFilter
+
+    override var channelEventsHandler: ChannelEventsHandler? = null
+
+    internal val eventsHandler: ChannelEventsHandler
+        get() = channelEventsHandler ?: defaultChannelEventsHandler
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
     override val loading: StateFlow<Boolean> = _loading

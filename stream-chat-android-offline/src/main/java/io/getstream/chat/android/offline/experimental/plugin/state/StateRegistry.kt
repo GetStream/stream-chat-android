@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.experimental.plugin.state
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
@@ -24,7 +25,7 @@ public class StateRegistry {
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, scope)
+            QueryChannelsMutableState(filter, sort, ChatClient.instance(), scope)
         }
     }
 
