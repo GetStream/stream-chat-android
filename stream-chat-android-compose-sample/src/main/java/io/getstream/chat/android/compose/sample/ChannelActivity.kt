@@ -115,7 +115,7 @@ class ChannelActivity : AppCompatActivity() {
 
         val user by listViewModel.user.collectAsState()
         val selectedChannel = listViewModel.selectedChannel
-        val isNetworkAvailable by listViewModel.isOnline.collectAsState()
+        val isNetworkAvailable by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column {

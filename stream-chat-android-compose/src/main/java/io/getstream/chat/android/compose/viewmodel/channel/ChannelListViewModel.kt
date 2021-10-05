@@ -17,6 +17,7 @@ import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,7 +75,7 @@ public class ChannelListViewModel(
     /**
      * The state of our network connection - if we're online or not.
      */
-    public val isOnline: StateFlow<Boolean> = chatDomain.online
+    public val connectionState: StateFlow<ConnectionState> = chatDomain.online
 
     /**
      * The state of the currently logged in user.

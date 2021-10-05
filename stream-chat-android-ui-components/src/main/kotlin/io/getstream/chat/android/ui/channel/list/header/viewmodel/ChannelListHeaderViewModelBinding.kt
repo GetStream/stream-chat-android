@@ -3,6 +3,7 @@
 package io.getstream.chat.android.ui.channel.list.header.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 
 /**
@@ -18,11 +19,11 @@ public fun ChannelListHeaderViewModel.bindView(view: ChannelListHeaderView, life
         currentUser.observe(lifecycleOwner) { user ->
             user?.let(::setUser)
         }
-        online.observe(lifecycleOwner) { isOnline ->
-            if (isOnline) {
-                showOnlineTitle()
-            } else {
-                showOfflineTitle()
+        online.observe(lifecycleOwner) { connectionState ->
+            when(connectionState) {
+                ConnectionState.CONNECTED -> showOnlineTitle()
+                ConnectionState.CONNECTING -> showOfflineTitle()
+                ConnectionState.OFFLINE -> showOfflineTitle()
             }
         }
     }

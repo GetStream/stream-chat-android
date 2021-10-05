@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.model.ConnectionState
 
 public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi constructor(
     cid: String,
@@ -27,7 +28,7 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
     public val members: LiveData<List<Member>> = _members
     public val channelState: LiveData<Channel> = _channelState
     public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline
-    public val online: LiveData<Boolean> = chatDomain.online
+    public val online: LiveData<ConnectionState> = chatDomain.online
     public val typingUsers: LiveData<List<User>> = _typingUsers
 
     init {

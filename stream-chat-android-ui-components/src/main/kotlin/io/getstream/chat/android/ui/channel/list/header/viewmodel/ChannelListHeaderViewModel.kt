@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView].
@@ -16,5 +17,5 @@ public class ChannelListHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
 ) : ViewModel() {
     public val currentUser: LiveData<User?> = chatDomain.user
-    public val online: LiveData<Boolean> = chatDomain.online
+    public val online: LiveData<ConnectionState> = chatDomain.online
 }

@@ -26,6 +26,7 @@ import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
+import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 
@@ -70,7 +71,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
+    override val online: LiveData<ConnectionState> = chatDomainStateFlow.online.asLiveData()
 
     /**
      * The total unread message count for the current user.

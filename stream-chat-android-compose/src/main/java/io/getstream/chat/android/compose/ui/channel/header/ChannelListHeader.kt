@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -52,7 +53,7 @@ public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = null,
-    isNetworkAvailable: Boolean = true,
+    isNetworkAvailable: ConnectionState = ConnectionState.CONNECTED,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -126,11 +127,11 @@ internal fun DefaultChannelHeaderLeadingContent(
  */
 @Composable
 internal fun ChannelHeaderTitle(
-    isNetworkAvailable: Boolean,
+    connectionState: ConnectionState,
     title: String,
     modifier: Modifier = Modifier,
 ) {
-    if (isNetworkAvailable) {
+    if (connectionState == ConnectionState.CONNECTED) {
         Text(
             modifier = modifier
                 .wrapContentWidth()

@@ -27,6 +27,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -55,7 +56,7 @@ public sealed interface ChatDomain {
     /**
      * StateFlow<Boolean> that indicates if we are currently online
      */
-    public val online: StateFlow<Boolean>
+    public val online: StateFlow<ConnectionState>
 
     /**
      * The total unread message count for the current user.
@@ -100,6 +101,7 @@ public sealed interface ChatDomain {
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
+    public fun isConnecting(): Boolean
     public fun isInitialized(): Boolean
     public fun getActiveQueries(): List<QueryChannelsController>
     public fun clean()

@@ -116,7 +116,7 @@ public fun MessagesScreen(
                             .height(56.dp),
                         channel = listViewModel.channel,
                         currentUser = user,
-                        isNetworkAvailable = isNetworkAvailable,
+                        connectionState = isNetworkAvailable,
                         messageMode = messageMode,
                         onBackPressed = backAction,
                         onHeaderActionClick = onHeaderActionClick

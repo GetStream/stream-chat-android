@@ -75,7 +75,7 @@ internal class MessageSendingService(
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
         return when {
-            domainImpl.online.value ->
+            domainImpl.isOnline() ->
                 if (message.hasPendingAttachments()) {
                     waitForAttachmentsToBeSent(message)
                 } else {
