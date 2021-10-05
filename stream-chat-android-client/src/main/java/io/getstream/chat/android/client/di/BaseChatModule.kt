@@ -31,7 +31,8 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -50,7 +51,8 @@ import java.util.concurrent.TimeUnit
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,
-    private val notificationsHandler: ChatNotificationHandler,
+    private val notificationsHandler: NotificationHandler,
+    private val notificationConfig: NotificationConfig,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
@@ -62,7 +64,7 @@ internal open class BaseChatModule(
 
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
-    private val defaultNotifications by lazy { buildNotification(notificationsHandler) }
+    private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
     private val defaultApi by lazy { buildApi() }
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
@@ -103,12 +105,13 @@ internal open class BaseChatModule(
     //endregion
 
     private fun buildNotification(
-        handler: ChatNotificationHandler,
+        handler: NotificationHandler,
+        notificationConfig: NotificationConfig,
     ): ChatNotifications {
-        return if (handler.config.pushNotificationsEnabled) {
-            ChatNotificationsImpl(handler, appContext)
+        return if (notificationConfig.pushNotificationsEnabled) {
+            ChatNotificationsImpl(handler, notificationConfig.pushDeviceGenerators, appContext)
         } else {
-            NoOpChatNotifications(handler)
+            NoOpChatNotifications
         }
     }
 

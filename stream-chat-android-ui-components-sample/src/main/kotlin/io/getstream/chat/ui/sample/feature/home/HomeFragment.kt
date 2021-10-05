@@ -13,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -22,12 +21,12 @@ import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHea
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
-import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
-import io.getstream.chat.ui.sample.application.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.setBadgeNumber
 import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
+import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_ID
+import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_TYPE
+import io.getstream.chat.ui.sample.feature.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
 
 class HomeFragment : Fragment() {
