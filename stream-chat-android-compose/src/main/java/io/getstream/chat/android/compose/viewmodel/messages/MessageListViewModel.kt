@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -541,7 +542,9 @@ public class MessageListViewModel(
         return if (previousMessage == null) {
             true
         } else {
-            (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+            val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
+
+            return timeDifference > TimeUnit.HOURS.toMillis(4)
         }
     }
 
