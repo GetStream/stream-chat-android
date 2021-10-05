@@ -57,7 +57,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(':stream-chat-android-client')
-    implementation fileTree(dir: 'libs', include: ['MiPush_SDK_Client_4_8_2.jar'])
+    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
 
     implementation Dependencies.coroutinesCore
 
