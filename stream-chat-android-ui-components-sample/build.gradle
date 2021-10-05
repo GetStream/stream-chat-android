@@ -137,9 +137,10 @@ repositories {
 
 dependencies {
     implementation project(":stream-chat-android-ui-components")
+    implementation project(":stream-chat-android-markdown-transformer")
     implementation project(":stream-chat-android-pushprovider-firebase")
     implementation project(":stream-chat-android-pushprovider-huawei")
-    implementation project(":stream-chat-android-markdown-transformer")
+    implementation project(":stream-chat-android-pushprovider-xiaomi")
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
