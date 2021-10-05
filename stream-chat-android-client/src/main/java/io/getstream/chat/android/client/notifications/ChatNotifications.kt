@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client.notifications
 
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -10,7 +8,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -18,19 +17,18 @@ import kotlinx.coroutines.launch
 
 @InternalStreamChatApi
 public interface ChatNotifications {
-    public val handler: ChatNotificationHandler
     public fun onSetUser()
     public fun setDevice(device: Device)
     public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
     public fun onLogout()
     public fun displayNotification(channel: Channel, message: Message)
-    public fun onDismissNotification(notificationId: Int)
     public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 internal class ChatNotificationsImpl constructor(
-    override val handler: ChatNotificationHandler,
+    private val handler: NotificationHandler,
+    private val pushDeviceGenerators: List<PushDeviceGenerator>,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
@@ -38,15 +36,10 @@ internal class ChatNotificationsImpl constructor(
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
-    private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-
-    init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            notificationManager.createNotificationChannel(handler.createNotificationChannel())
-    }
 
     override fun onSetUser() {
-        handler.onCreateDevice(::setDevice)
+        pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+            ?.asyncGenerateDevice(::setDevice)
     }
 
     override fun setDevice(device: Device) {
@@ -89,10 +82,6 @@ internal class ChatNotificationsImpl constructor(
         LoadNotificationDataWorker.cancel(context)
     }
 
-    override fun onDismissNotification(notificationId: Int) {
-        handler.onDismissNotification(notificationId)
-    }
-
     /**
      * Dismiss notification associated to the [channelType] and [channelId] received on the params.
      *
@@ -114,9 +103,6 @@ internal class ChatNotificationsImpl constructor(
             channelId = channelId,
             channelType = channelType,
             messageId = messageId,
-            notificationChannelName = context.getString(handler.config.loadNotificationDataChannelName),
-            notificationIcon = handler.config.loadNotificationDataIcon,
-            notificationTitle = context.getString(handler.config.loadNotificationDataTitle),
         )
     }
 
@@ -141,7 +127,7 @@ internal class ChatNotificationsImpl constructor(
     }
 }
 
-internal class NoOpChatNotifications(override val handler: ChatNotificationHandler) : ChatNotifications {
+internal object NoOpChatNotifications : ChatNotifications {
     override fun onSetUser() = Unit
     override fun setDevice(device: Device) = Unit
     override fun onPushMessage(
@@ -152,6 +138,5 @@ internal class NoOpChatNotifications(override val handler: ChatNotificationHandl
     override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
     override fun onLogout() = Unit
     override fun displayNotification(channel: Channel, message: Message) = Unit
-    override fun onDismissNotification(notificationId: Int) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }

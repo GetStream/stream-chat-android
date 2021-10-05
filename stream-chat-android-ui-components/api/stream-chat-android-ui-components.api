@@ -2309,6 +2309,7 @@ public final class io/getstream/chat/android/ui/search/list/SearchResultListView
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$LoadMoreListener;)V
+	public final fun setPaginationEnabled (Z)V
 	public final fun setSearchResultSelectedListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$SearchResultSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
@@ -2355,19 +2356,23 @@ public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchView
 }
 
 public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State {
-	public fun <init> (Ljava/lang/String;ZLjava/util/List;Z)V
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;ZLjava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Z
-	public final fun copy (Ljava/lang/String;ZLjava/util/List;Z)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;ZLjava/util/List;ZZ)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
 	public final fun getQuery ()Ljava/lang/String;
 	public final fun getResults ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
+	public final fun isLoadingMore ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
