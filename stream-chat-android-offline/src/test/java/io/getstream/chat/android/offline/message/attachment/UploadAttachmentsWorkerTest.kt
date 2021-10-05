@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.message.attachment
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -87,7 +86,7 @@ internal class UploadAttachmentsWorkerTest {
                     chatClient
                 )
 
-            verify(channelController, never()).uploadAttachments(any(), any())
+            verify(channelController, never()).uploadAttachments(any())
         }
 
     @Test
@@ -101,12 +100,12 @@ internal class UploadAttachmentsWorkerTest {
                 chatClient
             )
 
-        verify(channelController).uploadAttachments(any(), anyOrNull())
+        verify(channelController).uploadAttachments(any())
     }
 
     @Test
     fun `when not all attachments have state as success, it should return error`() = runBlockingTest {
-        whenever(channelController.uploadAttachments(eq(defaultMessagePendingAttachments), anyOrNull()))
+        whenever(channelController.uploadAttachments(eq(defaultMessagePendingAttachments)))
             .doReturn(attachmentsPending)
 
         val result = UploadAttachmentsWorker(mock())
