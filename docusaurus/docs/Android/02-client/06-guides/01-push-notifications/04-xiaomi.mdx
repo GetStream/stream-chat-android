@@ -1,0 +1,108 @@
+# Xiaomi Mi Push
+
+This is the guide for using [Xiaomi Mi Push](http://mipush.global.xiaomi.com/) to receive notifications from Stream Chat.
+
+## Configuring Notifications on the Stream Dashboard
+
+To be able to receive notifications from Stream, you need to provide your Xiaomi credentials to Stream.
+
+Go to the [Xiaomi Console](https://admin.xmpush.xiaomi.com/en/app/nav), and select the project your app belongs to.
+
+:::info
+If you don't have a Xiaomi project yet, you'll have to create a new one.
+:::
+
+Click on _App Info_ and locate the _App ID_ and _App secret_, and copy them (If values are not shown, you need to click "View" button):
+
+![Locating your Xiaomi App](../../../assets/notifications_xiaomi_setup_step_1.png)
+
+![Locating your Xiaomi Credentials](../../../assets/notifications_xiaomi_setup_step_2.png)
+
+Open the [Stream Dashboard](https://dashboard.getstream.io/). Navigate to the Chat _Overview_ page for your app.
+
+![Navigating to the Chat Overview page on the Stream Dashboard](../../../assets/notifications_xiaomi_setup_step_3.png)
+
+Scroll down and enable the _Xiaomi_ switch. Paste your _App ID_ and _App secret_, and click _Save_ to confirm your changes.
+
+![Setting up your Xiaomi App ID and App Secret on the Stream Dashboard](../../../assets/notifications_xiaomi_setup_step_4.png)
+
+That's the server-side setup done. You can now receive Stream's push notifications on the client side.
+
+## Receiving Notifications in the Client
+
+Start by [adding Xiaomi to your Android project](https://dev.mi.com/console/doc/detail?pId=1244). You need to download Xiaomi Mi Push SDK and add to your project. At the time of write this documentation they don't provide any maven repository that you can use, so you need to download the .jar file manualy and add it to the `libs` folder of your app.
+
+![Adding MiPush .jar file to your libs folder](../../../assets/notifications_xiaomi_setup_step_5.png)
+```groovy
+dependencies {
+    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
+}
+```
+
+
+Stream Chat's Android SDK ships an artifact that allows quick integration of Xiaomi Mi Push. Add the following dependency to your app's `build.gradle` file:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-pushprovider-xiaomi:$stream_version"
+}
+```
+
+Then, add a `XiaomiPushDeviceGenerator` to your `NotificationConfig`, and pass that into `ChatClient.Builder` when initializing the SDK:
+
+```kotlin {2-7,11}
+val notificationConfig = NotificationConfig(
+    pushDeviceGenerators = listOf(
+        XiaomiPushDeviceGenerator(
+            context = context,
+            appId = "YOUR XIAOMI APP ID",
+            appKey = "YOUR XIAOMI APP KEY",
+        )
+    )
+)
+ChatClient.Builder("apiKey", context)
+    .notifications(notificationsConfig)
+    .build()
+```
+
+:::caution
+Make sure that _ChatClient_ is initialized before handling push notifications. We strongly recommend initializing it in the `Application` class.
+:::
+
+That's it! You can now receive push notifications from Xiaomi Mi Push!
+
+### Using a Custom PushMessageReceiver
+
+The Stream Xiaomi push provider artifact contains a `ChatXiaomiMessagingReceiver` implementation that sends new Xiaomi tokens to Stream and forwards incoming push messages to `ChatClient` to handle.
+
+If you're using Xiaomi notifications for other purposes inside your app as well, you will need your own custom receiver to replace this.  Here, you have to call `XiaomiMessagingDelegate`'s `registerXiaomiToken` and `handleRemoteMessage` methods, like so:
+
+```kotlin {6,14}
+class CustomPushMessageReceiver : PushMessageReceiver() {
+
+    override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
+        // Update device's token on Stream backend
+        try {
+            XiaomiMessagingDelegate.registerHuaweiToken(miPushCommandMessage)
+        } catch (exception: IllegalStateException) {
+            // ChatClient was not initialized
+        }
+    }
+
+    override fun onReceivePassThroughMessage(context: Context, miPushMessage: MiPushMessage) {
+        try {
+            if (XiaomiMessagingDelegate.handleRemoteMessage(miPushMessage)) {
+                // RemoteMessage was from Stream and it is already processed
+            } else {
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+            }
+        } catch (IllegalStateException exception) {
+            // ChatClient was not initialized
+        }
+    }
+}
+```
+
+:::note
+Your custom receiver needs to have an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to replace our default service. (This priority is `0` by default.)
+:::
