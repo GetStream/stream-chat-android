@@ -163,7 +163,7 @@ class Messages(
                         // Handle error
                     }
 
-                    override fun onProgress(bytesUploaded: Long, totalLength: Long) {
+                    override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
                         // You can render the uploading progress here.
                     }
                 }

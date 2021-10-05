@@ -30,7 +30,7 @@ public interface ProgressCallback {
 
     /**
      * Called when the attachment upload is in progress with [bytesUploaded] count
-     * and [totalLength] in bytes of the file.
+     * and [totalBytes] in bytes of the file.
      */
-    public fun onProgress(bytesUploaded: Long, totalLength: Long)
+    public fun onProgress(bytesUploaded: Long, totalBytes: Long)
 }
