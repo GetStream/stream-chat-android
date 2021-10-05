@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
@@ -41,6 +42,7 @@ internal class SendMessageOfflineTest {
     }
 
     @Test
+    @Disabled("Need to mock MessageSendingService for this to work")
     fun `when calling watch, local messages should not be lost`() = testCoroutines.scope.runBlockingTest {
         val sut = Fixture(testCoroutines.scope, randomUser())
             .givenChannelWithoutMessages(randomChannel(cid = "channelType:channelId"))
