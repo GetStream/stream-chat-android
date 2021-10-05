@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 
 /**
@@ -25,6 +26,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
+    private val channelEventsHandler: ChannelEventsHandler? = null,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {
@@ -32,6 +34,6 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return ChannelListViewModel(ChatDomain.instance(), filter, sort, limit, messageLimit) as T
+        return ChannelListViewModel(ChatDomain.instance(), filter, sort, limit, messageLimit, channelEventsHandler) as T
     }
 }
