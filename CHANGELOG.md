@@ -65,7 +65,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
-- Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed in then.
+- Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 
