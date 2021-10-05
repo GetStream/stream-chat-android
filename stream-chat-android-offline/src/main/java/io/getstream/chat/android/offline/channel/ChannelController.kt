@@ -11,8 +11,17 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -22,23 +31,28 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
+import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.events.UserDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -53,9 +67,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
@@ -66,8 +78,6 @@ import io.getstream.chat.android.offline.message.MessageSendingServiceFactory
 import io.getstream.chat.android.offline.message.NEVER
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
-import io.getstream.chat.android.offline.message.attachment.generateUploadId
-import io.getstream.chat.android.offline.message.getMessageType
 import io.getstream.chat.android.offline.message.isEphemeral
 import io.getstream.chat.android.offline.message.shouldIncrementUnreadCount
 import io.getstream.chat.android.offline.message.wasCreatedAfter
@@ -564,112 +574,19 @@ public class ChannelController internal constructor(
         return response
     }
 
-    /**
-     * - Generate an ID
-     * - Insert the message into offline storage with sync status set to Sync Needed
-     * - If we're online do the send message request
-     * - If the request fails we retry according to the retry policy set on the repo
-     */
-    @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)")
-    )
-    internal suspend fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
-    ): Result<Message> {
-        return if (attachmentTransformer != null) {
-            sendMessage(message, attachmentTransformer)
-        } else {
-            sendMessage(message)
-        }
-    }
-
     internal suspend fun sendMessage(message: Message): Result<Message> = messageSendingService.sendNewMessage(message)
 
     internal suspend fun retrySendMessage(message: Message): Result<Message> =
         messageSendingService.sendMessage(message)
 
-    @Deprecated(
-        message = "Don't use sendMessage with attachmentTransformer. It's better to implement custom attachment uploading mechanism for additional transformation",
-        replaceWith = ReplaceWith("sendMessage(message: Message)")
-    )
-    private suspend fun sendMessage(
-        message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment),
-    ): Result<Message> {
-        val newMessage = message.copy()
-        newMessage.user = domainImpl.user.value ?: return Result(ChatError("Current user null"))
-
-        val online = domainImpl.isOnline()
-        val hasAttachments = newMessage.attachments.isNotEmpty()
-
-        // set defaults for id, cid and created at
-        if (newMessage.id.isEmpty()) {
-            newMessage.id = domainImpl.generateMessageId()
-        }
-        if (newMessage.cid.isEmpty()) {
-            newMessage.enrichWithCid(cid)
-        }
-
-        newMessage.attachments.forEach { attachment ->
-            attachment.uploadId = generateUploadId()
-            attachment.uploadState = Attachment.UploadState.InProgress
-        }
-
-        newMessage.type = getMessageType(message)
-        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
-        newMessage.syncStatus = if (online) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED
-
-        var uploadStatusMessage: Message? = null
-
-        if (hasAttachments) {
-            uploadStatusMessage = newMessage
-        }
-
-        // Update flow in channel controller
-        upsertMessage(newMessage)
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        for (query in domainImpl.getActiveQueries()) {
-            query.refreshChannel(cid)
-        }
-
-        // we insert early to ensure we don't lose messages
-        domainImpl.repos.insertMessage(newMessage)
-        domainImpl.repos.updateLastMessageForChannel(newMessage.cid, newMessage)
-
-        return if (online) {
-            // upload attachments
-            if (hasAttachments) {
-                logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
-
-                newMessage.attachments = uploadAttachments(newMessage, attachmentTransformer).toMutableList()
-
-                uploadStatusMessage?.let { cancelEphemeralMessage(it) }
-            }
-
-            newMessage.type = "regular"
-
-            logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
-            domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
-                .mapSuspend(::handleSendMessageSuccess)
-                .recoverSuspend { handleSendMessageFail(newMessage, it) }
-        } else {
-            logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
-            Result(newMessage)
-        }
-    }
-
     internal suspend fun uploadAttachments(
         message: Message,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): List<Attachment> {
         return try {
             message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
                 .map { attachment ->
                     AttachmentUploader(client)
-                        .uploadAttachment(channelType, channelId, attachment, attachmentTransformer)
+                        .uploadAttachment(channelType, channelId, attachment)
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
                 }.toMutableList()
@@ -1121,6 +1038,22 @@ public class ChannelController internal constructor(
                     mute.channel.cid == cid
                 }
             }
+            is ChannelUserBannedEvent,
+            is ChannelUserUnbannedEvent,
+            is NotificationChannelDeletedEvent,
+            is NotificationInvitedEvent,
+            is NotificationRemovedFromChannelEvent,
+            is ConnectedEvent,
+            is ConnectingEvent,
+            is DisconnectedEvent,
+            is ErrorEvent,
+            is GlobalUserBannedEvent,
+            is GlobalUserUnbannedEvent,
+            is HealthEvent,
+            is NotificationMutesUpdatedEvent,
+            is UnknownEvent,
+            is UserDeletedEvent,
+            -> Unit // Ignore these events
         }
     }
 

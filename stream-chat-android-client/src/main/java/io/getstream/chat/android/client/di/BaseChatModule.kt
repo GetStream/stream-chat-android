@@ -31,7 +31,8 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -50,17 +51,20 @@ import java.util.concurrent.TimeUnit
 internal open class BaseChatModule(
     private val appContext: Context,
     private val config: ChatClientConfig,
-    private val notificationsHandler: ChatNotificationHandler,
+    private val notificationsHandler: NotificationHandler,
+    private val notificationConfig: NotificationConfig,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val callbackExecutor: Executor?,
+    private val customOkHttpClient: OkHttpClient? = null,
+    private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
 
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
-    private val defaultNotifications by lazy { buildNotification(notificationsHandler) }
+    private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
     private val defaultApi by lazy { buildApi() }
     private val defaultSocket by lazy {
         buildSocket(config, moshiParser)
@@ -101,12 +105,13 @@ internal open class BaseChatModule(
     //endregion
 
     private fun buildNotification(
-        handler: ChatNotificationHandler,
+        handler: NotificationHandler,
+        notificationConfig: NotificationConfig,
     ): ChatNotifications {
-        return if (handler.config.pushNotificationsEnabled) {
-            ChatNotificationsImpl(handler, appContext)
+        return if (notificationConfig.pushNotificationsEnabled) {
+            ChatNotificationsImpl(handler, notificationConfig.pushDeviceGenerators, appContext)
         } else {
-            NoOpChatNotifications(handler)
+            NoOpChatNotifications
         }
     }
 
@@ -128,7 +133,7 @@ internal open class BaseChatModule(
     }
 
     // Create Builders from a single client to share threadpools
-    private val baseClient: OkHttpClient by lazy { OkHttpClient() }
+    private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
     private fun baseClientBuilder(): OkHttpClient.Builder =
         baseClient.newBuilder().followRedirects(false)
 
@@ -139,13 +144,26 @@ internal open class BaseChatModule(
         isAnonymousApi: Boolean,
     ): OkHttpClient.Builder {
         return baseClientBuilder()
+            .apply {
+                if (baseClient != customOkHttpClient) {
+                    connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                    writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                    readTimeout(timeout, TimeUnit.MILLISECONDS)
+                }
+            }
             // timeouts
-            .connectTimeout(timeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
-            .readTimeout(timeout, TimeUnit.MILLISECONDS)
+
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .let(httpClientConfig)
+            .addInterceptor(
+                TokenAuthInterceptor(
+                    tokenManager,
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
+            )
             .apply {
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
@@ -156,13 +174,6 @@ internal open class BaseChatModule(
                     )
                 }
             }
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
-            )
             .addNetworkInterceptor(ProgressInterceptor())
     }
 

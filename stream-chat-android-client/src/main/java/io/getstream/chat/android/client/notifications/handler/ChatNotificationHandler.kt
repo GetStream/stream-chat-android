@@ -15,12 +15,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
@@ -28,32 +25,22 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 /**
  * Class responsible for handling chat notifications.
  */
+@Deprecated(
+    message = "This class will be used internally on future versions and won't be accesible, you need to implement your own [NotificationHandler]"
+)
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    public val config: NotificationConfig = NotificationConfig(),
-) {
+    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent =
+        { _, _, _ -> context.packageManager!!.getLaunchIntentForPackage(context.packageName)!! },
+) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE) }
-    private val notificationManager: NotificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-
-    /**
-     * Handles showing notification after receiving [NewMessageEvent] from other users.
-     * Default implementation loads necessary data and displays notification even if app is in foreground.
-     *
-     * @return False if notification should be handled internally.
-     */
-    public open fun onChatEvent(event: NewMessageEvent): Boolean {
-        return true
-    }
-
-    /**
-     * Handles showing notification after receiving [PushMessage].
-     * Default implementation loads necessary data from the server and shows notification if application is not in foreground.
-     *
-     * @return False if remote message should be handled internally.
-     */
-    public open fun onPushMessage(message: PushMessage): Boolean {
-        return false
+    private val notificationManager: NotificationManager by lazy {
+        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                it.createNotificationChannel(createNotificationChannel())
+            }
+        }
     }
 
     @Deprecated(
@@ -98,17 +85,25 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    public open fun getNotificationChannelId(): String = context.getString(config.notificationChannelId)
+    public open fun getNotificationChannelId(): String = context.getString(R.string.stream_chat_notification_channel_id)
+    public open fun getNotificationChannelName(): String = context.getString(R.string.stream_chat_notification_channel_name)
 
-    public open fun getNotificationChannelName(): String =
-        context.getString(config.notificationChannelName)
+    @Deprecated(
+        message = "It is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
+    public open fun getErrorCaseNotificationTitle(): String = ""
 
-    public open fun getErrorCaseNotificationTitle(): String =
-        context.getString(config.errorCaseNotificationTitle)
+    @Deprecated(
+        message = "It is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
+    public open fun getErrorCaseNotificationContent(): String = ""
 
-    public open fun getErrorCaseNotificationContent(): String =
-        context.getString(config.errorCaseNotificationContent)
-
+    @Deprecated(
+        message = "Notification error is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
     public open fun buildErrorCaseNotification(): Notification {
         return getNotificationBuilder(
             contentTitle = getErrorCaseNotificationTitle(),
@@ -118,7 +113,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).build()
     }
 
-    internal fun showNotification(channel: Channel, message: Message) {
+    public override fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
@@ -139,14 +134,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         ).apply {
             addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
             addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
-            setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId))
+            setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId, channel))
         }
     }
 
     public open fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
-            contentText = context.getString(config.notificationGroupSummaryContentText),
+            contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {
@@ -154,10 +149,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
+    @Deprecated(
+        message = "Notification error is not used anymore",
+        level = DeprecationLevel.ERROR
+    )
     public open fun buildErrorNotificationGroupSummary(): Notification {
         return getNotificationBuilder(
-            contentTitle = context.getString(config.errorNotificationGroupSummaryTitle),
-            contentText = context.getString(config.errorNotificationGroupSummaryContentText),
+            contentTitle = "",
+            contentText = "",
             groupKey = getErrorNotificationGroupKey(),
             getErrorCaseIntent(),
         ).apply {
@@ -185,9 +184,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         messageId: String,
         channelType: String,
         channelId: String,
-    ): Intent {
-        return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
-    }
+    ): Intent = newMessageIntent(messageId, channelType, channelId)
 
     /**
      * Dismiss notifications from a given [channelType] and [channelId].
@@ -195,14 +192,14 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
      * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
      * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
      */
-    internal fun dismissChannelNotifications(channelType: String, channelId: String) {
+    override fun dismissChannelNotifications(channelType: String, channelId: String) {
         dismissSummaryNotification(getNotificationGroupSummaryId(channelType, channelId))
     }
 
     /**
      * Dismiss all notifications.
      */
-    internal fun dismissAllNotifications() {
+    override fun dismissAllNotifications() {
         getNotificationSummaryIds().forEach(::dismissSummaryNotification)
     }
 
@@ -220,17 +217,22 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         groupKey: String,
         intent: Intent,
     ): NotificationCompat.Builder {
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
         val contentIntent = PendingIntent.getActivity(
             context,
             getRequestCode(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            flags,
         )
 
         return NotificationCompat.Builder(context, getNotificationChannelId())
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true)
-            .setSmallIcon(config.smallIcon)
+            .setSmallIcon(R.drawable.stream_ic_notification)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -238,11 +240,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .setShowWhen(true)
             .setContentIntent(contentIntent)
             .setGroup(groupKey)
-    }
-
-    internal fun onCreateDevice(onDeviceCreated: (device: Device) -> Unit) {
-        config.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
-            ?.asyncGenerateDevice(onDeviceCreated)
     }
 
     private fun Channel.getNotificationContentTitle(): String =
@@ -261,15 +258,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         }
         notificationManager.cancel(notificationSummaryId)
         sharedPreferences.edit { remove(getNotificationSummaryIdKey(notificationSummaryId)) }
-    }
-
-    internal fun onDismissNotification(notificationId: Int) {
-        val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
-        removeNotificationId(notificationId)
-        notificationManager.cancel(notificationId)
-        if (getAssociatedNotificationIds(notificationSummaryId).isNullOrEmpty()) {
-            notificationManager.cancel(notificationSummaryId)
-        }
     }
 
     private fun addNotificationId(notificationId: Int, notificationSummaryId: Int) {

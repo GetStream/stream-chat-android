@@ -19,7 +19,6 @@ internal class AttachmentUploader(
         channelType: String,
         channelId: String,
         attachment: Attachment,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
@@ -46,15 +45,7 @@ internal class AttachmentUploader(
                 mimeType = mimeType ?: "",
                 attachmentType = attachmentType,
                 url = result.data()
-            ).let {
-                // allow the user to change the format of the attachment
-                if (attachmentTransformer != null) {
-                    attachmentTransformer(it, file)
-                } else {
-                    it
-                }
-            }
-
+            )
             progressTracker?.setComplete(true)
             Result(augmentedAttachment)
         } else {

@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
@@ -17,11 +18,24 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         private const val ACTION_READ = "com.getstream.sdk.chat.READ"
         private const val ACTION_REPLY = "com.getstream.sdk.chat.REPLY"
         private const val ACTION_DISMISS = "com.getstream.sdk.chat.DISMISS"
-        private const val KEY_NOTIFICATION_ID = "notification_id"
         private const val KEY_MESSAGE_ID = "message_id"
         private const val KEY_CHANNEL_ID = "id"
         private const val KEY_CHANNEL_TYPE = "type"
         private const val KEY_TEXT_REPLY = "text_reply"
+
+        private val IMMUTABLE_PENDING_INTENT_FLAGS =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+
+        private val MUTABLE_PENDING_INTENT_FLAGS =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
 
         private fun createReplyPendingIntent(
             context: Context,
@@ -31,11 +45,8 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             PendingIntent.getBroadcast(
                 context,
                 notificationId,
-                createNotifyIntent(context, notificationId, ACTION_REPLY).apply {
-                    putExtra(KEY_CHANNEL_ID, channel.id)
-                    putExtra(KEY_CHANNEL_TYPE, channel.type)
-                },
-                PendingIntent.FLAG_UPDATE_CURRENT,
+                createNotifyIntent(context, channel, ACTION_REPLY),
+                MUTABLE_PENDING_INTENT_FLAGS,
             )
 
         private fun createReadPendingIntent(
@@ -46,22 +57,21 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ): PendingIntent = PendingIntent.getBroadcast(
             context,
             notificationId,
-            createNotifyIntent(context, notificationId, ACTION_READ).apply {
-                putExtra(KEY_CHANNEL_ID, channel.id)
-                putExtra(KEY_CHANNEL_TYPE, channel.type)
+            createNotifyIntent(context, channel, ACTION_READ).apply {
                 putExtra(KEY_MESSAGE_ID, message.id)
             },
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            IMMUTABLE_PENDING_INTENT_FLAGS,
         )
 
         internal fun createDismissPendingIntent(
             context: Context,
             notificationId: Int,
+            channel: Channel,
         ): PendingIntent = PendingIntent.getBroadcast(
             context,
             notificationId,
-            createNotifyIntent(context, notificationId, ACTION_DISMISS),
-            PendingIntent.FLAG_UPDATE_CURRENT,
+            createNotifyIntent(context, channel, ACTION_DISMISS),
+            IMMUTABLE_PENDING_INTENT_FLAGS,
         )
 
         internal fun createReadAction(
@@ -96,56 +106,52 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 .build()
         }
 
-        private fun createNotifyIntent(context: Context, notificationId: Int, action: String) =
+        private fun createNotifyIntent(context: Context, channel: Channel, action: String) =
             Intent(context, NotificationMessageReceiver::class.java).apply {
-                putExtra(KEY_NOTIFICATION_ID, notificationId)
+                putExtra(KEY_CHANNEL_ID, channel.id)
+                putExtra(KEY_CHANNEL_TYPE, channel.type)
                 this.action = action
             }
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        when (intent?.action) {
-            ACTION_READ -> markAsRead(
-                intent.getStringExtra(KEY_MESSAGE_ID),
-                intent.getStringExtra(KEY_CHANNEL_ID),
-                intent.getStringExtra(KEY_CHANNEL_TYPE)
-            )
+    override fun onReceive(context: Context, intent: Intent) {
+        val channelType = intent.getStringExtra(KEY_CHANNEL_TYPE) ?: return
+        val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
+        when (intent.action) {
+            ACTION_READ -> intent.getStringExtra(KEY_MESSAGE_ID)?.let { messageId ->
+                markAsRead(
+                    messageId,
+                    channelId,
+                    channelType,
+                )
+            }
             ACTION_REPLY -> {
-                val results = RemoteInput.getResultsFromIntent(intent)
-                if (results != null) {
+                val results = RemoteInput.getResultsFromIntent(intent).getCharSequence(KEY_TEXT_REPLY)?.let { message ->
                     replyText(
-                        intent.getStringExtra(KEY_CHANNEL_ID),
-                        intent.getStringExtra(KEY_CHANNEL_TYPE),
-                        results.getCharSequence(KEY_TEXT_REPLY)
+                        channelId,
+                        channelType,
+                        message,
                     )
                 }
             }
         }
-        intent?.getIntExtra(KEY_NOTIFICATION_ID, 0)?.let(::cancelNotification)
+        cancelNotification(channelType, channelId)
     }
 
-    private fun markAsRead(messageId: String?, channelId: String?, channelType: String?) {
+    private fun markAsRead(messageId: String, channelId: String, channelType: String) {
         if (!ChatClient.isInitialized) return
-
-        if (messageId.isNullOrBlank() || channelId.isNullOrBlank() || channelType.isNullOrBlank()) {
-            return
-        }
 
         ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue()
     }
 
     private fun replyText(
-        channelId: String?,
-        type: String?,
-        messageChars: CharSequence?,
+        channelId: String,
+        type: String,
+        messageChars: CharSequence,
     ) {
         if (!ChatClient.isInitialized) return
 
-        val currentUser = ChatClient.instance().getCurrentUser()
-
-        if (messageChars.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank() || currentUser == null) {
-            return
-        }
+        val currentUser = ChatClient.instance().getCurrentUser() ?: return
 
         ChatClient.instance().sendMessage(
             channelType = type,
@@ -157,7 +163,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ).enqueue()
     }
 
-    private fun cancelNotification(notificationId: Int) {
-        ChatClient.dismissNotification(notificationId)
+    private fun cancelNotification(channelType: String, channelId: String) {
+        ChatClient.dismissChannelNotifications(channelType, channelId)
     }
 }
