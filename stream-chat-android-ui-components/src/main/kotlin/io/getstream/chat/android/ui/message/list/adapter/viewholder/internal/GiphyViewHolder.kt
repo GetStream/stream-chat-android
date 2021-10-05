@@ -1,6 +1,5 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
-import android.util.Log
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -44,7 +43,7 @@ internal class GiphyViewHolder(
 
         applyStyle()
 
-        if (diff?.attachments == true) {
+        if (diff?.attachments != false) {
             data.message
                 .attachments
                 .firstOrNull()
