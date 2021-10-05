@@ -20,18 +20,21 @@ class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
-        val notificationHandler = NotificationHandlerFactory(newMessageIntent = {
-                messageId: String,
-                channelType: String,
-                channelId: String
-            ->
-            Intent(context, HostActivity::class.java).apply {
-                putExtra(EXTRA_CHANNEL_ID, channelId)
-                putExtra(EXTRA_CHANNEL_TYPE, channelType)
-                putExtra(EXTRA_MESSAGE_ID, messageId)
+        val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
+            context = context,
+            newMessageIntent = {
+                    messageId: String,
+                    channelType: String,
+                    channelId: String
+                ->
+                Intent(context, HostActivity::class.java).apply {
+                    putExtra(EXTRA_CHANNEL_ID, channelId)
+                    putExtra(EXTRA_CHANNEL_TYPE, channelType)
+                    putExtra(EXTRA_MESSAGE_ID, messageId)
 
+                }
             }
-        }).createNotificationHandler(context)
+        )
         val notificationConfig =
             NotificationConfig(
                 smallIcon = R.drawable.ic_chat_bubble,
