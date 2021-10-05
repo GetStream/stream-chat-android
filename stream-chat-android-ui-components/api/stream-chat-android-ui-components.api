@@ -1529,6 +1529,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
+	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
@@ -1546,6 +1547,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
+	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
 	public final fun setDeletedMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
@@ -1594,6 +1596,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserBlockHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserBlockHandler;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;)V
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
+	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
@@ -1744,6 +1747,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler {
 	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler {
@@ -2307,6 +2314,7 @@ public final class io/getstream/chat/android/ui/search/list/SearchResultListView
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$LoadMoreListener;)V
+	public final fun setPaginationEnabled (Z)V
 	public final fun setSearchResultSelectedListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$SearchResultSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
@@ -2353,19 +2361,23 @@ public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchView
 }
 
 public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State {
-	public fun <init> (Ljava/lang/String;ZLjava/util/List;Z)V
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;ZLjava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Z
-	public final fun copy (Ljava/lang/String;ZLjava/util/List;Z)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;ZLjava/util/List;ZZ)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
 	public final fun getQuery ()Ljava/lang/String;
 	public final fun getResults ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
+	public final fun isLoadingMore ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

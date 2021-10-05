@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
-import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
@@ -116,7 +115,6 @@ internal class AttachmentUploaderTests {
     fun `Upload attachment should be configurable`() = runBlockingTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }
-        val extra = mutableMapOf<String, Any>("The Answer" to 42)
 
         val sut = Fixture()
             .givenMockedFileUploads(channelType, channelId, files)
@@ -130,49 +128,17 @@ internal class AttachmentUploaderTests {
                 type = "file",
                 mimeType = "",
                 name = attachment.upload!!.name,
-                extraData = extra,
                 uploadState = Attachment.UploadState.Success
             )
             val result = sut.uploadAttachment(
                 channelType,
                 channelId,
                 attachment = attachment,
-                attachmentTransformer = { attachment, _ ->
-                    attachment.copy(extraData = extra)
-                }
             )
 
             result.isSuccess.shouldBeTrue()
             result.data() shouldBeEqualTo expectedAttachment
         }
-    }
-
-    @Test
-    fun `Should return apply the right transformation to attachments`() = runBlockingTest {
-        val message = randomMessage()
-        message.cid = "cid"
-        message.attachments = randomAttachments()
-        val extra = mutableMapOf<String, Any>("the answer" to 42)
-
-        val files: List<File> = message.attachments.map { it.upload!! }
-
-        val sut = Fixture()
-            .givenMockedFileUploads(channelType, channelId, files)
-            .get()
-
-        val result = sut.uploadAttachment(
-            channelType,
-            channelId,
-            message.attachments.first(),
-            attachmentTransformer = { attachment, _ ->
-                attachment.copy(extraData = extra)
-            }
-        )
-
-        result.isSuccess.shouldBeTrue()
-        val uploadedAttachment = result.data()
-
-        uploadedAttachment.extraData shouldBeEqualTo extra
     }
 
     private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> {
