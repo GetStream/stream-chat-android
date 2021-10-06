@@ -78,6 +78,7 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fix bug using custom attributes into views inflated into our SDK Views
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
@@ -87,6 +88,7 @@
 - Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
 
 ### ⚠️ Changed
+- `ChatUI.uiMode` has been deprecated. If you want to force Dark/Light theme, you need to use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)`
 
 ### ❌ Removed
 
