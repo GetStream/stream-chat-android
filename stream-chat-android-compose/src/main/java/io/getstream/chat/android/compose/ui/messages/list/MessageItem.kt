@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.text.format.DateUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
@@ -24,14 +25,15 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -49,18 +51,19 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
-import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition
-import io.getstream.chat.android.compose.state.messages.items.Middle
-import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.common.MessageBubble
 import io.getstream.chat.android.compose.ui.common.Timestamp
@@ -68,14 +71,74 @@ import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isUploading
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import java.util.Date
 
 /**
  * Represents the time the highlight fade out transition will take.
  */
 public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
+
+/**
+ * Represents the default message item that's shown for each item in the list.
+ *
+ * Detects if we're dealing with a [DateSeparator] or a [MessageItem] and shows the required UI.
+ *
+ * @param messageListItem The item that holds the data.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user long taps on an item.
+ * @param onThreadClick Handler when the user taps on a thread in a message item.
+ * @param onImagePreviewResult Handler when the user receives a result from previewing message attachments.
+ */
+@Composable
+public fun DefaultMessageItem(
+    messageListItem: MessageListItem,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onThreadClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    when (messageListItem) {
+        is DateSeparator -> MessageDateSeparator(messageListItem)
+        is MessageItem -> DefaultMessageContainer(
+            modifier = modifier,
+            messageItem = messageListItem,
+            onLongItemClick = onLongItemClick,
+            onThreadClick = onThreadClick,
+            onImagePreviewResult = onImagePreviewResult
+        )
+    }
+}
+
+/**
+ * Represents a date separator item that shows whenever messages are too far apart in time.
+ *
+ * @param dateSeparator The data used to show the separator text.
+ */
+@Composable
+public fun MessageDateSeparator(
+    dateSeparator: DateSeparator,
+) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Center) {
+        Surface(
+            modifier = Modifier
+                .padding(vertical = 8.dp),
+            color = ChatTheme.colors.overlayDark,
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+                text = DateUtils.getRelativeTimeSpanString(
+                    dateSeparator.date.time,
+                    System.currentTimeMillis(),
+                    DateUtils.DAY_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_RELATIVE
+                ).toString(),
+                color = ChatTheme.colors.barsBackground,
+                style = ChatTheme.typography.body
+            )
+        }
+    }
+}
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -548,12 +611,8 @@ public fun UploadingFooter(
     message: Message,
     modifier: Modifier = Modifier,
 ) {
-    val attachments = message.attachments
-
-    val uploadStates: List<StateFlow<Boolean>> = attachments
-        .mapNotNull { it.uploadId }
-        .map { uploadId -> ProgressTrackerFactory.getOrCreate(uploadId).isComplete() }
-    val uploadedCount: Int by combine(uploadStates) { values -> values.count { it } }.collectAsState(initial = 0)
+    val uploadedCount = message.attachments.count { it.uploadState is Attachment.UploadState.Success }
+    val totalCount = message.attachments.size
 
     Column(
         modifier = modifier,
@@ -562,7 +621,7 @@ public fun UploadingFooter(
         OwnedMessageVisibilityContent(message = message)
 
         Text(
-            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount, attachments.size),
+            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount),
             style = ChatTheme.typography.body,
             textAlign = TextAlign.End
         )

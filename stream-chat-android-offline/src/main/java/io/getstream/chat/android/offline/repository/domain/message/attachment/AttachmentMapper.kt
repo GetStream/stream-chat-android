@@ -48,13 +48,14 @@ internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     name = name,
     fallback = fallback,
     upload = uploadFilePath?.let(::File),
-    uploadState = uploadState?.let(UploadStateEntity::toModel),
+    uploadState = uploadState?.toModel(uploadFilePath?.let(::File)),
     extraData = extraData.toMutableMap(),
 )
 
 private fun Attachment.UploadState.toEntity(): UploadStateEntity {
     val (statusCode, errorMessage) = when (this) {
-        is Attachment.UploadState.Success -> UPLOAD_STATE_SUCCESS to null
+        Attachment.UploadState.Success -> UPLOAD_STATE_SUCCESS to null
+        Attachment.UploadState.Idle -> UPLOAD_STATE_IN_PROGRESS to null
         is Attachment.UploadState.InProgress -> UPLOAD_STATE_IN_PROGRESS to null
         is Attachment.UploadState.Failed -> UPLOAD_STATE_FAILED to (
             this.error.message
@@ -64,9 +65,9 @@ private fun Attachment.UploadState.toEntity(): UploadStateEntity {
     return UploadStateEntity(statusCode, errorMessage)
 }
 
-private fun UploadStateEntity.toModel(): Attachment.UploadState = when (this.statusCode) {
+private fun UploadStateEntity.toModel(uploadFile: File?): Attachment.UploadState = when (this.statusCode) {
     UPLOAD_STATE_SUCCESS -> Attachment.UploadState.Success
-    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress
+    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0, uploadFile?.length() ?: 0)
     UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(ChatError(message = this.errorMessage))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
 }

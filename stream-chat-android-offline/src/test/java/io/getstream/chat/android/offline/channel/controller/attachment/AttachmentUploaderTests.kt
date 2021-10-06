@@ -144,7 +144,7 @@ internal class AttachmentUploaderTests {
     private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> {
         return randomAttachmentsWithFile(size)
             .map { attachment ->
-                attachment.apply { this.uploadState = Attachment.UploadState.InProgress }
+                attachment.apply { this.uploadState = Attachment.UploadState.Idle }
             }
             .toMutableList()
     }
