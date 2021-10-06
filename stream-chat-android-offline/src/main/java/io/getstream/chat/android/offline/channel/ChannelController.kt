@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -586,8 +587,12 @@ public class ChannelController internal constructor(
             message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
                 .map { attachment ->
                     AttachmentUploader(client)
-                        .uploadAttachment(channelType, channelId, attachment)
-                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+                        .uploadAttachment(
+                            channelType,
+                            channelId,
+                            attachment,
+                            ProgressCallbackImpl(message.id, attachment.uploadId!!)
+                        ).recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
                 }.toMutableList()
         } catch (e: Exception) {
@@ -599,10 +604,25 @@ public class ChannelController internal constructor(
             }.toMutableList()
         }.also {
             message.attachments = it
-
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             domainImpl.repos.deleteChannelMessage(message)
             domainImpl.repos.insertMessage(message)
+        }
+    }
+
+    private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
+        val message = _messages.value[messageId]
+        if (message != null) {
+            val newAttachments = message.attachments.map { attachment ->
+                if (attachment.uploadId == uploadId) {
+                    attachment.copy(uploadState = newState)
+                } else {
+                    attachment
+                }
+            }
+            val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
+            val newMessages = _messages.value + (updatedMessage.id to updatedMessage)
+            _messages.value = newMessages
         }
     }
 
@@ -1429,6 +1449,25 @@ public class ChannelController internal constructor(
          * @see ChatDomainImpl.online
          */
         public data class Result(val messages: List<Message>) : MessagesState()
+    }
+
+    internal inner class ProgressCallbackImpl(private val messageId: String, private val uploadId: String) :
+        ProgressCallback {
+        override fun onSuccess(url: String?) {
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
+        }
+
+        override fun onError(error: ChatError) {
+            updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
+        }
+
+        override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+            updateAttachmentUploadState(
+                messageId,
+                uploadId,
+                Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
+            )
+        }
     }
 
     internal companion object {
