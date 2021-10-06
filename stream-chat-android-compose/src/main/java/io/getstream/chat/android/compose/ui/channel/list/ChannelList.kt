@@ -1,13 +1,12 @@
 package io.getstream.chat.android.compose.ui.channel.list
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -158,10 +157,9 @@ public fun Channels(
     val state = rememberLazyListState()
 
     LazyColumn(
-        modifier,
+        modifier = modifier,
         state = state,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         itemsIndexed(channels) { index, item ->
             itemContent(item)
@@ -172,7 +170,7 @@ public fun Channels(
         }
 
         if (isLoadingMore) {
-            item { LoadingFooter() }
+            item { LoadingFooter(modifier = Modifier.fillMaxWidth()) }
         }
     }
 }

@@ -97,7 +97,8 @@ public fun SearchInput(
 
                 trailingIcon?.invoke(this)
             }
-        }
+        },
+        maxLines = 1
     )
 }
 

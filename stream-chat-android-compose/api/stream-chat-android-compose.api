@@ -437,7 +437,7 @@ public final class io/getstream/chat/android/compose/ui/channel/ChannelsScreenKt
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ChannelListHeaderKt {
-	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ComposableSingletons$ChannelListHeaderKt {
@@ -491,7 +491,7 @@ public final class io/getstream/chat/android/compose/ui/common/EmptyViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/InputFieldKt {
-	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/LoadingFooterKt {
@@ -791,6 +791,7 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
 	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
 	public static final fun getLastMessagePreviewText (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
+	public static final fun getReadStatuses (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionTypes {

@@ -5,37 +5,39 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.getUnreadMessagesCount
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
+import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
+import io.getstream.chat.android.compose.ui.util.getReadStatuses
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
@@ -55,88 +57,115 @@ internal fun DefaultChannelItem(
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier
-            .padding(top = 16.dp, bottom = 16.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+            .background(color = ChatTheme.colors.appBackground)
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
-                indication = null,
+                indication = rememberRipple(),
                 interactionSource = remember { MutableInteractionSource() }
             ),
-        verticalAlignment = CenterVertically,
     ) {
-        Box(
-            Modifier
-                .padding(start = 8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(ChatTheme.colors.borders)
-                    .size(36.dp)
-            )
-            ChannelAvatar(modifier = Modifier.size(36.dp), channel = channel, currentUser = currentUser)
-        }
-
-        Spacer(Modifier.width(8.dp))
-
-        val lastMessage = channel.messages.lastOrNull()
-
-        Column(
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalAlignment = CenterVertically,
         ) {
-            Text(
-                text = channel.getDisplayName(),
-                style = ChatTheme.typography.bodyBold,
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+            ChannelAvatar(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(40.dp),
+                channel = channel,
+                currentUser = currentUser
             )
 
-            val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+            Spacer(Modifier.width(8.dp))
 
-            if (lastMessageText.isNotEmpty()) {
+            val lastMessage = channel.messages.lastOrNull()
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = lastMessageText,
+                    text = channel.getDisplayName(),
+                    style = ChatTheme.typography.bodyBold,
+                    fontSize = 16.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
+
+                val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+
+                if (lastMessageText.isNotEmpty()) {
+                    Text(
+                        text = lastMessageText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ChatTheme.typography.body,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
             }
-        }
 
-        if (lastMessage != null) {
-            Row(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
-                    .wrapContentHeight()
-                    .align(Bottom),
-                verticalAlignment = CenterVertically,
-            ) {
-                val seenMessage = channel.getUnreadMessagesCount(currentUser?.id ?: "") == 0
-
-                val messageIcon =
-                    if (seenMessage) R.drawable.stream_compose_message_seen else R.drawable.stream_compose_message_not_seen
-
-                Icon(
+            if (lastMessage != null) {
+                Row(
                     modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(12.dp),
-                    painter = painterResource(id = messageIcon),
-                    contentDescription = null,
-                    tint = if (seenMessage) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                )
+                        .padding(horizontal = 8.dp)
+                        .wrapContentHeight()
+                        .align(Bottom),
+                    verticalAlignment = CenterVertically,
+                ) {
 
-                Timestamp(date = channel.lastUpdated)
+                    val lastMessage = channel.getLastMessage(currentUser)
+                    val readStatues = channel.getReadStatuses(
+                        userToIgnore = currentUser
+                    )
+                    val syncStatus = lastMessage?.syncStatus
+                    val readCount =
+                        if (lastMessage == null) 0 else readStatues.count { it.time >= lastMessage.getCreatedAtOrThrow().time }
+
+                    val currentUserSentMessage = lastMessage?.user?.id == currentUser?.id
+
+                    val messageIcon = when {
+                        !currentUserSentMessage || readCount == 0 -> R.drawable.stream_compose_message_sent
+                        currentUserSentMessage && readCount > 0 -> R.drawable.stream_compose_message_seen
+                        syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> R.drawable.stream_compose_ic_clock
+                        syncStatus == SyncStatus.COMPLETED -> R.drawable.stream_compose_message_sent
+                        else -> null
+                    }
+
+                    val iconTint =
+                        if (readStatues.isNotEmpty() && readCount == readStatues.size) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+
+                    if (messageIcon != null) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(12.dp),
+                            painter = painterResource(id = messageIcon),
+                            contentDescription = null,
+                            tint = iconTint,
+                        )
+                    }
+
+                    Timestamp(date = channel.lastUpdated)
+                }
             }
         }
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(color = ChatTheme.colors.borders)
+        )
     }
 }
