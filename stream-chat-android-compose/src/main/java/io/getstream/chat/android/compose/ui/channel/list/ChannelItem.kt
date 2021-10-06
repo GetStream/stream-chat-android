@@ -85,7 +85,7 @@ internal fun DefaultChannelItem(
 
             Spacer(Modifier.width(8.dp))
 
-            val lastMessage = channel.messages.lastOrNull()
+            val lastMessage = channel.getLastMessage(currentUser)
 
             Column(
                 modifier = Modifier
@@ -123,27 +123,21 @@ internal fun DefaultChannelItem(
                         .align(Bottom),
                     verticalAlignment = CenterVertically,
                 ) {
-
-                    val lastMessage = channel.getLastMessage(currentUser)
-                    val readStatues = channel.getReadStatuses(
-                        userToIgnore = currentUser
-                    )
-                    val syncStatus = lastMessage?.syncStatus
-                    val readCount =
-                        if (lastMessage == null) 0 else readStatues.count { it.time >= lastMessage.getCreatedAtOrThrow().time }
-
-                    val currentUserSentMessage = lastMessage?.user?.id == currentUser?.id
+                    val readStatues = channel.getReadStatuses(userToIgnore = currentUser)
+                    val syncStatus = lastMessage.syncStatus
+                    val currentUserSentMessage = lastMessage.user.id == currentUser?.id
+                    val readCount = readStatues.count { it.time >= lastMessage.getCreatedAtOrThrow().time }
 
                     val messageIcon = when {
-                        !currentUserSentMessage || readCount == 0 -> R.drawable.stream_compose_message_sent
-                        currentUserSentMessage && readCount > 0 -> R.drawable.stream_compose_message_seen
+                        currentUserSentMessage && readCount == 0 -> R.drawable.stream_compose_message_sent
+                        !currentUserSentMessage || readCount != 0 -> R.drawable.stream_compose_message_seen
                         syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> R.drawable.stream_compose_ic_clock
                         syncStatus == SyncStatus.COMPLETED -> R.drawable.stream_compose_message_sent
                         else -> null
                     }
 
                     val iconTint =
-                        if (readStatues.isNotEmpty() && readCount == readStatues.size) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                        if (!currentUserSentMessage || (readStatues.isNotEmpty() && readCount == readStatues.size)) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
 
                     if (messageIcon != null) {
                         Icon(
