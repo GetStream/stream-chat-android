@@ -1,5 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -13,6 +14,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +35,8 @@ internal class TextAndAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     private var scope: CoroutineScope? = null
+
+    var currentView: View? = null
 
     init {
         binding.run {
@@ -66,17 +70,31 @@ internal class TextAndAttachmentsViewHolder(
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         markdown.setText(binding.messageText, data.message.text)
 
-        if (diff?.attachments != false || data.message.attachments.any { it.type != "giphy" }) {
-            setupAttachment(data)
-        }
-
+        setupAttachment(data, diff)
         setupUploads(data)
     }
 
-    private fun setupAttachment(data: MessageListItem.MessageItem) {
+    private fun setupAttachment(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        if (currentView == null || diff?.attachments == true) {
+            createNewView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root)
+                .also { attachmentView ->
+                    currentView = attachmentView
+                })
+        } else {
+            updateMediaAttachmentListeners(currentView as MediaAttachmentsGroupView, data)
+        }
+    }
+
+    private fun updateMediaAttachmentListeners(view: MediaAttachmentsGroupView, data: MessageListItem.MessageItem) {
+        view.attachmentLongClickListener {
+            listeners.messageLongClickListener.onMessageLongClick(data.message)
+        }
+    }
+
+    private fun createNewView(view: View) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
+            addView(view)
         }
     }
 

@@ -46,6 +46,8 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         defStyleRes
     )
 
+    private val viewList: MutableList<MediaAttachmentView> = mutableListOf()
+
     fun showAttachments(attachments: List<Attachment>) {
         when (attachments.size) {
             0 -> Unit
@@ -77,6 +79,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             applyTo(this@MediaAttachmentsGroupView)
         }
         mediaAttachmentView.showAttachment(first)
+
+        viewList.clear()
+        viewList.add(mediaAttachmentView)
     }
 
     private fun showTwo(first: Attachment, second: Attachment) {
@@ -215,6 +220,14 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             .build()
             .let(::MaterialShapeDrawable)
             .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }
+    }
+
+    fun attachmentLongClickListener(attachmentClickListener: AttachmentLongClickListener) {
+        this.attachmentLongClickListener = attachmentClickListener
+
+        viewList.forEach { mediaAttachmentView ->
+            mediaAttachmentView.attachmentLongClickListener = attachmentLongClickListener
+        }
     }
 
     private sealed class State {
