@@ -9,7 +9,8 @@
     <color name="stream_compose_app_background">#F7F7F8</color>
     <color name="stream_compose_bars_background">#FFFFFF</color>
     <color name="stream_compose_link_background">#E9F1FF</color>
-    <color name="stream_compose_overlay">#80000000</color>
+    <color name="stream_compose_overlay_regular">#80000000</color>
+    <color name="stream_compose_overlay_dark">#99000000</color>
     <color name="stream_compose_primary_accent">#006CFF</color>
     <color name="stream_compose_error_accent">#FF3742</color>
     <color name="stream_compose_info_accent">#20E070</color>
@@ -24,7 +25,8 @@
     <color name="stream_compose_app_background_dark">#000000</color>
     <color name="stream_compose_bars_background_dark">#121416</color>
     <color name="stream_compose_link_background_dark">#00193D</color>
-    <color name="stream_compose_overlay_dark">#33000000</color>
+    <color name="stream_compose_overlay_regular_dark">#33000000</color>
+    <color name="stream_compose_overlay_dark_dark">#99FFFFFF</color>
     <color name="stream_compose_primary_accent_dark">#006CFF</color>
     <color name="stream_compose_error_accent_dark">#FF3742</color>
     <color name="stream_compose_info_accent_dark">#20E070</color>

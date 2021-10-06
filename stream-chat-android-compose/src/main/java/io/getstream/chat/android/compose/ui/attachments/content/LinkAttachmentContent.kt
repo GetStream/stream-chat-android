@@ -90,7 +90,6 @@ public fun LinkAttachmentContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = 250.dp)
-                    .padding(4.dp)
                     .clip(ChatTheme.shapes.attachment),
                 painter = painter,
                 contentDescription = null,

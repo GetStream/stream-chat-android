@@ -17,6 +17,7 @@ import io.getstream.chat.android.compose.R
  * @param barsBackground Used for button text, top and bottom bar background and other user messages.
  * @param linkBackground Used for the message link card background.
  * @param overlay Used for general overlays and background when opening modals.
+ * @param overlayDark Used for the date separator background color.
  * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
  * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
  * @param infoAccent Used for the online status.
@@ -32,6 +33,7 @@ public data class StreamColors(
     public val barsBackground: Color,
     public val linkBackground: Color,
     public val overlay: Color,
+    public val overlayDark: Color,
     public val primaryAccent: Color,
     public val errorAccent: Color,
     public val infoAccent: Color,
@@ -54,7 +56,8 @@ public data class StreamColors(
             appBackground = colorResource(R.color.stream_compose_app_background),
             barsBackground = colorResource(R.color.stream_compose_bars_background),
             linkBackground = colorResource(R.color.stream_compose_link_background),
-            overlay = colorResource(R.color.stream_compose_overlay),
+            overlay = colorResource(R.color.stream_compose_overlay_regular),
+            overlayDark = colorResource(id = R.color.stream_compose_overlay_dark),
             primaryAccent = colorResource(R.color.stream_compose_primary_accent),
             errorAccent = colorResource(R.color.stream_compose_error_accent),
             infoAccent = colorResource(R.color.stream_compose_info_accent),
@@ -76,7 +79,8 @@ public data class StreamColors(
             appBackground = colorResource(R.color.stream_compose_app_background_dark),
             barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
             linkBackground = colorResource(R.color.stream_compose_link_background_dark),
-            overlay = colorResource(R.color.stream_compose_overlay_dark),
+            overlay = colorResource(R.color.stream_compose_overlay_regular_dark),
+            overlayDark = colorResource(id = R.color.stream_compose_overlay_dark_dark),
             primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
             errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
             infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
