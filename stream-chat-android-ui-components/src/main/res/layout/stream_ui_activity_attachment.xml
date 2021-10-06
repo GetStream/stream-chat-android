@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        style="?attr/streamUiWebViewStyle"
+        style="?attr/streamUiAttachmentActivityWebViewStyle"
         />
 
     <ImageView
@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        style="?attr/streamUiImageStyle"
+        style="?attr/streamUiAttachmentActivityImageStyle"
         />
 
     <ProgressBar
@@ -34,6 +34,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        style="?attr/streamUiProgressBarStyle"
+        style="?attr/streamUiAttachmentActivityProgressBarStyle"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
