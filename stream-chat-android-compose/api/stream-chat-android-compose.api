@@ -491,7 +491,7 @@ public final class io/getstream/chat/android/compose/ui/common/EmptyViewKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/common/InputFieldKt {
-	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun InputField-PfoAEA0 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILandroidx/compose/foundation/BorderStroke;FLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/common/LoadingFooterKt {
