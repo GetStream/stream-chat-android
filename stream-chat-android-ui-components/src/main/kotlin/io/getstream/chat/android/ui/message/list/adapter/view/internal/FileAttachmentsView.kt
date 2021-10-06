@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -17,10 +16,7 @@ import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
@@ -34,9 +30,6 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBindin
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 internal class FileAttachmentsView : RecyclerView {
     var attachmentClickListener: AttachmentClickListener? = null
@@ -194,8 +187,11 @@ private class FileAttachmentViewHolder(
     }
 
     private fun subscribeForProgressIfNeeded(attachment: Attachment) {
-        if (attachment.uploadState is Attachment.UploadState.InProgress) {
-            handleInProgressAttachment(binding.fileSize)
+        val uploadState = attachment.uploadState
+        if (uploadState is Attachment.UploadState.Idle) {
+            handleInProgressAttachment(binding.fileSize, 0L, attachment.upload?.length() ?: 0)
+        } else if (uploadState is Attachment.UploadState.InProgress) {
+            handleInProgressAttachment(binding.fileSize, uploadState.bytesUploaded, uploadState.totalBytes)
         }
     }
 
@@ -209,7 +205,10 @@ private class FileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(item)
             fileTitle.text = item.getDisplayableName()
 
-            if (item.uploadState == Attachment.UploadState.InProgress) {
+            if (item.uploadState is Attachment.UploadState.Idle
+                || item.uploadState is Attachment.UploadState.InProgress
+                || (item.uploadState is Attachment.UploadState.Success && item.fileSize == 0)
+            ) {
                 actionButton.setImageDrawable(null)
                 fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
@@ -228,34 +227,15 @@ private class FileAttachmentViewHolder(
         }
     }
 
-    private fun handleInProgressAttachment(fileSizeView: TextView) {
-        attachment?.let { attachment ->
-            attachment.uploadId?.let(ProgressTrackerFactory::getOrCreate)?.let { tracker ->
-                val progress = tracker.currentProgress()
-                val completion = tracker.isComplete()
-                val totalValue = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0)
+    private fun handleInProgressAttachment(fileSizeView: TextView, bytesRead: Long, totalBytes: Long) {
+        val totalValue = MediaStringUtil.convertFileSizeByteCount(totalBytes)
 
-                val fileProgress = progress.combine(completion, ::Pair)
-
-                clearScope()
-                scope = CoroutineScope(DispatcherProvider.Main)
-
-                scope?.launch {
-                    fileProgress.collect { (progress, isComplete) ->
-                        val uploadedBytes = (progress / 100F * tracker.maxValue).toLong()
-                        updateProgress(
-                            context,
-                            fileSizeView,
-                            binding.progressBar,
-                            attachment,
-                            uploadedBytes,
-                            isComplete,
-                            totalValue
-                        )
-                    }
-                }
-            }
-        }
+        fileSizeView.text =
+            context.getString(
+                R.string.stream_ui_message_list_attachment_upload_progress,
+                MediaStringUtil.convertFileSizeByteCount(bytesRead),
+                totalValue
+            )
     }
 
     override fun unbind() {
@@ -266,30 +246,5 @@ private class FileAttachmentViewHolder(
     private companion object {
         private val CORNER_SIZE_PX = 12.dpToPxPrecise()
         private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
-
-        private fun updateProgress(
-            context: Context,
-            fileSizeView: TextView,
-            progressBar: ProgressBar,
-            attachment: Attachment,
-            uploadedBytes: Long,
-            isComplete: Boolean,
-            targetValue: String,
-        ) {
-            if (!isComplete) {
-                val nominalProgress = MediaStringUtil.convertFileSizeByteCount(uploadedBytes)
-
-                fileSizeView.text =
-                    context.getString(
-                        R.string.stream_ui_message_list_attachment_upload_progress,
-                        nominalProgress,
-                        targetValue
-                    )
-            } else {
-                progressBar.isVisible = false
-                fileSizeView.text =
-                    attachment.upload?.length()?.let(MediaStringUtil::convertFileSizeByteCount)
-            }
-        }
     }
 }

@@ -48,7 +48,9 @@
         app:layout_constraintStart_toEndOf="@id/progressBar"
         app:layout_constraintTop_toBottomOf="@id/fileTitle"
         app:layout_goneMarginStart="0dp"
-        tools:text="123 KB"
+        tools:text="123 KB / 2.4 MB"
+        android:ellipsize="end"
+        android:maxLines="1"
         />
 
     <ProgressBar

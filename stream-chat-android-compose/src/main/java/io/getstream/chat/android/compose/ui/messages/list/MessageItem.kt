@@ -30,7 +30,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -52,10 +51,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.compose.rememberImagePainter
-import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.items.DateSeparator
@@ -73,8 +71,6 @@ import io.getstream.chat.android.compose.ui.common.avatar.Avatar
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isUploading
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import java.util.Date
 
 /**
@@ -615,12 +611,8 @@ public fun UploadingFooter(
     message: Message,
     modifier: Modifier = Modifier,
 ) {
-    val attachments = message.attachments
-
-    val uploadStates: List<StateFlow<Boolean>> = attachments
-        .mapNotNull { it.uploadId }
-        .map { uploadId -> ProgressTrackerFactory.getOrCreate(uploadId).isComplete() }
-    val uploadedCount: Int by combine(uploadStates) { values -> values.count { it } }.collectAsState(initial = 0)
+    val uploadedCount = message.attachments.count { it.uploadState is Attachment.UploadState.Success }
+    val totalCount = message.attachments.size
 
     Column(
         modifier = modifier,
@@ -629,7 +621,7 @@ public fun UploadingFooter(
         OwnedMessageVisibilityContent(message = message)
 
         Text(
-            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount, attachments.size),
+            text = stringResource(id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount),
             style = ChatTheme.typography.body,
             textAlign = TextAlign.End
         )

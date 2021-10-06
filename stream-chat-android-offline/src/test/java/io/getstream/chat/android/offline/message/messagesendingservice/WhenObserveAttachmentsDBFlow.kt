@@ -22,6 +22,7 @@ import io.getstream.chat.android.offline.utils.CallRetryService
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.positiveRandomLong
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
@@ -38,7 +39,7 @@ internal class WhenObserveAttachmentsDBFlow {
         testCoroutineRule.scope.runBlockingTest {
             val attachment = randomAttachment {
                 title = "attachmentTitle"
-                uploadState = Attachment.UploadState.InProgress
+                uploadState = Attachment.UploadState.Idle
             }
             val channelClient = mock<ChannelClient>()
             val sendMessage = randomMessage(id = "messageId1", attachments = mutableListOf(attachment))
@@ -55,8 +56,10 @@ internal class WhenObserveAttachmentsDBFlow {
     @Test
     fun `Given db attachments flow is observed And not all attachments has success upload state Should not send message through BE`() =
         testCoroutineRule.scope.runBlockingTest {
-            val attachment1 = randomAttachment { uploadState = Attachment.UploadState.InProgress }
-            val attachment2 = randomAttachment { uploadState = Attachment.UploadState.InProgress }
+            val attachment1 = randomAttachment { uploadState = Attachment.UploadState.Idle }
+            val attachment2 = randomAttachment {
+                uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30)
+            }
             val sendMessage = randomMessage(attachments = mutableListOf(attachment1, attachment2))
             val channelClient = mock<ChannelClient>()
             val flow = Fixture()
@@ -65,7 +68,7 @@ internal class WhenObserveAttachmentsDBFlow {
                 .get()
 
             flow.value = listOf(
-                attachment1.copy(uploadState = Attachment.UploadState.InProgress),
+                attachment1.copy(uploadState = Attachment.UploadState.InProgress(positiveRandomLong(90), positiveRandomLong(10) + 90)),
                 attachment2.copy(uploadState = Attachment.UploadState.Success)
             )
 

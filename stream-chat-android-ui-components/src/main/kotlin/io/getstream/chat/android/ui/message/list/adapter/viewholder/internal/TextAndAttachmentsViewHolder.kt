@@ -1,14 +1,9 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
-import android.content.Context
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
@@ -22,10 +17,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.A
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
@@ -100,22 +91,18 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupUploads(data: MessageListItem.MessageItem) {
-        val uploadIdList: List<String> = data.message.attachments
-            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
-            .mapNotNull(Attachment::uploadId)
-
-        val needUpload = uploadIdList.isNotEmpty()
-
-        if (needUpload) {
-            clearScope()
-            val scope = CoroutineScope(DispatcherProvider.Main)
-            this.scope = scope
-
-            scope.launch {
-                trackFilesSent(context, uploadIdList, binding.sentFiles)
-            }
-        } else {
+        val totalAttachmentsCount = data.message.attachments.size
+        val completedAttachmentsCount =
+            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
+        if (completedAttachmentsCount == totalAttachmentsCount) {
             binding.sentFiles.isVisible = false
+        } else {
+            binding.sentFiles.text =
+                context.getString(
+                    R.string.stream_ui_message_list_attachment_uploading,
+                    completedAttachmentsCount,
+                    totalAttachmentsCount
+                )
         }
     }
 
@@ -125,40 +112,5 @@ internal class TextAndAttachmentsViewHolder(
 
     override fun onAttachedToWindow() {
         setupUploads(data)
-    }
-
-    private companion object {
-        private suspend fun trackFilesSent(
-            context: Context,
-            uploadIdList: List<String>,
-            sentFilesView: TextView,
-        ) {
-            val filesSent = 0
-            val totalFiles = uploadIdList.size
-
-            sentFilesView.isVisible = true
-            sentFilesView.text =
-                context.getString(R.string.stream_ui_message_list_attachment_uploading, filesSent, totalFiles)
-
-            val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
-                ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
-            }
-
-            combine(completionFlows) { isCompleteArray ->
-                isCompleteArray.count { isComplete -> isComplete }
-            }.collect { completedCount ->
-                if (completedCount == totalFiles) {
-                    sentFilesView.text =
-                        context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
-                } else {
-                    sentFilesView.text =
-                        context.getString(
-                            R.string.stream_ui_message_list_attachment_uploading,
-                            completedCount,
-                            totalFiles
-                        )
-                }
-            }
-        }
     }
 }
