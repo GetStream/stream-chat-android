@@ -83,9 +83,9 @@
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
 
 ### ✅ Added
-- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
 - Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
-
+- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView` 
 ### ⚠️ Changed
 
 ### ❌ Removed

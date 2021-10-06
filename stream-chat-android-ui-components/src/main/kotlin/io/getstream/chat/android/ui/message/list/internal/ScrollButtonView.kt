@@ -32,7 +32,7 @@ internal class ScrollButtonView : FrameLayout {
         binding.scrollActionButton.rippleColor = scrollButtonViewStyle.scrollButtonRippleColor
         binding.scrollActionButton.setImageDrawable(scrollButtonViewStyle.scrollButtonIcon)
         binding.scrollActionButton.backgroundTintList = ColorStateList.valueOf(scrollButtonViewStyle.scrollButtonColor)
-        binding.unreadCountTextView.backgroundTintList = ColorStateList.valueOf(scrollButtonViewStyle.scrollButtonBadgeColor)
+        binding.scrollActionButton.compatElevation = scrollButtonViewStyle.scrollButtonElevation
         scrollButtonViewStyle.scrollButtonBadgeTextStyle.apply(binding.unreadCountTextView)
     }
 
