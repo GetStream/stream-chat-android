@@ -111,6 +111,7 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
     private val editJobs = mutableMapOf<String, Job>()
@@ -584,17 +585,20 @@ public class ChannelController internal constructor(
         message: Message,
     ): List<Attachment> {
         return try {
-            message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
-                .map { attachment ->
-                    AttachmentUploader(client)
-                        .uploadAttachment(
-                            channelType,
-                            channelId,
-                            attachment,
-                            ProgressCallbackImpl(message.id, attachment.uploadId!!)
-                        ).recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+            message.attachments.map { attachment ->
+                if (attachment.uploadState != Attachment.UploadState.Success) {
+                    attachmentUploader.uploadAttachment(
+                        channelType,
+                        channelId,
+                        attachment,
+                        ProgressCallbackImpl(message.id, attachment.uploadId!!)
+                    )
+                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
-                }.toMutableList()
+                } else {
+                    attachment
+                }
+            }.toMutableList()
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
