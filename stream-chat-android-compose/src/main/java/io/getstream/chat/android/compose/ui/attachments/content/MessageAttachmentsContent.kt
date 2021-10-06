@@ -47,9 +47,9 @@ public fun MessageAttachmentsContent(
         )
 
         if (attachmentFactory != null) {
-            attachmentFactory.content(Modifier.padding(4.dp), attachmentState)
+            attachmentFactory.content(Modifier.padding(2.dp), attachmentState)
         } else if (linkFactory != null) {
-            linkFactory.content(Modifier.padding(4.dp), attachmentState)
+            linkFactory.content(Modifier.padding(8.dp), attachmentState)
         }
     }
 }
