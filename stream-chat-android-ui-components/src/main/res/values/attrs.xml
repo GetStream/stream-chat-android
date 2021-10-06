@@ -2,6 +2,7 @@
 <resources>
     <attr name="streamUiReactionsBubbleColorMine" format="color|reference" />
     <attr name="streamUiReactionsBubbleColorTheirs" format="color|reference" />
+    <attr name="streamUiValidTheme" format="boolean" />
 
     <!--Themes attributes-->
     <declare-styleable name="StreamUiStyleable">

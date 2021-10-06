@@ -61,28 +61,11 @@ internal fun Context.copyToClipboard(text: String) {
 internal val Context.streamThemeInflater: LayoutInflater
     get() = LayoutInflater.from(this.createStreamThemeWrapper())
 
-internal fun Context.createStreamThemeWrapper(uiMode: UiMode = ChatUI.uiMode): Context {
+internal fun Context.createStreamThemeWrapper(): Context {
     val typedValue = TypedValue()
-
-    val originalConfig = resources.configuration
-
     return when {
-        this.theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) ->
-            ContextThemeWrapper(this, typedValue.resourceId).uiMode(originalConfig, uiMode)
-        else -> ContextThemeWrapper(this, R.style.StreamUiTheme).uiMode(originalConfig, uiMode)
+        theme.resolveAttribute(R.attr.streamUiValidTheme, typedValue, true) -> this
+        theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)
+        else -> ContextThemeWrapper(this, R.style.StreamUiTheme)
     }
-}
-
-private fun ContextThemeWrapper.uiMode(originalConfig: Configuration, uiMode: UiMode): ContextThemeWrapper {
-    return apply {
-        applyOverrideConfiguration(
-            Configuration(originalConfig).apply { parseUiMode(uiMode)?.let { this.uiMode = it } }
-        )
-    }
-}
-
-private fun parseUiMode(uiMode: UiMode) = when (uiMode) {
-    UiMode.LIGHT -> Configuration.UI_MODE_NIGHT_NO
-    UiMode.DARK -> Configuration.UI_MODE_NIGHT_YES
-    UiMode.SYSTEM -> null
 }
