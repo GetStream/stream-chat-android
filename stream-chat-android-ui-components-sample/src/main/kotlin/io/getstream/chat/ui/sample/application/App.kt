@@ -2,10 +2,13 @@ package io.getstream.chat.ui.sample.application
 
 import android.app.Application
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.UiMode
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
@@ -17,6 +20,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
