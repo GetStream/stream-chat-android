@@ -202,6 +202,18 @@
     
     <style name="StreamUiTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiValidTheme">true</item>
+        <item name="streamUiAttachmentActivityProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
+        <item name="streamUiAttachmentActivityImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
+        <item name="streamUiAttachmentActivityWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
+        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
+        <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
+        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
+        <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
+        <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
+        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/StreamUi.AttachmentGallery.ActionsMenu</item>
+        <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
+        <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
+        <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
         <item name="streamUiGlobalAvatarBorderColor">@color/stream_ui_white</item>
         <item name="streamUiGlobalAvatarOnlineIndicatorColor">@color/stream_ui_accent_green</item>
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
@@ -752,14 +764,6 @@
     </style>
 
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiAttachmentGalleryOptionsStyle">@style/StreamUi.AttachmentGallery.Options</item>
-        <item name="streamUiAttachmentGalleryCloseButtonStyle">@style/StreamUi.AttachmentGallery.CloseButton</item>
-        <item name="streamUiAttachmentGalleryTitleStyle">@style/StreamUi.AttachmentGallery.Title</item>
-        <item name="streamUiAttachmentGalleryDateStyle">@style/StreamUi.AttachmentGallery.Date</item>
-        <item name="streamUiAttachmentGalleryActionsMenuStyle">@style/StreamUi.AttachmentGallery.ActionsMenu</item>
-        <item name="streamUiAttachmentGalleryBottomBarImageCountStyle">@style/StreamUi.AttachmentGallery.BottomBar.ImageCount</item>
-        <item name="streamUiAttachmentGalleryBottomBarLeftIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.LeftIcon</item>
-        <item name="streamUiAttachmentGalleryBottomBarRightIconStyle">@style/StreamUi.AttachmentGallery.BottomBar.RightIcon</item>
         <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
@@ -771,9 +775,6 @@
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiProgressBarStyle">@style/StreamUi.AttachmentActivity.ProgressBar</item>
-        <item name="streamUiImageStyle">@style/StreamUi.AttachmentActivity.Image</item>
-        <item name="streamUiWebViewStyle">@style/StreamUi.AttachmentActivity.WebView</item>
         <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 
@@ -827,7 +828,6 @@
     </style>
 
     <style name="StreamUi.MediaActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiMediaActivityIconStyle">@style/StreamUi.MediaActivity.Icon</item>
         <item name="streamUiTheme">@style/StreamUiTheme</item>
     </style>
 

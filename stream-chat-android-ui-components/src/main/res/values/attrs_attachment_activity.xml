@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AttachmentActivity">
-        <attr name="streamUiProgressBarStyle" format="reference"/>
-        <attr name="streamUiImageStyle" format="reference"/>
-        <attr name="streamUiWebViewStyle" format="reference"/>
+        <attr name="streamUiAttachmentActivityProgressBarStyle" format="reference"/>
+        <attr name="streamUiAttachmentActivityImageStyle" format="reference"/>
+        <attr name="streamUiAttachmentActivityWebViewStyle" format="reference"/>
     </declare-styleable>
 </resources>
