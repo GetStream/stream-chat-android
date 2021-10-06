@@ -14,6 +14,9 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
+import io.getstream.chat.android.ui.message.list.adapter.view.internal.FileAttachmentsView
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -81,12 +84,34 @@ internal class TextAndAttachmentsViewHolder(
                     currentView = attachmentView
                 })
         } else {
-            updateMediaAttachmentListeners(currentView as MediaAttachmentsGroupView, data)
+            updateMediaAttachmentListeners(currentView!!, data)
         }
     }
 
-    private fun updateMediaAttachmentListeners(view: MediaAttachmentsGroupView, data: MessageListItem.MessageItem) {
-        view.attachmentLongClickListener {
+    private fun updateMediaAttachmentListeners(view: View, data: MessageListItem.MessageItem) {
+        when (view) {
+            is MediaAttachmentsGroupView -> { updateListeners(view, data) }
+
+            is FileAttachmentsView -> { updateListeners(view, data) }
+        }
+    }
+
+    private fun updateListeners(view: MediaAttachmentsGroupView, data: MessageListItem.MessageItem) {
+        view.attachmentLongClickListenerUpdate {
+            listeners.messageLongClickListener.onMessageLongClick(data.message)
+        }
+
+        view.attachmentClickListenerUpdate {
+            listeners.attachmentClickListener.onAttachmentClick(data.message, it)
+        }
+    }
+
+    private fun updateListeners(view: FileAttachmentsView, data: MessageListItem.MessageItem) {
+        view.attachmentClickListener = AttachmentClickListener { attachment ->
+            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
+        }
+
+        view.attachmentLongClickListener = AttachmentLongClickListener {
             listeners.messageLongClickListener.onMessageLongClick(data.message)
         }
     }

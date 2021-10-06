@@ -222,11 +222,20 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }
     }
 
-    fun attachmentLongClickListener(attachmentClickListener: AttachmentLongClickListener) {
-        this.attachmentLongClickListener = attachmentClickListener
+    fun attachmentLongClickListenerUpdate(attachmentLongClickListener: AttachmentLongClickListener) {
+        this.attachmentLongClickListener = attachmentLongClickListener
 
         viewList.forEach { mediaAttachmentView ->
             mediaAttachmentView.attachmentLongClickListener = attachmentLongClickListener
+        }
+    }
+
+
+    fun attachmentClickListenerUpdate(attachmentClickListener: AttachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener
+
+        viewList.forEach { mediaAttachmentView ->
+            mediaAttachmentView.attachmentClickListener = attachmentClickListener
         }
     }
 
