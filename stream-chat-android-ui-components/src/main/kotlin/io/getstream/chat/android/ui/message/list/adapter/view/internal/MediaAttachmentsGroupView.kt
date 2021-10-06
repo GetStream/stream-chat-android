@@ -101,6 +101,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         }
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
+
+        viewList.clear()
+        viewList.add(viewOne)
+        viewList.add(viewTwo)
     }
 
     private fun showThree(first: Attachment, second: Attachment, third: Attachment) {
@@ -122,6 +126,11 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
         viewThree.showAttachment(third)
+
+        viewList.clear()
+        viewList.add(viewOne)
+        viewList.add(viewTwo)
+        viewList.add(viewThree)
     }
 
     private fun showFour(
@@ -152,6 +161,12 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         viewTwo.showAttachment(second)
         viewThree.showAttachment(third)
         viewFour.showAttachment(fourth, andMoreCount)
+
+        viewList.clear()
+        viewList.add(viewOne)
+        viewList.add(viewTwo)
+        viewList.add(viewThree)
+        viewList.add(viewFour)
     }
 
     override fun setBackground(background: Drawable) {
@@ -229,7 +244,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             mediaAttachmentView.attachmentLongClickListener = attachmentLongClickListener
         }
     }
-
 
     fun attachmentClickListenerUpdate(attachmentClickListener: AttachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener
