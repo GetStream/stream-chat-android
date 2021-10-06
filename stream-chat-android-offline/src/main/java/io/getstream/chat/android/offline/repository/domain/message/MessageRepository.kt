@@ -88,7 +88,9 @@ internal class MessageRepositoryImpl(
         if (messages.isEmpty()) return
         val messagesToInsert = messages.flatMap(Companion::allMessages)
         for (message in messagesToInsert) {
-            require(message.cid.isNotEmpty()) { "message.cid can not be empty" }
+            require(message.cid.isNotEmpty()) {
+                "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
+            }
         }
         for (m in messagesToInsert) {
             if (messageCache.get(m.id) != null || cache) {
