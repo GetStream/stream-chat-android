@@ -10,6 +10,8 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -137,6 +139,32 @@ internal class WhenSendNewMessage {
             verify(channelClient, never()).sendMessage(any())
         }
 
+    @Test
+    fun `Given message with uploadId and failed upload state Should insert message to DB and keep uploadId and update upload state to Idle`() =
+        runBlockingTest {
+            val message = randomMessage(
+                attachments = mutableListOf(
+                    randomAttachment {
+                        uploadId = "uploadId123"
+                        uploadState = Attachment.UploadState.Failed(mock())
+                    }
+                )
+            )
+            val repositoryFacade = mock<RepositoryFacade>()
+            val sut = Fixture().givenRepositories(repositoryFacade)
+                .get()
+
+            sut.sendNewMessage(message)
+
+            verify(repositoryFacade).insertMessage(
+                argThat { messageForInsert ->
+                    messageForInsert.attachments.first()
+                        .run { uploadId == "uploadId123" && uploadState == Attachment.UploadState.Idle }
+                },
+                eq(false)
+            )
+        }
+
     private class Fixture {
         private var repositoryFacade = mock<RepositoryFacade>()
         private var channelClient = mock<ChannelClient>()
@@ -144,6 +172,7 @@ internal class WhenSendNewMessage {
             on(it.user) doReturn MutableStateFlow(randomUser())
             on(it.repos) doReturn repositoryFacade
             on(it.scope) doReturn TestCoroutineScope()
+            on(it.online) doReturn MutableStateFlow(false)
             on { generateMessageId() } doReturn randomString()
             on { getActiveQueries() } doReturn emptyList()
             on { callRetryService() } doReturn CallRetryService(DefaultRetryPolicy(), mock())
