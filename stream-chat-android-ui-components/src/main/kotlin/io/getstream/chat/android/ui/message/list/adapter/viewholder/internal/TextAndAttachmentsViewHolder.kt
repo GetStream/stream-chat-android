@@ -66,7 +66,7 @@ internal class TextAndAttachmentsViewHolder(
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         markdown.setText(binding.messageText, data.message.text)
 
-        if (diff?.attachments != false) {
+        if (diff?.attachments != false || data.message.attachments.any { it.type != "giphy" }) {
             setupAttachment(data)
         }
 
