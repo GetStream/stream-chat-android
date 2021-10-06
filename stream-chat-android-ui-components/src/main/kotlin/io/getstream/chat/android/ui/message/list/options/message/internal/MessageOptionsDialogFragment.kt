@@ -14,6 +14,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
@@ -66,6 +67,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private var confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler? = null
     private var confirmFlagMessageClickHandler: ConfirmFlagMessageClickHandler? = null
     private var messageOptionsHandlers: MessageOptionsHandlers? = null
+    private var userReactionClickHandler: UserReactionClickHandler? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,10 +104,15 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         messageOptionsHandlers = null
         confirmDeleteMessageClickHandler = null
         confirmFlagMessageClickHandler = null
+        userReactionClickHandler = null
     }
 
     fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
         this.reactionClickHandler = reactionClickHandler
+    }
+
+    fun setUserReactionClickHandler(userReactionClickHandler: UserReactionClickHandler) {
+        this.userReactionClickHandler = userReactionClickHandler
     }
 
     fun setConfirmDeleteMessageClickHandler(confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler) {
@@ -187,6 +194,13 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             isVisible = true
             configure(style)
             currentUser.value?.let { user -> setMessage(message, user) }
+
+            setOnUserReactionClickListener { user, reaction ->
+                userReactionClickHandler?.let {
+                    it.onUserReactionClick(message, user, reaction)
+                    dismiss()
+                }
+            }
         }
     }
 
@@ -318,6 +332,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     internal fun interface ReactionClickHandler {
         fun onReactionClick(message: Message, reactionType: String)
+    }
+
+    internal fun interface UserReactionClickHandler {
+        fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
     }
 
     internal fun interface ConfirmDeleteMessageClickHandler {

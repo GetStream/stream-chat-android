@@ -140,6 +140,9 @@ messageListView.setEnterThreadListener { message: Message ->
 messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
     // Listen to events when download click for an attachment happens
 }
+setUserReactionClickListener{ message: Message, user: User, reaction: Reaction ->
+    // Listen to clicks on user reactions on the message options overlay
+}
 ```
 
 Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/index.html).
