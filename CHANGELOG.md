@@ -78,6 +78,7 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fixing ViewReactionsView being cropped if more than 7 reactions are added
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
