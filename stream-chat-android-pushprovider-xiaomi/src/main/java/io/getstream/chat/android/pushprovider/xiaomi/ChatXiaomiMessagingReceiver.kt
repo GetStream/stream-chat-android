@@ -14,7 +14,7 @@ public class ChatXiaomiMessagingReceiver : PushMessageReceiver() {
     override fun onReceivePassThroughMessage(context: Context, miPushMessage: MiPushMessage) {
         logger.logD("onReceivePassThroughMessage(): $miPushMessage")
         try {
-            XiaomiMessagingDelegate.handleRemoteMessage(miPushMessage)
+            XiaomiMessagingDelegate.handleMiPushMessage(miPushMessage)
         } catch (exception: IllegalStateException) {
             Log.e(TAG, "Error while handling remote message", exception)
         }

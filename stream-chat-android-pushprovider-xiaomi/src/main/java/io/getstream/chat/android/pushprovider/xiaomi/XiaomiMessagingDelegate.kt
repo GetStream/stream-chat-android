@@ -26,7 +26,7 @@ public object XiaomiMessagingDelegate {
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    public fun handleRemoteMessage(miPushMessage: MiPushMessage): Boolean {
+    public fun handleMiPushMessage(miPushMessage: MiPushMessage): Boolean {
         if (!miPushMessage.isValid()) {
             return false
         }

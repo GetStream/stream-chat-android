@@ -91,7 +91,7 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
 
     override fun onReceivePassThroughMessage(context: Context, miPushMessage: MiPushMessage) {
         try {
-            if (XiaomiMessagingDelegate.handleRemoteMessage(miPushMessage)) {
+            if (XiaomiMessagingDelegate.handleMiPushMessage(miPushMessage)) {
                 // MiPushMessage was from Stream and it is already processed
             } else {
                 // MiPushMessage wasn't sent from Stream and it needs to be handled by you
