@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
@@ -19,11 +20,13 @@ import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Normal
 import io.getstream.chat.android.compose.state.messages.Other
 import io.getstream.chat.android.compose.state.messages.Thread
-import io.getstream.chat.android.compose.state.messages.items.Bottom
+import io.getstream.chat.android.compose.state.messages.items.DateSeparator
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
-import io.getstream.chat.android.compose.state.messages.items.Middle
-import io.getstream.chat.android.compose.state.messages.items.None
-import io.getstream.chat.android.compose.state.messages.items.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Bottom
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Middle
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.None
+import io.getstream.chat.android.compose.state.messages.items.MessageItemGroupPosition.Top
+import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 import io.getstream.chat.android.compose.state.messages.list.Copy
 import io.getstream.chat.android.compose.state.messages.list.Delete
 import io.getstream.chat.android.compose.state.messages.list.Flag
@@ -42,6 +45,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -131,12 +135,12 @@ public class MessageListViewModel(
     /**
      * Represents the latest message we've seen in the channel.
      */
-    private var lastSeenChannelMessage: MessageItem? by mutableStateOf(null)
+    private var lastSeenChannelMessage: Message? by mutableStateOf(null)
 
     /**
      * Represents the latest message we've seen in the active thread.
      */
-    private var lastSeenThreadMessage: MessageItem? by mutableStateOf(null)
+    private var lastSeenThreadMessage: Message? by mutableStateOf(null)
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -190,7 +194,8 @@ public class MessageListViewModel(
                         }
                     }
                 }.collect { newState ->
-                    val newLastMessage = newState.messageItems.firstOrNull()?.message
+                    val newLastMessage =
+                        (newState.messageItems.firstOrNull { it is MessageItem } as? MessageItem)?.message
 
                     val hasNewMessage = lastLoadedMessage != null &&
                         messagesState.messageItems.isNotEmpty() &&
@@ -274,7 +279,7 @@ public class MessageListViewModel(
         for (i in 0..lastSeenMessagePosition) {
             val messageItem = messageItems[i]
 
-            if (!messageItem.isMine && messageItem.message.deletedAt == null) {
+            if (messageItem is MessageItem && !messageItem.isMine && messageItem.message.deletedAt == null) {
                 unreadCount++
             }
         }
@@ -288,11 +293,11 @@ public class MessageListViewModel(
      * @param lastSeenMessage - The last message we saw in the list.
      * @return [Int] list position of the last message we've seen.
      */
-    private fun getLastSeenMessagePosition(lastSeenMessage: MessageItem?): Int {
+    private fun getLastSeenMessagePosition(lastSeenMessage: Message?): Int {
         if (lastSeenMessage == null) return 0
 
         return currentMessagesState.messageItems.indexOfFirst {
-            it.message.id == lastSeenMessage.message.id
+            it is MessageItem && it.message.id == lastSeenMessage.id
         }
     }
 
@@ -300,29 +305,33 @@ public class MessageListViewModel(
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
      * time the data loads and whenever we see a message that's newer than the current last seen message.
      *
-     * @param currentMessage The message that is currently seen by the user.
+     * @param message The message that is currently seen by the user.
      */
-    public fun updateLastSeenMessage(currentMessage: MessageItem) {
+    public fun updateLastSeenMessage(message: Message) {
         val lastSeenMessage = if (isInThread) lastSeenThreadMessage else lastSeenChannelMessage
 
         if (lastSeenMessage == null) {
-            updateLastSeenMessageState(currentMessage)
+            updateLastSeenMessageState(message)
             return
         }
 
-        val lastSeenMessageDate = lastSeenMessage.message.createdAt ?: Date()
-        val currentMessageDate = currentMessage.message.createdAt ?: Date()
+        if (message.id == lastSeenMessage.id) return
+
+        val lastSeenMessageDate = message.createdAt ?: Date()
+        val currentMessageDate = message.createdAt ?: Date()
 
         if (currentMessageDate < lastSeenMessageDate) {
             return
         }
         val messages = currentMessagesState.messageItems
 
-        val currentMessagePosition = messages.indexOfFirst { it.message.id == currentMessage.message.id }
-        val lastSeenMessagePosition = messages.indexOfFirst { it.message.id == lastSeenMessage.message.id }
+        val currentMessagePosition =
+            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
+        val lastSeenMessagePosition =
+            messages.indexOfFirst { it is MessageItem && it.message.id == message.id }
 
         if (currentMessagePosition < lastSeenMessagePosition) {
-            updateLastSeenMessageState(currentMessage)
+            updateLastSeenMessageState(message)
         }
     }
 
@@ -331,7 +340,7 @@ public class MessageListViewModel(
      *
      * @param currentMessage The current message the user sees.
      */
-    private fun updateLastSeenMessageState(currentMessage: MessageItem) {
+    private fun updateLastSeenMessageState(currentMessage: Message) {
         if (isInThread) {
             lastSeenThreadMessage = currentMessage
 
@@ -493,13 +502,16 @@ public class MessageListViewModel(
      * @param messages The messages we need to group.
      * @return A list of [MessageItem]s, each containing a position.
      */
-    private fun groupMessages(messages: List<Message>): List<MessageItem> {
+    private fun groupMessages(messages: List<Message>): List<MessageListItem> {
         val parentMessageId = (messageMode as? Thread)?.parentMessage?.id
         val currentUser = user.value
+        val groupedMessages = mutableListOf<MessageListItem>()
 
-        return messages.mapIndexed { index, message ->
+        messages.forEachIndexed { index, message ->
             val user = message.user
-            val previousUser = messages.getOrNull(index - 1)?.user
+            val previousMessage = messages.getOrNull(index - 1)
+
+            val previousUser = previousMessage?.user
             val nextUser = messages.getOrNull(index + 1)?.user
 
             val position = when {
@@ -508,13 +520,32 @@ public class MessageListViewModel(
                 previousUser == user && nextUser != user -> Bottom
                 else -> None
             }
-            MessageItem(
-                message = message,
-                groupPosition = position,
-                parentMessageId = parentMessageId,
-                isMine = user.id == currentUser?.id
+
+            if (shouldAddDateSeparator(previousMessage, message)) {
+                groupedMessages.add(DateSeparator(message.getCreatedAtOrThrow()))
+            }
+
+            groupedMessages.add(
+                MessageItem(
+                    message = message,
+                    groupPosition = position,
+                    parentMessageId = parentMessageId,
+                    isMine = user.id == currentUser?.id
+                )
             )
-        }.reversed()
+        }
+
+        return groupedMessages.reversed()
+    }
+
+    private fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean {
+        return if (previousMessage == null) {
+            true
+        } else {
+            val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
+
+            return timeDifference > TimeUnit.HOURS.toMillis(4)
+        }
     }
 
     /**
@@ -604,7 +635,7 @@ public class MessageListViewModel(
      */
     public fun focusMessage(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it.message.id == messageId) {
+            if (it is MessageItem && it.message.id == messageId) {
                 it.copy(isFocused = true)
             } else {
                 it
@@ -625,7 +656,7 @@ public class MessageListViewModel(
      */
     private fun removeMessageFocus(messageId: String) {
         val messages = currentMessagesState.messageItems.map {
-            if (it.message.id == messageId) {
+            if (it is MessageItem && it.message.id == messageId) {
                 it.copy(isFocused = false)
             } else {
                 it
@@ -640,7 +671,7 @@ public class MessageListViewModel(
      *
      * @param messages The list of new message items.
      */
-    private fun updateMessages(messages: List<MessageItem>) {
+    private fun updateMessages(messages: List<MessageListItem>) {
         if (isInThread) {
             this.threadMessagesState = threadMessagesState.copy(messageItems = messages)
         } else {
@@ -655,6 +686,9 @@ public class MessageListViewModel(
      * @return The [Message] with the ID, if it exists.
      */
     public fun getMessageWithId(messageId: String): Message? {
-        return currentMessagesState.messageItems.firstOrNull { it.message.id == messageId }?.message
+        val messageItem =
+            currentMessagesState.messageItems.firstOrNull { it is MessageItem && it.message.id == messageId }
+
+        return (messageItem as? MessageItem)?.message
     }
 }
