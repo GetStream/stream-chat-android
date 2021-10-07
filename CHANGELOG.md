@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 - Upgraded Kotlin version to 1.5.30
 - Make our SDK compile-friendly with TargetSDK 31
+- Upgraded Coil version to [1.4.0](https://github.com/coil-kt/coil/releases/tag/1.4.0)
 
 ### ✅ Added
 
