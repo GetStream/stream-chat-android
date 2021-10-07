@@ -485,9 +485,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun initRecyclerView() {
         if (!::layoutManager.isInitialized) {
-            layoutManager = LinearLayoutManager(context).apply {
-                stackFromEnd = true
-            }
+            layoutManager = LinearLayoutManager(context)
         }
 
         binding.chatMessagesRV.apply {
