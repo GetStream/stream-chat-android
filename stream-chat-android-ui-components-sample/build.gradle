@@ -141,6 +141,7 @@ dependencies {
     implementation project(":stream-chat-android-pushprovider-firebase")
     implementation project(":stream-chat-android-pushprovider-huawei")
     implementation project(":stream-chat-android-pushprovider-xiaomi")
+    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
