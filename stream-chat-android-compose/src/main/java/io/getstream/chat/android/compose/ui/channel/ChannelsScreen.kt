@@ -80,7 +80,7 @@ public fun ChannelsScreen(
 
     val selectedChannel = listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
-    val isNetworkAvailable by listViewModel.connectionState.collectAsState()
+    val connectionState by listViewModel.connectionState.collectAsState()
 
     SystemBackPressedHandler(isEnabled = true) {
         if (selectedChannel != null) {
@@ -100,7 +100,7 @@ public fun ChannelsScreen(
                     onHeaderActionClick = onHeaderClickAction,
                     currentUser = user,
                     title = title,
-                    isNetworkAvailable = isNetworkAvailable
+                    connectionState = connectionState
                 )
             }
 

@@ -53,7 +53,7 @@ public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = null,
-    isNetworkAvailable: ConnectionState = ConnectionState.CONNECTED,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -65,7 +65,7 @@ public fun ChannelListHeader(
     titleContent: @Composable RowScope.() -> Unit = {
         ChannelHeaderTitle(
             modifier = Modifier.weight(1f),
-            isNetworkAvailable = isNetworkAvailable,
+            connectionState = connectionState,
             title = title
         )
     },
