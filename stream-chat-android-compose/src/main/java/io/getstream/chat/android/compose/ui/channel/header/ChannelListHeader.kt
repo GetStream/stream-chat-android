@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.channel.header
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,8 +14,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,10 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
@@ -56,8 +55,20 @@ public fun ChannelListHeader(
     isNetworkAvailable: Boolean = true,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
-    leadingContent: (@Composable () -> Unit)? = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
-    trailingContent: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
+    leadingContent: @Composable RowScope.() -> Unit = {
+        DefaultChannelHeaderLeadingContent(
+            currentUser,
+            onAvatarClick
+        )
+    },
+    titleContent: @Composable RowScope.() -> Unit = {
+        ChannelHeaderTitle(
+            modifier = Modifier.weight(1f),
+            isNetworkAvailable = isNetworkAvailable,
+            title = title
+        )
+    },
+    trailingContent: @Composable RowScope.() -> Unit = { DefaultChannelListHeaderAction(onHeaderActionClick) },
 ) {
     Surface(
         modifier = modifier
@@ -72,15 +83,11 @@ public fun ChannelListHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
 
-            leadingContent?.invoke()
+            leadingContent()
 
-            ChannelHeaderTitle(
-                modifier = Modifier.weight(6f),
-                isNetworkAvailable = isNetworkAvailable,
-                title = title
-            )
+            titleContent()
 
-            trailingContent?.invoke()
+            trailingContent()
         }
     }
 }
@@ -161,7 +168,7 @@ internal fun DefaultChannelListHeaderAction(
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
-            imageVector = Icons.Default.Edit,
+            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
             contentDescription = stringResource(id = R.string.stream_compose_edit_action),
             tint = Color.White,
         )

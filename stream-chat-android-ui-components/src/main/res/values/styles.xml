@@ -254,6 +254,7 @@
         <item name="streamUiScrollButtonRippleColor">@color/stream_ui_white_smoke</item>
         <item name="streamUiScrollButtonBadgeColor">@color/stream_ui_accent_blue</item>
         <item name="streamUiScrollButtonIcon">@drawable/stream_ui_ic_down</item>
+        <item name="streamUiScrollButtonElevation">3dp</item>
         <item name="streamUiScrollButtonBadgeTextSize">@dimen/stream_ui_scroll_button_unread_badge_text_size</item>
         <item name="streamUiScrollButtonBadgeTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiScrollButtonBadgeTextStyle">normal</item>
