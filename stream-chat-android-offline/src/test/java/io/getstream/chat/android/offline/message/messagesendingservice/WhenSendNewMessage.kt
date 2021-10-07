@@ -16,6 +16,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -152,11 +153,11 @@ internal class WhenSendNewMessage {
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
 
         fun givenOffline() = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(false)
+            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.OFFLINE)
         }
 
         fun givenOnline() = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(true)
+            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.CONNECTED)
         }
 
         fun givenCid(cid: String) = apply {

@@ -14,6 +14,7 @@ import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.message.MessageSendingService
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsWorker
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -104,7 +105,7 @@ internal class WhenObserveAttachmentsDBFlow {
         }
 
         suspend fun givenSendMessageCalled(message: Message) = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(true)
+            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.CONNECTED)
             whenever(channelClient.sendMessage(any())) doReturn message.asCall()
             whenever(repositoryFacade.observeAttachmentsForMessage(any())) doReturn flow
             messageSendingService.sendMessage(message)
