@@ -103,6 +103,7 @@
 - General improvements in the Attachments API and the way we build different attachments
 - Allowed for better long clicks on attachments
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
+- Updated and cleaned up Channel screen design
 - Improved logic for updating the `lastSeenMessage` for fewer calculations
 
 ### ✅ Added
@@ -118,6 +119,7 @@
 - Changed the type of the `onLastVisibleMessageChanged` parameter to `Message` for ease of use
 - Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
+- Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
 
 ### ❌ Removed
 

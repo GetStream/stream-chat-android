@@ -83,8 +83,15 @@ fun ChannelListHeader(
     title: String = "",
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     isNetworkAvailable: Boolean = true,
-    leadingContent: (@Composable () -> Unit)? = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
-    trailingContent: (@Composable () -> Unit)? = { DefaultChannelListHeaderAction(onHeaderActionClick) },
+    leadingContent: @Composable RowScope.() -> Unit = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
+    titleContent: @Composable RowScope.() -> Unit = {
+        ChannelHeaderTitle(
+            modifier = Modifier.weight(1f),
+            isNetworkAvailable = isNetworkAvailable,
+            title = title
+        )
+    },
+    trailingContent: @Composable RowScope.() -> Unit = { DefaultChannelListHeaderAction(onHeaderActionClick) },
     ... // Action handlers
 )
 ```
@@ -96,7 +103,9 @@ fun ChannelListHeader(
 * `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onAvatarClick`,
     * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
-
+* `titleContent`: Customizable composable function parameter that overrides the title content. This allows you to either:
+    * override the shown data but keep the UI, by passing in the `title` and `isNetworkAvailable`.
+    * or override both the UI and behavior by changing the `titleContent` parameter from the default to your own.
 * `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
     * or override both the UI and behavior by changing the `trailingContent` parameter from the default to your own.
