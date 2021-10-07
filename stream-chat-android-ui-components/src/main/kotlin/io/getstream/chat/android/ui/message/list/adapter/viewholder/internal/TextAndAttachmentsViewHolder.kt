@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -11,8 +12,10 @@ import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovemen
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -39,7 +42,78 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    var currentView: View? = null
+    private val messageClickListener: MessageListView.MessageClickListener by ListenerDelegate(
+        listeners.messageClickListener
+    ) { realListener ->
+        MessageListView.MessageClickListener(realListener()::onMessageClick)
+    }
+
+    private val messageLongClickListener: MessageListView.MessageLongClickListener by ListenerDelegate(
+        listeners.messageLongClickListener
+    ) { realListener ->
+        MessageListView.MessageLongClickListener(realListener()::onMessageLongClick)
+    }
+
+    private val messageRetryListener: MessageListView.MessageRetryListener by ListenerDelegate(
+        listeners.messageRetryListener
+    ) { realListener ->
+        MessageListView.MessageRetryListener(realListener()::onRetryMessage)
+    }
+
+    private val threadClickListener: MessageListView.ThreadClickListener by ListenerDelegate(
+        listeners.threadClickListener
+    ) { realListener ->
+        MessageListView.ThreadClickListener(realListener()::onThreadClick)
+    }
+
+    private val attachmentClickListener: MessageListView.AttachmentClickListener by ListenerDelegate(
+        listeners.attachmentClickListener
+    ) { realListener ->
+        MessageListView.AttachmentClickListener(realListener()::onAttachmentClick)
+    }
+
+    private val attachmentDownloadClickListener: MessageListView.AttachmentDownloadClickListener by ListenerDelegate(
+        listeners.attachmentDownloadClickListener
+    ) { realListener ->
+        MessageListView.AttachmentDownloadClickListener(realListener()::onAttachmentDownloadClick)
+    }
+
+    private val reactionViewClickListener: MessageListView.ReactionViewClickListener by ListenerDelegate(
+        listeners.reactionViewClickListener
+    ) { realListener ->
+        MessageListView.ReactionViewClickListener(realListener()::onReactionViewClick)
+    }
+
+    private val userClickListener: MessageListView.UserClickListener by ListenerDelegate(
+        listeners.userClickListener
+    ) { realListener ->
+        MessageListView.UserClickListener(realListener()::onUserClick)
+    }
+
+    private val giphySendListener: MessageListView.GiphySendListener by ListenerDelegate(
+        listeners.giphySendListener
+    ) { realListener ->
+        MessageListView.GiphySendListener(realListener()::onGiphySend)
+    }
+
+    private val linkClickListener: MessageListView.LinkClickListener by ListenerDelegate(
+        listeners.linkClickListener
+    ) { realListener ->
+        MessageListView.LinkClickListener(realListener()::onLinkClick)
+    }
+
+    private val newListeners = MessageListListenerContainerImpl(
+        messageClickListener = messageClickListener,
+        messageLongClickListener = messageLongClickListener,
+        messageRetryListener = messageRetryListener,
+        threadClickListener = threadClickListener,
+        attachmentClickListener = attachmentClickListener,
+        attachmentDownloadClickListener = attachmentDownloadClickListener,
+        reactionViewClickListener = reactionViewClickListener,
+        userClickListener = userClickListener,
+        giphySendListener = giphySendListener,
+        linkClickListener = linkClickListener,
+    )
 
     init {
         binding.run {
@@ -73,53 +147,17 @@ internal class TextAndAttachmentsViewHolder(
         binding.messageText.isVisible = data.message.text.isNotEmpty()
         markdown.setText(binding.messageText, data.message.text)
 
-        setupAttachment(data, diff)
+        if (diff?.attachments != false) {
+            setupAttachment(data, newListeners)
+        }
+
         setupUploads(data)
     }
 
-    private fun setupAttachment(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        if (currentView == null || diff?.attachments == true) {
-            createNewView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root)
-                .also { attachmentView ->
-                    currentView = attachmentView
-                })
-        } else {
-            updateMediaAttachmentListeners(currentView!!, data)
-        }
-    }
-
-    private fun updateMediaAttachmentListeners(view: View, data: MessageListItem.MessageItem) {
-        when (view) {
-            is MediaAttachmentsGroupView -> { updateListeners(view, data) }
-
-            is FileAttachmentsView -> { updateListeners(view, data) }
-        }
-    }
-
-    private fun updateListeners(view: MediaAttachmentsGroupView, data: MessageListItem.MessageItem) {
-        view.attachmentLongClickListenerUpdate {
-            listeners.messageLongClickListener.onMessageLongClick(data.message)
-        }
-
-        view.attachmentClickListenerUpdate {
-            listeners.attachmentClickListener.onAttachmentClick(data.message, it)
-        }
-    }
-
-    private fun updateListeners(view: FileAttachmentsView, data: MessageListItem.MessageItem) {
-        view.attachmentClickListener = AttachmentClickListener { attachment ->
-            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
-        }
-
-        view.attachmentLongClickListener = AttachmentLongClickListener {
-            listeners.messageLongClickListener.onMessageLongClick(data.message)
-        }
-    }
-
-    private fun createNewView(view: View) {
+    private fun setupAttachment(data: MessageListItem.MessageItem, listeners: MessageListListenerContainer) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(view)
+            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
         }
     }
 
