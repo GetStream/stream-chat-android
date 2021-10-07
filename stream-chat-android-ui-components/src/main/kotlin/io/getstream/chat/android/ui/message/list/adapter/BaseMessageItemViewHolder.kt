@@ -33,9 +33,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         bindData(messageListItem, diff)
     }
 
-    public open fun bindData(data: T, diff: MessageListItemPayloadDiff?) {
-        this.data = data
-    }
+    public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
 
     @CallSuper
     public open fun unbind() {
