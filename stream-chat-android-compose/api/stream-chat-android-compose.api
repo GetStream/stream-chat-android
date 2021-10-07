@@ -453,7 +453,7 @@ public final class io/getstream/chat/android/compose/ui/channel/ChannelsScreenKt
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ChannelListHeaderKt {
-	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelListHeader (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/header/ComposableSingletons$ChannelListHeaderKt {
@@ -641,8 +641,8 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/compon
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;ZLandroidx/compose/runtime/Composer;II)V
-	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageHeaderTitle (Lio/getstream/chat/android/client/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/offline/model/ConnectionState;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageListHeader (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/MessageMode;Lio/getstream/chat/android/offline/model/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt {
@@ -838,9 +838,9 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelLi
 	public final fun getChannelsState ()Lio/getstream/chat/android/compose/state/channel/list/ChannelsState;
 	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
+	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedChannel ()Lio/getstream/chat/android/client/models/Channel;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun isOnline ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun leaveGroup (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun loadMore ()V
 	public final fun performChannelAction (Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;)V

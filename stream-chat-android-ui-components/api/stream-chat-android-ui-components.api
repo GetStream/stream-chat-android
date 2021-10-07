@@ -525,6 +525,7 @@ public final class io/getstream/chat/android/ui/channel/list/header/ChannelListH
 	public final fun setOnUserAvatarClickListener (Lio/getstream/chat/android/ui/channel/list/header/ChannelListHeaderView$UserAvatarClickListener;)V
 	public final fun setOnlineTitle (Ljava/lang/String;)V
 	public final fun setUser (Lio/getstream/chat/android/client/models/User;)V
+	public final fun showConnectingTitle ()V
 	public final fun showOfflineTitle ()V
 	public final fun showOnlineTitle ()V
 }
