@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -25,6 +26,7 @@ import kotlin.properties.Delegates
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
 
+@OptIn(ExperimentalStreamChatApi::class)
 internal class MessageInputController(
     private val binding: StreamViewMessageInputBinding,
     private val view: MessageInputView,
