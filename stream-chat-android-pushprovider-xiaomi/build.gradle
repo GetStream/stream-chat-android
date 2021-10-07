@@ -56,5 +56,5 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     implementation project(':stream-chat-android-client')
-    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
+    compileOnly files('libs/MiPush_SDK_Client_4_8_2.jar')
 }
