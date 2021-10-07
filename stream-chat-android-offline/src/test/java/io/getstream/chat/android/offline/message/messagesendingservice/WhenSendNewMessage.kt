@@ -158,6 +158,7 @@ internal class WhenSendNewMessage {
 
         fun givenOnline() = apply {
             whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.CONNECTED)
+            whenever(chatDomainImpl.isOnline()) doReturn true
         }
 
         fun givenCid(cid: String) = apply {

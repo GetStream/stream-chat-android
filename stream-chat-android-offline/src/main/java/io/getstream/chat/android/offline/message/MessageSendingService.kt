@@ -56,7 +56,7 @@ internal class MessageSendingService(
                 createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
                 syncStatus = when {
                     attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                    domainImpl.isOnline() -> SyncStatus.IN_PROGRESS
+                    domainImpl.isOnline()-> SyncStatus.IN_PROGRESS
                     else -> SyncStatus.SYNC_NEEDED
                 }
             }
