@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -644,6 +645,7 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             instance = buildImpl()
             return instance()
         }

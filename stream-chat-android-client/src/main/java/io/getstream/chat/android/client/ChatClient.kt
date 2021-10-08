@@ -4,6 +4,7 @@ package io.getstream.chat.android.client
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
@@ -1734,11 +1735,19 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public override fun buildChatClient(): ChatClient {
+        @InternalStreamChatApi
+        @Deprecated(
+            message = "It shouldn't be used outside of SDK code. Created for testing purposes",
+            replaceWith = ReplaceWith("this.build()"),
+            level = DeprecationLevel.ERROR
+        )
+        override fun internalBuild(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
+
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]") }
 
             val config = ChatClientConfig(
                 apiKey = apiKey,
@@ -1783,11 +1792,12 @@ public class ChatClient internal constructor(
          * Create a [ChatClient] instance based on the current configuration
          * of the [Builder].
          */
-        public fun build(): ChatClient = buildChatClient().also {
+        public fun build(): ChatClient = internalBuild().also {
             instance = it
         }
 
-        public abstract fun buildChatClient(): ChatClient
+        @InternalStreamChatApi
+        public abstract fun internalBuild(): ChatClient
     }
 
     public companion object {
