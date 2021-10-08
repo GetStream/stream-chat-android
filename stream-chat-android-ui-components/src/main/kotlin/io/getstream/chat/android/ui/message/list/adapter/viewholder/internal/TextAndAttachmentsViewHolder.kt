@@ -35,7 +35,17 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private val newListeners = MessageListListenerContainerImpl(
+    /**
+     * We override the Message passed to listeners here with the up-to-date Message
+     * object from the [data] property of the base ViewHolder.
+     *
+     * This is required because these listeners will be invoked by the AttachmentViews,
+     * which don't always have an up-to-date Message object in them. This is due to the
+     * optimization that we don't re-create the AttachmentViews when the attachments
+     * of the Message are unchanged. However, other properties (like reactions) might
+     * change, and these listeners should receive a fully up-to-date Message.
+     */
+    private val modifiedListeners = MessageListListenerContainerImpl(
         messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
         messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
         messageRetryListener = { listeners.messageRetryListener.onRetryMessage(data.message) },
@@ -85,16 +95,16 @@ internal class TextAndAttachmentsViewHolder(
         markdown.setText(binding.messageText, data.message.text)
 
         if (diff?.attachments != false) {
-            setupAttachment(data, newListeners)
+            setupAttachment(data)
         }
 
         setupUploads(data)
     }
 
-    private fun setupAttachment(data: MessageListItem.MessageItem, listeners: MessageListListenerContainer) {
+    private fun setupAttachment(data: MessageListItem.MessageItem) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
+            addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners, style, binding.root))
         }
     }
 
