@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.ListenerDelegate
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -11,7 +10,6 @@ import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovemen
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
-import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
@@ -37,91 +35,21 @@ internal class TextAndAttachmentsViewHolder(
 
     private var scope: CoroutineScope? = null
 
-    private val messageClickListener: MessageListView.MessageClickListener by ListenerDelegate(
-        listeners.messageClickListener
-    ) { realListener ->
-        MessageListView.MessageClickListener {
-            realListener().onMessageClick(data.message)
-        }
-    }
-
-    private val messageLongClickListener: MessageListView.MessageLongClickListener by ListenerDelegate(
-        listeners.messageLongClickListener
-    ) { realListener ->
-        MessageListView.MessageLongClickListener {
-            realListener().onMessageLongClick(data.message)
-        }
-    }
-
-    private val messageRetryListener: MessageListView.MessageRetryListener by ListenerDelegate(
-        listeners.messageRetryListener
-    ) { realListener ->
-        MessageListView.MessageRetryListener {
-            realListener().onRetryMessage(data.message)
-        }
-    }
-
-    private val threadClickListener: MessageListView.ThreadClickListener by ListenerDelegate(
-        listeners.threadClickListener
-    ) { realListener ->
-        MessageListView.ThreadClickListener {
-            realListener().onThreadClick(data.message)
-        }
-    }
-
-    private val attachmentClickListener: MessageListView.AttachmentClickListener by ListenerDelegate(
-        listeners.attachmentClickListener
-    ) { realListener ->
-        MessageListView.AttachmentClickListener { _, attachment ->
-            realListener().onAttachmentClick(data.message, attachment)
-        }
-    }
-
-    private val attachmentDownloadClickListener: MessageListView.AttachmentDownloadClickListener by ListenerDelegate(
-        listeners.attachmentDownloadClickListener
-    ) { realListener ->
-        MessageListView.AttachmentDownloadClickListener(realListener()::onAttachmentDownloadClick)
-    }
-
-    private val reactionViewClickListener: MessageListView.ReactionViewClickListener by ListenerDelegate(
-        listeners.reactionViewClickListener
-    ) { realListener ->
-        MessageListView.ReactionViewClickListener {
-            realListener().onReactionViewClick(data.message)
-        }
-    }
-
-    private val userClickListener: MessageListView.UserClickListener by ListenerDelegate(
-        listeners.userClickListener
-    ) { realListener ->
-        MessageListView.UserClickListener(realListener()::onUserClick)
-    }
-
-    private val giphySendListener: MessageListView.GiphySendListener by ListenerDelegate(
-        listeners.giphySendListener
-    ) { realListener ->
-        MessageListView.GiphySendListener { _, action ->
-            realListener().onGiphySend(data.message, action)
-        }
-    }
-
-    private val linkClickListener: MessageListView.LinkClickListener by ListenerDelegate(
-        listeners.linkClickListener
-    ) { realListener ->
-        MessageListView.LinkClickListener { realListener()::onLinkClick }
-    }
-
     private val newListeners = MessageListListenerContainerImpl(
-        messageClickListener = messageClickListener,
-        messageLongClickListener = messageLongClickListener,
-        messageRetryListener = messageRetryListener,
-        threadClickListener = threadClickListener,
-        attachmentClickListener = attachmentClickListener,
-        attachmentDownloadClickListener = attachmentDownloadClickListener,
-        reactionViewClickListener = reactionViewClickListener,
-        userClickListener = userClickListener,
-        giphySendListener = giphySendListener,
-        linkClickListener = linkClickListener,
+        messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
+        messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
+        messageRetryListener = { listeners.messageRetryListener.onRetryMessage(data.message) },
+        threadClickListener = { listeners.threadClickListener.onThreadClick(data.message) },
+        attachmentClickListener = { _, attachment ->
+            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
+        },
+        attachmentDownloadClickListener = listeners.attachmentDownloadClickListener::onAttachmentDownloadClick,
+        reactionViewClickListener = { listeners.reactionViewClickListener.onReactionViewClick(data.message) },
+        userClickListener = { listeners.userClickListener.onUserClick(data.message.user) },
+        giphySendListener = { _, action ->
+            listeners.giphySendListener.onGiphySend(data.message, action)
+        },
+        linkClickListener = listeners.linkClickListener::onLinkClick
     )
 
     init {
