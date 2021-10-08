@@ -119,6 +119,8 @@ public class ChatClient internal constructor(
     private val tokenUtils: TokenUtils = TokenUtils,
     private val scope: CoroutineScope,
     private val appContext: Context,
+    @property:InternalStreamChatApi
+    @property:ExperimentalStreamChatApi
     public val plugins: Collection<Plugin> = emptyList(),
 ) {
     private var connectionListener: InitConnectionListener? = null
@@ -1770,6 +1772,8 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
+        @InternalStreamChatApi
+        @ExperimentalStreamChatApi
         public fun withPlugin(plugin: Plugin): Builder = apply {
             plugins += plugin
         }
