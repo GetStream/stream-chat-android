@@ -12,6 +12,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBi
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -33,6 +34,33 @@ internal class TextAndAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     private var scope: CoroutineScope? = null
+
+    /**
+     * We override the Message passed to listeners here with the up-to-date Message
+     * object from the [data] property of the base ViewHolder.
+     *
+     * This is required because these listeners will be invoked by the AttachmentViews,
+     * which don't always have an up-to-date Message object in them. This is due to the
+     * optimization that we don't re-create the AttachmentViews when the attachments
+     * of the Message are unchanged. However, other properties (like reactions) might
+     * change, and these listeners should receive a fully up-to-date Message.
+     */
+    private val modifiedListeners = MessageListListenerContainerImpl(
+        messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
+        messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
+        messageRetryListener = { listeners.messageRetryListener.onRetryMessage(data.message) },
+        threadClickListener = { listeners.threadClickListener.onThreadClick(data.message) },
+        attachmentClickListener = { _, attachment ->
+            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
+        },
+        attachmentDownloadClickListener = listeners.attachmentDownloadClickListener::onAttachmentDownloadClick,
+        reactionViewClickListener = { listeners.reactionViewClickListener.onReactionViewClick(data.message) },
+        userClickListener = { listeners.userClickListener.onUserClick(data.message.user) },
+        giphySendListener = { _, action ->
+            listeners.giphySendListener.onGiphySend(data.message, action)
+        },
+        linkClickListener = listeners.linkClickListener::onLinkClick
+    )
 
     init {
         binding.run {
@@ -76,7 +104,7 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         with(binding.attachmentsContainer) {
             removeAllViews()
-            addView(attachmentViewFactory.createAttachmentView(data, listeners, style, binding.root))
+            addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners, style, binding.root))
         }
     }
 
