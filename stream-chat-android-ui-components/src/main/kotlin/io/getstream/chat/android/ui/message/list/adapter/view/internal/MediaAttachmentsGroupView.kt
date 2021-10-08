@@ -96,7 +96,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         }
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
-
     }
 
     private fun showThree(first: Attachment, second: Attachment, third: Attachment) {
