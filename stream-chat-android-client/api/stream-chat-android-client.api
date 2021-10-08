@@ -1962,8 +1962,21 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/models/Attachment$UploadState$Idle : io/getstream/chat/android/client/models/Attachment$UploadState {
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Idle;
+}
+
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$InProgress : io/getstream/chat/android/client/models/Attachment$UploadState {
-	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public fun <init> (JJ)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;JJILjava/lang/Object;)Lio/getstream/chat/android/client/models/Attachment$UploadState$InProgress;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytesUploaded ()J
+	public final fun getTotalBytes ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$Success : io/getstream/chat/android/client/models/Attachment$UploadState {
@@ -2894,10 +2907,6 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
 }
 
-public final class io/getstream/chat/android/client/uploader/ProgressTrackerKt {
-	public static final fun toProgressCallback (Lio/getstream/chat/android/client/uploader/ProgressTracker;)Lio/getstream/chat/android/client/utils/ProgressCallback;
-}
-
 public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes {
 	public static final field INSTANCE Lio/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes;
 	public final fun isImageMimeTypeSupported (Ljava/lang/String;)Z
@@ -2906,7 +2915,12 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (J)V
+	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/utils/ProgressCallback$DefaultImpls {
+	public static fun onProgress (Lio/getstream/chat/android/client/utils/ProgressCallback;J)V
 }
 
 public final class io/getstream/chat/android/client/utils/SyncStatus : java/lang/Enum {

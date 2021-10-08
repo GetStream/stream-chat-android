@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -30,9 +28,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * It also holds a clear action, that is active when the search is in focus and not empty, to clear
  * the input.
  *
- * @param modifier Modifier for styling.
  * @param query Current query value.
  * @param onValueChange Handler when the value changes.
+ * @param modifier Modifier for styling.
  * @param onSearchStarted Handler when the search starts, by focusing the input field.
  * @param leadingIcon The icon at the start of the search component that's customizable, but shows
  * [DefaultSearchLeadingIcon] by default.
@@ -58,7 +56,7 @@ public fun SearchInput(
                 onClick = { onValueChange("") },
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Cancel,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_clear),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel_search),
                         tint = ChatTheme.colors.textLowEmphasis,
                     )
@@ -97,7 +95,9 @@ public fun SearchInput(
 
                 trailingIcon?.invoke(this)
             }
-        }
+        },
+        maxLines = 1,
+        innerPadding = 4.dp,
     )
 }
 
@@ -108,9 +108,9 @@ public fun SearchInput(
 internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
     Icon(
         modifier = Modifier.weight(1f),
-        imageVector = Icons.Default.Search,
+        painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
-        tint = if (!empty) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.textLowEmphasis,
     )
 }
 

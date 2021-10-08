@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.channel
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import io.getstream.chat.android.compose.ui.channel.info.ChannelInfo
 import io.getstream.chat.android.compose.ui.channel.list.ChannelList
 import io.getstream.chat.android.compose.ui.common.SearchInput
 import io.getstream.chat.android.compose.ui.common.SimpleDialog
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
@@ -60,7 +62,7 @@ public fun ChannelsScreen(
     querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
-    isShowingSearch: Boolean = true,
+    isShowingSearch: Boolean = false,
     onHeaderClickAction: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
@@ -105,6 +107,7 @@ public fun ChannelsScreen(
             if (isShowingSearch) {
                 SearchInput(
                     modifier = Modifier
+                        .background(color = ChatTheme.colors.appBackground)
                         .padding(horizontal = 12.dp, vertical = 8.dp)
                         .fillMaxWidth(),
                     query = searchQuery,

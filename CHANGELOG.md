@@ -5,12 +5,16 @@
 ### ⬆️ Improved
 - Upgraded Kotlin version to 1.5.30
 - Make our SDK compile-friendly with TargetSDK 31
+- Upgraded Coil version to [1.4.0](https://github.com/coil-kt/coil/releases/tag/1.4.0)
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
+- Attachment#uploadState is now updated in real-time during uploads.
 
 ### ❌ Removed
+- Removed `ProgressTrackerFactory` and `ProgressTracker` in favour of new progress tracking implementation.
 
 ## stream-chat-android
 ### 🐞 Fixed
@@ -38,9 +42,12 @@
 - `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead.
 
 ### ✅ Added
+- 🚨 Breaking change: A new `Idle` state is added to `Attachment.UploadState`.
+- Added a new callback function `onProgress(bytesUploaded: Long, totalLength: Long)` in `ProgressCallback`.
 - Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
 - Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
 ### ❌ Removed
@@ -77,9 +84,9 @@
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
 
 ### ✅ Added
-- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items. 
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
 - Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
-
+- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView` 
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -96,6 +103,7 @@
 - General improvements in the Attachments API and the way we build different attachments
 - Allowed for better long clicks on attachments
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
+- Updated and cleaned up Channel screen design
 - Improved logic for updating the `lastSeenMessage` for fewer calculations
 
 ### ✅ Added
@@ -111,6 +119,7 @@
 - Changed the type of the `onLastVisibleMessageChanged` parameter to `Message` for ease of use
 - Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
+- Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
 
 ### ❌ Removed
 
