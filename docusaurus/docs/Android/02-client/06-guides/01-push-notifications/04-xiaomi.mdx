@@ -75,7 +75,7 @@ Your client is now set up to receive notifications from Stream using Xiaomi Mi P
 
 The Stream Xiaomi push provider artifact contains a `ChatXiaomiMessagingReceiver` implementation that sends new Xiaomi tokens to Stream and forwards incoming push messages to `ChatClient` to handle.
 
-If you're using Xiaomi notifications for other purposes inside your app as well, you will need your own custom receiver to replace this. Here, you have to call `XiaomiMessagingDelegate`'s `registerXiaomiToken` and `handleRemoteMessage` methods, like so:
+If you're using Xiaomi notifications for other purposes inside your app as well, you will need your own custom receiver to replace this. Here, you have to call `XiaomiMessagingDelegate`'s `registerXiaomiToken` and `handleMiPushMessage` methods, like so:
 
 ```kotlin {6,14}
 class CustomPushMessageReceiver : PushMessageReceiver() {
