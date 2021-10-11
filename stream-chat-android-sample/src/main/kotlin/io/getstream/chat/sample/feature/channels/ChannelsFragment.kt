@@ -16,6 +16,9 @@ import com.getstream.sdk.chat.viewmodel.channels.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
+import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
+import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.application.App
 import io.getstream.chat.sample.common.navigateSafely
@@ -24,8 +27,8 @@ import io.getstream.chat.sample.databinding.FragmentChannelsBinding
 
 class ChannelsFragment : Fragment() {
 
-    private val channelsViewModel: ChannelsViewModel by viewModels {
-        ChannelsViewModelFactory(
+    private val viewModel: ChannelListViewModel by viewModels {
+        ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
@@ -52,17 +55,7 @@ class ChannelsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        channelsViewModel.bindView(binding.channelsListView, viewLifecycleOwner)
-
-        channelsViewModel.state.observe(
-            viewLifecycleOwner,
-            Observer {
-                if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
-                    findNavController().navigateSafely(R.id.action_to_userLoginFragment)
-                }
-            }
-        )
-
+        viewModel.bindView(binding.channelsListView, viewLifecycleOwner)
         setupOnClickListeners()
         setupToolbar()
     }
@@ -72,7 +65,7 @@ class ChannelsFragment : Fragment() {
     }
 
     private fun setupOnClickListeners() {
-        binding.channelsListView.setOnChannelClickListener {
+        binding.channelsListView.setChannelItemClickListener {
             findNavController().navigateSafely(ChannelsFragmentDirections.actionOpenChannel(it.cid))
         }
 
@@ -80,18 +73,17 @@ class ChannelsFragment : Fragment() {
             findNavController().navigateSafely(R.id.action_to_create_channel)
         }
 
-        binding.channelsListView.setOnLongClickListener(
-            ChannelListView.ChannelClickListener { channel ->
+        binding.channelsListView.setChannelLongClickListener { channel ->
                 AlertDialog.Builder(requireContext())
                     .setMessage(R.string.hide_channel_dialog)
                     .setNegativeButton(R.string.deny) { dialog, _ ->
                         dialog.dismiss()
                     }
                     .setPositiveButton(R.string.confirm) { _, _ ->
-                        channelsViewModel.hideChannel(channel)
+                        viewModel.hideChannel(channel)
                     }.show()
+            true
             }
-        )
 
         activity?.apply {
             onBackPressedDispatcher.addCallback(
@@ -108,12 +100,13 @@ class ChannelsFragment : Fragment() {
             when (it.itemId) {
                 R.id.item_log_out -> {
                     App.instance.userRepository.user = SampleUser.None
-                    channelsViewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
+                    ChatClient.instance().disconnect()
+                    findNavController().navigateSafely(R.id.action_to_userLoginFragment)
                     true
                 }
 
                 R.id.mark_all_read -> {
-                    channelsViewModel.markAllRead()
+                    viewModel.markAllRead()
                     true
                 }
 
