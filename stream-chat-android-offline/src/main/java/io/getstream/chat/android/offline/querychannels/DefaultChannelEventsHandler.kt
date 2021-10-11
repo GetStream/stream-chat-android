@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
+import kotlinx.coroutines.runBlocking
 
 internal class DefaultChannelEventsHandler(
     private val client: ChatClient,
@@ -35,16 +36,16 @@ internal class DefaultChannelEventsHandler(
             .let { it.isSuccess && it.data() }
     }
 
-    override suspend fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult =
+    override fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult =
         handleCidEventByRequest(event)
 
-    override suspend fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult =
+    override fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult =
         handleCidEventByRequestIfNeeded(event)
 
-    override suspend fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult =
+    override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult =
         handleCidEventByRequestIfNeeded(event)
 
-    private suspend fun handleCidEventByRequestIfNeeded(event: HasChannel): EventHandlingResult {
+    private fun handleCidEventByRequestIfNeeded(event: HasChannel): EventHandlingResult {
         return if (checkFilterOnChannelUpdatedEvent) {
             handleCidEventByRequest(event)
         } else {
@@ -52,11 +53,13 @@ internal class DefaultChannelEventsHandler(
         }
     }
 
-    private suspend fun handleCidEventByRequest(event: HasChannel): EventHandlingResult {
-        return if (newChannelEventFilter(event.channel, filter)) {
-            EventHandlingResult.ADD
-        } else {
-            EventHandlingResult.REMOVE
+    private fun handleCidEventByRequest(event: HasChannel): EventHandlingResult {
+        return runBlocking {
+            if (newChannelEventFilter(event.channel, filter)) {
+                EventHandlingResult.ADD
+            } else {
+                EventHandlingResult.REMOVE
+            }
         }
     }
 }

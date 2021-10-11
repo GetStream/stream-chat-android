@@ -44,13 +44,17 @@ public class QueryChannelsController internal constructor(
     private val mutableState: QueryChannelsMutableState,
     private val queryChannelsLogic: QueryChannelsLogic,
 ) {
-    public val recoveryNeeded: MutableStateFlow<Boolean> = mutableState.recoveryNeeded
+    public val recoveryNeeded: MutableStateFlow<Boolean> by mutableState::recoveryNeeded
 
+    /**
+     * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     */
     public var channelEventsHandler: ChannelEventsHandler? = null
 
-    // TODO deprecate
+    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
-    // TODO deprecate
+
+    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var checkFilterOnChannelUpdatedEvent: Boolean by mutableState::checkFilterOnChannelUpdatedEvent
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec

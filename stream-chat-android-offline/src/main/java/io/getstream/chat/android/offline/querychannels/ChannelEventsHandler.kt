@@ -17,7 +17,7 @@ public fun interface ChannelEventsHandler {
      * @param event Event that contains particular channel. See more [HasChannel]
      * @return [EventHandlingResult] Result of handling.
      */
-    public suspend fun onChannelEvent(event: HasChannel): EventHandlingResult
+    public fun onChannelEvent(event: HasChannel): EventHandlingResult
 }
 
 /**
@@ -38,12 +38,27 @@ public enum class EventHandlingResult {
     SKIP
 }
 
+/**
+ * Basic implementation of [ChannelEventsHandler]. It handles basic channel events like [NotificationAddedToChannelEvent],
+ * [ChannelDeletedEvent], [NotificationChannelDeletedEvent], [ChannelUpdatedByUserEvent], [ChannelUpdatedEvent].
+ * It skips other type of events, mark as remove result [EventHandlingResult.REMOVE] for deleted events, other logic
+ * you're free to implement.
+ */
 public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
-    public abstract suspend fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult
-    public abstract suspend fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult
-    public abstract suspend fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult
+    /**
+     * Handles [NotificationAddedToChannelEvent] event.
+     */
+    public abstract fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult
+    /**
+     * Handles [ChannelUpdatedByUserEvent] event.
+     */
+    public abstract fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult
+    /**
+     * Handles [ChannelUpdatedEvent] event.
+     */
+    public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult
 
-    override suspend fun onChannelEvent(event: HasChannel): EventHandlingResult {
+    override fun onChannelEvent(event: HasChannel): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> onNotificationAddedToChannelEvent(event)
             is ChannelDeletedEvent -> EventHandlingResult.REMOVE
