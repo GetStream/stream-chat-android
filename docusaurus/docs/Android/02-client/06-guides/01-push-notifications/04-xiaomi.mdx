@@ -83,7 +83,7 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
         // Update device's token on Stream backend
         try {
-            XiaomiMessagingDelegate.registerHuaweiToken(miPushCommandMessage)
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
