@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     >
 
-    <com.getstream.sdk.chat.view.ChannelHeaderView
-        android:id="@+id/channelHeaderView"
+    <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+        android:id="@+id/messageListHeaderView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toTopOf="@+id/messageInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/channelHeaderView"
+        app:layout_constraintTop_toBottomOf="@+id/messageListHeaderView"
         app:streamButtonIcon="@drawable/stream_bottom_arrow"
         app:streamDefaultScrollButtonEnabled="true"
         app:streamMessageDateShow="true"
