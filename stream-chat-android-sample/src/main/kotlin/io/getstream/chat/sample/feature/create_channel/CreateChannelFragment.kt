@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.viewmodel.CreateChannelViewModel
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.hideKeyboard
 import io.getstream.chat.sample.common.showKeyboard
