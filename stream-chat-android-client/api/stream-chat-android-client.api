@@ -2786,11 +2786,6 @@ public final class io/getstream/chat/android/client/models/UserEntity$DefaultImp
 	public static fun getUserId (Lio/getstream/chat/android/client/models/UserEntity;)Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/notifications/DeviceRegisteredListener {
-	public abstract fun onDeviceRegisteredError (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public abstract fun onDeviceRegisteredSuccess ()V
-}
-
 public class io/getstream/chat/android/client/notifications/handler/ChatNotificationHandler : io/getstream/chat/android/client/notifications/handler/NotificationHandler {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function3;)V
@@ -2803,7 +2798,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun dismissAllNotifications ()V
 	public fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	protected final fun getContext ()Landroid/content/Context;
-	public fun getDeviceRegisteredListener ()Lio/getstream/chat/android/client/notifications/DeviceRegisteredListener;
 	public fun getErrorCaseIntent ()Landroid/content/Intent;
 	public fun getErrorCaseNotificationContent ()Ljava/lang/String;
 	public fun getErrorCaseNotificationTitle ()Ljava/lang/String;

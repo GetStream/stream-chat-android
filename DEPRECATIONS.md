@@ -10,7 +10,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `NotificationConfig` attributes <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | Attributes to customize notifications are not used anymore. You need to override those Strings/Drawable into resources of your app |
 | `ChatClient#cdnUrl`  <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.12 | 2021.11.09 ⌛ | Use `ChatClient.fileUploader()` to add custom file uploading logic instead  |
 | `ChatClient#cdnTimeout` and `ChatClient#baseTimeout` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | 2021.11.09 ⌛ | Use `ChatClient.okHttpClient()` to set the timeouts instead |
-| `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 ⌛ | This class is not used anymore |
+| `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | This class is not used anymore |
 | `ViewReactionsViewStyle#bubbleBorderColor` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | Use bubbleBorderColorMine instead  |
 | `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 4.20.0 | Some attributes are not needed anymore |
 | `NotificationLoadDataListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 4.20.0 | This class is not used anymore, you will be asked to build your notification |
