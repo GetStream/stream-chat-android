@@ -25,12 +25,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageListHeaderView"
         app:streamUiFlagMessageConfirmationEnabled="true"
-        app:streamScrollButtonBackground="@drawable/stream_shape_round"
-        app:streamNewMessagesBehaviour="count_new_messages"
         app:streamUiNewMessagesBehaviour="count_new_messages"
         app:streamUiMuteUserEnabled="false"
         app:streamUiPinMessageEnabled="true"
-        app:streamUiScrollButtonIcon="@drawable/stream_bottom_arrow"
         />
 
     <ProgressBar
