@@ -50,8 +50,6 @@ class ChatInitializer(private val context: Context) {
         val domain = ChatDomain.Builder(client, context)
             .offlineEnabled()
             .build()
-
-        val ui = ChatUI.Builder(context).build()
     }
 
     fun isUserSet(): Boolean {
