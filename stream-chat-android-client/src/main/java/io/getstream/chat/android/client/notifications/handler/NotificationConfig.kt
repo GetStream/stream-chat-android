@@ -70,10 +70,6 @@ public data class NotificationConfig(
         level = DeprecationLevel.ERROR,
     )
     @StringRes val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
-    @Deprecated(
-        message = "Notifications are grouped by channel by default. This behavior can be changed by handling the notification",
-        level = DeprecationLevel.WARNING,
-    ) val shouldGroupNotifications: Boolean = false,
     val pushNotificationsEnabled: Boolean = true,
     val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
 )
