@@ -8,12 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.view.channels.ChannelListView
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import com.getstream.sdk.chat.viewmodel.channels.bindView
-import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
