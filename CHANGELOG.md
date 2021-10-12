@@ -58,8 +58,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- ChannelEventsHandler is added to QueryChannelsController to handle logic of update channel events. If you want to have specific logic of event handling it is the right place to customize it.
 
 ### ⚠️ Changed
+- `QueryChannelsController::newChannelEventFilter` and `QueryChannelsController#checkFilterOnChannelUpdatedEvent` are now deprecated. See the deprecation log for more details.
 
 ### ❌ Removed
 
