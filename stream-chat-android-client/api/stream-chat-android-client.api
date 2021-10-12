@@ -2791,11 +2791,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/D
 	public abstract fun onDeviceRegisteredSuccess ()V
 }
 
-public abstract interface class io/getstream/chat/android/client/notifications/NotificationLoadDataListener {
-	public abstract fun onLoadFail (Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)V
-	public abstract fun onLoadSuccess (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;)V
-}
-
 public class io/getstream/chat/android/client/notifications/handler/ChatNotificationHandler : io/getstream/chat/android/client/notifications/handler/NotificationHandler {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function3;)V
@@ -2808,7 +2803,6 @@ public class io/getstream/chat/android/client/notifications/handler/ChatNotifica
 	public fun dismissAllNotifications ()V
 	public fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	protected final fun getContext ()Landroid/content/Context;
-	public fun getDataLoadListener ()Lio/getstream/chat/android/client/notifications/NotificationLoadDataListener;
 	public fun getDeviceRegisteredListener ()Lio/getstream/chat/android/client/notifications/DeviceRegisteredListener;
 	public fun getErrorCaseIntent ()Landroid/content/Intent;
 	public fun getErrorCaseNotificationContent ()Ljava/lang/String;

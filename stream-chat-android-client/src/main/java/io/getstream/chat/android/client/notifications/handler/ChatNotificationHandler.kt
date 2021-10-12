@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 /**
@@ -48,14 +47,6 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
         level = DeprecationLevel.ERROR,
     )
     public open fun getDeviceRegisteredListener(): DeviceRegisteredListener? {
-        return null
-    }
-
-    @Deprecated(
-        message = "It is not used anymore, you will be notify to build the notification instead",
-        level = DeprecationLevel.ERROR,
-    )
-    public open fun getDataLoadListener(): NotificationLoadDataListener? {
         return null
     }
 
