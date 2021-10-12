@@ -12,17 +12,17 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `ChatClient#cdnTimeout` and `ChatClient#baseTimeout` <br/>*client* | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | 2021.11.09 ⌛ | Use `ChatClient.okHttpClient()` to set the timeouts instead |
 | `DeviceRegisteredListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | This class is not used anymore |
 | `ViewReactionsViewStyle#bubbleBorderColor` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | 2021.10.26 ⌛ | Use bubbleBorderColorMine instead  |
-| `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 4.20.0 | Some attributes are not needed anymore |
-| `NotificationLoadDataListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12 4.20.0 | This class is not used anymore, you will be asked to build your notification |
-| `ChatClient#searchMessages` <br/>*client* | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0 | 2021.11.15 ⌛ | Use the `ChatClient#searchMessages` method with unwrapped parameters instead |
-| `ChatDomain#createDistinctChannel` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0 | 2021.11.15 ⌛ | Use ChatClient::createChannel directly |
-| `ChatDomain#removeMembers` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0 | 2021.11.15 ⌛ | Use ChatClient::removeMembers directly |
-| `User#name` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0  | Use class member instead |
-| `User#image` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0  | Use class member instead |
-| `Channel#name` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0  | Use class member instead |
-| `Channel#image` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0  | Use class member instead |
-| `ChatClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0 | Use getMessagesWithAttachments function with types list instead |
-| `ChannelClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.09.15<br/>4.18.0 | 2021.10.12 4.20.0 | Use getMessagesWithAttachments function with types list instead |
+| `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | Some attributes are not needed anymore |
+| `NotificationLoadDataListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | This class is not used anymore, you will be asked to build your notification |
+| `ChatClient#searchMessages` <br/>*client* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.15 ⌛ | Use the `ChatClient#searchMessages` method with unwrapped parameters instead |
+| `ChatDomain#createDistinctChannel` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.15 ⌛ | Use ChatClient::createChannel directly |
+| `ChatDomain#removeMembers` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.15 ⌛ | Use ChatClient::removeMembers directly |
+| `User#name` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
+| `User#image` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
+| `Channel#name` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
+| `Channel#image` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
+| `ChatClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | Use getMessagesWithAttachments function with types list instead |
+| `ChannelClient#getMessagesWithAttachments`<br/>*client* | 2021.08.24<br/>4.17.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | Use getMessagesWithAttachments function with types list instead |
 | `created_at`, `updated_at`, `isTypingEvents`, `isReadEvents`, `isConnectEvents`, `isSearch`, `isMutes` in Config class are all deprecated. <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.08.25<br/>4.17.0 | 2021.08.25<br/>4.17.0 | Use `createdAt`, `updatedAt`, `typingEventsEnabled`, `readEventsEnabled`, `connectEventsEnabled`, `searchEnabled` and `mutesEnabled` instead |
 | `MessageListViewModel#currentUser` <br/>*ui-components* | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | 2021.08.24<br/>4.17.0 | Use `MessageListViewModel#user.value` instead |
 | `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
