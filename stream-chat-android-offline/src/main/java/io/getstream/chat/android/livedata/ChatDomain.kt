@@ -103,7 +103,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::removeMembers directly",
         replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
@@ -122,7 +122,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::createChannel directly",
         replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun createDistinctChannel(
         channelType: String,

@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.utils.extensions.getChannelNameOrMembers
 import com.getstream.sdk.chat.utils.extensions.getLastMessageReads
 import com.getstream.sdk.chat.utils.extensions.getReadDateOfChannelLastMessage
 import com.getstream.sdk.chat.utils.extensions.readLastMessage
-import io.getstream.chat.android.client.models.name
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import java.util.Date
