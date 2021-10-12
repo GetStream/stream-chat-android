@@ -769,12 +769,19 @@ internal class ChatDomainImpl internal constructor(
      * @throws IllegalArgumentException when message contains non-synchronized attachments
      */
     private suspend fun retryMessagesWithSyncedAttachments(): List<Message> {
-        val messages = repos.selectMessagesSyncNeeded()
-        require(
-            messages.all {
-                it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
-            }
-        ) { "Logical error. Messages with non-synchronized attachments should have another sync status!" }
+        val (messages, nonCorrectStateMessages) = repos.selectMessagesSyncNeeded().partition {
+            it.attachments.all { attachment -> attachment.uploadState === Attachment.UploadState.Success }
+        }
+        if (nonCorrectStateMessages.isNotEmpty()) {
+            val message = nonCorrectStateMessages.first()
+            val attachmentUploadState =
+                message.attachments.firstOrNull { it.uploadState != Attachment.UploadState.Success }
+                    ?: Attachment.UploadState.Success
+            logger.logE(
+                "Logical error. Messages with non-synchronized attachments should have another sync status!" +
+                    "\nMessage has ${message.syncStatus} syncStatus, while attachment has $attachmentUploadState upload state"
+            )
+        }
 
         messages.forEach { message ->
             val channelClient = client.channel(message.cid)
