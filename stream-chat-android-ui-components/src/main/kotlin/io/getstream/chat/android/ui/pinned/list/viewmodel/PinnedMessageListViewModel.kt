@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
@@ -82,28 +81,27 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
-        val channelFilter = Filters.`eq`("cid", cid)
-        val messageFilter = Filters.`eq`("pinned", true)
+        val channelFilter = Filters.eq("cid", cid)
+        val messageFilter = Filters.eq("pinned", true)
 
-        val request = SearchMessagesRequest(
-            offset = currentState.results.size,
-            limit = QUERY_LIMIT,
-            channelFilter = channelFilter,
-            messageFilter = messageFilter,
-        )
-
-        logger.logD("Getting pinned messages (cid: $cid, offset: ${request.offset}, limit: ${request.limit})")
+        logger.logD("Getting pinned messages (cid: $cid, offset: ${currentState.results.size}, limit: $QUERY_LIMIT)")
 
         val result = ChatClient.instance()
-            .searchMessages(request)
+            .searchMessages(
+                channelFilter = channelFilter,
+                messageFilter = messageFilter,
+                offset = currentState.results.size,
+                limit = QUERY_LIMIT,
+            )
             .await()
 
         if (result.isSuccess) {
-            logger.logD("Got ${result.data().size} messages")
+            val messages = result.data().messages
+            logger.logD("Got ${messages.size} messages")
             _state.value = currentState.copy(
-                results = currentState.results + result.data(),
+                results = currentState.results + messages,
                 isLoading = false,
-                canLoadMore = result.data().size == QUERY_LIMIT
+                canLoadMore = messages.size == QUERY_LIMIT
             )
         } else {
             logger.logD("Error ${result.error().message}")
