@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -16,11 +17,9 @@ import io.getstream.chat.android.offline.querychannels.QueryChannelsController.C
 internal class QueryChannelsControllerImpl(private val queryChannels: QueryChannelsControllerStateFlow) :
     QueryChannelsController {
 
-    override val filter: FilterObject
-        get() = queryChannels.filter
+    override val filter: FilterObject by queryChannels::filter
 
-    override val sort: QuerySort<Channel>
-        get() = queryChannels.sort
+    override val sort: QuerySort<Channel> by queryChannels::sort
 
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean
         get() = { channel, filter -> runBlocking { queryChannels.newChannelEventFilter(channel, filter) } }
@@ -30,13 +29,11 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
             }
         }
 
-    override var checkFilterOnChannelUpdatedEvent: Boolean = false
-    override var recoveryNeeded: Boolean
-        get() = queryChannels.recoveryNeeded.value
-        set(value) {
-            queryChannels.recoveryNeeded.value = value
-        }
-    val queryChannelsSpec: QueryChannelsSpec = queryChannels.queryChannelsSpec
+    override var checkFilterOnChannelUpdatedEvent: Boolean by queryChannels::checkFilterOnChannelUpdatedEvent
+    override var recoveryNeeded: Boolean by queryChannels.recoveryNeeded::value
+    val queryChannelsSpec: QueryChannelsSpec by queryChannels::queryChannelsSpec
+
+    override var channelEventsHandler: ChannelEventsHandler? by queryChannels::channelEventsHandler
 
     override val endOfChannels: LiveData<Boolean> = queryChannels.endOfChannels.asLiveData()
 

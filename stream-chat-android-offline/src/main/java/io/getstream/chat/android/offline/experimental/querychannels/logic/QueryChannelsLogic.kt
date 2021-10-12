@@ -1,15 +1,12 @@
 package io.getstream.chat.android.offline.experimental.querychannels.logic
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.experimental.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -27,23 +24,6 @@ internal class QueryChannelsLogic(
 ) : QueryChannelsListener {
 
     private val logger = ChatLogger.get("QueryChannelsLogic")
-
-    var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filterObject ->
-        chatDomainImpl.client.queryChannelsInternal(
-            QueryChannelsRequest(
-                filter = Filters.and(
-                    filterObject,
-                    Filters.eq("cid", channel.cid)
-                ),
-                offset = 0,
-                limit = 1,
-                messageLimit = 0,
-                memberLimit = 0,
-            )
-        ).await()
-            .map { channels -> channels.any { it.cid == channel.cid } }
-            .let { it.isSuccess && it.data() }
-    }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         mutableState._currentRequest.value = request
@@ -74,7 +54,10 @@ internal class QueryChannelsLogic(
             .also { addChannels(it) }
     }
 
-    internal suspend fun addChannel(channel: Channel) = addChannels(listOf(channel))
+    internal suspend fun addChannel(channel: Channel) {
+        addChannels(listOf(channel))
+        chatDomainImpl.channel(channel).updateDataFromChannel(channel)
+    }
 
     private suspend fun addChannels(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
@@ -136,7 +119,7 @@ internal class QueryChannelsLogic(
     ) {
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
-                .filterNot { newChannelEventFilter(it, mutableState.filter) }
+                .filterNot { mutableState.newChannelEventFilter(it, mutableState.filter) }
                 .map { it.cid }
                 .let { removeChannels(it) }
         }
