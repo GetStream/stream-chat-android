@@ -14,23 +14,23 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <com.getstream.sdk.chat.view.MessageListView
+    <io.getstream.chat.android.ui.message.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/padding_medium"
         app:layout_constraintBottom_toTopOf="@+id/messageInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageListHeaderView"
-        app:streamButtonIcon="@drawable/stream_bottom_arrow"
-        app:streamDefaultScrollButtonEnabled="true"
-        app:streamMessageDateShow="true"
-        app:streamNewMessagesBehaviour="count_new_messages"
-        app:streamNewMessagesTextPlural="@string/new_messages_plural"
-        app:streamNewMessagesTextSingle="@string/new_messages_single"
+        app:streamUiFlagMessageConfirmationEnabled="true"
         app:streamScrollButtonBackground="@drawable/stream_shape_round"
+        app:streamNewMessagesBehaviour="count_new_messages"
+        app:streamUiNewMessagesBehaviour="count_new_messages"
+        app:streamUiMuteUserEnabled="false"
+        app:streamUiPinMessageEnabled="true"
+        app:streamUiScrollButtonIcon="@drawable/stream_bottom_arrow"
         />
 
     <ProgressBar
