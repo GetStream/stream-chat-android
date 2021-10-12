@@ -807,33 +807,6 @@ public class ChatClient internal constructor(
         }
 
     /**
-     * Returns a [Call<List<Message>>] With messages which contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param offset The messages offset.
-     * @param limit Max limit messages to be fetched.
-     * @param type The desired type attachment.
-     */
-    @Deprecated(
-        message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun getMessagesWithAttachments(
-        channelType: String,
-        channelId: String,
-        offset: Int,
-        limit: Int,
-        type: String,
-    ): Call<List<Message>> {
-        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
-        val messageFilter = Filters.`in`("attachments.type", type)
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
-    }
-
-    /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
      * not necessarily all of them will have a specified type.
      *
