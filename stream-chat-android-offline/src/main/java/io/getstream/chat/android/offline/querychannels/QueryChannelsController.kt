@@ -3,14 +3,10 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.events.ChannelDeletedEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -21,6 +17,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
@@ -47,12 +44,18 @@ public class QueryChannelsController internal constructor(
     private val mutableState: QueryChannelsMutableState,
     private val queryChannelsLogic: QueryChannelsLogic,
 ) {
+    public val recoveryNeeded: MutableStateFlow<Boolean> by mutableState::recoveryNeeded
 
-    public var checkFilterOnChannelUpdatedEvent: Boolean = false
-    internal val recoveryNeeded: MutableStateFlow<Boolean> = mutableState.recoveryNeeded
+    /**
+     * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     */
+    public var channelEventsHandler: ChannelEventsHandler? = null
 
-    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean =
-        queryChannelsLogic.newChannelEventFilter
+    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
+    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
+
+    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
+    public var checkFilterOnChannelUpdatedEvent: Boolean by mutableState::checkFilterOnChannelUpdatedEvent
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
@@ -93,9 +96,8 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun updateQueryChannelSpec(channel: Channel) {
-        if (newChannelEventFilter(channel, filter)) {
+        if (mutableState.defaultChannelEventsHandler.newChannelEventFilter(channel, filter)) {
             addChannel(channel)
-            domainImpl.channel(channel).updateDataFromChannel(channel)
         } else {
             removeChannel(channel.cid)
         }
@@ -112,13 +114,12 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun handleEvent(event: ChatEvent) {
-        when (event) {
-            is NotificationAddedToChannelEvent -> updateQueryChannelSpec(event.channel)
-            is ChannelDeletedEvent -> removeChannel(event.channel.cid)
-            is NotificationChannelDeletedEvent -> removeChannel(event.channel.cid)
-            is ChannelUpdatedByUserEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
-            is ChannelUpdatedEvent -> event.channel.takeIf { checkFilterOnChannelUpdatedEvent }?.let { updateQueryChannelSpec(it) }
-            else -> Unit // Ignore other events
+        if (event is HasChannel) {
+            when (mutableState.eventsHandler.onChannelEvent(event)) {
+                EventHandlingResult.ADD -> addChannel(event.channel)
+                EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
+                EventHandlingResult.SKIP -> Unit
+            }.exhaustive
         }
 
         if (event is MarkAllReadEvent) {
@@ -252,8 +253,6 @@ public class QueryChannelsController internal constructor(
         runQueryOnline(request.toQueryChannelsRequest(filter, domainImpl.userPresence))
 
     private suspend fun runQueryOnline(request: QueryChannelsRequest) = queryChannelsLogic.runQueryOnline(request)
-
-    private fun List<ChannelMute>.toChannelsId() = map { channelMute -> channelMute.channel.id }
 
     public sealed class ChannelsState {
         /** The QueryChannelsController is initialized but no query is currently running.
