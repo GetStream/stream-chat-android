@@ -12,7 +12,7 @@ internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntit
     messageId = messageId,
     authorName = authorName,
     titleLink = titleLink,
-    authorLink = titleLink,
+    authorLink = authorLink,
     thumbUrl = thumbUrl,
     imageUrl = imageUrl,
     assetUrl = assetUrl,
