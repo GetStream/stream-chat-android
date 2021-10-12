@@ -2272,20 +2272,12 @@ public final class io/getstream/chat/android/client/models/ConnectionData {
 }
 
 public final class io/getstream/chat/android/client/models/ContentUtils {
-	public static final fun getImage (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
-	public static final fun getImage (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
-	public static final fun getName (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
-	public static final fun getName (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static final fun getOriginalLanguage (Lio/getstream/chat/android/client/models/Message;)Ljava/lang/String;
 	public static final fun getTranslation (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun getUnreadMessagesCount (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;)I
 	public static synthetic fun getUnreadMessagesCount$default (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;ILjava/lang/Object;)I
-	public static final fun setImage (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;)V
-	public static final fun setImage (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
-	public static final fun setName (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;)V
-	public static final fun setName (Lio/getstream/chat/android/client/models/User;Ljava/lang/String;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/models/CustomObject {
