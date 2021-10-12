@@ -251,6 +251,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
         members: List<Member>,
     ): Call<List<Member>> = chatDomainStateFlow.queryMembers(cid, offset, limit, filter, sort, members)
 
+    @Suppress("DEPRECATION_ERROR")
     override fun createDistinctChannel(
         channelType: String,
         members: List<String>,

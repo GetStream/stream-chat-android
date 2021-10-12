@@ -127,7 +127,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::createChannel directly",
         replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun createDistinctChannel(
         channelType: String,
