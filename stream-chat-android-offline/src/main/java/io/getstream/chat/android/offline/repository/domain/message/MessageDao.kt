@@ -17,13 +17,21 @@ internal abstract class MessageDao {
     @Transaction
     open suspend fun insert(messageEntities: List<MessageEntity>) {
         upsertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
+        deleteAttachments(messageEntities.map { it.messageInnerEntity.id })
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
+    @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
+    abstract fun deleteAttachments(messageIds: List<String>)
+
+    @Query("DELETE FROM attachment_inner_entity WHERE messageId = :messageId")
+    abstract fun deleteAttachments(messageId: String)
+
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) {
         upsertMessageInnerEntity(messageEntity.messageInnerEntity)
+        deleteAttachments(messageEntity.messageInnerEntity.id)
         insertAttachments(messageEntity.attachments)
         insertReactions(messageEntity.let { it.latestReactions + it.ownReactions })
     }
