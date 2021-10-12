@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
  */
 public fun interface ChannelEventsHandler {
     /**
-     * Function that computes result of handling event.
+     * Function that computes result of handling event. It runs in background.
      *
      * @param event Event that contains particular channel. See more [HasChannel]
      * @return [EventHandlingResult] Result of handling.
@@ -46,15 +46,15 @@ public enum class EventHandlingResult {
  */
 public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
     /**
-     * Handles [NotificationAddedToChannelEvent] event.
+     * Handles [NotificationAddedToChannelEvent] event. It runs in background.
      */
     public abstract fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult
     /**
-     * Handles [ChannelUpdatedByUserEvent] event.
+     * Handles [ChannelUpdatedByUserEvent] event. It runs in background.
      */
     public abstract fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult
     /**
-     * Handles [ChannelUpdatedEvent] event.
+     * Handles [ChannelUpdatedEvent] event. It runs in background.
      */
     public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult
 

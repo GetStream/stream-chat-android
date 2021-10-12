@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.map
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
+ * @param channelEventsHandler The instance of [ChannelEventsHandler] that will be used to handle channel updates event for this combination of [sort] and [filter].
  */
 public class ChannelListViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
