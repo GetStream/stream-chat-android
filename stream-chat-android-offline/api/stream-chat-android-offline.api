@@ -541,7 +541,6 @@ public final class io/getstream/chat/android/offline/repository/domain/channelco
 
 public final class io/getstream/chat/android/offline/repository/domain/message/MessageDao_Impl {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteAttachments (Ljava/lang/String;)V
 	public fun deleteAttachments (Ljava/util/List;)V
 	public fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

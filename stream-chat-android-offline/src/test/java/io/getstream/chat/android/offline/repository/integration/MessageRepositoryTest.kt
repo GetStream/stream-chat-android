@@ -6,7 +6,6 @@ import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldBe
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -30,8 +29,8 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
         val messageFromDb = requireNotNull(chatDomainImpl.repos.selectMessage(message.id))
 
         messageFromDb.attachments.size `should be equal to` 3
-        messageFromDb.attachments.any { it.url == "newUrl1" } shouldBe true
-        messageFromDb.attachments.any { it.url == "newUrl2" } shouldBe true
-        messageFromDb.attachments.any { it.url == "newUrl3" } shouldBe true
+        messageFromDb.attachments[0].url `should be equal to` "newUrl1"
+        messageFromDb.attachments[1].url `should be equal to` "newUrl2"
+        messageFromDb.attachments[2].url `should be equal to` "newUrl3"
     }
 }

@@ -25,16 +25,8 @@ internal abstract class MessageDao {
     @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
     abstract fun deleteAttachments(messageIds: List<String>)
 
-    @Query("DELETE FROM attachment_inner_entity WHERE messageId = :messageId")
-    abstract fun deleteAttachments(messageId: String)
-
     @Transaction
-    open suspend fun insert(messageEntity: MessageEntity) {
-        upsertMessageInnerEntity(messageEntity.messageInnerEntity)
-        deleteAttachments(messageEntity.messageInnerEntity.id)
-        insertAttachments(messageEntity.attachments)
-        insertReactions(messageEntity.let { it.latestReactions + it.ownReactions })
-    }
+    open suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract suspend fun insertMessageInnerEntity(messageInnerEntity: MessageInnerEntity): Long
