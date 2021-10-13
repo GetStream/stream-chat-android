@@ -1408,8 +1408,10 @@ public class ChannelController internal constructor(
                 ?.data()
             ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         upsertMessage(message)
-        loadOlderMessages(messageId, newerMessagesOffset)
-        loadNewerMessages(messageId, olderMessagesOffset)
+        domainImpl.scope.launch {
+            loadOlderMessages(messageId, newerMessagesOffset)
+            loadNewerMessages(messageId, olderMessagesOffset)
+        }
         return Result(message)
     }
 
