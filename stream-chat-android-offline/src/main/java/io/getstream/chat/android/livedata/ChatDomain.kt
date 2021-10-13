@@ -27,7 +27,6 @@ import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.model.ConnectionState
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
