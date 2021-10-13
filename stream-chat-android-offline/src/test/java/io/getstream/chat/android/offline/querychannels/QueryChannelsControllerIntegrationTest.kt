@@ -18,12 +18,22 @@ import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
+
+    @Test
+    fun `Given initialized SDK When request channels Should not crash`(): Unit = runBlocking {
+        val queryChannelsController = Fixture(chatDomainImpl, data.filter1).givenChannelInOfflineStorage(data.channel1).get()
+
+        val queryChannelsResult = queryChannelsController.query()
+
+        queryChannelsResult.isSuccess shouldBe true
+    }
 
     @Test
     fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`(): Unit =

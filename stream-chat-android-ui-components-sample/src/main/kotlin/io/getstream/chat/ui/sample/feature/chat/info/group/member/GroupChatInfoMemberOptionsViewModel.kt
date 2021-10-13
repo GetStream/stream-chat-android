@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.models.Channel
@@ -25,6 +26,7 @@ class GroupChatInfoMemberOptionsViewModel(
     private val cid: String,
     private val memberId: String,
     private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     private val _events = MutableLiveData<Event<UiEvent>>()
@@ -104,7 +106,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     private fun removeFromChannel() {
         viewModelScope.launch {
-            val result = chatDomain.removeMembers(cid, memberId).await()
+            val result = chatClient.channel(cid).removeMembers(memberId).await()
             if (result.isSuccess) {
                 _events.value = Event(UiEvent.Dismiss)
             } else {

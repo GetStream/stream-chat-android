@@ -151,7 +151,7 @@ public class ChatClient internal constructor(
                     userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id)
+                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -328,7 +328,7 @@ public class ChatClient internal constructor(
 
         encryptedUserConfigStorage.get()?.let { config ->
             initializeClientWithUser(
-                user = User(id = config.userId),
+                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
         }
@@ -343,11 +343,12 @@ public class ChatClient internal constructor(
         preSetUserListeners.forEach { it(user) }
     }
 
-    private fun storePushNotificationsConfig(userId: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String) {
         encryptedUserConfigStorage.put(
             PushNotificationsConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
+                userName = userName,
             ),
         )
     }
@@ -723,7 +724,7 @@ public class ChatClient internal constructor(
     @Deprecated(
         message = "Use the searchMessages method with unwrapped parameters instead",
         replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
@@ -807,33 +808,6 @@ public class ChatClient internal constructor(
         }
 
     /**
-     * Returns a [Call<List<Message>>] With messages which contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param offset The messages offset.
-     * @param limit Max limit messages to be fetched.
-     * @param type The desired type attachment.
-     */
-    @Deprecated(
-        message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun getMessagesWithAttachments(
-        channelType: String,
-        channelId: String,
-        offset: Int,
-        limit: Int,
-        type: String,
-    ): Call<List<Message>> {
-        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
-        val messageFilter = Filters.`in`("attachments.type", type)
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
-    }
-
-    /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
      * not necessarily all of them will have a specified type.
      *
@@ -853,7 +827,12 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", types)
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+        return searchMessages(
+            channelFilter = channelFilter,
+            messageFilter = messageFilter,
+            offset = offset,
+            limit = limit,
+        ).map { it.messages }
     }
 
     @CheckResult
@@ -1790,7 +1769,12 @@ public class ChatClient internal constructor(
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
-            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]") }
+            instance?.run {
+                Log.e(
+                    "Chat",
+                    "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]"
+                )
+            }
 
             val config = ChatClientConfig(
                 apiKey = apiKey,

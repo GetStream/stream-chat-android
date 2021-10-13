@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -110,7 +111,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::removeMembers directly",
         replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
@@ -127,7 +128,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::createChannel directly",
         replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun createDistinctChannel(
         channelType: String,
@@ -591,6 +592,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private var database: ChatDatabase? = null
+        private var handler: Handler = Handler(Looper.getMainLooper())
 
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
@@ -602,6 +604,11 @@ public sealed interface ChatDomain {
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
+        }
+
+        @VisibleForTesting
+        internal fun handler(handler: Handler) = apply {
+            this.handler = handler
         }
 
         public fun enableBackgroundSync(): Builder {
@@ -666,9 +673,10 @@ public sealed interface ChatDomain {
                     .let(::OfflinePlugin)
         }
 
+        @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val handler = Handler(Looper.getMainLooper())
+            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -678,9 +686,12 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = getPlugin(),
+                offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
-            )
+            ).also { domainImpl ->
+                // TODO remove when plugin becomes stateless
+                plugin.initState(domainImpl, client)
+            }
         }
     }
 

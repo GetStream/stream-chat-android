@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.experimental.plugin
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -10,6 +11,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.plugin.logic.LogicRegistry
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 
@@ -19,8 +21,11 @@ public class OfflinePlugin(private val config: Config) : Plugin {
 
     internal constructor() : this(Config())
 
-    public val state: StateRegistry = StateRegistry()
-    internal val logic: LogicRegistry = LogicRegistry(state)
+    // TODO make it val and stateless when remove QueryChannelsMutableState::defaultChannelEventsHandler
+    public lateinit var state: StateRegistry
+        private set
+    internal lateinit var logic: LogicRegistry
+        private set
 
     override val name: String = MODULE_NAME
 
@@ -31,6 +36,14 @@ public class OfflinePlugin(private val config: Config) : Plugin {
             if (config.userPresence) userPresenceEnabled() else userPresenceDisabled()
             recoveryEnabled()
         }.build()
+
+        initState(io.getstream.chat.android.offline.ChatDomain.instance as ChatDomainImpl, chatClient)
+    }
+
+    @VisibleForTesting
+    internal fun initState(chatDomainImpl: ChatDomainImpl, chatClient: ChatClient) {
+        state = StateRegistry(chatDomainImpl, chatClient)
+        logic = LogicRegistry(state)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest): Unit =

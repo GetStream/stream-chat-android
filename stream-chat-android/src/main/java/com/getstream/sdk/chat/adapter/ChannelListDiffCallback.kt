@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.utils.extensions.getOtherUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 
 internal class ChannelListDiffCallback @JvmOverloads constructor(

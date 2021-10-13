@@ -15,7 +15,6 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
 
 public class ReadStateView : RelativeLayout {

@@ -14,7 +14,6 @@ import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.getstream.sdk.chat.utils.formatDate
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.name
 
 internal class UsernameAndDateConfigurator(
     private val binding: StreamItemMessageBinding,
