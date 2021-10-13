@@ -151,7 +151,7 @@ public class ChatClient internal constructor(
                     userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id)
+                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -328,7 +328,7 @@ public class ChatClient internal constructor(
 
         encryptedUserConfigStorage.get()?.let { config ->
             initializeClientWithUser(
-                user = User(id = config.userId),
+                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
         }
@@ -343,11 +343,12 @@ public class ChatClient internal constructor(
         preSetUserListeners.forEach { it(user) }
     }
 
-    private fun storePushNotificationsConfig(userId: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String) {
         encryptedUserConfigStorage.put(
             PushNotificationsConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
+                userName = userName,
             ),
         )
     }

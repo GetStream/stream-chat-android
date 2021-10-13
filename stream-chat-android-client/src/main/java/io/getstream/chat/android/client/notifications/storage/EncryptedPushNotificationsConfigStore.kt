@@ -36,15 +36,19 @@ internal class EncryptedPushNotificationsConfigStore(context: Context) {
         prefs.edit().apply {
             putString(KEY_USER_ID, config.userId)
             putString(KEY_USER_TOKEN, config.userToken)
+            putString(KEY_USER_NAME, config.userName)
         }.apply()
     }
 
     fun get(): PushNotificationsConfig? = prefs.run {
         val userId = getString(KEY_USER_ID, "") ?: ""
         val userToken = getString(KEY_USER_TOKEN, "") ?: ""
+        val userName = getString(KEY_USER_NAME, "") ?: ""
 
-        val config = PushNotificationsConfig(userId, userToken)
-        return if (config.isValid()) config else { null }
+        val config = PushNotificationsConfig(userId = userId, userToken = userToken, userName = userName)
+        return if (config.isValid()) config else {
+            null
+        }
     }
 
     fun clear() = prefs.edit().clear().apply()
@@ -55,5 +59,6 @@ internal class EncryptedPushNotificationsConfigStore(context: Context) {
         private const val SYNC_CONFIG_PREFS_NAME = ".stream_livedata_sync_config_store"
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_TOKEN = "user_token"
+        private const val KEY_USER_NAME = "user_name"
     }
 }
