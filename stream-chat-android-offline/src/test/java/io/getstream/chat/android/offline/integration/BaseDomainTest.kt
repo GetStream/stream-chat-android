@@ -32,8 +32,6 @@ import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.createRoomDB
-import io.getstream.chat.android.offline.experimental.plugin.Config
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
@@ -65,17 +63,8 @@ internal open class BaseDomainTest {
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
-    private val offlineEnabled = true
-    private val userPresence = true
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
-    private val offlinePlugin = OfflinePlugin(
-        Config(
-            backgroundSyncEnabled = backgroundSyncEnabled,
-            userPresence = userPresence,
-            persistenceEnabled = offlineEnabled
-        )
-    )
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
@@ -193,7 +182,6 @@ internal open class BaseDomainTest {
             on { connectUser(any(), any<String>()) } doAnswer {
                 TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
             }
-            on { plugins } doReturn listOf(offlinePlugin)
         }
     }
 
@@ -202,22 +190,18 @@ internal open class BaseDomainTest {
         val context = getApplicationContext() as Context
         val handler: Handler = mock()
 
-        chatDomainImpl = ChatDomainImpl(
-            client,
-            db,
-            handler,
-            offlineEnabled,
-            userPresence,
-            recoveryEnabled,
-            backgroundSyncEnabled,
-            context,
-            offlinePlugin = offlinePlugin,
-        )
+        chatDomain = ChatDomain.Builder(context, client)
+            .database(db)
+            .handler(handler)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .recoveryDisabled()
+            .disableBackgroundSync()
+            .build()
+        chatDomainImpl = chatDomain as ChatDomainImpl
+
         chatDomainImpl.scope = testCoroutines.scope
-        offlinePlugin.initState(chatDomainImpl, client)
         chatDomainImpl.retryPolicy = NoRetryPolicy()
-        chatDomain = chatDomainImpl
-        ChatDomain.instance = chatDomainImpl
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {

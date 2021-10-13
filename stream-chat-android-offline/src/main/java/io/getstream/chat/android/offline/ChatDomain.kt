@@ -592,6 +592,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private var database: ChatDatabase? = null
+        private var handler: Handler = Handler(Looper.getMainLooper())
 
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
@@ -603,6 +604,11 @@ public sealed interface ChatDomain {
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
+        }
+
+        @VisibleForTesting
+        internal fun handler(handler: Handler) = apply {
+            this.handler = handler
         }
 
         public fun enableBackgroundSync(): Builder {
@@ -670,7 +676,6 @@ public sealed interface ChatDomain {
         @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val handler = Handler(Looper.getMainLooper())
             val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
