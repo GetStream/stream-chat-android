@@ -1402,11 +1402,11 @@ public class ChannelController internal constructor(
         newerMessagesOffset: Int,
         olderMessagesOffset: Int,
     ): Result<Message> {
-        val result = client.getMessage(messageId).await()
-        if (result.isError) {
-            return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-        }
-        val message = result.data()
+        val message = domainImpl.repos.selectMessage(messageId)
+            ?: client.getMessage(messageId).await()
+                .takeIf { it.isSuccess }
+                ?.data()
+            ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         upsertMessage(message)
         loadOlderMessages(messageId, newerMessagesOffset)
         loadNewerMessages(messageId, olderMessagesOffset)
