@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -666,9 +667,11 @@ public sealed interface ChatDomain {
                     .let(::OfflinePlugin)
         }
 
+        @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
+            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -678,9 +681,12 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = getPlugin(),
+                offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
-            )
+            ).also { domainImpl ->
+                // TODO remove when plugin becomes stateless
+                plugin.initState(domainImpl, client)
+            }
         }
     }
 
