@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -117,37 +118,31 @@ public class MessageListViewModel @JvmOverloads constructor(
                 _reads.addSource(channelController.reads) { _reads.value = it }
                 _loadMoreLiveData.addSource(channelController.loadingOlderMessages) { _loadMoreLiveData.value = it }
 
-                if (messageId.isNullOrEmpty()) {
-                    stateMerger.apply {
-                        addSource(channelController.messagesState) { messageState ->
-                            when (messageState) {
-                                is ChannelController.MessagesState.NoQueryActive,
-                                is ChannelController.MessagesState.Loading,
-                                -> value = State.Loading
-                                is ChannelController.MessagesState.OfflineNoResults ->
-                                    value = State.Result(MessageListItemWrapper())
-                                is ChannelController.MessagesState.Result -> {
-                                    removeSource(channelController.messagesState)
-                                    onNormalModeEntered()
-                                }
+                stateMerger.apply {
+                    addSource(channelController.messagesState) { messageState ->
+                        when (messageState) {
+                            is ChannelController.MessagesState.NoQueryActive,
+                            is ChannelController.MessagesState.Loading,
+                            -> value = State.Loading
+                            is ChannelController.MessagesState.OfflineNoResults ->
+                                value = State.Result(MessageListItemWrapper())
+                            is ChannelController.MessagesState.Result -> {
+                                removeSource(channelController.messagesState)
+                                onNormalModeEntered()
                             }
                         }
                     }
-                } else {
-                    domain.loadMessageById(
-                        cid,
-                        messageId,
-                        MESSAGES_LIMIT,
-                        MESSAGES_LIMIT
-                    ).enqueue {
-                        if (it.isSuccess) {
-                            _targetMessage.value = it.data()
-                            onNormalModeEntered()
-                        } else {
-                            stateMerger.value = State.Result(MessageListItemWrapper())
+                }
+                stateMerger.observeForever(object : Observer<State> {
+                    override fun onChanged(state: State?) {
+                        if (state is State.Result) {
+                            if (!messageId.isNullOrBlank()) {
+                                onEvent(Event.ShowMessage(messageId))
+                            }
+                            stateMerger.removeObserver(this)
                         }
                     }
-                }
+                })
             }
         }
     }
