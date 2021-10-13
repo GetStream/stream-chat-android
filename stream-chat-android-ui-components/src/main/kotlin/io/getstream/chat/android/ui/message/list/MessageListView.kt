@@ -485,13 +485,13 @@ public class MessageListView : ConstraintLayout {
 
     private fun initRecyclerView() {
         if (!::layoutManager.isInitialized) {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context).apply {
+                stackFromEnd = true
+            }
         }
 
         binding.chatMessagesRV.apply {
-            layoutManager = this@MessageListView.layoutManager.apply {
-                stackFromEnd = true
-            }
+            layoutManager = this@MessageListView.layoutManager
             setHasFixedSize(false)
             setItemViewCacheSize(20)
         }
