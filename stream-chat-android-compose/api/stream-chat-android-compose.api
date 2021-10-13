@@ -804,7 +804,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamTypography {
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamTypography$Companion {
-	public final fun defaultTypography ()Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
+	public final fun defaultTypography (Landroidx/compose/ui/text/font/FontFamily;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
+	public static synthetic fun defaultTypography$default (Lio/getstream/chat/android/compose/ui/theme/StreamTypography$Companion;Landroidx/compose/ui/text/font/FontFamily;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
