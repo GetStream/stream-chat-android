@@ -12,19 +12,15 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            notifyListenersIfActiveNetworkAvailable()
+            notifyListenersIfNetworkStateChanged()
         }
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-            notifyListenersIfActiveNetworkAvailable()
+            notifyListenersIfNetworkStateChanged()
         }
 
         override fun onLost(network: Network) {
-            // Checks whether the network was switched or connection was lost
-            if (!isConnected() && this@NetworkStateProvider.isConnected) {
-                this@NetworkStateProvider.isConnected = false
-                listeners.forEach { it.onDisconnected() }
-            }
+            notifyListenersIfNetworkStateChanged()
         }
     }
 
@@ -36,10 +32,14 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
-    private fun notifyListenersIfActiveNetworkAvailable() {
-        if (!isConnected && isConnected()) {
+    private fun notifyListenersIfNetworkStateChanged() {
+        val isNowConnected = isConnected()
+        if (!isConnected && isNowConnected) {
             isConnected = true
             listeners.forEach { it.onConnected() }
+        } else if (isConnected && !isNowConnected) {
+            isConnected = false
+            listeners.forEach { it.onDisconnected() }
         }
     }
 
