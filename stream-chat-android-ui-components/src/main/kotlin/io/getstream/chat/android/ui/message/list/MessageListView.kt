@@ -116,7 +116,6 @@ public class MessageListView : ConstraintLayout {
     private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
     private lateinit var adapter: MessageListItemAdapter
-    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var loadingView: View
     private lateinit var loadingViewContainer: ViewGroup
     private lateinit var emptyStateView: View
@@ -484,14 +483,10 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initRecyclerView() {
-        if (!::layoutManager.isInitialized) {
+        binding.chatMessagesRV.apply {
             layoutManager = LinearLayoutManager(context).apply {
                 stackFromEnd = true
             }
-        }
-
-        binding.chatMessagesRV.apply {
-            layoutManager = this@MessageListView.layoutManager
             setHasFixedSize(false)
             setItemViewCacheSize(20)
         }
@@ -657,8 +652,7 @@ public class MessageListView : ConstraintLayout {
      * @param layoutManager
      */
     public fun setCustomLinearLayoutManager(layoutManager: LinearLayoutManager) {
-        this.layoutManager = layoutManager
-        binding.chatMessagesRV.layoutManager = this.layoutManager
+        binding.chatMessagesRV.layoutManager = layoutManager
     }
 
     /**
