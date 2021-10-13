@@ -111,6 +111,7 @@ public class ChannelController internal constructor(
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val attachmentUploader: AttachmentUploader = AttachmentUploader(client),
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
     private val editJobs = mutableMapOf<String, Job>()
@@ -584,17 +585,20 @@ public class ChannelController internal constructor(
         message: Message,
     ): List<Attachment> {
         return try {
-            message.attachments.filter { it.uploadState != Attachment.UploadState.Success }
-                .map { attachment ->
-                    AttachmentUploader(client)
-                        .uploadAttachment(
-                            channelType,
-                            channelId,
-                            attachment,
-                            ProgressCallbackImpl(message.id, attachment.uploadId!!)
-                        ).recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+            message.attachments.map { attachment ->
+                if (attachment.uploadState != Attachment.UploadState.Success) {
+                    attachmentUploader.uploadAttachment(
+                        channelType,
+                        channelId,
+                        attachment,
+                        ProgressCallbackImpl(message.id, attachment.uploadId!!)
+                    )
+                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
                         .data()
-                }.toMutableList()
+                } else {
+                    attachment
+                }
+            }.toMutableList()
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
@@ -602,11 +606,17 @@ public class ChannelController internal constructor(
                 }
                 it
             }.toMutableList()
-        }.also {
-            message.attachments = it
+        }.also { attachments ->
+            message.attachments = attachments
+            // TODO refactor this place. A lot of side effects happening here.
+            //  We should extract it to entity that will handle logic of uploading only.
+            if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
+                message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+            }
             // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
             domainImpl.repos.deleteChannelMessage(message)
             domainImpl.repos.insertMessage(message)
+            upsertMessage(message)
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.offline.repository.domain.message.MessageInnerEntity
 
@@ -17,10 +18,13 @@ import io.getstream.chat.android.offline.repository.domain.message.MessageInnerE
             onDelete = ForeignKey.CASCADE,
             deferred = true
         )
-    ]
+    ],
+    indices = [Index("messageId")]
 )
 internal data class AttachmentEntity(
     @ColumnInfo(index = true)
+    @PrimaryKey
+    val id: String,
     val messageId: String,
     val authorName: String?,
     val titleLink: String?,
@@ -39,11 +43,16 @@ internal data class AttachmentEntity(
     val name: String?,
     val fallback: String?,
     val uploadFilePath: String?,
-    @Embedded val uploadState: UploadStateEntity?,
+    @Embedded
+    var uploadState: UploadStateEntity? = null,
     val extraData: Map<String, Any>,
 ) {
-    @PrimaryKey
-    var id: Int = hashCode()
+    companion object {
+        internal const val EXTRA_DATA_ID_KEY = "extra_data_id_key"
+        internal fun generateId(messageId: String, index: Int): String {
+            return messageId + "_$index"
+        }
+    }
 }
 
 internal data class UploadStateEntity(val statusCode: Int, val errorMessage: String?) {
