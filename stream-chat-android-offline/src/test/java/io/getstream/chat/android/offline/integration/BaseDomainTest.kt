@@ -16,7 +16,6 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -61,7 +60,6 @@ internal open class BaseDomainTest {
     lateinit var db: ChatDatabase
     lateinit var queryControllerImpl: QueryChannelsController
     lateinit var query: QueryChannelsSpec
-    lateinit var filter: FilterObject
 
     private val recoveryEnabled = false
     private val backgroundSyncEnabled = false
