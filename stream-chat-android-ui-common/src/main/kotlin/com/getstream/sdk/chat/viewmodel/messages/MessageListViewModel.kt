@@ -135,7 +135,6 @@ public class MessageListViewModel @JvmOverloads constructor(
                 }
                 messageId.takeUnless { it.isNullOrBlank() }
                     ?.let { targetMessageId ->
-                        targetMessageId.takeIf { it.isNotBlank() }
                         stateMerger.observeForever(object : Observer<State> {
                             override fun onChanged(state: State?) {
                                 if (state is State.Result) {
