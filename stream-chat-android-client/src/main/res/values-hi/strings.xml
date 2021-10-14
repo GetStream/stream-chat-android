@@ -12,4 +12,5 @@
     <string name="stream_chat_notification_group_summary_content_text">आपको नए मैसेज प्राप्त हुए हैं</string>
     <string name="stream_chat_error_notification_group_summary_title">चैट मैसेज</string>
     <string name="stream_chat_error_notification_group_summary_content_text">आपको नए मैसेज प्राप्त हुए हैं</string>
+    <string name="stream_chat_notification_empty_username">अनाम यूजर</string>
 </resources>
