@@ -12,4 +12,5 @@
     <string name="stream_chat_notification_group_summary_content_text">Hai ricevuto nuovi messaggi</string>
     <string name="stream_chat_error_notification_group_summary_title">Messaggi</string>
     <string name="stream_chat_error_notification_group_summary_content_text">Hai ricevuto nuovi messaggi</string>
+    <string name="stream_chat_notification_empty_username">Utente senza nome</string>
 </resources>

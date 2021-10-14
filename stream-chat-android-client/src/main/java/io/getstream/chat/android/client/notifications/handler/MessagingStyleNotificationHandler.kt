@@ -46,7 +46,7 @@ internal class MessagingStyleNotificationHandler(
         val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
         val notification = NotificationCompat.Builder(context, getNotificationChannelId())
             .setSmallIcon(R.drawable.stream_ic_notification)
-            .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage()))
+            .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context)))
             .setContentIntent(contentPendingIntent)
             .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
             .addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
@@ -92,7 +92,7 @@ internal class MessagingStyleNotificationHandler(
             ?.let(NotificationCompat.MessagingStyle::extractMessagingStyleFromNotification)
 
     private fun createMessagingStyle(currentUser: User, channel: Channel): NotificationCompat.MessagingStyle =
-        NotificationCompat.MessagingStyle(currentUser.toPerson())
+        NotificationCompat.MessagingStyle(currentUser.toPerson(context))
             .setConversationTitle(channel.name)
             .setGroupConversation(channel.name.isNotBlank())
 
@@ -112,17 +112,16 @@ internal class MessagingStyleNotificationHandler(
     }
 }
 
-private fun Message.toMessagingStyleMessage(): NotificationCompat.MessagingStyle.Message =
-    NotificationCompat.MessagingStyle.Message(text, timestamp, person)
+private fun Message.toMessagingStyleMessage(context: Context): NotificationCompat.MessagingStyle.Message =
+    NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
 
-private val Message.person: Person
-    get() = user.toPerson()
+private fun Message.person(context: Context): Person = user.toPerson(context)
 
 private val Message.timestamp: Long
     get() = (createdAt ?: createdLocallyAt ?: Date()).time
 
-private fun User.toPerson(): Person =
+private fun User.toPerson(context: Context): Person =
     Person.Builder()
         .setKey(id)
-        .setName(name)
+        .setName(name.takeIf { it.isNotEmpty() } ?: context.getString(R.string.stream_chat_notification_empty_username))
         .build()
