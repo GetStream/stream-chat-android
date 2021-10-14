@@ -95,6 +95,7 @@
 - `ChatUI.uiMode` has been deprecated. If you want to force Dark/Light theme, you need to use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)`
 
 ### ❌ Removed
+- `android.permission.CAMERA` from our Manifest. This permission is not required anymore.
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
