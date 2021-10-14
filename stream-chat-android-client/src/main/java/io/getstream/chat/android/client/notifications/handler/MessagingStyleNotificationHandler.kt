@@ -123,5 +123,5 @@ private val Message.timestamp: Long
 private fun User.toPerson(context: Context): Person =
     Person.Builder()
         .setKey(id)
-        .setName(name.takeIf { it.isNotEmpty() } ?: context.getString(R.string.stream_chat_notification_empty_username))
+        .setName(name.takeIf { it.isNotBlank() } ?: context.getString(R.string.stream_chat_notification_empty_username))
         .build()
