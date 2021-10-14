@@ -24,16 +24,7 @@ public class PermissionChecker {
 
     public fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            )
-                .all {
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        it
-                    ) == PackageManager.PERMISSION_GRANTED
-                }
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     public fun checkStoragePermissions(
         view: View,
@@ -77,10 +68,7 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_input_permission_camera_title),
             view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
             view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
-            listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            ),
+            listOf(Manifest.permission.CAMERA),
             onPermissionDenied,
             onPermissionGranted
         )
