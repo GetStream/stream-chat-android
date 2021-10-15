@@ -713,13 +713,11 @@ public abstract class io/getstream/chat/android/ui/common/internal/SimpleListAda
 	public fun <init> ()V
 	public final fun clear ()V
 	public final fun getItemCount ()I
-	public final fun getItemList ()Ljava/util/List;
 	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
 	public final fun onBindViewHolder (Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;I)V
 	public synthetic fun onViewRecycled (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
 	public fun onViewRecycled (Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;)V
 	public final fun removeItem (Ljava/lang/Object;)V
-	public final fun setItemList (Ljava/util/List;)V
 	public final fun setItems (Ljava/util/List;)V
 }
 
@@ -2007,11 +2005,6 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;
 }
 
-public final class io/getstream/chat/android/ui/message/list/adapter/attachments/AttachmentGroup {
-	public fun <init> (Ljava/util/List;)V
-	public final fun getAttachments ()Ljava/util/List;
-}
-
 public final class io/getstream/chat/android/ui/message/list/adapter/view/MediaAttachmentViewStyle {
 	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IILio/getstream/chat/android/ui/common/style/TextStyle;I)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
@@ -2056,14 +2049,14 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory {
-	public abstract fun attachmentViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
-	public abstract fun setUp (Ljava/util/List;)V
+	public abstract fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
+	public abstract fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactoryImpl : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory {
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentLongClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentDownloadClickListener;Lio/getstream/chat/android/ui/message/list/FileAttachmentViewStyle;)V
-	public fun attachmentViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
-	public fun setUp (Ljava/util/List;)V
+	public fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
+	public fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
