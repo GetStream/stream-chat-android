@@ -19,34 +19,26 @@ public open class AttachmentViewHolderFactoryImpl(
     private val style: FileAttachmentViewStyle,
 ) : AttachmentViewHolderFactory {
 
-    private lateinit var attachments: List<Attachment>
-
-    override fun setUp(attachments: List<Attachment>) {
-        this.attachments = attachments
+    override fun attachmentMediaViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): SimpleListAdapter.ViewHolder<List<Attachment>> {
+        return StreamUiItemImageAttachmentBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let(::MediaAttachmentsViewHolder)
     }
 
-    override fun attachmentViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): SimpleListAdapter.ViewHolder<List<Attachment>> {
-        return when {
-            attachments.isMedia() -> StreamUiItemImageAttachmentBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let(::MediaAttachmentsViewHolder)
-
-            attachments.isNotEmpty() -> StreamUiItemFileAttachmentBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let {
-                    FileAttachmentViewHolder(
-                        it,
-                        attachmentClickListener,
-                        attachmentLongClickListener,
-                        attachmentDownloadClickListener,
-                        style,
-                    )
-                }
-
-            else -> error("Unsupported case for attachment adapter factory!")
-        }
+    override fun attachmentFileViewHolder(parent: ViewGroup, viewType: Int): SimpleListAdapter.ViewHolder<Attachment> {
+        return StreamUiItemFileAttachmentBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let {
+                FileAttachmentViewHolder(
+                    it,
+                    attachmentClickListener,
+                    attachmentLongClickListener,
+                    attachmentDownloadClickListener,
+                    style,
+                )
+            }
     }
 }

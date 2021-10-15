@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBi
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
+import io.getstream.chat.android.ui.message.list.adapter.attachments.MediaAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -45,8 +46,6 @@ internal class TextAndAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     private var scope: CoroutineScope? = null
-
-    private lateinit var adapter: FileAttachmentsAdapter
 
     init {
         binding.run {
@@ -85,27 +84,32 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        attachmentViewHolderFactory.setUp(data.message.attachments)
-        adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
+        val attachments = data.message.attachments
 
         binding.run {
             attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-                recycleChildrenOnDetach = true
+                // recycleChildrenOnDetach = true
             }
-            attachmentsRecycler.setRecycledViewPool(recycledViewPool)
-            attachmentsRecycler.adapter = adapter
+            // attachmentsRecycler.setRecycledViewPool(recycledViewPool)
         }
 
-        //Fix this with a different base adapter for AttachmentGroup
-        val attachmentGroups = if (data.message.attachments.isMedia()) {
-            listOf(data.message.attachments)
-        } else {
-            data.message.attachments.map { attachment ->
-                listOf(attachment)
-            }
-        }
+        when {
+            attachments.isMedia() -> {
+                val adapter = MediaAttachmentsAdapter(attachmentViewHolderFactory)
 
-        adapter.setItems(attachmentGroups)
+                binding.attachmentsRecycler.adapter = adapter
+                adapter.setItems(listOf(attachments))
+            }
+
+            attachments.isNotEmpty() -> {
+                val adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
+
+                binding.attachmentsRecycler.adapter = adapter
+                adapter.setItems(attachments)
+            }
+
+            else -> error("Unsupported case for attachment adapter factory!")
+        }
     }
 
     private fun clearScope() {
