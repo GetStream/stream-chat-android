@@ -37,7 +37,8 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewHolderFactory: AttachmentViewHolderFactory,
-    private val recycledViewPool: RecyclerView.RecycledViewPool,
+    private val mediaRecycledViewPool: RecyclerView.RecycledViewPool,
+    private val fileRecycledViewPool: RecyclerView.RecycledViewPool,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -86,18 +87,16 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         val attachments = data.message.attachments
 
-        binding.run {
-            attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-                // recycleChildrenOnDetach = true
-            }
-            // attachmentsRecycler.setRecycledViewPool(recycledViewPool)
-        }
-
         when {
             attachments.isMedia() -> {
                 val adapter = MediaAttachmentsAdapter(attachmentViewHolderFactory)
 
                 binding.attachmentsRecycler.adapter = adapter
+                binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
+                    recycleChildrenOnDetach = true
+                }
+                binding.attachmentsRecycler.setRecycledViewPool(mediaRecycledViewPool)
+
                 adapter.setItems(listOf(attachments))
             }
 
@@ -105,6 +104,11 @@ internal class TextAndAttachmentsViewHolder(
                 val adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
 
                 binding.attachmentsRecycler.adapter = adapter
+                binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
+                    recycleChildrenOnDetach = true
+                }
+                binding.attachmentsRecycler.setRecycledViewPool(fileRecycledViewPool)
+
                 adapter.setItems(attachments)
             }
 
