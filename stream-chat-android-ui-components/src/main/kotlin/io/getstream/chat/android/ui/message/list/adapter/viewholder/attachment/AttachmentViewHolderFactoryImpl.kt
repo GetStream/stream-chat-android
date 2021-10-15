@@ -8,7 +8,6 @@ import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
-import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.AttachmentLongClickListener
@@ -29,7 +28,7 @@ public open class AttachmentViewHolderFactoryImpl(
     override fun attachmentViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): SimpleListAdapter.ViewHolder<AttachmentGroup> {
+    ): SimpleListAdapter.ViewHolder<List<Attachment>> {
         return when {
             attachments.isMedia() -> StreamUiItemImageAttachmentBinding
                 .inflate(parent.streamThemeInflater, parent, false)

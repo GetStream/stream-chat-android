@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentGroup
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
@@ -99,10 +98,10 @@ internal class TextAndAttachmentsViewHolder(
 
         //Fix this with a different base adapter for AttachmentGroup
         val attachmentGroups = if (data.message.attachments.isMedia()) {
-            listOf(AttachmentGroup(data.message.attachments))
+            listOf(data.message.attachments)
         } else {
             data.message.attachments.map { attachment ->
-                AttachmentGroup(listOf(attachment))
+                listOf(attachment)
             }
         }
 
