@@ -15,7 +15,7 @@ Based on the provided state, this component shows the following UI:
 
 * `LoadingView`: If we're loading the initial data.
 * `EmptyView`: If there is no data and we've finished loading.
-* Messages: The list of messages in the channel, including file and image attachments, with various actions like thread clicks, item long taps, pagination and reaching the bottom.
+* `Messages`: The list of messages in the channel, including file and image attachments, with various actions like thread clicks, item long taps, pagination and reaching the bottom.
 
 Let's see how to show a list of messages.
 
@@ -64,17 +64,25 @@ The `MessageList` component exposes the following actions, as per the signature:
 @Composable
 fun MessageList(
 	..., // State & UI
-    onThreadClick: (Message) -> Unit = { viewModel.onMessageThreadClick(it) },
-    onLongItemClick: (Message) -> Unit = { viewModel.onMessageSelected(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.onLoadMore() },
-    onScrollToBottom: () -> Unit = { viewModel.onScrolledToBottom() },
+    onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
+    onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
+    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
+    onScrolledToBottom: () -> Unit = { viewModel.clearNewMessageState() },
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
+        if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
+            viewModel.focusMessage(it.messageId)
+        }
+    },
 )
 ```
 
 * `onThreadClick`: Handler for the user tapping on a message with a thread.
 * `onLongItemClick`: Handler for the user long tapping on an item. 
 * `onMessagesStartReached`: Handler for the user reaching the end of messages (oldest message), to trigger pagination.
-* `onScrollToBottom`: Handler for the user reaching the start of the list (newest message). Used to remove the "New message" or "Scroll to bottom" actions from the UI.
+* `onLastVisibleMessageChanged`: Handler when the user scrolls and the last visible item changes.
+* `onScrolledToBottom`: Handler for the user reaching the start of the list (newest message). Used to remove the "New message" or "Scroll to bottom" actions from the UI.
+* `onImagePreviewResult`: Handler when the user receives a result from the Image Preview screen, after opening an image attachment.
 
 You can customize the behavior here by providing your own actions, like so:
 
@@ -107,20 +115,21 @@ fun MessageList(
     modifier: Modifier = Modifier,
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
     emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
-    itemContent: @Composable (Message) -> Unit = { message ->
-        DefaultMessageContainer(
-            message = message,
-            onThreadClick = onThreadClick,
+    itemContent: @Composable (MessageListItem) -> Unit = {
+        DefaultMessageItem(
+            messageListItem = it,
             onLongItemClick = onLongItemClick,
+            onThreadClick = onThreadClick,
+            onImagePreviewResult = onImagePreviewResult
         )
-    }
+    },
 )
 ```
 
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
 * `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
 * `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no messages available.
-* `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageItem` inside the lambda when building your custom UI.
+* `itemContent`: Composable function that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItem` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:
 
@@ -129,44 +138,51 @@ Here's an example of customizing the `Message` items in the list:
 fun CustomMessageList() {
     MessageList(
         viewModel = listViewModel,
-        modifier = Modifier.fillMaxSize().background(ChatTheme.colors.appBackground),
-        itemContent = { messageItem ->
-		    val (message, position) = messageItem
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .widthIn(max = 300.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Avatar(
-                        modifier = Modifier.size(36.dp),
-                        painter = rememberImagePainter(data = message.user.image)
-                    )
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.appBackground),
+        itemContent = { item ->
+            if (item is MessageItem) { // we check that this is not a `DateSeparator` item
+                val message = item.message
 
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = message.user.name,
-                        style = ChatTheme.typography.bodyBold,
-                        fontSize = 14.sp
-                    )
-                }
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .widthIn(max = 300.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Avatar(
+                            modifier = Modifier.size(36.dp),
+                            painter = rememberImagePainter(data = message.user.image)
+                        )
 
-                MessageBubble(
-                    color = ChatTheme.colors.barsBackground,
-                    modifier = Modifier.padding(top = 4.dp),
-                    shape = RoundedCornerShape(
-                        topEnd = 16.dp,
-                        topStart = 0.dp,
-                        bottomEnd = 16.dp,
-                        bottomStart = 16.dp
-                    ),
-                    content = {
                         Text(
-                            modifier = Modifier.padding(8.dp),
-                            text = message.text
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = message.user.name,
+                            style = ChatTheme.typography.bodyBold,
+                            fontSize = 14.sp,
+                            color = ChatTheme.colors.textHighEmphasis
                         )
                     }
-                )
+
+                    MessageBubble(
+                        color = ChatTheme.colors.barsBackground,
+                        modifier = Modifier.padding(top = 4.dp),
+                        shape = RoundedCornerShape(
+                            topEnd = 16.dp,
+                            topStart = 0.dp,
+                            bottomEnd = 16.dp,
+                            bottomStart = 16.dp
+                        ),
+                        content = {
+                            Text(
+                                modifier = Modifier.padding(8.dp),
+                                text = message.text,
+                                color = ChatTheme.colors.textHighEmphasis
+                            )
+                        }
+                    )
+                }
             }
         }
     )

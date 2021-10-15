@@ -155,16 +155,16 @@ class Messages(
             channelClient.sendFile(
                 anyOtherFile,
                 object : ProgressCallback {
-                    override fun onSuccess(file: String) {
-                        val fileUrl = file
+                    override fun onSuccess(url: String?) {
+                        val fileUrl = url
                     }
 
                     override fun onError(error: ChatError) {
                         // Handle error
                     }
 
-                    override fun onProgress(progress: Long) {
-                        // You can render the uploading progress here
+                    override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+                        // You can render the uploading progress here.
                     }
                 }
             ).enqueue() // No callback passed to enqueue, as we'll get notified above anyway

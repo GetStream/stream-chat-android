@@ -54,7 +54,7 @@ To customize the `ChatTheme`, simply override any of the default properties by p
 ```kotlin
 setContent {
     ChatTheme(
-        shapes = StreamShapes( // Customizing the shapes
+        shapes = StreamShapes.defaultShapes().copy( // Customizing the shapes
             avatar = RoundedCornerShape(8.dp),
             attachment = RoundedCornerShape(16.dp),
             inputField = RectangleShape,

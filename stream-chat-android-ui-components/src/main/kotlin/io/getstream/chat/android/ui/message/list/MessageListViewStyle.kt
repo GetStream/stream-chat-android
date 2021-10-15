@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -102,6 +103,7 @@ public data class MessageListViewStyle(
 
     internal companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
+        private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
 
         private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
             return TextStyle.Builder(typedArray)
@@ -151,6 +153,10 @@ public data class MessageListViewStyle(
                     .scrollButtonBadgeColor(
                         R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
                         context.getColorCompat(R.color.stream_ui_accent_blue)
+                    )
+                    .scrollButtonElevation(
+                        R.styleable.MessageListView_streamUiScrollButtonElevation,
+                        DEFAULT_SCROLL_BUTTON_ELEVATION
                     )
                     .scrollButtonIcon(
                         R.styleable.MessageListView_streamUiScrollButtonIcon,

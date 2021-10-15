@@ -11,5 +11,10 @@ import io.getstream.chat.android.compose.ui.util.isUploading
 @Suppress("FunctionName")
 public fun UploadAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.isUploading() } },
-    content = @Composable { FileUploadContent(it) },
+    content = @Composable { modifier, state ->
+        FileUploadContent(
+            modifier = modifier,
+            attachmentState = state
+        )
+    },
 )

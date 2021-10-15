@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
@@ -22,7 +21,6 @@ internal class ChatEventsObservable(
 
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
-    private val logger = ChatLogger.get("ChatEventsObservable")
 
     private fun onNext(event: ChatEvent) {
         subscriptions.forEach { subscription ->
@@ -37,6 +35,7 @@ internal class ChatEventsObservable(
             is ErrorEvent -> {
                 client.callConnectionListener(null, event.error)
             }
+            else -> Unit // Ignore other events
         }
         subscriptions = subscriptions.filterNot(Disposable::isDisposed).toSet()
         checkIfEmpty()

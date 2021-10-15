@@ -3,8 +3,10 @@ package io.getstream.chat.android.compose.ui.messages.composer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -13,12 +15,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.list.Edit
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
@@ -140,8 +144,14 @@ public fun MessageComposer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                if (shouldShowIntegrations) {
+                if (shouldShowIntegrations && activeAction !is Edit) {
                     integrations()
+                } else {
+                    Spacer(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .align(CenterVertically)
+                    )
                 }
 
                 input()

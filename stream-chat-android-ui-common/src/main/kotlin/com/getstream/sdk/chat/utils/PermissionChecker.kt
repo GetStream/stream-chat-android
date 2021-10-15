@@ -24,21 +24,22 @@ public class PermissionChecker {
 
     public fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            )
-                .all {
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        it
-                    ) == PackageManager.PERMISSION_GRANTED
-                }
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+
+    /**
+     * Check if Camera Permission needs to be requested to the user
+     *
+     * @param context of the App
+     *
+     * @return True if [Manifest.permission.CAMERA] is present on the App Manifest and user didn't grant it, False in another case
+     */
+    public fun isNeededToRequestForCameraPermissions(context: Context): Boolean =
+        isPermissionContainedOnManifest(context, Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
 
     public fun checkStoragePermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit
+        onPermissionGranted: () -> Unit,
     ) {
         checkPermissions(
             view,
@@ -54,7 +55,7 @@ public class PermissionChecker {
     public fun checkWriteStoragePermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit
+        onPermissionGranted: () -> Unit,
     ) {
         checkPermissions(
             view,
@@ -70,21 +71,32 @@ public class PermissionChecker {
     public fun checkCameraPermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit
+        onPermissionGranted: () -> Unit,
     ) {
         checkPermissions(
             view,
             view.context.getString(R.string.stream_ui_message_input_permission_camera_title),
             view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
             view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
-            listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            ),
+            listOf(Manifest.permission.CAMERA),
             onPermissionDenied,
             onPermissionGranted
         )
     }
+
+    /**
+     * Check if the [permission] was declared on the App Manifest
+     *
+     * @param context of the current Application
+     * @param permission name to be checked
+     *
+     * @return True if the permission is present on the App Manifest
+     */
+    private fun isPermissionContainedOnManifest(context: Context, permission: String): Boolean =
+        context.packageManager
+            .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+            .requestedPermissions
+            .contains(permission)
 
     private fun checkPermissions(
         view: View,
@@ -93,7 +105,7 @@ public class PermissionChecker {
         snackbarMessage: String,
         permissions: List<String>,
         onPermissionDenied: () -> Unit,
-        onPermissionGranted: () -> Unit
+        onPermissionGranted: () -> Unit,
     ) {
 
         val permissionsListener = object : BaseMultiplePermissionsListener() {
@@ -126,7 +138,7 @@ public class PermissionChecker {
 
     private fun snackbarPermissionsListener(
         view: View,
-        snackbarMessage: String
+        snackbarMessage: String,
     ): SnackbarOnAnyDeniedMultiplePermissionsListener =
         SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
             .with(view, snackbarMessage)
@@ -136,7 +148,7 @@ public class PermissionChecker {
     private fun dialogPermissionsListener(
         context: Context,
         dialogTitle: String,
-        dialogMessage: String
+        dialogMessage: String,
     ): DialogOnAnyDeniedMultiplePermissionsListener =
         DialogOnAnyDeniedMultiplePermissionsListener.Builder
             .withContext(context)

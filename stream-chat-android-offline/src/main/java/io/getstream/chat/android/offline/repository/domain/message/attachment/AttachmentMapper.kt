@@ -7,11 +7,12 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.Up
 import io.getstream.chat.android.offline.repository.domain.message.attachment.UploadStateEntity.Companion.UPLOAD_STATE_SUCCESS
 import java.io.File
 
-internal fun Attachment.toEntity(messageId: String): AttachmentEntity = AttachmentEntity(
+internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntity = AttachmentEntity(
+    id = getOrGenerateId(messageId, index),
     messageId = messageId,
     authorName = authorName,
     titleLink = titleLink,
-    authorLink = titleLink,
+    authorLink = authorLink,
     thumbUrl = thumbUrl,
     imageUrl = imageUrl,
     assetUrl = assetUrl,
@@ -48,13 +49,14 @@ internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     name = name,
     fallback = fallback,
     upload = uploadFilePath?.let(::File),
-    uploadState = uploadState?.let(UploadStateEntity::toModel),
+    uploadState = uploadState?.toModel(uploadFilePath?.let(::File)),
     extraData = extraData.toMutableMap(),
 )
 
 private fun Attachment.UploadState.toEntity(): UploadStateEntity {
     val (statusCode, errorMessage) = when (this) {
-        is Attachment.UploadState.Success -> UPLOAD_STATE_SUCCESS to null
+        Attachment.UploadState.Success -> UPLOAD_STATE_SUCCESS to null
+        Attachment.UploadState.Idle -> UPLOAD_STATE_IN_PROGRESS to null
         is Attachment.UploadState.InProgress -> UPLOAD_STATE_IN_PROGRESS to null
         is Attachment.UploadState.Failed -> UPLOAD_STATE_FAILED to (
             this.error.message
@@ -64,9 +66,19 @@ private fun Attachment.UploadState.toEntity(): UploadStateEntity {
     return UploadStateEntity(statusCode, errorMessage)
 }
 
-private fun UploadStateEntity.toModel(): Attachment.UploadState = when (this.statusCode) {
+private fun UploadStateEntity.toModel(uploadFile: File?): Attachment.UploadState = when (this.statusCode) {
     UPLOAD_STATE_SUCCESS -> Attachment.UploadState.Success
-    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress
+    UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0, uploadFile?.length() ?: 0)
     UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(ChatError(message = this.errorMessage))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
+}
+
+private fun Attachment.getOrGenerateId(messageId: String, index: Int): String {
+    return if (extraData.containsKey(AttachmentEntity.EXTRA_DATA_ID_KEY)) {
+        extraData[AttachmentEntity.EXTRA_DATA_ID_KEY] as String
+    } else {
+        AttachmentEntity.generateId(messageId, index).also { id ->
+            extraData[AttachmentEntity.EXTRA_DATA_ID_KEY] = id
+        }
+    }
 }

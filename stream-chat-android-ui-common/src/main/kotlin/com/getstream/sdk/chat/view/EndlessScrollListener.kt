@@ -25,10 +25,10 @@ public class EndlessScrollListener(
             throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
         }
 
-        if (layoutManager.stackFromEnd) {
-            checkScrollUp(dy, layoutManager, recyclerView)
-        } else {
+        if (layoutManager.reverseLayout) {
             checkScrollDown(dy, layoutManager, recyclerView)
+        } else {
+            checkScrollUp(dy, layoutManager, recyclerView)
         }
     }
 
@@ -37,15 +37,8 @@ public class EndlessScrollListener(
             // Scrolling downwards
             return
         }
-        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-        if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
-            scrollStateReset = false
-            recyclerView.post {
-                if (paginationEnabled) {
-                    loadMoreListener()
-                }
-            }
-        }
+
+        handleScroll(layoutManager, recyclerView)
     }
 
     private fun checkScrollDown(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
@@ -53,9 +46,13 @@ public class EndlessScrollListener(
             // Scrolling upwards
             return
         }
-        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-        val remainingItems = layoutManager.itemCount - lastVisiblePosition
-        if (scrollStateReset && remainingItems <= loadMoreThreshold) {
+
+        handleScroll(layoutManager, recyclerView)
+    }
+
+    private fun handleScroll(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
             scrollStateReset = false
             recyclerView.post {
                 if (paginationEnabled) {

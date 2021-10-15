@@ -33,11 +33,11 @@ internal class StreamFileUploaderTest {
     private val url = "url"
 
     private val progressCallback = object : ProgressCallback {
-        override fun onSuccess(file: String) = Unit
+        override fun onSuccess(url: String?) = Unit
 
         override fun onError(error: ChatError) = Unit
 
-        override fun onProgress(progress: Long) = Unit
+        override fun onProgress(bytesUploaded: Long, totalBytes: Long) = Unit
     }
 
     private lateinit var retrofitCdnApi: RetrofitCdnApi

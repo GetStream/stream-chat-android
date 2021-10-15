@@ -2,7 +2,7 @@ package io.getstream.chat.android.compose.state.messages
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.state.messages.items.MessageItem
+import io.getstream.chat.android.compose.state.messages.items.MessageListItem
 
 /**
  * UI representation of the Conversation/Messages screen. Holds all the data required to show messages.
@@ -21,7 +21,7 @@ public data class MessagesState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val endOfMessages: Boolean = false,
-    val messageItems: List<MessageItem> = emptyList(),
+    val messageItems: List<MessageListItem> = emptyList(),
     val selectedMessage: Message? = null,
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,

@@ -16,14 +16,19 @@ import org.mockito.MockitoAnnotations
 internal open class BaseChatClientTest {
     @Mock
     protected lateinit var socketStateService: SocketStateService
+
     @Mock
     protected lateinit var userStateService: UserStateService
+
     @Mock
     protected lateinit var socket: ChatSocket
+
     @Mock
     protected lateinit var tokenManager: TokenManager
+
     @Mock
     protected lateinit var config: ChatClientConfig
+
     @Mock
     protected lateinit var api: ChatApi
 
@@ -44,6 +49,8 @@ internal open class BaseChatClientTest {
             userStateService = userStateService,
             encryptedUserConfigStorage = mock(),
             tokenUtils = tokenUtils,
+            appContext = mock(),
+            scope = mock(),
         )
     }
 }

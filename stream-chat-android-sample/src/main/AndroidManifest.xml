@@ -15,7 +15,10 @@
         android:theme="@style/AppTheme"
         >
 
-        <activity android:name="io.getstream.chat.sample.feature.HostActivity">
+        <activity
+            android:name="io.getstream.chat.sample.feature.HostActivity"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

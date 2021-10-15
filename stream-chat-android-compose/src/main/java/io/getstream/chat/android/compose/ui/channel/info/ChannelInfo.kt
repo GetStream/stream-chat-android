@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
@@ -123,7 +122,7 @@ public fun ChannelInfo(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay.copy(alpha = 0.7f))
+            .background(ChatTheme.colors.overlay)
             .clickable(
                 indication = null,
                 interactionSource = MutableInteractionSource(),

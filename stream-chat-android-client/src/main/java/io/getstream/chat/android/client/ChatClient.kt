@@ -4,6 +4,7 @@ package io.getstream.chat.android.client
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
@@ -22,6 +23,8 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
+import io.getstream.chat.android.client.call.doOnResult
+import io.getstream.chat.android.client.call.doOnStart
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -38,6 +41,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -66,6 +70,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
 import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -82,9 +89,12 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
@@ -95,22 +105,24 @@ import java.util.concurrent.Executor
  * The ChatClient is the main entry point for all low-level operations on chat
  */
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@OptIn(ExperimentalStreamChatApi::class)
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    @InternalStreamChatApi public val notifications: ChatNotifications,
+    @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
     private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
+    private val scope: CoroutineScope,
+    private val appContext: Context,
+    @property:InternalStreamChatApi
+    @property:ExperimentalStreamChatApi
+    public val plugins: Collection<Plugin> = emptyList(),
 ) {
-
-    @InternalStreamChatApi
-    public val notificationHandler: ChatNotificationHandler = notifications.handler
-
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket, this)
@@ -139,7 +151,7 @@ public class ChatClient internal constructor(
                     userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id)
+                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -157,9 +169,12 @@ public class ChatClient internal constructor(
                 is NewMessageEvent -> {
                     notifications.onNewMessageEvent(event)
                 }
+                else -> Unit // Ignore other events
             }
         }
         logger.logI("Initialised: " + getVersion())
+
+        plugins.forEach { it.init(appContext, this) }
     }
 
     //region Set user
@@ -313,7 +328,7 @@ public class ChatClient internal constructor(
 
         encryptedUserConfigStorage.get()?.let { config ->
             initializeClientWithUser(
-                user = User(id = config.userId),
+                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
         }
@@ -328,11 +343,12 @@ public class ChatClient internal constructor(
         preSetUserListeners.forEach { it(user) }
     }
 
-    private fun storePushNotificationsConfig(userId: String) {
+    private fun storePushNotificationsConfig(userId: String, userName: String) {
         encryptedUserConfigStorage.put(
             PushNotificationsConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
+                userName = userName,
             ),
         )
     }
@@ -708,7 +724,7 @@ public class ChatClient internal constructor(
     @Deprecated(
         message = "Use the searchMessages method with unwrapped parameters instead",
         replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @CheckResult
     public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
@@ -792,33 +808,6 @@ public class ChatClient internal constructor(
         }
 
     /**
-     * Returns a [Call<List<Message>>] With messages which contain at least one desired type attachment but
-     * not necessarily all of them will have a specified type.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param offset The messages offset.
-     * @param limit Max limit messages to be fetched.
-     * @param type The desired type attachment.
-     */
-    @Deprecated(
-        message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun getMessagesWithAttachments(
-        channelType: String,
-        channelId: String,
-        offset: Int,
-        limit: Int,
-        type: String,
-    ): Call<List<Message>> {
-        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
-        val messageFilter = Filters.`in`("attachments.type", type)
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
-    }
-
-    /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
      * not necessarily all of them will have a specified type.
      *
@@ -838,7 +827,12 @@ public class ChatClient internal constructor(
     ): Call<List<Message>> {
         val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", types)
-        return searchMessages(SearchMessagesRequest(offset, limit, channelFilter, messageFilter))
+        return searchMessages(
+            channelFilter = channelFilter,
+            messageFilter = messageFilter,
+            offset = offset,
+            limit = limit,
+        ).map { it.messages }
     }
 
     @CheckResult
@@ -885,9 +879,18 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> {
-        return api.sendMessage(channelType, channelId, message)
-    }
+    ): Call<Message> = api.sendMessage(channelType, channelId, message)
+        .doOnStart(scope) { plugins.forEach { it.onMessageSendRequest(channelType, channelId, message) } }
+        .doOnResult(scope) { result ->
+            plugins.forEach {
+                it.onMessageSendResult(
+                    result,
+                    channelType,
+                    channelId,
+                    message
+                )
+            }
+        }
 
     @CheckResult
     public fun updateMessage(
@@ -975,18 +978,32 @@ public class ChatClient internal constructor(
     }
 
     @CheckResult
+    @InternalStreamChatApi
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
+
+    @CheckResult
     public fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        return api.queryChannel(channelType, channelId, request)
-    }
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+        .doOnStart(scope) {
+            plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+        }
+        .doOnResult(scope) { result ->
+            plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+        }
 
     @CheckResult
-    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return queryChannelsPostponeHelper.queryChannels(request)
-    }
+    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
+        queryChannelsPostponeHelper.queryChannels(request)
+            .doOnStart(scope) {
+                plugins.forEach { it.onQueryChannelsRequest(request) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onQueryChannelsResult(result, request) }
+            }
 
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -1556,9 +1573,15 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
+    /**
+     * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
+     *
+     * @param apiKey The API key of your Stream Chat app obtained from the [Stream Dashboard](https://dashboard.getstream.io/).
+     * @param appContext The application [Context].
+     */
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
-        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 30_000L
         private var cdnTimeout = 30_000L
@@ -1566,45 +1589,127 @@ public class ChatClient internal constructor(
         private var warmUp: Boolean = true
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler =
-            ChatNotificationHandler(appContext)
+        private var notificationsHandler: NotificationHandler? = null
+        private var notificationConfig: NotificationConfig = NotificationConfig()
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
+        private var plugins: List<Plugin> = emptyList()
+        private var customOkHttpClient: OkHttpClient? = null
 
+        /**
+         * Sets the log level to be used by the client.
+         *
+         * See [ChatLogLevel] for details about the available options.
+         *
+         * We strongly recommend using [ChatLogLevel.NOTHING] in production builds,
+         * which produces no logs.
+         *
+         * @param level The log level to use.
+         */
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
             return this
         }
 
+        /**
+         * Sets a [ChatLoggerHandler] instance that will receive log events from the SDK.
+         *
+         * Use this to forward SDK events to your own logging solutions.
+         *
+         * See the FirebaseLogger class in the UI Components sample app for an example implementation.
+         *
+         * @param loggerHandler Your custom [ChatLoggerHandler] implementation.
+         */
         public fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
             return this
         }
 
-        public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+        /**
+         * Sets a custom [ChatNotificationHandler] that the SDK will use to handle everything
+         * around push notifications. Create your own subclass and override methods to customize
+         * notification appearance and behavior.
+         *
+         * See the [Push Notifications](https://staging.getstream.io/chat/docs/sdk/android/client/guides/push-notifications/)
+         * documentation for more information.
+         *
+         *
+         * @param notificationConfig Config push notification.
+         * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
+         */
+        @JvmOverloads
+        public fun notifications(
+            notificationConfig: NotificationConfig,
+            notificationsHandler: NotificationHandler = NotificationHandlerFactory.createNotificationHandler(context = appContext),
+        ): Builder = apply {
+            this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
-            return this
         }
 
+        /**
+         * Sets a custom file uploader implementation that will be used by the client
+         * to upload files and images.
+         *
+         * The default implementation uses Stream's own CDN to store these files,
+         * which has a 20 MB upload size limit.
+         *
+         * For more info, see [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
+         *
+         * @param fileUploader Your custom implementation of [FileUploader].
+         */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
             return this
         }
 
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
         }
 
+        @Deprecated("Use okHttpClient() to set the timeouts")
         public fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
         }
 
+        /**
+         * By default, ChatClient performs a dummy HTTP call to the Stream API
+         * when a user is set to initialize the HTTP connection and make subsequent
+         * requests reusing this connection execute faster.
+         *
+         * Calling this method disables this connection warm-up behavior.
+         */
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
         }
 
+        /**
+         * Sets a custom [OkHttpClient] that will be used by the client to
+         * perform API calls to Stream.
+         *
+         * Use this to configure parameters like timeout values, or to
+         * add interceptors to process all network requests.
+         *
+         * @param okHttpClient The client to use for API calls.
+         */
+        public fun okHttpClient(okHttpClient: OkHttpClient): Builder = apply {
+            this.customOkHttpClient = okHttpClient
+        }
+
+        /**
+         * Sets the base URL to be used by the client.
+         *
+         * By default, this is the URL of Stream's [Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/),
+         * which provides low latency regardless of which region your Stream
+         * app is hosted in.
+         *
+         * You should only change this URL if you're on dedicated Stream
+         * Chat infrastructure.
+         *
+         * @param value The base URL to use.
+         */
         public fun baseUrl(value: String): Builder {
             var baseUrl = value
             if (baseUrl.startsWith("https://")) {
@@ -1620,6 +1725,11 @@ public class ChatClient internal constructor(
             return this
         }
 
+        @Deprecated(
+            message = "Do not use this method for file upload customization. Instead, implement the FileUploader interface and use the fileUploader method of this builder.",
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("this.fileUploader(CustomFileUploader())")
+        )
         public fun cdnUrl(value: String): Builder {
             var cdnUrl = value
             if (cdnUrl.startsWith("https://")) {
@@ -1641,10 +1751,29 @@ public class ChatClient internal constructor(
             this.callbackExecutor = callbackExecutor
         }
 
-        public override fun buildChatClient(): ChatClient {
+        @InternalStreamChatApi
+        @ExperimentalStreamChatApi
+        public fun withPlugin(plugin: Plugin): Builder = apply {
+            plugins += plugin
+        }
+
+        @InternalStreamChatApi
+        @Deprecated(
+            message = "It shouldn't be used outside of SDK code. Created for testing purposes",
+            replaceWith = ReplaceWith("this.build()"),
+            level = DeprecationLevel.ERROR
+        )
+        override fun internalBuild(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
+            }
+
+            instance?.run {
+                Log.e(
+                    "Chat",
+                    "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]"
+                )
             }
 
             val config = ChatClientConfig(
@@ -1659,7 +1788,16 @@ public class ChatClient internal constructor(
             )
 
             val module =
-                ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager, callbackExecutor)
+                ChatModule(
+                    appContext,
+                    config,
+                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
+                    notificationConfig,
+                    fileUploader,
+                    tokenManager,
+                    callbackExecutor,
+                    customOkHttpClient,
+                )
 
             val result = ChatClient(
                 config,
@@ -1671,18 +1809,25 @@ public class ChatClient internal constructor(
                 module.queryChannelsPostponeHelper,
                 EncryptedPushNotificationsConfigStore(appContext),
                 module.userStateService,
+                scope = module.networkScope,
+                appContext = appContext,
+                plugins = plugins,
             )
             return result
         }
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
-
-        public fun build(): ChatClient = buildChatClient().also {
+        /**
+         * Create a [ChatClient] instance based on the current configuration
+         * of the [Builder].
+         */
+        public fun build(): ChatClient = internalBuild().also {
             instance = it
         }
 
-        public abstract fun buildChatClient(): ChatClient
+        @InternalStreamChatApi
+        public abstract fun internalBuild(): ChatClient
     }
 
     public companion object {
@@ -1745,11 +1890,6 @@ public class ChatClient internal constructor(
         @Throws(IllegalStateException::class)
         public fun dismissChannelNotifications(channelType: String, channelId: String) {
             ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
-        }
-
-        @Throws(IllegalStateException::class)
-        internal fun dismissNotification(notificationId: Int) {
-            ensureClientInitialized().notifications.onDismissNotification(notificationId)
         }
 
         /**

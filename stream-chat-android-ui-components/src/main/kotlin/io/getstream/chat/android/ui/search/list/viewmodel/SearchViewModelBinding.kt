@@ -22,6 +22,7 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
             }
             else -> {
                 view.showMessages(state.query, state.results)
+                view.setPaginationEnabled(!state.isLoadingMore && state.results.isNotEmpty())
             }
         }
     }
@@ -31,7 +32,5 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
             view.showError()
         }
     )
-    view.setLoadMoreListener {
-        this.loadMore()
-    }
+    view.setLoadMoreListener(::loadMore)
 }

@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebResourceError;
@@ -12,6 +13,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -58,6 +63,15 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         webView.setWebViewClient(new AppWebViewClients());
     }
 
+    private String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     /**
      * Load document as url
      *
@@ -65,10 +79,8 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
      */
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
-
         if (ChatClient.instance().isSocketConnected()) {
-            //TODO: llc: add signing
-            webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
+            webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + encodeUrl(url));
         } else {
             finish();
         }

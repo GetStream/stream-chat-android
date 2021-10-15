@@ -216,6 +216,7 @@ internal class ChatDomainImplCreateChannelTest {
 
             reset(repositoryFacade)
 
+            @Suppress("DEPRECATION_ERROR")
             val result = sut.createDistinctChannel("channelType", mock(), mock()).execute()
 
             result.isError.shouldBeTrue()

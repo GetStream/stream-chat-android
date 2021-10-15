@@ -7,8 +7,8 @@ public class ChatClientConfig(
     public var httpUrl: String,
     public var cdnHttpUrl: String,
     public var wssUrl: String,
-    public var baseTimeout: Long,
-    public var cdnTimeout: Long,
+    @Deprecated("Use ChatClient.okHttpClient() to set the timeouts") public var baseTimeout: Long,
+    @Deprecated("Use ChatClient.okHttpClient() to set the timeouts") public var cdnTimeout: Long,
     public val warmUp: Boolean,
     public val loggerConfig: ChatLogger.Config,
 ) {

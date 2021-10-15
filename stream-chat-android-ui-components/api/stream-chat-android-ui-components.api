@@ -553,8 +553,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelLi
 	public static final field Companion Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/client/api/models/QuerySort;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)V
-	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChannelEventsHandler;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/offline/ChatDomain;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChannelEventsHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/client/models/Channel;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getPaginationState ()Landroidx/lifecycle/LiveData;
@@ -652,7 +652,8 @@ public final class io/getstream/chat/android/ui/channel/list/viewmodel/factory/C
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;I)V
 	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;II)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChannelEventsHandler;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/QuerySort;IILio/getstream/chat/android/offline/querychannels/ChannelEventsHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -1552,6 +1553,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun displayNewMessages (Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;)V
+	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
 	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
@@ -1569,6 +1571,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setConfirmDeleteMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmDeleteMessageHandler;)V
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
+	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
 	public final fun setDeletedMessageListItemPredicate (Lio/getstream/chat/android/ui/message/list/MessageListView$MessageListItemPredicate;)V
@@ -1617,6 +1620,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setUserBlockHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserBlockHandler;)V
 	public final fun setUserClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserClickListener;)V
 	public final fun setUserMuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserMuteHandler;)V
+	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener;)V
 	public final fun setUserUnmuteHandler (Lio/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler;)V
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
@@ -1769,6 +1773,10 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 	public abstract fun onUserMute (Lio/getstream/chat/android/client/models/User;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$UserUnmuteHandler {
 	public abstract fun onUserUnmute (Lio/getstream/chat/android/client/models/User;)V
 }
@@ -1896,20 +1904,22 @@ public final class io/getstream/chat/android/ui/message/list/MessageReplyStyle {
 }
 
 public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewStyle {
-	public fun <init> (ZZIIILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public fun <init> (ZZIIIFLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()I
 	public final fun component4 ()I
 	public final fun component5 ()I
-	public final fun component6 ()Landroid/graphics/drawable/Drawable;
-	public final fun component7 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun copy (ZZIIILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;ZZIIILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
+	public final fun component6 ()F
+	public final fun component7 ()Landroid/graphics/drawable/Drawable;
+	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (ZZIIIFLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;ZZIIIFLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getScrollButtonBadgeColor ()I
 	public final fun getScrollButtonBadgeTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getScrollButtonColor ()I
+	public final fun getScrollButtonElevation ()F
 	public final fun getScrollButtonEnabled ()Z
 	public final fun getScrollButtonIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getScrollButtonRippleColor ()I
@@ -2357,6 +2367,7 @@ public final class io/getstream/chat/android/ui/search/list/SearchResultListView
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$LoadMoreListener;)V
+	public final fun setPaginationEnabled (Z)V
 	public final fun setSearchResultSelectedListener (Lio/getstream/chat/android/ui/search/list/SearchResultListView$SearchResultSelectedListener;)V
 	public final fun showError ()V
 	public final fun showLoading ()V
@@ -2403,19 +2414,23 @@ public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchView
 }
 
 public final class io/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State {
-	public fun <init> (Ljava/lang/String;ZLjava/util/List;Z)V
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;ZLjava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Z
-	public final fun copy (Ljava/lang/String;ZLjava/util/List;Z)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public final fun component5 ()Z
+	public final fun copy (Ljava/lang/String;ZLjava/util/List;ZZ)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/search/list/viewmodel/SearchViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
 	public final fun getQuery ()Ljava/lang/String;
 	public final fun getResults ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
+	public final fun isLoadingMore ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

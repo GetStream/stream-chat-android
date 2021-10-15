@@ -67,6 +67,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
                 view.displayNewMessages(state.messageListItem)
                 view.hideLoadingView()
             }
+            MessageListViewModel.State.NavigateUp -> Unit // Not handled here
         }
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)

@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
-import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -30,10 +29,10 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface ChannelApi {
 
-    @GET("/channels")
+    @POST("/channels")
     fun queryChannels(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest,
+        @Body request: QueryChannelsRequest,
     ): RetrofitCall<QueryChannelsResponse>
 
     @POST("/channels/{type}/query")

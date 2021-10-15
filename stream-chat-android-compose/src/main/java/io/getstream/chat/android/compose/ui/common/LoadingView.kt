@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -16,8 +17,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun LoadingView(modifier: Modifier = Modifier) {
     Box(
-        modifier,
-        contentAlignment = Alignment.Center
+        modifier.background(ChatTheme.colors.appBackground),
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
     }

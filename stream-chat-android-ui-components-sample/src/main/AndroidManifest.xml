@@ -19,6 +19,7 @@
         <activity
             android:name="io.getstream.chat.ui.sample.feature.HostActivity"
             android:windowSoftInputMode="adjustResize"
+            android:exported="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

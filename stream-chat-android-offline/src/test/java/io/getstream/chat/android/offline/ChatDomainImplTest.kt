@@ -10,10 +10,12 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -79,7 +81,7 @@ internal class ChatDomainImplTest {
             val awaitingAttachmentsMessage = randomMessage(
                 syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
                 attachments = mutableListOf(
-                    randomAttachment { uploadState = Attachment.UploadState.InProgress },
+                    randomAttachment { uploadState = Attachment.UploadState.InProgress(positiveRandomLong(20), positiveRandomLong(100) + 20) },
                     randomAttachment { uploadState = Attachment.UploadState.Success },
                 ),
             )
@@ -145,14 +147,15 @@ internal class ChatDomainImplTest {
         private val recoveryEnabled = true
 
         private val chatDomainImpl = ChatDomainImpl(
-            client,
-            db,
-            handler,
-            offlineEnabled,
-            userPresence,
-            recoveryEnabled,
-            false,
-            mock(),
+            client = client,
+            db = db,
+            mainHandler = handler,
+            offlineEnabled = offlineEnabled,
+            userPresence = userPresence,
+            recoveryEnabled = recoveryEnabled,
+            backgroundSyncEnabled = false,
+            appContext = mock(),
+            offlinePlugin = OfflinePlugin()
         ).also {
             it.setUser(randomUser())
         }

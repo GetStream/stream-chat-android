@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.ui.attachments
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
@@ -49,5 +50,8 @@ public object StreamAttachmentFactories {
  */
 public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
     public val canHandle: (attachments: List<Attachment>) -> Boolean,
-    public val content: @Composable (AttachmentState) -> Unit,
+    public val content: @Composable (
+        modifier: Modifier,
+        attachmentState: AttachmentState,
+    ) -> Unit,
 )

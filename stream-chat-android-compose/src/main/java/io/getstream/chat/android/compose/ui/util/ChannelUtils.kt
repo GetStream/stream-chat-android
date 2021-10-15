@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import java.util.Date
 
 /**
  * Generates the display name for a channel based on its data.
@@ -116,4 +117,16 @@ public fun Channel.getLastMessagePreviewText(
             }
         }
     }
+}
+
+/**
+ * Filters the read status of each person other than the target user.
+ *
+ * @param userToIgnore The user whose message it is.
+ *
+ * @return List of [Date] values that represent a read status for each other user in the channel.
+ */
+public fun Channel.getReadStatuses(userToIgnore: User?): List<Date> {
+    return read.filter { it.user.id != userToIgnore?.id }
+        .mapNotNull { it.lastRead }
 }

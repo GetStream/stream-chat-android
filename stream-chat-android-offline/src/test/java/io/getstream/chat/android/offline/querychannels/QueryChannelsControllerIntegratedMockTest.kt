@@ -26,7 +26,7 @@ internal class QueryChannelsControllerIntegratedMockTest : BaseConnectedMockedTe
                 chatDomainImpl.queryChannels(data.filter1, QuerySort.desc(Channel::lastMessageAt))
             val channel1 = data.channel1.copy(lastMessageAt = Date(10000L))
             val channel2 = data.channel2.copy(lastMessageAt = Date(20000L))
-            whenever(client.queryChannels(any())) doReturn TestCall(Result(listOf(channel1, channel2)))
+            whenever(client.queryChannelsInternal(any())) doReturn TestCall(Result(listOf(channel1, channel2)))
 
             // 1. Query channels and check that live data emits a proper sorted list.
             queryChannelsController.query()

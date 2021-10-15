@@ -6,6 +6,10 @@ on:
       - develop
       - main
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   debug_build:
     name: Debug build

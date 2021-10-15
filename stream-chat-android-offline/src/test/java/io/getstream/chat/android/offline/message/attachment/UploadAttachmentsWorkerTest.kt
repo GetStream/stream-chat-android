@@ -1,7 +1,6 @@
 package io.getstream.chat.android.offline.message.attachment
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -15,6 +14,7 @@ import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import io.getstream.chat.android.test.positiveRandomLong
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +40,7 @@ internal class UploadAttachmentsWorkerTest {
 
     private val attachmentsPending = mutableListOf(
         randomAttachment {
-            this.uploadState = Attachment.UploadState.InProgress
+            this.uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30)
         }
     )
 
@@ -87,7 +87,7 @@ internal class UploadAttachmentsWorkerTest {
                     chatClient
                 )
 
-            verify(channelController, never()).uploadAttachments(any(), any())
+            verify(channelController, never()).uploadAttachments(any())
         }
 
     @Test
@@ -101,12 +101,12 @@ internal class UploadAttachmentsWorkerTest {
                 chatClient
             )
 
-        verify(channelController).uploadAttachments(any(), anyOrNull())
+        verify(channelController).uploadAttachments(any())
     }
 
     @Test
     fun `when not all attachments have state as success, it should return error`() = runBlockingTest {
-        whenever(channelController.uploadAttachments(eq(defaultMessagePendingAttachments), anyOrNull()))
+        whenever(channelController.uploadAttachments(eq(defaultMessagePendingAttachments)))
             .doReturn(attachmentsPending)
 
         val result = UploadAttachmentsWorker(mock())

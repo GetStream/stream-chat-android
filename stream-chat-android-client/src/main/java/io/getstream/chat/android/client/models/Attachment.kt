@@ -40,9 +40,28 @@ public data class Attachment(
 
 ) : CustomObject {
 
+    /**
+     * Represents various states in attachment upload lifecycle.
+     */
     public sealed class UploadState {
-        public object InProgress : UploadState()
+        /**
+         * Idle state before attachment starts to upload.
+         */
+        public object Idle : UploadState()
+
+        /**
+         * State representing attachment upload progress.
+         */
+        public data class InProgress(val bytesUploaded: Long, val totalBytes: Long) : UploadState()
+
+        /**
+         * State indicating that the attachment was uploaded successfully
+         */
         public object Success : UploadState()
+
+        /**
+         * State indicating that the attachment upload failed.
+         */
         public data class Failed(val error: ChatError) : UploadState()
     }
 }

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
@@ -25,7 +26,6 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -103,7 +103,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::removeMembers directly",
         replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
@@ -122,7 +122,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::createChannel directly",
         replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun createDistinctChannel(
         channelType: String,
@@ -592,10 +592,6 @@ public sealed interface ChatDomain {
 
         private val offlineChatDomainBuilder: OfflineChatDomainBuilder = OfflineChatDomainBuilder(appContext, client)
 
-        internal fun database(db: ChatDatabase) = apply {
-            offlineChatDomainBuilder.database(db)
-        }
-
         public fun enableBackgroundSync(): Builder = apply {
             offlineChatDomainBuilder.enableBackgroundSync()
         }
@@ -633,6 +629,7 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+            ChatDomain.instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             val offlineChatDomain = offlineChatDomainBuilder.build()
             ChatDomain.instance = buildImpl(offlineChatDomain)
             return ChatDomain.instance()

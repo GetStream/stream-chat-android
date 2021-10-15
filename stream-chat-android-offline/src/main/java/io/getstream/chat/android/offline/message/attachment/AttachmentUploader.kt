@@ -3,11 +3,9 @@ package io.getstream.chat.android.offline.message.attachment
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
-import io.getstream.chat.android.client.uploader.toProgressCallback
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
@@ -19,7 +17,7 @@ internal class AttachmentUploader(
         channelType: String,
         channelId: String,
         attachment: Attachment,
-        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null,
+        progressCallback: ProgressCallback? = null,
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
 
@@ -27,38 +25,24 @@ internal class AttachmentUploader(
             ?: attachment.mimeType
         val attachmentType = mimeType.toAttachmentType()
 
-        val progressTracker = attachment.uploadId?.let {
-            ProgressTrackerFactory.getOrCreate(it).apply {
-                maxValue = file.length()
-            }
-        }
-        val progressCallback = progressTracker?.toProgressCallback()
-
         val result = if (attachmentType == AttachmentType.IMAGE) {
             client.sendImage(channelType, channelId, file, progressCallback).await()
         } else {
             client.sendFile(channelType, channelId, file, progressCallback).await()
         }
-
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                 file = file,
                 mimeType = mimeType ?: "",
                 attachmentType = attachmentType,
                 url = result.data()
-            ).let {
-                // allow the user to change the format of the attachment
-                if (attachmentTransformer != null) {
-                    attachmentTransformer(it, file)
-                } else {
-                    it
-                }
-            }
-
-            progressTracker?.setComplete(true)
+            )
+            augmentedAttachment.uploadState = Attachment.UploadState.Success
+            progressCallback?.onSuccess(augmentedAttachment.url)
             Result(augmentedAttachment)
         } else {
-            progressTracker?.setComplete(false)
+            attachment.uploadState = Attachment.UploadState.Failed(result.error())
+            progressCallback?.onError(result.error())
             Result(result.error())
         }
     }

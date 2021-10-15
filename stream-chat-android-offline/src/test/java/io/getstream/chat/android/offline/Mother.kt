@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelInfo
@@ -35,6 +36,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.message.attachment.generateUploadId
 import io.getstream.chat.android.offline.model.ChannelConfig
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -288,7 +290,7 @@ internal fun randomMessageUpdateEvent(
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()) },
+    creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()).apply { uploadId = generateUploadId() } },
 ): List<Attachment> = (1..size).map(creationFunction)
 
 internal fun randomUser(

@@ -1,16 +1,11 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
-import android.content.Context
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.uploader.ProgressTrackerFactory
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -21,15 +16,12 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadD
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.attachments.MediaAttachmentsAdapter
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 internal class TextAndAttachmentsViewHolder(
     parent: ViewGroup,
@@ -47,6 +39,33 @@ internal class TextAndAttachmentsViewHolder(
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     private var scope: CoroutineScope? = null
+
+    /**
+     * We override the Message passed to listeners here with the up-to-date Message
+     * object from the [data] property of the base ViewHolder.
+     *
+     * This is required because these listeners will be invoked by the AttachmentViews,
+     * which don't always have an up-to-date Message object in them. This is due to the
+     * optimization that we don't re-create the AttachmentViews when the attachments
+     * of the Message are unchanged. However, other properties (like reactions) might
+     * change, and these listeners should receive a fully up-to-date Message.
+     */
+    private val modifiedListeners = MessageListListenerContainerImpl(
+        messageClickListener = { listeners.messageClickListener.onMessageClick(data.message) },
+        messageLongClickListener = { listeners.messageLongClickListener.onMessageLongClick(data.message) },
+        messageRetryListener = { listeners.messageRetryListener.onRetryMessage(data.message) },
+        threadClickListener = { listeners.threadClickListener.onThreadClick(data.message) },
+        attachmentClickListener = { _, attachment ->
+            listeners.attachmentClickListener.onAttachmentClick(data.message, attachment)
+        },
+        attachmentDownloadClickListener = listeners.attachmentDownloadClickListener::onAttachmentDownloadClick,
+        reactionViewClickListener = { listeners.reactionViewClickListener.onReactionViewClick(data.message) },
+        userClickListener = { listeners.userClickListener.onUserClick(data.message.user) },
+        giphySendListener = { _, action ->
+            listeners.giphySendListener.onGiphySend(data.message, action)
+        },
+        linkClickListener = listeners.linkClickListener::onLinkClick
+    )
 
     init {
         binding.run {
@@ -127,22 +146,18 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupUploads(data: MessageListItem.MessageItem) {
-        val uploadIdList: List<String> = data.message.attachments
-            .filter { attachment -> attachment.uploadState == Attachment.UploadState.InProgress }
-            .mapNotNull(Attachment::uploadId)
-
-        val needUpload = uploadIdList.isNotEmpty()
-
-        if (needUpload) {
-            clearScope()
-            val scope = CoroutineScope(DispatcherProvider.Main)
-            this.scope = scope
-
-            scope.launch {
-                trackFilesSent(context, uploadIdList, binding.sentFiles)
-            }
-        } else {
+        val totalAttachmentsCount = data.message.attachments.size
+        val completedAttachmentsCount =
+            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
+        if (completedAttachmentsCount == totalAttachmentsCount) {
             binding.sentFiles.isVisible = false
+        } else {
+            binding.sentFiles.text =
+                context.getString(
+                    R.string.stream_ui_message_list_attachment_uploading,
+                    completedAttachmentsCount,
+                    totalAttachmentsCount
+                )
         }
     }
 
@@ -152,40 +167,5 @@ internal class TextAndAttachmentsViewHolder(
 
     override fun onAttachedToWindow() {
         setupUploads(data)
-    }
-
-    private companion object {
-        private suspend fun trackFilesSent(
-            context: Context,
-            uploadIdList: List<String>,
-            sentFilesView: TextView,
-        ) {
-            val filesSent = 0
-            val totalFiles = uploadIdList.size
-
-            sentFilesView.isVisible = true
-            sentFilesView.text =
-                context.getString(R.string.stream_ui_message_list_attachment_uploading, filesSent, totalFiles)
-
-            val completionFlows: List<Flow<Boolean>> = uploadIdList.map { uploadId ->
-                ProgressTrackerFactory.getOrCreate(uploadId).isComplete()
-            }
-
-            combine(completionFlows) { isCompleteArray ->
-                isCompleteArray.count { isComplete -> isComplete }
-            }.collect { completedCount ->
-                if (completedCount == totalFiles) {
-                    sentFilesView.text =
-                        context.getString(R.string.stream_ui_message_list_attachment_upload_complete)
-                } else {
-                    sentFilesView.text =
-                        context.getString(
-                            R.string.stream_ui_message_list_attachment_uploading,
-                            completedCount,
-                            totalFiles
-                        )
-                }
-            }
-        }
     }
 }

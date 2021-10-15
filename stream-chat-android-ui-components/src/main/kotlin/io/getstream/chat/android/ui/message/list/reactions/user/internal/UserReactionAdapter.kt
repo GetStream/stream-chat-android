@@ -14,13 +14,14 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding
 
-internal class UserReactionAdapter :
-    ListAdapter<UserReactionItem, UserReactionAdapter.UserReactionViewHolder>(UserReactionItemDiffCallback) {
+internal class UserReactionAdapter(
+    private val userReactionClickListener: UserReactionClickListener,
+) : ListAdapter<UserReactionItem, UserReactionAdapter.UserReactionViewHolder>(UserReactionItemDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
         return StreamUiItemUserReactionBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let(UserReactionAdapter::UserReactionViewHolder)
+            .let { UserReactionViewHolder(it, userReactionClickListener) }
     }
 
     override fun onBindViewHolder(holder: UserReactionViewHolder, position: Int) {
@@ -29,9 +30,14 @@ internal class UserReactionAdapter :
 
     class UserReactionViewHolder(
         private val binding: StreamUiItemUserReactionBinding,
+        private val userReactionClickListener: UserReactionClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var userReactionItem: UserReactionItem
+
+        init {
+            binding.root.setOnClickListener { userReactionClickListener.onUserReactionClick(userReactionItem) }
+        }
 
         fun bind(userReactionItem: UserReactionItem) {
             this.userReactionItem = userReactionItem
@@ -77,5 +83,9 @@ internal class UserReactionAdapter :
         override fun areContentsTheSame(oldItem: UserReactionItem, newItem: UserReactionItem): Boolean {
             return oldItem == newItem
         }
+    }
+
+    internal fun interface UserReactionClickListener {
+        fun onUserReactionClick(userReaction: UserReactionItem)
     }
 }

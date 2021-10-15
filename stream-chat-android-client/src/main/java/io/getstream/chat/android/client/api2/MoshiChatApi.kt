@@ -764,7 +764,7 @@ internal class MoshiChatApi(
 
         return channelApi.queryChannels(
             connectionId = connectionId,
-            payload = request,
+            request = request,
         ).map { response -> response.channels.map(this::flattenChannel) }
     }
 

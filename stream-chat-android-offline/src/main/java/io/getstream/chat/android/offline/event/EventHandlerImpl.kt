@@ -83,8 +83,6 @@ internal class EventHandlerImpl(
                 }
                 is ConnectedEvent -> {
                     logger.logI("Received ConnectedEvent, marking the domain as online and initialized")
-                    val recovered = domainImpl.isInitialized()
-
                     domainImpl.setOnline()
                     domainImpl.setInitialized()
                     domainImpl.scope.launch {
@@ -105,6 +103,7 @@ internal class EventHandlerImpl(
                         domainImpl.retryFailedEntities()
                     }
                 }
+                else -> Unit // Ignore other events
             }
         }
     }
@@ -389,6 +388,7 @@ internal class EventHandlerImpl(
                     domainImpl.repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     domainImpl.repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                else -> Unit // Ignore other events
             }
         }
     }
@@ -449,5 +449,9 @@ internal class EventHandlerImpl(
         } else {
             // for events of current user we keep "ownReactions" from the event
         }
+    }
+
+    internal fun clear() {
+        firstConnect = true
     }
 }

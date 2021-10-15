@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
@@ -18,14 +17,12 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
-import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment

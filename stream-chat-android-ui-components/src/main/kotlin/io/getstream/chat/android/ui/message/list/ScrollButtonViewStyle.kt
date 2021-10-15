@@ -30,8 +30,9 @@ public data class ScrollButtonViewStyle(
     @ColorInt public val scrollButtonColor: Int,
     @ColorInt public val scrollButtonRippleColor: Int,
     @ColorInt public val scrollButtonBadgeColor: Int,
+    public val scrollButtonElevation: Float,
     public val scrollButtonIcon: Drawable?,
-    public val scrollButtonBadgeTextStyle: TextStyle
+    public val scrollButtonBadgeTextStyle: TextStyle,
 ) {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
@@ -41,6 +42,7 @@ public data class ScrollButtonViewStyle(
         @ColorInt private var scrollButtonRippleColor: Int = 0
         @ColorInt private var scrollButtonBadgeColor: Int = 0
         private var scrollButtonIcon: Drawable? = null
+        private var scrollButtonElevation: Float = 0F
 
         fun scrollButtonEnabled(
             @StyleableRes scrollButtonEnabledStyleableId: Int,
@@ -84,6 +86,13 @@ public data class ScrollButtonViewStyle(
             scrollButtonIcon = attrs.getDrawable(scrollButtonIconStyleableId) ?: defaultIcon
         }
 
+        fun scrollButtonElevation(
+            @StyleableRes scrollButtonElevation: Int,
+            defaultElevation: Float,
+        ) = apply {
+            this.scrollButtonElevation = attrs.getDimension(scrollButtonElevation, defaultElevation)
+        }
+
         fun build(): ScrollButtonViewStyle {
             val scrollButtonBadgeTextStyle = TextStyle.Builder(attrs)
                 .size(
@@ -108,7 +117,8 @@ public data class ScrollButtonViewStyle(
                 scrollButtonRippleColor = scrollButtonRippleColor,
                 scrollButtonBadgeColor = scrollButtonBadgeColor,
                 scrollButtonIcon = scrollButtonIcon,
-                scrollButtonBadgeTextStyle = scrollButtonBadgeTextStyle
+                scrollButtonBadgeTextStyle = scrollButtonBadgeTextStyle,
+                scrollButtonElevation = scrollButtonElevation
             ).let(TransformStyle.scrollButtonStyleTransformer::transform)
         }
     }

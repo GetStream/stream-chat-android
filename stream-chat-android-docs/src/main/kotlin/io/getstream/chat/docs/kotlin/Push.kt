@@ -47,19 +47,18 @@ class Push(val context: Context, val client: ChatClient) {
                 pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
             )
 
-            val notificationHandler = MyNotificationHandler(context, notificationsConfig)
+            val notificationHandler = MyNotificationHandler(context)
 
             ChatClient.Builder("{{ api_key }}", context)
-                .notifications(ChatNotificationHandler(context, notificationsConfig))
-                .notifications(notificationHandler)
+                .notifications(notificationsConfig)
                 .build()
         }
 
         /**
          * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
          */
-        inner class CustomChatNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
-            ChatNotificationHandler(context, notificationConfig) {
+        inner class CustomChatNotificationHandler(context: Context) :
+            ChatNotificationHandler(context) {
 
             override fun onPushMessage(message: PushMessage): Boolean {
                 // Handle remote message and return true if message should not be handled by SDK
@@ -98,8 +97,8 @@ class Push(val context: Context, val client: ChatClient) {
     /**
      * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#redirection-from-notification-to-app">Redirection from notification to app</a>
      */
-    class MyNotificationHandler(context: Context, notificationConfig: NotificationConfig) :
-        ChatNotificationHandler(context, notificationConfig) {
+    class MyNotificationHandler(context: Context) :
+        ChatNotificationHandler(context) {
 
         override fun getNewMessageIntent(
             messageId: String,

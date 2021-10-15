@@ -36,10 +36,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun GiphyAttachmentContent(attachmentState: AttachmentState) {
+public fun GiphyAttachmentContent(
+    attachmentState: AttachmentState,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
-    val (modifier, messageItem, onLongItemClick) = attachmentState
-    val (message, _) = messageItem
+    val (message, onLongItemClick) = attachmentState
     val attachment = message.attachments.firstOrNull { it.type == ModelType.attach_giphy }
 
     checkNotNull(attachment) {
