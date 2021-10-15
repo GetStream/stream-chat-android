@@ -12,7 +12,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding

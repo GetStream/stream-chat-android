@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.common.internal
+package io.getstream.chat.android.ui.common.adapters
 
 import android.content.Context
 import android.view.View

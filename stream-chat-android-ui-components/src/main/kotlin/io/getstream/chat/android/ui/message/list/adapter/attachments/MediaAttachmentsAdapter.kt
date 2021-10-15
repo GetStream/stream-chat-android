@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.message.list.adapter.attachments
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 
 internal class MediaAttachmentsAdapter(

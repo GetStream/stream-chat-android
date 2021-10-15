@@ -2,7 +2,7 @@ package io.getstream.chat.android.ui.suggestion.list.adapter.internal
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItem
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSuggestionItemViewHolder

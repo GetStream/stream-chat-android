@@ -2,9 +2,8 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
