@@ -1,7 +1,9 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -43,6 +45,7 @@ import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
@@ -76,6 +79,10 @@ public fun AttachmentsPicker(
     val context = LocalContext.current
     val storagePermissionState =
         rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    val requiresCameraPermission = isCameraPermissionDeclared(context)
+
+    val cameraPermissionState =
+        if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
     val mediaCaptureResultLauncher =
         rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
@@ -128,7 +135,12 @@ public fun AttachmentsPicker(
                 ) {
                     val pickerMode = attachmentsPickerViewModel.attachmentsPickerMode
 
-                    val hasPermission = storagePermissionState.hasPermission
+                    val permissionState = when (pickerMode) {
+                        Images, Files -> storagePermissionState
+                        MediaCapture -> cameraPermissionState
+                    }
+
+                    val hasPermission = permissionState?.hasPermission ?: true
 
                     val content = @Composable {
                         when (pickerMode) {
@@ -161,13 +173,13 @@ public fun AttachmentsPicker(
                         }
                     }
 
-                    if (pickerMode == MediaCapture) {
+                    if (pickerMode == MediaCapture && permissionState == null) {
                         content()
-                    } else {
+                    } else if (permissionState != null) {
                         PermissionRequired(
-                            permissionState = storagePermissionState,
-                            permissionNotGrantedContent = { MissingPermissionContent() },
-                            permissionNotAvailableContent = { MissingPermissionContent() },
+                            permissionState = permissionState,
+                            permissionNotGrantedContent = { MissingPermissionContent(permissionState) },
+                            permissionNotAvailableContent = { MissingPermissionContent(permissionState) },
                             content = content
                         )
                     }
@@ -190,14 +202,34 @@ public fun AttachmentsPicker(
 }
 
 /**
+ * Returns if we need to check for the camera permission or not.
+ *
+ * @param context The context of the app.
+ * @return If the camera permission is declared in the manifest or not.
+ */
+private fun isCameraPermissionDeclared(context: Context): Boolean {
+    return context.packageManager
+        .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+        .requestedPermissions
+        .contains(Manifest.permission.CAMERA)
+}
+
+/**
  * Shows the UI if we're missing permissions to fetch data for attachments.
  * The UI explains to the user which permission is missing and why we need it.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun MissingPermissionContent() {
-    val title = R.string.stream_ui_message_input_permission_storage_title
-    val message = R.string.stream_ui_message_input_permission_storage_message
+private fun MissingPermissionContent(permissionState: PermissionState) {
+    val title = when (permissionState.permission) {
+        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_title
+        else -> R.string.stream_ui_message_input_permission_camera_title
+    }
+
+    val message = when (permissionState.permission) {
+        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_message
+        else -> R.string.stream_ui_message_input_permission_camera_message
+    }
 
     val context = LocalContext.current
 

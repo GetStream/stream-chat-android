@@ -110,6 +110,7 @@
 - Improved the experience of creating the MessagesViewModelFactory with default arguments
 - Updated and cleaned up Channel screen design
 - Improved logic for updating the `lastSeenMessage` for fewer calculations
+- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
 
 ### ✅ Added
 - Added DateSeparator items to Messages to group up messages by their creation date
@@ -125,8 +126,11 @@
 - Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 - Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
+- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
 
 ### ❌ Removed
+- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
+- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
