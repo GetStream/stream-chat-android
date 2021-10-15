@@ -429,8 +429,6 @@ private class Fixture {
         val filter = Filters.neutral()
         val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
         return QueryChannelsController(
-            filter,
-            querySort,
             chatDomainImpl,
             mutableState,
             QueryChannelsLogic(mutableState, chatDomainImpl),

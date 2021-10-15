@@ -225,8 +225,6 @@ internal class WhenQuery {
             val mutableState = QueryChannelsMutableState(filter, querySort, chatClient, chatDomainImpl.scope)
 
             return QueryChannelsController(
-                filter,
-                querySort,
                 chatDomainImpl,
                 mutableState,
                 QueryChannelsLogic(mutableState, chatDomainImpl),
