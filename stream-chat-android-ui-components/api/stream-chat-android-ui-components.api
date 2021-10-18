@@ -675,7 +675,7 @@ public abstract class io/getstream/chat/android/ui/common/adapters/SimpleListAda
 	public fun onViewRecycled (Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;)V
 	public final fun removeItem (Ljava/lang/Object;)V
 	protected final fun setItemList (Ljava/util/List;)V
-	public final fun setItems (Ljava/util/List;)V
+	public fun setItems (Ljava/util/List;)V
 }
 
 public abstract class io/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
