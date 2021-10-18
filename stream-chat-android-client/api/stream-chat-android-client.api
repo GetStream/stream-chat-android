@@ -2935,6 +2935,13 @@ public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeT
 	public final fun isImageMimeTypeSupported (Ljava/lang/String;)Z
 }
 
+public final class io/getstream/chat/android/client/user/CredentialConfig {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getUserId ()Ljava/lang/String;
+	public final fun getUserName ()Ljava/lang/String;
+	public final fun getUserToken ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (J)V
