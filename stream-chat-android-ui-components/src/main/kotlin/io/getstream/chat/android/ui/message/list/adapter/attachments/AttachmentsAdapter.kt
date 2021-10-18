@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactoryImpl
 
-internal class MediaAttachmentsAdapter(
+internal class AttachmentsAdapter(
     private val viewHolderFactory: AttachmentViewHolderFactory,
 ) : SimpleListAdapter<List<Attachment>, SimpleListAdapter.ViewHolder<List<Attachment>>>() {
 

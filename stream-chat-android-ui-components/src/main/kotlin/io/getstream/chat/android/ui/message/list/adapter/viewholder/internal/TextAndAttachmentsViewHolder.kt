@@ -13,7 +13,7 @@ import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.attachments.MediaAttachmentsAdapter
+import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
@@ -103,7 +103,7 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         val attachments = data.message.attachments
 
-        val adapter = MediaAttachmentsAdapter(attachmentViewHolderFactory)
+        val adapter = AttachmentsAdapter(attachmentViewHolderFactory)
 
         binding.attachmentsRecycler.adapter = adapter
         binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
