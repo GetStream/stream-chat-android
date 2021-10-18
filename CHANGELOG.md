@@ -27,10 +27,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- The UserCredentialStorage interface was added to ChatClient. You can set your own implementation via ChatClient.Builder::credentialStorage
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed dependency of androidx-security-crypto library. Now storage of user token uses private shared preferences by default.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
