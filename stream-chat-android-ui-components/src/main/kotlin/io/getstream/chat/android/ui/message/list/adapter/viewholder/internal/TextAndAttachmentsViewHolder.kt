@@ -107,7 +107,7 @@ internal class TextAndAttachmentsViewHolder(
 
         binding.attachmentsRecycler.adapter = adapter
         binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-            recycleChildrenOnDetach = true
+            // recycleChildrenOnDetach = true
         }
         binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
 
