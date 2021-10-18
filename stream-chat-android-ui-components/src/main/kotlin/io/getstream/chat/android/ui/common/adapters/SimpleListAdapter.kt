@@ -14,7 +14,7 @@ public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHold
         holder.bind(itemList[position])
     }
 
-    public fun setItems(items: List<T>) {
+    public open fun setItems(items: List<T>) {
         this.itemList.clear()
         this.itemList.addAll(items)
         notifyDataSetChanged()

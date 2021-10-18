@@ -21,4 +21,12 @@ internal class AttachmentsAdapter(
         else
             AttachmentViewHolderFactoryImpl.FILE
     }
+
+    override fun setItems(items: List<List<Attachment>>) {
+        if (items.size != 1) {
+            error("This adapter only accepts a list of one item")
+        }
+
+        super.setItems(items)
+    }
 }
