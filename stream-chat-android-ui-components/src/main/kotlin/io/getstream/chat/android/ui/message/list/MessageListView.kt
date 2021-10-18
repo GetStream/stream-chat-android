@@ -435,6 +435,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentViewFactory: AttachmentViewFactory
+    private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
 
     public constructor(context: Context) : this(context, null, 0)
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -615,19 +616,9 @@ public class MessageListView : ConstraintLayout {
         )
     }
 
-    private fun setAttachmentViewHolderFactory(factory: AttachmentViewHolderFactory) {
-        check(::messageListItemViewHolderFactory.isInitialized.not()) {
-            "messageListItemViewHolderFactory is not initialized yet."
-        }
-
-        messageListItemViewHolderFactory.setAttachmentViewHolderFactory(factory)
-    }
-
     private fun defaultMessageListItemViewHolderFactory(): MessageListItemViewHolderFactory {
         return MessageListItemViewHolderFactory().apply {
-            setAttachmentViewHolderFactory(
-                AttachmentViewHolderFactoryImpl({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
-            )
+            setAttachmentViewHolderFactory(attachmentViewHolderFactory)
         }
     }
 
@@ -639,6 +630,11 @@ public class MessageListView : ConstraintLayout {
 
         if (::attachmentViewFactory.isInitialized.not()) {
             attachmentViewFactory = AttachmentViewFactory()
+        }
+
+        if (::attachmentViewHolderFactory.isInitialized.not()) {
+            attachmentViewHolderFactory =
+                AttachmentViewHolderFactoryImpl({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
         }
 
         // Create default ViewHolderFactory if needed
