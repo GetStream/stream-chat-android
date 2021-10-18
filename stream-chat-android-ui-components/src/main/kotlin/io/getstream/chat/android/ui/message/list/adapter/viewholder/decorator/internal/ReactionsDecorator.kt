@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -88,44 +87,67 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
                 }
 
                 reactionsSpace.doOnPreDraw {
-                    val offsetViewBounds = Rect()
-                    it.getDrawingRect(offsetViewBounds)
-                    rootConstraintLayout.offsetDescendantRectToMyCoords(it, offsetViewBounds)
-                    val relativeXToParent = offsetViewBounds.left
-                    val rootWidth =
-                        rootConstraintLayout.measuredWidth - (rootConstraintLayout.paddingStart + rootConstraintLayout.paddingEnd)
+                    val dynamicOffset = calculateDynamicOffset(
+                        rootConstraintLayout,
+                        reactionsSpace,
+                        reactionsView,
+                        data
+                    )
 
-                    val offsetFromParent =
-                        if (data.isTheirs) relativeXToParent else rootConstraintLayout.measuredWidth - relativeXToParent
-
-                    val expectedReactionsAndOffsetWidth = offsetFromParent + reactionsView.measuredWidth
-
-                    val dynamicOffset = if (expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth)
-                        expectedReactionsAndOffsetWidth - rootWidth
-                    else
-                        MULTIPLE_REACTIONS_OFFSET
-
-                    it.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                        val offset = when {
-                            data.message.hasSingleReaction() -> {
-                                SINGLE_REACTION_OFFSET
-                            }
-                            else -> dynamicOffset
-                        }
-
-                        if (data.isTheirs) {
-                            endToEnd = contentView.id
-                            marginEnd = offset
-                        } else {
-                            startToStart = contentView.id
-                            marginStart = offset
-                        }
-                    }
+                    updateOffset(contentView, reactionsSpace, data, dynamicOffset)
                 }
             }
         } else {
             reactionsView.isVisible = false
             reactionsSpace.isVisible = false
+        }
+    }
+
+    private fun calculateDynamicOffset(
+        rootConstraintLayout: ConstraintLayout,
+        reactionsSpace: View,
+        reactionsView: ViewReactionsView,
+        data: MessageListItem.MessageItem,
+    ): Int {
+        val offsetViewBounds = Rect()
+        reactionsSpace.getDrawingRect(offsetViewBounds)
+        rootConstraintLayout.offsetDescendantRectToMyCoords(reactionsSpace, offsetViewBounds)
+        val relativeXToParent = offsetViewBounds.left
+        val rootWidth =
+            rootConstraintLayout.measuredWidth - (rootConstraintLayout.paddingStart + rootConstraintLayout.paddingEnd)
+
+        val offsetFromParent =
+            if (data.isTheirs) relativeXToParent else rootConstraintLayout.measuredWidth - relativeXToParent
+
+        val expectedReactionsAndOffsetWidth = offsetFromParent + reactionsView.measuredWidth
+
+        return if (expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth)
+            expectedReactionsAndOffsetWidth - rootWidth
+        else
+            MULTIPLE_REACTIONS_OFFSET
+    }
+
+    private fun updateOffset(
+        contentView: View,
+        reactionsSpace: View,
+        data: MessageListItem.MessageItem,
+        dynamicOffset: Int,
+    ) {
+        reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            val offset = when {
+                data.message.hasSingleReaction() -> {
+                    SINGLE_REACTION_OFFSET
+                }
+                else -> dynamicOffset
+            }
+
+            if (data.isTheirs) {
+                endToEnd = contentView.id
+                marginEnd = offset
+            } else {
+                startToStart = contentView.id
+                marginStart = offset
+            }
         }
     }
 
