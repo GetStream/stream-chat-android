@@ -7,14 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.attachments.MediaAttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
@@ -106,33 +104,15 @@ internal class TextAndAttachmentsViewHolder(
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         val attachments = data.message.attachments
 
-        when {
-            attachments.isMedia() -> {
-                val adapter = MediaAttachmentsAdapter(attachmentViewHolderFactory)
+        val adapter = MediaAttachmentsAdapter(attachmentViewHolderFactory)
 
-                binding.attachmentsRecycler.adapter = adapter
-                binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-                    recycleChildrenOnDetach = true
-                }
-                binding.attachmentsRecycler.setRecycledViewPool(mediaRecycledViewPool)
-
-                adapter.setItems(listOf(attachments))
-            }
-
-            attachments.isNotEmpty() -> {
-                val adapter = FileAttachmentsAdapter(attachmentViewHolderFactory)
-
-                binding.attachmentsRecycler.adapter = adapter
-                binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-                    recycleChildrenOnDetach = true
-                }
-                binding.attachmentsRecycler.setRecycledViewPool(fileRecycledViewPool)
-
-                adapter.setItems(attachments)
-            }
-
-            else -> error("Unsupported case for attachment adapter factory!")
+        binding.attachmentsRecycler.adapter = adapter
+        binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
+            recycleChildrenOnDetach = true
         }
+        binding.attachmentsRecycler.setRecycledViewPool(mediaRecycledViewPool)
+
+        adapter.setItems(listOf(attachments))
     }
 
     private fun clearScope() {

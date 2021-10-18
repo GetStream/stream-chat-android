@@ -6,7 +6,7 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 
 public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
-    private var itemList: MutableList<T> = mutableListOf()
+    protected var itemList: MutableList<T> = mutableListOf()
 
     final override fun getItemCount(): Int = itemList.size
 

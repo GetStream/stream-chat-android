@@ -6,13 +6,9 @@ import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 
 public interface AttachmentViewHolderFactory {
 
-    public fun attachmentMediaViewHolder(
+    public fun attachmentViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): SimpleListAdapter.ViewHolder<List<Attachment>>
 
-    public fun attachmentFileViewHolder(
-        parent: ViewGroup,
-        viewType: Int,
-    ): SimpleListAdapter.ViewHolder<Attachment>
 }
