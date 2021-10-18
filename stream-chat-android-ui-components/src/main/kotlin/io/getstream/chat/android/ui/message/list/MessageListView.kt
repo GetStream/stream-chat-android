@@ -87,6 +87,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
@@ -612,6 +613,14 @@ public class MessageListView : ConstraintLayout {
             replyEnabled = requireStyle().replyEnabled && channel.config.isRepliesEnabled,
             threadsEnabled = requireStyle().threadsEnabled && channel.config.isRepliesEnabled,
         )
+    }
+
+    private fun setAttachmentViewHolderFactory(factory: AttachmentViewHolderFactory) {
+        check(::messageListItemViewHolderFactory.isInitialized.not()) {
+            "messageListItemViewHolderFactory is not initialized yet."
+        }
+
+        messageListItemViewHolderFactory.setAttachmentViewHolderFactory(factory)
     }
 
     private fun defaultMessageListItemViewHolderFactory(): MessageListItemViewHolderFactory {
