@@ -664,6 +664,25 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
+public abstract class io/getstream/chat/android/ui/common/adapters/SimpleListAdapter : androidx/recyclerview/widget/RecyclerView$Adapter {
+	public fun <init> ()V
+	public final fun clear ()V
+	public final fun getItemCount ()I
+	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
+	public final fun onBindViewHolder (Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;I)V
+	public synthetic fun onViewRecycled (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
+	public fun onViewRecycled (Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;)V
+	public final fun removeItem (Ljava/lang/Object;)V
+	public final fun setItems (Ljava/util/List;)V
+}
+
+public abstract class io/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public abstract fun bind (Ljava/lang/Object;)V
+	public final fun getContext ()Landroid/content/Context;
+	public fun unbind ()V
+}
+
 public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;)Ljava/lang/String;
 	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;I)Ljava/lang/String;
@@ -707,25 +726,6 @@ public final class io/getstream/chat/android/ui/common/internal/ChatUIInitialize
 	public fun create (Landroid/content/Context;)Lio/getstream/chat/android/ui/ChatUI;
 	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
 	public fun dependencies ()Ljava/util/List;
-}
-
-public abstract class io/getstream/chat/android/ui/common/internal/SimpleListAdapter : androidx/recyclerview/widget/RecyclerView$Adapter {
-	public fun <init> ()V
-	public final fun clear ()V
-	public final fun getItemCount ()I
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
-	public final fun onBindViewHolder (Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;I)V
-	public synthetic fun onViewRecycled (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
-	public fun onViewRecycled (Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;)V
-	public final fun removeItem (Ljava/lang/Object;)V
-	public final fun setItems (Ljava/util/List;)V
-}
-
-public abstract class io/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
-	public fun <init> (Landroid/view/View;)V
-	public abstract fun bind (Ljava/lang/Object;)V
-	public final fun getContext ()Landroid/content/Context;
-	public fun unbind ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/markdown/ChatMarkdown {
@@ -2049,14 +2049,14 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory {
-	public abstract fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
-	public abstract fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
+	public abstract fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;
+	public abstract fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;
 }
 
 public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactoryImpl : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentViewHolderFactory {
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentLongClickListener;Lio/getstream/chat/android/ui/message/list/adapter/view/internal/AttachmentDownloadClickListener;Lio/getstream/chat/android/ui/message/list/FileAttachmentViewStyle;)V
-	public fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
-	public fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/internal/SimpleListAdapter$ViewHolder;
+	public fun attachmentFileViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;
+	public fun attachmentMediaViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/common/adapters/SimpleListAdapter$ViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
