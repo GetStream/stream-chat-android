@@ -27,8 +27,7 @@ internal class TextAndAttachmentsViewHolder(
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
     private val attachmentViewHolderFactory: AttachmentViewHolderFactory,
-    private val mediaRecycledViewPool: RecyclerView.RecycledViewPool,
-    private val fileRecycledViewPool: RecyclerView.RecycledViewPool,
+    private val recycledViewPool: RecyclerView.RecycledViewPool,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -110,7 +109,7 @@ internal class TextAndAttachmentsViewHolder(
         binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
             recycleChildrenOnDetach = true
         }
-        binding.attachmentsRecycler.setRecycledViewPool(mediaRecycledViewPool)
+        binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
 
         adapter.setItems(listOf(attachments))
     }

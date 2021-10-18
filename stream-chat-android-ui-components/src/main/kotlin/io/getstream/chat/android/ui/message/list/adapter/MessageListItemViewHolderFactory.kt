@@ -46,9 +46,7 @@ public open class MessageListItemViewHolderFactory {
 
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
 
-    private val mediaAttachmentsRecycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
-
-    private val fileAttachmentsRecycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
+    private val attachmentsRecycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
@@ -113,8 +111,7 @@ public open class MessageListItemViewHolderFactory {
             listenerContainer,
             markdown,
             attachmentViewHolderFactory,
-            mediaAttachmentsRecycledViewPool,
-            fileAttachmentsRecycledViewPool
+            attachmentsRecycledViewPool
         )
     }
 
