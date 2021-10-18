@@ -7,6 +7,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'com.huawei.agconnect'
+apply plugin: 'shot'
 
 apply from: "${rootDir}/scripts/android.gradle"
 
@@ -15,6 +16,11 @@ android {
         applicationId "io.getstream.chat.ui.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName
+        testInstrumentationRunner "com.karumi.shot.ShotTestRunner"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*'
     }
 
     File signFile = rootProject.file('.sign/keystore.properties')
@@ -153,4 +159,10 @@ dependencies {
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
+
+    // Instrumentation tests
+    androidTestImplementation Dependencies.junit4
+    androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.androidxTestJunit
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 }
