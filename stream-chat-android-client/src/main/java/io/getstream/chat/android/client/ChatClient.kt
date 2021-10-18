@@ -73,7 +73,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
+import io.getstream.chat.android.client.notifications.storage.SharedPreferencesCredentialStorage
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -1813,7 +1813,7 @@ public class ChatClient internal constructor(
                 tokenManager,
                 module.socketStateService,
                 module.queryChannelsPostponeHelper,
-                userCredentialStorage = userCredentialStorage ?: EncryptedPushNotificationsConfigStore(appContext),
+                userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
                 appContext = appContext,
