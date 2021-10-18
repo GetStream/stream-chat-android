@@ -74,7 +74,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
-import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -84,6 +83,7 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
+import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -345,7 +345,7 @@ public class ChatClient internal constructor(
 
     private fun storePushNotificationsConfig(userId: String, userName: String) {
         encryptedUserConfigStorage.put(
-            PushNotificationsConfig(
+            CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
                 userName = userName,
