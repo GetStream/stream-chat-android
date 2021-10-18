@@ -67,7 +67,6 @@ public class Push {
             int notificationGroupSummaryContentText = R.string.stream_chat_notification_group_summary_content_text;
             int errorNotificationGroupSummaryTitle = R.string.stream_chat_error_notification_group_summary_content_text;
             int errorNotificationGroupSummaryContentText = R.string.stream_chat_error_notification_group_summary_content_text;
-            boolean shouldGroupNotifications = true;
             boolean pushNotificationsEnabled = true;
             List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>() {{
                     add(new FirebasePushDeviceGenerator());
@@ -86,7 +85,6 @@ public class Push {
                     notificationGroupSummaryContentText,
                     errorNotificationGroupSummaryTitle,
                     errorNotificationGroupSummaryContentText,
-                    shouldGroupNotifications,
                     pushNotificationsEnabled,
                     pushDeviceGenerators
             );

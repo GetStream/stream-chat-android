@@ -84,7 +84,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         pinExpires = pinExpires,
         pinnedByUserId = pinnedBy?.id,
     ),
-    attachments = attachments.map { it.toEntity(id) },
+    attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
 )

@@ -7,7 +7,6 @@ import android.widget.RelativeLayout
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamReplyToViewBinding
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.name
 
 internal class PreviewMessageView @JvmOverloads constructor(
     context: Context,

@@ -17,16 +17,16 @@ internal abstract class MessageDao {
     @Transaction
     open suspend fun insert(messageEntities: List<MessageEntity>) {
         upsertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
+        deleteAttachments(messageEntities.map { it.messageInnerEntity.id })
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
+    @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
+    abstract fun deleteAttachments(messageIds: List<String>)
+
     @Transaction
-    open suspend fun insert(messageEntity: MessageEntity) {
-        upsertMessageInnerEntity(messageEntity.messageInnerEntity)
-        insertAttachments(messageEntity.attachments)
-        insertReactions(messageEntity.let { it.latestReactions + it.ownReactions })
-    }
+    open suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     protected abstract suspend fun insertMessageInnerEntity(messageInnerEntity: MessageInnerEntity): Long

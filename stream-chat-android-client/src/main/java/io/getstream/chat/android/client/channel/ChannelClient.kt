@@ -676,14 +676,6 @@ public class ChannelClient internal constructor(
     public fun getImageAttachments(offset: Int, limit: Int): Call<List<Attachment>> =
         client.getImageAttachments(channelType, channelId, offset, limit)
 
-    @Deprecated(
-        message = "Use getMessagesWithAttachments function with types list instead",
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun getMessagesWithAttachments(offset: Int, limit: Int, type: String): Call<List<Message>> =
-        client.getMessagesWithAttachments(channelType, channelId, offset, limit, type)
-
     /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
      * not necessarily all of them will have a specified type.

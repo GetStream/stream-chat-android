@@ -19,6 +19,7 @@ internal class ViewReactionsBubbleDrawer(
         style = Paint.Style.FILL
     }
     private val bubbleStrokePaintMine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        @Suppress("DEPRECATION_ERROR")
         color = viewReactionsViewStyle.bubbleBorderColor ?: viewReactionsViewStyle.bubbleBorderColorMine
         strokeWidth = viewReactionsViewStyle.bubbleBorderWidthMine
         style = Paint.Style.STROKE

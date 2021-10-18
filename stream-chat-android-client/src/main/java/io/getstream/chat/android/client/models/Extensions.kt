@@ -28,30 +28,6 @@ public fun Channel.getUnreadMessagesCount(forUserId: String = ""): Int {
     }
 }
 
-@Deprecated(
-    message = "Remove the import and use class member instead",
-    level = DeprecationLevel.ERROR,
-)
-public var User.image: String by User::image
-
-@Deprecated(
-    message = "Remove the import and use class member instead",
-    level = DeprecationLevel.ERROR,
-)
-public var User.name: String by User::name
-
-@Deprecated(
-    message = "Remove the import and use class member instead",
-    level = DeprecationLevel.ERROR,
-)
-public var Channel.image: String by Channel::image
-
-@Deprecated(
-    message = "Remove the import and use class member instead",
-    level = DeprecationLevel.ERROR,
-)
-public var Channel.name: String by Channel::name
-
 internal fun getExternalField(obj: CustomObject, key: String): String {
 
     val value = obj.extraData[key]

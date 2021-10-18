@@ -1,9 +1,12 @@
 package io.getstream.chat.android.offline
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.CheckResult
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
@@ -20,8 +23,10 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
@@ -29,6 +34,7 @@ import io.getstream.chat.android.offline.thread.ThreadController
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
+import io.getstream.chat.android.offline.experimental.plugin.Config as OfflinePluginConfig
 
 /**
  * The ChatDomain is the main entry point for all flow & offline operations on chat.
@@ -105,7 +111,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::removeMembers directly",
         replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
 
@@ -122,7 +128,7 @@ public sealed interface ChatDomain {
     @Deprecated(
         message = "Use ChatClient::createChannel directly",
         replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public fun createDistinctChannel(
         channelType: String,
@@ -586,6 +592,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private var database: ChatDatabase? = null
+        private var handler: Handler = Handler(Looper.getMainLooper())
 
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
@@ -593,9 +600,15 @@ public sealed interface ChatDomain {
         private var backgroundSyncEnabled: Boolean = true
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
 
+        @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
+        }
+
+        @VisibleForTesting
+        internal fun handler(handler: Handler) = apply {
+            this.handler = handler
         }
 
         public fun enableBackgroundSync(): Builder {
@@ -644,12 +657,26 @@ public sealed interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             instance = buildImpl()
             return instance()
         }
 
+        @ExperimentalStreamChatApi
+        private fun getPlugin(): OfflinePlugin {
+            return client.plugins.firstOrNull { it.name == OfflinePlugin.MODULE_NAME }?.let { it as OfflinePlugin } // TODO should be removed when ChatDomain will be merged to LLC
+                ?: OfflinePluginConfig(
+                    backgroundSyncEnabled = backgroundSyncEnabled,
+                    userPresence = userPresence,
+                    persistenceEnabled = storageEnabled
+                )
+                    .let(::OfflinePlugin)
+        }
+
+        @SuppressLint("VisibleForTests")
+        @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val handler = Handler(Looper.getMainLooper())
+            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -659,13 +686,18 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                uploadAttachmentsNetworkType,
-            )
+                offlinePlugin = plugin,
+                uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
+            ).also { domainImpl ->
+                // TODO remove when plugin becomes stateless
+                plugin.initState(domainImpl, client)
+            }
         }
     }
 
     public companion object {
-        private var instance: ChatDomain? = null
+        @VisibleForTesting
+        internal var instance: ChatDomain? = null
 
         @JvmStatic
         public fun instance(): ChatDomain = instance
