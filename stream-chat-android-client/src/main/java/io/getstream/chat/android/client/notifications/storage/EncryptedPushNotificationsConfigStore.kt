@@ -5,8 +5,10 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.user.CredentialConfig
+import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 
-internal class EncryptedPushNotificationsConfigStore(context: Context) {
+internal class EncryptedPushNotificationsConfigStore(context: Context) : UserCredentialStorage {
     private val prefs: SharedPreferences
     private val logger = ChatLogger.get("EncryptedBackgroundSyncConfigStore")
 
@@ -32,26 +34,25 @@ internal class EncryptedPushNotificationsConfigStore(context: Context) {
         }
     }
 
-    fun put(config: PushNotificationsConfig) {
-        prefs.edit().apply {
-            putString(KEY_USER_ID, config.userId)
-            putString(KEY_USER_TOKEN, config.userToken)
-            putString(KEY_USER_NAME, config.userName)
-        }.apply()
-    }
-
-    fun get(): PushNotificationsConfig? = prefs.run {
+    override fun get(): CredentialConfig? = prefs.run {
         val userId = getString(KEY_USER_ID, "") ?: ""
         val userToken = getString(KEY_USER_TOKEN, "") ?: ""
         val userName = getString(KEY_USER_NAME, "") ?: ""
 
-        val config = PushNotificationsConfig(userId = userId, userToken = userToken, userName = userName)
-        return if (config.isValid()) config else {
-            null
-        }
+        val config = CredentialConfig(userId = userId, userToken = userToken, userName = userName)
+
+        return config.takeIf(CredentialConfig::isValid)
     }
 
-    fun clear() = prefs.edit().clear().apply()
+    override fun clear() = prefs.edit().clear().apply()
+
+    override fun put(credentialConfig: CredentialConfig) {
+        prefs.edit().apply {
+            putString(KEY_USER_ID, credentialConfig.userId)
+            putString(KEY_USER_TOKEN, credentialConfig.userToken)
+            putString(KEY_USER_NAME, credentialConfig.userName)
+        }.apply()
+    }
 
     companion object {
         private const val MASTER_KEY_ALIAS = "_stream_sync_config_master_key_"

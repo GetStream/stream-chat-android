@@ -2942,6 +2942,12 @@ public final class io/getstream/chat/android/client/user/CredentialConfig {
 	public final fun getUserToken ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/user/storage/UserCredentialStorage {
+	public abstract fun clear ()V
+	public abstract fun get ()Lio/getstream/chat/android/client/user/CredentialConfig;
+	public abstract fun put (Lio/getstream/chat/android/client/user/CredentialConfig;)V
+}
+
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
 	public abstract fun onProgress (J)V
