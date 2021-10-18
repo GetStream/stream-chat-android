@@ -3,11 +3,107 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# October 18th, 2021 - 4.20.0
+## Common changes for all artifacts
+### ⬆️ Improved
 - Upgraded Kotlin version to 1.5.30
 - Make our SDK compile-friendly with TargetSDK 31
 - Upgraded Coil version to [1.4.0](https://github.com/coil-kt/coil/releases/tag/1.4.0)
-
-### ✅ Added
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
@@ -17,10 +113,6 @@
 - Removed `ProgressTrackerFactory` and `ProgressTracker` in favour of new progress tracking implementation.
 
 ## stream-chat-android
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Push Notification uses `MessagingStyle` on devices with API Version 23+
 - Push Notification configuration has been simplified, check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customizing-push-notifications) to see how it works
@@ -30,8 +122,6 @@
 ### ⚠️ Changed
 - Some properties of `NotificationConfig` has been deprecated, check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section
 - `ChatNotificationhandler` class has been deprecated, you need to use `NotificationHandler` now. Check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section.
-
-### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -50,13 +140,9 @@
 - 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
 - Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
-### ❌ Removed
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Fixed infinite loading of message if any of its attachments uploading was failed
-
-### ⬆️ Improved
 
 ### ✅ Added
 - `ChannelEventsHandler` is added to `QueryChannelsController` to handle updating channel list logic after receiving events. You can provide custom `ChannelEventsHandler` through `ChannelListViewModel` or using `QueryChannelsController` directly.
@@ -64,25 +150,16 @@
 ### ⚠️ Changed
 - `QueryChannelsController::newChannelEventFilter` and `QueryChannelsController#checkFilterOnChannelUpdatedEvent` are now deprecated. See the deprecation log for more details.
 
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed PDF attachments previews
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
 - Fix bug using custom attributes into views inflated into our SDK Views
+
 ### ⬆️ Improved
 - Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
 - Removed full screen loading view when loading more message items on the `SearchResultListView`.
@@ -127,29 +204,6 @@
 - Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
 - Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
 
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 15th, 2021 - 4.19.0
 ## Common changes for all artifacts
