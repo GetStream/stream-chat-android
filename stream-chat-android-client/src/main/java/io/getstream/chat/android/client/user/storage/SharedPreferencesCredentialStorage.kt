@@ -1,9 +1,8 @@
-package io.getstream.chat.android.client.notifications.storage
+package io.getstream.chat.android.client.user.storage
 
 import android.content.Context
 import android.content.SharedPreferences
 import io.getstream.chat.android.client.user.CredentialConfig
-import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 
 internal class SharedPreferencesCredentialStorage(context: Context) : UserCredentialStorage {
 
