@@ -27,7 +27,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- The UserCredentialStorage interface was added to ChatClient. You can set your own implementation via ChatClient.Builder::credentialStorage
+- The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
 
