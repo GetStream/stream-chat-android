@@ -73,8 +73,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+`ThreadParticipants` component now have `text: String` param allowing customizing the thread label.
 
 ### ⚠️ Changed
+* `ThreadParticipants` is public
 
 ### ❌ Removed
 
