@@ -109,6 +109,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             modifier = size,
             user = currentUser,
             contentDescription = currentUser.name,
+            showOnlineIndicator = false,
             onClick = { onAvatarClick(currentUser) }
         )
     } else {

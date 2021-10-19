@@ -313,7 +313,8 @@ private fun RowScope.MessageAvatar(
                 .padding(start = 8.dp, end = 8.dp)
                 .size(24.dp)
                 .align(Alignment.Bottom),
-            user = user
+            user = user,
+            showOnlineIndicator = false
         )
     } else {
         Spacer(modifier = Modifier.width(40.dp))
