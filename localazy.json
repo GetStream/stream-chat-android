@@ -1,0 +1,35 @@
+{
+  "upload": {
+    "type": "android",
+    "files": [
+      {
+        "pattern": "stream-chat-android-ui-common/src/main/res/values/strings*.xml",
+        "file": "strings-ui-common.xml"
+      },
+      {
+        "pattern": "stream-chat-android-client/src/main/res/values/strings*.xml",
+        "file": "strings-client.xml"
+      },
+      {
+        "pattern": "stream-chat-android-ui-components/src/main/res/values/strings*.xml"
+      },
+      {
+        "group": "client-all",
+        "pattern": "stream-chat-android-client/src/main/res/values-*/strings*.xml",
+        "lang": "${autodetectLang}",
+        "file": "strings-client.xml"
+      },
+      {
+        "group": "ui-common-all",
+        "pattern": "stream-chat-android-ui-common/src/main/res/values-*/strings*.xml",
+        "lang": "${autodetectLang}",
+        "file": "strings-ui-common.xml"
+      },
+      {
+        "group": "ui-components-all",
+        "pattern": "stream-chat-android-ui-components/src/main/res/values-*/strings*.xml",
+        "lang": "${autodetectLang}"
+      }
+    ]
+  }
+}
