@@ -29,9 +29,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          key: ${{ runner.os }}-gradle-ktlint-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-ktlint-
       - name: ktlint
         run: ./gradlew ktlintCheck --scan
 
@@ -51,9 +51,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          key: ${{ runner.os }}-gradle-APICheck-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-APICheck-
       - name: API check
         run: ./gradlew apiCheck --scan
 
@@ -73,9 +73,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          key: ${{ runner.os }}-gradle-build-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-build-
       - name: Build
         run: ./gradlew assembleDebug --scan
 
@@ -95,9 +95,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          key: ${{ runner.os }}-gradle-tests-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-tests-
       - name: Unit tests
         run: ./gradlew testDebug --stacktrace --scan
       - name: Upload testDebugUnitTest results
