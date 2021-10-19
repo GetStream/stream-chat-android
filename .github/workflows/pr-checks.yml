@@ -24,6 +24,14 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: ktlint
         run: ./gradlew ktlintCheck --scan
 
@@ -38,6 +46,14 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: API check
         run: ./gradlew apiCheck --scan
 
@@ -52,6 +68,14 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Build
         run: ./gradlew assembleDebug --scan
 
@@ -66,6 +90,14 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Unit tests
         run: ./gradlew testDebug --stacktrace --scan
       - name: Upload testDebugUnitTest results
