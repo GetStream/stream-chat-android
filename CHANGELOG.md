@@ -32,7 +32,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Removed dependency of androidx-security-crypto library. Now storage of user token uses private shared preferences by default.
+- `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
