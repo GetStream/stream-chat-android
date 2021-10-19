@@ -150,11 +150,11 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
 ```
 
 ### Choose Light/Dark Theme
-It is possible to choose between LIGHT, DARK and SYSTEM (default) ui mode. LIGHT forces the colors to be in light mode, DARK to dark colors and SYSTEM uses the colors accondingly to what which theme is selected in the system. You can chose the theme using ChatUI:
+Our SDK already provide a DayNight theme. If you want to force Dark or Light mode, you need to follow the default Android mechanism to use it:
+```
+// Force Dark theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
+// Force Light theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 ```
-ChatUI.uiMode = UiMode.DARK
-```
-:::caution
-Due to some limitations in the Android SDK, to use uiMode you must set `streamUiTheme` instead of using a theme that sets `streamUiValidTheme`
-:::

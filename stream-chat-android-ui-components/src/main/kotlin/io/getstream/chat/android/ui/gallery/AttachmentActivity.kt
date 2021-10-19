@@ -6,8 +6,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -15,24 +13,22 @@ import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
  */
 public class AttachmentActivity : AppCompatActivity() {
-    private lateinit var webView: WebView
-    private lateinit var iv_image: ImageView
-    private lateinit var progressBar: ProgressBar
+    private lateinit var binding: StreamUiActivityAttachmentBinding
 
     private val logger = ChatLogger.get("AttachmentActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.stream_ui_activity_attachment)
 
-        webView = findViewById(R.id.webView)
-        iv_image = findViewById(R.id.ivImage)
-        progressBar = findViewById(R.id.progressBar)
+        binding = StreamUiActivityAttachmentBinding.inflate(streamThemeInflater)
+        setContentView(binding.root)
 
         configUIs()
 
@@ -47,11 +43,11 @@ public class AttachmentActivity : AppCompatActivity() {
     }
 
     private fun configUIs() {
-        iv_image.isVisible = false
-        webView.isVisible = false
+        binding.ivImage.isVisible = false
+        binding.webView.isVisible = false
 
         // WebView
-        webView.apply {
+        binding.webView.apply {
             settings.apply {
                 javaScriptEnabled = true
                 loadWithOverviewMode = true
@@ -76,12 +72,12 @@ public class AttachmentActivity : AppCompatActivity() {
      * @param url web url
      */
     private fun loadUrlToWeb(url: String?) {
-        iv_image.isVisible = false
-        webView.isVisible = true
-        progressBar.isVisible = true
+        binding.ivImage.isVisible = false
+        binding.webView.isVisible = true
+        binding.progressBar.isVisible = true
 
         url?.let {
-            webView.loadUrl(it)
+            binding.webView.loadUrl(it)
         }
     }
 
@@ -95,10 +91,10 @@ public class AttachmentActivity : AppCompatActivity() {
             Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show()
             return
         }
-        iv_image.isVisible = true
-        webView.isVisible = false
+        binding.ivImage.isVisible = true
+        binding.webView.isVisible = false
 
-        iv_image.load(
+        binding.ivImage.load(
             data = url,
             placeholderResId = R.drawable.stream_ui_placeholder,
         )
@@ -112,7 +108,7 @@ public class AttachmentActivity : AppCompatActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-            progressBar.isVisible = false
+            binding.progressBar.isVisible = false
         }
 
         override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError?) {

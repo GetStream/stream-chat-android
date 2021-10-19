@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
@@ -52,6 +53,7 @@ import java.util.concurrent.Executors
 /**
  * Sets up a ChatDomain object with a mocked ChatClient.
  */
+@ExperimentalStreamChatApi
 internal open class BaseDomainTest2 {
 
     /** a realistic set of chat data, please only add to this, don't update */
@@ -149,6 +151,7 @@ internal open class BaseDomainTest2 {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
+            on { queryChannelsInternal(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any<Boolean>()) } doReturn TestCall(
@@ -185,6 +188,7 @@ internal open class BaseDomainTest2 {
             .offlineEnabled()
             .userPresenceEnabled()
             .buildImpl()
+        ChatDomain.instance = chatDomainImpl
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error

@@ -19,7 +19,7 @@ public data class ViewReactionsViewStyle(
     @Deprecated(
         message  = "Use bubbleBorderColorMine instead",
         replaceWith = ReplaceWith("bubbleBorderColorMine"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     @ColorInt public val bubbleBorderColor: Int?,
     @ColorInt public val bubbleBorderColorMine: Int,

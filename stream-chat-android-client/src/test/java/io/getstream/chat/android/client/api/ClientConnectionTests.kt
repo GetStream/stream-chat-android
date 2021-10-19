@@ -102,8 +102,10 @@ internal class ClientConnectionTests {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
-            encryptedUserConfigStorage = mock(),
+            userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
+            appContext = mock(),
+            scope = testCoroutines.scope,
         )
     }
 

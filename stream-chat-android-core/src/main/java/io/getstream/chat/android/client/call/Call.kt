@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -80,6 +81,14 @@ public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
 public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
     return ZipCall(this, call)
 }
+
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.doOnStart(scope: CoroutineScope, function: suspend () -> Unit): Call<T> =
+    DoOnStartCall(this, scope, function)
+
+@InternalStreamChatApi
+public fun <T : Any> Call<T>.doOnResult(scope: CoroutineScope, function: suspend (Result<T>) -> Unit): Call<T> =
+    DoOnResultCall(this, scope, function)
 
 @InternalStreamChatApi
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}
