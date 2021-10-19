@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.user
 
 /**
- * Data class that contain credential of current user.
+ * Data class that contains credentials of the current user.
  */
 public class CredentialConfig(
     /**
