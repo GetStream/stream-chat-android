@@ -24,14 +24,9 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-      - uses: actions/cache@v2
+      - uses: ./.github/actions/gradle-cache
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-ktlint-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-ktlint-
+          key-prefix: gradle-ktlint
       - name: ktlint
         run: ./gradlew ktlintCheck --scan
 
@@ -46,14 +41,9 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-      - uses: actions/cache@v2
+      - uses: ./.github/actions/gradle-cache
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-APICheck-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-APICheck-
+          key-prefix: gradle-APICheck
       - name: API check
         run: ./gradlew apiCheck --scan
 
@@ -68,14 +58,9 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-      - uses: actions/cache@v2
+      - uses: ./.github/actions/gradle-cache
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-build-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-build-
+          key-prefix: gradle-build
       - name: Build
         run: ./gradlew assembleDebug --scan
 
@@ -90,14 +75,9 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
-      - uses: actions/cache@v2
+      - uses: ./.github/actions/gradle-cache
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-tests-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/Dependencies.kt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-tests-
+          key-prefix: gradle-test
       - name: Unit tests
         run: ./gradlew testDebug --stacktrace --scan
       - name: Upload testDebugUnitTest results
