@@ -4,6 +4,9 @@ import io.getstream.chat.android.client.user.CredentialConfig
 
 /**
  * Storage for [CredentialConfig].
+ * SDK needs to store user credentials to restore SDK with user connected state. It is required for push notifications
+ * for example. When a device receives push notification app with SDK might be killed or not run completely. SDK handles
+ * it and restore state using data from [CredentialConfig].
  */
 public interface UserCredentialStorage {
     /**
