@@ -1760,7 +1760,7 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Overrides a default implementation based on shared preferences implementation for [UserCredentialStorage].
+         * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
          */
         public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
             userCredentialStorage = credentialStorage
