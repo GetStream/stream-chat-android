@@ -82,7 +82,7 @@ internal class MockClientBuilder(
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = queryChannelsPostponeHelper,
             userStateService = userStateService,
-            encryptedUserConfigStorage = mock(),
+            userCredentialStorage = mock(),
             tokenUtils = tokenUtil,
             appContext = mock(),
             scope = testCoroutineScope,
