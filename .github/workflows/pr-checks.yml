@@ -24,8 +24,11 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-ktlint
       - name: ktlint
-        run: ./gradlew ktlintCheck
+        run: ./gradlew ktlintCheck --scan
 
   api_check:
     name: API check
@@ -38,8 +41,11 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-APICheck
       - name: API check
-        run: ./gradlew apiCheck
+        run: ./gradlew apiCheck --scan
 
   debug_build:
     name: Debug build
@@ -52,8 +58,11 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-build
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --scan
 
   test:
     name: Unit tests
@@ -66,8 +75,11 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-test
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew testDebug --stacktrace --scan
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
