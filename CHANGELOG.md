@@ -36,6 +36,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
 
