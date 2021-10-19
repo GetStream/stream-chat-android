@@ -25,7 +25,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: ktlint
-        run: ./gradlew ktlintCheck
+        run: ./gradlew ktlintCheck --scan
 
   api_check:
     name: API check
@@ -39,7 +39,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: API check
-        run: ./gradlew apiCheck
+        run: ./gradlew apiCheck --scan
 
   debug_build:
     name: Debug build
@@ -53,7 +53,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --scan
 
   test:
     name: Unit tests
@@ -67,7 +67,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew testDebug --stacktrace --scan
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
