@@ -35,9 +35,7 @@ class ViewReactionsTest : ScreenshotTest {
     private fun testWithReactions(reactions: Map<String, Int>) {
         val fragmentArgs = bundleOf(CUSTOM_REACTIONS to reactions)
         val fragmentScenario = launchFragmentInContainer<ComponentBrowserViewReactionsFragment>(fragmentArgs)
-
-
-        Thread.sleep(5000)
+        
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
