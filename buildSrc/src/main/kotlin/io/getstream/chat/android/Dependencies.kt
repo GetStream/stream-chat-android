@@ -20,7 +20,7 @@ object Versions {
     internal const val ANDROIDX_SECURITY_CRYPTO = "1.1.0-alpha03"
     internal const val ANDROIDX_STARTUP = "1.1.0"
     internal const val ANDROIDX_TEST_JUNIT = "1.1.3"
-    internal const val ANDROIDX_TEST = "1.4.0"
+    internal const val ANDROIDX_TEST = "1.3.0"
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
     internal const val COIL = "1.4.0"
     internal const val COMPOSE_ACCOMPANIST = "0.19.0"
@@ -35,7 +35,7 @@ object Versions {
     internal const val DOKKA = "1.5.0"
     internal const val DOKKASAURUS = "0.1.10"
     internal const val DOTENV = "5.2.2"
-    internal const val ESPRESSO = "3.4.0"
+    internal const val ESPRESSO = "3.3.0"
     internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
@@ -104,7 +104,9 @@ object Dependencies {
     const val androidxSecurityCrypto = "androidx.security:security-crypto:${Versions.ANDROIDX_SECURITY_CRYPTO}"
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
     const val androidxTest = "androidx.test:core:${Versions.ANDROIDX_TEST}"
+    const val androidxTestKtx = "androidx.test:core-ktx:${Versions.ANDROIDX_TEST}"
     const val androidxTestJunit = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_JUNIT}"
+    const val androidxTestJunitKtx = "androidx.test.ext:junit-ktx:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxViewPager2 = "androidx.viewpager2:viewpager2:${Versions.ANDROIDX_VIEW_PAGER_2}"
     const val coil = "io.coil-kt:coil:${Versions.COIL}"
     const val coilGif = "io.coil-kt:coil-gif:${Versions.COIL}"
@@ -202,6 +204,7 @@ object Dependencies {
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
+    const val navigationTest = "androidx.navigation:navigation-testing:${Versions.NAVIGATION}"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

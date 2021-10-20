@@ -14,6 +14,8 @@ import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserViewReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 
+const val CUSTOM_REACTIONS = "CUSTOM_REACTIONS"
+
 @InternalStreamChatApi
 class ComponentBrowserViewReactionsFragment : Fragment() {
     private var _binding: FragmentComponentBrowserViewReactionsViewBinding? = null
@@ -25,6 +27,8 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentComponentBrowserViewReactionsViewBinding.inflate(inflater, container, false)
+
+
         return binding.root
     }
 
@@ -35,6 +39,8 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val reactions = arguments?.getSerializable(CUSTOM_REACTIONS)
+
         binding.apply {
             viewReactionsView1.setMessage(
                 message = randomMessage().apply {
@@ -91,14 +97,21 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                 },
                 isMyMessage = true
             )
+
+            val customReactions = if (reactions != null) {
+                reactions as Map<String, Int>
+            } else {
+                mutableMapOf(
+                    LOVE to 10,
+                    WUT to 20,
+                    LOL to 20,
+                    THUMBS_UP to 20
+                )
+            }
+
             viewReactionsView6.setMessage(
                 message = randomMessage().apply {
-                    reactionCounts = mutableMapOf(
-                        LOVE to 10,
-                        WUT to 20,
-                        LOL to 20,
-                        THUMBS_UP to 20
-                    )
+                    reactionCounts = customReactions.toMutableMap()
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
                         Reaction(type = WUT)
