@@ -1,11 +1,11 @@
 package io.getstream.chat.android.ui.message.list.reactions.edit.internal
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 
-private const val LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_FACTOR = 0.9F
+private const val LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP = 2
 
 internal class EditReactionsBubbleDrawer(
     private val editReactionsViewStyle: EditReactionsViewStyle,
@@ -15,7 +15,7 @@ internal class EditReactionsBubbleDrawer(
         color = editReactionsViewStyle.bubbleColorMine
         style = Paint.Style.FILL
     }
-    
+
     private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = editReactionsViewStyle.bubbleColorTheirs
         style = Paint.Style.FILL
@@ -83,6 +83,6 @@ internal class EditReactionsBubbleDrawer(
     }
 
     private fun largeTailBubbleInitialPosition(): Float {
-        return bubbleHeight.toFloat() * LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_FACTOR
+        return bubbleHeight.toFloat() - LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP.dpToPx()
     }
 }
