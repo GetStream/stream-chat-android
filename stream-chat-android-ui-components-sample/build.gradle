@@ -164,12 +164,11 @@ dependencies {
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
+    debugImplementation Dependencies.fragmentTest
 
     // Instrumentation tests
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
-//    androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation Dependencies.navigationTest
-    debugImplementation("androidx.fragment:fragment-testing:1.3.6")
 }

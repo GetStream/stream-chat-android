@@ -37,6 +37,7 @@ object Versions {
     internal const val DOTENV = "5.2.2"
     internal const val ESPRESSO = "3.3.0"
     internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
+    internal const val FRAGMENT_TESTING = "1.3.6"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.7.1"
@@ -136,6 +137,7 @@ object Dependencies {
     const val dotenv = "io.github.cdimascio:java-dotenv:${Versions.DOTENV}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO}"
     const val exoMedia = "com.github.brianwernick:ExoMedia:${Versions.EXOMEDIA}"
+    const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.FRAGMENT_TESTING}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:${Versions.FIREBASE_CRASHLYTICS}"
     const val firebaseCrashlyticsPlugin =
@@ -182,6 +184,7 @@ object Dependencies {
     const val navigationSafeArgsGradlePlugin =
         "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}"
     const val navigationRuntimeKTX = "androidx.navigation:navigation-runtime-ktx:${Versions.NAVIGATION}"
+    const val navigationTest = "androidx.navigation:navigation-testing:${Versions.NAVIGATION}"
     const val navigationUIKTX = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
     const val ok2curl = "com.github.mrmike:ok2curl:${Versions.OK2CURL}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
@@ -204,7 +207,6 @@ object Dependencies {
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
-    const val navigationTest = "androidx.navigation:navigation-testing:${Versions.NAVIGATION}"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
