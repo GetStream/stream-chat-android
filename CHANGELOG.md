@@ -160,6 +160,7 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fixing ViewReactionsView being cropped if more than 7 reactions are added
 - Fix bug using custom attributes into views inflated into our SDK Views
 
 ### ⬆️ Improved
