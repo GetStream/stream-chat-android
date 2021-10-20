@@ -99,7 +99,7 @@
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy_offset">0dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_radius">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_offset">5dp</dimen>
-    <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy_offset">2dp</dimen>
+    <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy_offset">4dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_radius">3dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_offset">10dp</dimen>
 

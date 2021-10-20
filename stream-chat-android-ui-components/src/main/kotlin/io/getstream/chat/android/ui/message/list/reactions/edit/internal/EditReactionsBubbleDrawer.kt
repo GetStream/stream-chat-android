@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 
+private const val LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_FACTOR = 0.9F
+
 internal class EditReactionsBubbleDrawer(
     private val editReactionsViewStyle: EditReactionsViewStyle,
 ) {
@@ -13,11 +15,7 @@ internal class EditReactionsBubbleDrawer(
         color = editReactionsViewStyle.bubbleColorMine
         style = Paint.Style.FILL
     }
-
-    private val bubblePaintMineTransparent = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.TRANSPARENT
-        style = Paint.Style.FILL
-    }
+    
     private val bubblePaintTheirs = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = editReactionsViewStyle.bubbleColorTheirs
         style = Paint.Style.FILL
@@ -64,7 +62,7 @@ internal class EditReactionsBubbleDrawer(
         }
         canvas.drawCircle(
             (bubbleWidth / 2).toFloat() + offset,
-            bubbleHeight.toFloat() + editReactionsViewStyle.largeTailBubbleCyOffset,
+            largeTailBubbleInitialPosition() + editReactionsViewStyle.largeTailBubbleCyOffset.toFloat(),
             editReactionsViewStyle.largeTailBubbleRadius.toFloat(),
             paint
         )
@@ -76,11 +74,15 @@ internal class EditReactionsBubbleDrawer(
         }
         canvas.drawCircle(
             bubbleWidth / 2 + offset,
-            bubbleHeight.toFloat() +
+            largeTailBubbleInitialPosition() +
                 editReactionsViewStyle.largeTailBubbleRadius.toFloat() +
-                editReactionsViewStyle.smallTailBubbleCyOffset,
+                editReactionsViewStyle.smallTailBubbleCyOffset.toFloat(),
             editReactionsViewStyle.smallTailBubbleRadius.toFloat(),
             paint
         )
+    }
+
+    private fun largeTailBubbleInitialPosition(): Float {
+        return bubbleHeight.toFloat() * LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_FACTOR
     }
 }
