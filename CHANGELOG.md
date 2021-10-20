@@ -61,7 +61,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-
+- Better position for icon of failed message
 ### ✅ Added
 
 ### ⚠️ Changed
