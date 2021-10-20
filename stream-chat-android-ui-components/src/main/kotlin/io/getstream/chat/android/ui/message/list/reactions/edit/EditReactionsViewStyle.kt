@@ -15,15 +15,14 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 public data class EditReactionsViewStyle(
     @ColorInt public val bubbleColorMine: Int,
     @ColorInt public val bubbleColorTheirs: Int,
-    @Px public val totalHeight: Int,
     @Px public val horizontalPadding: Int,
     @Px public val itemSize: Int,
     @Px public val bubbleHeight: Int,
     @Px public val bubbleRadius: Int,
-    @Px public val largeTailBubbleCy: Int,
+    @Px public val largeTailBubbleCyOffset: Int,
     @Px public val largeTailBubbleRadius: Int,
     @Px public val largeTailBubbleOffset: Int,
-    @Px public val smallTailBubbleCy: Int,
+    @Px public val smallTailBubbleCyOffset: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
 ) {
@@ -44,8 +43,6 @@ public data class EditReactionsViewStyle(
         }
 
         fun build(): EditReactionsViewStyle {
-            val totalHeight =
-                context.getDimension(R.dimen.stream_ui_edit_reactions_total_height)
             val horizontalPadding =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_padding)
             val itemSize =
@@ -54,14 +51,14 @@ public data class EditReactionsViewStyle(
                 context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_height)
             val bubbleRadius =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_bubble_radius)
-            val largeTailBubbleCy =
-                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_cy)
+            val largeTailBubbleCyOffset =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_cy_offset)
             val largeTailBubbleRadius =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_radius)
             val largeTailBubbleOffset =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_large_tail_bubble_offset)
-            val smallTailBubbleCy =
-                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_cy)
+            val smallTailBubbleCyOffset =
+                context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_cy_offset)
             val smallTailBubbleRadius =
                 context.getDimension(R.dimen.stream_ui_edit_reactions_small_tail_bubble_radius)
             val smallTailBubbleOffset =
@@ -70,15 +67,14 @@ public data class EditReactionsViewStyle(
             return EditReactionsViewStyle(
                 bubbleColorMine = bubbleColorMine,
                 bubbleColorTheirs = bubbleColorTheirs,
-                totalHeight = totalHeight,
                 horizontalPadding = horizontalPadding,
                 itemSize = itemSize,
                 bubbleHeight = bubbleHeight,
                 bubbleRadius = bubbleRadius,
-                largeTailBubbleCy = largeTailBubbleCy,
+                largeTailBubbleCyOffset = largeTailBubbleCyOffset,
                 largeTailBubbleRadius = largeTailBubbleRadius,
                 largeTailBubbleOffset = largeTailBubbleOffset,
-                smallTailBubbleCy = smallTailBubbleCy,
+                smallTailBubbleCyOffset = smallTailBubbleCyOffset,
                 smallTailBubbleRadius = smallTailBubbleRadius,
                 smallTailBubbleOffset = smallTailBubbleOffset
             ).let(TransformStyle.editReactionsStyleTransformer::transform)

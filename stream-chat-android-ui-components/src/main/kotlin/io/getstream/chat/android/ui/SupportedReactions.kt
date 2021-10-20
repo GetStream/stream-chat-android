@@ -31,6 +31,13 @@ public class SupportedReactions(
         THUMBS_DOWN to thumbsDownDrawable(context),
         LOL to lolDrawable(context),
         WUT to wutDrawable(context),
+        // "wut1" to wutDrawable(context),
+        // "wut2" to wutDrawable(context),
+        // "wut3" to wutDrawable(context),
+        // "wut4" to wutDrawable(context),
+        // "wut5" to wutDrawable(context),
+        // "wut6" to wutDrawable(context),
+        // "wut7" to wutDrawable(context),
     ),
 ) {
     public val types: List<String> = reactions.keys.toList()
@@ -43,7 +50,7 @@ public class SupportedReactions(
         return reactions[type]
     }
 
-    public class ReactionDrawable(public val inactiveDrawable: Drawable, public val activeDrawable: Drawable) {
+    public class ReactionDrawable(private val inactiveDrawable: Drawable, private val activeDrawable: Drawable) {
         public fun getDrawable(isActive: Boolean): Drawable = if (isActive) {
             activeDrawable
         } else {
