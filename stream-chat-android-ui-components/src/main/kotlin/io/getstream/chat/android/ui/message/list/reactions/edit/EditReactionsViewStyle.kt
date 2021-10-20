@@ -25,6 +25,7 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleCyOffset: Int,
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
+    public val reactionsColumn: Int,
 ) {
 
     internal data class Builder(private val array: TypedArray, private val context: Context) {
@@ -34,12 +35,18 @@ public data class EditReactionsViewStyle(
         @ColorInt
         private var bubbleColorTheirs: Int = context.getColorCompat(R.color.stream_ui_white)
 
+        private var reactionsColumn = 5
+
         fun bubbleColorMine(@StyleableRes bubbleColorMineResId: Int) = apply {
             bubbleColorMine = array.getColor(bubbleColorMineResId, context.getColorCompat(R.color.stream_ui_white))
         }
 
         fun bubbleColorTheirs(@StyleableRes bubbleColorTheirsResId: Int) = apply {
             bubbleColorTheirs = array.getColor(bubbleColorTheirsResId, context.getColorCompat(R.color.stream_ui_white))
+        }
+
+        fun reactionsColumns(columnsResId: Int) = apply {
+            reactionsColumn = array.getInt(columnsResId, 5)
         }
 
         fun build(): EditReactionsViewStyle {
@@ -76,7 +83,8 @@ public data class EditReactionsViewStyle(
                 largeTailBubbleOffset = largeTailBubbleOffset,
                 smallTailBubbleCyOffset = smallTailBubbleCyOffset,
                 smallTailBubbleRadius = smallTailBubbleRadius,
-                smallTailBubbleOffset = smallTailBubbleOffset
+                smallTailBubbleOffset = smallTailBubbleOffset,
+                reactionsColumn = reactionsColumn,
             ).let(TransformStyle.editReactionsStyleTransformer::transform)
         }
     }

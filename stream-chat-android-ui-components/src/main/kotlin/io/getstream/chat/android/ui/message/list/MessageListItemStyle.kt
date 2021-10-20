@@ -398,6 +398,7 @@ public data class MessageListItemStyle(
             val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
                 .bubbleColorMine(R.styleable.MessageListView_streamUiEditReactionsBubbleColorMine)
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
+                .reactionsColumns(R.styleable.MessageListView_streamUiEditReactionsColumns)
                 .build()
 
             val iconIndicatorSent = attributes.getDrawable(

@@ -359,6 +359,7 @@
         <!-- Message edit reactions view style -->
         <item name="streamUiEditReactionsBubbleColorMine">@color/stream_ui_white</item>
         <item name="streamUiEditReactionsBubbleColorTheirs">@color/stream_ui_white</item>
+        <item name="streamUiEditReactionsColumns">5</item>
 
         <!-- Indicator icons -->
         <item name="streamUiIconIndicatorSent">@drawable/stream_ui_ic_check_single</item>

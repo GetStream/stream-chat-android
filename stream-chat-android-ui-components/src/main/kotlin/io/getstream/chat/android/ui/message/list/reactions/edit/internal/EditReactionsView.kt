@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
@@ -17,6 +16,8 @@ import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsVie
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionsAdapter
 import kotlin.math.ceil
+
+private const val TAIL_BUBBLE_SPACE_DP = 16
 
 @InternalStreamChatApi
 public class EditReactionsView : RecyclerView {
@@ -45,6 +46,7 @@ public class EditReactionsView : RecyclerView {
     }
 
     private var bubbleHeight: Int = 0
+    private var reactionsColumns: Int = 5
 
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
@@ -57,12 +59,12 @@ public class EditReactionsView : RecyclerView {
             )
         }
 
-        if (reactionItems.size > 5) {
-            val timesBigger = ceil(reactionItems.size.toFloat() / 5).toInt()
+        if (reactionItems.size > reactionsColumns) {
+            val timesBigger = ceil(reactionItems.size.toFloat() / reactionsColumns).toInt()
             bubbleHeight = bubbleHeight.times(timesBigger)
         }
 
-        minimumHeight = bubbleHeight + 16.dpToPx()
+        minimumHeight = bubbleHeight + TAIL_BUBBLE_SPACE_DP.dpToPx()
 
         reactionsAdapter.submitList(reactionItems)
     }
@@ -83,7 +85,6 @@ public class EditReactionsView : RecyclerView {
 
         bubbleHeight = style.bubbleHeight
 
-        layoutManager = GridLayoutManager(context, 5)
         itemAnimator = null
         overScrollMode = View.OVER_SCROLL_NEVER
         setWillNotDraw(false)
@@ -93,9 +94,13 @@ public class EditReactionsView : RecyclerView {
         this.reactionsViewStyle = editReactionsViewStyle
         this.bubbleDrawer = EditReactionsBubbleDrawer(reactionsViewStyle)
 
+        reactionsColumns = editReactionsViewStyle.reactionsColumn
+
         reactionsViewStyle.horizontalPadding.let {
             setPadding(it, 0, it, 0)
         }
+
+        layoutManager = GridLayoutManager(context, reactionsColumns)
 
         adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
             reactionClickListener?.onReactionClick(it)
