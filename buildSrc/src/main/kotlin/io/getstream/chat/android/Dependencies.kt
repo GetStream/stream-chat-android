@@ -19,7 +19,7 @@ object Versions {
     internal const val ANDROIDX_RECYCLERVIEW = "1.2.1"
     internal const val ANDROIDX_STARTUP = "1.1.0"
     internal const val ANDROIDX_TEST_JUNIT = "1.1.3"
-    internal const val ANDROIDX_TEST = "1.3.0"
+    internal const val ANDROIDX_TEST = "1.4.0"
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
     internal const val COIL = "1.4.0"
     internal const val COMPOSE_ACCOMPANIST = "0.19.0"
