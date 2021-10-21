@@ -75,6 +75,7 @@ public class ChannelListViewModel(
     /**
      * The state of our network connection - if we're online, connecting or offline.
      */
+    @Deprecated("Use connectionState instead")
     public val isOnline: StateFlow<Boolean> = chatDomain.online
 
     /**

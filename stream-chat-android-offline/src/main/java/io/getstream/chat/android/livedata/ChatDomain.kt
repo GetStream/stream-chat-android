@@ -55,6 +55,7 @@ public sealed interface ChatDomain {
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
+    @Deprecated("Use connectionState instead")
     public val online: LiveData<Boolean>
 
     /**
