@@ -473,8 +473,8 @@
         <item name="streamUiMessageEndMargin">0dp</item>
 
         <!-- Message max possible factors -->
-        <item name="streamUiMessageMaxPossibleWidthFactorMine">100%</item>
-        <item name="streamUiMessageMaxPossibleWidthFactorTheirs">100%</item>
+        <item name="streamUiMessageMaxPossibleWidthFactorMine">0%</item>
+        <item name="streamUiMessageMaxPossibleWidthFactorTheirs">0%</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
