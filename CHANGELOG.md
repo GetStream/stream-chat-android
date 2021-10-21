@@ -59,6 +59,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
 
 ### ⬆️ Improved
 
