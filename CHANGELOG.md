@@ -7,8 +7,6 @@
 ### ✅ Added
 - Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
 ### ⚠️ Changed
-- 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
-- Attachment#uploadState is now updated in real-time during uploads.
 
 ### ❌ Removed
 
