@@ -63,6 +63,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
 
 ### ⚠️ Changed
 
