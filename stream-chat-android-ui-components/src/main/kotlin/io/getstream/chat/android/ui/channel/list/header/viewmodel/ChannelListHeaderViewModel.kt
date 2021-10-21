@@ -17,5 +17,6 @@ public class ChannelListHeaderViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
 ) : ViewModel() {
     public val currentUser: LiveData<User?> = chatDomain.user
-    public val online: LiveData<ConnectionState> = chatDomain.online
+    public val connectionState: LiveData<ConnectionState> = chatDomain.connectionState
+    public val online: LiveData<Boolean> = chatDomain.online
 }

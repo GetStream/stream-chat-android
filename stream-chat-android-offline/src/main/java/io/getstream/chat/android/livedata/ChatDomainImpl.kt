@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -71,7 +72,12 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    override val online: LiveData<ConnectionState> = chatDomainStateFlow.online.asLiveData()
+    override val connectionState: LiveData<ConnectionState> = chatDomainStateFlow.connectionState.asLiveData()
+
+    override val online: LiveData<Boolean> =
+        chatDomainStateFlow.connectionState
+            .asLiveData()
+            .map { state -> state == ConnectionState.CONNECTED}
 
     /**
      * The total unread message count for the current user.

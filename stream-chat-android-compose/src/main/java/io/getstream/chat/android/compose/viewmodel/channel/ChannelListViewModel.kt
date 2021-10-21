@@ -73,9 +73,14 @@ public class ChannelListViewModel(
         private set
 
     /**
-     * The state of our network connection - if we're online or not.
+     * The state of our network connection - if we're online, connecting or offline.
      */
-    public val connectionState: StateFlow<ConnectionState> = chatDomain.online
+    public val isOnline: StateFlow<Boolean> = chatDomain.online
+
+    /**
+     * The state of our network connection - if we're online, connecting or offline.
+     */
+    public val connectionState: StateFlow<ConnectionState> = chatDomain.connectionState
 
     /**
      * The state of the currently logged in user.

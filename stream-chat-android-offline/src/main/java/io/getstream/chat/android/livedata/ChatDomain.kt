@@ -48,9 +48,14 @@ public sealed interface ChatDomain {
     public val initialized: LiveData<Boolean>
 
     /**
+     * LiveData<ConnectionState> that indicates if we are currently online, connecting or offline
+     */
+    public val connectionState: LiveData<ConnectionState>
+
+    /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    public val online: LiveData<ConnectionState>
+    public val online: LiveData<Boolean>
 
     /**
      * The total unread message count for the current user.

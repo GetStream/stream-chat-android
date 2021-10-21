@@ -105,7 +105,7 @@ internal class WhenObserveAttachmentsDBFlow {
         }
 
         suspend fun givenSendMessageCalled(message: Message) = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.CONNECTED)
+            whenever(chatDomainImpl.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
             whenever(chatDomainImpl.isOnline()) doReturn true
             whenever(channelClient.sendMessage(any())) doReturn message.asCall()
             whenever(repositoryFacade.observeAttachmentsForMessage(any())) doReturn flow

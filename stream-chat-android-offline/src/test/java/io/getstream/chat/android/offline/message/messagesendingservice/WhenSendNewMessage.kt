@@ -153,11 +153,11 @@ internal class WhenSendNewMessage {
         private var uploadAttachmentsWorker = mock<UploadAttachmentsWorker>()
 
         fun givenOffline() = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.OFFLINE)
+            whenever(chatDomainImpl.connectionState) doReturn MutableStateFlow(ConnectionState.OFFLINE)
         }
 
         fun givenOnline() = apply {
-            whenever(chatDomainImpl.online) doReturn MutableStateFlow(ConnectionState.CONNECTED)
+            whenever(chatDomainImpl.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
             whenever(chatDomainImpl.isOnline()) doReturn true
         }
 

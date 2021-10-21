@@ -107,7 +107,7 @@ public sealed interface QueryChannelsController {
 
         /** The list of channels, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
-         * @see ChatDomainImpl.online
+         * @see ChatDomainImpl.connectionState
          */
         public data class Result(val channels: List<Channel>) : ChannelsState()
     }

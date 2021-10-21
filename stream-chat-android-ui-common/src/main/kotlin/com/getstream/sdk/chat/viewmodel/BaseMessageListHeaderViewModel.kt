@@ -28,7 +28,7 @@ public abstract class BaseMessageListHeaderViewModel @InternalStreamChatApi cons
     public val members: LiveData<List<Member>> = _members
     public val channelState: LiveData<Channel> = _channelState
     public val anyOtherUsersOnline: LiveData<Boolean> = _anyOtherUsersOnline
-    public val online: LiveData<ConnectionState> = chatDomain.online
+    public val online: LiveData<ConnectionState> = chatDomain.connectionState
     public val typingUsers: LiveData<List<User>> = _typingUsers
 
     init {

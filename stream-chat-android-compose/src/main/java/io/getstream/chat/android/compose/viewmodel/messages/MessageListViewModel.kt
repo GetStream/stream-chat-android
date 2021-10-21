@@ -112,7 +112,13 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val isOnline: StateFlow<ConnectionState>
+    public val connectionState: StateFlow<ConnectionState>
+        get() = chatDomain.connectionState
+
+    /**
+     * Gives us information about the online state of the device.
+     */
+    public val isOnline: StateFlow<Boolean>
         get() = chatDomain.online
 
     /**

@@ -54,9 +54,14 @@ public sealed interface ChatDomain {
     public val initialized: StateFlow<Boolean>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online
+     * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
      */
-    public val online: StateFlow<ConnectionState>
+    public val connectionState: StateFlow<ConnectionState>
+
+    /**
+     * StateFlow<Boolean> that indicates if we are currently online, connecting of offline.
+     */
+    public val online: StateFlow<Boolean>
 
     /**
      * The total unread message count for the current user.
