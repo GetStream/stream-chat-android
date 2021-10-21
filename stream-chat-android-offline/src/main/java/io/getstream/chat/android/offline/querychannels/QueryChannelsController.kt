@@ -38,18 +38,19 @@ private const val CHANNEL_LIMIT = 30
 
 @OptIn(ExperimentalStreamChatApi::class)
 public class QueryChannelsController internal constructor(
-    public val filter: FilterObject,
-    public val sort: QuerySort<Channel>,
     private val domainImpl: ChatDomainImpl,
     private val mutableState: QueryChannelsMutableState,
     private val queryChannelsLogic: QueryChannelsLogic,
 ) {
     public val recoveryNeeded: MutableStateFlow<Boolean> by mutableState::recoveryNeeded
 
+    public val filter: FilterObject by mutableState::filter
+    public val sort: QuerySort<Channel> by mutableState::sort
+
     /**
      * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler? = null
+    public var channelEventsHandler: ChannelEventsHandler? by mutableState::channelEventsHandler
 
     @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
@@ -115,7 +116,7 @@ public class QueryChannelsController internal constructor(
 
     internal suspend fun handleEvent(event: ChatEvent) {
         if (event is HasChannel) {
-            when (mutableState.eventsHandler.onChannelEvent(event)) {
+            when (mutableState.eventsHandler.onChannelEvent(event, filter)) {
                 EventHandlingResult.ADD -> addChannel(event.channel)
                 EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
                 EventHandlingResult.SKIP -> Unit

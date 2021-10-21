@@ -4,9 +4,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -15,15 +18,29 @@ import io.getstream.chat.android.offline.utils.ChannelDiffCallback
 import io.getstream.chat.android.offline.utils.DiffUtilOperationCounter
 import io.getstream.chat.android.offline.utils.UpdateOperationCounts
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest() {
+
+    @Test
+    fun `Given initialized SDK When request channels Should not crash`(): Unit = runBlocking {
+        val queryChannelsController =
+            Fixture(chatDomainImpl, data.filter1).givenChannelInOfflineStorage(data.channel1).get()
+
+        val queryChannelsResult = queryChannelsController.query()
+
+        queryChannelsResult.isSuccess shouldBe true
+    }
 
     @Test
     fun `Given the same channels in cache and BE When observing channels Should receive the correct number of events with channels`(): Unit =
@@ -53,6 +70,35 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             // updating the last message, should should trigger 1 "changed" operation
             chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
             counter.counts shouldBeEqualTo UpdateOperationCounts(events = 6, changed = 3, inserted = 2)
+        }
+
+    @Test
+    fun `Given channel events handler When handle channel events Should invoke channel events handler`(): Unit =
+        runBlocking {
+            val channelEventsHandler = object : ChannelEventsHandler {
+                var didHandle = false
+                override fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+                    didHandle = true
+                    return EventHandlingResult.SKIP
+                }
+            }
+            val sut = Fixture(chatDomainImpl, data.filter1).givenChannelInOfflineStorage(data.channel1).get()
+            sut.channelEventsHandler = channelEventsHandler
+
+            sut.handleEvent(
+                ChannelUpdatedByUserEvent(
+                    type = randomString(),
+                    createdAt = randomDate(),
+                    cid = randomCID(),
+                    channelType = randomString(),
+                    channelId = randomString(),
+                    user = mock(),
+                    message = mock(),
+                    channel = mock()
+                )
+            )
+
+            channelEventsHandler.didHandle shouldBe true
         }
 
     private class Fixture(

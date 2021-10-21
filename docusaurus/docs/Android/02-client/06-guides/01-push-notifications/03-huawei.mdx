@@ -54,7 +54,7 @@ val notificationConfig = NotificationConfig(
     )
 )
 ChatClient.Builder("apiKey", context)
-    .notifications(ChatNotificationHandler(context, notificationsConfig))
+    .notifications(notificationConfig)
     .build()
 ```
 

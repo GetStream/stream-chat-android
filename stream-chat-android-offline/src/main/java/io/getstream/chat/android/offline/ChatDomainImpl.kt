@@ -587,13 +587,7 @@ internal class ChatDomainImpl internal constructor(
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             val mutableState = offlinePlugin.state.queryChannels(filter, sort).toMutableState()
             val logic = offlinePlugin.logic.queryChannels(filter, sort)
-            QueryChannelsController(
-                filter,
-                sort,
-                this,
-                mutableState,
-                logic
-            )
+            QueryChannelsController(domainImpl = this, mutableState = mutableState, queryChannelsLogic = logic)
         }
 
     private suspend fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =

@@ -47,7 +47,7 @@ internal open class BaseChatClientTest {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userStateService = userStateService,
-            encryptedUserConfigStorage = mock(),
+            userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
             appContext = mock(),
             scope = mock(),
