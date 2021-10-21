@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -1628,7 +1627,7 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Sets a custom [ChatNotificationHandler] that the SDK will use to handle everything
+         * Sets a custom [NotificationHandler] that the SDK will use to handle everything
          * around push notifications. Create your own subclass and override methods to customize
          * notification appearance and behavior.
          *
@@ -1637,7 +1636,7 @@ public class ChatClient internal constructor(
          *
          *
          * @param notificationConfig Config push notification.
-         * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
+         * @param notificationsHandler Your custom class implementation of [NotificationHandler].
          */
         @JvmOverloads
         public fun notifications(
@@ -1860,10 +1859,10 @@ public class ChatClient internal constructor(
         /**
          * Handles push message.
          * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
-         * Push message will be handled internally unless user overrides [ChatNotificationHandler.onPushMessage]
+         * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *
-         * @see [ChatNotificationHandler.onPushMessage]
+         * @see [NotificationHandler.onPushMessage]
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
