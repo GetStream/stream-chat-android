@@ -75,10 +75,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override val connectionState: LiveData<ConnectionState> = chatDomainStateFlow.connectionState.asLiveData()
 
     @Deprecated("Use connectionState instead")
-    override val online: LiveData<Boolean> =
-        chatDomainStateFlow.connectionState
-            .asLiveData()
-            .map { state -> state == ConnectionState.CONNECTED }
+    override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
 
     /**
      * The total unread message count for the current user.
