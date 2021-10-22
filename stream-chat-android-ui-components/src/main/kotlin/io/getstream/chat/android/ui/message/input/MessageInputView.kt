@@ -441,16 +441,24 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton() {
-        binding.attachmentsButton.run {
-            messageInputViewStyle.attachButtonIcon.let(this::setImageDrawable)
-            setOnClickListener {
-                context.getFragmentManager()?.let {
-                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
-                        .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
-                        .show(it, AttachmentSelectionDialogFragment.TAG)
-                }
+        binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
+        setAttachmentButtonClickListener {
+            context.getFragmentManager()?.let {
+                AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
+                    .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
+                    .show(it, AttachmentSelectionDialogFragment.TAG)
             }
         }
+    }
+
+    /**
+     * Sets a click listener for the attachment button. If you want to implement custom attachment flow do not forget
+     * to set selected attachments via the [submitAttachments] method.
+     *
+     * @param listener Listener that being invoked when user clicks on the attachment button in [MessageInputView].
+     */
+    public fun setAttachmentButtonClickListener(listener: () -> Unit) {
+        binding.attachmentsButton.setOnClickListener { listener() }
     }
 
     private fun configLightningButton() {
@@ -664,6 +672,16 @@ public class MessageInputView : ConstraintLayout {
     private fun editMessage(oldMessage: Message) {
         sendMessageHandler.editMessage(oldMessage, binding.messageInputFieldView.messageText)
         inputMode = InputMode.Normal
+    }
+
+    /**
+     * Set a collection of attachments in [MessageInputView].
+     *
+     * @param attachments Collection of [AttachmentMetaData] that you are going to send with a message.
+     * @param attachmentSource Value from enum [AttachmentSource] that represents source of attachments.
+     */
+    public fun submitAttachments(attachments: Collection<AttachmentMetaData>, attachmentSource: AttachmentSource) {
+        attachmentSelectionListener.onAttachmentsSelected(attachments.toSet(), attachmentSource)
     }
 
     private companion object {
