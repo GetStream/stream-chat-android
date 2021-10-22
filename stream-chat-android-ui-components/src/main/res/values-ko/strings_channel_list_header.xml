@@ -2,4 +2,5 @@
 <resources>
     <string name="stream_ui_channel_list_header_connected">스트림 채팅</string>
     <string name="stream_ui_channel_list_header_disconnected">네트워크를 검색하는 중입니다</string>
+    <string name="stream_ui_channel_list_header_offline">연결이 끊긴</string>
 </resources>
