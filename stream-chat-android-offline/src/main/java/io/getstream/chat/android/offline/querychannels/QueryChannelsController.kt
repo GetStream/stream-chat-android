@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -131,6 +132,9 @@ public class QueryChannelsController internal constructor(
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
+            }
+            if (event is ChannelHiddenEvent) {
+                removeChannel(event.cid)
             }
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
