@@ -86,3 +86,14 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
+
+  ui_test:
+    name: UI tests
+    steps:
+      - name: Snapshot tests
+        uses: reactivecircus/android-emulator-runner@v2
+          with:
+            api-level: 29
+            profile: Pixel 3a
+            script: ./gradlew stream-chat-android-ui-components-sample:demoDebugExecuteScreenshotTests
+        
