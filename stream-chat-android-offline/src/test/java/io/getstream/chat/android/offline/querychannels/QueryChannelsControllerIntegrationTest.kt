@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.models.Channel
@@ -35,7 +36,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
     @Test
     fun `Given initialized SDK When request channels Should not crash`(): Unit = runBlocking {
         val queryChannelsController =
-            Fixture(chatDomainImpl, data.filter1).givenChannelInOfflineStorage(data.channel1).get()
+            Fixture(chatDomainImpl, data.filter1).givenChannelsInOfflineStorage(data.channel1).get()
 
         val queryChannelsResult = queryChannelsController.query()
 
@@ -49,7 +50,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
             }
             val sut = Fixture(chatDomainImpl, data.filter1)
-                .givenChannelInOfflineStorage(data.channel1)
+                .givenChannelsInOfflineStorage(data.channel1)
                 .givenMessageInOfflineStorage(data.message1)
                 .withCounter(counter)
                 .get()
@@ -82,7 +83,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                     return EventHandlingResult.SKIP
                 }
             }
-            val sut = Fixture(chatDomainImpl, data.filter1).givenChannelInOfflineStorage(data.channel1).get()
+            val sut = Fixture(chatDomainImpl, data.filter1).givenChannelsInOfflineStorage(data.channel1).get()
             sut.channelEventsHandler = channelEventsHandler
 
             sut.handleEvent(
@@ -101,6 +102,23 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             channelEventsHandler.didHandle shouldBe true
         }
 
+    @Test
+    fun `Given two channels in query When handle ChannelHiddenEvent Should remove channel`(): Unit = runBlocking {
+        val sut = Fixture(chatDomainImpl, data.filter1)
+            .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
+            .get()
+        sut.query()
+        sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2, data.channel3)
+
+        sut.handleEvent(
+            mock<ChannelHiddenEvent> {
+                on { it.cid } doReturn data.channel3.cid
+            }
+        )
+
+        sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2)
+    }
+
     private class Fixture(
         private val chatDomainImpl: ChatDomainImpl,
         private val filter: FilterObject,
@@ -109,12 +127,13 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             newChannelEventFilter = { _, _ -> true }
         }
 
-        fun givenChannelInOfflineStorage(channel: Channel): Fixture {
+        fun givenChannelsInOfflineStorage(vararg channels: Channel): Fixture {
             runBlocking {
-                val query = QueryChannelsSpec(filter).apply { cids = setOf(channel.cid) }
-                chatDomainImpl.repos.insertChannel(channel)
+                val channelList = channels.toList()
+                val query = QueryChannelsSpec(filter).apply { cids = channelList.map(Channel::cid).toSet() }
+                chatDomainImpl.repos.insertChannels(channelList)
                 chatDomainImpl.repos.insertQueryChannels(query)
-                whenever(chatDomainImpl.client.queryChannelsInternal(any())) doReturn listOf(channel).asCall()
+                whenever(chatDomainImpl.client.queryChannelsInternal(any())) doReturn channelList.asCall()
             }
             return this
         }
