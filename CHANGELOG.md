@@ -70,6 +70,8 @@
 
 ### ✅ Added
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
+- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
+- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
 
