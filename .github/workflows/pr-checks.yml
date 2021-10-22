@@ -107,6 +107,6 @@ jobs:
           api-level: 29
           profile: Nexus 6
           script: | 
-          adb shell settings put global hidden_api_policy 1
-          ./gradlew stream-chat-android-ui-components-sample:demoDebugExecuteScreenshotTests -Precord
+            adb shell settings put global hidden_api_policy 1
+            ./gradlew stream-chat-android-ui-components-sample:demoDebugExecuteScreenshotTests -Precord
         
