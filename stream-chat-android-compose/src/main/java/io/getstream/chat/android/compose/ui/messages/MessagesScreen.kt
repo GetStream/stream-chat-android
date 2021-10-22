@@ -86,7 +86,7 @@ public fun MessagesScreen(
     val messageMode = listViewModel.messageMode
     val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
-    val isNetworkAvailable by listViewModel.isOnline.collectAsState()
+    val isNetworkAvailable by listViewModel.connectionState.collectAsState()
     val user by listViewModel.user.collectAsState()
 
     val backAction = {
@@ -116,7 +116,7 @@ public fun MessagesScreen(
                             .height(56.dp),
                         channel = listViewModel.channel,
                         currentUser = user,
-                        isNetworkAvailable = isNetworkAvailable,
+                        connectionState = isNetworkAvailable,
                         messageMode = messageMode,
                         onBackPressed = backAction,
                         onHeaderActionClick = onHeaderActionClick
