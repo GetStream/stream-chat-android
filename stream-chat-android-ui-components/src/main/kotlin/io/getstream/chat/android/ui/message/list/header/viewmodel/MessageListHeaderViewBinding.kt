@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getDisplayName
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
@@ -27,11 +28,17 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         view.setAvatar(it)
     }
 
-    online.observe(lifecycle) { isOnline ->
-        if (isOnline) {
-            view.showOnlineStateSubtitle()
-        } else {
-            view.showSearchingForNetworkLabel()
+    online.observe(lifecycle) { onlineState ->
+        when (onlineState) {
+            ConnectionState.CONNECTED -> {
+                view.showOnlineStateSubtitle()
+            }
+            ConnectionState.CONNECTING -> {
+                view.showSearchingForNetworkLabel()
+            }
+            ConnectionState.OFFLINE -> {
+                view.showOfflineStateLabel()
+            }
         }
     }
 

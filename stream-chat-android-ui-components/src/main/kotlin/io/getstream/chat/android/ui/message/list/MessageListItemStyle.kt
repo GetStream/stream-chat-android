@@ -60,6 +60,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property textStyleErrorMessage Appearance for error message text.
  * @property messageStartMargin Margin for messages in the left side. Default value is 48dp.
  * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
+ * @property messageMaxPossibleWidthFactorMine Factor used to compute max possible width for message sent by the current user. Should be in <0, 1> range. Message will be wider when the factor is smaller
+ * @property messageMaxPossibleWidthFactorTheirs Factor used to compute max possible width for message sent by other user. Should be in <0, 1> range. Message will be wider when the factor is smaller
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -99,6 +101,8 @@ public data class MessageListItemStyle(
     @ColorInt public val pinnedMessageBackgroundColor: Int,
     @Px public val messageStartMargin: Int,
     @Px public val messageEndMargin: Int,
+    public val messageMaxPossibleWidthFactorMine: Float,
+    public val messageMaxPossibleWidthFactorTheirs: Float,
 ) {
 
     @ColorInt
@@ -139,6 +143,9 @@ public data class MessageListItemStyle(
         internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
         internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
         internal val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
+
+        private const val BASE_MESSAGE_MAX_POSSIBLE_FACTOR = 1
+        private const val DEFAULT_MESSAGE_MAX_POSSIBLE_FACTOR = 1f
     }
 
     internal class Builder(private val attributes: TypedArray, private val context: Context) {
@@ -526,6 +533,20 @@ public data class MessageListItemStyle(
                 context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
             ).toInt()
 
+            val messageMaxPossibleWidthFactorMine = attributes.getFraction(
+                R.styleable.MessageListView_streamUiMessageMaxPossibleWidthFactorMine,
+                BASE_MESSAGE_MAX_POSSIBLE_FACTOR,
+                BASE_MESSAGE_MAX_POSSIBLE_FACTOR,
+                DEFAULT_MESSAGE_MAX_POSSIBLE_FACTOR,
+            )
+
+            val messageMaxPossibleWidthFactorTheirs = attributes.getFraction(
+                R.styleable.MessageListView_streamUiMessageMaxPossibleWidthFactorTheirs,
+                BASE_MESSAGE_MAX_POSSIBLE_FACTOR,
+                BASE_MESSAGE_MAX_POSSIBLE_FACTOR,
+                DEFAULT_MESSAGE_MAX_POSSIBLE_FACTOR,
+            )
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -564,11 +585,19 @@ public data class MessageListItemStyle(
                 pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
                 messageStartMargin = messageStartMargin,
                 messageEndMargin = messageEndMargin,
+                messageMaxPossibleWidthFactorMine = messageMaxPossibleWidthFactorMine,
+                messageMaxPossibleWidthFactorTheirs = messageMaxPossibleWidthFactorTheirs
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
+                .also { style -> style.checkMessageMaxPossibleWidthFactorsRange() }
         }
 
         private fun Int.nullIfNotSet(): Int? {
             return if (this == VALUE_NOT_SET) null else this
+        }
+
+        private fun MessageListItemStyle.checkMessageMaxPossibleWidthFactorsRange() {
+            require(messageMaxPossibleWidthFactorMine in 0.0..1.0) { "messageMaxPossibleWidthFactorMine cannot be lower than 0 and greater than 1! Current value: $messageMaxPossibleWidthFactorMine" }
+            require(messageMaxPossibleWidthFactorTheirs in 0.0..1.0) { "messageMaxPossibleWidthFactorTheirs cannot be lower than 0 and greater than 1! Current value: $messageMaxPossibleWidthFactorTheirs" }
         }
     }
 }
