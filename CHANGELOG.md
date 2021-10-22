@@ -42,6 +42,7 @@
 - Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
+- Channel gets removed from `QueryChannelsController` when receive `ChannelHiddenEvent`
 
 ### ✅ Added
 
