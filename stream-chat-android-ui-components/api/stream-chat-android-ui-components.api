@@ -59,9 +59,7 @@ public final class io/getstream/chat/android/ui/SupportedReactions$DefaultReacti
 
 public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawable {
 	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
-	public final fun getActiveDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getDrawable (Z)Landroid/graphics/drawable/Drawable;
-	public final fun getInactiveDrawable ()Landroid/graphics/drawable/Drawable;
 }
 
 public final class io/getstream/chat/android/ui/TransformStyle {
@@ -2124,13 +2122,13 @@ public final class io/getstream/chat/android/ui/message/list/reactions/edit/Edit
 	public final fun getBubbleRadius ()I
 	public final fun getHorizontalPadding ()I
 	public final fun getItemSize ()I
-	public final fun getLargeTailBubbleCy ()I
+	public final fun getLargeTailBubbleCyOffset ()I
 	public final fun getLargeTailBubbleOffset ()I
 	public final fun getLargeTailBubbleRadius ()I
-	public final fun getSmallTailBubbleCy ()I
+	public final fun getReactionsColumn ()I
+	public final fun getSmallTailBubbleCyOffset ()I
 	public final fun getSmallTailBubbleOffset ()I
 	public final fun getSmallTailBubbleRadius ()I
-	public final fun getTotalHeight ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

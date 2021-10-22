@@ -200,6 +200,7 @@
         <!-- Message edit reactions view style -->
         <attr name="streamUiEditReactionsBubbleColorMine" format="color" />
         <attr name="streamUiEditReactionsBubbleColorTheirs" format="color" />
+        <attr name="streamUiEditReactionsColumns" format="integer" />
 
         <!-- Indicator icons -->
         <attr name="streamUiIconIndicatorSent" format="reference" />
