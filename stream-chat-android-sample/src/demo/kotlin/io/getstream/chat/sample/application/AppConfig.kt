@@ -10,100 +10,94 @@ object AppConfig {
 
     val availableUsers: List<SampleUser> = listOf(
         SampleUser(
-            name = "Jc",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FJc.png?alt=media",
-            id = "1f37e58d-d8b0-476a-a4f2-f8611e0d85d9",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYzN2U1OGQtZDhiMC00NzZhLWE0ZjItZjg2MTFlMGQ4NWQ5In0.l3u9P1NKhJ91rI1tzOcABGh045Kj69-iVkC2yUtohVw"
+            id = "jc",
+            name = "Jc Miñarro",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4"
         ),
         SampleUser(
-            name = "Fra",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FFra.png?alt=media",
-            id = "Fra",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiRnJhIn0.ENQGHEsAL3WjVhd_qTiJa_9ojGKi2ftJ8xlocT8SVX4"
+            id = "amit",
+            name = "Amit Kumar",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o"
         ),
         SampleUser(
-            name = "Carter",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FCarter.png?alt=media",
-            id = "6d95273b-33f0-40f5-b07c-0da261092074",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNmQ5NTI3M2ItMzNmMC00MGY1LWIwN2MtMGRhMjYxMDkyMDc0In0.lT5O4EmWzhRKPTau6dHP4F6M42EA2aN_8-iAPuiFPLc"
+            id = "belal",
+            name = "Belal Khan",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"
         ),
         SampleUser(
-            name = "Dmitrii",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FDmitrii.png?alt=media",
-            id = "1e330111-670d-49a7-8f08-e6734338c641",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWUzMzAxMTEtNjcwZC00OWE3LThmMDgtZTY3MzQzMzhjNjQxIn0.YEFdEMWj5rurQKr0QMrvO72jGZHU-AlpUIbyY4jxYdU"
+            id = "dmitrii",
+            name = "Dmitrii Bychkov",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU"
         ),
         SampleUser(
-            name = "Leandro",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FLeandro.png?alt=media",
-            id = "29e46def-88f4-4b6a-a10c-584d10c4fdc9",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjllNDZkZWYtODhmNC00YjZhLWExMGMtNTg0ZDEwYzRmZGM5In0.Mxr4Prnb1-EVM5NSSP2EugLApSChoKnVFwe7ZO15V_U"
+            id = "filip",
+            name = "Filip Babić",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU"
         ),
         SampleUser(
-            name = "Marton",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FMarton.png?alt=media",
-            id = "1f052c08-f682-4a83-896c-9f19a68bd2bb",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMWYwNTJjMDgtZjY4Mi00YTgzLTg5NmMtOWYxOWE2OGJkMmJiIn0.L-cQ-DYubOzFpsg94OEwlTRYjat9G4cqfAgzBPALW0g"
+            id = "jaewoong",
+            name = "Jaewoong Eum",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc"
         ),
         SampleUser(
-            name = "Oleg",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FOleg.png?alt=media",
-            id = "0d3e6e63-6200-4dd1-a841-4050664891e2",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMGQzZTZlNjMtNjIwMC00ZGQxLWE4NDEtNDA1MDY2NDg5MWUyIn0.osFIgnle17f6yEkK7rPJguQaKhOiawAO3BylYaiRTqE"
+            id = "leandro",
+            name = "Leandro Borges Ferreira",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g"
         ),
         SampleUser(
-            name = "Rafal",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FRafal.png?alt=media",
-            id = "12fb0ed9-93d8-48a5-9885-28e41f2e4c43",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTJmYjBlZDktOTNkOC00OGE1LTk4ODUtMjhlNDFmMmU0YzQzIn0.t_oc_DEwTav7ni0z4bi8Xla_5Zj5cI6l3rKxwoCvtB0"
+            id = "marton",
+            name = "Márton Braun",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U018YPHEW7L-26ab96fd1ed3-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8"
         ),
         SampleUser(
-            name = "Samuel",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FSam.png?alt=media",
-            id = "5531a8cb-3b81-4a54-b424-7ae4e27bf8ba",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNTUzMWE4Y2ItM2I4MS00YTU0LWI0MjQtN2FlNGUyN2JmOGJhIn0.PXkmukg3JU4igH_YUMr7WC7a1EcwKBr_C5V2ouBlmIs"
+            id = "oleg",
+            name = "Oleg Kuzmin",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U019BEATNCD-bad2dcf654ef-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU"
         ),
         SampleUser(
-            name = "Tommaso",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FTommaso.png?alt=media",
-            id = "06356564-149f-4b2c-8525-d22056fec404",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMDYzNTY1NjQtMTQ5Zi00YjJjLTg1MjUtZDIyMDU2ZmVjNDA0In0.R3-HY9Cno62yIhCjLXDBR8LF7y1udwX8m4LLNP2dIZo"
+            id = "rafal",
+            name = "Rafal Adasiewicz",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U0177N46AFN-a4e664d1960d-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k"
         ),
         SampleUser(
-            name = "Thierry",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FThierry.png?alt=media",
-            id = "ad7d9314-5071-4d61-98a1-ffa643ce824a",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWQ3ZDkzMTQtNTA3MS00ZDYxLTk4YTEtZmZhNjQzY2U4MjRhIn0.iF4UWGFtX0eTAIBTCum7fjD_TKn8wjEqb3PVxJrwbuM"
+            id = "samuel",
+            name = "Samuel Urbanowicz",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXD396-6d3169b36889-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2FtdWVsIn0.SusttZNc2Y0sc-JPEOPCmTa5FuKDHRcWGO_7kYrC1C0"
         ),
         SampleUser(
-            name = "Zetra",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FZetra.png?alt=media",
-            id = "cebf562a-4806-4c64-a827-59d50aac42ba",
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY2ViZjU2MmEtNDgwNi00YzY0LWE4MjctNTlkNTBhYWM0MmJhIn0.kuXab7RhQRHdsErEW5tTN_mmuyLPNU4ZbprvuPXM4OY"
+            id = "thierry",
+            name = "Thierry Schellenbach",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02RM6X6D-g28a1278a98e-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.hZi4pBPt2v2HSoS-7Yn7Ll2a1twhs763MlRGFAday2c"
         ),
         SampleUser(
-            name = "Qatest0",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FQatest0.png?alt=media",
-            id = "qatest0",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MCJ9.Vow00KvvhLvWRZIPKomXQOYpBL_P-_-eDeDKmBRvEj4"
+            id = "tommaso",
+            name = "Tommaso Barbugli",
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02U7SJP4-0f65a5997877-128",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"
         ),
         SampleUser(
-            name = "Qatest1",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FQatest1.png?alt=media",
             id = "qatest1",
+            name = "QA Test 1",
+            image = "https://getstream.imgix.net/images/random_svg/QT.png",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0"
         ),
         SampleUser(
-            name = "Qatest2",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FQatest2.png?alt=media",
             id = "qatest2",
+            name = "QA Test 2",
+            image = "https://getstream.imgix.net/images/random_svg/QT.png",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc"
-        ),
-        SampleUser(
-            name = "Qatest3",
-            image = "https://firebasestorage.googleapis.com/v0/b/stream-chat-internal.appspot.com/o/users%2FQatest3.png?alt=media",
-            id = "qatest3",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MyJ9.kLZJz5kl7e3Zw7i2T39Yp05_nAmh9RGG0rt6-5zOpfE"
         ),
     )
 }

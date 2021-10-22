@@ -2,4 +2,5 @@
 <resources>
     <string name="stream_ui_channel_list_header_connected">ストリームチャット</string>
     <string name="stream_ui_channel_list_header_disconnected">ネットワークを検索中</string>
+    <string name="stream_ui_channel_list_header_offline">切断されました</string>
 </resources>
