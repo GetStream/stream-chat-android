@@ -103,6 +103,11 @@ internal class EventHandlerImpl(
                         domainImpl.retryFailedEntities()
                     }
                 }
+
+                is ConnectingEvent -> {
+                    domainImpl.setConnecting()
+                }
+
                 else -> Unit // Ignore other events
             }
         }

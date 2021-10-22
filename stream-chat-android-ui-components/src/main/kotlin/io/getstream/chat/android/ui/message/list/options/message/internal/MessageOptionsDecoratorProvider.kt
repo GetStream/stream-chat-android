@@ -19,7 +19,7 @@ internal class MessageOptionsDecoratorProvider(
     private val messageOptionsDecorators = listOf<Decorator>(
         BackgroundDecorator(messageListItemStyle),
         TextDecorator(messageListItemStyle),
-        MaxPossibleWidthDecorator(),
+        MaxPossibleWidthDecorator(messageListItemStyle),
         MessageContainerMarginDecorator(messageListItemStyle),
         AvatarDecorator(),
         ReplyDecorator(messageReplyStyle),
