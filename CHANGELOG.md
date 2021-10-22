@@ -33,6 +33,7 @@
 - The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
+- BREAKING CHANGE: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
 
 ### ❌ Removed
 - `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
@@ -72,6 +73,7 @@
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
 
 ### ⚠️ Changed
+- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
 
 ### ❌ Removed
 
