@@ -159,7 +159,7 @@ public class MessageMoreActionDialog(
     }
 
     private fun canThreadOnMessage(): Boolean {
-        return (style.isThreadEnabled && channel.config.isRepliesEnabled && message.parentId == null)
+        return (style.isThreadEnabled && channel.config.isThreadEnabled && message.parentId == null)
     }
 
     private fun canReactOnMessage(): Boolean {
