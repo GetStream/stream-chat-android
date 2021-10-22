@@ -63,6 +63,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
+The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
 
 ### ⚠️ Changed
