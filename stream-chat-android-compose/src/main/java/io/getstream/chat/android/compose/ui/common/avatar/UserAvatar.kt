@@ -26,6 +26,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param contentDescription The content description of the avatar.
+ * @param showOnlineIndicator If we show online indicator or not.
+ * @param onlineIndicatorAlignment The alignment of online indicator.
+ * @param onlineIndicator Custom composable that allows to replace the default online indicator.
  * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
