@@ -1,12 +1,17 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
@@ -30,13 +35,12 @@ public fun UserAvatar(
     shape: Shape = ChatTheme.shapes.avatar,
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
-    onlineIndicatorAlignment: Alignment = Alignment.TopEnd,
+    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
-        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment))
+        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.toAlignment()))
     },
     onClick: (() -> Unit)? = null,
 ) {
-
     Box(modifier = modifier) {
         if (user.image.isNotBlank()) {
             val authorImage = rememberImagePainter(data = user.image)
@@ -58,5 +62,40 @@ public fun UserAvatar(
         if (showOnlineIndicator && user.online) {
             onlineIndicator()
         }
+    }
+}
+
+/**
+ * Component that represents an online indicator to be used with [UserAvatar].
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun OnlineIndicator(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(12.dp)
+            .background(ChatTheme.colors.appBackground, CircleShape)
+            .padding(2.dp)
+            .background(ChatTheme.colors.infoAccent, CircleShape)
+    )
+}
+
+/**
+ * Represents the position of [OnlineIndicator] in [UserAvatar].
+ */
+public enum class OnlineIndicatorAlignment {
+    TopEnd,
+    BottomEnd,
+    TopStart,
+    BottomStart
+}
+
+private fun OnlineIndicatorAlignment.toAlignment(): Alignment {
+    return when (this) {
+        OnlineIndicatorAlignment.TopEnd -> Alignment.TopEnd
+        OnlineIndicatorAlignment.BottomEnd -> Alignment.BottomEnd
+        OnlineIndicatorAlignment.TopStart -> Alignment.TopStart
+        OnlineIndicatorAlignment.BottomStart -> Alignment.BottomStart
     }
 }
