@@ -5,7 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
 ### ⚠️ Changed
 
 ### ❌ Removed
@@ -36,6 +36,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
 
@@ -58,10 +59,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 ### ⬆️ Improved
-
+- Better position for icon of failed message
 ### ✅ Added
+- Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
 
 ### ⚠️ Changed
 
@@ -160,6 +162,7 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fixing ViewReactionsView being cropped if more than 7 reactions are added
 - Fix bug using custom attributes into views inflated into our SDK Views
 
 ### ⬆️ Improved

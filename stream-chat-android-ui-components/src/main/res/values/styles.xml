@@ -359,6 +359,7 @@
         <!-- Message edit reactions view style -->
         <item name="streamUiEditReactionsBubbleColorMine">@color/stream_ui_white</item>
         <item name="streamUiEditReactionsBubbleColorTheirs">@color/stream_ui_white</item>
+        <item name="streamUiEditReactionsColumns">5</item>
 
         <!-- Indicator icons -->
         <item name="streamUiIconIndicatorSent">@drawable/stream_ui_ic_check_single</item>
@@ -471,6 +472,10 @@
         <!-- Margin for messages -->
         <item name="streamUiMessageStartMargin">@dimen/stream_ui_message_viewholder_avatar_missing_margin</item>
         <item name="streamUiMessageEndMargin">0dp</item>
+
+        <!-- Message max possible factors -->
+        <item name="streamUiMessageMaxPossibleWidthFactorMine">100%</item>
+        <item name="streamUiMessageMaxPossibleWidthFactorTheirs">100%</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">
