@@ -104,6 +104,7 @@ public fun Result<*>.toUnitResult(): Result<Unit> = map {}
  *
  * @return The original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
     if (isSuccess) {
         successSideEffect(data())
@@ -118,6 +119,7 @@ public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result
  *
  * @return The original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
     if (isSuccess) {
         successSideEffect(data())
@@ -134,6 +136,7 @@ public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspe
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -151,6 +154,7 @@ public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -167,6 +171,7 @@ public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
@@ -183,6 +188,7 @@ public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T>
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
@@ -198,6 +204,7 @@ public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (Chat
  *
  * @return The original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
     if (isError) {
         errorSideEffect(error())
@@ -212,6 +219,7 @@ public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Re
  *
  * @return The original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any> Result<T>.onErrorSuspend(errorSideEffect: suspend (ChatError) -> Unit): Result<T> {
     if (isError) {
         errorSideEffect(error())
@@ -227,6 +235,7 @@ public suspend fun <T : Any> Result<T>.onErrorSuspend(errorSideEffect: suspend (
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
@@ -243,6 +252,7 @@ public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
+@JvmSynthetic
 public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
