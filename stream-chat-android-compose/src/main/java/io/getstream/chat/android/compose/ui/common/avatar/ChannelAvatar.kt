@@ -87,7 +87,8 @@ public fun ChannelAvatar(
                                     .weight(1f)
                                     .fillMaxSize(),
                                 user = activeUsers[imageIndex].user,
-                                shape = RectangleShape
+                                shape = RectangleShape,
+                                showOnlineIndicator = false
                             )
                         }
                     }
@@ -105,7 +106,8 @@ public fun ChannelAvatar(
                                     .weight(1f)
                                     .fillMaxSize(),
                                 user = activeUsers[imageIndex].user,
-                                shape = RectangleShape
+                                shape = RectangleShape,
+                                showOnlineIndicator = false
                             )
                         }
                     }
