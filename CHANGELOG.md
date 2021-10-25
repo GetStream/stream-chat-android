@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
 - Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
