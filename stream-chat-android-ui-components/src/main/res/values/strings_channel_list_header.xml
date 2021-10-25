@@ -2,4 +2,5 @@
 <resources>
     <string name="stream_ui_channel_list_header_connected">Stream Chat</string>
     <string name="stream_ui_channel_list_header_disconnected">Waiting for network</string>
+    <string name="stream_ui_channel_list_header_offline">Disconnected</string>
 </resources>

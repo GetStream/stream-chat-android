@@ -3,8 +3,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
+- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
 
 ### ⚠️ Changed
 
@@ -14,6 +16,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added KDocs for `Result` properties and methods.
 
 ### ✅ Added
 
@@ -59,13 +62,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 
 ### ⬆️ Improved
+- Better position for icon of failed message
 
 ### ✅ Added
 - Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
 The maximum attachments count cannot be greater than 10. Default value: 10.
-- Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
+- Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
 
 ### ⚠️ Changed
 
@@ -75,8 +80,11 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
+- `ThreadParticipants` is now public and can be used for your custom UI.
 
 ### ✅ Added
+- `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
 
 ### ⚠️ Changed
 

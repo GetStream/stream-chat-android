@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -26,6 +27,7 @@ import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.toLiveDataRetryPolicy
+import io.getstream.chat.android.offline.model.ConnectionState
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.offline.ChatDomain as ChatDomainStateFlow
 
@@ -70,6 +72,9 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
+    override val connectionState: LiveData<ConnectionState> = chatDomainStateFlow.connectionState.asLiveData()
+
+    @Deprecated("Use connectionState instead")
     override val online: LiveData<Boolean> = chatDomainStateFlow.online.asLiveData()
 
     /**

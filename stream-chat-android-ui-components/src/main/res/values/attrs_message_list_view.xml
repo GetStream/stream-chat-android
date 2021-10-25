@@ -200,6 +200,7 @@
         <!-- Message edit reactions view style -->
         <attr name="streamUiEditReactionsBubbleColorMine" format="color" />
         <attr name="streamUiEditReactionsBubbleColorTheirs" format="color" />
+        <attr name="streamUiEditReactionsColumns" format="integer" />
 
         <!-- Indicator icons -->
         <attr name="streamUiIconIndicatorSent" format="reference" />
@@ -401,9 +402,9 @@
         <attr name="streamUiMessageStartMargin" format="dimension|reference" />
         <attr name="streamUiMessageEndMargin" format="dimension|reference" />
 
-        <!-- Fraction used to compute max possible width for message sent by the current user. Should be in <0%, 100%> range. Message will be wider when the fraction is smaller -->
-        <attr name="streamUiMessageMaxPossibleWidthFactorMine" format="fraction" />
-        <!-- Fraction used to compute max possible width for message sent by other user. Should be in <0%, 100%> range. Message will be wider when the fraction is smaller -->
-        <attr name="streamUiMessageMaxPossibleWidthFactorTheirs" format="fraction" />
+        <!-- Fraction used to compute max width for message sent by the current user. Should be in [75% - 100%] range. -->
+        <attr name="streamUiMessageMaxWidthFactorMine" format="fraction" />
+        <!-- Fraction used to compute max width for message sent by other user. Should be in [75% - 100%] range. -->
+        <attr name="streamUiMessageMaxWidthFactorTheirs" format="fraction" />
     </declare-styleable>
 </resources>
