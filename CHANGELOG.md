@@ -62,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
 - 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 
 ### ⬆️ Improved

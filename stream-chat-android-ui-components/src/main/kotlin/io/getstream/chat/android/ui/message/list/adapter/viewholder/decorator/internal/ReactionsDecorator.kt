@@ -10,7 +10,6 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.common.extensions.hasReactions
-import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
@@ -134,19 +133,12 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         dynamicOffset: Int,
     ) {
         reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            val offset = when {
-                data.message.hasSingleReaction() -> {
-                    SINGLE_REACTION_OFFSET
-                }
-                else -> dynamicOffset
-            }
-
             if (data.isTheirs) {
                 endToEnd = contentView.id
-                marginEnd = offset
+                marginEnd = dynamicOffset
             } else {
                 startToStart = contentView.id
-                marginStart = offset
+                marginStart = dynamicOffset
             }
         }
     }
