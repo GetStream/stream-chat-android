@@ -15,7 +15,7 @@ public enum class AttachmentSource {
     FILE,
 
     /**
-     * Image or video captured attachment from camera.
+     * Image or video attachment captured by the camera.
      */
     CAMERA,
 }
