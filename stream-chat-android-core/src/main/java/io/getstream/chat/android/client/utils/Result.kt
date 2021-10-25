@@ -239,5 +239,7 @@ public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T)
 
 /**
  * Returns a [Result] that contains an instance of [T] as a data payload.
+ *
+ * @return A [Result] the contains an instance of [T] as a data payload.
  */
 public fun <T : Any> T.toResult(): Result<T> = Result.success(this)
