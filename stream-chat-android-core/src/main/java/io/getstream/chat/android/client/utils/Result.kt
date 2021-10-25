@@ -17,16 +17,28 @@ public class Result<T : Any> private constructor(
     @Suppress("DEPRECATION")
     public constructor(error: ChatError) : this(null, error)
 
+    /**
+     * Returns true if a request of payload response has been successful.
+     */
     public val isSuccess: Boolean
         get() = data != null
 
+    /**
+     * Returns true if a request of payload response has been failed.
+     */
     public val isError: Boolean
         get() = error != null
 
+    /**
+     * Returns the successful data payload.
+     */
     public fun data(): T {
         return checkNotNull(data) { "Result is not successful. Check result.isSuccess before reading the data." }
     }
 
+    /**
+     * Returns the [ChatError] error payload.
+     */
     public fun error(): ChatError {
         return checkNotNull(error) { "Result is successful, not an error. Check result.isSuccess before reading the error." }
     }
@@ -77,6 +89,51 @@ public class Result<T : Any> private constructor(
     }
 }
 
+/**
+ * Returns a [Result] of [Unit] from any type of a [Result].
+ *
+ * @return [Result] of [Unit].
+ */
+@InternalStreamChatApi
+public fun Result<*>.toUnitResult(): Result<Unit> = map {}
+
+/**
+ * Runs the [successSideEffect] lambda function if the [Result] contains a successful data payload.
+ *
+ * @param successSideEffect A lambda that receives the successful data payload.
+ *
+ * @return The original instance of the [Result].
+ */
+public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
+    if (isSuccess) {
+        successSideEffect(data())
+    }
+    return this
+}
+
+/**
+ * Runs the suspending [successSideEffect] lambda function if the [Result] contains a successful data payload.
+ *
+ * @param successSideEffect A suspending lambda that receives the successful data payload.
+ *
+ * @return The original instance of the [Result].
+ */
+public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
+    if (isSuccess) {
+        successSideEffect(data())
+    }
+    return this
+}
+
+/**
+ * Returns a transformed [Result] of applying the given [mapper] function if the [Result]
+ * contains a successful data payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
+ *
+ * @param mapper A lambda for mapping [Result] of [T] to [Result] of [K].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
 public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -85,23 +142,15 @@ public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
     }
 }
 
-@InternalStreamChatApi
-public fun Result<*>.toUnitResult(): Result<Unit> = map {}
-
-public fun <T: Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
-    if (isSuccess) {
-        successSideEffect(data())
-    }
-    return this
-}
-
-public suspend fun <T: Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
-    if (isSuccess) {
-        successSideEffect(data())
-    }
-    return this
-}
-
+/**
+ * Returns a transformed [Result] of applying the given suspending [mapper] function if the [Result]
+ * contains a successful data payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
+ *
+ * @param mapper A suspending lambda for mapping [Result] of [T] to [Result] of [K].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
 public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
     return if (isSuccess) {
         Result(mapper(data()))
@@ -110,7 +159,15 @@ public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -
     }
 }
 
-public fun <T: Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
+/**
+ * Recovers the error payload by applying the given [errorMapper] function if the [Result]
+ * contains an error payload.
+ *
+ * @param errorMapper A lambda that receives [ChatError] and transforms it as a payload [T].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
+public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
     } else {
@@ -118,7 +175,15 @@ public fun <T: Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> 
     }
 }
 
-public suspend fun <T: Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
+/**
+ * Recovers the error payload by applying the given suspending [errorMapper] function if the [Result]
+ * contains an error payload.
+ *
+ * @param errorMapper A suspending lambda that receives [ChatError] and transforms it as a payload [T].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
+public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
     return if (isSuccess) {
         this
     } else {
@@ -126,14 +191,29 @@ public suspend fun <T: Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatE
     }
 }
 
-public fun <T: Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
+/**
+ * Runs the [errorSideEffect] lambda function if the [Result] contains an error payload.
+ *
+ * @param errorSideEffect A lambda that receives the [ChatError] payload.
+ *
+ * @return The original instance of the [Result].
+ */
+public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
     if (isError) {
         errorSideEffect(error())
     }
     return this
 }
 
-public fun <T : Any, R: Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
+/**
+ * Returns a transformed [Result] from results of the [func] if the [Result] contains a successful data payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
+ *
+ * @param func A lambda that returns [Result] of [R].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
+public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
     } else {
@@ -141,7 +221,15 @@ public fun <T : Any, R: Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R
     }
 }
 
-public suspend fun <T : Any, R: Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
+/**
+ * Returns a transformed [Result] from results of the suspending [func] if the [Result] contains a successful data payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
+ *
+ * @param func A suspending lambda that returns [Result] of [R].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
+public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
     return if (isSuccess) {
         func(data())
     } else {
@@ -149,4 +237,7 @@ public suspend fun <T : Any, R: Any> Result<T>.flatMapSuspend(func: suspend (T) 
     }
 }
 
-public fun <T: Any> T.toResult(): Result<T> = Result.success(this)
+/**
+ * Returns a [Result] that contains an instance of [T] as a data payload.
+ */
+public fun <T : Any> T.toResult(): Result<T> = Result.success(this)
