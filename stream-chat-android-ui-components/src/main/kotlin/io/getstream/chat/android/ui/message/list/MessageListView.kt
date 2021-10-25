@@ -294,6 +294,7 @@ public class MessageListView : ConstraintLayout {
                         setReactionClickHandler { message, reactionType ->
                             messageReactionHandler.onMessageReaction(message, reactionType)
                         }
+                        setMessageListItemViewHolderFactory(messageListItemViewHolderFactory)
                         setConfirmDeleteMessageClickHandler { message, callback ->
                             confirmDeleteMessageHandler.onConfirmDeleteMessage(
                                 message,
@@ -393,6 +394,7 @@ public class MessageListView : ConstraintLayout {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
                     }
+                    setMessageListItemViewHolderFactory(messageListItemViewHolderFactory)
                     setUserReactionClickHandler { message, user, reaction ->
                         userReactionClickListener.onUserReactionClick(message, user, reaction)
                     }

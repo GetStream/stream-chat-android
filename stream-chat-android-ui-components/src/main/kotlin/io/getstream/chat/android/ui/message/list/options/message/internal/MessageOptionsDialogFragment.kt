@@ -62,6 +62,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private lateinit var message: Message
     private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
+    private var viewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory()
 
     private var reactionClickHandler: ReactionClickHandler? = null
     private var confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler? = null
@@ -109,6 +110,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
         this.reactionClickHandler = reactionClickHandler
+    }
+
+    fun setMessageListItemViewHolderFactory(factory: MessageListItemViewHolderFactory) {
+        viewHolderFactory = factory
     }
 
     fun setUserReactionClickHandler(userReactionClickHandler: UserReactionClickHandler) {
@@ -164,7 +169,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory()
+        viewHolder = viewHolderFactory
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
                 setListenerContainer(MessageListListenerContainerImpl())
