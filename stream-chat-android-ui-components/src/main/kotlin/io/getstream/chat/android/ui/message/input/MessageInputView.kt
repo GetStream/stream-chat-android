@@ -484,16 +484,24 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton() {
-        binding.attachmentsButton.run {
-            messageInputViewStyle.attachButtonIcon.let(this::setImageDrawable)
-            setOnClickListener {
-                context.getFragmentManager()?.let {
-                    AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
-                        .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
-                        .show(it, AttachmentSelectionDialogFragment.TAG)
-                }
+        binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
+        setAttachmentButtonClickListener {
+            context.getFragmentManager()?.let {
+                AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
+                    .apply { setAttachmentSelectionListener(attachmentSelectionListener) }
+                    .show(it, AttachmentSelectionDialogFragment.TAG)
             }
         }
+    }
+
+    /**
+     * Sets a click listener for the attachment button. If you want to implement custom attachment flow do not forget
+     * to set selected attachments via the [submitAttachments] method.
+     *
+     * @param listener Listener that being invoked when user clicks on the attachment button in [MessageInputView].
+     */
+    public fun setAttachmentButtonClickListener(listener: AttachmentButtonClickListener) {
+        binding.attachmentsButton.setOnClickListener { listener.onAttachmentButtonClicked() }
     }
 
     private fun configLightningButton() {
@@ -709,6 +717,16 @@ public class MessageInputView : ConstraintLayout {
         inputMode = InputMode.Normal
     }
 
+    /**
+     * Set a collection of attachments in [MessageInputView].
+     *
+     * @param attachments Collection of [AttachmentMetaData] that you are going to send with a message.
+     * @param attachmentSource Value from enum [AttachmentSource] that represents source of attachments.
+     */
+    public fun submitAttachments(attachments: Collection<AttachmentMetaData>, attachmentSource: AttachmentSource) {
+        attachmentSelectionListener.onAttachmentsSelected(attachments.toSet(), attachmentSource)
+    }
+
     private companion object {
         private const val CLICK_DELAY = 100L
         private const val TYPING_DEBOUNCE_MS = 300L
@@ -870,5 +888,15 @@ public class MessageInputView : ConstraintLayout {
         override suspend fun handleUserLookup(query: String): List<User> {
             return searchUsers(users, query, streamTransliterator)
         }
+    }
+
+    /**
+     * Functional interface for a listener on the attachment button clicks.
+     */
+    public fun interface AttachmentButtonClickListener {
+        /**
+         * Function to be invoked when a click on the attachment button happens.
+         */
+        public fun onAttachmentButtonClicked()
     }
 }
