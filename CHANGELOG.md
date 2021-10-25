@@ -61,7 +61,7 @@
 ### 🐞 Fixed
 - 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 ### ⬆️ Improved
-
+- Better position for icon of failed message
 ### ✅ Added
 - Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
 
@@ -73,6 +73,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
 
 ### ✅ Added
 
