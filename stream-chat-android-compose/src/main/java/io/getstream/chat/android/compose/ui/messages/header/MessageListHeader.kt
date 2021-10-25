@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getDisplayName
+import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -57,7 +58,7 @@ public fun MessageListHeader(
     currentUser: User?,
     modifier: Modifier = Modifier,
     messageMode: MessageMode = Normal,
-    isNetworkAvailable: Boolean = true,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -75,7 +76,7 @@ public fun MessageListHeader(
             channel = channel,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
-            isNetworkAvailable = isNetworkAvailable
+            connectionState = connectionState
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
@@ -116,7 +117,7 @@ public fun MessageListHeader(
  * @param modifier Modifier for styling.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderActionClick Handler for when the user taps on the header content.
- * @param isNetworkAvailable A flag that governs if we show the subtitle or the network loading view.
+ * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  */
 @Composable
 public fun DefaultMessageHeaderTitle(
@@ -124,7 +125,7 @@ public fun DefaultMessageHeaderTitle(
     modifier: Modifier,
     messageMode: MessageMode = Normal,
     onHeaderActionClick: (Channel) -> Unit = {},
-    isNetworkAvailable: Boolean = true,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
 
     val title = when (messageMode) {
@@ -160,7 +161,7 @@ public fun DefaultMessageHeaderTitle(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        if (isNetworkAvailable) {
+        if (connectionState == ConnectionState.CONNECTED) {
             Text(
                 text = subtitle,
                 color = ChatTheme.colors.textLowEmphasis,

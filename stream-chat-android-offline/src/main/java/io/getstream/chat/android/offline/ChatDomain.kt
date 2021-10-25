@@ -28,6 +28,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -54,8 +55,14 @@ public sealed interface ChatDomain {
     public val initialized: StateFlow<Boolean>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online
+     * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
      */
+    public val connectionState: StateFlow<ConnectionState>
+
+    /**
+     * StateFlow<Boolean> that indicates if we are currently online, connecting of offline.
+     */
+    @Deprecated("Use connectionState instead")
     public val online: StateFlow<Boolean>
 
     /**
@@ -101,6 +108,7 @@ public sealed interface ChatDomain {
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
+    public fun isConnecting(): Boolean
     public fun isInitialized(): Boolean
     public fun getActiveQueries(): List<QueryChannelsController>
     public fun clean()

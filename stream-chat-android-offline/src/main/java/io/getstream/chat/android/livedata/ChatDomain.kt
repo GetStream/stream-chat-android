@@ -26,6 +26,7 @@ import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.ChatDomain as OfflineChatDomain
 import io.getstream.chat.android.offline.ChatDomain.Builder as OfflineChatDomainBuilder
 
@@ -47,8 +48,14 @@ public sealed interface ChatDomain {
     public val initialized: LiveData<Boolean>
 
     /**
+     * LiveData<ConnectionState> that indicates if we are currently online, connecting or offline
+     */
+    public val connectionState: LiveData<ConnectionState>
+
+    /**
      * LiveData<Boolean> that indicates if we are currently online
      */
+    @Deprecated("Use connectionState instead")
     public val online: LiveData<Boolean>
 
     /**

@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.12.26<br/>⌛ | 2021.12.26 ⌛ | Use ChatDomain#connectionState instead |
 | `QueryChannelsController#newChannelEventFilter` | 2021.10.12<br/>4.20.0 | 2021.11.12<br/>⌛ | 2021.12.12 ⌛ | Use QueryChannelsController::channelEventsHandler instead of |
 | `QueryChannelsController#checkFilterOnChannelUpdatedEvent` | 2021.10.12<br/>4.20.0 | 2021.11.12<br/>⌛ | 2021.12.12 ⌛ | Use QueryChannelsController::channelEventsHandler instead of |
 | `ChatUI#uiMode` <br/>*ui-components* | 2021.10.12<br/>4.20.0 | 2021.11.12<br/>⌛ | 2021.12.12 ⌛ | This behavior is not supported anymore. Our SDK already use Day/Night themes that follow the standard process Android provide to support them. If you want to force your app to use Dark/Light mode, you need tu use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)` |
