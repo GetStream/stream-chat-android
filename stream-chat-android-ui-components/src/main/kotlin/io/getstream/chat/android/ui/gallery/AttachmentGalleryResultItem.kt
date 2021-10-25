@@ -4,6 +4,10 @@ import android.os.Parcelable
 import io.getstream.chat.android.client.models.Attachment
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Parcelable data class that represents [Attachment] in [AttachmentGalleryActivity] as result some operation. See click
+ * listeners of [AttachmentGalleryActivity].
+ */
 @Parcelize
 public data class AttachmentGalleryResultItem(
     val messageId: String,
@@ -24,7 +28,10 @@ public data class AttachmentGalleryResultItem(
     val name: String? = null,
 ) : Parcelable
 
-internal fun AttachmentGalleryResultItem.toAttachment(): Attachment {
+/**
+ * Extension to convert instance of [AttachmentGalleryResultItem] to [Attachment] type.
+ */
+public fun AttachmentGalleryResultItem.toAttachment(): Attachment {
     return Attachment(
         authorName = authorName,
         authorLink = authorLink,
@@ -41,7 +48,10 @@ internal fun AttachmentGalleryResultItem.toAttachment(): Attachment {
     )
 }
 
-internal fun Attachment.toAttachmentGalleryResultItem(
+/**
+ * Extension to convert instance of [Attachment] to [AttachmentGalleryResultItem] type.
+ */
+public fun Attachment.toAttachmentGalleryResultItem(
     messageId: String,
     cid: String,
     userName: String,
