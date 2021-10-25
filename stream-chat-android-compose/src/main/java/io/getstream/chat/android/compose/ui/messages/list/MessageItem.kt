@@ -506,20 +506,18 @@ private val URL_SCHEMES = listOf("http://", "https://")
  *
  * @param participants List of users in the thread.
  * @param modifier Modifier for styling.
+ * @param text Text of the label.
  */
 @Composable
-private fun ThreadParticipants(
+public fun ThreadParticipants(
     participants: List<User>,
     modifier: Modifier = Modifier,
+    text: String,
 ) {
-    Row(
-        modifier = modifier
-            .padding(start = 4.dp, end = 4.dp, top = 4.dp)
-    ) {
-
+    Row(modifier = modifier.padding(start = 4.dp, end = 4.dp, top = 4.dp)) {
         Text(
             modifier = Modifier.padding(end = 4.dp),
-            text = stringResource(id = R.string.stream_compose_thread_footnote),
+            text = text,
             style = ChatTheme.typography.footnoteBold,
             color = ChatTheme.colors.primaryAccent
         )
@@ -645,7 +643,11 @@ internal fun MessageFooter(
     val hasThread = message.threadParticipants.isNotEmpty()
 
     if (hasThread) {
-        ThreadParticipants(modifier = modifier, participants = message.threadParticipants)
+        ThreadParticipants(
+            modifier = modifier,
+            participants = message.threadParticipants,
+            text = stringResource(id = R.string.stream_compose_thread_footnote)
+        )
     } else if (!hasThread && (position == Bottom || position == None)) {
         Row(
             modifier = modifier.padding(top = 4.dp),
