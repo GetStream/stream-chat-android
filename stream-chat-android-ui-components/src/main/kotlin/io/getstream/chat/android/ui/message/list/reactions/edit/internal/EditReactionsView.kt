@@ -4,16 +4,20 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.message.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.message.list.reactions.internal.ReactionsAdapter
+import kotlin.math.ceil
+
+private const val TAIL_BUBBLE_SPACE_DP = 16
 
 @InternalStreamChatApi
 public class EditReactionsView : RecyclerView {
@@ -41,6 +45,9 @@ public class EditReactionsView : RecyclerView {
         init(context, attrs)
     }
 
+    private var bubbleHeight: Int = 0
+    private var reactionsColumns: Int = 5
+
     public fun setMessage(message: Message, isMyMessage: Boolean) {
         this.isMyMessage = isMyMessage
 
@@ -51,6 +58,14 @@ public class EditReactionsView : RecyclerView {
                 reactionDrawable = reactionDrawable
             )
         }
+
+        if (reactionItems.size > reactionsColumns) {
+            val timesBigger = ceil(reactionItems.size.toFloat() / reactionsColumns).toInt()
+            bubbleHeight = bubbleHeight.times(timesBigger)
+        }
+
+        minimumHeight = bubbleHeight + TAIL_BUBBLE_SPACE_DP.dpToPx()
+
         reactionsAdapter.submitList(reactionItems)
     }
 
@@ -60,13 +75,16 @@ public class EditReactionsView : RecyclerView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        bubbleDrawer.drawReactionsBubble(canvas, width, isMyMessage, true)
+
+        bubbleDrawer.drawReactionsBubble(canvas, width, bubbleHeight, isMyMessage, true)
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        applyStyle(EditReactionsViewStyle(context, attrs))
+        val style = EditReactionsViewStyle(context, attrs)
+        applyStyle(style)
 
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        bubbleHeight = style.bubbleHeight
+
         itemAnimator = null
         overScrollMode = View.OVER_SCROLL_NEVER
         setWillNotDraw(false)
@@ -76,10 +94,13 @@ public class EditReactionsView : RecyclerView {
         this.reactionsViewStyle = editReactionsViewStyle
         this.bubbleDrawer = EditReactionsBubbleDrawer(reactionsViewStyle)
 
-        minimumHeight = reactionsViewStyle.totalHeight
+        reactionsColumns = editReactionsViewStyle.reactionsColumn
+
         reactionsViewStyle.horizontalPadding.let {
             setPadding(it, 0, it, 0)
         }
+
+        layoutManager = GridLayoutManager(context, reactionsColumns)
 
         adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
             reactionClickListener?.onReactionClick(it)

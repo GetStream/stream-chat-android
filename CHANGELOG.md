@@ -3,18 +3,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Upgraded Kotlin version to 1.5.30
-- Make our SDK compile-friendly with TargetSDK 31
-- Upgraded Coil version to [1.4.0](https://github.com/coil-kt/coil/releases/tag/1.4.0)
 
 ### ✅ Added
-
+- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
 ### ⚠️ Changed
-- 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
-- Attachment#uploadState is now updated in real-time during uploads.
 
 ### ❌ Removed
-- Removed `ProgressTrackerFactory` and `ProgressTracker` in favour of new progress tracking implementation.
 
 ## stream-chat-android
 ### 🐞 Fixed
@@ -22,53 +16,38 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Push Notification uses `MessagingStyle` on devices with API Version 23+
-- Push Notification configuration has been simplified, check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customizing-push-notifications) to see how it works
-- `NotificationHandler` interface allows you to implement your own Push Notification logic show/remove notifications. It is the new interface you need to use if you were using `ChatNotificationHandler` previously
-- `NotificationHandlerFactory` help you to use our default `NotificationHandler` implementations
 
 ### ⚠️ Changed
-- Some properties of `NotificationConfig` has been deprecated, check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section
-- `ChatNotificationhandler` class has been deprecated, you need to use `NotificationHandler` now. Check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section.
 
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed issues with Proguard stripping response classes incorrectly
 
 ### ⬆️ Improved
-- Added KDocs for `ChatClient.Builder` methods.
-- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead.
 
 ### ✅ Added
-- 🚨 Breaking change: A new `Idle` state is added to `Attachment.UploadState`.
-- Added a new callback function `onProgress(bytesUploaded: Long, totalLength: Long)` in `ProgressCallback`.
-- Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
+- The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
-- 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
-- Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
 
 ### ❌ Removed
+- `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fixed infinite loading of message if any of its attachments uploading was failed
+- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- `ChannelEventsHandler` is added to `QueryChannelsController` to handle updating channel list logic after receiving events. You can provide custom `ChannelEventsHandler` through `ChannelListViewModel` or using `QueryChannelsController` directly.
 
 ### ⚠️ Changed
-- `QueryChannelsController::newChannelEventFilter` and `QueryChannelsController#checkFilterOnChannelUpdatedEvent` are now deprecated. See the deprecation log for more details.
 
 ### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fixed PDF attachments previews
 
 ### ⬆️ Improved
 
@@ -80,57 +59,27 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed bug related to scroll of messages.
-- Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
-- Fix bug using custom attributes into views inflated into our SDK Views
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 ### ⬆️ Improved
-- Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
-- Removed full screen loading view when loading more message items on the `SearchResultListView`.
-
+- Better position for icon of failed message
 ### ✅ Added
-- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
-- Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
-- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView` 
+- Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
+
 ### ⚠️ Changed
-- `ChatUI.uiMode` has been deprecated. If you want to force Dark/Light theme, you need to use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)`
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed a bug where attachments weren't properly stored when editing a message
 
 ### ⬆️ Improved
-- Updated the Compose framework version (1.0.3)
-- Updated the Accompanist libraries version (0.19.0)
-- Improved overlays in all components, to match the same design and opacity
-- Added smaller animations to the AttachmentPicker in the MessagesScreen
-- General improvements in the Attachments API and the way we build different attachments
-- Allowed for better long clicks on attachments
-- Improved the experience of creating the MessagesViewModelFactory with default arguments
-- Updated and cleaned up Channel screen design
-- Improved logic for updating the `lastSeenMessage` for fewer calculations
-- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
 
 ### ✅ Added
-- Added DateSeparator items to Messages to group up messages by their creation date
-- Added an `overlayDark` color for date separators and similar UI components
 
 ### ⚠️ Changed
-- Removed AttachmentPicker option when editing messages
-- Removed Attachment previews when editing messages with attachments
-- Improved the ease of use of the AttachmentState API by keeping it state & actions only
-- Moved the `modifier` parameter outside of the AttachmentState to the AttachmentFactory
-- Updated Attachments to hold `Message` items instead of `MessageItem`s
-- Changed the type of the `onLastVisibleMessageChanged` parameter to `Message` for ease of use
-- Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
-- Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
-- Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
-- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
 
 ### ❌ Removed
-- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
-- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
@@ -153,6 +102,114 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# October 18th, 2021 - 4.20.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Upgraded Kotlin version to 1.5.30
+- Make our SDK compile-friendly with TargetSDK 31
+- Upgraded Coil version to [1.4.0](https://github.com/coil-kt/coil/releases/tag/1.4.0)
+
+### ⚠️ Changed
+- 🚨 Breaking change: `ProgressCallback` is not invoked on main thread anymore. So make sure to handle it if you were previously using this callback to update the UI directly.
+- Attachment#uploadState is now updated in real-time during uploads.
+
+### ❌ Removed
+- Removed `ProgressTrackerFactory` and `ProgressTracker` in favour of new progress tracking implementation.
+
+## stream-chat-android
+### ✅ Added
+- Push Notification uses `MessagingStyle` on devices with API Version 23+
+- Push Notification configuration has been simplified, check our [docs](https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#customizing-push-notifications) to see how it works
+- `NotificationHandler` interface allows you to implement your own Push Notification logic show/remove notifications. It is the new interface you need to use if you were using `ChatNotificationHandler` previously
+- `NotificationHandlerFactory` help you to use our default `NotificationHandler` implementations
+
+### ⚠️ Changed
+- Some properties of `NotificationConfig` has been deprecated, check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section
+- `ChatNotificationhandler` class has been deprecated, you need to use `NotificationHandler` now. Check our [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md) section.
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed issues with Proguard stripping response classes incorrectly
+
+### ⬆️ Improved
+- Added KDocs for `ChatClient.Builder` methods.
+- `ChatClient` now defaults to using the `https://chat.stream-io-api.com` base URL, using [Stream's Edge API Infrastructure](https://getstream.io/blog/chat-edge-infrastructure/) instead of connecting to a region-specific API. If you're not on a dedicated chat infrastructure, remove any region-specific base URL settings from the `ChatClient.Builder` to use Edge instead.
+
+### ✅ Added
+- 🚨 Breaking change: A new `Idle` state is added to `Attachment.UploadState`.
+- Added a new callback function `onProgress(bytesUploaded: Long, totalLength: Long)` in `ProgressCallback`.
+- Added the possibility to add your own instance of OkHttpClient with `ChatClient.okHttpClient`.
+
+### ⚠️ Changed
+- 🚨 Breaking change: `Attachment.UploadState.InProgress` now is data class having two fields, `bytesUploaded: Long` and `totalBytes: Long` instead of object.
+- Deprecated the `ChatClient.Builder#cdnUrl` method. To customize file uploads, set a custom `FileUploader` implementation instead. More info in the documentation: [Using Your Own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn).
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed infinite loading of message if any of its attachments uploading was failed
+
+### ✅ Added
+- `ChannelEventsHandler` is added to `QueryChannelsController` to handle updating channel list logic after receiving events. You can provide custom `ChannelEventsHandler` through `ChannelListViewModel` or using `QueryChannelsController` directly.
+
+### ⚠️ Changed
+- `QueryChannelsController::newChannelEventFilter` and `QueryChannelsController#checkFilterOnChannelUpdatedEvent` are now deprecated. See the deprecation log for more details.
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed PDF attachments previews
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed bug related to scroll of messages.
+- Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fixing ViewReactionsView being cropped if more than 7 reactions are added
+- Fix bug using custom attributes into views inflated into our SDK Views
+
+### ⬆️ Improved
+- Now it is possible to set a custom `LinearLayoutManager` to `MessageListView`, this can be used to change stack of messages or revert the layout.
+- Removed full screen loading view when loading more message items on the `SearchResultListView`.
+
+### ✅ Added
+- Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
+- Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
+- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView` 
+### ⚠️ Changed
+- `ChatUI.uiMode` has been deprecated. If you want to force Dark/Light theme, you need to use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)`
+
+### ❌ Removed
+- `android.permission.CAMERA` from our Manifest. This permission is not required anymore.
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed a bug where attachments weren't properly stored when editing a message
+
+### ⬆️ Improved
+- Updated the Compose framework version (1.0.3)
+- Updated the Accompanist libraries version (0.19.0)
+- Improved overlays in all components, to match the same design and opacity
+- Added smaller animations to the AttachmentPicker in the MessagesScreen
+- General improvements in the Attachments API and the way we build different attachments
+- Allowed for better long clicks on attachments
+- Improved the experience of creating the MessagesViewModelFactory with default arguments
+- Updated and cleaned up Channel screen design
+- Improved logic for updating the `lastSeenMessage` for fewer calculations
+
+### ✅ Added
+- Added DateSeparator items to Messages to group up messages by their creation date
+- Added an `overlayDark` color for date separators and similar UI components
+
+### ⚠️ Changed
+- Removed AttachmentPicker option when editing messages
+- Removed Attachment previews when editing messages with attachments
+- Improved the ease of use of the AttachmentState API by keeping it state & actions only
+- Moved the `modifier` parameter outside of the AttachmentState to the AttachmentFactory
+- Updated Attachments to hold `Message` items instead of `MessageItem`s
+- Changed the type of the `onLastVisibleMessageChanged` parameter to `Message` for ease of use
+- Changed the parameter type of `itemContent` in `MessageList` and `Messages` to `MessageListItem`
+- Renamed `onScrollToBottom` to `onScrolledToBottom` in `MessageList` and `Messages`
+- Made the ChannelListHeader Slot APIs non-nullable so they're always provided, also made them an extension of the RowScope for ease of use
+
 
 # September 15th, 2021 - 4.19.0
 ## Common changes for all artifacts

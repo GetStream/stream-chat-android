@@ -15,9 +15,11 @@ import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import kotlinx.coroutines.launch
@@ -33,10 +35,13 @@ internal class MediaAttachmentFragment : Fragment() {
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
-    private val style by lazy { staticStyle!! }
+    private val style by lazy { staticStyle }
+    private val dialogStyle: AttachmentSelectionDialogStyle by lazy {
+        style?.attachmentSelectionDialogStyle ?: AttachmentSelectionDialogStyle.createDefault(requireContext())
+    }
 
-    private val mediaAttachmentsAdapter: MediaAttachmentAdapter = MediaAttachmentAdapter(style = style.attachmentSelectionDialogStyle) {
-        updateMediaAttachment(it)
+    private val mediaAttachmentsAdapter: MediaAttachmentAdapter by lazy {
+        MediaAttachmentAdapter(style = dialogStyle, ::updateMediaAttachment)
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
@@ -52,7 +57,8 @@ internal class MediaAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiFragmentAttachmentMediaBinding.inflate(requireContext().streamThemeInflater, container, false)
+        _binding =
+            StreamUiFragmentAttachmentMediaBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
 
@@ -79,10 +85,9 @@ internal class MediaAttachmentFragment : Fragment() {
             adapter = mediaAttachmentsAdapter
         }
         binding.grantPermissionsInclude.apply {
-            val style = style.attachmentSelectionDialogStyle
-            grantPermissionsImageView.setImageDrawable(style.allowAccessToGalleryIcon)
-            grantPermissionsTextView.text = style.allowAccessToGalleryText
-            style.grantPermissionsTextStyle.apply(grantPermissionsTextView)
+            grantPermissionsImageView.setImageDrawable(dialogStyle.allowAccessToGalleryIcon)
+            grantPermissionsTextView.text = dialogStyle.allowAccessToGalleryText
+            dialogStyle.grantPermissionsTextStyle.apply(grantPermissionsTextView)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
@@ -132,8 +137,9 @@ internal class MediaAttachmentFragment : Fragment() {
             }
 
             if (attachments.isEmpty()) {
-                style.mediaAttachmentEmptyStateTextStyle.apply(binding.emptyPlaceholderTextView)
-                binding.emptyPlaceholderTextView.text = style.mediaAttachmentEmptyStateText
+                style?.mediaAttachmentEmptyStateTextStyle?.apply(binding.emptyPlaceholderTextView)
+                binding.emptyPlaceholderTextView.text = style?.mediaAttachmentEmptyStateText
+                    ?: requireContext().getString(R.string.stream_ui_message_input_no_files)
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 mediaAttachmentsAdapter.setAttachments(attachments)

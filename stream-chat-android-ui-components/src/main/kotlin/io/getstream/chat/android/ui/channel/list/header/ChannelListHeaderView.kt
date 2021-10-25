@@ -160,7 +160,18 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     public fun showOfflineTitle() {
         binding.offlineTitleContainer.isVisible = true
+        binding.offlineProgressBar.isVisible = false
         binding.onlineTextView.isVisible = false
+
+        binding.offlineTextView.text = resources.getString(R.string.stream_ui_channel_list_header_offline)
+    }
+
+    public fun showConnectingTitle() {
+        binding.offlineTitleContainer.isVisible = true
+        binding.offlineProgressBar.isVisible = true
+        binding.onlineTextView.isVisible = false
+
+        binding.offlineTextView.text = resources.getString(R.string.stream_ui_channel_list_header_disconnected)
     }
 
     public fun setOnUserAvatarClickListener(listener: UserAvatarClickListener) {
