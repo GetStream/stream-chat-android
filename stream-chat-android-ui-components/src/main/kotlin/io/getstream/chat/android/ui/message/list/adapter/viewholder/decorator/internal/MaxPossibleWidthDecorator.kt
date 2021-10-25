@@ -39,10 +39,10 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
         val marginStartPercent = if (data.isTheirs) {
             START_PERCENT
         } else {
-            START_PERCENT + getMaxPossibleWidthFactor(data.isTheirs)
+            START_PERCENT + getMaxWidthFactor(data.isTheirs)
         }
         val marginEndPercent = if (data.isTheirs) {
-            END_PERCENT - getMaxPossibleWidthFactor(data.isTheirs)
+            END_PERCENT - getMaxWidthFactor(data.isTheirs)
         } else {
             END_PERCENT
         }
@@ -51,21 +51,20 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
     }
 
     /**
-     * Gets message's max possible width factor from [style] based on [isTheirs] and scales it using [MAX_POSSIBLE_WIDTH_FACTOR]
+     * Gets message's max width factor from [style] based on [isTheirs]
      */
-    private fun getMaxPossibleWidthFactor(isTheirs: Boolean): Float {
+    private fun getMaxWidthFactor(isTheirs: Boolean): Float {
         val maxPossibleWidthFactor = if (isTheirs) {
-            style.messageMaxPossibleWidthFactorTheirs
+            style.messageMaxWidthFactorTheirs
         } else {
-            style.messageMaxPossibleWidthFactorMine
+            style.messageMaxWidthFactorMine
         }
 
-        return maxPossibleWidthFactor * MAX_POSSIBLE_WIDTH_FACTOR
+        return 1 - maxPossibleWidthFactor
     }
 
     companion object {
-        private const val MAX_POSSIBLE_WIDTH_FACTOR = .25f
         private const val START_PERCENT = 0f
-        private const val END_PERCENT = 1f
+        private const val END_PERCENT = 0.97f
     }
 }
