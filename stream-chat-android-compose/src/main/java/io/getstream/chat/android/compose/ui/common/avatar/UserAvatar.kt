@@ -40,15 +40,15 @@ public fun UserAvatar(
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
-        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.toAlignment()))
+        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
     },
     onClick: (() -> Unit)? = null,
 ) {
-    Box(modifier = modifier) {
+    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { modifier ->
         if (user.image.isNotBlank()) {
             val authorImage = rememberImagePainter(data = user.image)
             Avatar(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier,
                 shape = shape,
                 painter = authorImage,
                 contentDescription = contentDescription,
@@ -56,15 +56,21 @@ public fun UserAvatar(
             )
         } else {
             InitialsAvatar(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier,
                 initials = user.initials,
                 shape = shape
             )
         }
+    }
 
-        if (showOnlineIndicator && user.online) {
+    if (showOnlineIndicator && user.online) {
+        Box(modifier = modifier) {
+            avatarContent(Modifier.fillMaxSize())
+
             onlineIndicator()
         }
+    } else {
+        avatarContent(modifier = modifier)
     }
 }
 
@@ -87,18 +93,9 @@ public fun OnlineIndicator(modifier: Modifier = Modifier) {
 /**
  * Represents the position of [OnlineIndicator] in [UserAvatar].
  */
-public enum class OnlineIndicatorAlignment {
-    TopEnd,
-    BottomEnd,
-    TopStart,
-    BottomStart
-}
-
-private fun OnlineIndicatorAlignment.toAlignment(): Alignment {
-    return when (this) {
-        OnlineIndicatorAlignment.TopEnd -> Alignment.TopEnd
-        OnlineIndicatorAlignment.BottomEnd -> Alignment.BottomEnd
-        OnlineIndicatorAlignment.TopStart -> Alignment.TopStart
-        OnlineIndicatorAlignment.BottomStart -> Alignment.BottomStart
-    }
+public enum class OnlineIndicatorAlignment(public val alignment: Alignment) {
+    TopEnd(Alignment.TopEnd),
+    BottomEnd(Alignment.BottomEnd),
+    TopStart(Alignment.TopStart),
+    BottomStart(Alignment.BottomStart)
 }
