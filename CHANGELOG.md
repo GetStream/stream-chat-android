@@ -74,12 +74,16 @@
 
 ### ⬆️ Improved
 - Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
+- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
 
 ### ❌ Removed
+- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
+- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
