@@ -17,10 +17,10 @@
     <string name="stream_ui_message_list_pinned_message">%s의 고정</string>
     <string name="stream_ui_message_list_pinned_message_you">나</string>
     <plurals name="stream_ui_message_list_thread_reply">
-        <item quantity="other">%d스레드 답장</item>
+        <item quantity="other">%d개의 스레드 응답</item>
     </plurals>
     <plurals name="stream_ui_message_list_thread_separator">
-        <item quantity="other">%d개의 답장</item>
+        <item quantity="other">%d개의 응답</item>
     </plurals>
 
     <!-- Message Actions Dialog -->
@@ -37,7 +37,7 @@
     <string name="stream_ui_message_list_block_user">사용자 차단</string>
     <string name="stream_ui_message_list_delete_message">메시지 삭제</string>
     <plurals name="stream_ui_message_list_message_reactions">
-        <item quantity="other">%d개의 메세지에 대한 반응</item>
+        <item quantity="other">%d개의 공감</item>
     </plurals>
 
     <!-- Message Action Confirmations -->

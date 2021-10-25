@@ -5,7 +5,7 @@
     <string name="stream_ui_message_list_header_untitled_channel">무명의 그룹</string>
 
     <!-- Header Subtitle -->
-    <string name="stream_ui_message_list_header_thread_subtitle">%s 참여 중</string>
+    <string name="stream_ui_message_list_header_thread_subtitle">%s 참여</string>
     <string name="stream_ui_message_list_header_disconnected">네트워크를 검색하는 중입니다</string>
     <string name="stream_ui_message_list_header_offline">오프라인…</string>
     <string name="stream_ui_message_list_header_retry">재시도</string>

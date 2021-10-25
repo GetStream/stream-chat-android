@@ -4,7 +4,7 @@
     <string name="stream_ui_attachment_gallery_date">%s %s에 보냈습니다</string>
     <string name="stream_ui_attachment_gallery_reply">답장</string>
     <string name="stream_ui_attachment_gallery_delete">삭제</string>
-    <string name="stream_ui_attachment_gallery_show_in_chat">대화에서 보기</string>
+    <string name="stream_ui_attachment_gallery_show_in_chat">대화보기</string>
     <string name="stream_ui_attachment_gallery_save_image">이미지 저장</string>
     <string name="stream_ui_attachment_gallery_share">이미지 공유</string>
 
