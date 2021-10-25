@@ -51,7 +51,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Using the same `MessageListItemViewHolderFactory` of `MessageListView` in `MessageOptionsDialogFragment`
 ### ⬆️ Improved
 
 ### ✅ Added
