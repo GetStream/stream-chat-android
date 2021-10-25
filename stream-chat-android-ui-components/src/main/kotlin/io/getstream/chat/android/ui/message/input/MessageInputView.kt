@@ -457,8 +457,8 @@ public class MessageInputView : ConstraintLayout {
      *
      * @param listener Listener that being invoked when user clicks on the attachment button in [MessageInputView].
      */
-    public fun setAttachmentButtonClickListener(listener: () -> Unit) {
-        binding.attachmentsButton.setOnClickListener { listener() }
+    public fun setAttachmentButtonClickListener(listener: AttachmentButtonClickListener) {
+        binding.attachmentsButton.setOnClickListener { listener.onAttachmentButtonClicked() }
     }
 
     private fun configLightningButton() {
@@ -831,5 +831,15 @@ public class MessageInputView : ConstraintLayout {
         override suspend fun handleUserLookup(query: String): List<User> {
             return searchUsers(users, query, streamTransliterator)
         }
+    }
+
+    /**
+     * Functional interface for a listener on the attachment button clicks.
+     */
+    public fun interface AttachmentButtonClickListener {
+        /**
+         * Function to be invoked when a click on the attachment button happens.
+         */
+        public fun onAttachmentButtonClicked()
     }
 }
