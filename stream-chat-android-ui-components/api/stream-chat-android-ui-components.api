@@ -1504,8 +1504,8 @@ public final class io/getstream/chat/android/ui/message/list/MessageListItemStyl
 	public final fun getMessageLinkBackgroundColorTheirs ()I
 	public final fun getMessageLinkTextColorMine ()Ljava/lang/Integer;
 	public final fun getMessageLinkTextColorTheirs ()Ljava/lang/Integer;
-	public final fun getMessageMaxPossibleWidthFactorMine ()F
-	public final fun getMessageMaxPossibleWidthFactorTheirs ()F
+	public final fun getMessageMaxWidthFactorMine ()F
+	public final fun getMessageMaxWidthFactorTheirs ()F
 	public final fun getMessageStartMargin ()I
 	public final fun getMessageStrokeColorMine ()I
 	public final fun getMessageStrokeColorTheirs ()I
