@@ -73,6 +73,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
 
 ### ✅ Added
 
