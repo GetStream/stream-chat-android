@@ -1,7 +1,7 @@
-package io.getstream.chat.android.command.dag.unittest.task
+package io.getstream.chat.android.command.unittest.task
 
-import io.getstream.chat.android.command.dag.unittest.filter.selectedUnitTestCommand
-import io.getstream.chat.android.command.dag.unittest.plugin.UnitTestsCommandExtension
+import io.getstream.chat.android.command.unittest.filter.selectedUnitTestCommand
+import io.getstream.chat.android.command.unittest.plugin.UnitTestsCommandExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction

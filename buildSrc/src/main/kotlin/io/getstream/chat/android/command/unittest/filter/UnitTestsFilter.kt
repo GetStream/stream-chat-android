@@ -1,6 +1,6 @@
-package io.getstream.chat.android.command.dag.unittest.filter
+package io.getstream.chat.android.command.unittest.filter
 
-import io.getstream.chat.android.command.dag.unittest.model.TestType
+import io.getstream.chat.android.command.unittest.model.TestType
 import io.getstream.chat.android.command.utils.generateGradleCommand
 import org.gradle.api.Project
 import java.io.File

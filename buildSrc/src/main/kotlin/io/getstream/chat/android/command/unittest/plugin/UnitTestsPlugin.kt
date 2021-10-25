@@ -1,6 +1,6 @@
-package io.getstream.chat.android.command.dag.unittest.plugin
+package io.getstream.chat.android.command.unittest.plugin
 
-import io.getstream.chat.android.command.dag.unittest.task.UnitTestsTask
+import io.getstream.chat.android.command.unittest.task.UnitTestsTask
 import io.getstream.chat.android.command.utils.registerExt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
