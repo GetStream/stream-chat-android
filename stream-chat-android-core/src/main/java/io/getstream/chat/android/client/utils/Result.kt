@@ -206,6 +206,20 @@ public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Re
 }
 
 /**
+ * Runs the suspending [errorSideEffect] lambda function if the [Result] contains an error payload.
+ *
+ * @param errorSideEffect A suspending lambda that receives the [ChatError] payload.
+ *
+ * @return The original instance of the [Result].
+ */
+public suspend fun <T : Any> Result<T>.onErrorSuspend(errorSideEffect: suspend (ChatError) -> Unit): Result<T> {
+    if (isError) {
+        errorSideEffect(error())
+    }
+    return this
+}
+
+/**
  * Returns a transformed [Result] from results of the [func] if the [Result] contains a successful data payload.
  * Returns an original [Result] if the [Result] contains an error payload.
  *
