@@ -63,7 +63,7 @@
 ### ⬆️ Improved
 - Better position for icon of failed message
 ### ✅ Added
-- Added `streamUiMessageMaxPossibleWidthFactorMine` and `streamUiMessageMaxPossibleWidthFactorTheirs` `MessageListView` attributes. You can make messages wider by passing values < 100%.
+Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
 
 ### ⚠️ Changed
 
