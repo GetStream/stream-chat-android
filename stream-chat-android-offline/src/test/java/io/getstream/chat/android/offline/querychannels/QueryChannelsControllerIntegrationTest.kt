@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.ChatDomainImpl
@@ -119,6 +120,36 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2)
     }
 
+    @Test
+    fun `Given hidden channel and channel events handler that add channel on new message When handle NotificationMessageNewEvent Should add channel to list`(): Unit =
+        runBlocking {
+            val sut = Fixture(chatDomainImpl, data.filter1)
+                .givenChannelsInOfflineStorage(data.channel1, data.channel2, data.channel3)
+                .givenChannelEventsHandler { event, _ ->
+                    if (event is NotificationMessageNewEvent) {
+                        EventHandlingResult.ADD
+                    } else {
+                        EventHandlingResult.SKIP
+                    }
+                }
+                .get()
+            sut.query()
+            sut.handleEvent(
+                mock<ChannelHiddenEvent> {
+                    on { it.cid } doReturn data.channel3.cid
+                }
+            )
+
+            sut.handleEvent(
+                mock<NotificationMessageNewEvent> {
+                    on { it.channel } doReturn data.channel3
+                    on { it.cid } doReturn data.channel3.cid
+                }
+            )
+
+            sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2, data.channel3)
+        }
+
     private class Fixture(
         private val chatDomainImpl: ChatDomainImpl,
         private val filter: FilterObject,
@@ -154,6 +185,10 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 }
             }
             return this
+        }
+
+        fun givenChannelEventsHandler(eventsHandler: ChannelEventsHandler) = apply {
+            queryChannelsControllerImpl.channelEventsHandler = eventsHandler
         }
 
         fun get(): QueryChannelsController = queryChannelsControllerImpl
