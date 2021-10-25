@@ -906,6 +906,11 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItemKt {
+	public static final fun toAttachment (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;)Lio/getstream/chat/android/client/models/Attachment;
+	public static final fun toAttachmentGalleryResultItem (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
+}
+
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
 	public static final field TYPE_KEY Ljava/lang/String;
