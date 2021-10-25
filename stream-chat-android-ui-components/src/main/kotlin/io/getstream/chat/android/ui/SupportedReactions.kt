@@ -43,7 +43,7 @@ public class SupportedReactions(
         return reactions[type]
     }
 
-    public class ReactionDrawable(public val inactiveDrawable: Drawable, public val activeDrawable: Drawable) {
+    public class ReactionDrawable(private val inactiveDrawable: Drawable, private val activeDrawable: Drawable) {
         public fun getDrawable(isActive: Boolean): Drawable = if (isActive) {
             activeDrawable
         } else {

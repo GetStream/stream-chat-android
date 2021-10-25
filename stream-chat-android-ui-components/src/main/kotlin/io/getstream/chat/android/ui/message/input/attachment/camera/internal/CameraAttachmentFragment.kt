@@ -72,7 +72,7 @@ internal class CameraAttachmentFragment : Fragment() {
     }
 
     private fun checkPermissions() {
-        if (!permissionChecker.isGrantedCameraPermissions(requireContext())) {
+        if (permissionChecker.isNeededToRequestForCameraPermissions(requireContext())) {
             permissionChecker.checkCameraPermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,

@@ -2,4 +2,5 @@
 <resources>
     <string name="stream_ui_channel_list_header_connected">Stream Chat</string>
     <string name="stream_ui_channel_list_header_disconnected">Attendo la rete</string>
+    <string name="stream_ui_channel_list_header_offline">Disconnesso</string>
 </resources>

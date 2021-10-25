@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -27,6 +28,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
@@ -53,8 +55,14 @@ public sealed interface ChatDomain {
     public val initialized: StateFlow<Boolean>
 
     /**
-     * StateFlow<Boolean> that indicates if we are currently online
+     * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
      */
+    public val connectionState: StateFlow<ConnectionState>
+
+    /**
+     * StateFlow<Boolean> that indicates if we are currently online, connecting of offline.
+     */
+    @Deprecated("Use connectionState instead")
     public val online: StateFlow<Boolean>
 
     /**
@@ -100,6 +108,7 @@ public sealed interface ChatDomain {
     public suspend fun disconnect()
     public fun isOnline(): Boolean
     public fun isOffline(): Boolean
+    public fun isConnecting(): Boolean
     public fun isInitialized(): Boolean
     public fun getActiveQueries(): List<QueryChannelsController>
     public fun clean()
@@ -591,6 +600,7 @@ public sealed interface ChatDomain {
         public constructor(client: ChatClient, appContext: Context) : this(appContext, client)
 
         private var database: ChatDatabase? = null
+        private var handler: Handler = Handler(Looper.getMainLooper())
 
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
@@ -602,6 +612,11 @@ public sealed interface ChatDomain {
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
+        }
+
+        @VisibleForTesting
+        internal fun handler(handler: Handler) = apply {
+            this.handler = handler
         }
 
         public fun enableBackgroundSync(): Builder {
@@ -666,9 +681,10 @@ public sealed interface ChatDomain {
                     .let(::OfflinePlugin)
         }
 
+        @SuppressLint("VisibleForTests")
         @OptIn(ExperimentalStreamChatApi::class)
         internal fun buildImpl(): ChatDomainImpl {
-            val handler = Handler(Looper.getMainLooper())
+            val plugin = getPlugin()
             return ChatDomainImpl(
                 client,
                 database,
@@ -678,9 +694,12 @@ public sealed interface ChatDomain {
                 userPresence,
                 backgroundSyncEnabled,
                 appContext,
-                offlinePlugin = getPlugin(),
+                offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
-            )
+            ).also { domainImpl ->
+                // TODO remove when plugin becomes stateless
+                plugin.initState(domainImpl, client)
+            }
         }
     }
 

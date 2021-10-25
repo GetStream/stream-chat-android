@@ -13,10 +13,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
 import kotlinx.coroutines.runBlocking
 
-internal class DefaultChannelEventsHandler(
-    private val client: ChatClient,
-    private val filter: FilterObject,
-) : BaseChannelEventsHandler() {
+internal class DefaultChannelEventsHandler(private val client: ChatClient) : BaseChannelEventsHandler() {
     internal var checkFilterOnChannelUpdatedEvent: Boolean = false
 
     internal var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filter ->
@@ -36,24 +33,30 @@ internal class DefaultChannelEventsHandler(
             .let { it.isSuccess && it.data() }
     }
 
-    override fun onNotificationAddedToChannelEvent(event: NotificationAddedToChannelEvent): EventHandlingResult =
-        handleCidEventByRequest(event)
+    override fun onNotificationAddedToChannelEvent(
+        event: NotificationAddedToChannelEvent,
+        filter: FilterObject,
+    ): EventHandlingResult =
+        handleCidEventByRequest(event, filter)
 
-    override fun onChannelUpdatedByUserEvent(event: ChannelUpdatedByUserEvent): EventHandlingResult =
-        handleCidEventByRequestIfNeeded(event)
+    override fun onChannelUpdatedByUserEvent(
+        event: ChannelUpdatedByUserEvent,
+        filter: FilterObject,
+    ): EventHandlingResult =
+        handleCidEventByRequestIfNeeded(event, filter)
 
-    override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent): EventHandlingResult =
-        handleCidEventByRequestIfNeeded(event)
+    override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
+        handleCidEventByRequestIfNeeded(event, filter)
 
-    private fun handleCidEventByRequestIfNeeded(event: HasChannel): EventHandlingResult {
+    private fun handleCidEventByRequestIfNeeded(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return if (checkFilterOnChannelUpdatedEvent) {
-            handleCidEventByRequest(event)
+            handleCidEventByRequest(event, filter)
         } else {
             EventHandlingResult.SKIP
         }
     }
 
-    private fun handleCidEventByRequest(event: HasChannel): EventHandlingResult {
+    private fun handleCidEventByRequest(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return runBlocking {
             if (newChannelEventFilter(event.channel, filter)) {
                 EventHandlingResult.ADD

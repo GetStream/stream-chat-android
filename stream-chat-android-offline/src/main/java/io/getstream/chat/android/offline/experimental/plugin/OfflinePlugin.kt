@@ -21,6 +21,7 @@ public class OfflinePlugin(private val config: Config) : Plugin {
 
     internal constructor() : this(Config())
 
+    // TODO make it val and stateless when remove QueryChannelsMutableState::defaultChannelEventsHandler
     public lateinit var state: StateRegistry
         private set
     internal lateinit var logic: LogicRegistry

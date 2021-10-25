@@ -45,7 +45,9 @@ internal class MessageSendingService(
 
                 val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
                 attachmentsToUpload.forEach { attachment ->
-                    attachment.uploadId = generateUploadId()
+                    if (attachment.uploadId == null) {
+                        attachment.uploadId = generateUploadId()
+                    }
                     attachment.uploadState = Attachment.UploadState.Idle
                 }
                 nonFileAttachments.forEach { attachment ->
@@ -75,7 +77,7 @@ internal class MessageSendingService(
 
     internal suspend fun sendMessage(message: Message): Result<Message> {
         return when {
-            domainImpl.online.value ->
+            domainImpl.isOnline() ->
                 if (message.hasPendingAttachments()) {
                     waitForAttachmentsToBeSent(message)
                 } else {

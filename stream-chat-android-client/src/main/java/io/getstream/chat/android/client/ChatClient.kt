@@ -69,12 +69,9 @@ import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.client.notifications.storage.EncryptedPushNotificationsConfigStore
-import io.getstream.chat.android.client.notifications.storage.PushNotificationsConfig
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
@@ -84,6 +81,9 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
+import io.getstream.chat.android.client.user.CredentialConfig
+import io.getstream.chat.android.client.user.storage.SharedPreferencesCredentialStorage
+import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -114,7 +114,7 @@ public class ChatClient internal constructor(
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
     private val queryChannelsPostponeHelper: QueryChannelsPostponeHelper,
-    private val encryptedUserConfigStorage: EncryptedPushNotificationsConfigStore,
+    private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
     private val scope: CoroutineScope,
@@ -151,7 +151,7 @@ public class ChatClient internal constructor(
                     userStateService.onUserUpdated(user)
                     api.setConnection(user.id, connectionId)
                     lifecycleObserver.observe()
-                    storePushNotificationsConfig(user.id)
+                    storePushNotificationsConfig(user.id, user.name)
                     notifications.onSetUser()
                 }
                 is DisconnectedEvent -> {
@@ -326,9 +326,9 @@ public class ChatClient internal constructor(
             return
         }
 
-        encryptedUserConfigStorage.get()?.let { config ->
+        userCredentialStorage.get()?.let { config ->
             initializeClientWithUser(
-                user = User(id = config.userId),
+                user = User(id = config.userId).apply { name = config.userName },
                 tokenProvider = ConstantTokenProvider(config.userToken),
             )
         }
@@ -336,18 +336,19 @@ public class ChatClient internal constructor(
 
     @InternalStreamChatApi
     public fun containsStoredCredentials(): Boolean {
-        return encryptedUserConfigStorage.get() != null
+        return userCredentialStorage.get() != null
     }
 
     private fun notifySetUser(user: User) {
         preSetUserListeners.forEach { it(user) }
     }
 
-    private fun storePushNotificationsConfig(userId: String) {
-        encryptedUserConfigStorage.put(
-            PushNotificationsConfig(
+    private fun storePushNotificationsConfig(userId: String, userName: String) {
+        userCredentialStorage.put(
+            CredentialConfig(
                 userToken = getCurrentToken() ?: "",
                 userId = userId,
+                userName = userName,
             ),
         )
     }
@@ -699,7 +700,7 @@ public class ChatClient internal constructor(
         socketStateService.onDisconnectRequested()
         userStateService.onLogout()
         socket.disconnect()
-        encryptedUserConfigStorage.clear()
+        userCredentialStorage.clear()
         lifecycleObserver.dispose()
     }
 
@@ -1594,6 +1595,7 @@ public class ChatClient internal constructor(
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var plugins: List<Plugin> = emptyList()
         private var customOkHttpClient: OkHttpClient? = null
+        private var userCredentialStorage: UserCredentialStorage? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -1625,7 +1627,7 @@ public class ChatClient internal constructor(
         }
 
         /**
-         * Sets a custom [ChatNotificationHandler] that the SDK will use to handle everything
+         * Sets a custom [NotificationHandler] that the SDK will use to handle everything
          * around push notifications. Create your own subclass and override methods to customize
          * notification appearance and behavior.
          *
@@ -1634,7 +1636,7 @@ public class ChatClient internal constructor(
          *
          *
          * @param notificationConfig Config push notification.
-         * @param notificationsHandler Your custom subclass of [ChatNotificationHandler].
+         * @param notificationsHandler Your custom class implementation of [NotificationHandler].
          */
         @JvmOverloads
         public fun notifications(
@@ -1756,6 +1758,13 @@ public class ChatClient internal constructor(
             plugins += plugin
         }
 
+        /**
+         * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
+         */
+        public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
+            userCredentialStorage = credentialStorage
+        }
+
         @InternalStreamChatApi
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
@@ -1798,7 +1807,7 @@ public class ChatClient internal constructor(
                     customOkHttpClient,
                 )
 
-            val result = ChatClient(
+            return ChatClient(
                 config,
                 module.api(),
                 module.socket(),
@@ -1806,13 +1815,12 @@ public class ChatClient internal constructor(
                 tokenManager,
                 module.socketStateService,
                 module.queryChannelsPostponeHelper,
-                EncryptedPushNotificationsConfigStore(appContext),
+                userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 scope = module.networkScope,
                 appContext = appContext,
                 plugins = plugins,
             )
-            return result
         }
     }
 
@@ -1851,10 +1859,10 @@ public class ChatClient internal constructor(
         /**
          * Handles push message.
          * If user is not connected - automatically restores last user credentials and sets user without connecting to the socket.
-         * Push message will be handled internally unless user overrides [ChatNotificationHandler.onPushMessage]
+         * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *
-         * @see [ChatNotificationHandler.onPushMessage]
+         * @see [NotificationHandler.onPushMessage]
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
