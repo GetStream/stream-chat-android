@@ -69,6 +69,8 @@
 - Better position for icon of failed message
 
 ### ✅ Added
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
+The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
 - Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
 - Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.

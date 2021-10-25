@@ -124,6 +124,12 @@ public class MessageInputView : ConstraintLayout {
 
     private var scope: CoroutineScope? = null
     private var bigFileSelectionListener: BigFileSelectionListener? = null
+    private var selectedAttachmentsCountListener: SelectedAttachmentsCountListener =
+        SelectedAttachmentsCountListener { attachmentsCount, maxAttachmentsCount ->
+            if (attachmentsCount > maxAttachmentsCount) {
+                alertMaxAttachmentsCountExceeded()
+            }
+        }
 
     public constructor(context: Context) : this(context, null)
 
@@ -300,9 +306,9 @@ public class MessageInputView : ConstraintLayout {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         messageInputDebouncer = Debouncer(TYPING_DEBOUNCE_MS)
-        scope = CoroutineScope(DispatcherProvider.Main)
-        scope?.launch {
-            binding.messageInputFieldView.hasBigAttachment.collect(::consumeHasBigFile)
+        scope = CoroutineScope(DispatcherProvider.Main).apply {
+            launch { binding.messageInputFieldView.hasBigAttachment.collect(::consumeHasBigFile) }
+            launch { binding.messageInputFieldView.selectedAttachmentsCount.collect(::consumeSelectedAttachmentsCount) }
         }
     }
 
@@ -334,7 +340,11 @@ public class MessageInputView : ConstraintLayout {
         setMentionsEnabled(messageInputViewStyle.mentionsEnabled)
         setCommandsEnabled(messageInputViewStyle.commandsEnabled)
         setSuggestionListViewInternal(SuggestionListView(context))
-        binding.messageInputFieldView.setAttachmentMaxFileMb(messageInputViewStyle.attachmentMaxFileSize)
+        binding.messageInputFieldView.apply {
+            setAttachmentMaxFileMb(messageInputViewStyle.attachmentMaxFileSize)
+            maxAttachmentsCount = messageInputViewStyle.maxAttachmentsCount
+        }
+
         val horizontalPadding = resources.getDimensionPixelSize(R.dimen.stream_ui_spacing_tiny)
         updatePadding(left = horizontalPadding, right = horizontalPadding)
 
@@ -343,6 +353,15 @@ public class MessageInputView : ConstraintLayout {
 
     public fun listenForBigAttachments(listener: BigFileSelectionListener) {
         bigFileSelectionListener = listener
+    }
+
+    /**
+     * Sets [SelectedAttachmentsCountListener] invoked when attachments count changes
+     *
+     * @param listener The listener to be set
+     */
+    public fun setSelectedAttachmentsCountListener(listener: SelectedAttachmentsCountListener) {
+        selectedAttachmentsCountListener = listener
     }
 
     private fun dismissInputMode(inputMode: InputMode) {
@@ -355,20 +374,26 @@ public class MessageInputView : ConstraintLayout {
 
     private fun configSendButtonListener() {
         binding.sendMessageButtonEnabled.setOnClickListener {
-            if (binding.messageInputFieldView.hasBigAttachment.value) {
-                consumeHasBigFile(true)
-            } else {
-                onSendButtonClickListener?.onClick()
-                inputMode.let {
-                    when (it) {
-                        is InputMode.Normal -> sendMessage()
-                        is InputMode.Thread -> sendThreadMessage(it.parentMessage)
-                        is InputMode.Edit -> editMessage(it.oldMessage)
-                        is InputMode.Reply -> sendMessage(it.repliedMessage)
-                    }
+            when {
+                binding.messageInputFieldView.hasBigAttachment.value -> {
+                    consumeHasBigFile(hasBigFile = true)
                 }
-                binding.messageInputFieldView.clearContent()
-                startCooldownTimerIfNecessary()
+                binding.messageInputFieldView.selectedAttachmentsCount.value > messageInputViewStyle.maxAttachmentsCount -> {
+                    consumeSelectedAttachmentsCount(attachmentsCount = binding.messageInputFieldView.selectedAttachmentsCount.value)
+                }
+                else -> {
+                    onSendButtonClickListener?.onClick()
+                    inputMode.let {
+                        when (it) {
+                            is InputMode.Normal -> sendMessage()
+                            is InputMode.Thread -> sendThreadMessage(it.parentMessage)
+                            is InputMode.Edit -> editMessage(it.oldMessage)
+                            is InputMode.Reply -> sendMessage(it.repliedMessage)
+                        }
+                    }
+                    binding.messageInputFieldView.clearContent()
+                    startCooldownTimerIfNecessary()
+                }
             }
         }
     }
@@ -379,11 +404,29 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    private fun consumeSelectedAttachmentsCount(attachmentsCount: Int) {
+        selectedAttachmentsCountListener.attachmentsCountChanged(
+            attachmentsCount = attachmentsCount,
+            maxAttachmentsCount = messageInputViewStyle.maxAttachmentsCount,
+        )
+    }
+
     private fun alertBigFileSendAttempt() {
         Snackbar.make(this,
             resources.getString(R.string.stream_ui_message_input_error_file_large_size,
                 messageInputViewStyle.attachmentMaxFileSize),
             Snackbar.LENGTH_LONG)
+            .apply { anchorView = binding.sendButtonContainer }
+            .show()
+    }
+
+    private fun alertMaxAttachmentsCountExceeded() {
+        Snackbar.make(
+            this,
+            resources.getString(R.string.stream_ui_message_input_error_max_attachments_count_exceeded,
+                messageInputViewStyle.maxAttachmentsCount),
+            Snackbar.LENGTH_LONG,
+        )
             .apply { anchorView = binding.sendButtonContainer }
             .show()
     }
@@ -802,6 +845,20 @@ public class MessageInputView : ConstraintLayout {
     @FunctionalInterface
     public interface BigFileSelectionListener {
         public fun handleBigFileSelected(hasBigFile: Boolean)
+    }
+
+    /**
+     * Listener invoked when selected attachments count changes. Can be used to perform actions such as showing an alert when max attachments count is exceeded.
+     * By default, shows a [Snackbar] with error message when attachments count is exceeded
+     */
+    public fun interface SelectedAttachmentsCountListener {
+        /**
+         * Called when attachments count changes
+         *
+         * @param attachmentsCount Current attachments count
+         * @param maxAttachmentsCount Maximum attachments count
+         */
+        public fun attachmentsCountChanged(attachmentsCount: Int, maxAttachmentsCount: Int)
     }
 
     /**
