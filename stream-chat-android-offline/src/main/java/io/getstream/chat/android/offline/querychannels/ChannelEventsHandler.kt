@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 
 /**
  * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
@@ -72,6 +73,14 @@ public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
      */
     public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
 
+    /**
+     * Handles [NotificationMessageNewEvent] event. It runs in background.
+     */
+    public open fun onNotificationMessageNewEvent(
+        event: NotificationMessageNewEvent,
+        filter: FilterObject,
+    ): EventHandlingResult = EventHandlingResult.SKIP
+
     override fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> onNotificationAddedToChannelEvent(event, filter)
@@ -79,6 +88,7 @@ public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
             is NotificationChannelDeletedEvent -> EventHandlingResult.REMOVE
             is ChannelUpdatedByUserEvent -> onChannelUpdatedByUserEvent(event, filter)
             is ChannelUpdatedEvent -> onChannelUpdatedEvent(event, filter)
+            is NotificationMessageNewEvent -> onNotificationMessageNewEvent(event, filter)
             else -> EventHandlingResult.SKIP
         }
     }

@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
@@ -47,6 +48,11 @@ internal class DefaultChannelEventsHandler(private val client: ChatClient) : Bas
 
     override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
         handleCidEventByRequestIfNeeded(event, filter)
+
+    override fun onNotificationMessageNewEvent(
+        event: NotificationMessageNewEvent,
+        filter: FilterObject,
+    ): EventHandlingResult = handleCidEventByRequest(event, filter)
 
     private fun handleCidEventByRequestIfNeeded(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return if (checkFilterOnChannelUpdatedEvent) {
