@@ -71,12 +71,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+* `ThreadParticipants` is now public and can be used for your custom UI.
 
 ### ✅ Added
-`ThreadParticipants` component now have `text: String` param allowing customizing the thread label.
+`ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
 
 ### ⚠️ Changed
-* `ThreadParticipants` is public
 
 ### ❌ Removed
 
