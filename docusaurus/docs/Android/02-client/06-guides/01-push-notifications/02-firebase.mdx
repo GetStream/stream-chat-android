@@ -51,7 +51,7 @@ val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
 )
 ChatClient.Builder("apiKey", context)
-    .notifications(ChatNotificationHandler(context, notificationsConfig))
+    .notifications(notificationConfig)
     .build()
 ```
 
