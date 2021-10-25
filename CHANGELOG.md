@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added KDocs for `Result` properties and methods.
 
 ### ✅ Added
 
