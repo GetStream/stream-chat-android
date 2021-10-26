@@ -10,43 +10,74 @@ import io.getstream.chat.android.offline.channel.ChannelData
 import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalStreamChatApi
+/** State container with reactive data of a channel.*/
 public interface ChannelState {
+    /** Type of this channel.*/
     public val channelType: String
+
+    /** Id of this channel.*/
     public val channelId: String
+
+    /** CID of this channel. It's 'channelType:channelId'.*/
     public val cid: String
+
+    /** A replied message state in this channel. By default is null. There is a value if you're replying some message.*/
     public val repliedMessage: StateFlow<Message?>
+
+    /** The message collection of this channel. */
     public val messages: StateFlow<List<Message>>
+
+    /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
     public val messagesState: StateFlow<MessagesState>
+
+    /** The collection of messages from previous pages of data.*/
     public val oldMessages: StateFlow<List<Message>>
-    /** the number of people currently watching the channel */
+
+    /** The number of people currently watching the channel.*/
     public val watcherCount: StateFlow<Int>
-    /** the list of users currently watching this channel */
+
+    /** The list of users currently watching this channel.*/
     public val watchers: StateFlow<List<User>>
-    /** who is currently typing (current user is excluded from this) */
+
+    /** Who is currently typing. Current user is excluded from this. */
     public val typing: StateFlow<TypingEvent>
-    /** how far every user in this channel has read */
+
+    /** How far every user in this channel has read. */
     public val reads: StateFlow<List<ChannelUserRead>>
-    /** read status for the current user */
+
+    /** Read status for the current user. */
     public val read: StateFlow<ChannelUserRead?>
-    /** unread count for this channel, calculated based on read state (this works even if you're offline)*/
+
+    /** Unread count for this channel, calculated based on read state. This works even if you're offline. */
     public val unreadCount: StateFlow<Int?>
-    /** the list of members of this channel */
+
+    /** The list of members of this channel. */
     public val members: StateFlow<List<Member>>
-    /** StateFlow object with the channel data */
+
+    /** StateFlow object with the channel data. */
     public val channelData: StateFlow<ChannelData>
-    /** if the channel is currently hidden */
+
+    /** If the channel is currently hidden. */
     public val hidden: StateFlow<Boolean>
-    /** if the channel is currently muted */
+
+    /** If the channel is currently muted. */
     public val muted: StateFlow<Boolean>
-    /** if we are currently loading */
+
+    /** If we are currently loading. */
     public val loading: StateFlow<Boolean>
-    /** if we are currently loading older messages */
+
+    /** If we are currently loading older messages. */
     public val loadingOlderMessages: StateFlow<Boolean>
-    /** if we are currently loading newer messages */
+
+    /** If we are currently loading newer messages. */
     public val loadingNewerMessages: StateFlow<Boolean>
-    /** set to true if there are no more older messages to load */
+
+    /** If there are no more older messages to load. */
     public val endOfOlderMessages: StateFlow<Boolean>
-    /** set to true if there are no more newer messages to load */
+
+    /** If there are no more newer messages to load. */
     public val endOfNewerMessages: StateFlow<Boolean>
+
+    /** If we need to recover state when connection established again. */
     public val recoveryNeeded: Boolean
 }
