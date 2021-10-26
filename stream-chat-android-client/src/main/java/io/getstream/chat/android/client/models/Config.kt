@@ -45,9 +45,9 @@ public data class Config(
     val isReactionsEnabled: Boolean = true,
 
     /**
-     * Enables message threads and replies. Enabled by default.
+     * Enables message threads. Enabled by default.
      */
-    val isRepliesEnabled: Boolean = true,
+    val isThreadEnabled: Boolean = true,
 
     /**
      * Determines if users are able to mute other users. Enabled by default.
