@@ -89,6 +89,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 
 ### ✅ Added
 - `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
 - `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
