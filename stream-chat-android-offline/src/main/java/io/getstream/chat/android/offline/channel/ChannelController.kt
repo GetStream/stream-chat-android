@@ -1402,14 +1402,16 @@ public class ChannelController internal constructor(
         newerMessagesOffset: Int,
         olderMessagesOffset: Int,
     ): Result<Message> {
-        val result = client.getMessage(messageId).await()
-        if (result.isError) {
-            return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-        }
-        val message = result.data()
+        val message = client.getMessage(messageId).await()
+            .takeIf { it.isSuccess }
+            ?.data()
+            ?: domainImpl.repos.selectMessage(messageId)
+            ?: return Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
         upsertMessage(message)
-        loadOlderMessages(messageId, newerMessagesOffset)
-        loadNewerMessages(messageId, olderMessagesOffset)
+        domainImpl.scope.launch {
+            loadOlderMessages(messageId, newerMessagesOffset)
+            loadNewerMessages(messageId, olderMessagesOffset)
+        }
         return Result(message)
     }
 
@@ -1456,7 +1458,7 @@ public class ChannelController internal constructor(
 
         /** The list of messages, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
-         * @see ChatDomainImpl.online
+         * @see ChatDomainImpl.connectionState
          */
         public data class Result(val messages: List<Message>) : MessagesState()
     }

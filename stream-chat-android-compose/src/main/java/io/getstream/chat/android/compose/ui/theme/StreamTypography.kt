@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -34,63 +35,75 @@ public data class StreamTypography(
 
     public companion object {
         /**
-         * Builds the default typography set for our theme.
+         * Builds the default typography set for our theme, with the ability to customize the font family.
          *
+         * @param fontFamily The font that the users want to use for the app.
          * @return [StreamTypography] that holds all the default text styles that we support.
          */
-        public fun defaultTypography(): StreamTypography = StreamTypography(
+        public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography = StreamTypography(
             title1 = TextStyle(
                 fontSize = 24.sp,
                 lineHeight = 34.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                fontFamily = fontFamily
             ),
             title3 = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 25.sp,
-                fontWeight = FontWeight.W400
+                fontWeight = FontWeight.W400,
+                fontFamily = fontFamily
             ),
             title3Bold = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 25.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                fontFamily = fontFamily
             ),
             body = TextStyle(
                 fontSize = 14.sp,
-                fontWeight = FontWeight.W400
+                fontWeight = FontWeight.W400,
+                fontFamily = fontFamily
             ),
             bodyItalic = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                fontFamily = fontFamily
             ),
             bodyBold = TextStyle(
                 fontSize = 14.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                fontFamily = fontFamily
             ),
             footnote = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
-                fontWeight = FontWeight.W400
+                fontWeight = FontWeight.W400,
+                fontFamily = fontFamily
             ),
             footnoteItalic = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W400,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                fontFamily = fontFamily
             ),
             footnoteBold = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
-                fontWeight = FontWeight.W500
+                fontWeight = FontWeight.W500,
+                fontFamily = fontFamily
             ),
             captionBold = TextStyle(
                 fontSize = 10.sp,
                 lineHeight = 16.sp,
-                fontWeight = FontWeight.W700
+                fontWeight = FontWeight.W700,
+                fontFamily = fontFamily
             ),
             tabBar = TextStyle(
                 fontSize = 10.sp,
-                fontWeight = FontWeight.W400
+                fontWeight = FontWeight.W400,
+                fontFamily = fontFamily
             )
         )
     }

@@ -1,5 +1,6 @@
 plugins {
 	id("com.github.burrunan.s3-build-cache") version "1.2"
+	id("com.gradle.enterprise") version "3.7"
 }
 include (
 		':stream-chat-android',
@@ -20,7 +21,7 @@ include (
 
 buildCache {
 	local {
-		enabled = true
+		enabled = !System.getenv().containsKey("CI")
 		removeUnusedEntriesAfterDays = 7
 	}
 	Properties localProperties = new Properties()
@@ -48,5 +49,12 @@ buildCache {
 			push = System.getenv().containsKey("CI")
 
 		}
+	}
+}
+
+gradleEnterprise {
+	buildScan {
+		termsOfServiceUrl = "https://gradle.com/terms-of-service"
+		termsOfServiceAgree = "yes"
 	}
 }

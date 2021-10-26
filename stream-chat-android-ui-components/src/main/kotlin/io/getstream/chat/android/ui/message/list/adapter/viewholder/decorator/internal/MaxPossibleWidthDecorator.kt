@@ -2,12 +2,13 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import androidx.constraintlayout.widget.Guideline
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 
-internal class MaxPossibleWidthDecorator : BaseDecorator() {
+internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
@@ -35,17 +36,35 @@ internal class MaxPossibleWidthDecorator : BaseDecorator() {
     }
 
     private fun applyMaxPossibleWidth(marginStart: Guideline, marginEnd: Guideline, data: MessageListItem.MessageItem) {
-        val marginStartPercent = if (data.isTheirs) START_PERCENT else MINE_START_PERCENT
-        val marginEndPercent = if (data.isTheirs) THEIR_END_PERCENT else END_PERCENT
+        val marginStartPercent = if (data.isTheirs) {
+            START_PERCENT
+        } else {
+            START_PERCENT + getMaxWidthFactor(data.isTheirs)
+        }
+        val marginEndPercent = if (data.isTheirs) {
+            END_PERCENT - getMaxWidthFactor(data.isTheirs)
+        } else {
+            END_PERCENT
+        }
         marginStart.setGuidelinePercent(marginStartPercent)
         marginEnd.setGuidelinePercent(marginEndPercent)
     }
 
+    /**
+     * Gets message's max width factor from [style] based on [isTheirs]
+     */
+    private fun getMaxWidthFactor(isTheirs: Boolean): Float {
+        val maxPossibleWidthFactor = if (isTheirs) {
+            style.messageMaxWidthFactorTheirs
+        } else {
+            style.messageMaxWidthFactorMine
+        }
+
+        return 1 - maxPossibleWidthFactor
+    }
+
     companion object {
-        private const val MAX_POSSIBLE_WIDTH_FACTOR = .25f
         private const val START_PERCENT = 0f
-        private const val END_PERCENT = 1f
-        private const val MINE_START_PERCENT = START_PERCENT + MAX_POSSIBLE_WIDTH_FACTOR
-        private const val THEIR_END_PERCENT = END_PERCENT - MAX_POSSIBLE_WIDTH_FACTOR
+        private const val END_PERCENT = 0.97f
     }
 }
