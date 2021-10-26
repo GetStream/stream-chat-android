@@ -83,6 +83,7 @@
 
 ### ✅ Added
 - `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
 
