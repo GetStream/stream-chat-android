@@ -5,6 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.reset
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -148,6 +151,48 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             )
 
             sut.channels.value shouldBeEqualTo listOf(data.channel1, data.channel2, data.channel3)
+        }
+
+    @Test
+    fun `Given channel in the list and default events handler When handle NotificationMessageNewEvent Should not make request to API`(): Unit =
+        runBlocking {
+            val sut = Fixture(chatDomainImpl, data.filter1)
+                .givenChannelsInOfflineStorage(data.channel1, data.channel2)
+                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .get()
+            sut.query()
+            reset(client)
+
+            sut.handleEvent(
+                mock<NotificationMessageNewEvent> {
+                    on { it.channel } doReturn data.channel2
+                    on { it.cid } doReturn data.channel2.cid
+                }
+            )
+
+            verifyZeroInteractions(client)
+        }
+
+    @Test
+    fun `Given channel is not in the list and default events handler When handle NotificationMessageNewEvent Should make request to API`(): Unit =
+        runBlocking {
+            val sut = Fixture(chatDomainImpl, data.filter1)
+                .givenChannelsInOfflineStorage(data.channel1)
+                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .get()
+            sut.query()
+            reset(client)
+            whenever(client.channel(any())) doReturn channelClientMock
+            whenever(client.queryChannels(any())) doReturn emptyList<Channel>().asCall()
+
+            sut.handleEvent(
+                mock<NotificationMessageNewEvent> {
+                    on { it.channel } doReturn data.channel2
+                    on { it.cid } doReturn data.channel2.cid
+                }
+            )
+
+            verify(client).queryChannels(any())
         }
 
     private class Fixture(
