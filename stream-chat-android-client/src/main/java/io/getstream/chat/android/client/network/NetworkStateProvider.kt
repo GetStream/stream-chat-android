@@ -45,11 +45,13 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
 
     fun isConnected(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            connectivityManager.run {
-                getNetworkCapabilities(activeNetwork)?.run {
-                    hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-                } ?: false
-            }
+            runCatching {
+                connectivityManager.run {
+                    getNetworkCapabilities(activeNetwork)?.run {
+                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    }
+                }
+            }.getOrNull() ?: false
         } else {
             connectivityManager.activeNetworkInfo?.isConnected ?: false
         }
