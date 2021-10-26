@@ -50,7 +50,7 @@ public class QueryChannelsController internal constructor(
     /**
      * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler? = null
+    public var channelEventsHandler: ChannelEventsHandler? by mutableState::channelEventsHandler
 
     @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
@@ -275,7 +275,7 @@ public class QueryChannelsController internal constructor(
 
         /** The list of channels, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
-         * @see ChatDomainImpl.online
+         * @see ChatDomainImpl.connectionState
          */
         public data class Result(val channels: List<Channel>) : ChannelsState()
     }

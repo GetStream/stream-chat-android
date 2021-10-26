@@ -92,6 +92,7 @@
 
         <!--Constants-->
         <attr name="streamUiAttachmentMaxFileSizeMb" format="integer" />
+        <attr name="streamUiMaxAttachmentsCount" format="integer" />
 
         <!--Commands-->
         <attr name="streamUiCommandsEnabled" format="boolean" />

@@ -28,7 +28,7 @@ internal class MessageListItemDecoratorProvider(
         BackgroundDecorator(messageListViewStyle.itemStyle),
         TextDecorator(messageListViewStyle.itemStyle),
         GapDecorator(),
-        MaxPossibleWidthDecorator(),
+        MaxPossibleWidthDecorator(messageListViewStyle.itemStyle),
         MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
         AvatarDecorator(showAvatarPredicate),
         FailedIndicatorDecorator(),
