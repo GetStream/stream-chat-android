@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -135,12 +136,7 @@ internal fun DefaultChannelItem(
                     val unreadCount = channel.unreadCount
 
                     if (unreadCount != null && unreadCount > 0) {
-                        UnreadCountIndicator(
-                            unreadCount = unreadCount,
-                            modifier = Modifier
-                                .background(shape = CircleShape, color = ChatTheme.colors.errorAccent)
-                                .size(18.dp)
-                        )
+                        UnreadCountIndicator(unreadCount = unreadCount)
                     }
 
                     Row(verticalAlignment = CenterVertically) {
@@ -178,14 +174,19 @@ internal fun DefaultChannelItem(
 public fun UnreadCountIndicator(
     unreadCount: Int,
     modifier: Modifier = Modifier,
+    color: Color = ChatTheme.colors.errorAccent,
 ) {
     val displayText = if (unreadCount > 99) UNREAD_COUNT_MANY else unreadCount.toString()
+    val shape = RoundedCornerShape(9.dp)
 
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .defaultMinSize(minWidth = 18.dp, minHeight = 18.dp)
+            .background(shape = shape, color = color)
+            .padding(horizontal = 4.dp),
+        contentAlignment = Center
     ) {
         Text(
-            modifier = Modifier.align(Center),
             text = displayText,
             color = Color.White,
             textAlign = TextAlign.Center,
@@ -223,10 +224,10 @@ public fun MessageReadStatusIcon(
         else -> null
     }
 
-    val iconTint =
-        if (!currentUserSentMessage || (readStatues.isNotEmpty() && readCount == readStatues.size)) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
-
     if (messageIcon != null) {
+        val iconTint =
+            if (!currentUserSentMessage || (readStatues.isNotEmpty() && readCount == readStatues.size)) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+
         Icon(
             modifier = modifier,
             painter = painterResource(id = messageIcon),
