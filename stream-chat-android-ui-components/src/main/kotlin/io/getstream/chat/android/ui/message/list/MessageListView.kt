@@ -288,7 +288,8 @@ public class MessageListView : ConstraintLayout {
                             hasTextToCopy = message.text.isNotBlank(),
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
-                        requireStyle()
+                        requireStyle(),
+                        messageListItemViewHolderFactory
                     )
                     .apply {
                         setReactionClickHandler { message, reactionType ->
@@ -388,7 +389,8 @@ public class MessageListView : ConstraintLayout {
                         hasTextToCopy = false, // No effect when displaying reactions
                         suppressThreads = false, // No effect when displaying reactions
                     ),
-                    requireStyle()
+                    requireStyle(),
+                    messageListItemViewHolderFactory
                 ).apply {
                     setReactionClickHandler { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
