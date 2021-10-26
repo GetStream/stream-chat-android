@@ -45,6 +45,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private val style by lazy { messageListViewStyle!! }
+    private val viewHolderFactory by lazy { messageViewHolderFactory!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -62,7 +63,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private lateinit var message: Message
     private lateinit var viewHolder: BaseMessageItemViewHolder<out MessageListItem>
-    private var viewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory()
 
     private var reactionClickHandler: ReactionClickHandler? = null
     private var confirmDeleteMessageClickHandler: ConfirmDeleteMessageClickHandler? = null
@@ -110,10 +110,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
         this.reactionClickHandler = reactionClickHandler
-    }
-
-    fun setMessageListItemViewHolderFactory(factory: MessageListItemViewHolderFactory) {
-        viewHolderFactory = factory
     }
 
     fun setUserReactionClickHandler(userReactionClickHandler: UserReactionClickHandler) {
@@ -386,21 +382,24 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         internal var messageListViewStyle: MessageListViewStyle? = null
 
         var messageArg: Message? = null
+        var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
 
         fun newReactionOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style, messageViewHolderFactory)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, messageViewHolderFactory)
         }
 
         private fun newInstance(
@@ -408,8 +407,10 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory
         ): MessageOptionsDialogFragment {
             messageListViewStyle = style
+            this.messageViewHolderFactory = messageViewHolderFactory
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
