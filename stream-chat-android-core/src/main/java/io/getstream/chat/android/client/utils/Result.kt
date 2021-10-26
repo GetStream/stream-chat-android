@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import kotlin.jvm.Throws
 
 /**
  *  A class which encapsulates a successful outcome with a value of type [T] or a failure with [ChatError].
@@ -160,11 +159,12 @@ public fun Result<*>.toUnitResult(): Result<Unit> = map {}
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result<T> {
+public inline fun <T : Any> Result<T>.onSuccess(
+    crossinline successSideEffect: (T) -> Unit,
+): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
     }
-    return this
 }
 
 /**
@@ -175,11 +175,12 @@ public fun <T : Any> Result<T>.onSuccess(successSideEffect: (T) -> Unit): Result
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public suspend fun <T : Any> Result<T>.onSuccessSuspend(successSideEffect: suspend (T) -> Unit): Result<T> {
+public suspend inline fun <T : Any> Result<T>.onSuccessSuspend(
+    crossinline successSideEffect: suspend (T) -> Unit,
+): Result<T> = apply {
     if (isSuccess) {
         successSideEffect(data())
     }
-    return this
 }
 
 /**
@@ -260,11 +261,12 @@ public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (Chat
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Result<T> {
+public inline fun <T : Any> Result<T>.onError(
+    crossinline errorSideEffect: (ChatError) -> Unit,
+): Result<T> = apply {
     if (isError) {
         errorSideEffect(error())
     }
-    return this
 }
 
 /**
@@ -275,11 +277,12 @@ public fun <T : Any> Result<T>.onError(errorSideEffect: (ChatError) -> Unit): Re
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public suspend fun <T : Any> Result<T>.onErrorSuspend(errorSideEffect: suspend (ChatError) -> Unit): Result<T> {
+public suspend inline fun <T : Any> Result<T>.onErrorSuspend(
+    crossinline errorSideEffect: suspend (ChatError) -> Unit,
+): Result<T> = apply {
     if (isError) {
         errorSideEffect(error())
     }
-    return this
 }
 
 /**
