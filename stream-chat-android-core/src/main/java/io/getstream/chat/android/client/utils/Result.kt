@@ -64,7 +64,11 @@ public class Result<T : Any> private constructor(
     public companion object {
 
         /**
-         * Creates a [Result] object with [data] payload
+         * Creates a [Result] object with [data] payload.
+         *
+         * @param data successful data payload.
+         *
+         * @return [Result] of [T] that contains successful data payload.
          */
         @JvmStatic
         public fun <T : Any> success(data: T): Result<T> {
@@ -72,7 +76,11 @@ public class Result<T : Any> private constructor(
         }
 
         /**
-         * Creates a [Result] object with error payload
+         * Creates a [Result] object with error payload.
+         *
+         * @param t Unexpected [Exception] or [Throwable].
+         *
+         * @return [Result] of [T] that contains [ChatError] error payload.
          */
         @JvmStatic
         public fun <T : Any> error(t: Throwable): Result<T> {
@@ -80,11 +88,36 @@ public class Result<T : Any> private constructor(
         }
 
         /**
-         * Creates a [Result] object with error payload
+         * Creates a [Result] object with error payload.
+         *
+         * @param error [ChatError] error payload.
+         *
+         * @return [Result] of [T] that contains [ChatError] error payload.
          */
         @JvmStatic
         public fun <T : Any> error(error: ChatError): Result<T> {
             return Result(null, error)
+        }
+
+        /**
+         * Creates a [Result] object with nullable [Any] type of data.
+         *
+         * @param data Any type of data for creating an instance of [Result].
+         *
+         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
+         */
+        @JvmStatic
+        public inline fun <reified T : Any> of(data: Any?): Result<T> {
+            return when (data) {
+                is T -> success(data)
+                is Throwable -> error(data)
+                is ChatError -> error(data)
+                null -> {
+                    val throwable: Throwable = NullPointerException("data payload can not be a null.")
+                    error(ChatError(throwable.message, throwable))
+                }
+                else -> throw IllegalArgumentException("Unknown type ")
+            }
         }
     }
 }
