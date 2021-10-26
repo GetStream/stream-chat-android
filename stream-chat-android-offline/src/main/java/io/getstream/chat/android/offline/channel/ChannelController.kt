@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.client.utils.recoverSuspend
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
@@ -149,23 +148,23 @@ public class ChannelController internal constructor(
             )
         }
     }.stateIn(domainImpl.scope, SharingStarted.Eagerly, MessagesState.NoQueryActive)
-    public val oldMessages: StateFlow<List<Message>> = mutableState.oldMessages
-    public val watcherCount: StateFlow<Int> = mutableState.watcherCount
-    public val watchers: StateFlow<List<User>> = mutableState.watchers
-    public val typing: StateFlow<TypingEvent> = mutableState.typing
-    public val reads: StateFlow<List<ChannelUserRead>> = mutableState.reads
-    public val read: StateFlow<ChannelUserRead?> = mutableState.read
-    public val unreadCount: StateFlow<Int?> = mutableState.unreadCount
-    public val members: StateFlow<List<Member>> = mutableState.members
-    public val channelData: StateFlow<ChannelData> = mutableState.channelData
-    public val hidden: StateFlow<Boolean> = mutableState.hidden
-    public val muted: StateFlow<Boolean> = mutableState.muted
-    public val loading: StateFlow<Boolean> = mutableState.loading
-    public val loadingOlderMessages: StateFlow<Boolean> = mutableState.loadingOlderMessages
-    public val loadingNewerMessages: StateFlow<Boolean> = mutableState.loadingNewerMessages
-    public val endOfOlderMessages: StateFlow<Boolean> = mutableState.endOfOlderMessages
-    public val endOfNewerMessages: StateFlow<Boolean> = mutableState.endOfNewerMessages
-    public val recoveryNeeded: Boolean = mutableState.recoveryNeeded
+    public val oldMessages: StateFlow<List<Message>> by mutableState::oldMessages
+    public val watcherCount: StateFlow<Int> by mutableState::watcherCount
+    public val watchers: StateFlow<List<User>> by mutableState::watchers
+    public val typing: StateFlow<TypingEvent> by mutableState::typing
+    public val reads: StateFlow<List<ChannelUserRead>> by mutableState::reads
+    public val read: StateFlow<ChannelUserRead?> by mutableState::read
+    public val unreadCount: StateFlow<Int?> by mutableState::unreadCount
+    public val members: StateFlow<List<Member>> by mutableState::members
+    public val channelData: StateFlow<ChannelData> by mutableState::channelData
+    public val hidden: StateFlow<Boolean> by mutableState::hidden
+    public val muted: StateFlow<Boolean> by mutableState::muted
+    public val loading: StateFlow<Boolean> by mutableState::loading
+    public val loadingOlderMessages: StateFlow<Boolean> by mutableState::loadingOlderMessages
+    public val loadingNewerMessages: StateFlow<Boolean> by mutableState::loadingNewerMessages
+    public val endOfOlderMessages: StateFlow<Boolean> by mutableState::endOfOlderMessages
+    public val endOfNewerMessages: StateFlow<Boolean> by mutableState::endOfNewerMessages
+    public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
     internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
         ThreadController(threadId, this, domainImpl)
