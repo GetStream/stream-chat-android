@@ -31,5 +31,23 @@
         "lang": "${autodetectLang}"
       }
     ]
+  },
+  "download": {
+    "files": [
+      {
+        "stop": true,
+        "conditions": "equals: ${file}, strings-client.xml",
+        "output": "stream-chat-android-client/src/main/res/values-${langAndroidRes}/strings.xml"
+      },
+      {
+        "stop": true,
+        "conditions": "equals: ${file}, strings-ui-common.xml",
+        "output": "stream-chat-android-ui-common/src/main/res/values-${langAndroidRes}/strings.xml"
+      },
+      {
+        "stop": true,
+        "output": "stream-chat-android-ui-components/src/main/res/values-${langAndroidRes}/${file}"
+      }
+    ]
   }
 }
