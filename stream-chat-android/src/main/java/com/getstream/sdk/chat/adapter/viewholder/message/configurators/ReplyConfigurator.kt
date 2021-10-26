@@ -38,7 +38,7 @@ internal class ReplyConfigurator(
         val replyCount = message.replyCount
 
         if (!style.isThreadEnabled ||
-            !channel.config.isRepliesEnabled ||
+            !channel.config.isThreadEnabled ||
             message.isDeleted() ||
             message.isFailed() ||
             replyCount == 0 ||

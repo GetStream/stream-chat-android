@@ -33,6 +33,7 @@
 - The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
+- BREAKING CHANGE: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
 
 ### ❌ Removed
 - `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
@@ -52,7 +53,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-
+- Using the same `MessageListItemViewHolderFactory` of `MessageListView` in `MessageOptionsDialogFragment`
 ### ⬆️ Improved
 
 ### ✅ Added
@@ -78,6 +79,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
+- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
 
 ### ❌ Removed
 
