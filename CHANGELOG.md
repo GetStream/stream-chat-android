@@ -67,6 +67,7 @@
 
 ### ⬆️ Improved
 - Better position for icon of failed message
+- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
 - Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
