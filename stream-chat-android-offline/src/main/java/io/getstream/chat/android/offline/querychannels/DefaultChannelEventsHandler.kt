@@ -53,6 +53,13 @@ internal class DefaultChannelEventsHandler(
     override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
         handleCidEventByRequestIfNeeded(event, filter)
 
+    /**
+     * Handles [NotificationMessageNewEvent]. If the current channel list contains the channel from this event then it
+     * returns [EventHandlingResult.SKIP] otherwise it makes a request to API to define outcome of handling.
+     *
+     * @param event Instance of [NotificationMessageNewEvent] that is being handled.
+     * @param filter [FilterObject] which is used to define an outcome.
+     */
     override fun onNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
