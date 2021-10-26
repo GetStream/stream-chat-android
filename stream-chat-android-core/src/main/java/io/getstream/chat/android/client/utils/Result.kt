@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import kotlin.jvm.Throws
 
 /**
  *  A class which encapsulates a successful outcome with a value of type [T] or a failure with [ChatError].
@@ -107,17 +108,38 @@ public class Result<T : Any> private constructor(
          * @return [Result] of [T] that contains successful data or [ChatError] error payload.
          */
         @JvmStatic
-        public inline fun <reified T : Any> of(data: Any?): Result<T> {
+        @Throws(IllegalArgumentException::class)
+        public inline fun <reified T : Any> of(data: Any): Result<T> {
             return when (data) {
                 is T -> success(data)
                 is Throwable -> error(data)
                 is ChatError -> error(data)
-                null -> {
-                    val throwable: Throwable = NullPointerException("data payload can not be a null.")
-                    error(ChatError(throwable.message, throwable))
-                }
-                else -> throw IllegalArgumentException("Unknown type ")
+                else -> throw IllegalArgumentException("Unexpected type of the data payload: $data")
             }
+        }
+
+        /**
+         * Creates a [Result] object with nullable [Any] type of data.
+         *
+         * @param block A lambda function that returns a data for creating an instance of [Result].
+         *
+         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
+         */
+        @JvmSynthetic
+        public inline fun <reified T : Any> of(crossinline block: () -> Any): Result<T> {
+            return of(block.invoke())
+        }
+
+        /**
+         * Creates a [Result] object with nullable [Any] type of data.
+         *
+         * @param block A suspending lambda function that returns a data for creating an instance of [Result].
+         *
+         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
+         */
+        @JvmSynthetic
+        public suspend inline fun <reified T : Any> ofSuspend(crossinline block: suspend () -> Any): Result<T> {
+            return of(block.invoke())
         }
     }
 }
