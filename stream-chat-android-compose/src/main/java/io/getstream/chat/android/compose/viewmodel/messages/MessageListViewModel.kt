@@ -357,6 +357,8 @@ public class MessageListViewModel(
 
             messagesState = messagesState.copy(unreadCount = getUnreadMessageCount())
         }
+
+        chatDomain.markRead(channelId).enqueue()
     }
 
     /**

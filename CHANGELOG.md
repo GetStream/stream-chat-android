@@ -67,11 +67,14 @@
 
 ### ⬆️ Improved
 - Better position for icon of failed message
+- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
 - Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
 The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
+- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
+- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
 
@@ -87,6 +90,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 
 ### ✅ Added
 - `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
 - `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it

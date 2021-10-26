@@ -25,6 +25,8 @@ internal class MessageDeletedViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
 
+        if (diff?.deleted == false) return
+
         style.textStyleMessageDeleted.apply(binding.deleteLabel)
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
