@@ -26,9 +26,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import java.io.Serializable
@@ -168,9 +166,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         viewHolder = viewHolderFactory
             .apply {
                 decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
-                setListenerContainer(MessageListListenerContainerImpl())
-                setAttachmentViewFactory(AttachmentViewFactory())
-                setMessageListItemStyle(style.itemStyle)
             }
             .createViewHolder(
                 binding.messageContainer,
@@ -410,7 +405,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory
         ): MessageOptionsDialogFragment {
             messageListViewStyle = style
-            this.messageViewHolderFactory = messageViewHolderFactory
+            this.messageViewHolderFactory = messageViewHolderFactory.clone()
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
