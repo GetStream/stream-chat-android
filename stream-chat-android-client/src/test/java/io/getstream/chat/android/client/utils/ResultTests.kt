@@ -24,7 +24,7 @@ internal class ResultTests {
     }
 
     @Test
-    fun `Should create corresponding types of Result by of`() {
+    fun `Should create corresponding types of Result from of`() {
         val success = Result.success("123")
         success `should be equal to result` Result.of("123")
 
@@ -45,7 +45,7 @@ internal class ResultTests {
     }
 
     @Test
-    fun `Should create corresponding types of Result by of with lambda`() {
+    fun `Should create corresponding types of Result by from with lambda`() {
         val success = Result.success("123")
         success `should be equal to result` Result.of { "123" }
 
