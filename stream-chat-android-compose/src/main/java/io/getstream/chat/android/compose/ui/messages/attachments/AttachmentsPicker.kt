@@ -1,7 +1,9 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -77,7 +79,10 @@ public fun AttachmentsPicker(
     val context = LocalContext.current
     val storagePermissionState =
         rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
-    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    val requiresCameraPermission = isCameraPermissionDeclared(context)
+
+    val cameraPermissionState =
+        if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
     val mediaCaptureResultLauncher =
         rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
@@ -129,12 +134,13 @@ public fun AttachmentsPicker(
                     color = ChatTheme.colors.barsBackground,
                 ) {
                     val pickerMode = attachmentsPickerViewModel.attachmentsPickerMode
+
                     val permissionState = when (pickerMode) {
                         Images, Files -> storagePermissionState
                         MediaCapture -> cameraPermissionState
                     }
 
-                    val hasPermission = permissionState.hasPermission
+                    val hasPermission = permissionState?.hasPermission ?: true
 
                     val content = @Composable {
                         when (pickerMode) {
@@ -167,22 +173,26 @@ public fun AttachmentsPicker(
                         }
                     }
 
-                    PermissionRequired(
-                        permissionState = permissionState,
-                        permissionNotGrantedContent = { MissingPermissionContent(permissionState = permissionState) },
-                        permissionNotAvailableContent = { MissingPermissionContent(permissionState = permissionState) },
-                        content = content
-                    )
+                    if (pickerMode == MediaCapture && permissionState == null) {
+                        content()
+                    } else if (permissionState != null) {
+                        PermissionRequired(
+                            permissionState = permissionState,
+                            permissionNotGrantedContent = { MissingPermissionContent(permissionState) },
+                            permissionNotAvailableContent = { MissingPermissionContent(permissionState) },
+                            content = content
+                        )
+                    }
 
-                    LaunchedEffect(permissionState.hasPermission) {
-                        if (permissionState.permissionRequested && permissionState.hasPermission) {
+                    LaunchedEffect(storagePermissionState.hasPermission) {
+                        if (storagePermissionState.permissionRequested && storagePermissionState.hasPermission) {
                             attachmentsPickerViewModel.loadData()
                         }
                     }
 
                     LaunchedEffect(pickerMode) {
-                        if (!hasPermission && !permissionState.permissionRequested) {
-                            permissionState.launchPermissionRequest()
+                        if (!hasPermission && !storagePermissionState.permissionRequested) {
+                            storagePermissionState.launchPermissionRequest()
                         }
                     }
                 }
@@ -192,10 +202,21 @@ public fun AttachmentsPicker(
 }
 
 /**
+ * Returns if we need to check for the camera permission or not.
+ *
+ * @param context The context of the app.
+ * @return If the camera permission is declared in the manifest or not.
+ */
+private fun isCameraPermissionDeclared(context: Context): Boolean {
+    return context.packageManager
+        .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+        .requestedPermissions
+        .contains(Manifest.permission.CAMERA)
+}
+
+/**
  * Shows the UI if we're missing permissions to fetch data for attachments.
  * The UI explains to the user which permission is missing and why we need it.
- *
- * @param permissionState The missing permission.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

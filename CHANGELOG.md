@@ -62,13 +62,18 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
 - 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 
 ### ⬆️ Improved
 - Better position for icon of failed message
 
 ### ✅ Added
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
+The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
+- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
+- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
 
@@ -79,6 +84,7 @@
 
 ### ⬆️ Improved
 - Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
+- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
 - `ThreadParticipants` is now public and can be used for your custom UI.
 
 ### ✅ Added
@@ -86,8 +92,11 @@
 - Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
+- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
 
 ### ❌ Removed
+- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
+- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed

@@ -31,4 +31,5 @@
     <string name="stream_ui_message_input_error_file_size">File troppo grande</string>
     <string name="stream_ui_message_input_error_max_length">La lunghezza massima del messaggio (%1$d) è stata superata.</string>
     <string name="stream_ui_message_input_error_file_large_size">File troppo grande - max %dMB.</string>
+    <string name="stream_ui_message_input_error_max_attachments_count_exceeded">Attenzione: il limite massimo di %1$d file è stato superato.</string>
 </resources>
