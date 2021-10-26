@@ -19,6 +19,8 @@ internal class ErrorMessageViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        if (diff?.syncStatus == false) return
+
         binding.messageTextView.text = data.message.text
         style.textStyleErrorMessage.apply(binding.messageTextView)
     }
