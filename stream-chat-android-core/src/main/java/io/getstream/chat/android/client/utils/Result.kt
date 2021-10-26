@@ -98,50 +98,6 @@ public class Result<T : Any> private constructor(
         public fun <T : Any> error(error: ChatError): Result<T> {
             return Result(null, error)
         }
-
-        /**
-         * Creates a [Result] object with nullable [Any] type of data.
-         *
-         * @param data Any type of data for creating an instance of [Result].
-         *
-         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
-         */
-        @JvmStatic
-        @Throws(IllegalArgumentException::class)
-        public inline fun <reified T : Any> of(data: Any): Result<T> {
-            return when (data) {
-                is T -> success(data)
-                is Throwable -> error(data)
-                is ChatError -> error(data)
-                else -> throw IllegalArgumentException("Unexpected type of the data payload: $data")
-            }
-        }
-
-        /**
-         * Creates a [Result] object with nullable [Any] type of data.
-         *
-         * @param block A lambda function that returns a data for creating an instance of [Result].
-         *
-         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
-         */
-        @JvmSynthetic
-        @Throws(IllegalArgumentException::class)
-        public inline fun <reified T : Any> of(crossinline block: () -> Any): Result<T> {
-            return of(block.invoke())
-        }
-
-        /**
-         * Creates a [Result] object with nullable [Any] type of data.
-         *
-         * @param block A suspending lambda function that returns a data for creating an instance of [Result].
-         *
-         * @return [Result] of [T] that contains successful data or [ChatError] error payload.
-         */
-        @JvmSynthetic
-        @Throws(IllegalArgumentException::class)
-        public suspend inline fun <reified T : Any> ofSuspend(crossinline block: suspend () -> Any): Result<T> {
-            return of(block.invoke())
-        }
     }
 }
 
