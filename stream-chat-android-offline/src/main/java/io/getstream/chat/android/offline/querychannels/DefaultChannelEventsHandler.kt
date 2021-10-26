@@ -12,9 +12,13 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
-internal class DefaultChannelEventsHandler(private val client: ChatClient) : BaseChannelEventsHandler() {
+internal class DefaultChannelEventsHandler(
+    private val client: ChatClient,
+    private val channels: StateFlow<List<Channel>>,
+) : BaseChannelEventsHandler() {
     internal var checkFilterOnChannelUpdatedEvent: Boolean = false
 
     internal var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filter ->
@@ -52,7 +56,13 @@ internal class DefaultChannelEventsHandler(private val client: ChatClient) : Bas
     override fun onNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = handleCidEventByRequest(event, filter)
+    ): EventHandlingResult {
+        return if (channels.value.any { it.cid == event.cid }) {
+            EventHandlingResult.SKIP
+        } else {
+            handleCidEventByRequest(event, filter)
+        }
+    }
 
     private fun handleCidEventByRequestIfNeeded(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return if (checkFilterOnChannelUpdatedEvent) {
