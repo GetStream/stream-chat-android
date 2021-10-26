@@ -125,6 +125,7 @@ public class Result<T : Any> private constructor(
          * @return [Result] of [T] that contains successful data or [ChatError] error payload.
          */
         @JvmSynthetic
+        @Throws(IllegalArgumentException::class)
         public inline fun <reified T : Any> of(crossinline block: () -> Any): Result<T> {
             return of(block.invoke())
         }
@@ -137,6 +138,7 @@ public class Result<T : Any> private constructor(
          * @return [Result] of [T] that contains successful data or [ChatError] error payload.
          */
         @JvmSynthetic
+        @Throws(IllegalArgumentException::class)
         public suspend inline fun <reified T : Any> ofSuspend(crossinline block: suspend () -> Any): Result<T> {
             return of(block.invoke())
         }
