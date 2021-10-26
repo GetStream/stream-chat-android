@@ -688,7 +688,7 @@ internal fun randomConfig(
     connectEventsEnabled = connectEventsEnabled,
     searchEnabled = searchEnabled,
     isReactionsEnabled = isReactionsEnabled,
-    isRepliesEnabled = isRepliesEnabled,
+    isThreadEnabled = isRepliesEnabled,
     muteEnabled = muteEnabled,
     uploadsEnabled = uploadsEnabled,
     urlEnrichmentEnabled = urlEnrichmentEnabled,

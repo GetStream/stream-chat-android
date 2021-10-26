@@ -2255,7 +2255,7 @@ public final class io/getstream/chat/android/client/models/Config {
 	public final fun getUrlEnrichmentEnabled ()Z
 	public fun hashCode ()I
 	public final fun isReactionsEnabled ()Z
-	public final fun isRepliesEnabled ()Z
+	public final fun isThreadEnabled ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
