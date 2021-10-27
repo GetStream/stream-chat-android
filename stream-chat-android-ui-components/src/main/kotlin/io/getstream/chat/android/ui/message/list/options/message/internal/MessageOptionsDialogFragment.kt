@@ -26,7 +26,9 @@ import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import java.io.Serializable
@@ -405,7 +407,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             messageViewHolderFactory: MessageListItemViewHolderFactory
         ): MessageOptionsDialogFragment {
             messageListViewStyle = style
-            this.messageViewHolderFactory = messageViewHolderFactory.clone()
+            this.messageViewHolderFactory =
+                messageViewHolderFactory.clone()
+                .apply {
+                    setListenerContainer(MessageListListenerContainerImpl())
+                }
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
