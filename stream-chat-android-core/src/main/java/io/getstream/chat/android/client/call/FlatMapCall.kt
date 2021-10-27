@@ -3,23 +3,18 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.utils.Result
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class MapCall<T : Any, K : Any>(
+internal class FlatMapCall<T : Any, K : Any>(
     private val call: Call<T>,
-    private val mapper: (T) -> K,
+    private val mapper: (T) -> Call<K>,
 ) : Call<K> {
 
     private var canceled = AtomicBoolean(false)
-
-    override fun cancel() {
-        canceled.set(true)
-    }
 
     override fun execute(): Result<K> {
         val resultA = call.execute()
 
         return if (resultA.isSuccess) {
-            val data = mapper(resultA.data())
-            Result(data)
+            return mapper(resultA.data()).execute()
         } else {
             val error = resultA.error()
             Result(error)
@@ -33,12 +28,16 @@ internal class MapCall<T : Any, K : Any>(
             }
 
             if (it.isSuccess) {
-                val data = mapper(it.data())
-                callback.onResult(Result(data))
+                val resultCall = mapper(it.data())
+                resultCall.enqueue(callback)
             } else {
                 val error = it.error()
                 callback.onResult(Result(error))
             }
         }
+    }
+
+    override fun cancel() {
+        canceled.set(true)
     }
 }
