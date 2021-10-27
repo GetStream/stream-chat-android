@@ -11,6 +11,4 @@ public interface BackgroundDrawer {
     public fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
 
     public fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
-
-
 }
