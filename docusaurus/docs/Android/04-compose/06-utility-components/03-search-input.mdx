@@ -3,7 +3,7 @@
 The [`SearchInput`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/common/SearchInput.kt) component allows you to fill in a search query. It contains the following elements: 
 
 * `leadingIcon`: The icon at the start of the search component.
-* `label`: The label shown in the search component
+* `label`: The label shown in the search component.
 * `trailingIcon`: An internal icon to clear user input.
 
 Let's see how to use the component.
@@ -49,7 +49,7 @@ fun SearchInput(
 * `onValueChange`: Handler when the value changes.
 * `onSearchStarted`: Handler when the search starts, by focusing the input field. 
 
-You can use the [ChannelListViewModel] to search for channels by name. To do so, simply pass the search query from `onValueChange` callback to the [ChannelListViewModel]. The results can be displayed using the [ChannelList].
+You can use the `ChannelListViewModel` to search for channels by name. To do so, simply pass the search query from `onValueChange` callback to the `ChannelListViewModel`. The results can be displayed using the `ChannelList`.
 
 ```kotlin
 var searchQuery by rememberSaveable { mutableStateOf("") }
