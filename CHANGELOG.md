@@ -60,7 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background.
 ### ⚠️ Changed
 
 ### ❌ Removed
