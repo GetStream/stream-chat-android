@@ -49,6 +49,21 @@ fun SearchInput(
 * `onValueChange`: Handler when the value changes.
 * `onSearchStarted`: Handler when the search starts, by focusing the input field. 
 
+You can use the [ChannelListViewModel] to search for channels by name. To do so, simply pass the search query from `onValueChange` callback to the [ChannelListViewModel]. The results can be displayed using the [ChannelList].
+
+```kotlin
+var searchQuery by rememberSaveable { mutableStateOf("") }
+
+SearchInput(
+    ...,,
+    query = searchQuery,
+    onValueChange = {
+        searchQuery = it
+        listViewModel.setSearchQuery(it)
+    },
+)
+```
+
 ##  Customization
 
 We allow for a few ways of customizing the `SearchInput` component, as per the signature:
@@ -78,11 +93,11 @@ SearchInput(
         listViewModel.setSearchQuery(it)
     },
     leadingIcon = {
-        // Removing the leading icon
+        // Remove the leading icon
         Spacer(Modifier.width(16.dp))
     },
     label = {
-        // Customizing the hint
+        // Customize the hint
         Text(
             text = "Search channels",
             style = ChatTheme.typography.body,
@@ -93,5 +108,3 @@ SearchInput(
 ```
 
 The snippet above will produce the following UI.
-
-<!-- TODO -->
