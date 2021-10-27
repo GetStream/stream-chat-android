@@ -24,7 +24,25 @@ Based on the state of the `Channel` and the number of members, it shows differen
 
 ## Handling Actions
 
-Currently, the `ChannelAvatar` component doesn't expose any actions.
+The `ChannelAvatar` component exposes a single action to handle click events:
+
+```kotlin
+@Composable
+fun ChannelAvatar(
+    ..., // State
+    onClick: (() -> Unit)? = null,
+)
+```
+
+If you want to handle clicks on `ChannelAvataar`, you can use the code below:
+
+```kotlin
+fun ChannelAvatar(
+    ..., // State
+) {
+    // Handle avatar clicks here
+}
+```
 
 ## Customization
 
@@ -43,3 +61,16 @@ fun ChannelAvatar(
 * `currentUser`: The current user, used to determine avatar data.
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
 * `contentDescription`: The content description of the avatar.
+
+Here's an example of customizing the UI of the user avatar:
+
+```kotlin
+ChannelAvatar(
+    modifier = Modifier.size(48.dp),
+    channel = channel,
+    currentUser = currentUser,
+    contentDescription = "Channel",
+)
+```
+
+The sample above will produce a custom channel avatar.
