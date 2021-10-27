@@ -55,12 +55,12 @@ You can use the [ChannelListViewModel] to search for channels by name. To do so,
 var searchQuery by rememberSaveable { mutableStateOf("") }
 
 SearchInput(
-    ...,,
+    ...,
     query = searchQuery,
     onValueChange = {
         searchQuery = it
         listViewModel.setSearchQuery(it)
-    },
+    }
 )
 ```
 
@@ -85,8 +85,13 @@ fun SearchInput(
 Here's an example of customizing the UI of the SearchInput:
 
 ```kotlin
+var searchQuery by rememberSaveable { mutableStateOf("") }
+
 SearchInput(
-    modifier = Modifier.fillMaxSize(),
+    modifier = Modifier
+        .background(color = ChatTheme.colors.appBackground)
+        .padding(horizontal = 12.dp, vertical = 12.dp)
+        .fillMaxWidth(),
     query = searchQuery,
     onValueChange = {
         searchQuery = it
@@ -108,3 +113,5 @@ SearchInput(
 ```
 
 The snippet above will produce the following UI.
+
+![The SearchInput Component](../../assets/compose_custom_search_input_component.png)
