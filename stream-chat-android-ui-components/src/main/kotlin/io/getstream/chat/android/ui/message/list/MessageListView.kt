@@ -87,6 +87,8 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
+import io.getstream.chat.android.ui.message.list.background.BackgroundDrawer
+import io.getstream.chat.android.ui.message.list.background.BackgroundDrawerImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
@@ -258,6 +260,7 @@ public class MessageListView : ConstraintLayout {
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
+    private var backgroundDrawer: BackgroundDrawer? = null
 
     private var deletedMessageListItemPredicate: MessageListItemPredicate =
         DeletedMessageListItemPredicate.VisibleToEveryone
@@ -633,6 +636,7 @@ public class MessageListView : ConstraintLayout {
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
+            backgroundDrawer ?: BackgroundDrawerImpl(requireStyle().itemStyle)
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

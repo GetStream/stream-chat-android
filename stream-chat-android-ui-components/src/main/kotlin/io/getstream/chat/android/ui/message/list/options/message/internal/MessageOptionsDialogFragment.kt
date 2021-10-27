@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.background.BackgroundDrawerImpl
 import java.io.Serializable
 
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
@@ -166,7 +167,12 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupMessageView() {
         viewHolder = MessageListItemViewHolderFactory()
             .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
+                decoratorProvider =
+                    MessageOptionsDecoratorProvider(
+                        style.itemStyle,
+                        style.replyMessageStyle,
+                        BackgroundDrawerImpl(style.itemStyle)
+                    )
                 setListenerContainer(MessageListListenerContainerImpl())
                 setAttachmentViewFactory(AttachmentViewFactory())
                 setMessageListItemStyle(style.itemStyle)
