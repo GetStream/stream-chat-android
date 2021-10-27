@@ -3,10 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
-- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
 
 ### ⚠️ Changed
 
@@ -16,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Added KDocs for `Result` properties and methods.
 
 ### ✅ Added
 
@@ -30,20 +27,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
-- BREAKING CHANGE: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
 
 ### ❌ Removed
-- `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
-- Channel gets removed from `QueryChannelsController` when receive `ChannelHiddenEvent`
 
 ### ✅ Added
 
@@ -64,23 +56,12 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
-- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
-- Made it impossible to send a message during the cooldown interval in slow mode.
 
 ### ⬆️ Improved
-- Better position for icon of failed message
-- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
-- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
-The maximum attachments count cannot be greater than 10. Default value: 10.
-- Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
-- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
-- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
-- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
 
 ### ❌ Removed
 
@@ -88,20 +69,12 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
-- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
-- `ThreadParticipants` is now public and can be used for your custom UI.
 
 ### ✅ Added
-- `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
-- Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
-- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
 
 ### ❌ Removed
-- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
-- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
@@ -124,6 +97,73 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+
+# October 27th, 2021 - 4.21.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
+
+### ✅ Added
+- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Added KDocs for `Result` properties and methods.
+
+### ✅ Added
+- The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
+
+### ⚠️ Changed
+- 🚨 Breaking change: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
+
+### ❌ Removed
+- `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
+
+### ⬆️ Improved
+- Channel gets removed from `QueryChannelsController` when receive `ChannelHiddenEvent`
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
+- Made it impossible to send a message during the cooldown interval in slow mode.
+
+### ⬆️ Improved
+- Better position for icon of failed message
+- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
+
+### ✅ Added
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
+The maximum attachments count cannot be greater than 10. Default value: 10.
+- Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
+- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
+- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
+
+### ⚠️ Changed
+- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
+- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
+- `ThreadParticipants` is now public and can be used for your custom UI.
+
+### ✅ Added
+- `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
+
+### ⚠️ Changed
+- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
+
+### ❌ Removed
+- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
+- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
+
 
 # October 18th, 2021 - 4.20.0
 ## Common changes for all artifacts
