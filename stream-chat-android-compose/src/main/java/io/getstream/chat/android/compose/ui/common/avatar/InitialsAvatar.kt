@@ -36,7 +36,7 @@ public fun InitialsAvatar(
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = initials,
-            style = ChatTheme.typography.title1,
+            style = ChatTheme.typography.title3Bold,
             color = Color.White
         )
     }
