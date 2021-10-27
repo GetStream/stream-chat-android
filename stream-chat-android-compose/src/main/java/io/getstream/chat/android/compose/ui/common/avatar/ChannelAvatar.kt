@@ -4,12 +4,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -116,3 +122,104 @@ public fun ChannelAvatar(
         }
     }
 }
+
+@Preview(name = "Channel avatar")
+@Preview
+@Composable
+private fun ChannelAvatarPreview(
+    @PreviewParameter(ChannelAvatarPreviewParameterProvider::class) data: ChannelAvatarPreviewData,
+) {
+    ChatTheme {
+        ChannelAvatar(
+            channel = data.channel,
+            currentUser = data.currentUser,
+            modifier = Modifier.size(36.dp)
+        )
+    }
+}
+
+/**
+ * Provides sample channels that will be used to render channel avatar previews.
+ */
+private class ChannelAvatarPreviewParameterProvider : PreviewParameterProvider<ChannelAvatarPreviewData> {
+    override val values: Sequence<ChannelAvatarPreviewData> = sequenceOf(
+        ChannelAvatarPreviewData(
+            currentUser = currentUser,
+            channel = Channel().apply {
+                image = "https://picsum.photos/id/237/128/128"
+                members = listOf(
+                    Member(user = currentUser),
+                    Member(user = user1),
+                )
+            }
+        ),
+        ChannelAvatarPreviewData(
+            currentUser = currentUser,
+            channel = Channel().apply {
+                members = listOf(
+                    Member(user = currentUser),
+                    Member(user = user1),
+                )
+            }
+        ),
+        ChannelAvatarPreviewData(
+            currentUser = currentUser,
+            channel = Channel().apply {
+                members = listOf(
+                    Member(user = currentUser),
+                    Member(user = user1),
+                    Member(user = user2),
+                )
+            }
+        ),
+        ChannelAvatarPreviewData(
+            currentUser = currentUser,
+            channel = Channel().apply {
+                members = listOf(
+                    Member(user = currentUser),
+                    Member(user = user1),
+                    Member(user = user2),
+                    Member(user = user3),
+                    Member(user = user4),
+                )
+            }
+        ),
+    )
+
+    private companion object {
+        private val currentUser: User = User().apply {
+            id = "jc"
+            name = "Jc Miñarro"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
+        }
+        private val user1: User = User().apply {
+            id = "amit"
+            name = "Amit Kumar"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128"
+            online = true
+        }
+        private val user2: User = User().apply {
+            id = "belal"
+            name = "Belal Khan"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128"
+        }
+        private val user3: User = User().apply {
+            id = "dmitrii"
+            name = "Dmitrii Bychkov"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128"
+        }
+        private val user4: User = User().apply {
+            id = "filip"
+            name = "Filip Babić"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
+        }
+    }
+}
+
+/**
+ * A class that encapsulates test data that will be provided to channel previews.
+ */
+private data class ChannelAvatarPreviewData(
+    val currentUser: User,
+    val channel: Channel,
+)

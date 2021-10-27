@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
@@ -22,7 +25,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * Based on the state within the [User], we either show an image or their initials.
  *
- * @param user The user whose avatars we want to show.
+ * @param user The user whose avatar we want to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param contentDescription The content description of the avatar.
@@ -92,10 +95,51 @@ public fun OnlineIndicator(modifier: Modifier = Modifier) {
 
 /**
  * Represents the position of [OnlineIndicator] in [UserAvatar].
+ *
+ * @param alignment The standard Compose [Alignment] that corresponds to the [OnlineIndicator] alignment.
  */
 public enum class OnlineIndicatorAlignment(public val alignment: Alignment) {
     TopEnd(Alignment.TopEnd),
     BottomEnd(Alignment.BottomEnd),
     TopStart(Alignment.TopStart),
     BottomStart(Alignment.BottomStart)
+}
+
+@Preview(name = "User avatar")
+@Composable
+private fun UserAvatarPreview(
+    @PreviewParameter(UserAvatarPreviewParameterProvider::class) user: User,
+) {
+    ChatTheme {
+        UserAvatar(
+            modifier = Modifier.size(36.dp),
+            user = user,
+            showOnlineIndicator = true,
+        )
+    }
+}
+
+/**
+ * Provides sample users that will be used to render user avatar previews.
+ */
+private class UserAvatarPreviewParameterProvider : PreviewParameterProvider<User> {
+    override val values: Sequence<User> = sequenceOf(
+        // Offline user with avatar image
+        User(online = false).apply {
+            id = "jc"
+            name = "Jc Miñarro"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
+        },
+        // Online user with avatar image
+        User(online = true).apply {
+            id = "jc"
+            name = "Jc Miñarro"
+            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
+        },
+        // Offline user without avatar image
+        User(online = false).apply {
+            id = "jc"
+            name = "Jc Miñarro"
+        }
+    )
 }
