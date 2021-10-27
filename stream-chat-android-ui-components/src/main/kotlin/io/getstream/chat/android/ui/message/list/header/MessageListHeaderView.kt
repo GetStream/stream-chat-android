@@ -102,7 +102,10 @@ public class MessageListHeaderView : FrameLayout {
     }
 
     public fun setRetryClickListener(listener: OnClickListener) {
-        binding.offlineRetryButton.setOnClickListener { listener.onClick() }
+        binding.offlineRetryButton.apply {
+            isVisible = true
+            setOnClickListener { listener.onClick() }
+        }
     }
 
     public fun showTypingStateLabel(typingUsers: List<User>) {
