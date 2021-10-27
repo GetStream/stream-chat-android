@@ -2040,6 +2040,7 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 
 public abstract interface class io/getstream/chat/android/ui/message/list/background/BackgroundDrawer {
 	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun giphyAppearanceModel ()Lcom/google/android/material/shape/ShapeAppearanceModel;
 	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
@@ -2048,6 +2049,7 @@ public class io/getstream/chat/android/ui/message/list/background/BackgroundDraw
 	public static final field Companion Lio/getstream/chat/android/ui/message/list/background/BackgroundDrawerImpl$Companion;
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;)V
 	public fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun giphyAppearanceModel ()Lcom/google/android/material/shape/ShapeAppearanceModel;
 	public fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
