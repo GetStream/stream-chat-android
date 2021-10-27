@@ -13,8 +13,10 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 
+/**
+ * Default drawer of background of message items
+ */
 public open class BackgroundDrawerImpl(private val style: MessageListItemStyle): BackgroundDrawer {
 
     override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
@@ -23,7 +25,7 @@ public open class BackgroundDrawerImpl(private val style: MessageListItemStyle):
 
     override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return ShapeAppearanceModel.builder()
-            .setAllCornerSizes(BackgroundDecorator.DEFAULT_CORNER_RADIUS)
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .apply {
                 when {
                     data.isBottomPosition() && data.isMine -> setBottomRightCornerSize(0f)
@@ -42,7 +44,7 @@ public open class BackgroundDrawerImpl(private val style: MessageListItemStyle):
     }
 
     private fun defaultBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        val radius = BackgroundDecorator.DEFAULT_CORNER_RADIUS
+        val radius = DEFAULT_CORNER_RADIUS
         val bottomRightCorner = if (data.isMine && data.isBottomPosition()) 0f else radius
         val bottomLeftCorner = if (data.isMine.not() && data.isBottomPosition()) 0f else radius
 
@@ -89,11 +91,17 @@ public open class BackgroundDrawerImpl(private val style: MessageListItemStyle):
         }
     }
 
+    override fun giphyAppearanceModel(): ShapeAppearanceModel {
+        return ShapeAppearanceModel.builder()
+            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
+            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
+            .build()
+    }
+
     public companion object {
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
         private val MESSAGE_CURRENT_USER_BACKGROUND = R.color.stream_ui_grey_gainsboro
         private val SMALL_CARD_VIEW_CORNER_RADIUS = 2.dpToPxPrecise()
-        private val IMAGE_VIEW_CORNER_RADIUS = 8.dpToPxPrecise()
 
         internal val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
     }
