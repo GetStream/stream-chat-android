@@ -1,23 +1,26 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.compose.preview.ChannelAvatarPreviewParameterProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -29,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param currentUser The current user, used to determine avatar data.
  * @param modifier Modifier for styling.
  * @param contentDescription The description to use for the avatar.
+ * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
 public fun ChannelAvatar(
@@ -36,6 +40,7 @@ public fun ChannelAvatar(
     currentUser: User?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     val members = channel.members
     val memberCount = members.size
@@ -50,7 +55,8 @@ public fun ChannelAvatar(
             Avatar(
                 modifier = modifier,
                 painter = painter,
-                contentDescription = contentDescription
+                contentDescription = contentDescription,
+                onClick = onClick
             )
         }
         /**
@@ -59,7 +65,11 @@ public fun ChannelAvatar(
         memberCount == 1 -> {
             val channelInitials = channel.initials
 
-            InitialsAvatar(initials = channelInitials, modifier)
+            InitialsAvatar(
+                modifier = modifier,
+                initials = channelInitials,
+                onClick = onClick
+            )
         }
         /**
          * If the channel has two members - direct message with another person - we show their image or initials.
@@ -70,7 +80,8 @@ public fun ChannelAvatar(
             UserAvatar(
                 modifier = modifier,
                 user = user,
-                contentDescription = user.name
+                contentDescription = user.name,
+                onClick = onClick
             )
         }
         /**
@@ -80,7 +91,17 @@ public fun ChannelAvatar(
             val activeUsers = members.filter { it.user.id != currentUser?.id }.take(4)
             val imageCount = activeUsers.size
 
-            Row(modifier.clip(ChatTheme.shapes.avatar)) {
+            val clickableModifier: Modifier = if (onClick != null) {
+                modifier.clickable(
+                    onClick = onClick,
+                    indication = rememberRipple(bounded = false, radius = 24.dp),
+                    interactionSource = remember { MutableInteractionSource() }
+                )
+            } else {
+                modifier
+            }
+
+            Row(clickableModifier.clip(ChatTheme.shapes.avatar)) {
                 Column(
                     modifier = Modifier
                         .weight(1f, fill = false)
@@ -127,99 +148,14 @@ public fun ChannelAvatar(
 @Preview
 @Composable
 private fun ChannelAvatarPreview(
-    @PreviewParameter(ChannelAvatarPreviewParameterProvider::class) data: ChannelAvatarPreviewData,
+    @PreviewParameter(ChannelAvatarPreviewParameterProvider::class) data: Pair<User, Channel>,
 ) {
     ChatTheme {
+        val (currentUser, channel) = data
         ChannelAvatar(
-            channel = data.channel,
-            currentUser = data.currentUser,
+            channel = channel,
+            currentUser = currentUser,
             modifier = Modifier.size(36.dp)
         )
     }
 }
-
-/**
- * Provides sample channels that will be used to render channel avatar previews.
- */
-private class ChannelAvatarPreviewParameterProvider : PreviewParameterProvider<ChannelAvatarPreviewData> {
-    override val values: Sequence<ChannelAvatarPreviewData> = sequenceOf(
-        ChannelAvatarPreviewData(
-            currentUser = currentUser,
-            channel = Channel().apply {
-                image = "https://picsum.photos/id/237/128/128"
-                members = listOf(
-                    Member(user = currentUser),
-                    Member(user = user1),
-                )
-            }
-        ),
-        ChannelAvatarPreviewData(
-            currentUser = currentUser,
-            channel = Channel().apply {
-                members = listOf(
-                    Member(user = currentUser),
-                    Member(user = user1),
-                )
-            }
-        ),
-        ChannelAvatarPreviewData(
-            currentUser = currentUser,
-            channel = Channel().apply {
-                members = listOf(
-                    Member(user = currentUser),
-                    Member(user = user1),
-                    Member(user = user2),
-                )
-            }
-        ),
-        ChannelAvatarPreviewData(
-            currentUser = currentUser,
-            channel = Channel().apply {
-                members = listOf(
-                    Member(user = currentUser),
-                    Member(user = user1),
-                    Member(user = user2),
-                    Member(user = user3),
-                    Member(user = user4),
-                )
-            }
-        ),
-    )
-
-    private companion object {
-        private val currentUser: User = User().apply {
-            id = "jc"
-            name = "Jc Miñarro"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
-        }
-        private val user1: User = User().apply {
-            id = "amit"
-            name = "Amit Kumar"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128"
-            online = true
-        }
-        private val user2: User = User().apply {
-            id = "belal"
-            name = "Belal Khan"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128"
-        }
-        private val user3: User = User().apply {
-            id = "dmitrii"
-            name = "Dmitrii Bychkov"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128"
-        }
-        private val user4: User = User().apply {
-            id = "filip"
-            name = "Filip Babić"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
-        }
-    }
-}
-
-/**
- * A class that encapsulates test data that will be provided to channel previews.
- */
-private data class ChannelAvatarPreviewData(
-    val currentUser: User,
-    val channel: Channel,
-)

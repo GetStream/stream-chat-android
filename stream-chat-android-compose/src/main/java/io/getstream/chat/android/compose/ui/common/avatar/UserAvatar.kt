@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.compose.preview.UserAvatarPreviewParameterProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -47,11 +47,11 @@ public fun UserAvatar(
     },
     onClick: (() -> Unit)? = null,
 ) {
-    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { modifier ->
+    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { innerModifier ->
         if (user.image.isNotBlank()) {
             val authorImage = rememberImagePainter(data = user.image)
             Avatar(
-                modifier = modifier,
+                modifier = innerModifier,
                 shape = shape,
                 painter = authorImage,
                 contentDescription = contentDescription,
@@ -59,20 +59,23 @@ public fun UserAvatar(
             )
         } else {
             InitialsAvatar(
-                modifier = modifier,
+                modifier = innerModifier,
                 initials = user.initials,
-                shape = shape
+                shape = shape,
+                onClick = onClick
             )
         }
     }
 
     if (showOnlineIndicator && user.online) {
+        // Apply modifier to the outer box
         Box(modifier = modifier) {
-            avatarContent(Modifier.fillMaxSize())
+            avatarContent(modifier = Modifier.fillMaxSize())
 
             onlineIndicator()
         }
     } else {
+        // Apply modifier to the avatar itself
         avatarContent(modifier = modifier)
     }
 }
@@ -117,29 +120,4 @@ private fun UserAvatarPreview(
             showOnlineIndicator = true,
         )
     }
-}
-
-/**
- * Provides sample users that will be used to render user avatar previews.
- */
-private class UserAvatarPreviewParameterProvider : PreviewParameterProvider<User> {
-    override val values: Sequence<User> = sequenceOf(
-        // Offline user with avatar image
-        User(online = false).apply {
-            id = "jc"
-            name = "Jc Miñarro"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
-        },
-        // Online user with avatar image
-        User(online = true).apply {
-            id = "jc"
-            name = "Jc Miñarro"
-            image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128"
-        },
-        // Offline user without avatar image
-        User(online = false).apply {
-            id = "jc"
-            name = "Jc Miñarro"
-        }
-    )
 }
