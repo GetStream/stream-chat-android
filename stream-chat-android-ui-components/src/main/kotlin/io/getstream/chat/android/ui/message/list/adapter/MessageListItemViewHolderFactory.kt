@@ -68,6 +68,10 @@ public open class MessageListItemViewHolderFactory {
 
     private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
 
+    /*
+    * This is necessary to maintain the configuration of this factory, but without sharing the instance. Please use
+    * clone when sharing the factory between MessageListView and MessageOptionsDialogFragment
+    */
     internal fun clone(): MessageListItemViewHolderFactory {
         val newFactory = MessageListItemViewHolderFactory()
 
