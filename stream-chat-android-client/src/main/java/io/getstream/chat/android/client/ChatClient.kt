@@ -22,9 +22,11 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
+import io.getstream.chat.android.client.call.flatMap
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -987,13 +989,15 @@ public class ChatClient internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
-        .doOnStart(scope) {
-            plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
-        }
-        .doOnResult(scope) { result ->
-            plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
-        }
+    ): Call<Channel> =
+        precondition { onQueryChannelPrecondition(channelType, channelId, request) }
+            .flatMap { api.queryChannel(channelType, channelId, request) }
+            .doOnStart(scope) {
+                plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
+            }
+            .doOnResult(scope) { result ->
+                plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
+            }
 
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
@@ -1571,6 +1575,21 @@ public class ChatClient internal constructor(
         val payload: String =
             Base64.encodeToString("{\"user_id\":\"$userId\"}".toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
         return "$header.$payload.$devSignature"
+    }
+
+    private fun precondition(preconditionCheck: suspend Plugin.() -> Result<Unit>): Call<Unit> = CoroutineCall(scope) {
+        plugins.fold(Result.success(Unit)) { result, plugin ->
+            if (result.isError) {
+                result
+            } else {
+                val preconditionResult = preconditionCheck(plugin)
+                if (preconditionResult.isError) {
+                    preconditionResult
+                } else {
+                    result
+                }
+            }
+        }
     }
 
     /**
