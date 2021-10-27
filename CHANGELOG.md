@@ -34,6 +34,7 @@
 - The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
 
 ### ⚠️ Changed
+- BREAKING CHANGE: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
 
 ### ❌ Removed
 - `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
@@ -43,6 +44,7 @@
 - Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
 
 ### ⬆️ Improved
+- Channel gets removed from `QueryChannelsController` when receive `ChannelHiddenEvent`
 
 ### ✅ Added
 
@@ -65,9 +67,11 @@
 ### 🐞 Fixed
 - Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
 - 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
+- Made it impossible to send a message during the cooldown interval in slow mode.
 
 ### ⬆️ Improved
 - Better position for icon of failed message
+- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
 - Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
@@ -77,6 +81,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
 
 ### ⚠️ Changed
+- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
 
 ### ❌ Removed
 
@@ -90,6 +95,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 
 ### ✅ Added
 - `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
 
 ### ⚠️ Changed
 - `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it

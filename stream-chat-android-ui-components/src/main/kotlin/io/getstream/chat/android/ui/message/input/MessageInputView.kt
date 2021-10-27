@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.os.CountDownTimer
 import android.util.AttributeSet
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -34,6 +33,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
+import io.getstream.chat.android.ui.message.input.MessageInputView.SelectedAttachmentsCountListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
@@ -47,12 +47,14 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
-import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
@@ -86,8 +88,7 @@ public class MessageInputView : ConstraintLayout {
     private var maxMessageLength: Int = Integer.MAX_VALUE
 
     private var cooldownInterval: Int = 0
-    private var cooldownTimer: CountDownTimer? = null
-    private var previousInputHint: String? = null
+    private var cooldownTimerJob: Job? = null
 
     private val attachmentSelectionListener = AttachmentSelectionListener { attachments, attachmentSource ->
         if (attachments.isNotEmpty()) {
@@ -315,8 +316,8 @@ public class MessageInputView : ConstraintLayout {
     override fun onDetachedFromWindow() {
         messageInputDebouncer?.shutdown()
         messageInputDebouncer = null
-        cooldownTimer?.cancel()
-        cooldownTimer = null
+        cooldownTimerJob?.cancel()
+        cooldownTimerJob = null
         hideSuggestionList()
         scope?.cancel()
         scope = null
@@ -436,26 +437,25 @@ public class MessageInputView : ConstraintLayout {
      */
     private fun startCooldownTimerIfNecessary() {
         if (cooldownInterval > 0) {
-            // store the current message input hint
-            previousInputHint = binding.messageInputFieldView.messageHint
+            cooldownTimerJob?.cancel()
+            cooldownTimerJob = GlobalScope.launch(DispatcherProvider.Main) {
+                with(binding) {
+                    val previousInputHint = binding.messageInputFieldView.messageHint
 
-            with(binding) {
-                cooldownBadgeTextView.isVisible = true
-                messageInputFieldView.messageHint = context.getString(R.string.stream_ui_message_input_slow_mode_hint)
+                    disableSendButton()
+                    cooldownBadgeTextView.isVisible = true
+                    messageInputFieldView.messageHint =
+                        context.getString(R.string.stream_ui_message_input_slow_mode_hint)
 
-                cooldownTimer = object : CountDownTimer(cooldownInterval * 1000L, 1000) {
-
-                    override fun onTick(millisUntilFinished: Long) {
-                        val secondsRemaining = (millisUntilFinished.toFloat() / 1000).roundToInt()
-                        cooldownBadgeTextView.text = "$secondsRemaining"
+                    for (timeRemaining in cooldownInterval downTo 1) {
+                        cooldownBadgeTextView.text = "$timeRemaining"
+                        delay(1000)
                     }
 
-                    override fun onFinish() {
-                        cooldownBadgeTextView.isVisible = false
-                        // restore the last input hint
-                        messageInputFieldView.messageHint = previousInputHint ?: ""
-                    }
-                }.start()
+                    enableSendButton()
+                    cooldownBadgeTextView.isVisible = false
+                    messageInputFieldView.messageHint = previousInputHint
+                }
             }
         }
     }

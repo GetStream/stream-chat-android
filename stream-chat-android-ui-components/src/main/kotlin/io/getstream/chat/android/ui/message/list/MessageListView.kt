@@ -608,8 +608,8 @@ public class MessageListView : ConstraintLayout {
         initAdapter()
 
         messageListViewStyle = requireStyle().copy(
-            replyEnabled = requireStyle().replyEnabled && channel.config.isRepliesEnabled,
-            threadsEnabled = requireStyle().threadsEnabled && channel.config.isRepliesEnabled,
+            replyEnabled = requireStyle().replyEnabled,
+            threadsEnabled = requireStyle().threadsEnabled && channel.config.isThreadEnabled,
         )
     }
 

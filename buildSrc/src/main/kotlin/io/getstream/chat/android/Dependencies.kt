@@ -34,8 +34,9 @@ object Versions {
     internal const val DOKKA = "1.5.0"
     internal const val DOKKASAURUS = "0.1.10"
     internal const val DOTENV = "5.2.2"
-    internal const val ESPRESSO = "3.4.0"
+    internal const val ESPRESSO = "3.3.0"
     internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
+    internal const val FRAGMENT_TESTING = "1.3.6"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.7.1"
@@ -73,6 +74,7 @@ object Versions {
     internal const val ROBOLECTRIC = "4.6.1"
     internal const val ROOM = "2.3.0"
     internal const val SHIMMER = "0.5.0"
+    internal const val SHOT = "5.11.2"
     internal const val STFALCON_IMAGE_VIEWER = "d11578fe3f"
     internal const val TEST_PARAMETER_INJECTOR = "1.4"
     internal const val THREETENBP = "1.5.1"
@@ -102,7 +104,9 @@ object Dependencies {
     const val androidxRecyclerview = "androidx.recyclerview:recyclerview:${Versions.ANDROIDX_RECYCLERVIEW}"
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
     const val androidxTest = "androidx.test:core:${Versions.ANDROIDX_TEST}"
+    const val androidxTestKtx = "androidx.test:core-ktx:${Versions.ANDROIDX_TEST}"
     const val androidxTestJunit = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_JUNIT}"
+    const val androidxTestJunitKtx = "androidx.test.ext:junit-ktx:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxViewPager2 = "androidx.viewpager2:viewpager2:${Versions.ANDROIDX_VIEW_PAGER_2}"
     const val coil = "io.coil-kt:coil:${Versions.COIL}"
     const val coilGif = "io.coil-kt:coil-gif:${Versions.COIL}"
@@ -132,6 +136,7 @@ object Dependencies {
     const val dotenv = "io.github.cdimascio:java-dotenv:${Versions.DOTENV}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO}"
     const val exoMedia = "com.github.brianwernick:ExoMedia:${Versions.EXOMEDIA}"
+    const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.FRAGMENT_TESTING}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:${Versions.FIREBASE_CRASHLYTICS}"
     const val firebaseCrashlyticsPlugin =
@@ -178,6 +183,7 @@ object Dependencies {
     const val navigationSafeArgsGradlePlugin =
         "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}"
     const val navigationRuntimeKTX = "androidx.navigation:navigation-runtime-ktx:${Versions.NAVIGATION}"
+    const val navigationTest = "androidx.navigation:navigation-testing:${Versions.NAVIGATION}"
     const val navigationUIKTX = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
     const val ok2curl = "com.github.mrmike:ok2curl:${Versions.OK2CURL}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
@@ -192,6 +198,7 @@ object Dependencies {
     const val roomRuntime = "androidx.room:room-runtime:${Versions.ROOM}"
     const val roomTesting = "androidx.room:room-testing:${Versions.ROOM}"
     const val shimmer = "com.facebook.shimmer:shimmer:${Versions.SHIMMER}"
+    const val shot = "com.karumi:shot:${Versions.SHOT}"
     const val stfalconImageViewer = "com.github.stfalcon-studio:StfalconImageViewer:${Versions.STFALCON_IMAGE_VIEWER}"
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
