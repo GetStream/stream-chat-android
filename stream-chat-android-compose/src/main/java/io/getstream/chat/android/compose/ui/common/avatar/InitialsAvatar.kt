@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.initialsGradient
 
@@ -36,7 +35,7 @@ public fun InitialsAvatar(
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(
             onClick = onClick,
-            indication = rememberRipple(bounded = false, radius = 24.dp),
+            indication = rememberRipple(bounded = false),
             interactionSource = remember { MutableInteractionSource() }
         )
     } else {

@@ -13,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Represents an avatar with user sections.
+ * Represents an avatar with a matrix of user images or initials.
  *
  * @param users The initials to show.
  * @param modifier Modifier for styling.
@@ -38,7 +37,7 @@ public fun GroupAvatar(
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(
             onClick = onClick,
-            indication = rememberRipple(bounded = false, radius = 24.dp),
+            indication = rememberRipple(bounded = false),
             interactionSource = remember { MutableInteractionSource() }
         )
     } else {
