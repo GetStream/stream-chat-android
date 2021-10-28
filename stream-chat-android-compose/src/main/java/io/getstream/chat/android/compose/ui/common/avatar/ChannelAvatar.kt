@@ -4,13 +4,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.previewdata.ChannelAvatarPreviewParameterProvider
+import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -89,16 +88,36 @@ public fun ChannelAvatar(
     }
 }
 
-@Preview(name = "Channel avatar")
+@Preview
 @Composable
-private fun ChannelAvatarPreview(
-    @PreviewParameter(ChannelAvatarPreviewParameterProvider::class) data: Pair<User, Channel>,
-) {
+private fun ChannelWithImageAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithImage)
+}
+
+@Preview
+@Composable
+private fun ChannelWithOnlineUserAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
+}
+
+@Preview
+@Composable
+private fun ChannelWithFewMembersAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithFewMembers)
+}
+
+@Preview
+@Composable
+private fun ChannelWithManyMembersAvatarPreview() {
+    buildChannelAvatarPreview(PreviewChannelData.channelWithManyMembers)
+}
+
+@Composable
+private fun buildChannelAvatarPreview(channel: Channel) {
     ChatTheme {
-        val (currentUser, channel) = data
         ChannelAvatar(
             channel = channel,
-            currentUser = currentUser,
+            currentUser = channel.members.first().user,
             modifier = Modifier.size(36.dp)
         )
     }

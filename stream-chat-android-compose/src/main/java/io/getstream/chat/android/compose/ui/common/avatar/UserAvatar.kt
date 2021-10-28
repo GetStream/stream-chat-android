@@ -12,12 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.previewdata.UserAvatarPreviewParameterProvider
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -108,11 +107,26 @@ public enum class OnlineIndicatorAlignment(public val alignment: Alignment) {
     BottomStart(Alignment.BottomStart)
 }
 
-@Preview(name = "User avatar")
+@Preview
 @Composable
-private fun UserAvatarPreview(
-    @PreviewParameter(UserAvatarPreviewParameterProvider::class) user: User,
-) {
+private fun UserWithImageAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithImage)
+}
+
+@Preview
+@Composable
+private fun UserWithOnlineStatusAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithOnlineStatus)
+}
+
+@Preview
+@Composable
+private fun UserWithoutImageAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithoutImage)
+}
+
+@Composable
+private fun buildUserAvatarPreview(user: User) {
     ChatTheme {
         UserAvatar(
             modifier = Modifier.size(36.dp),

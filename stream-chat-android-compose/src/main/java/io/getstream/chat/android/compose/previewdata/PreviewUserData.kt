@@ -6,6 +6,11 @@ import io.getstream.chat.android.client.models.User
  * Provides sample users that will be used to render component previews.
  */
 internal object PreviewUserData {
+
+    /**
+     * A collection of users with names and avatars.
+     */
+
     val user1: User = User().apply {
         id = "jc"
         name = "Jc Miñarro"
@@ -32,4 +37,14 @@ internal object PreviewUserData {
         name = "Filip Babić"
         image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
     }
+
+    /**
+     * Users with specific properties.
+     */
+
+    val userWithImage = user1
+
+    val userWithOnlineStatus = user2.copy(online = true)
+
+    val userWithoutImage = user3.apply { image = "" }
 }
