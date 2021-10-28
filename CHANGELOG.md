@@ -105,7 +105,9 @@
 - Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
-- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
+- Added `ChatDomain.connectionState` that exposes 3 states: `CONNECTED`, `CONNECTING` and `OFFLINE`.
+  `ChannelListHeaderView` and `MessageListHeaderView` show different title based on newly introduced connection state.
+  `ChatDomain.online` is now deprecated - use `ChatDomain.connectionState` instead.
 
 ## stream-chat-android-client
 ### ⬆️ Improved
