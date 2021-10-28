@@ -76,11 +76,11 @@ Here's an example of customizing the UI of the user avatar:
 
 ```kotlin
 UserAvatar(
-    modifier = modifier.size(48.dp),
+    modifier = Modifier.size(48.dp),
     user = user,
     onlineIndicator = {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .align(Alignment.TopEnd)
                 .size(12.dp)
                 .background(Color.Blue, CircleShape)
@@ -89,4 +89,6 @@ UserAvatar(
 )
 ```
 
-The snippet above will produce an avatar with a blue online indicator. 
+The snippet above will produce an avatar with a blue online indicator:
+
+![The UserAvatar Component](../../assets/compose_custom_user_avatar_component.png)
