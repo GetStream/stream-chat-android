@@ -91,13 +91,16 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
 - Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
 - `ThreadParticipants` is now public and can be used for your custom UI.
+- Improved the icon set and polished the UI for various Messages features
 
 ### ✅ Added
 - `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
 - Added unread message count indicators to ChannelItems to show users more info about their channels
+- Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
 
 ### ⚠️ Changed
 - `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
+- The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
 
 ### ❌ Removed
 - Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
