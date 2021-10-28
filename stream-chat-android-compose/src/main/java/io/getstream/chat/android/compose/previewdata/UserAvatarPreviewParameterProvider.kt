@@ -1,10 +1,11 @@
-package io.getstream.chat.android.compose.preview
+package io.getstream.chat.android.compose.previewdata
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 
 /**
- * Provides sample users that will be used to render user avatar previews.
+ * Provides sample users that will be used to render previews for the [UserAvatar] component.
  */
 internal class UserAvatarPreviewParameterProvider : PreviewParameterProvider<User> {
     override val values: Sequence<User> = sequenceOf(

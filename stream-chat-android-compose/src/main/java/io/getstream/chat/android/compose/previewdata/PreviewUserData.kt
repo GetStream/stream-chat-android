@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.preview
+package io.getstream.chat.android.compose.previewdata
 
 import io.getstream.chat.android.client.models.User
 
