@@ -20,7 +20,6 @@ internal object PreviewUserData {
         id = "amit"
         name = "Amit Kumar"
         image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128"
-        online = true
     }
     val user3: User = User().apply {
         id = "belal"
@@ -38,6 +37,12 @@ internal object PreviewUserData {
         image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128"
     }
 
+    val user6: User = User().apply {
+        id = "jaewoong"
+        name = "Jaewoong Eum"
+        image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128"
+    }
+
     /**
      * Users with specific properties.
      */
@@ -46,5 +51,5 @@ internal object PreviewUserData {
 
     val userWithOnlineStatus = user2.copy(online = true)
 
-    val userWithoutImage = user3.apply { image = "" }
+    val userWithoutImage = user6.apply { image = "" }
 }
