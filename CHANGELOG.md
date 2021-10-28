@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added Indonesian :indonesia: translations.
 
 ### ⚠️ Changed
 
