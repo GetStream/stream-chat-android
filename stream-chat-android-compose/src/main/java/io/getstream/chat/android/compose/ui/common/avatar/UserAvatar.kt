@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.preview.UserAvatarPreviewParameterProvider
+import io.getstream.chat.android.compose.previewdata.UserAvatarPreviewParameterProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**

@@ -1,18 +1,8 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -20,7 +10,7 @@ import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.preview.ChannelAvatarPreviewParameterProvider
+import io.getstream.chat.android.compose.previewdata.ChannelAvatarPreviewParameterProvider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -88,64 +78,18 @@ public fun ChannelAvatar(
          * If the channel has more than two members - group - we load a matrix of their images or initials.
          */
         else -> {
-            val activeUsers = members.filter { it.user.id != currentUser?.id }.take(4)
-            val imageCount = activeUsers.size
+            val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
 
-            val clickableModifier: Modifier = if (onClick != null) {
-                modifier.clickable(
-                    onClick = onClick,
-                    indication = rememberRipple(bounded = false, radius = 24.dp),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
-            } else {
-                modifier
-            }
-
-            Row(clickableModifier.clip(ChatTheme.shapes.avatar)) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxHeight()
-                ) {
-                    for (imageIndex in 0 until imageCount step 2) {
-                        if (imageIndex < imageCount) {
-                            UserAvatar(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                user = activeUsers[imageIndex].user,
-                                shape = RectangleShape,
-                                showOnlineIndicator = false
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxHeight()
-                ) {
-                    for (imageIndex in 1 until imageCount step 2) {
-                        if (imageIndex < imageCount) {
-                            UserAvatar(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize(),
-                                user = activeUsers[imageIndex].user,
-                                shape = RectangleShape,
-                                showOnlineIndicator = false
-                            )
-                        }
-                    }
-                }
-            }
+            GroupAvatar(
+                users = users,
+                modifier = modifier,
+                onClick = onClick,
+            )
         }
     }
 }
 
 @Preview(name = "Channel avatar")
-@Preview
 @Composable
 private fun ChannelAvatarPreview(
     @PreviewParameter(ChannelAvatarPreviewParameterProvider::class) data: Pair<User, Channel>,

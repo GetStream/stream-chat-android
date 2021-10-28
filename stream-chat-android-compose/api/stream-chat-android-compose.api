@@ -551,6 +551,10 @@ public final class io/getstream/chat/android/compose/ui/common/avatar/ChannelAva
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/common/avatar/GroupAvatarKt {
+	public static final fun GroupAvatar (Ljava/util/List;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/common/avatar/InitialsAvatarKt {
 	public static final fun InitialsAvatar (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
