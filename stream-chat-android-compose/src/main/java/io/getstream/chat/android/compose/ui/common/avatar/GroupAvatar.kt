@@ -19,7 +19,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * Represents an avatar with a matrix of user images or initials.
  *
- * @param users The initials to show.
+ * @param users The users to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param onClick The handler when the user clicks on the avatar.
