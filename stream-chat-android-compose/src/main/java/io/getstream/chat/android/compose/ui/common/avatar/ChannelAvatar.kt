@@ -1,8 +1,10 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
@@ -20,6 +22,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param channel The channel whose data we need to show.
  * @param currentUser The current user, used to determine avatar data.
  * @param modifier Modifier for styling.
+ * @param shape The shape of the avatar.
  * @param contentDescription The description to use for the avatar.
  * @param onClick The handler when the user clicks on the avatar.
  */
@@ -28,6 +31,12 @@ public fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.avatar,
+    showOnlineIndicator: Boolean = true,
+    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    onlineIndicator: @Composable BoxScope.() -> Unit = {
+        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+    },
     contentDescription: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -44,6 +53,7 @@ public fun ChannelAvatar(
             Avatar(
                 modifier = modifier,
                 painter = painter,
+                shape = shape,
                 contentDescription = contentDescription,
                 onClick = onClick
             )
@@ -57,6 +67,7 @@ public fun ChannelAvatar(
             InitialsAvatar(
                 modifier = modifier,
                 initials = channelInitials,
+                shape = shape,
                 onClick = onClick
             )
         }
@@ -69,7 +80,11 @@ public fun ChannelAvatar(
             UserAvatar(
                 modifier = modifier,
                 user = user,
+                shape = shape,
                 contentDescription = user.name,
+                showOnlineIndicator = showOnlineIndicator,
+                onlineIndicatorAlignment = onlineIndicatorAlignment,
+                onlineIndicator = onlineIndicator,
                 onClick = onClick
             )
         }
@@ -82,6 +97,7 @@ public fun ChannelAvatar(
             GroupAvatar(
                 users = users,
                 modifier = modifier,
+                shape = shape,
                 onClick = onClick,
             )
         }

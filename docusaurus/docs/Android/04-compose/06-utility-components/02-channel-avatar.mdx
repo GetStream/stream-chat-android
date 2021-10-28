@@ -49,28 +49,41 @@ fun ChannelAvatar(
 In terms of UI customization, the `ChannelAvatar` exposes the following properties:
 
 ```kotlin
+@Composable
 fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
+    shape: Shape = ChatTheme.shapes.avatar,
     contentDescription: String? = null,
+    showOnlineIndicator: Boolean = true,
+    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    onlineIndicator: @Composable BoxScope.() -> Unit = {
+        OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+    },
 )
 ```
 
 * `channel`: The channel whose data we need to show.
 * `currentUser`: The current user, used to determine avatar data.
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
+* `shape`: The shape of the avatar.
 * `contentDescription`: The content description of the avatar.
+* `showOnlineIndicator`: If we show online indicator or not.
+* `onlineIndicatorAlignment`: The alignment of online indicator.
+* `onlineIndicator`: Custom composable that allows replacing the default online indicator.
 
 Here's an example of customizing the UI of the channel avatar:
 
 ```kotlin
 ChannelAvatar(
-    modifier = Modifier.size(48.dp),
     channel = channel,
     currentUser = currentUser,
-    contentDescription = "Channel",
+    modifier = Modifier.size(48.dp),
+    shape = RoundedCornerShape(8.dp)
 )
 ```
 
-The sample above will produce a custom channel avatar.
+The sample above will produce a custom channel avatar with rounded corners:
+
+![The ChannelAvatar Component](../../assets/compose_custom_channel_avatar_component.png)
