@@ -132,8 +132,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen.
-- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature.
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
 - Made it impossible to send a message during the cooldown interval in slow mode.
 
 ### ⬆️ Improved
@@ -141,8 +141,7 @@
 - Small improvment for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
-- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
-  The maximum attachments count cannot be greater than 10. Default value: 10.
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message. The maximum attachments count cannot be greater than 10. Default value: 10.
 - Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
 - Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
 - Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
@@ -238,7 +237,7 @@
 ### ✅ Added
 - Added `MessageListView::getRecyclerView` method which exposes the inner `RecyclerView` with message list items.
 - Added `MessageListView::setUserReactionClickListener` method to set a listener used when a reaction left by a user is clicked on the message options overlay.
-- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView`
+- Added attr `streamUiScrollButtonElevation` to set the elevation of scroll button ot `MessageListView` 
 ### ⚠️ Changed
 - `ChatUI.uiMode` has been deprecated. If you want to force Dark/Light theme, you need to use `AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)`
 
