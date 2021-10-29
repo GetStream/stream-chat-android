@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.ui.common
+package io.getstream.chat.android.compose.handlers
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
