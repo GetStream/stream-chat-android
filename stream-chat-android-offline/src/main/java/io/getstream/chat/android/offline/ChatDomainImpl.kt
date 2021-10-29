@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -51,7 +52,6 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
@@ -871,12 +871,7 @@ internal class ChatDomainImpl internal constructor(
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
-        pagination: QueryChannelPaginationRequest,
-    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-
-    suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelsPaginationRequest,
+        pagination: QueryChannelRequest,
     ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannels(

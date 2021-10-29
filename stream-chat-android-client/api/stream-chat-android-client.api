@@ -416,6 +416,8 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
 	public final fun isFilteringNewerMessages ()Z
+	public final fun membersLimit ()I
+	public final fun membersOffset ()I
 	public final fun messagesLimit ()I
 	public synthetic fun noPresence ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noPresence ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
@@ -423,10 +425,12 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun noState ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
-	public final fun pagination ()Lio/getstream/chat/android/client/api/models/Pagination;
+	public final fun pagination ()Lkotlin/Pair;
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
+	public final fun watchersLimit ()I
+	public final fun watchersOffset ()I
 	public fun withData (Ljava/util/Map;)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withMembers (II)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withMessages (I)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;

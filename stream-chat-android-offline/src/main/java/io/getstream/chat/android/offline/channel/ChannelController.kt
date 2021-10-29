@@ -333,7 +333,7 @@ public class ChannelController internal constructor(
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
             return
         }
-        runChannelQuery(QueryChannelPaginationRequest(limit))
+        runChannelQuery(QueryChannelPaginationRequest(limit).toWatchChannelRequest(domainImpl.userPresence))
     }
 
     private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
@@ -366,7 +366,7 @@ public class ChannelController internal constructor(
                     messageFilterDirection = Pagination.LESS_THAN
                     messageFilterValue = it
                 }
-            }
+            }.toWatchChannelRequest(domainImpl.userPresence)
         )
     }
 
@@ -380,7 +380,7 @@ public class ChannelController internal constructor(
                     messageFilterDirection = Pagination.GREATER_THAN
                     messageFilterValue = it
                 }
-            }
+            }.toWatchChannelRequest(domainImpl.userPresence)
         )
     }
 
@@ -392,7 +392,7 @@ public class ChannelController internal constructor(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.LESS_THAN
                 messageFilterValue = messageId
-            }
+            }.toWatchChannelRequest(domainImpl.userPresence)
         )
     }
 
@@ -404,12 +404,11 @@ public class ChannelController internal constructor(
             QueryChannelPaginationRequest(limit).apply {
                 messageFilterDirection = Pagination.GREATER_THAN
                 messageFilterValue = messageId
-            }
+            }.toWatchChannelRequest(domainImpl.userPresence)
         )
     }
 
-    private suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
-        val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
+    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val loader = when {
             request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
             request.filteringOlderMessages() -> mutableState._loadingOlderMessages
@@ -423,12 +422,12 @@ public class ChannelController internal constructor(
         }
         loader.value = true
         // first we load the data from room and update the messages and channel flow
-        val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(request) }
 
         // start the online query before queryOfflineJob.await
         val queryOnlineJob = domainImpl.scope.async { runChannelQueryOnline(request) }
         val localChannel = queryOfflineJob.await()?.also { channel ->
-            if (pagination.filteringOlderMessages()) {
+            if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
                 updateDataFromLocalChannel(channel)
@@ -453,7 +452,7 @@ public class ChannelController internal constructor(
         return result
     }
 
-    private suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? =
+    private suspend fun runChannelQueryOffline(pagination: WatchChannelRequest): Channel? =
         domainImpl.selectAndEnrichChannel(cid, pagination)?.also { channel ->
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
@@ -622,10 +621,6 @@ public class ChannelController internal constructor(
 
     internal suspend fun sendFile(file: File): Result<String> {
         return client.sendFile(channelType, channelId, file).await()
-    }
-
-    private suspend fun sendFile(file: File, callback: ProgressCallback): Result<String> {
-        return client.sendFile(channelType, channelId, file, callback).await()
     }
 
     /**
