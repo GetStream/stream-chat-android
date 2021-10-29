@@ -416,12 +416,14 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
 	public final fun isFilteringNewerMessages ()Z
+	public final fun messagesLimit ()I
 	public synthetic fun noPresence ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noPresence ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public synthetic fun noState ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noState ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
+	public final fun pagination ()Lio/getstream/chat/android/client/api/models/Pagination;
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V

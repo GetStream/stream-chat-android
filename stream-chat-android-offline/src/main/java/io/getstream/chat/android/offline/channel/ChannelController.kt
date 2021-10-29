@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -407,15 +408,12 @@ public class ChannelController internal constructor(
         )
     }
 
-    internal suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
-        val loader = when (pagination.messageFilterDirection) {
-            Pagination.GREATER_THAN,
-            Pagination.GREATER_THAN_OR_EQUAL,
-            -> mutableState._loadingNewerMessages
-            Pagination.LESS_THAN,
-            Pagination.LESS_THAN_OR_EQUAL,
-            -> mutableState._loadingOlderMessages
-            null -> mutableState._loading
+    private suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
+        val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
+        val loader = when {
+            request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
+            request.filteringOlderMessages() -> mutableState._loadingOlderMessages
+            else -> mutableState._loading
         }
         if (loader.value) {
             logger.logI("Another request to load messages is in progress. Ignoring this request.")
@@ -428,9 +426,9 @@ public class ChannelController internal constructor(
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
-        val queryOnlineJob = domainImpl.scope.async { runChannelQueryOnline(pagination) }
+        val queryOnlineJob = domainImpl.scope.async { runChannelQueryOnline(request) }
         val localChannel = queryOfflineJob.await()?.also { channel ->
-            if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
+            if (pagination.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
                 updateDataFromLocalChannel(channel)
@@ -460,14 +458,13 @@ public class ChannelController internal constructor(
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-    internal suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
-        val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
+    private suspend fun runChannelQueryOnline(request: WatchChannelRequest): Result<Channel> {
         val response = channelClient.watch(request).await()
 
         if (response.isSuccess) {
             mutableState.recoveryNeeded = false
             val channelResponse = response.data()
-            if (pagination.messageLimit > channelResponse.messages.size) {
+            if (request.messagesLimit() > channelResponse.messages.size) {
                 if (request.isFilteringNewerMessages()) {
                     mutableState._endOfNewerMessages.value = true
                 } else {
