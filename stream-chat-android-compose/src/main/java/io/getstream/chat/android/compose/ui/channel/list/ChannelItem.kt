@@ -82,13 +82,14 @@ internal fun DefaultChannelItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(
+                    vertical = ChatTheme.dimens.channelItemVerticalPadding,
+                    horizontal = ChatTheme.dimens.channelItemHorizontalPadding
+                ),
             verticalAlignment = CenterVertically,
         ) {
             ChannelAvatar(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .size(40.dp),
+                modifier = Modifier.size(40.dp),
                 channel = channel,
                 currentUser = currentUser
             )
@@ -128,7 +129,7 @@ internal fun DefaultChannelItem(
             if (lastMessage != null) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                        .padding(start = 8.dp)
                         .wrapContentHeight()
                         .align(Bottom),
                     horizontalAlignment = Alignment.End
