@@ -66,16 +66,55 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return keys.contains(Pagination.LESS_THAN.toString()) || keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
 
+    /**
+     * Returns offset of watchers for a requested channel.
+     */
+    public fun watchersOffset(): Int {
+        return watchers[KEY_OFFSET] as? Int ?: 0
+    }
+
+    /**
+     * Returns offset of members for a requested channel.
+     */
+    public fun membersOffset(): Int {
+        return watchers[KEY_OFFSET] as? Int ?: 0
+    }
+
+    /**
+     * Returns limit of messages for a requested channel.
+     */
     public fun messagesLimit(): Int {
         return messages[KEY_LIMIT] as? Int ?: 0
     }
 
-    public fun pagination(): Pagination? {
+    /**
+     * Returns limit of watchers for a requested channel.
+     */
+    public fun watchersLimit(): Int {
+        return watchers[KEY_LIMIT] as? Int ?: 0
+    }
+
+    /**
+     * Returns limit of members for a requested channel.
+     */
+    public fun membersLimit(): Int {
+        return messages[KEY_LIMIT] as? Int ?: 0
+    }
+
+    /**
+     * Returns a pair value of [Pagination] and id of message for this pagination. Can be absent.
+     */
+    public fun pagination(): Pair<Pagination, String>? {
         if (messages.isEmpty()) {
             return null
         }
         val keys = messages.keys
-        return Pagination.values().firstOrNull { keys.contains(it.toString()) }
+        val pagination = Pagination.values().firstOrNull { keys.contains(it.toString()) }
+        return if (pagination != null) {
+            pagination to (messages[pagination.toString()] as? String ?: "")
+        } else {
+            null
+        }
     }
 
     private companion object {

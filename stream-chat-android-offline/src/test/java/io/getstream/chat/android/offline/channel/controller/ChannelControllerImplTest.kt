@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.randomString
@@ -32,7 +33,7 @@ internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     override fun setup() {
         super.setup()
-        channelController = ChannelController(channelType, channelId, clientMock, chatDomainImpl)
+        channelController = ChannelController(ChannelMutableState(channelType, channelId, chatDomainImpl.scope, chatDomainImpl.user), clientMock, chatDomainImpl)
     }
 
     @Test
