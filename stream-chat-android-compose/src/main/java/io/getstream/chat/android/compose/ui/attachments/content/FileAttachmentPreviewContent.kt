@@ -53,7 +53,7 @@ public fun FileAttachmentPreviewContent(
                 border = BorderStroke(1.dp, ChatTheme.colors.borders)
             ) {
                 Row(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                         .padding(vertical = 8.dp, horizontal = 8.dp),
