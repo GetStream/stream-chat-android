@@ -515,6 +515,10 @@ public final class io/getstream/chat/android/compose/ui/common/InputFieldKt {
 	public static final fun InputField-PfoAEA0 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ILandroidx/compose/foundation/BorderStroke;FLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/common/LoadMoreHandlerKt {
+	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/common/LoadingFooterKt {
 	public static final fun LoadingFooter (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
