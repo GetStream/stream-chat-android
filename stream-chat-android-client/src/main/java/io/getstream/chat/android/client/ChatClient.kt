@@ -22,13 +22,12 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.call.doOnResult
 import io.getstream.chat.android.client.call.doOnStart
-import io.getstream.chat.android.client.call.flatMap
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
+import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
@@ -119,7 +118,7 @@ public class ChatClient internal constructor(
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
-    private val scope: CoroutineScope,
+    internal val scope: CoroutineScope,
     private val appContext: Context,
     @property:InternalStreamChatApi
     @property:ExperimentalStreamChatApi
@@ -990,14 +989,14 @@ public class ChatClient internal constructor(
         channelId: String,
         request: QueryChannelRequest,
     ): Call<Channel> =
-        precondition { onQueryChannelPrecondition(channelType, channelId, request) }
-            .flatMap { api.queryChannel(channelType, channelId, request) }
+        api.queryChannel(channelType, channelId, request)
             .doOnStart(scope) {
                 plugins.forEach { it.onQueryChannelRequest(channelType, channelId, request) }
             }
             .doOnResult(scope) { result ->
                 plugins.forEach { it.onQueryChannelResult(result, channelType, channelId, request) }
             }
+            .precondition { onQueryChannelPrecondition(channelType, channelId, request) }
 
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> =
@@ -1577,20 +1576,22 @@ public class ChatClient internal constructor(
         return "$header.$payload.$devSignature"
     }
 
-    private fun precondition(preconditionCheck: suspend Plugin.() -> Result<Unit>): Call<Unit> = CoroutineCall(scope) {
-        plugins.fold(Result.success(Unit)) { result, plugin ->
-            if (result.isError) {
-                result
-            } else {
-                val preconditionResult = preconditionCheck(plugin)
-                if (preconditionResult.isError) {
-                    preconditionResult
-                } else {
+    @ExperimentalStreamChatApi
+    internal fun <T : Any> Call<T>.precondition(preconditionCheck: suspend Plugin.() -> Result<Unit>): Call<T> =
+        withPrecondition(scope) {
+            plugins.fold(Result.success(Unit)) { result, plugin ->
+                if (result.isError) {
                     result
+                } else {
+                    val preconditionResult = preconditionCheck(plugin)
+                    if (preconditionResult.isError) {
+                        preconditionResult
+                    } else {
+                        result
+                    }
                 }
             }
         }
-    }
 
     /**
      * Builder to initialize the singleton [ChatClient] instance and configure its parameters.
