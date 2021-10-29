@@ -11,12 +11,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Attachment
@@ -141,7 +139,7 @@ public fun MessageComposer(
             Row(
                 Modifier
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
 
                 if (shouldShowIntegrations && activeAction !is Edit) {
@@ -162,7 +160,7 @@ public fun MessageComposer(
                     enabled = isInputValid,
                     content = {
                         Icon(
-                            imageVector = Icons.Default.Send,
+                            painter = painterResource(id = R.drawable.stream_compose_ic_send),
                             contentDescription = stringResource(id = R.string.stream_compose_send_message),
                             tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
                         )
