@@ -1,9 +1,13 @@
 package io.getstream.chat.android.compose.ui.common.avatar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,24 +23,36 @@ import io.getstream.chat.android.compose.ui.util.initialsGradient
  * @param initials The initials to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
+ * @param onClick The handler when the user clicks on the avatar.
  */
 @Composable
 public fun InitialsAvatar(
     initials: String,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
+    onClick: (() -> Unit)? = null,
 ) {
+    val clickableModifier: Modifier = if (onClick != null) {
+        modifier.clickable(
+            onClick = onClick,
+            indication = rememberRipple(bounded = false),
+            interactionSource = remember { MutableInteractionSource() }
+        )
+    } else {
+        modifier
+    }
+
     val initialsGradient = initialsGradient(initials = initials)
 
     Box(
-        modifier = modifier
+        modifier = clickableModifier
             .clip(shape)
             .background(brush = initialsGradient)
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = initials,
-            style = ChatTheme.typography.title1,
+            style = ChatTheme.typography.title3Bold,
             color = Color.White
         )
     }
