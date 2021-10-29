@@ -26,11 +26,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -38,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -118,6 +114,7 @@ public fun AttachmentsPicker(
         ) {
             Column {
                 AttachmentPickerOptions(
+                    attachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
@@ -284,6 +281,7 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
  */
 @Composable
 private fun AttachmentPickerOptions(
+    attachmentsPickerMode: AttachmentsPickerMode,
     hasPickedImages: Boolean,
     hasPickedFiles: Boolean,
     onOptionClick: (AttachmentsPickerMode) -> Unit,
@@ -303,9 +301,13 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedFiles,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Image,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_images_option),
-                        tint = if (!hasPickedFiles) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = when {
+                            attachmentsPickerMode == Images -> ChatTheme.colors.primaryAccent
+                            hasPickedFiles -> ChatTheme.colors.disabled
+                            else -> ChatTheme.colors.textLowEmphasis
+                        },
                     )
                 },
                 onClick = { onOptionClick(Images) }
@@ -315,9 +317,13 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedImages,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Folder,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_files_option),
-                        tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = when {
+                            attachmentsPickerMode == Files -> ChatTheme.colors.primaryAccent
+                            hasPickedImages -> ChatTheme.colors.disabled
+                            else -> ChatTheme.colors.textLowEmphasis
+                        },
                     )
                 },
                 onClick = { onOptionClick(Files) }
@@ -327,9 +333,9 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedFiles && !hasPickedImages,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Camera,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled
                     )
                 },
                 onClick = { onOptionClick(MediaCapture) }
@@ -344,9 +350,9 @@ private fun AttachmentPickerOptions(
             content = {
                 Icon(
                     modifier = Modifier.weight(1f),
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
                 )
             }
         )
