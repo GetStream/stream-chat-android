@@ -1,4 +1,4 @@
-name: Download translations from Localazy
+name: Download translations from Localazy Test
 on:
   push:
     branches:
