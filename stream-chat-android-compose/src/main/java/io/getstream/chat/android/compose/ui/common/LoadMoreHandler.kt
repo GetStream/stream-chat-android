@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 /**
- * Handler to be used with [LazyColumn] tom implement infinite scroll.
+ * Handler to be used with [LazyColumn] to implement infinite scroll.
  *
  * @param listState The state of the list used to control scrolling.
  * @param loadMoreThreshold The number if items before the end of the list.
@@ -37,7 +37,7 @@ public fun LoadMoreHandler(
     LaunchedEffect(shouldLoadMore) {
         snapshotFlow { shouldLoadMore.value }
             .distinctUntilChanged()
-            .filter { it }
+            .filter { shouldLoad -> shouldLoad }
             .collect {
                 loadMore()
             }
