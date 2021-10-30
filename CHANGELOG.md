@@ -60,6 +60,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
+  Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
 
 ### ⚠️ Changed
 
