@@ -159,6 +159,7 @@ public fun ChannelInfo(
                     text = LocalContext.current.resources.getQuantityString(
                         R.plurals.stream_compose_channel_members,
                         channelMembers.size,
+                        channelMembers.size,
                         onlineMembers
                     ),
                     style = ChatTheme.typography.footnoteBold,

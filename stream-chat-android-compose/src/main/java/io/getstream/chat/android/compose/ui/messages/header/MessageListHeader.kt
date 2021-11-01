@@ -138,6 +138,7 @@ public fun DefaultMessageHeaderTitle(
         Normal -> LocalContext.current.resources.getQuantityString(
             R.plurals.stream_compose_channel_members,
             channel.memberCount,
+            channel.memberCount,
             channel.members.count { it.user.online }
         )
         is Thread -> stringResource(id = R.string.stream_compose_thread_subtitle, channel.getDisplayName())
