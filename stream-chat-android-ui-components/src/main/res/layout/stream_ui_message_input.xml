@@ -59,8 +59,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/attachmentsButton"
-        android:layout_width="@dimen/stream_ui_message_input_button_size"
-        android:layout_height="@dimen/stream_ui_message_input_button_size"
+        android:layout_width="@dimen/stream_ui_attachment_button_size"
+        android:layout_height="@dimen/stream_ui_attachment_button_size"
         android:layout_marginBottom="12dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
@@ -71,8 +71,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/commandsButton"
-        android:layout_width="@dimen/stream_ui_message_input_button_size"
-        android:layout_height="@dimen/stream_ui_message_input_button_size"
+        android:layout_width="@dimen/stream_ui_command_button_size"
+        android:layout_height="@dimen/stream_ui_command_button_size"
         android:layout_marginBottom="12dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
@@ -106,8 +106,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/sendMessageButtonDisabled"
-            android:layout_width="@dimen/stream_ui_message_input_button_size"
-            android:layout_height="@dimen/stream_ui_message_input_button_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_filled_right_arrow"
             tools:visibility="gone"
@@ -115,8 +115,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/sendMessageButtonEnabled"
-            android:layout_width="@dimen/stream_ui_message_input_button_size"
-            android:layout_height="@dimen/stream_ui_message_input_button_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_filled_up_arrow"
             tools:visibility="visible"
