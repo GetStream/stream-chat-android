@@ -522,7 +522,7 @@ internal class ChatDomainImpl internal constructor(
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController = ChannelController(
                 mutableState = offlinePlugin.state.channel(channelType, channelId).toMutableState(),
-                queryChannelLogic = offlinePlugin.logic.queryChannel(channelType, channelId),
+                channelLogic = offlinePlugin.logic.channel(channelType, channelId),
                 client = client,
                 domainImpl = this,
             )

@@ -984,6 +984,14 @@ public class ChatClient internal constructor(
         queryChannelsPostponeHelper.queryChannels(request)
 
     @CheckResult
+    @InternalStreamChatApi
+    public fun queryChannelInternal(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
+
+    @CheckResult
     public fun queryChannel(
         channelType: String,
         channelId: String,
