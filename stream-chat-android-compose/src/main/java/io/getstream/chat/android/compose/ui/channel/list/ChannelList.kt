@@ -13,9 +13,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.common.EmptyView
-import io.getstream.chat.android.compose.ui.common.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.common.LoadingFooter
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel

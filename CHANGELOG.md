@@ -59,6 +59,7 @@
 - Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
 
