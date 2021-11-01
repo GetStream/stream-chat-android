@@ -78,11 +78,6 @@ public fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
 }
 
 @InternalStreamChatApi
-public fun <T : Any, K : Any> Call<T>.flatMap(mapper: (T) -> Call<K>): Call<K> {
-    return FlatMapCall(this, mapper)
-}
-
-@InternalStreamChatApi
 public fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
     return ZipCall(this, call)
 }
