@@ -1,7 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.composer.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -9,19 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -32,20 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import com.getstream.sdk.chat.utils.MediaStringUtil
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.list.Edit
 import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.common.InputField
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.list.QuotedMessage
@@ -177,140 +160,7 @@ private fun MessageInputAttachments(
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (attachments.all { it.type == "image" }) {
-        MessageInputImageAttachments(attachments, onAttachmentRemoved, modifier)
-    } else {
-        MessageInputFileAttachments(attachments, onAttachmentRemoved, modifier)
-    }
-}
+    val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
 
-/**
- * UI for currently selected image attachments, within the [MessageInput].
- *
- * @param attachments Selected attachments.
- * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
- * @param modifier Modifier for styling.
- */
-@Composable
-internal fun MessageInputImageAttachments(
-    attachments: List<Attachment>,
-    onAttachmentRemoved: (Attachment) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyRow(
-        modifier = modifier.clip(RoundedCornerShape(16.dp)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
-    ) {
-        items(attachments) { image ->
-            val painter = rememberImagePainter(data = image.upload ?: image.imagePreviewUrl)
-            Box(
-                modifier = Modifier
-                    .size(95.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = { onAttachmentRemoved(image) }
-                        ),
-                    imageVector = Icons.Default.Cancel,
-                    contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                    tint = ChatTheme.colors.textLowEmphasis
-                )
-            }
-        }
-    }
-}
-
-/**
- * UI for currently selected file attachments, within the [MessageInput].
- *
- * @param attachments Selected attachments.
- * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
- * @param modifier Modifier for styling.
- */
-@Composable
-internal fun MessageInputFileAttachments(
-    attachments: List<Attachment>,
-    onAttachmentRemoved: (Attachment) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .heightIn(max = 300.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top)
-    ) {
-        items(attachments) { attachment ->
-            Surface(
-                modifier = Modifier.padding(1.dp),
-                color = ChatTheme.colors.appBackground,
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, ChatTheme.colors.borders)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(vertical = 8.dp, horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FileAttachmentImage(attachment = attachment)
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .padding(start = 16.dp),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = attachment.title ?: attachment.name ?: "",
-                            style = ChatTheme.typography.bodyBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = ChatTheme.colors.textHighEmphasis
-                        )
-
-                        val fileSize = attachment.upload?.length()?.let { length ->
-                            MediaStringUtil.convertFileSizeByteCount(length)
-                        }
-                        if (fileSize != null) {
-                            Text(
-                                text = fileSize,
-                                style = ChatTheme.typography.footnote,
-                                color = ChatTheme.colors.textLowEmphasis
-                            )
-                        }
-                    }
-
-                    Icon(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() },
-                                onClick = { onAttachmentRemoved(attachment) }
-                            ),
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                        tint = ChatTheme.colors.textLowEmphasis
-                    )
-                }
-            }
-        }
-    }
+    previewFactory?.previewContent?.invoke(modifier, attachments, onAttachmentRemoved)
 }

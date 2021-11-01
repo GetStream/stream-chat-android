@@ -10,6 +10,8 @@ import io.getstream.chat.android.compose.ui.util.hasLink
  * An [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to
  * build the UI for the message.
  *
+ * Has no "preview content", given that this attachment only exists after being sent.
+ *
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  */
 @Suppress("FunctionName")
@@ -17,6 +19,7 @@ public fun LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
+    previewContent = @Composable { _, _, _ -> },
     content = @Composable { modifier, state ->
         LinkAttachmentContent(
             modifier = modifier,

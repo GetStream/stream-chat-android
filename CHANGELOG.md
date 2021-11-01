@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
 - You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
@@ -69,10 +70,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the icon set and polished the UI for various Messages features
 
 ### ✅ Added
+- Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
 
 ### ⚠️ Changed
+- The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
 
 ### ❌ Removed
 
@@ -105,7 +109,9 @@
 - Improved Korean 🇰🇷 translations.
 
 ### ✅ Added
-- Adding ChatDomain.connectionState from with 3 states: CONNECTED, CONNECTING and OFFLINE. Also changing the exibition of disconnected state in ChannelListHeaderView and MessageListHeaderView. Please use this instead of ChatDomain.online
+- Added `ChatDomain.connectionState` that exposes 3 states: `CONNECTED`, `CONNECTING` and `OFFLINE`.
+  `ChannelListHeaderView` and `MessageListHeaderView` show different title based on newly introduced connection state.
+  `ChatDomain.online` is now deprecated - use `ChatDomain.connectionState` instead.
 
 ## stream-chat-android-client
 ### ⬆️ Improved

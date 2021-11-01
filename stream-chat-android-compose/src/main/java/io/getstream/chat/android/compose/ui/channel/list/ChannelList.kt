@@ -2,7 +2,7 @@ package io.getstream.chat.android.compose.ui.channel.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.common.EmptyView
 import io.getstream.chat.android.compose.ui.common.LoadingFooter
@@ -154,23 +155,30 @@ public fun Channels(
     itemContent: @Composable (Channel) -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channels) = channelsState
-    val state = rememberLazyListState()
+    val listState = rememberLazyListState()
 
     LazyColumn(
         modifier = modifier,
-        state = state,
+        state = listState,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        itemsIndexed(channels) { index, item ->
+        items(
+            items = channels,
+            key = Channel::cid
+        ) { item ->
             itemContent(item)
-
-            if (!endOfChannels && channels.isNotEmpty() && state.isScrollInProgress && index == channels.lastIndex) {
-                onLastItemReached()
-            }
         }
 
         if (isLoadingMore) {
-            item { LoadingFooter(modifier = Modifier.fillMaxWidth()) }
+            item {
+                LoadingFooter(modifier = Modifier.fillMaxWidth())
+            }
+        }
+    }
+
+    if (!endOfChannels && channels.isNotEmpty()) {
+        LoadMoreHandler(listState) {
+            onLastItemReached()
         }
     }
 }
