@@ -165,6 +165,8 @@ public fun MessageList(
  * Finally, it handles the scrolling behavior, such as when a new message arrives, be it ours or from
  * someone else.
  *
+ * This is a change in the Compose module.
+ *
  * @param messagesState Current state of messages, like messages to display, if we're loading more
  * and if we've reached the end of the list.
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.

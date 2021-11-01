@@ -109,3 +109,7 @@ public fun <T : Any> Call<T>.enqueue(
         }
     }
 }
+
+internal fun newCodeInTheCoreModule() {
+    println("Hello there!")
+}

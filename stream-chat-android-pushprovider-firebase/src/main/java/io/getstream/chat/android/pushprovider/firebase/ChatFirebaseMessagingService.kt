@@ -5,6 +5,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.logger.ChatLogger
 
+/**
+ * Firebase push service
+ */
 internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
     private val logger = ChatLogger.get("ChatFirebaseMessagingService")
 

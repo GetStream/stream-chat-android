@@ -3,7 +3,6 @@
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
       <name>coil.ImageLoader</name>
-      <name>coil.load</name>
     </excluded-names>
   </component>
 </project>

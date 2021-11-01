@@ -32,6 +32,10 @@ artifacts {
 group = PUBLISH_GROUP_ID
 version = PUBLISH_VERSION
 
+/**
+ * Something in the publishing scripts
+ */
+
 afterEvaluate {
     publishing {
         publications {

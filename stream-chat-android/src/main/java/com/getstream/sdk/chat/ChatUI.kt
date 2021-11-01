@@ -26,6 +26,8 @@ import io.getstream.chat.android.ui.common.BuildConfig
  * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
  * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
  *
+ * Line change in the old UI module.
+ *
  * @see ChatMarkdown
  * @see UrlSigner
  * @see ChatStrings
