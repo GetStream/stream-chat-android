@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 - Fixed bug when showing messages with pending attachements that cause loading state to be not shown in some cases.
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
 
@@ -69,10 +70,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the icon set and polished the UI for various Messages features
 
 ### ✅ Added
+- Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
 
 ### ⚠️ Changed
+- The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
 
 ### ❌ Removed
 
