@@ -91,8 +91,7 @@ internal abstract class MessageDao {
         limit: Int = 100,
         dateFilter: Date,
     ): List<MessageEntity>
-
-    // @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit")
+    
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
