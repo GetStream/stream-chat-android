@@ -11,6 +11,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved logs for errors in the SDK.
 
 ### ✅ Added
 
