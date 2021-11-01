@@ -29,6 +29,7 @@
 
     <!-- Errors -->
     <string name="stream_ui_message_input_error_file_size">ファイルが大きすぎます</string>
-    <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（％d)字を超えました"</string>
+    <string name="stream_ui_message_input_error_max_length">"最大メッセージ長（%1$d)字を超えました"</string>
     <string name="stream_ui_message_input_error_file_large_size">ファイルが大きすぎます- 最大%dMB。</string>
+    <string name="stream_ui_message_input_error_max_attachments_count_exceeded">添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません</string>
 </resources>

@@ -121,10 +121,11 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
 
         val expectedReactionsAndOffsetWidth = offsetFromParent + reactionsView.measuredWidth
 
-        return if (expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth)
-            expectedReactionsAndOffsetWidth - rootWidth
-        else
-            MULTIPLE_REACTIONS_OFFSET
+        return when {
+            expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth -> expectedReactionsAndOffsetWidth - rootWidth
+            data.message.hasSingleReaction() -> SINGLE_REACTION_OFFSET
+            else -> MULTIPLE_REACTIONS_OFFSET
+        }
     }
 
     private fun updateOffset(
@@ -134,19 +135,12 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
         dynamicOffset: Int,
     ) {
         reactionsSpace.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            val offset = when {
-                data.message.hasSingleReaction() -> {
-                    SINGLE_REACTION_OFFSET
-                }
-                else -> dynamicOffset
-            }
-
             if (data.isTheirs) {
                 endToEnd = contentView.id
-                marginEnd = offset
+                marginEnd = dynamicOffset
             } else {
                 startToStart = contentView.id
-                marginStart = offset
+                marginStart = dynamicOffset
             }
         }
     }

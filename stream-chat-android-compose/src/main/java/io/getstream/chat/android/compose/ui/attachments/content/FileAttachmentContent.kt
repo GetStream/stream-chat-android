@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -132,10 +130,8 @@ public fun FileAttachmentItem(attachment: Attachment) {
                             .downloadAttachment(attachment)
                             .enqueue()
                     },
-                imageVector = Icons.Default.CloudDownload,
-                contentDescription = stringResource(
-                    id = R.string.stream_compose_download
-                ),
+                painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+                contentDescription = stringResource(id = R.string.stream_compose_download),
                 tint = ChatTheme.colors.textHighEmphasis
             )
         }

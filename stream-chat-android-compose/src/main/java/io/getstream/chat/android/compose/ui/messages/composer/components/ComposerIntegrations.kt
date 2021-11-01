@@ -3,11 +3,10 @@ package io.getstream.chat.android.compose.ui.messages.composer.components
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Attachment
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -30,7 +29,7 @@ internal fun RowScope.DefaultComposerIntegrations(
             .align(CenterVertically),
         content = {
             Icon(
-                imageVector = Icons.Default.Attachment,
+                painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
                 contentDescription = stringResource(id = R.string.stream_compose_attachments),
                 tint = ChatTheme.colors.textLowEmphasis,
             )

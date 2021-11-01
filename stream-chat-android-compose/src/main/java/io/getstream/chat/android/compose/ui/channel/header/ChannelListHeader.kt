@@ -110,6 +110,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             modifier = size,
             user = currentUser,
             contentDescription = currentUser.name,
+            showOnlineIndicator = false,
             onClick = { onAvatarClick(currentUser) }
         )
     } else {
@@ -164,7 +165,7 @@ internal fun DefaultChannelListHeaderAction(
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(bounded = false, radius = 24.dp),
+        indication = rememberRipple(bounded = false),
         color = ChatTheme.colors.primaryAccent,
     ) {
         Icon(
