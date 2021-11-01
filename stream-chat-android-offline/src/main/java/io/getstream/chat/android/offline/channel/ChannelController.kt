@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelLogic
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.inOffsetWith
 import io.getstream.chat.android.offline.extensions.isPermanent
@@ -106,6 +107,7 @@ import kotlin.math.max
 @OptIn(ExperimentalStreamChatApi::class)
 public class ChannelController internal constructor(
     private val mutableState: ChannelMutableState,
+    private val queryChannelLogic: QueryChannelLogic,
     private val client: ChatClient,
     @VisibleForTesting
     internal val domainImpl: ChatDomainImpl,
@@ -409,17 +411,11 @@ public class ChannelController internal constructor(
     }
 
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
-        val loader = when {
-            request.isFilteringNewerMessages() -> mutableState._loadingNewerMessages
-            request.filteringOlderMessages() -> mutableState._loadingOlderMessages
-            else -> mutableState._loading
+        val preconditionResult = queryChannelLogic.onQueryChannelPrecondition(channelType, channelId, request)
+        if (preconditionResult.isError) {
+            return Result.error(preconditionResult.error())
         }
-        if (loader.value) {
-            logger.logI("Another request to load messages is in progress. Ignoring this request.")
-            return Result(
-                ChatError("Another request to load messages is in progress. Ignoring this request.")
-            )
-        }
+        val loader = queryChannelLogic.loadingStateByRequest(request)
         loader.value = true
         // first we load the data from room and update the messages and channel flow
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(request) }
