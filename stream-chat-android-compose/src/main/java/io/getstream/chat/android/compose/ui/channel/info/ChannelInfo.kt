@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -84,21 +85,21 @@ public fun ChannelInfo(
 
     val channelOptions = mutableListOf(
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_view_info),
+            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Person,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_leave_group),
+            title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.PersonRemove,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = LeaveGroup(selectedChannel)
         ),
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_cancel),
+            title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Cancel,
             iconColor = ChatTheme.colors.textLowEmphasis,
@@ -110,7 +111,7 @@ public fun ChannelInfo(
         channelOptions.add(
             2,
             ChannelOption(
-                title = stringResource(id = R.string.stream_compose_delete_conversation),
+                title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
                 icon = Icons.Default.Delete,
                 iconColor = ChatTheme.colors.errorAccent,
@@ -155,8 +156,8 @@ public fun ChannelInfo(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = stringResource(
-                        id = R.string.stream_compose_channel_members,
+                    text = LocalContext.current.resources.getQuantityString(
+                        R.plurals.stream_compose_channel_members,
                         channelMembers.size,
                         onlineMembers
                     ),
