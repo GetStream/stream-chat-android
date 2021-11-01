@@ -61,10 +61,10 @@
         android:id="@+id/attachmentsButton"
         android:layout_width="@dimen/stream_ui_attachment_button_size"
         android:layout_height="@dimen/stream_ui_attachment_button_size"
-        android:layout_marginBottom="12dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/stream_ui_ic_attach"
+        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -73,11 +73,11 @@
         android:id="@+id/commandsButton"
         android:layout_width="@dimen/stream_ui_command_button_size"
         android:layout_height="@dimen/stream_ui_command_button_size"
-        android:layout_marginBottom="12dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/stream_ui_ic_command"
         android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintStart_toEndOf="@id/attachmentsButton"
         tools:visibility="visible"
@@ -98,8 +98,9 @@
     <FrameLayout
         android:id="@+id/sendButtonContainer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintTop_toTopOf="@id/messageInputFieldView"
         app:layout_constraintBottom_toBottomOf="@id/messageInputFieldView"
         app:layout_constraintEnd_toEndOf="parent"
         >
@@ -110,6 +111,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_filled_right_arrow"
+            android:layout_gravity="center_vertical"
             tools:visibility="gone"
             />
 
@@ -119,6 +121,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_filled_up_arrow"
+            android:layout_gravity="center_vertical"
             tools:visibility="visible"
             />
 
