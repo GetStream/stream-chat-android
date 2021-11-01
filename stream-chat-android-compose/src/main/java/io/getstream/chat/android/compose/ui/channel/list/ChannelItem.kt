@@ -89,7 +89,7 @@ internal fun DefaultChannelItem(
             verticalAlignment = CenterVertically,
         ) {
             ChannelAvatar(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
                 channel = channel,
                 currentUser = currentUser
             )

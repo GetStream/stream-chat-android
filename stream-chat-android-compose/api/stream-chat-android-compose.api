@@ -796,12 +796,14 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
 	public final fun component2-D9Ej5fM ()F
-	public final fun copy-YgX7TsA (FF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-YgX7TsA$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun component3-D9Ej5fM ()F
+	public final fun copy-2z7ARbQ (FFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-2z7ARbQ$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelAvatarSize-D9Ej5fM ()F
 	public final fun getChannelItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getChannelItemVerticalPadding-D9Ej5fM ()F
 	public fun hashCode ()I
