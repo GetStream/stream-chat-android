@@ -287,6 +287,7 @@ public class ChannelController internal constructor(
     }
 
     /** Delete the channel action. Fires an API request. */
+    //Take a look here
     internal suspend fun delete(): Result<Unit> = channelClient.delete().await().toUnitResult()
 
     internal suspend fun watch(limit: Int = 30) {
