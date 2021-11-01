@@ -60,7 +60,7 @@ internal abstract class MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insertReactions(reactions: List<ReactionEntity>)
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY createdAt ASC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelNewerThan(
         cid: String,
@@ -68,7 +68,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY createdAt ASC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelEqualOrNewerThan(
         cid: String,
@@ -76,7 +76,7 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt < :dateFilter || createdLocallyAt < :dateFilter) ORDER BY createdAt DESC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt < :dateFilter || createdLocallyAt < :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelOlderThan(
         cid: String,
@@ -84,14 +84,14 @@ internal abstract class MessageDao {
         dateFilter: Date,
     ): List<MessageEntity>
 
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt <= :dateFilter || createdLocallyAt <= :dateFilter) ORDER BY createdAt DESC LIMIT :limit")
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND (createdAt <= :dateFilter || createdLocallyAt <= :dateFilter) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannelEqualOrOlderThan(
         cid: String,
         limit: Int = 100,
         dateFilter: Date,
     ): List<MessageEntity>
-    
+
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END DESC LIMIT :limit")
     @Transaction
     abstract suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
@@ -120,7 +120,7 @@ internal abstract class MessageDao {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY createdAt ASC")
+    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
     @Transaction
     protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
 }
