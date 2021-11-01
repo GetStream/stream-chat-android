@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelLogic
 import io.getstream.chat.android.offline.experimental.querychannels.logic.QueryChannelsLogic
@@ -21,7 +22,7 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
-
+    private val channels: ConcurrentHashMap<Pair<String, String>, QueryChannelLogic> = ConcurrentHashMap()
     fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             QueryChannelsLogic(stateRegistry.queryChannels(filter, sort).toMutableState(), chatDomain)
@@ -31,9 +32,14 @@ internal class LogicRegistry internal constructor(private val stateRegistry: Sta
     fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
-    fun queryChannel(): QueryChannelLogic = QueryChannelLogic(chatDomain)
+    fun queryChannel(channelType: String, channelId: String): QueryChannelLogic {
+        return channels.getOrPut(channelType to channelId) {
+            QueryChannelLogic(stateRegistry.channel(channelType, channelId).toMutableState(), chatDomain)
+        }
+    }
 
     fun clear() {
         queryChannels.clear()
+        channels.clear()
     }
 }
