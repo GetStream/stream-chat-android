@@ -39,7 +39,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param modifier Modifier for styling.
  * @param title The title to display, when the network is available.
  * @param currentUser The currently logged in user, to load its image in the avatar.
- * @param connectionState A flag that governs if we show the title or the network loading view.
+ * @param isNetworkAvailable A flag that governs if we show the title or the network loading view.
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.

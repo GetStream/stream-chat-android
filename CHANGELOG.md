@@ -67,6 +67,8 @@
 ### ❌ Removed
 
 ## stream-chat-android-compose
+- Added localization support for the components related the channel list.
+
 ### 🐞 Fixed
 
 ### ⬆️ Improved
