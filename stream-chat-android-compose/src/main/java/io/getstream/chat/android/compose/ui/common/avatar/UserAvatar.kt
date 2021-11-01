@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -22,7 +24,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  *
  * Based on the state within the [User], we either show an image or their initials.
  *
- * @param user The user whose avatars we want to show.
+ * @param user The user whose avatar we want to show.
  * @param modifier Modifier for styling.
  * @param shape The shape of the avatar.
  * @param contentDescription The content description of the avatar.
@@ -44,11 +46,11 @@ public fun UserAvatar(
     },
     onClick: (() -> Unit)? = null,
 ) {
-    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { modifier ->
+    val avatarContent: (@Composable (modifier: Modifier) -> Unit) = @Composable { innerModifier ->
         if (user.image.isNotBlank()) {
             val authorImage = rememberImagePainter(data = user.image)
             Avatar(
-                modifier = modifier,
+                modifier = innerModifier,
                 shape = shape,
                 painter = authorImage,
                 contentDescription = contentDescription,
@@ -56,20 +58,23 @@ public fun UserAvatar(
             )
         } else {
             InitialsAvatar(
-                modifier = modifier,
+                modifier = innerModifier,
                 initials = user.initials,
-                shape = shape
+                shape = shape,
+                onClick = onClick
             )
         }
     }
 
     if (showOnlineIndicator && user.online) {
+        // Apply modifier to the outer box
         Box(modifier = modifier) {
-            avatarContent(Modifier.fillMaxSize())
+            avatarContent(modifier = Modifier.fillMaxSize())
 
             onlineIndicator()
         }
     } else {
+        // Apply modifier to the avatar itself
         avatarContent(modifier = modifier)
     }
 }
@@ -92,10 +97,41 @@ public fun OnlineIndicator(modifier: Modifier = Modifier) {
 
 /**
  * Represents the position of [OnlineIndicator] in [UserAvatar].
+ *
+ * @param alignment The standard Compose [Alignment] that corresponds to the [OnlineIndicator] alignment.
  */
 public enum class OnlineIndicatorAlignment(public val alignment: Alignment) {
     TopEnd(Alignment.TopEnd),
     BottomEnd(Alignment.BottomEnd),
     TopStart(Alignment.TopStart),
     BottomStart(Alignment.BottomStart)
+}
+
+@Preview
+@Composable
+private fun UserWithImageAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithImage)
+}
+
+@Preview
+@Composable
+private fun UserWithOnlineStatusAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithOnlineStatus)
+}
+
+@Preview
+@Composable
+private fun UserWithoutImageAvatarPreview() {
+    buildUserAvatarPreview(PreviewUserData.userWithoutImage)
+}
+
+@Composable
+private fun buildUserAvatarPreview(user: User) {
+    ChatTheme {
+        UserAvatar(
+            modifier = Modifier.size(36.dp),
+            user = user,
+            showOnlineIndicator = true,
+        )
+    }
 }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -121,29 +122,26 @@ public class ChannelListViewModel(
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
     private suspend fun observeChannels(controller: QueryChannelsController) {
-        controller.loadingMore
-            .combine(controller.channelsState) { isLoadingMore, channelsState ->
-                isLoadingMore to channelsState
-            }.combine(controller.endOfChannels) { (isLoadingMore, state), endOfChannels ->
-                when (state) {
-                    QueryChannelsController.ChannelsState.NoQueryActive,
-                    QueryChannelsController.ChannelsState.Loading,
-                    ->
-                        channelsState.copy(isLoading = true)
-                    QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
+        controller.channelsState.map { state ->
+            when (state) {
+                QueryChannelsController.ChannelsState.NoQueryActive,
+                QueryChannelsController.ChannelsState.Loading,
+                ->
+                    channelsState.copy(isLoading = true)
+                QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
+                    isLoading = false,
+                    channels = emptyList()
+                )
+                is QueryChannelsController.ChannelsState.Result -> {
+                    channelsState.copy(
                         isLoading = false,
-                        channels = emptyList()
+                        channels = state.channels,
+                        isLoadingMore = false,
+                        endOfChannels = controller.endOfChannels.value
                     )
-                    is QueryChannelsController.ChannelsState.Result -> {
-                        channelsState.copy(
-                            isLoading = false,
-                            channels = state.channels,
-                            isLoadingMore = isLoadingMore,
-                            endOfChannels = endOfChannels
-                        )
-                    }
                 }
-            }.collectLatest { newState -> channelsState = newState }
+            }
+        }.collectLatest { newState -> channelsState = newState }
     }
 
     /**
@@ -200,6 +198,7 @@ public class ChannelListViewModel(
             currentConfig.filters
         }
 
+        channelsState = channelsState.copy(isLoadingMore = true)
         chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
     }
 

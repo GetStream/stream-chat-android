@@ -11,7 +11,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -35,7 +34,7 @@ public fun Avatar(
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(
             onClick = onClick,
-            indication = rememberRipple(bounded = false, radius = 24.dp),
+            indication = rememberRipple(bounded = false),
             interactionSource = remember { MutableInteractionSource() }
         )
     } else {
