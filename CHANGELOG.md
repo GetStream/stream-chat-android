@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
 
