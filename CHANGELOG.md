@@ -59,9 +59,10 @@
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 translation related to the flagging.
+- 🚨 Breaking change: Now the button for sending message in MessageInputView sizes itself accordingly with the drawable used, instead of having a predefined size (32dp)
 
 ### ✅ Added
-
+ 
 ### ⚠️ Changed
 
 ### ❌ Removed
