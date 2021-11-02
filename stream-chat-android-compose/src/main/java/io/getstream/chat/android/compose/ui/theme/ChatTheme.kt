@@ -22,6 +22,9 @@ import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 private val LocalColors = compositionLocalOf<StreamColors> {
     error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalDimens = compositionLocalOf<StreamDimens> {
+    error("No dimens provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalTypography = compositionLocalOf<StreamTypography> {
     error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -45,6 +48,7 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
+ * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param attachmentFactories Attachment factories that we provide.
@@ -56,6 +60,7 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
+    dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
@@ -69,6 +74,7 @@ public fun ChatTheme(
 
     CompositionLocalProvider(
         LocalColors provides colors,
+        LocalDimens provides dimens,
         LocalTypography provides typography,
         LocalShapes provides shapes,
         LocalAttachmentFactories provides attachmentFactories,
@@ -90,6 +96,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalColors.current
+
+    public val dimens: StreamDimens
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDimens.current
 
     public val typography: StreamTypography
         @Composable

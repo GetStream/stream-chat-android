@@ -911,7 +911,9 @@ public class Android {
                                 genericDrawable,
                                 textStyleGeneric,
                                 genericDrawable,
-                                10
+                                10,
+                                genericDrawable,
+                                genericDrawable
                         )
 
             );

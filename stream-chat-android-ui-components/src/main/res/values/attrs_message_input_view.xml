@@ -40,6 +40,8 @@
         </attr>
         <attr name="streamUiMessageInputDividerBackgroundDrawable" format="reference" />
         <attr name="streamUiMessageInputCloseButtonIconDrawable" format="reference" />
+        <attr name="streamUiEditInputModeIcon" format="reference" />
+        <attr name="streamUiReplyInputModeIcon" format="reference" />
 
         <!--Send Button-->
         <!-- {@deprecated Use sendButton icons instead.} -->
