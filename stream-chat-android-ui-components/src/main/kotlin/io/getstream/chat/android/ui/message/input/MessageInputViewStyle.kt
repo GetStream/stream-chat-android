@@ -62,6 +62,8 @@ private const val DEFAULT_ATTACHMENT_MAX_SIZE_MB = 20
  * @property fileCheckboxSelectedDrawable Background for selector of files list in selected state. Default value is [R.drawable.stream_ui_circle_blue].
  * @property fileCheckboxDeselectedDrawable Background for selector of files list in deselected state. Default value is [R.drawable.stream_ui_ic_file_manager].
  * @property maxAttachmentsCount Maximum number of attachments for single message. Cannot by greater than 10. Default value is 10.
+ * @property editInputModeIcon Icon displayed in MessageInputView's top left corner when user edits the message. Default value is [R.drawable.stream_ui_ic_edit]
+ * @property replyInputModeIcon Icon displayed in MessageInputView's top left corner when user replies to the message. Default value is [R.drawable.stream_ui_ic_arrow_curve_left]
  */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -107,6 +109,8 @@ public data class MessageInputViewStyle(
     public val cooldownTimerTextStyle: TextStyle,
     public val cooldownTimerBackgroundDrawable: Drawable,
     public val maxAttachmentsCount: Int,
+    public val editInputModeIcon: Drawable,
+    public val replyInputModeIcon: Drawable,
 ) {
 
     public companion object {
@@ -577,6 +581,12 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiCooldownTimerBackgroundDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_cooldown_badge_background)!!
 
+                val editInputModeIcon = a.getDrawable(R.styleable.MessageInputView_streamUiEditInputModeIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_edit)!!
+
+                val replyInputModeIcon = a.getDrawable(R.styleable.MessageInputView_streamUiReplyInputModeIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left)!!
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -621,6 +631,8 @@ public data class MessageInputViewStyle(
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
                     cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                     maxAttachmentsCount = maxAttachmentsCount,
+                    editInputModeIcon = editInputModeIcon,
+                    replyInputModeIcon = replyInputModeIcon,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
                     .also { style -> style.checkMaxAttachmentsCountRange() }
             }

@@ -39,7 +39,7 @@ public fun EmptyView(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(16.dp))
 
         Text(
-            text = stringResource(id = R.string.stream_compose_empty_state_title),
+            text = stringResource(id = R.string.stream_compose_channel_list_empty_title),
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
             textAlign = TextAlign.Center
@@ -48,7 +48,7 @@ public fun EmptyView(modifier: Modifier = Modifier) {
         Spacer(Modifier.size(8.dp))
 
         Text(
-            text = stringResource(id = R.string.stream_compose_empty_state_message),
+            text = stringResource(id = R.string.stream_compose_channel_list_empty_message),
             style = ChatTheme.typography.body,
             color = ChatTheme.colors.textLowEmphasis,
             textAlign = TextAlign.Center

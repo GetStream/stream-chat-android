@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
  * @param footnoteBold Used for footnote information in certain important items, like the thread reply text, or user
  * info components.
  */
+@Immutable
 public data class StreamTypography(
     public val title1: TextStyle,
     public val title3: TextStyle,

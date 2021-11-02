@@ -292,7 +292,7 @@ private fun BoxScope.MessagesScrollingOption(
         ) {
             Icon(
                 modifier = Modifier.padding(16.dp),
-                painter = painterResource(R.drawable.stream_compose_ic__arrow_down),
+                painter = painterResource(R.drawable.stream_compose_ic_arrow_down),
                 contentDescription = null,
                 tint = ChatTheme.colors.primaryAccent
             )

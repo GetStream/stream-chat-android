@@ -77,7 +77,7 @@ public fun DefaultChannelItem(
         ChannelAvatar(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .size(40.dp),
+                .size(ChatTheme.dimens.channelAvatarSize),
             channel = it,
             currentUser = currentUser
         )
@@ -125,7 +125,10 @@ public fun DefaultChannelItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(
+                    vertical = ChatTheme.dimens.channelItemVerticalPadding,
+                    horizontal = ChatTheme.dimens.channelItemHorizontalPadding
+                ),
             verticalAlignment = CenterVertically,
         ) {
             leadingContent(channel)
