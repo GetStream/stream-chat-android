@@ -149,7 +149,7 @@ public class MessageInputView : ConstraintLayout {
             is InputMode.Reply -> {
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_input_reply)
-                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_arrow_curve_left)
+                binding.inputModeIcon.setImageDrawable(messageInputViewStyle.replyInputModeIcon)
                 binding.messageInputFieldView.onReply(newValue.repliedMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
@@ -157,7 +157,7 @@ public class MessageInputView : ConstraintLayout {
             is InputMode.Edit -> {
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
-                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_edit)
+                binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
                 binding.messageInputFieldView.onEdit(newValue.oldMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
