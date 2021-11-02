@@ -159,30 +159,40 @@ fun ChannelList(
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
 
 ```kotlin
-ChannelList(
-    ..., // State and actions
-    itemContent = { // Customize the channel items
-        val painter = ... // Load appropriate image
+@Composable
+fun CustomChannelListItem() {
+    val user by ... // fetch user from ChatDomain or ViewModel
 
-        Card(modifier = Modifier.padding(2.dp).fillMaxWidth()) {
-            Row(
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Avatar(
-                    modifier = Modifier.padding(end = 6.dp).size(24.dp),
-                    painter = painter
-                )
+    ChannelList(
+        ..., // set up state
+        itemContent = { // Customize the channel items
+            Card(modifier = Modifier
+                .padding(2.dp)
+                .fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ChannelAvatar(
+                        modifier = Modifier.size(40.dp),
+                        channel = it,
+                        currentUser = user
+                    )
 
-                Text(
-                    text = it.id,
-                	style = ChatTheme.typography.bodyBold,
-                	maxLines = 1,
-            	)
-        	}
-    	}
-	}
-)
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = it.getDisplayName(),
+                        style = ChatTheme.typography.bodyBold,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+    )
+}
 ```
 
 The snippet above will generate the following UI:
