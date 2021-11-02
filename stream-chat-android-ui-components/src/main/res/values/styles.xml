@@ -961,6 +961,8 @@
         <item name="streamUiCooldownTimerTextStyle">bold</item>
         <item name="streamUiCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
         <item name="streamUiMaxAttachmentsCount">10</item>
+        <item name="streamUiEditInputModeIcon">@drawable/stream_ui_ic_edit</item>
+        <item name="streamUiReplyInputModeIcon">@drawable/stream_ui_ic_arrow_curve_left</item>
     </style>
 
     <style name="StreamUi.PinnedMessageList" parent="StreamUi">
