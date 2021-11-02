@@ -17,7 +17,7 @@ import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 /**
  * Default drawer of background of message items
  */
-public open class BackgroundDrawerImpl(private val style: MessageListItemStyle): BackgroundDrawer {
+public open class MessageBackgroundFactoryImpl(private val style: MessageListItemStyle): MessageBackgroundFactory {
 
     override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
         return defaultBackground(context, data)

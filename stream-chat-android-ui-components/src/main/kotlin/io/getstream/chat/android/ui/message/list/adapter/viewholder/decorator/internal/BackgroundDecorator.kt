@@ -7,16 +7,16 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.background.BackgroundDrawer
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 
-internal class BackgroundDecorator(private val backgroundDrawer: BackgroundDrawer) : BaseDecorator() {
+internal class BackgroundDecorator(private val messageBackgroundFactory: MessageBackgroundFactory) : BaseDecorator() {
 
     override fun decorateTextAndAttachmentsMessage(
         viewHolder: TextAndAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.messageContainer.background =
-            backgroundDrawer.textAndAttachmentMessageBackground(
+            messageBackgroundFactory.textAndAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
                 data
             )
@@ -27,7 +27,7 @@ internal class BackgroundDecorator(private val backgroundDrawer: BackgroundDrawe
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.messageContainer.background =
-            backgroundDrawer.deletedMessageBackground(
+            messageBackgroundFactory.deletedMessageBackground(
                 viewHolder.binding.messageContainer.context,
                 data
             )
@@ -38,7 +38,7 @@ internal class BackgroundDecorator(private val backgroundDrawer: BackgroundDrawe
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.messageContainer.background =
-            backgroundDrawer.plainTextMessageBackground(
+            messageBackgroundFactory.plainTextMessageBackground(
                 viewHolder.binding.messageContainer.context,
                 data
             )

@@ -10,16 +10,16 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.MessageContainerMarginDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReplyDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
-import io.getstream.chat.android.ui.message.list.background.BackgroundDrawer
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 
 internal class MessageOptionsDecoratorProvider(
     messageListItemStyle: MessageListItemStyle,
     messageReplyStyle: MessageReplyStyle,
-    backgroundDrawer: BackgroundDrawer
+    messageBackgroundFactory: MessageBackgroundFactory
 ) : DecoratorProvider {
 
     private val messageOptionsDecorators = listOf<Decorator>(
-        BackgroundDecorator(backgroundDrawer),
+        BackgroundDecorator(messageBackgroundFactory),
         TextDecorator(messageListItemStyle),
         MaxPossibleWidthDecorator(messageListItemStyle),
         MessageContainerMarginDecorator(messageListItemStyle),
