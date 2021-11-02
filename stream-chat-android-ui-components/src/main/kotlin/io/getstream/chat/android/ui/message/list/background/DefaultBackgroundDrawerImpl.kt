@@ -91,11 +91,15 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         }
     }
 
-    override fun giphyAppearanceModel(): ShapeAppearanceModel {
+    override fun giphyAppearanceModel(context: Context): Drawable {
         return ShapeAppearanceModel.builder()
             .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
             .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
             .build()
+            .let(::MaterialShapeDrawable)
+            .apply {
+                setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
+            }
     }
 
     public companion object {

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -48,10 +47,8 @@ internal class BackgroundDecorator(private val messageBackgroundFactory: Message
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        viewHolder.binding.cardView.shapeAppearanceModel = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(DEFAULT_CORNER_RADIUS)
-            .setBottomRightCornerSize(SMALL_CARD_VIEW_CORNER_RADIUS)
-            .build()
+        viewHolder.binding.cardView.background =
+            messageBackgroundFactory.giphyAppearanceModel(viewHolder.binding.cardView.context)
     }
 
     companion object {

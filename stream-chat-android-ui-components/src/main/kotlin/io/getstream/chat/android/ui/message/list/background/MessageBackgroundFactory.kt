@@ -3,7 +3,6 @@ package io.getstream.chat.android.ui.message.list.background
 import android.content.Context
 import android.graphics.drawable.Drawable
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.google.android.material.shape.ShapeAppearanceModel
 import java.io.Serializable
 
 /**
@@ -29,5 +28,5 @@ public interface MessageBackgroundFactory : Serializable {
     /**
      * ShapeAppearanceModel for giphy card
      */
-    public fun giphyAppearanceModel(): ShapeAppearanceModel
+    public fun giphyAppearanceModel(context: Context): Drawable
 }
