@@ -166,6 +166,8 @@ public class MessageInputView : ConstraintLayout {
                 binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
+                } else if (previousValue is InputMode.Edit) {
+                    binding.messageInputFieldView.onEditMessageDismissed()
                 }
             }
         }
