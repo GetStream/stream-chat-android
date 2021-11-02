@@ -99,7 +99,7 @@ class ChannelActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun MyCustomUiSimplified() {
+    private fun MyCustomUiSimplified() {
         val user by ChatDomain.instance().user.collectAsState()
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -120,7 +120,7 @@ class ChannelActivity : AppCompatActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    fun CustomChannelListItem(channel: Channel, user: User?) {
+    private fun CustomChannelListItem(channel: Channel, user: User?) {
         DefaultChannelItem(
             channel = channel,
             currentUser = user,
@@ -141,7 +141,8 @@ class ChannelActivity : AppCompatActivity() {
             detailsContent = {
                 Text(
                     text = it.getDisplayName(),
-                    style = ChatTheme.typography.bodyBold
+                    style = ChatTheme.typography.bodyBold,
+                    color = ChatTheme.colors.textHighEmphasis
                 )
             }
         )
@@ -158,7 +159,7 @@ class ChannelActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun MyCustomUi() {
+    private fun MyCustomUi() {
         var query by remember { mutableStateOf("") }
 
         val user by listViewModel.user.collectAsState()
