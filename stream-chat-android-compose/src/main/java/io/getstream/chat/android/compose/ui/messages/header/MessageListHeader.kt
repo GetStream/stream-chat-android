@@ -44,7 +44,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
  * @param currentUser The current user, required for different UI states.
  * @param modifier Modifier for styling.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
- * @param isNetworkAvailable A flag that governs if we show the subtitle or the network loading view.
+ * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
