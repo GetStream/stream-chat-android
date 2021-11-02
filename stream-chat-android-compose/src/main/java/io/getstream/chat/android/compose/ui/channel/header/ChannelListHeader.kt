@@ -170,8 +170,8 @@ internal fun DefaultChannelListHeaderAction(
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
-            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
-            contentDescription = stringResource(id = R.string.stream_compose_edit_action),
+            painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
+            contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
             tint = Color.White,
         )
     }

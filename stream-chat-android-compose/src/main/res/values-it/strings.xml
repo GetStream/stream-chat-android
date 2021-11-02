@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channel List Header -->
+    <string name="stream_compose_channel_list_header_new_chat">Nuova chat</string>
+
+    <!-- Search Input -->
+    <string name="stream_compose_search_input_cancel">Annulla</string>
+    <string name="stream_compose_search_input_hint">Cerca i canali per nome</string>
+
+    <!-- Channel List -->
+    <string name="stream_compose_channel_list_empty_title">Inizia una conversazione!</string>
+    <string name="stream_compose_channel_list_empty_message">Che ne dici di mandare il tuo primo messaggio ad un amico?</string>
+    <string name="stream_compose_channel_list_you">Tu</string>
+
+    <!-- Channel Info Dialog -->
+    <string name="stream_compose_channel_info_view_info">Vedi info</string>
+    <string name="stream_compose_channel_info_leave_group">Esci dal gruppo</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">Esci dal gruppo</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">Vuoi lasciare il gruppo %1$s?</string>
+    <string name="stream_compose_channel_info_delete_conversation">Elimina canale</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Elimina canale</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Vuoi eliminare il canale% 1$s?</string>
+    <string name="stream_compose_channel_info_dismiss">Annulla</string>
+
+    <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="one">%1d Membro, %2d Online</item>
+        <item quantity="other">%1d Membri, %2d Online</item>
+    </plurals>
+    <string name="stream_compose_ok">OK</string>
+    <string name="stream_compose_cancel">Annulla</string>
+    <string name="stream_compose_waiting_for_network">Attendo la rete</string>
+    <string name="stream_compose_untitled_channel">Canale senza nome</string>
+</resources>

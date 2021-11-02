@@ -72,6 +72,7 @@
 
 ## stream-chat-android-compose
 - Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
+- Added localization support for the components related the channel list.
 
 ### 🐞 Fixed
 

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -134,8 +135,9 @@ public fun DefaultMessageHeaderTitle(
     }
 
     val subtitle = when (messageMode) {
-        Normal -> stringResource(
-            id = R.string.stream_compose_channel_members,
+        Normal -> LocalContext.current.resources.getQuantityString(
+            R.plurals.stream_compose_channel_members,
+            channel.memberCount,
             channel.memberCount,
             channel.members.count { it.user.online }
         )
