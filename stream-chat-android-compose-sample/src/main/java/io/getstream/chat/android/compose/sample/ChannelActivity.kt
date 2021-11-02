@@ -137,6 +137,7 @@ class ChannelActivity : AppCompatActivity() {
                 )
 
                 ChannelList(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
                     onChannelLongClick = { listViewModel.selectChannel(it) }

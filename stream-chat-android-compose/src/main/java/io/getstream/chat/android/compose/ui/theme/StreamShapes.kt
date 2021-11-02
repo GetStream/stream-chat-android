@@ -2,6 +2,7 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
  */
+@Immutable
 public data class StreamShapes(
     public val avatar: Shape,
     public val myMessageBubble: Shape,

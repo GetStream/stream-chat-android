@@ -45,7 +45,7 @@ public fun SimpleDialog(
         },
         confirmButton = {
             Button(onClick = { onPositiveAction() }) {
-                Text(text = stringResource(id = R.string.stream_compose_yes))
+                Text(text = stringResource(id = R.string.stream_compose_ok))
             }
         },
         dismissButton = {

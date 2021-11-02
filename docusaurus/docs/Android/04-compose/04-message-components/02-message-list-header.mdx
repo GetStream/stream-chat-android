@@ -20,7 +20,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             MessageListHeader(
                 channel,
                 currentUser,
-                isNetworkAvailable,
+                connectionState,
                 messageMode,
                 modifier = Modifier.fillMaxWidth(),
                 onBackPressed = { },
@@ -93,7 +93,7 @@ As the component is fully state-dependent, you can customize the data it shows, 
 fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
-    isNetworkAvailable: Boolean = true,
+    connectionState = ConnectionState.CONNECTED,
     messageMode: MessageMode = Normal,
     ..., // content
     ... // actions
@@ -102,7 +102,7 @@ fun MessageListHeader(
 
 * `channel`: The information about the current channel, used to show the member count, name and avatar data.
 * `currentUser`: Currently logged in user, used to differentiate it from other users, when loading the channel image.
-* `isNetworkAvailable`: Used to switch between the `NetworkLoadingView` and the member count text.
+* `connectionState`: The state of WebSocket connection, used to switch between the member count text and the the `NetworkLoadingView`.
 * `messageMode`: Used to determine the header title. If we're in a thread, we show a title saying who the owner of the parent message is.
 
 These will change what data is displayed in the header.
@@ -127,7 +127,7 @@ fun MessageListHeader(
             channel = channel,
             messageMode = messageMode,
             onHeaderActionClick = onHeaderActionClick,
-            isNetworkAvailable = isNetworkAvailable
+            connectionState = connectionState
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
