@@ -202,6 +202,13 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    fun onEditMessageDismissed() {
+        if (mode is Mode.EditMessageMode) {
+            mode = Mode.MessageMode
+            clearContent()
+        }
+    }
+
     fun onEdit(edit: Message) {
         mode = Mode.EditMessageMode(edit)
     }
