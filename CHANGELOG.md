@@ -63,6 +63,7 @@
 - Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
+- You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
 - Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
 
