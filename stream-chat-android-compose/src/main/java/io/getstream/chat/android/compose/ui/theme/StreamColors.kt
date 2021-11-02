@@ -1,6 +1,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import io.getstream.chat.android.compose.R
@@ -23,6 +24,7 @@ import io.getstream.chat.android.compose.R
  * @param infoAccent Used for the online status.
  * @param highlight Used for message highlights.
  */
+@Immutable
 public data class StreamColors(
     public val textHighEmphasis: Color,
     public val textLowEmphasis: Color,
