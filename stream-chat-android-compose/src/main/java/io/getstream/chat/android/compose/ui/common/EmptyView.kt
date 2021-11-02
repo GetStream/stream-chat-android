@@ -36,7 +36,7 @@ public fun EmptyView(
         Icon(
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.disabled,
             modifier = Modifier.size(96.dp),
         )
 
