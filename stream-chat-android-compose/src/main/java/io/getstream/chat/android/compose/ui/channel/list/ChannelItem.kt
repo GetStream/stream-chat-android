@@ -76,7 +76,7 @@ public fun DefaultChannelItem(
     leadingContent: @Composable RowScope.(Channel) -> Unit = {
         ChannelAvatar(
             modifier = Modifier
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
                 .size(ChatTheme.dimens.channelAvatarSize),
             channel = it,
             currentUser = currentUser
@@ -96,7 +96,7 @@ public fun DefaultChannelItem(
             channel = it,
             currentUser = currentUser,
             modifier = Modifier
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
                 .wrapContentHeight()
                 .align(Alignment.Bottom)
         )
@@ -216,7 +216,7 @@ public fun ChannelLastMessageInfo(
                     lastMessage = lastMessage,
                     currentUser = currentUser,
                     modifier = Modifier
-                        .padding(end = 8.dp)
+                        .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
                         .size(12.dp)
                 )
 
