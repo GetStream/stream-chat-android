@@ -8,9 +8,9 @@
     <string name="stream_compose_search_input_hint">नाम से चैनल खोजें</string>
 
     <!-- Channel List -->
-    <string name="stream_compose_channel_list_empty_title">चलो चैट करना शुरू करें!</string>
-    <string name="stream_compose_channel_list_empty_message">किसी मित्र को अपना पहला संदेश भेजने के बारे में क्या विचार है?</string>
     <string name="stream_compose_channel_list_you">आप</string>
+    <string name="stream_compose_channel_list_empty_channels">कोई चैनल उपलब्ध नहीं है</string>
+    <string name="stream_compose_channel_list_empty_search_results">%1$s के लिए कोई परिणाम नहीं</string>
 
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">जानकारी देखें</string>
@@ -31,4 +31,7 @@
     <string name="stream_compose_cancel">रद्द करें</string>
     <string name="stream_compose_waiting_for_network">नेटवर्क की प्रतीक्षा में</string>
     <string name="stream_compose_untitled_channel">बिना नाम वाला चैनल</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">कोई मैसेज नहीं</string>
 </resources>

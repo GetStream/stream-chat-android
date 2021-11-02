@@ -8,15 +8,11 @@
     <string name="stream_compose_search_input_hint">Search channels by name</string>
 
     <!-- Channel List -->
-    <string name="stream_compose_channel_list_empty_title">Let\'s start chatting!</string>
-    <string name="stream_compose_channel_list_empty_message">How about sending your first message to a friend?</string>
     <string name="stream_compose_channel_list_you">You</string>
+    <string name="stream_compose_channel_list_empty_channels">No channels available</string>
+    <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 
     <!-- Channel Info Dialog -->
-    <plurals name="stream_compose_channel_members">
-        <item quantity="one">%1d Member, %2d Online</item>
-        <item quantity="other">%1d Members, %2d Online</item>
-    </plurals>
     <string name="stream_compose_channel_info_view_info">View info</string>
     <string name="stream_compose_channel_info_leave_group">Leave group</string>
     <string name="stream_compose_channel_info_leave_group_confirmation_title">Leave group</string>
@@ -27,10 +23,17 @@
     <string name="stream_compose_channel_info_dismiss">Cancel</string>
 
     <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="one">%1d Member, %2d Online</item>
+        <item quantity="other">%1d Members, %2d Online</item>
+    </plurals>
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Cancel</string>
     <string name="stream_compose_waiting_for_network">Waiting for network</string>
     <string name="stream_compose_untitled_channel">Channel without name</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">No messages</string>
 
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_send_message">Send</string>

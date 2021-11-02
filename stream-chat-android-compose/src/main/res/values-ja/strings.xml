@@ -8,9 +8,9 @@
     <string name="stream_compose_search_input_hint">名前でチャンネルを検索</string>
 
     <!-- Channel List -->
-    <string name="stream_compose_channel_list_empty_title">チャットを始めよう！</string>
-    <string name="stream_compose_channel_list_empty_message">友人に最初のメッセージを送りましょうか？</string>
     <string name="stream_compose_channel_list_you">あなた</string>
+    <string name="stream_compose_channel_list_empty_channels">利用可能なチャンネルはありません</string>
+    <string name="stream_compose_channel_list_empty_search_results">\"%s\"の結果はありません</string>
 
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">情報を見る</string>
@@ -30,4 +30,7 @@
     <string name="stream_compose_cancel">キャンセル</string>
     <string name="stream_compose_waiting_for_network">ネットワークを検索中</string>
     <string name="stream_compose_untitled_channel">名前のないチャンネル</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>
 </resources>

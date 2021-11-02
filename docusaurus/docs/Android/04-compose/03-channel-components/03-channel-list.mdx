@@ -70,8 +70,7 @@ Here's an example of using the default `viewModel`, but overriding the behavior:
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-
+    
     setContent {
         ChatTheme {
             // Custom state holder
@@ -138,7 +137,13 @@ If you're looking to customize the UI of the `ChannelList`, there are a few ways
 fun ChannelList(
     modifier: Modifier = Modifier,
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyView(modifier) },
+    emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
+        DefaultChannelSearchEmptyView(
+            searchQuery = searchQuery,
+            modifier = modifier
+        )
+    },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             item = channel,
@@ -153,7 +158,8 @@ fun ChannelList(
 
 * `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
 * `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
-* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available.  
+* `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available. 
+* `emptySearchContent`: Composable that represents the empty content if there are no channels matching the search query.
 * `itemContent`: Customizable composable function that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:

@@ -96,6 +96,7 @@ public class ChannelListViewModel(
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
+                    channelsState = channelsState.copy(searchQuery = query)
 
                     val filter = if (query.isNotEmpty()) {
                         Filters.and(config.filters, Filters.autocomplete("name", query))
