@@ -16,24 +16,24 @@ To use the `DefaultChannelItem`, it's best to override the `itemContent` paramet
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-	super.onCreate(savedInstanceState)
+    super.onCreate(savedInstanceState)
 
-	setContent {
-		val user by ... // fetch user from ChatDomain or ViewModel
+    setContent {
+        val user by ... // fetch user from ChatDomain or ViewModel
 
-		ChatTheme {
-			ChannelList(
-				itemContent = { channel -> // Customize the channel items
-					DefaultChannelItem(
-						channel = channel,
-						currentUser = user,
-						onChannelLongClick = { },
-						onChannelClick = { },
-					)
-				}
-			)
-		}
-	}
+        ChatTheme {
+            ChannelList(
+                itemContent = { channel -> // Customize the channel items
+                    DefaultChannelItem(
+                        channel = channel,
+                        currentUser = user,
+                        onChannelLongClick = { },
+                        onChannelClick = { },
+                    )
+                }
+            )
+        }
+    }
 }
 ```
 
@@ -52,8 +52,8 @@ The `DefaultChannelItem` signature exposes the following actions that can be int
 ```kotlin
 @Composable
 fun DefaultChannelItem(
-	onChannelClick: (Channel) -> Unit,
-	onChannelLongClick: (Channel) -> Unit,
+    onChannelClick: (Channel) -> Unit,
+    onChannelLongClick: (Channel) -> Unit,
     ... // state and other UI-related customization options 
 )
 ```
@@ -69,16 +69,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
     setContent {
         ChatTheme {
-			ChannelList(
-				itemContent = { channel ->
-					DefaultChannelItem(
-						channel = channel,
-						currentUser = user,
-						onChannelLongClick = { viewModel.selectChannel(it) },
-						onChannelClick = ::openMessages,
-					)
-				}
-			)
+            ChannelList(
+                itemContent = { channel ->
+                    DefaultChannelItem(
+                        channel = channel,
+                        currentUser = user,
+                        onChannelLongClick = { viewModel.selectChannel(it) },
+                        onChannelClick = ::openMessages,
+                    )
+                }
+            )
         }
     }
 }
