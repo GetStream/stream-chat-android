@@ -79,6 +79,9 @@ internal class ChannelMutableState(
                 .toList()
         }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     }
+    internal var lastMarkReadEvent: Date? = null
+    internal var lastKeystrokeAt: Date? = null
+    internal var lastStartTypingEvent: Date? = null
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages

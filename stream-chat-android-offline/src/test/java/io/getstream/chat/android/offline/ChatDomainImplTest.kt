@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline
 
+import android.content.Context
 import android.os.Handler
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
@@ -10,7 +11,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.channel.ChannelController
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.test.TestCall
@@ -146,19 +146,17 @@ internal class ChatDomainImplTest {
         private val userPresence = true
         private val recoveryEnabled = true
 
-        private val chatDomainImpl = ChatDomainImpl(
-            client = client,
-            db = db,
-            mainHandler = handler,
-            offlineEnabled = offlineEnabled,
-            userPresence = userPresence,
-            recoveryEnabled = recoveryEnabled,
-            backgroundSyncEnabled = false,
-            appContext = mock(),
-            offlinePlugin = OfflinePlugin()
-        ).also {
-            it.setUser(randomUser())
-        }
+        private val chatDomainImpl = ChatDomain.Builder(mock<Context>(), client)
+            .database(db)
+            .handler(handler)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .recoveryEnabled()
+            .build()
+            .let { it as ChatDomainImpl }
+            .also {
+                it.setUser(randomUser())
+            }
 
         fun withRepositoryFacade(repositoryFacade: RepositoryFacade) = apply {
             chatDomainImpl.repos = repositoryFacade

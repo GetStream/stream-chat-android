@@ -16,10 +16,14 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUploader
 import io.getstream.chat.android.offline.randomAttachment
 import io.getstream.chat.android.offline.randomMessage
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
@@ -164,9 +168,10 @@ internal class WhenUploadAttachmentsTests {
 
     private class Fixture {
 
+        private val scope = TestCoroutineScope()
         private var uploader: AttachmentUploader = mock()
         private val chatDomainImpl = mock<ChatDomainImpl> {
-            on { it.scope } doReturn TestCoroutineScope()
+            on { it.scope } doReturn scope
             on { it.appContext } doReturn mock()
         }
         private val chatClient = mock<ChatClient> {
@@ -181,13 +186,15 @@ internal class WhenUploadAttachmentsTests {
             whenever(chatDomainImpl.repos) doReturn repository
         }
 
-        fun get(): ChannelController =
-            ChannelController(
-                "channelType",
-                "channelId",
+        fun get(): ChannelController {
+            val mutableState = ChannelMutableState("channelType", "channelId", scope, MutableStateFlow(randomUser()))
+            return ChannelController(
+                mutableState = mutableState,
+                channelLogic = ChannelLogic(mutableState, chatDomainImpl),
                 client = chatClient,
                 domainImpl = chatDomainImpl,
                 attachmentUploader = uploader
             )
+        }
     }
 }

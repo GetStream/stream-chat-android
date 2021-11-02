@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.usecase
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Channel
@@ -10,7 +11,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.integration.BaseDomainTest2
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.failedCall
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -49,11 +49,13 @@ internal class LoadOldMessagesTest : BaseDomainTest2() {
 
     @Test
     fun `when online request works, it is the one used instead of local cache`() = runBlockingTest {
-        val desiredCid = randomString()
+        val type = "channelType"
+        val id = "channelId"
+        val desiredCid = "$type:$id"
 
-        whenever(channelClientMock.watch(any<WatchChannelRequest>())) doReturn Channel(cid = desiredCid).asCall()
+        whenever(clientMock.queryChannelInternal(eq(type), eq(id), any())) doReturn Channel(cid = desiredCid).asCall()
 
-        val result = chatDomainImpl.loadOlderMessages(data.channel1.cid, 10).execute()
+        val result = chatDomainImpl.loadOlderMessages(desiredCid, 10).execute()
 
         result.isSuccess.shouldBeTrue()
         result.data().cid shouldBeEqualTo desiredCid
