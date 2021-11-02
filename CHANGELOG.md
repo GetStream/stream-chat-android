@@ -75,7 +75,7 @@
 ## stream-chat-android-compose
 - Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
 - Added localization support for the components related the channel list.
-- Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder when there are no search results.
+- Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 
 ### 🐞 Fixed
 

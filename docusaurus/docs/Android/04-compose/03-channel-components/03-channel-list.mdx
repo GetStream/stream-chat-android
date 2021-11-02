@@ -159,7 +159,7 @@ fun ChannelList(
 * `modifier`: The modifier parameter for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
 * `loadingContent`: Customizable composable function that allows you to override the default `LoadingView` when loading the initial data set.
 * `emptyContent`: Customizable composable function that allows you to override the empty state, when there are no channels available. 
-* `emptySearchContent`: Composable that represents the empty content if there are no channels matching the search query.
+* `emptySearchContent`: Customizable composable function that allows you to override the empty state, when there are no channels matching the search query.
 * `itemContent`: Customizable composable function that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda, when building your custom UI.
 
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
