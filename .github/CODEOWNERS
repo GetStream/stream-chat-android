@@ -45,16 +45,16 @@ scripts                     @GetStream/android-developers
 settings.gradle             @GetStream/android-developers
 
 # Docs
-CHANGELOG.md                @GetStream/android-developers
-DEPRECATIONS.md             @GetStream/android-developers
-LICENSE                     @GetStream/android-developers
-README.md                   @GetStream/android-developers
-docs                        @GetStream/android-developers
-docusaurus                  @GetStream/android-developers
-docusaurus/02-client        @GetStream/android-developers-core
-docusaurus/03-ui            @GetStream/android-developers-ui
-docusaurus/04-compose       @GetStream/android-developers-compose
-dokkasaurus_filter.json     @leandroBorgesFerreira
+CHANGELOG.md                            @GetStream/android-developers
+DEPRECATIONS.md                         @GetStream/android-developers
+LICENSE                                 @GetStream/android-developers
+README.md                               @GetStream/android-developers
+docs                                    @GetStream/android-developers
+docusaurus                              @GetStream/android-developers
+docusaurus/docs/Android/02-client       @GetStream/android-developers-core
+docusaurus/docs/Android/03-ui           @GetStream/android-developers-ui
+docusaurus/docs/Android/04-compose      @GetStream/android-developers-compose
+dokkasaurus_filter.json                 @leandroBorgesFerreira
 
 # Misc
 .idea                       @GetStream/android-developers

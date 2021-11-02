@@ -28,7 +28,7 @@ public fun Channel.getDisplayName(): String {
         ?: getUsersExcludingCurrent()
             .joinToString { it.name }
             .takeIf { it.isNotEmpty() }
-        ?: stringResource(id = R.string.stream_compose_channel_list_untitled_channel)
+        ?: stringResource(id = R.string.stream_compose_untitled_channel)
 }
 
 /**
