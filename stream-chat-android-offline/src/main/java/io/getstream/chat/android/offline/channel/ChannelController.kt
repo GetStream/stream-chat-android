@@ -109,15 +109,15 @@ public class ChannelController internal constructor(
     messageSendingServiceFactory: MessageSendingServiceFactory = MessageSendingServiceFactory(),
 ) {
 
-    public val channelType: String = mutableState.channelType
-    public val channelId: String = mutableState.channelId
-    public val cid: String = mutableState.cid
+    public val channelType: String by mutableState::channelType
+    public val channelId: String by mutableState::channelId
+    public val cid: String by mutableState::cid
 
     private val editJobs = mutableMapOf<String, Job>()
 
-    private var lastMarkReadEvent: Date? = null
-    private var lastKeystrokeAt: Date? = null
-    private var lastStartTypingEvent: Date? = null
+    private var lastMarkReadEvent: Date? by mutableState::lastMarkReadEvent
+    private var lastKeystrokeAt: Date? by mutableState::lastKeystrokeAt
+    private var lastStartTypingEvent: Date? by mutableState::lastStartTypingEvent
     private val channelClient = client.channel(channelType, channelId)
 
     private var keystrokeParentMessageId: String? = null
@@ -129,8 +129,8 @@ public class ChannelController internal constructor(
     private val messageSendingService: MessageSendingService =
         messageSendingServiceFactory.create(domainImpl, this, client.channel(cid))
 
-    internal val unfilteredMessages = mutableState.unfilteredMessages
-    internal val hideMessagesBefore = mutableState.hideMessagesBefore
+    internal val unfilteredMessages by mutableState::unfilteredMessages
+    internal val hideMessagesBefore by mutableState::hideMessagesBefore
 
     public val messages: StateFlow<List<Message>> = mutableState.messages
     public val repliedMessage: StateFlow<Message?> = mutableState.repliedMessage

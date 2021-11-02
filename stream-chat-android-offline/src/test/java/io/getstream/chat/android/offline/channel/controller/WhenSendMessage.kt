@@ -18,11 +18,14 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.randomAttachmentsWithFile
+import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.RetryPolicy
@@ -63,12 +66,13 @@ internal class WhenSendMessage {
     private val repos: RepositoryFacade = mock()
 
     private val doNotRetryPolicy: RetryPolicy = DefaultRetryPolicy()
+    private val userFlow = MutableStateFlow(randomUser())
 
     private val domainImpl: ChatDomainImpl = mock {
         on(it.appContext) doReturn mock()
         on(it.scope) doReturn testCoroutines.scope
         on(it.generateMessageId()) doReturn randomString()
-        on(it.user) doReturn MutableStateFlow(User())
+        on(it.user) doReturn userFlow
         on(it.repos) doReturn repos
         on(it.isOnline()) doReturn true
         on(it.getActiveQueries()) doReturn emptyList()
@@ -76,10 +80,12 @@ internal class WhenSendMessage {
         on(it.client) doReturn chatClient
     }
 
+    @OptIn(ExperimentalStreamChatApi::class)
     @Before
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
-        channelController = ChannelController(channelType, channelId, chatClient, domainImpl)
+        val mutableState = ChannelMutableState(channelType, channelId, scope, userFlow)
+        channelController = ChannelController(mutableState, ChannelLogic(mutableState, domainImpl), chatClient, domainImpl)
     }
 
     @Test
