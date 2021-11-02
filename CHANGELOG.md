@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
 
 ### ⚠️ Changed
 
@@ -56,17 +57,24 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 translation related to the flagging.
 
 ### ✅ Added
 - You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
+- Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
+  Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
+
 ### ⚠️ Changed
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
+- Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
+- Added localization support for the components related the channel list.
+
 ### 🐞 Fixed
 
 ### ⬆️ Improved

@@ -61,7 +61,7 @@ public fun SearchInput(
                 content = {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_clear),
-                        contentDescription = stringResource(id = R.string.stream_compose_cancel_search),
+                        contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
                         tint = ChatTheme.colors.textLowEmphasis,
                     )
                 }
@@ -124,7 +124,7 @@ internal fun RowScope.DefaultSearchLeadingIcon(empty: Boolean) {
 @Composable
 internal fun DefaultSearchLabel() {
     Text(
-        text = stringResource(id = R.string.stream_compose_query_channels),
+        text = stringResource(id = R.string.stream_compose_search_input_hint),
         style = ChatTheme.typography.body,
         color = ChatTheme.colors.textLowEmphasis,
     )
