@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
@@ -20,9 +22,15 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
+import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
+import kotlinx.coroutines.flow.map
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
@@ -35,6 +43,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param domain Entry point for all livedata & offline operations.
  * @param client Entry point for all low-level operations.
  */
+@OptIn(ExperimentalStreamChatApi::class)
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
@@ -92,6 +101,70 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
 
     init {
+        if (ToggleService.instance().isEnabled(OfflinePlugin.TOGGLE_KEY_OFFLINE)) {
+            initWithOfflinePlugin()
+        } else {
+            initWithChatDomain()
+        }
+    }
+
+    private fun initWithOfflinePlugin() {
+        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
+
+        val channelState = client.asReferenced().watchChannel(cid, MESSAGES_LIMIT).asState(viewModelScope)
+
+        ChatClient.dismissChannelNotifications(
+            channelType = channelState.channelType,
+            channelId = channelState.channelId
+        )
+
+        val channelDataLiveData = channelState.channelData.asLiveData()
+        _channel.addSource(channelDataLiveData) {
+            _channel.value = channelState.toChannel()
+            // Channel should be propagated only once because it's used to initialize MessageListView
+            _channel.removeSource(channelState.channelData.asLiveData())
+        }
+        val typingIds = channelState.typing.map { (_, idList) -> idList }.asLiveData()
+
+        messageListData = MessageListItemLiveData(
+            user,
+            channelState.messages.asLiveData(),
+            channelState.reads.asLiveData(),
+            typingIds,
+            false,
+            dateSeparatorHandler,
+        )
+        _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
+        _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
+
+        stateMerger.apply {
+            val messagesStateLiveData = channelState.messagesState.asLiveData()
+            addSource(messagesStateLiveData) { messageState ->
+                when (messageState) {
+                    MessagesState.Loading,
+                    MessagesState.NoQueryActive,
+                    -> value = State.Loading
+                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
+                    is MessagesState.Result -> {
+                        removeSource(messagesStateLiveData)
+                        onNormalModeEntered()
+                    }
+                }
+            }
+        }
+        messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
+            stateMerger.observeForever(object : Observer<State> {
+                override fun onChanged(state: State?) {
+                    if (state is State.Result) {
+                        onEvent(Event.ShowMessage(targetMessageId))
+                        stateMerger.removeObserver(this)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun initWithChatDomain() {
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
         domain.watchChannel(cid, MESSAGES_LIMIT).enqueue { channelControllerResult ->
