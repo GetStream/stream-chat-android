@@ -28,7 +28,6 @@ import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import java.io.Serializable
@@ -96,6 +95,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         messageListViewStyle = null
+        messageViewHolderFactory = null
         _binding = null
     }
 
@@ -166,9 +166,6 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private fun setupMessageView() {
         viewHolder = viewHolderFactory
-            .apply {
-                decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
-            }
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
@@ -410,7 +407,11 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             this.messageViewHolderFactory =
                 messageViewHolderFactory.clone()
                 .apply {
+                    /* Default listener. We don't want the message of this dialog to listen for clicks just like it was
+                    * a normal message inside MessageListView
+                    */
                     setListenerContainer(MessageListListenerContainerImpl())
+                    decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
                 }
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
