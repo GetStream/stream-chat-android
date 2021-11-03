@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -28,6 +29,8 @@ import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
@@ -37,7 +40,6 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.items.MessageItem
 import io.getstream.chat.android.compose.state.messages.items.MessageListItem
-import io.getstream.chat.android.compose.ui.common.EmptyView
 import io.getstream.chat.android.compose.ui.common.LoadingView
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -80,7 +82,7 @@ public fun MessageList(
         }
     },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
     itemContent: @Composable (MessageListItem) -> Unit = {
         DefaultMessageItem(
             messageListItem = it,
@@ -132,7 +134,7 @@ public fun MessageList(
     onLongItemClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
     itemContent: @Composable (MessageListItem) -> Unit = {
         DefaultMessageItem(
             messageListItem = it,
@@ -258,6 +260,26 @@ public fun Messages(
                 }
             }
         }
+    }
+}
+
+/**
+ * The default empty placeholder that is displayed when there are no messages in the channel.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultMessageListEmptyView(modifier: Modifier) {
+    Box(
+        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.stream_compose_message_list_empty_messages),
+            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textLowEmphasis,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

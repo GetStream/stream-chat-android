@@ -57,12 +57,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug when showing messages with pending attachements that cause loading state to be not shown in some cases.
 - Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 translation related to the flagging.
+- 🚨 Breaking change: Now the button for sending message in MessageInputView sizes itself accordingly with the drawable used, instead of having a predefined size (32dp)
 
 ### ✅ Added
+- You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
 - Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
 
@@ -73,6 +76,7 @@
 ## stream-chat-android-compose
 - Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
 - Added localization support for the components related the channel list.
+- Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 
 ### 🐞 Fixed
 

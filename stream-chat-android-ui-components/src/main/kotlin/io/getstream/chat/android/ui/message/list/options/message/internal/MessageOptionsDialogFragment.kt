@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import java.io.Serializable
 
 internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
@@ -43,7 +44,12 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
+    private val messageBackgroundFactory: MessageBackgroundFactory by lazy {
+        requireArguments().getSerializable(ARG_OPTIONS_BACKGROUND_FACTORY) as MessageBackgroundFactory
+    }
+
     private val style by lazy { messageListViewStyle!! }
+
     private val viewHolderFactory by lazy { messageViewHolderFactory!! }
 
     private val configuration by lazy {
@@ -372,6 +378,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         private const val ARG_OPTIONS_MODE = "optionsMode"
         private const val ARG_OPTIONS_CONFIG = "optionsConfig"
+        private const val ARG_OPTIONS_BACKGROUND_FACTORY = "backgroundFactory"
 
         internal var messageListViewStyle: MessageListViewStyle? = null
 
@@ -382,18 +389,20 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
+            messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style, messageViewHolderFactory)
+            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style, messageViewHolderFactory, messageBackgroundFactory)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
+            messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, messageViewHolderFactory)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, messageViewHolderFactory, messageBackgroundFactory)
         }
 
         private fun newInstance(
@@ -401,7 +410,8 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
-            messageViewHolderFactory: MessageListItemViewHolderFactory
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
+            messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
             messageListViewStyle = style
             this.messageViewHolderFactory =
@@ -411,12 +421,13 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     * a normal message inside MessageListView
                     */
                     setListenerContainer(MessageListListenerContainerImpl())
-                    decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle)
+                    decoratorProvider = MessageOptionsDecoratorProvider(style.itemStyle, style.replyMessageStyle, messageBackgroundFactory)
                 }
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,
-                    ARG_OPTIONS_CONFIG to configuration
+                    ARG_OPTIONS_CONFIG to configuration,
+                    ARG_OPTIONS_BACKGROUND_FACTORY to messageBackgroundFactory
                 )
                 // pass message via static field
                 messageArg = message
