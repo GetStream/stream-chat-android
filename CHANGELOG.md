@@ -65,6 +65,8 @@
 ### ✅ Added
 - Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
+- Added `setMessageInputModeListener`, `setSendMessageButtonEnabledDrawable` and `setSendMessageButtonDisabledDrawable` method to `MessageInputView`.
+  They can be used together for changing send button icon based on current input mode. See [docs](https://getstream.io/chat/docs/sdk/android/ui/components/message-input#changing-send-message-button) for more details.
 
 ### ⚠️ Changed
 

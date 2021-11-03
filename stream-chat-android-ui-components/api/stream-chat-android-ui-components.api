@@ -1078,8 +1078,11 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setMaxMessageLength (I)V
 	public final fun setMaxMessageLengthHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler;)V
 	public final fun setMentionsEnabled (Z)V
+	public final fun setMessageInputModeListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageInputViewModeListener;)V
 	public final fun setOnSendButtonClickListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener;)V
 	public final fun setSelectedAttachmentsCountListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$SelectedAttachmentsCountListener;)V
+	public final fun setSendMessageButtonDisabledDrawable (Landroid/graphics/drawable/Drawable;)V
+	public final fun setSendMessageButtonEnabledDrawable (Landroid/graphics/drawable/Drawable;)V
 	public final fun setSendMessageHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;)V
 	public final fun setSuggestionListViewHolderFactory (Lio/getstream/chat/android/ui/suggestion/list/adapter/SuggestionListItemViewHolderFactory;)V
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
@@ -1152,6 +1155,10 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$I
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MaxMessageLengthHandler {
 	public abstract fun onMessageLengthChanged (Ljava/lang/String;IIZ)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageInputViewModeListener {
+	public abstract fun inputModeChanged (Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler {
