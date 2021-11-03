@@ -96,7 +96,6 @@ public class ChannelListViewModel(
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
-
                     val filter = if (query.isNotEmpty()) {
                         Filters.and(config.filters, Filters.autocomplete("name", query))
                     } else {
@@ -106,7 +105,7 @@ public class ChannelListViewModel(
                     val result = chatDomain.queryChannels(filter, config.querySort).await()
 
                     if (result.isSuccess) {
-                        observeChannels(result.data())
+                        observeChannels(controller = result.data(), searchQuery = query)
                     } else {
                         result.error().cause?.printStackTrace()
                         channelsState =
@@ -121,23 +120,29 @@ public class ChannelListViewModel(
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
-    private suspend fun observeChannels(controller: QueryChannelsController) {
+    private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
         controller.channelsState.map { state ->
             when (state) {
                 QueryChannelsController.ChannelsState.NoQueryActive,
                 QueryChannelsController.ChannelsState.Loading,
-                ->
-                    channelsState.copy(isLoading = true)
-                QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
-                    isLoading = false,
-                    channels = emptyList()
+                -> channelsState.copy(
+                    isLoading = true,
+                    searchQuery = searchQuery
                 )
+                QueryChannelsController.ChannelsState.OfflineNoResults -> {
+                    channelsState.copy(
+                        isLoading = false,
+                        channels = emptyList(),
+                        searchQuery = searchQuery
+                    )
+                }
                 is QueryChannelsController.ChannelsState.Result -> {
                     channelsState.copy(
                         isLoading = false,
                         channels = state.channels,
                         isLoadingMore = false,
-                        endOfChannels = controller.endOfChannels.value
+                        endOfChannels = controller.endOfChannels.value,
+                        searchQuery = searchQuery
                     )
                 }
             }

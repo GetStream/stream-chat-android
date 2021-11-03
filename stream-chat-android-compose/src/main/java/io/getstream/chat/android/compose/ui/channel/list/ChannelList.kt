@@ -7,12 +7,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
 import io.getstream.chat.android.compose.ui.common.EmptyView
@@ -34,6 +37,7 @@ import io.getstream.chat.android.offline.ChatDomain
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
+ * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param itemContent UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -57,11 +61,17 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyView(modifier) },
+    emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
+        DefaultChannelSearchEmptyView(
+            searchQuery = searchQuery,
+            modifier = modifier
+        )
+    },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,
-            viewModel.user.value,
+            currentUser = viewModel.user.value,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
@@ -77,6 +87,7 @@ public fun ChannelList(
         onChannelLongClick = onChannelLongClick,
         loadingContent = loadingContent,
         emptyContent = emptyContent,
+        emptySearchContent = emptySearchContent,
         itemContent = itemContent
     )
 }
@@ -101,6 +112,7 @@ public fun ChannelList(
  * @param onChannelLongClick Handler for a long item tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
+ * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search query.
  * @param itemContent UI lambda function that allows the user to completely customize the item UI.
  * It shows [DefaultChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
@@ -114,7 +126,13 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyView(modifier) },
+    emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
+        DefaultChannelSearchEmptyView(
+            searchQuery = searchQuery,
+            modifier = modifier
+        )
+    },
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,
@@ -124,7 +142,7 @@ public fun ChannelList(
         )
     },
 ) {
-    val (isLoading, _, _, channels) = channelsState
+    val (isLoading, _, _, channels, searchQuery) = channelsState
 
     when {
         isLoading -> loadingContent()
@@ -134,6 +152,7 @@ public fun ChannelList(
             onLastItemReached = onLastItemReached,
             itemContent = itemContent
         )
+        searchQuery.isNotEmpty() -> emptySearchContent(searchQuery)
         else -> emptyContent()
     }
 }
@@ -181,4 +200,36 @@ public fun Channels(
             onLastItemReached()
         }
     }
+}
+
+/**
+ * The default empty placeholder for the case when there are no channels available to the user.
+ *
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultChannelListEmptyView(modifier: Modifier = Modifier) {
+    EmptyView(
+        modifier = modifier,
+        painter = painterResource(id = R.drawable.stream_compose_empty_channels),
+        text = stringResource(R.string.stream_compose_channel_list_empty_channels),
+    )
+}
+
+/**
+ * The default empty placeholder for the case when channel search returns no results.
+ *
+ * @param searchQuery The search query that returned no results.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+internal fun DefaultChannelSearchEmptyView(
+    searchQuery: String,
+    modifier: Modifier = Modifier,
+) {
+    EmptyView(
+        modifier = modifier,
+        painter = painterResource(id = R.drawable.stream_compose_empty_search_results),
+        text = stringResource(R.string.stream_compose_channel_list_empty_search_results, searchQuery),
+    )
 }
