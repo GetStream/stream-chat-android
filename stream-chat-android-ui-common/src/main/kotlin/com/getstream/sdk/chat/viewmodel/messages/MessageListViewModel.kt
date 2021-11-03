@@ -122,7 +122,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         _channel.addSource(channelDataLiveData) {
             _channel.value = channelState.toChannel()
             // Channel should be propagated only once because it's used to initialize MessageListView
-            _channel.removeSource(channelState.channelData.asLiveData())
+            _channel.removeSource(channelDataLiveData)
         }
         val typingIds = channelState.typing.map { (_, idList) -> idList }.asLiveData()
 
