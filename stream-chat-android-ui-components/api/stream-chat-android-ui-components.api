@@ -2049,6 +2049,25 @@ public class io/getstream/chat/android/ui/message/list/adapter/viewholder/attach
 	protected final fun createLinkContent (Lio/getstream/chat/android/client/models/Attachment;ZLio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Landroid/view/View;)Landroid/view/View;
 }
 
+public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory : java/io/Serializable {
+	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
+	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+}
+
+public class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl : io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl$Companion;
+	public fun <init> (Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;)V
+	public fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun giphyAppearanceModel (Landroid/content/Context;)Landroid/graphics/drawable/Drawable;
+	public fun plainTextMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun textAndAttachmentMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+}
+
+public final class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactoryImpl$Companion {
+}
+
 public final class io/getstream/chat/android/ui/message/list/header/MessageListHeaderView : android/widget/FrameLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
