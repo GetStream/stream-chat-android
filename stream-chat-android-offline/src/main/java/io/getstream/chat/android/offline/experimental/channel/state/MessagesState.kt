@@ -1,11 +1,15 @@
 package io.getstream.chat.android.offline.experimental.channel.state
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 
 /**
  * Represents of possible state of messages for [ChannelState].
  */
+@ExperimentalStreamChatApi
+@InternalStreamChatApi
 public sealed class MessagesState {
     /**
      * The ChannelState is initialized but no query is currently running.
