@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug when showing messages with pending attachements that cause loading state to be not shown in some cases.
 - Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
