@@ -125,13 +125,17 @@ public class ChannelListViewModel(
             when (state) {
                 QueryChannelsController.ChannelsState.NoQueryActive,
                 QueryChannelsController.ChannelsState.Loading,
-                ->
-                    channelsState.copy(isLoading = true)
-                QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
-                    isLoading = false,
-                    channels = emptyList(),
+                -> channelsState.copy(
+                    isLoading = true,
                     searchQuery = searchQuery
                 )
+                QueryChannelsController.ChannelsState.OfflineNoResults -> {
+                    channelsState.copy(
+                        isLoading = false,
+                        channels = emptyList(),
+                        searchQuery = searchQuery
+                    )
+                }
                 is QueryChannelsController.ChannelsState.Result -> {
                     channelsState.copy(
                         isLoading = false,
