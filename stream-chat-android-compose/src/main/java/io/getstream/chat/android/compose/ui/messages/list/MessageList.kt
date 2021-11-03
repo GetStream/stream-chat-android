@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -271,10 +270,9 @@ public fun Messages(
  */
 @Composable
 internal fun DefaultMessageListEmptyView(modifier: Modifier) {
-    Column(
+    Box(
         modifier = modifier.background(color = ChatTheme.colors.appBackground),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(R.string.stream_compose_message_list_empty_messages),
