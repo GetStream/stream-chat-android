@@ -8,9 +8,9 @@
     <string name="stream_compose_search_input_hint">Buscar canales por nombre</string>
 
     <!-- Channel List -->
-    <string name="stream_compose_channel_list_empty_title">¡Empecemos a charlar!</string>
-    <string name="stream_compose_channel_list_empty_message">¿Qué le parece enviar su primer mensaje a un amigo?</string>
     <string name="stream_compose_channel_list_you">Tú</string>
+    <string name="stream_compose_channel_list_empty_channels">No hay canales disponibles</string>
+    <string name="stream_compose_channel_list_empty_search_results">No se encontraron resultados para \"%1$s\"</string>
 
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">Ver información</string>
@@ -31,4 +31,7 @@
     <string name="stream_compose_cancel">Cancelar</string>
     <string name="stream_compose_waiting_for_network">Esperando conexión de red</string>
     <string name="stream_compose_untitled_channel">Canal sin nombre</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">Sin mensajes</string>
 </resources>

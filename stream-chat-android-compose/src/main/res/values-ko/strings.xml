@@ -8,9 +8,9 @@
     <string name="stream_compose_search_input_hint">이름으로 채널 검색</string>
 
     <!-- Channel List -->
-    <string name="stream_compose_channel_list_empty_title">채팅 시작해요!</string>
-    <string name="stream_compose_channel_list_empty_message">친구에게 첫 메시지를 보내 볼까요?</string>
     <string name="stream_compose_channel_list_you">나</string>
+    <string name="stream_compose_channel_list_empty_channels">사용 가능한 그룹이 없습니다</string>
+    <string name="stream_compose_channel_list_empty_search_results">\"%s\"에 대한 검색결과가 없습니다.</string>
 
     <!-- Channel Info Dialog -->
     <string name="stream_compose_channel_info_view_info">정보 보기</string>
@@ -30,4 +30,7 @@
     <string name="stream_compose_cancel">취소</string>
     <string name="stream_compose_waiting_for_network">네트워크를 검색하는 중입니다</string>
     <string name="stream_compose_untitled_channel">무명의 그룹</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
 </resources>
