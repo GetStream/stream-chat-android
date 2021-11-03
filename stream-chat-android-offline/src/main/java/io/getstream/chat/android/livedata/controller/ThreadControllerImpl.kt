@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.thread.ThreadController as ThreadControllerStateFlow
 
 /**
@@ -17,12 +15,6 @@ import io.getstream.chat.android.offline.thread.ThreadController as ThreadContro
  */
 internal class ThreadControllerImpl(private val threadControllerStateFlow: ThreadControllerStateFlow) :
     ThreadController {
-
-    internal constructor(
-        threadId: String,
-        channelControllerImpl: ChannelController,
-        domain: ChatDomainImpl,
-    ) : this(ThreadControllerStateFlow(threadId, channelControllerImpl, domain.chatDomainStateFlow))
 
     override val threadId: String = threadControllerStateFlow.threadId
 

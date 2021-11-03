@@ -106,10 +106,12 @@ internal class ChatDomainImplReplayEventsForActiveChannelsTest {
         }
 
         fun get(): ChatDomainImpl {
-            return ChatDomain.Builder(context, chatClient).buildImpl().apply {
-                scope = coroutineScope
-                eventHandler = eventHandlerImpl
-            }
+            return ChatDomain.Builder(context, chatClient).build()
+                .let { it as ChatDomainImpl }
+                .apply {
+                    scope = coroutineScope
+                    eventHandler = eventHandlerImpl
+                }
         }
     }
 }

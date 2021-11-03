@@ -10,8 +10,11 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.message.attachment.AttachmentUrlValidator
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomChannelDeletedEvent
@@ -46,32 +49,36 @@ internal class WhenHandleEvent {
 
     private val channelId = randomString()
     private val currentUser = User(id = CURRENT_USER_ID)
+    private val scope = TestCoroutineScope()
+    private val userFlow = MutableStateFlow(currentUser)
 
     private val chatClient: ChatClient = mock {
         on(it.channel(any())) doReturn mock()
     }
     private val chatDomain: ChatDomainImpl = mock {
         on(it.appContext) doReturn mock()
-        on(it.scope) doReturn TestCoroutineScope()
-        on(it.user) doReturn MutableStateFlow(currentUser)
+        on(it.scope) doReturn scope
+        on(it.user) doReturn userFlow
         on(it.getChannelConfig(any())) doReturn Config(connectEventsEnabled = true, muteEnabled = true)
     }
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelController: ChannelController
 
+    @OptIn(ExperimentalStreamChatApi::class)
     @BeforeEach
     fun setUp() {
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doAnswer { invocation ->
             invocation.arguments[0] as List<Message>
         }
 
+        val mutableState = ChannelMutableState("type1", channelId, scope, userFlow)
+
         channelController = ChannelController(
-            channelType = "type1",
-            channelId = channelId,
+            mutableState,
+            ChannelLogic(mutableState, chatDomain, attachmentUrlValidator),
             client = chatClient,
             domainImpl = chatDomain,
-            attachmentUrlValidator = attachmentUrlValidator,
         )
     }
 

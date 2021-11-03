@@ -56,7 +56,6 @@ internal class WhenKeystroke : BaseChannelControllerTests() {
 
     @Test
     fun `Given config with typing events And successful response And no keystroke before Should return result with True`() = runBlockingTest {
-        val channelClient = mock<ChannelClient>()
         Fixture()
             .givenTypingEvents(true)
             .givenSuccessfulResponse()
