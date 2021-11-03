@@ -79,7 +79,7 @@ object Versions {
     internal const val THREETENBP = "1.5.1"
     internal const val THREETENABP = "1.3.1"
     internal const val TIMBER = "5.0.0"
-    internal const val WORK = "2.5.0"
+    internal const val WORK = "2.7.0"
 }
 
 object Dependencies {
