@@ -6,13 +6,9 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBindi
 
 internal class MediaAttachmentsViewHolder(
     private val binding: StreamUiItemImageAttachmentBinding,
-): SimpleListAdapter.ViewHolder<List<Attachment>>(binding.root) {
+) : SimpleListAdapter.ViewHolder<List<Attachment>>(binding.root) {
 
     override fun bind(item: List<Attachment>) {
         binding.mediaAttachmentView.showAttachments(item)
-    }
-
-    override fun unbind() {
-        super.unbind()
     }
 }
