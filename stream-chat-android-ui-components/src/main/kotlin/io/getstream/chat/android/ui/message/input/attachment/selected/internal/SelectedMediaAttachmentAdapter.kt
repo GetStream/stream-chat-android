@@ -11,7 +11,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
+import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemSelectedAttachmentMediaBinding
 
 internal class SelectedMediaAttachmentAdapter(

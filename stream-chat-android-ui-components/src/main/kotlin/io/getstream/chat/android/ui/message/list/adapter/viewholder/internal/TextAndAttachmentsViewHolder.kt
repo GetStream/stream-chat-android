@@ -109,7 +109,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         val attachments = data.message.attachments
-        attachmentsAdapter.setItems(listOf(attachments))
+        attachmentsAdapter.submitList(listOf(attachments))
     }
 
     private fun clearScope() {

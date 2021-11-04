@@ -1,12 +1,12 @@
-package io.getstream.chat.android.ui.common.adapters
+package io.getstream.chat.android.ui.common.internal
 
 import android.content.Context
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 
-public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
-    protected var itemList: MutableList<T> = mutableListOf()
+internal abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
+    var itemList: MutableList<T> = mutableListOf()
 
     final override fun getItemCount(): Int = itemList.size
 
@@ -14,13 +14,13 @@ public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHold
         holder.bind(itemList[position])
     }
 
-    public open fun setItems(items: List<T>) {
+    fun setItems(items: List<T>) {
         this.itemList.clear()
         this.itemList.addAll(items)
         notifyDataSetChanged()
     }
 
-    public fun removeItem(item: T) {
+    fun removeItem(item: T) {
         val index = itemList.indexOf(item)
         if (index != -1) {
             itemList.remove(item)
@@ -28,7 +28,7 @@ public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHold
         }
     }
 
-    public fun clear() {
+    fun clear() {
         itemList.clear()
         notifyDataSetChanged()
     }
@@ -39,11 +39,11 @@ public abstract class SimpleListAdapter<T : Any, VH : SimpleListAdapter.ViewHold
         holder.unbind()
     }
 
-    public abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        public val context: Context = itemView.context
+    abstract class ViewHolder<T : Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val context: Context = itemView.context
 
-        public abstract fun bind(item: T)
+        abstract fun bind(item: T)
 
-        public open fun unbind() {}
+        open fun unbind() {}
     }
 }

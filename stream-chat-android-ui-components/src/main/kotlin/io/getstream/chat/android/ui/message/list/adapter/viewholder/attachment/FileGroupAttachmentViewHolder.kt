@@ -2,7 +2,6 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.attachments.FileAttachmentsAdapter
@@ -16,7 +15,7 @@ internal class FileGroupAttachmentViewHolder(
     attachmentLongClickListener: AttachmentLongClickListener,
     attachmentDownloadClickListener: AttachmentDownloadClickListener,
     style: FileAttachmentViewStyle,
-) : SimpleListAdapter.ViewHolder<List<Attachment>>(binding.root) {
+) : AttachmentViewHolder(binding.root) {
 
     private val adapter = FileAttachmentsAdapter(
         attachmentClickListener,
@@ -26,11 +25,11 @@ internal class FileGroupAttachmentViewHolder(
     )
 
     init {
-        binding.fileAttachmentView.layoutManager = LinearLayoutManager(context)
+        binding.fileAttachmentView.layoutManager = LinearLayoutManager(itemView.context)
         binding.fileAttachmentView.adapter = adapter
     }
 
-    override fun bind(item: List<Attachment>) {
-        adapter.setItems(item)
+    override fun bind(attachments: List<Attachment>) {
+        adapter.setItems(attachments)
     }
 }

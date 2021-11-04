@@ -1,8 +1,9 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
+import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.adapters.SimpleListAdapter
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
@@ -26,7 +27,7 @@ public open class AttachmentViewHolderFactory(
     public fun createAttachmentViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): SimpleListAdapter.ViewHolder<List<Attachment>> {
+    ): AttachmentViewHolder {
         return when (viewType) {
             MEDIA -> {
                 StreamUiItemImageAttachmentBinding
@@ -52,4 +53,9 @@ public open class AttachmentViewHolderFactory(
         }
     }
 
+}
+
+public abstract class AttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    public abstract fun bind(attachments: List<Attachment>)
+    public open fun unbind() {}
 }
