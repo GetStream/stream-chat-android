@@ -3,6 +3,7 @@ package io.getstream.chat.android.offline.querychannels
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -50,7 +51,7 @@ public class QueryChannelsController internal constructor(
     /**
      * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler? = null
+    public var channelEventsHandler: ChannelEventsHandler? by mutableState::channelEventsHandler
 
     @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
@@ -69,12 +70,12 @@ public class QueryChannelsController internal constructor(
     public val channels: StateFlow<List<Channel>> = mutableState.channels
     public val mutedChannelIds: StateFlow<List<String>> = mutableState.mutedChannelIds
 
-    public val channelsState: StateFlow<ChannelsState> = mutableState.channelsState.map { state ->
+    public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
-            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Result -> ChannelsState.Result(
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Loading -> ChannelsState.Loading
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.NoQueryActive -> ChannelsState.NoQueryActive
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.OfflineNoResults -> ChannelsState.OfflineNoResults
+            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Result -> ChannelsState.Result(
                 state.channels
             )
         }
@@ -131,6 +132,9 @@ public class QueryChannelsController internal constructor(
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
+            }
+            if (event is ChannelHiddenEvent) {
+                removeChannel(event.cid)
             }
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
@@ -275,7 +279,7 @@ public class QueryChannelsController internal constructor(
 
         /** The list of channels, loaded either from offline storage or an API call.
          * Observe chatDomain.online to know if results are currently up to date
-         * @see ChatDomainImpl.online
+         * @see ChatDomainImpl.connectionState
          */
         public data class Result(val channels: List<Channel>) : ChannelsState()
     }

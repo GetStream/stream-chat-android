@@ -6,14 +6,22 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.experimental.plugin.Plugin
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.test.TestCoroutineRule
+import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
+@OptIn(ExperimentalStreamChatApi::class)
 internal open class BaseChatClientTest {
+    @get:Rule
+    val coroutineRule = TestCoroutineRule()
+
     @Mock
     protected lateinit var socketStateService: SocketStateService
 
@@ -29,6 +37,8 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var config: ChatClientConfig
 
+    protected lateinit var plugins: MutableList<Plugin>
+
     @Mock
     protected lateinit var api: ChatApi
 
@@ -38,6 +48,7 @@ internal open class BaseChatClientTest {
     @BeforeEach
     fun before() {
         MockitoAnnotations.openMocks(this)
+        plugins = mutableListOf()
         chatClient = ChatClient(
             config = config,
             api = api,
@@ -47,10 +58,11 @@ internal open class BaseChatClientTest {
             socketStateService = socketStateService,
             queryChannelsPostponeHelper = mock(),
             userStateService = userStateService,
-            encryptedUserConfigStorage = mock(),
+            userCredentialStorage = mock(),
             tokenUtils = tokenUtils,
             appContext = mock(),
-            scope = mock(),
+            scope = coroutineRule.scope,
+            plugins = plugins,
         )
     }
 }

@@ -1,7 +1,9 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,11 +26,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -36,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,7 +75,10 @@ public fun AttachmentsPicker(
     val context = LocalContext.current
     val storagePermissionState =
         rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
-    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    val requiresCameraPermission = isCameraPermissionDeclared(context)
+
+    val cameraPermissionState =
+        if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
     val mediaCaptureResultLauncher =
         rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
@@ -113,6 +114,7 @@ public fun AttachmentsPicker(
         ) {
             Column {
                 AttachmentPickerOptions(
+                    attachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
                     hasPickedFiles = attachmentsPickerViewModel.hasPickedFiles,
                     hasPickedImages = attachmentsPickerViewModel.hasPickedImages,
                     onOptionClick = {
@@ -129,12 +131,13 @@ public fun AttachmentsPicker(
                     color = ChatTheme.colors.barsBackground,
                 ) {
                     val pickerMode = attachmentsPickerViewModel.attachmentsPickerMode
+
                     val permissionState = when (pickerMode) {
                         Images, Files -> storagePermissionState
                         MediaCapture -> cameraPermissionState
                     }
 
-                    val hasPermission = permissionState.hasPermission
+                    val hasPermission = permissionState?.hasPermission ?: true
 
                     val content = @Composable {
                         when (pickerMode) {
@@ -167,22 +170,26 @@ public fun AttachmentsPicker(
                         }
                     }
 
-                    PermissionRequired(
-                        permissionState = permissionState,
-                        permissionNotGrantedContent = { MissingPermissionContent(permissionState = permissionState) },
-                        permissionNotAvailableContent = { MissingPermissionContent(permissionState = permissionState) },
-                        content = content
-                    )
+                    if (pickerMode == MediaCapture && permissionState == null) {
+                        content()
+                    } else if (permissionState != null) {
+                        PermissionRequired(
+                            permissionState = permissionState,
+                            permissionNotGrantedContent = { MissingPermissionContent(permissionState) },
+                            permissionNotAvailableContent = { MissingPermissionContent(permissionState) },
+                            content = content
+                        )
+                    }
 
-                    LaunchedEffect(permissionState.hasPermission) {
-                        if (permissionState.permissionRequested && permissionState.hasPermission) {
+                    LaunchedEffect(storagePermissionState.hasPermission) {
+                        if (storagePermissionState.permissionRequested && storagePermissionState.hasPermission) {
                             attachmentsPickerViewModel.loadData()
                         }
                     }
 
                     LaunchedEffect(pickerMode) {
-                        if (!hasPermission && !permissionState.permissionRequested) {
-                            permissionState.launchPermissionRequest()
+                        if (!hasPermission && !storagePermissionState.permissionRequested) {
+                            storagePermissionState.launchPermissionRequest()
                         }
                     }
                 }
@@ -192,10 +199,21 @@ public fun AttachmentsPicker(
 }
 
 /**
+ * Returns if we need to check for the camera permission or not.
+ *
+ * @param context The context of the app.
+ * @return If the camera permission is declared in the manifest or not.
+ */
+private fun isCameraPermissionDeclared(context: Context): Boolean {
+    return context.packageManager
+        .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+        .requestedPermissions
+        .contains(Manifest.permission.CAMERA)
+}
+
+/**
  * Shows the UI if we're missing permissions to fetch data for attachments.
  * The UI explains to the user which permission is missing and why we need it.
- *
- * @param permissionState The missing permission.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -263,6 +281,7 @@ private fun MissingPermissionContent(permissionState: PermissionState) {
  */
 @Composable
 private fun AttachmentPickerOptions(
+    attachmentsPickerMode: AttachmentsPickerMode,
     hasPickedImages: Boolean,
     hasPickedFiles: Boolean,
     onOptionClick: (AttachmentsPickerMode) -> Unit,
@@ -282,9 +301,13 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedFiles,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Image,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_images_option),
-                        tint = if (!hasPickedFiles) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = when {
+                            attachmentsPickerMode == Images -> ChatTheme.colors.primaryAccent
+                            hasPickedFiles -> ChatTheme.colors.disabled
+                            else -> ChatTheme.colors.textLowEmphasis
+                        },
                     )
                 },
                 onClick = { onOptionClick(Images) }
@@ -294,9 +317,13 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedImages,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Folder,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_files_option),
-                        tint = if (!hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = when {
+                            attachmentsPickerMode == Files -> ChatTheme.colors.primaryAccent
+                            hasPickedImages -> ChatTheme.colors.disabled
+                            else -> ChatTheme.colors.textLowEmphasis
+                        },
                     )
                 },
                 onClick = { onOptionClick(Files) }
@@ -306,9 +333,9 @@ private fun AttachmentPickerOptions(
                 enabled = !hasPickedFiles && !hasPickedImages,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.Camera,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                         contentDescription = stringResource(id = R.string.stream_compose_capture_option),
-                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                        tint = if (!hasPickedFiles && !hasPickedImages) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled
                     )
                 },
                 onClick = { onOptionClick(MediaCapture) }
@@ -323,9 +350,9 @@ private fun AttachmentPickerOptions(
             content = {
                 Icon(
                     modifier = Modifier.weight(1f),
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled
+                    tint = if (hasPickedFiles || hasPickedImages) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
                 )
             }
         )

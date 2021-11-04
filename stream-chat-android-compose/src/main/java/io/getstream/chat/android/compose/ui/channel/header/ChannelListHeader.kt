@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.offline.model.ConnectionState
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -38,7 +39,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param title The title to display, when the network is available.
  * @param currentUser The currently logged in user, to load its image in the avatar.
- * @param isNetworkAvailable A flag that governs if we show the title or the network loading view.
+ * @param connectionState The state of WS connection used to switch between the title and the network loading view.
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
@@ -52,7 +53,7 @@ public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = null,
-    isNetworkAvailable: Boolean = true,
+    connectionState: ConnectionState = ConnectionState.CONNECTED,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -64,7 +65,7 @@ public fun ChannelListHeader(
     titleContent: @Composable RowScope.() -> Unit = {
         ChannelHeaderTitle(
             modifier = Modifier.weight(1f),
-            isNetworkAvailable = isNetworkAvailable,
+            connectionState = connectionState,
             title = title
         )
     },
@@ -109,6 +110,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             modifier = size,
             user = currentUser,
             contentDescription = currentUser.name,
+            showOnlineIndicator = false,
             onClick = { onAvatarClick(currentUser) }
         )
     } else {
@@ -117,20 +119,20 @@ internal fun DefaultChannelHeaderLeadingContent(
 }
 
 /**
- * Represents the channel header's title slot. It either shows a [Text] if [isNetworkAvailable] is true,
- * or a [NetworkLoadingView] if there is no connections.
+ * Represents the channel header's title slot. It either shows a [Text] if [connectionState] is
+ * [ConnectionState.CONNECTED], or a [NetworkLoadingView] if there is no connections.
  *
- * @param isNetworkAvailable If the network connection is available or not.
+ * @param connectionState The state of WebSocket connection.
  * @param title The title to show.
  * @param modifier Modifier for styling.
  */
 @Composable
 internal fun ChannelHeaderTitle(
-    isNetworkAvailable: Boolean,
+    connectionState: ConnectionState,
     title: String,
     modifier: Modifier = Modifier,
 ) {
-    if (isNetworkAvailable) {
+    if (connectionState == ConnectionState.CONNECTED) {
         Text(
             modifier = modifier
                 .wrapContentWidth()
@@ -163,13 +165,13 @@ internal fun DefaultChannelListHeaderAction(
             .shadow(4.dp, shape = CircleShape, clip = true),
         onClick = onHeaderActionClick,
         interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(bounded = false, radius = 24.dp),
+        indication = rememberRipple(bounded = false),
         color = ChatTheme.colors.primaryAccent,
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
-            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
-            contentDescription = stringResource(id = R.string.stream_compose_edit_action),
+            painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
+            contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
             tint = Color.White,
         )
     }

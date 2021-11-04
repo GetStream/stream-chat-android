@@ -90,17 +90,16 @@
     <dimen name="stream_ui_view_reactions_small_tail_bubble_offset">9dp</dimen>
 
     <!--EditReactionsView-->
-    <dimen name="stream_ui_edit_reactions_total_height">54dp</dimen>
     <dimen name="stream_ui_edit_reactions_total_width">216dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_offset">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_item_size">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_height">40dp</dimen>
     <dimen name="stream_ui_edit_reactions_bubble_radius">20dp</dimen>
-    <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy">36dp</dimen>
+    <dimen name="stream_ui_edit_reactions_large_tail_bubble_cy_offset">0dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_radius">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_large_tail_bubble_offset">5dp</dimen>
-    <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy">48dp</dimen>
+    <dimen name="stream_ui_edit_reactions_small_tail_bubble_cy_offset">4dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_radius">3dp</dimen>
     <dimen name="stream_ui_edit_reactions_small_tail_bubble_offset">10dp</dimen>
 
@@ -113,6 +112,8 @@
     <!--MessageInputFieldView-->
     <dimen name="stream_ui_message_input_command_icon_size">16dp</dimen>
     <dimen name="stream_ui_message_input_button_size">32dp</dimen>
+    <dimen name="stream_ui_attachment_button_size">32dp</dimen>
+    <dimen name="stream_ui_command_button_size">32dp</dimen>
 
     <dimen name="stream_ui_read_state_avatar_height">14dp</dimen>
     <dimen name="stream_ui_read_state_avatar_width">14dp</dimen>

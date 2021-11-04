@@ -16,19 +16,21 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReactionsDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.ReplyDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.TextDecorator
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
+    messageBackgroundFactory: MessageBackgroundFactory
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
-        BackgroundDecorator(messageListViewStyle.itemStyle),
+        BackgroundDecorator(messageBackgroundFactory),
         TextDecorator(messageListViewStyle.itemStyle),
         GapDecorator(),
-        MaxPossibleWidthDecorator(),
+        MaxPossibleWidthDecorator(messageListViewStyle.itemStyle),
         MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
         AvatarDecorator(showAvatarPredicate),
         FailedIndicatorDecorator(),

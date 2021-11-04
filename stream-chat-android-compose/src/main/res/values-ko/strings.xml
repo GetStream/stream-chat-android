@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channel List Header -->
+    <string name="stream_compose_channel_list_header_new_chat">새 채팅</string>
+
+    <!-- Search Input -->
+    <string name="stream_compose_search_input_cancel">취소</string>
+    <string name="stream_compose_search_input_hint">이름으로 채널 검색</string>
+
+    <!-- Channel List -->
+    <string name="stream_compose_channel_list_you">나</string>
+    <string name="stream_compose_channel_list_empty_channels">사용 가능한 그룹이 없습니다</string>
+    <string name="stream_compose_channel_list_empty_search_results">\"%s\"에 대한 검색결과가 없습니다.</string>
+
+    <!-- Channel Info Dialog -->
+    <string name="stream_compose_channel_info_view_info">정보 보기</string>
+    <string name="stream_compose_channel_info_leave_group">그룹 나가기</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">Leave group</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">%1$s 그룹에서 나가시겠습니까?</string>
+    <string name="stream_compose_channel_info_delete_conversation">대화 삭제하기</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">대화 삭제하기</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">%1$s 채널을 삭제하시겠습니까</string>
+    <string name="stream_compose_channel_info_dismiss">취소</string>
+
+    <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="other">%1d명, %2d명이 온라인</item>
+    </plurals>
+    <string name="stream_compose_ok">확인</string>
+    <string name="stream_compose_cancel">취소</string>
+    <string name="stream_compose_waiting_for_network">네트워크를 검색하는 중입니다</string>
+    <string name="stream_compose_untitled_channel">무명의 그룹</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">메시지 없음</string>
+</resources>

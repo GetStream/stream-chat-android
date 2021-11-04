@@ -80,7 +80,7 @@ public fun ChannelsScreen(
 
     val selectedChannel = listViewModel.selectedChannel
     val user by listViewModel.user.collectAsState()
-    val isNetworkAvailable by listViewModel.isOnline.collectAsState()
+    val connectionState by listViewModel.connectionState.collectAsState()
 
     SystemBackPressedHandler(isEnabled = true) {
         if (selectedChannel != null) {
@@ -100,7 +100,7 @@ public fun ChannelsScreen(
                     onHeaderActionClick = onHeaderClickAction,
                     currentUser = user,
                     title = title,
-                    isNetworkAvailable = isNetworkAvailable
+                    connectionState = connectionState
                 )
             }
 
@@ -152,9 +152,11 @@ public fun ChannelsScreen(
         if (activeAction is LeaveGroup) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.stream_compose_leave_group),
+                title = stringResource(
+                    id = R.string.stream_compose_channel_info_leave_group_confirmation_title
+                ),
                 message = stringResource(
-                    id = R.string.stream_compose_leave_group_text,
+                    id = R.string.stream_compose_channel_info_leave_group_confirmation_message,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
@@ -163,9 +165,11 @@ public fun ChannelsScreen(
         } else if (activeAction is DeleteConversation) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(id = R.string.stream_compose_delete_conversation),
+                title = stringResource(
+                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_title
+                ),
                 message = stringResource(
-                    id = R.string.stream_compose_delete_conversation_text,
+                    id = R.string.stream_compose_channel_info_delete_conversation_confirmation_message,
                     activeAction.channel.id
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },

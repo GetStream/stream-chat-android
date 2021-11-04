@@ -20,8 +20,6 @@ import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -75,7 +73,7 @@ internal fun FilesPicker(
             IconButton(
                 content = {
                     Icon(
-                        imageVector = Icons.Default.AddCircleOutline,
+                        painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
                         contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                         tint = ChatTheme.colors.primaryAccent,
                     )

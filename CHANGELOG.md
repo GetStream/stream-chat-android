@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
 
 ### ⚠️ Changed
 
@@ -56,23 +57,40 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed bug when showing messages with pending attachements that cause loading state to be not shown in some cases.
+- Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
+- Improved Korean 🇰🇷 translation related to the flagging.
+- 🚨 Breaking change: Now the button for sending message in MessageInputView sizes itself accordingly with the drawable used, instead of having a predefined size (32dp)
 
 ### ✅ Added
+- You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
+- Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
+  Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
+- Added `setMessageInputModeListener`, `setSendMessageButtonEnabledDrawable` and `setSendMessageButtonDisabledDrawable` method to `MessageInputView`.
+  They can be used together for changing send button icon based on current input mode. See [docs](https://getstream.io/chat/docs/sdk/android/ui/components/message-input#changing-send-message-button) for more details.
 
 ### ⚠️ Changed
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
+- Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
+- Added localization support for the components related the channel list.
+- Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
+- Fixed channel options that are displayed in the `ChannelInfo` component.
+
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the icon set and polished the UI for various Messages features
 
 ### ✅ Added
+- Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
 
 ### ⚠️ Changed
+- The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
 
 ### ❌ Removed
 
@@ -97,6 +115,75 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+
+# October 27th, 2021 - 4.21.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Improved Korean 🇰🇷 translations.
+
+### ✅ Added
+- Added `ChatDomain.connectionState` that exposes 3 states: `CONNECTED`, `CONNECTING` and `OFFLINE`.
+  `ChannelListHeaderView` and `MessageListHeaderView` show different title based on newly introduced connection state.
+  `ChatDomain.online` is now deprecated - use `ChatDomain.connectionState` instead.
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Added KDocs for `Result` properties and methods.
+
+### ✅ Added
+- The `UserCredentialStorage` interface was added to `ChatClient`. You can set your own implementation via `ChatClient.Builder::credentialStorage`
+
+### ⚠️ Changed
+- 🚨 Breaking change: Config property `isRepliesEnabled` is renamed to `isThreadEnabled` to avoid misleading. Now it toggles only thread feature.
+
+### ❌ Removed
+- `androidx-security-crypto` dependency was removed. Now, the user's token storage uses private shared preferences by default.
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fix bug when ChannelEventsHandler was not used even if it was set in QueryChannelsController
+
+### ⬆️ Improved
+- Channel gets removed from `QueryChannelsController` when receive `ChannelHiddenEvent`
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed position of reactions. Now the reactions adapts its starting position to fit entirely in the screen. 
+- 🚨 Breaking change: Fixing positions of reactions in edit reactions dialog. Using a GridLayoutManager instead of LinearLayoutManager, so now there's box with all reactions instead of a scrollable list. The way to customize the box is a bit different, then a breaking change was inserted in this feature. 
+- Made it impossible to send a message during the cooldown interval in slow mode.
+
+### ⬆️ Improved
+- Better position for icon of failed message
+- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
+
+### ✅ Added
+- Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
+The maximum attachments count cannot be greater than 10. Default value: 10.
+- Added `streamUiMessageMaxWidthFactorMine` and `streamUiMessageMaxWidthFactorTheirs` `MessageListView` attributes. You can adjust messages width by passing values in [75% - 100%] range.
+- Added `MessageInputView::setAttachmentButtonClickListener` that helps you to override click listener for the attachment button.
+- Added `MessageInputView::submitAttachments` method to set attachments in `MessageInputView` to be sent with a message.
+
+### ⚠️ Changed
+- Feature of replied messages can be enabled/disabled only locally via SDK. `Thread` dashboard flag toggles only thread feature.
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Added a way to customize the app font family, by passing in a parameter to `StreamTypography.defaultTypography()`
+- Improved permission handling for the `AttachmentsPicker` to handle only the required permissions
+- `ThreadParticipants` is now public and can be used for your custom UI.
+
+### ✅ Added
+- `ThreadParticipants` component now has a `text: String` parameter allowing customizing the thread label.
+- Added unread message count indicators to ChannelItems to show users more info about their channels
+
+### ⚠️ Changed
+- `CAMERA` permission is no longer required to be declared in the App Manifest, because we don't use it
+
+### ❌ Removed
+- Removed `CAMERA` permission requirement, because we don't use internal camera preview, we request a 3rd party app
+- Removed `CAMERA` permission checks if the user doesn't require the permission in their app
+
 
 # October 18th, 2021 - 4.20.0
 ## Common changes for all artifacts
@@ -158,6 +245,7 @@
 ### 🐞 Fixed
 - Fixed bug related to scroll of messages.
 - Updating attachments view holder only when attachments have changed. This fixes a problem with reloading gifs when reactions are added or removed.
+- Fixing ViewReactionsView being cropped if more than 7 reactions are added
 - Fix bug using custom attributes into views inflated into our SDK Views
 
 ### ⬆️ Improved

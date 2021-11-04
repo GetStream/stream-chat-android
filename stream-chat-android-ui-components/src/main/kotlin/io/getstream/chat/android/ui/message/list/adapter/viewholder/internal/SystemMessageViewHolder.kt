@@ -20,6 +20,8 @@ internal class SystemMessageViewHolder(
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        if (diff?.text == false) return
+
         binding.messageTextView.text = data.message.text
         binding.messageTextView.setTextStyle(style.textStyleSystemMessage)
     }

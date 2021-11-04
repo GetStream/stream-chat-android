@@ -61,6 +61,8 @@ import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewRea
  * @property textStyleErrorMessage Appearance for error message text.
  * @property messageStartMargin Margin for messages in the left side. Default value is 48dp.
  * @property messageEndMargin Margin for messages in the right side. Default value is 0dp.
+ * @property messageMaxWidthFactorMine Factor used to compute max width for message sent by the current user. Should be in <0.75, 1> range.
+ * @property messageMaxWidthFactorTheirs Factor used to compute max width for message sent by other user. Should be in <0.75, 1> range.
  */
 public data class MessageListItemStyle(
     public val fileAttachmentStyle: FileAttachmentViewStyle,
@@ -101,6 +103,8 @@ public data class MessageListItemStyle(
     @ColorInt public val pinnedMessageBackgroundColor: Int,
     @Px public val messageStartMargin: Int,
     @Px public val messageEndMargin: Int,
+    public val messageMaxWidthFactorMine: Float,
+    public val messageMaxWidthFactorTheirs: Float,
 ) {
 
     @ColorInt
@@ -141,6 +145,9 @@ public data class MessageListItemStyle(
         internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
         internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
         internal val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
+
+        private const val BASE_MESSAGE_MAX_WIDTH_FACTOR = 1
+        private const val DEFAULT_MESSAGE_MAX_WIDTH_FACTOR = 0.75f
 
         private fun fileAttachmentStyle(context: Context, typedArray: TypedArray): FileAttachmentViewStyle {
             val progressBarDrawable =
@@ -485,6 +492,7 @@ public data class MessageListItemStyle(
             val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
                 .bubbleColorMine(R.styleable.MessageListView_streamUiEditReactionsBubbleColorMine)
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiEditReactionsBubbleColorTheirs)
+                .reactionsColumns(R.styleable.MessageListView_streamUiEditReactionsColumns)
                 .build()
 
             val iconIndicatorSent = attributes.getDrawable(
@@ -612,6 +620,20 @@ public data class MessageListItemStyle(
                 context.getDimension(R.dimen.stream_ui_message_viewholder_avatar_missing_margin).toFloat()
             ).toInt()
 
+            val messageMaxWidthFactorMine = attributes.getFraction(
+                R.styleable.MessageListView_streamUiMessageMaxWidthFactorMine,
+                BASE_MESSAGE_MAX_WIDTH_FACTOR,
+                BASE_MESSAGE_MAX_WIDTH_FACTOR,
+                DEFAULT_MESSAGE_MAX_WIDTH_FACTOR,
+            )
+
+            val messageMaxWidthFactorTheirs = attributes.getFraction(
+                R.styleable.MessageListView_streamUiMessageMaxWidthFactorTheirs,
+                BASE_MESSAGE_MAX_WIDTH_FACTOR,
+                BASE_MESSAGE_MAX_WIDTH_FACTOR,
+                DEFAULT_MESSAGE_MAX_WIDTH_FACTOR,
+            )
+
             return MessageListItemStyle(
                 fileAttachmentStyle = fileAttachmentStyle,
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
@@ -651,11 +673,19 @@ public data class MessageListItemStyle(
                 pinnedMessageBackgroundColor = pinnedMessageBackgroundColor,
                 messageStartMargin = messageStartMargin,
                 messageEndMargin = messageEndMargin,
+                messageMaxWidthFactorMine = messageMaxWidthFactorMine,
+                messageMaxWidthFactorTheirs = messageMaxWidthFactorTheirs
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
+                .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }
 
         private fun Int.nullIfNotSet(): Int? {
             return if (this == VALUE_NOT_SET) null else this
+        }
+
+        private fun MessageListItemStyle.checkMessageMaxWidthFactorsRange() {
+            require(messageMaxWidthFactorMine in 0.75..1.0) { "messageMaxWidthFactorMine cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorMine" }
+            require(messageMaxWidthFactorTheirs in 0.75..1.0) { "messageMaxWidthFactorTheirs cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorTheirs" }
         }
     }
 }

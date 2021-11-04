@@ -134,7 +134,7 @@ internal object EventArguments {
         connectEventsEnabled = true,
         searchEnabled = true,
         isReactionsEnabled = true,
-        isRepliesEnabled = true,
+        isThreadEnabled = true,
         muteEnabled = true,
         uploadsEnabled = true,
         urlEnrichmentEnabled = true,

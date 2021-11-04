@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import io.getstream.chat.android.compose.state.channel.list.LeaveGroup
 import io.getstream.chat.android.compose.state.channel.list.ViewInfo
 import io.getstream.chat.android.compose.ui.common.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isDistinct
 
 /**
  * Shows special UI when an item is selected.
@@ -69,8 +71,6 @@ public fun ChannelInfo(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val isAdmin = selectedChannel.members.firstOrNull { it.user.id == user?.id }?.role == "admin"
-
     val channelMembers = selectedChannel.members
     val onlineMembers = channelMembers.count { it.user.online }
 
@@ -82,42 +82,48 @@ public fun ChannelInfo(
         }
     }
 
-    val channelOptions = mutableListOf(
+    val canLeaveChannel = !selectedChannel.isDistinct()
+
+    val canDeleteChannel = selectedChannel.members
+        .firstOrNull { it.user.id == user?.id }
+        ?.role
+        ?.let { it == "admin" || it == "owner" }
+        ?: false
+
+    val channelOptions = listOfNotNull(
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_view_info),
+            title = stringResource(id = R.string.stream_compose_channel_info_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Person,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
+        if (canLeaveChannel) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                icon = Icons.Default.PersonRemove,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = LeaveGroup(selectedChannel)
+            )
+        } else null,
+        if (canDeleteChannel) {
+            ChannelOption(
+                title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
+                titleColor = ChatTheme.colors.errorAccent,
+                icon = Icons.Default.Delete,
+                iconColor = ChatTheme.colors.errorAccent,
+                action = DeleteConversation(selectedChannel)
+            )
+        } else null,
         ChannelOption(
-            title = stringResource(id = R.string.stream_compose_leave_group),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = Icons.Default.PersonRemove,
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            action = LeaveGroup(selectedChannel)
-        ),
-        ChannelOption(
-            title = stringResource(id = R.string.stream_compose_cancel),
+            title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
             icon = Icons.Default.Cancel,
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = Cancel,
         )
     )
-
-    if (isAdmin) {
-        channelOptions.add(
-            2,
-            ChannelOption(
-                title = stringResource(id = R.string.stream_compose_delete_conversation),
-                titleColor = ChatTheme.colors.errorAccent,
-                icon = Icons.Default.Delete,
-                iconColor = ChatTheme.colors.errorAccent,
-                action = DeleteConversation(selectedChannel)
-            )
-        )
-    }
 
     Box(
         modifier = Modifier
@@ -155,8 +161,9 @@ public fun ChannelInfo(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = stringResource(
-                        id = R.string.stream_compose_channel_members,
+                    text = LocalContext.current.resources.getQuantityString(
+                        R.plurals.stream_compose_channel_members,
+                        channelMembers.size,
                         channelMembers.size,
                         onlineMembers
                     ),

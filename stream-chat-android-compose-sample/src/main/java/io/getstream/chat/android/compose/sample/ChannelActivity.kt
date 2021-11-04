@@ -115,14 +115,14 @@ class ChannelActivity : AppCompatActivity() {
 
         val user by listViewModel.user.collectAsState()
         val selectedChannel = listViewModel.selectedChannel
-        val isNetworkAvailable by listViewModel.isOnline.collectAsState()
+        val connectionState by listViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
                     currentUser = user,
-                    isNetworkAvailable = isNetworkAvailable
+                    connectionState = connectionState
                 )
 
                 SearchInput(
@@ -137,6 +137,7 @@ class ChannelActivity : AppCompatActivity() {
                 )
 
                 ChannelList(
+                    modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
                     onChannelLongClick = { listViewModel.selectChannel(it) }

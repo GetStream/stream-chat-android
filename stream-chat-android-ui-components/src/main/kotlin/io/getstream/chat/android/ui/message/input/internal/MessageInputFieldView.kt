@@ -46,9 +46,13 @@ internal class MessageInputFieldView : FrameLayout {
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
     private var attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
+    internal var maxAttachmentsCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
 
     private val _hasBigAttachment = MutableStateFlow(false)
     internal val hasBigAttachment: StateFlow<Boolean> = _hasBigAttachment
+
+    private val _selectedAttachmentsCount = MutableStateFlow(0)
+    internal val selectedAttachmentsCount: StateFlow<Int> = _selectedAttachmentsCount
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) onModeChanged(newMode)
@@ -198,6 +202,13 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    fun onEditMessageDismissed() {
+        if (mode is Mode.EditMessageMode) {
+            mode = Mode.MessageMode
+            clearContent()
+        }
+    }
+
     fun onEdit(edit: Message) {
         mode = Mode.EditMessageMode(edit)
     }
@@ -218,9 +229,14 @@ internal class MessageInputFieldView : FrameLayout {
         _hasBigAttachment.value = selectedAttachments.hasBigAttachment()
     }
 
+    private fun notifySelectedAttachmentsCountChanged() {
+        _selectedAttachmentsCount.value = selectedAttachments.size
+    }
+
     private fun clearSelectedAttachments() {
         selectedAttachments = emptyList()
         notifyBigAttachments()
+        notifySelectedAttachmentsCountChanged()
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
@@ -317,6 +333,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun selectedAttachmentsChanged() {
         notifyBigAttachments()
+        notifySelectedAttachmentsCountChanged()
         resetModeIfNecessary()
         contentChangeListener?.onSelectedAttachmentsChanged(selectedAttachments)
     }
