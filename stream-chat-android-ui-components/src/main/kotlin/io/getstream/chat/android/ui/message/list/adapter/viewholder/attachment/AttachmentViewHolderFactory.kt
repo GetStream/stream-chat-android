@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.common.extensions.internal.isMedia
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentGroupBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
@@ -20,11 +21,13 @@ public open class AttachmentViewHolderFactory(
 ) {
 
     public companion object {
-        public const val MEDIA: Int = 1
-        public const val FILE: Int = 2
+        private const val BUILT_IN_TYPES = 9000
+
+        public const val MEDIA: Int = BUILT_IN_TYPES + 1
+        public const val FILE: Int = BUILT_IN_TYPES + 2
     }
 
-    public fun createAttachmentViewHolder(
+    public open fun createViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): AttachmentViewHolder {
@@ -53,6 +56,12 @@ public open class AttachmentViewHolderFactory(
         }
     }
 
+    public open fun getItemViewType(attachments: List<Attachment>): Int {
+        return when {
+            attachments.isMedia() -> MEDIA
+            else -> FILE
+        }
+    }
 }
 
 public abstract class AttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
