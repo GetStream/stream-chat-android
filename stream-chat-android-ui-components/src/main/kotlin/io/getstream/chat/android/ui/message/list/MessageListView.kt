@@ -70,17 +70,21 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageClickLis
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageDeleteHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageEditHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageFlagHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.MessageListItemTransformer
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageLongClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.MessagePinHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageReactionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageReplyHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
+import io.getstream.chat.android.ui.message.list.MessageListView.MessageUnpinHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.UserReactionClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.UserUnmuteHandler
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
@@ -88,7 +92,6 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
@@ -634,7 +637,7 @@ public class MessageListView : ConstraintLayout {
 
         if (::attachmentViewHolderFactory.isInitialized.not()) {
             attachmentViewHolderFactory =
-                AttachmentViewHolderFactoryImpl({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
+                AttachmentViewHolderFactory({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
         }
 
         // Create default ViewHolderFactory if needed
