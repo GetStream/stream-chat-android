@@ -2,8 +2,11 @@ package io.getstream.chat.android.offline.querychannels
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
@@ -17,12 +20,12 @@ public fun interface ChannelEventsHandler {
     /**
      * Function that computes result of handling event. It runs in background.
      *
-     * @param event Event that contains particular channel. See more [HasChannel]
+     * @param event ChatEvent that may contain updates for the set of channels. See more [HasChannel]
      * @param filter [FilterObject] that can be used to define result of handling.
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    public fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult
+    public fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
 }
 
 /**
@@ -81,7 +84,7 @@ public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
-    override fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+    public open fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> onNotificationAddedToChannelEvent(event, filter)
             is ChannelDeletedEvent -> EventHandlingResult.REMOVE
@@ -89,6 +92,22 @@ public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
             is ChannelUpdatedByUserEvent -> onChannelUpdatedByUserEvent(event, filter)
             is ChannelUpdatedEvent -> onChannelUpdatedEvent(event, filter)
             is NotificationMessageNewEvent -> onNotificationMessageNewEvent(event, filter)
+            else -> EventHandlingResult.SKIP
+        }
+    }
+
+    public open fun onCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
+        return if (event is ChannelHiddenEvent) {
+            EventHandlingResult.REMOVE
+        } else {
+            EventHandlingResult.SKIP
+        }
+    }
+
+    override fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
+        return when (event) {
+            is HasChannel -> onChannelEvent(event, filter)
+            is CidEvent -> onCidEvent(event, filter)
             else -> EventHandlingResult.SKIP
         }
     }
