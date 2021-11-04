@@ -20,7 +20,7 @@ import java.util.Date
 private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
 
 /**
- * Allows to store additional information if the channel is muted for the current user.
+ * Allows storing additional information if the channel is muted for the current user.
  *
  * @see [ChannelListViewModel.combine]
  */
