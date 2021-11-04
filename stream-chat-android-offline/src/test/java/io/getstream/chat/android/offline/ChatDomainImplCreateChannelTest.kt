@@ -257,7 +257,7 @@ internal class ChatDomainImplCreateChannelTest {
         }
 
         fun get(): ChatDomainImpl {
-            return ChatDomain.Builder(context, chatClient).buildImpl().apply {
+            return ChatDomain.Builder(context, chatClient).build().let { it as ChatDomainImpl }.apply {
                 offlineEnabled = false
                 setUser(this@Fixture.user)
                 repos = repositoryFacade

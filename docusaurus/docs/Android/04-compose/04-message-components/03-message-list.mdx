@@ -114,7 +114,7 @@ fun MessageList(
 	..., // State
     modifier: Modifier = Modifier,
     loadingContent: @Composable () -> Unit = { LoadingView(modifier) },
-    emptyContent: @Composable () -> Unit = { EmptyView(modifier) },
+    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyView(modifier) },
     itemContent: @Composable (MessageListItem) -> Unit = {
         DefaultMessageItem(
             messageListItem = it,

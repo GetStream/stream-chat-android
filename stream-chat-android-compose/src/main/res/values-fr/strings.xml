@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Channel List Header -->
+    <string name="stream_compose_channel_list_header_new_chat">Nouvelle discussion</string>
+
+    <!-- Search Input -->
+    <string name="stream_compose_search_input_cancel">Annuler</string>
+    <string name="stream_compose_search_input_hint">Rechercher des chaînes par nom</string>
+
+    <!-- Channel List -->
+    <string name="stream_compose_channel_list_you">Vous</string>
+    <string name="stream_compose_channel_list_empty_channels">Aucun canal disponible</string>
+    <string name="stream_compose_channel_list_empty_search_results">Aucun résultat pour %1$s</string>
+
+    <!-- Channel Info Dialog -->
+    <string name="stream_compose_channel_info_view_info">Voir les informations</string>
+    <string name="stream_compose_channel_info_leave_group">Quitter le Groupe</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_title">Quitter le Groupe</string>
+    <string name="stream_compose_channel_info_leave_group_confirmation_message">Voulez-vous quitter le groupe %1$s?</string>
+    <string name="stream_compose_channel_info_delete_conversation">Supprimer la conversation</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_title">Supprimer la conversation</string>
+    <string name="stream_compose_channel_info_delete_conversation_confirmation_message">Voulez-vous quitter le groupe %1$s?</string>
+    <string name="stream_compose_channel_info_dismiss">Annuler</string>
+
+    <!-- Common -->
+    <plurals name="stream_compose_channel_members">
+        <item quantity="one">%1d Membre, %2d En ligne</item>
+        <item quantity="other">%1d Membres, %2d En ligne</item>
+    </plurals>
+    <string name="stream_compose_ok">OK</string>
+    <string name="stream_compose_cancel">Annuler</string>
+    <string name="stream_compose_waiting_for_network">En attente de réseau</string>
+    <string name="stream_compose_untitled_channel">Channel without name</string>
+
+    <!-- Message List -->
+    <string name="stream_compose_message_list_empty_messages">Pas de messages</string>
+</resources>

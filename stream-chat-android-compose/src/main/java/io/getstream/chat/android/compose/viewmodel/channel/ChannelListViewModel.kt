@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -95,7 +96,6 @@ public class ChannelListViewModel(
         viewModelScope.launch {
             searchQuery.combine(queryConfig) { query, config -> query to config }
                 .collectLatest { (query, config) ->
-
                     val filter = if (query.isNotEmpty()) {
                         Filters.and(config.filters, Filters.autocomplete("name", query))
                     } else {
@@ -105,7 +105,7 @@ public class ChannelListViewModel(
                     val result = chatDomain.queryChannels(filter, config.querySort).await()
 
                     if (result.isSuccess) {
-                        observeChannels(result.data())
+                        observeChannels(controller = result.data(), searchQuery = query)
                     } else {
                         result.error().cause?.printStackTrace()
                         channelsState =
@@ -120,30 +120,33 @@ public class ChannelListViewModel(
      *
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
-    private suspend fun observeChannels(controller: QueryChannelsController) {
-        controller.loadingMore
-            .combine(controller.channelsState) { isLoadingMore, channelsState ->
-                isLoadingMore to channelsState
-            }.combine(controller.endOfChannels) { (isLoadingMore, state), endOfChannels ->
-                when (state) {
-                    QueryChannelsController.ChannelsState.NoQueryActive,
-                    QueryChannelsController.ChannelsState.Loading,
-                    ->
-                        channelsState.copy(isLoading = true)
-                    QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
+    private suspend fun observeChannels(controller: QueryChannelsController, searchQuery: String) {
+        controller.channelsState.map { state ->
+            when (state) {
+                QueryChannelsController.ChannelsState.NoQueryActive,
+                QueryChannelsController.ChannelsState.Loading,
+                -> channelsState.copy(
+                    isLoading = true,
+                    searchQuery = searchQuery
+                )
+                QueryChannelsController.ChannelsState.OfflineNoResults -> {
+                    channelsState.copy(
                         isLoading = false,
-                        channels = emptyList()
+                        channels = emptyList(),
+                        searchQuery = searchQuery
                     )
-                    is QueryChannelsController.ChannelsState.Result -> {
-                        channelsState.copy(
-                            isLoading = false,
-                            channels = state.channels,
-                            isLoadingMore = isLoadingMore,
-                            endOfChannels = endOfChannels
-                        )
-                    }
                 }
-            }.collectLatest { newState -> channelsState = newState }
+                is QueryChannelsController.ChannelsState.Result -> {
+                    channelsState.copy(
+                        isLoading = false,
+                        channels = state.channels,
+                        isLoadingMore = false,
+                        endOfChannels = controller.endOfChannels.value,
+                        searchQuery = searchQuery
+                    )
+                }
+            }
+        }.collectLatest { newState -> channelsState = newState }
     }
 
     /**
@@ -200,6 +203,7 @@ public class ChannelListViewModel(
             currentConfig.filters
         }
 
+        channelsState = channelsState.copy(isLoadingMore = true)
         chatDomain.queryChannelsLoadMore(filter, currentConfig.querySort).enqueue()
     }
 

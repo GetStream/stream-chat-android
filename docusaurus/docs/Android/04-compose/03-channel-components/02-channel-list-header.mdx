@@ -82,12 +82,12 @@ fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    isNetworkAvailable: Boolean = true,
+    connectionState = ConnectionState.CONNECTED,
     leadingContent: @Composable RowScope.() -> Unit = { DefaultChannelHeaderLeadingContent(currentUser, onAvatarClick) },
     titleContent: @Composable RowScope.() -> Unit = {
         ChannelHeaderTitle(
             modifier = Modifier.weight(1f),
-            isNetworkAvailable = isNetworkAvailable,
+            connectionState = connectionState,
             title = title
         )
     },
@@ -99,12 +99,12 @@ fun ChannelListHeader(
 * `modifier`: Modifier for the root component styling. You can add things like a background, elevation, padding and more.
 * `title`: The text to show when you're connected to the Internet.
 * `currentUser`: The state of the current user, for displaying the `Avatar`.
-* `isNetworkAvailable`: Whether we should show the title or the `NetworkLoadingView`.
+* `connectionState`: The state of WebSocket connection, used to switch between the title and the the `NetworkLoadingView`.
 * `leadingContent`: Customizable composable function parameter that overrides the leading action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onAvatarClick`,
     * or override both the UI and behavior by changing the `leadingContent` parameter from the default to your own.
 * `titleContent`: Customizable composable function parameter that overrides the title content. This allows you to either:
-    * override the shown data but keep the UI, by passing in the `title` and `isNetworkAvailable`.
+    * override the shown data but keep the UI, by passing in the `title` and `connectionState`.
     * or override both the UI and behavior by changing the `titleContent` parameter from the default to your own.
 * `trailingContent`: Customizable composable function parameter that overrides the trailing action. This allows you to either:
     * override the default behavior but keep the UI by overriding `onHeaderActionClick`,
@@ -115,8 +115,8 @@ Here's an example of customizing the UI of the header:
 ```kotlin
 ChannelListHeader(
     // Customizing the appearance
-    modifier = Modifier.fillMaxWidth(), 
-    isNetworkAvailable = false,
+    modifier = Modifier.fillMaxWidth(),
+    connectionState = ConnectionState.CONNECTING,
     currentUser = user,
     title = "My Chat App",
     trailingContent = { // Customizing the trailing action

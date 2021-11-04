@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
@@ -63,6 +64,7 @@ public class MessageInputView : ConstraintLayout {
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
         configInputMode(previousValue, newValue)
+        messageInputViewModeListener.inputModeChanged(inputMode = newValue)
     }
 
     public var chatMode: ChatMode by Delegates.observable(ChatMode.GROUP_CHAT) { _, _, _ ->
@@ -132,6 +134,8 @@ public class MessageInputView : ConstraintLayout {
             }
         }
 
+    private var messageInputViewModeListener: MessageInputViewModeListener = MessageInputViewModeListener { }
+
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -149,7 +153,7 @@ public class MessageInputView : ConstraintLayout {
             is InputMode.Reply -> {
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_input_reply)
-                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_arrow_curve_left)
+                binding.inputModeIcon.setImageDrawable(messageInputViewStyle.replyInputModeIcon)
                 binding.messageInputFieldView.onReply(newValue.repliedMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
@@ -157,7 +161,7 @@ public class MessageInputView : ConstraintLayout {
             is InputMode.Edit -> {
                 binding.inputModeHeader.isVisible = true
                 binding.headerLabel.text = context.getString(R.string.stream_ui_message_list_edit_message)
-                binding.inputModeIcon.setImageResource(R.drawable.stream_ui_ic_edit)
+                binding.inputModeIcon.setImageDrawable(messageInputViewStyle.editInputModeIcon)
                 binding.messageInputFieldView.onEdit(newValue.oldMessage)
                 binding.messageInputFieldView.binding.messageEditText.focusAndShowKeyboard()
             }
@@ -166,6 +170,8 @@ public class MessageInputView : ConstraintLayout {
                 binding.inputModeHeader.isVisible = false
                 if (previousValue is InputMode.Reply) {
                     binding.messageInputFieldView.onReplyDismissed()
+                } else if (previousValue is InputMode.Edit) {
+                    binding.messageInputFieldView.onEditMessageDismissed()
                 }
             }
         }
@@ -504,6 +510,39 @@ public class MessageInputView : ConstraintLayout {
         binding.attachmentsButton.setOnClickListener { listener.onAttachmentButtonClicked() }
     }
 
+    /**
+     * Sets a listener for message input view mode changes
+     *
+     * @param listener The listener to be set
+     * @see [InputMode]
+     */
+    public fun setMessageInputModeListener(listener: MessageInputViewModeListener) {
+        messageInputViewModeListener = listener
+    }
+
+    /**
+     * Sets a send message button enabled drawable.
+     * Keep in mind that [MessageInputView] displays two different send message buttons:
+     * - sendMessageButtonEnabled - when the user is able to send a message
+     * - sendMessageButtonDisabled - when the user is not able to send a message (send button is disabled)
+     *
+     * Drawable will override the one provided either by attributes or TransformStyle.messageInputStyleTransformer
+     * @param drawable The drawable to be set
+     */
+    public fun setSendMessageButtonEnabledDrawable(drawable: Drawable) {
+        binding.sendMessageButtonEnabled.setImageDrawable(drawable)
+    }
+
+    /**
+     * Sets a send message button disabled drawable.
+
+     * @param drawable The drawable to be set
+     * @see [setSendMessageButtonEnabledDrawable]
+     */
+    public fun setSendMessageButtonDisabledDrawable(drawable: Drawable) {
+        binding.sendMessageButtonDisabled.setImageDrawable(drawable)
+    }
+
     private fun configLightningButton() {
         binding.commandsButton.run {
             messageInputViewStyle.commandsButtonIcon.let(this::setImageDrawable)
@@ -770,10 +809,28 @@ public class MessageInputView : ConstraintLayout {
         }
     }
 
+    /**
+     * Class representing [MessageInputView] mode
+     */
     public sealed class InputMode {
+        /**
+         * A mode when the user can send a message
+         */
         public object Normal : InputMode()
+
+        /**
+         * A mode when the user can reply to a thread
+         */
         public data class Thread(val parentMessage: Message) : InputMode()
+
+        /**
+         * A mode when the user can edit the message
+         */
         public data class Edit(val oldMessage: Message) : InputMode()
+
+        /**
+         * A mode when the user can reply to the message
+         */
         public data class Reply(val repliedMessage: Message) : InputMode()
     }
 
@@ -898,5 +955,18 @@ public class MessageInputView : ConstraintLayout {
          * Function to be invoked when a click on the attachment button happens.
          */
         public fun onAttachmentButtonClicked()
+    }
+
+    /**
+     * Listener invoked when input mode changes.
+     * Can be used for changing view's appearance based on the current mode - for example, send message buttons' drawables
+     */
+    public fun interface MessageInputViewModeListener {
+        /**
+         * Called when input mode changes
+         *
+         * @param inputMode Current input mode
+         */
+        public fun inputModeChanged(inputMode: InputMode)
     }
 }
