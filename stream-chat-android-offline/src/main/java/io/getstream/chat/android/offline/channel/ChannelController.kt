@@ -75,6 +75,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.extensions.isPermanent
 import io.getstream.chat.android.offline.extensions.removeMyReaction
@@ -164,9 +165,8 @@ public class ChannelController internal constructor(
     public val channelConfig: StateFlow<Config> by mutableState::channelConfig
     public val recoveryNeeded: Boolean by mutableState::recoveryNeeded
 
-    internal fun getThread(threadId: String): ThreadController = threadControllerMap.getOrPut(threadId) {
-        ThreadController(threadId, this, domainImpl)
-            .also { domainImpl.scope.launch { it.loadOlderMessages() } }
+    internal fun getThread(threadId: String, threadState: ThreadMutableState): ThreadController = threadControllerMap.getOrPut(threadId) {
+        ThreadController(threadState, this).also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
