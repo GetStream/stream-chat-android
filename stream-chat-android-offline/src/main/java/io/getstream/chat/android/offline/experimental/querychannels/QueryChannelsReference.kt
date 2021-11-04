@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 @InternalStreamChatApi
 @ExperimentalStreamChatApi
-public class QueryChannelsReference(
+public class QueryChannelsReference internal constructor(
     public val request: QueryChannelsRequest,
     private val chatClient: ChatClient
 ) : QueryReference<List<Channel>, QueryChannelsState> {

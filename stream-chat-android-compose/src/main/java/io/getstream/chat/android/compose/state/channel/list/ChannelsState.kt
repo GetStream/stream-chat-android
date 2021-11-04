@@ -9,10 +9,12 @@ import io.getstream.chat.android.client.models.Channel
  * @param isLoadingMore If we're loading more items (pagination).
  * @param endOfChannels If we've reached the end of channels, to stop triggering pagination.
  * @param channels The channels to render.
+ * @param searchQuery The current search query.
  */
 public data class ChannelsState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val endOfChannels: Boolean = false,
     val channels: List<Channel> = emptyList(),
+    val searchQuery: String = "",
 )

@@ -15,6 +15,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.randomChannel
 import io.getstream.chat.android.offline.randomMessage
 import io.getstream.chat.android.offline.randomUser
@@ -67,15 +69,16 @@ internal class SendMessageOfflineTest {
         )
     }
 
-    private class Fixture(scope: CoroutineScope, user: User) {
+    private class Fixture(private val scope: CoroutineScope, user: User) {
         private val repos: RepositoryFacade = mock()
         private val chatClient: ChatClient = mock()
         private val channelClient: ChannelClient = mock()
         private val chatDomainImpl: ChatDomainImpl = mock()
+        private val userFlow = MutableStateFlow(user)
 
         init {
             whenever(chatClient.channel(any(), any())) doReturn channelClient
-            whenever(chatDomainImpl.user) doReturn MutableStateFlow(user)
+            whenever(chatDomainImpl.user) doReturn userFlow
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
@@ -99,9 +102,10 @@ internal class SendMessageOfflineTest {
         }
 
         fun get(): ChannelController {
+            val mutableState = ChannelMutableState("channelType", "channelId", scope, userFlow)
             return ChannelController(
-                "channelType",
-                "channelId",
+                mutableState,
+                ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
                 chatDomainImpl,
                 messageSendingServiceFactory = mock()

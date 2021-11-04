@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -35,6 +36,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.BuildConfig
 import io.getstream.chat.android.offline.channel.ChannelController
 import io.getstream.chat.android.offline.event.EventHandlerImpl
+import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
 import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
@@ -50,7 +52,6 @@ import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.offline.repository.builder.RepositoryFacadeBuilder
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.offline.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.service.sync.OfflineSyncFirebaseMessagingHandler
@@ -509,11 +510,8 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun channel(cid: String): ChannelController {
-        if (!CHANNEL_CID_REGEX.matches(cid)) {
-            throw IllegalArgumentException("Received invalid cid, expected format messaging:123, got $cid")
-        }
-        val parts = cid.split(":")
-        return channel(parts[0], parts[1])
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return channel(channelType, channelId)
     }
 
     internal fun channel(
@@ -523,8 +521,8 @@ internal class ChatDomainImpl internal constructor(
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMapImpl.containsKey(cid)) {
             val channelController = ChannelController(
-                channelType = channelType,
-                channelId = channelId,
+                mutableState = offlinePlugin.state.channel(channelType, channelId).toMutableState(),
+                channelLogic = offlinePlugin.logic.channel(channelType, channelId),
                 client = client,
                 domainImpl = this,
             )
@@ -874,12 +872,7 @@ internal class ChatDomainImpl internal constructor(
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
-        pagination: QueryChannelPaginationRequest,
-    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-
-    suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelsPaginationRequest,
+        pagination: QueryChannelRequest,
     ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
 
     suspend fun selectAndEnrichChannels(

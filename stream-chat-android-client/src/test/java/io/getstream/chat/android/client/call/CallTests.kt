@@ -26,4 +26,25 @@ internal class CallTests {
 
         mutableList shouldBeEqualTo listOf(1, 2, 3, 4)
     }
+
+    @Test
+    fun `Should invoke methods in right order with precondition`() {
+        val mutableList = mutableListOf<Int>()
+
+        CoroutineCall(testCoroutines.scope) {
+            mutableList.add(2)
+            Result.success(2)
+        }
+            .doOnStart(testCoroutines.scope) { mutableList.add(1) }
+            .doOnResult(testCoroutines.scope) { mutableList.add(3) }
+            .withPrecondition(testCoroutines.scope) {
+                mutableList.add(0)
+                Result.success(Unit)
+            }
+            .enqueue {
+                mutableList.add(4)
+            }
+
+        mutableList shouldBeEqualTo listOf(0, 1, 2, 3, 4)
+    }
 }

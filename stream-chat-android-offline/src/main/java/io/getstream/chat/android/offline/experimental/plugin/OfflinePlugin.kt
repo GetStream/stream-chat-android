@@ -52,12 +52,24 @@ public class OfflinePlugin(private val config: Config) : Plugin {
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest): Unit =
         logic.queryChannels(request).onQueryChannelsResult(result, request)
 
+    override suspend fun onQueryChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Result<Unit> = logic.channel(channelType, channelId).onQueryChannelPrecondition(channelType, channelId, request)
+
+    override suspend fun onQueryChannelRequest(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ): Unit = logic.channel(channelType, channelId).onQueryChannelRequest(channelType, channelId, request)
+
     override suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Unit = logic.queryChannel().onQueryChannelResult(result, channelType, channelId, request)
+    ): Unit = logic.channel(channelType, channelId).onQueryChannelResult(result, channelType, channelId, request)
 
     internal fun clear() {
         logic.clear()

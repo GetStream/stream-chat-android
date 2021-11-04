@@ -79,7 +79,7 @@ jobs:
         with:
           key-prefix: gradle-test
       - name: Unit tests
-        run: ./gradlew testDebug --stacktrace --scan
+        run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
         uses: actions/upload-artifact@v2
         if: failure()
