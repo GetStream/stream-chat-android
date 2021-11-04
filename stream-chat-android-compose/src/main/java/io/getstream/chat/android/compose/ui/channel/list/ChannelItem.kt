@@ -70,6 +70,7 @@ private const val UNREAD_COUNT_MANY = "99+"
 public fun DefaultChannelItem(
     channel: Channel,
     currentUser: User?,
+    mutedChannelIds: Set<String> = emptySet(),
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
@@ -85,6 +86,7 @@ public fun DefaultChannelItem(
     detailsContent: @Composable RowScope.(Channel) -> Unit = {
         ChannelDetails(
             channel = it,
+            isMuted = it.id in mutedChannelIds,
             currentUser = currentUser,
             modifier = Modifier
                 .weight(1f)
@@ -148,12 +150,14 @@ public fun DefaultChannelItem(
  *
  * @param channel The channel to show the info for.
  * @param currentUser The currently logged in user, used for data handling.
+ * @param isMuted If the channel is muted for the current user.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun ChannelDetails(
     channel: Channel,
     currentUser: User?,
+    isMuted: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -171,7 +175,15 @@ public fun ChannelDetails(
 
         val lastMessageText = channel.getLastMessagePreviewText(currentUser)
 
-        if (lastMessageText.isNotEmpty()) {
+        if (isMuted) {
+            Text(
+                text = "Channel muted",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        } else if (lastMessageText.isNotEmpty()) {
             Text(
                 text = lastMessageText,
                 maxLines = 1,

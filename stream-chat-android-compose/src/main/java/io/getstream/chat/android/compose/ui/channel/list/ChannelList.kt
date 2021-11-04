@@ -61,9 +61,10 @@ public fun ChannelList(
     itemContent: @Composable (Channel) -> Unit = { channel ->
         DefaultChannelItem(
             channel = channel,
-            viewModel.user.value,
+            currentUser = viewModel.user.value,
             onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick
+            onChannelLongClick = onChannelLongClick,
+            mutedChannelIds = viewModel.channelsState.mutedChannelIds
         )
     },
 ) {
@@ -119,6 +120,7 @@ public fun ChannelList(
         DefaultChannelItem(
             channel = channel,
             currentUser = currentUser,
+            mutedChannelIds = channelsState.mutedChannelIds,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )

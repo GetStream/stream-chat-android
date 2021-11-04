@@ -122,26 +122,28 @@ public class ChannelListViewModel(
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
     private suspend fun observeChannels(controller: QueryChannelsController) {
-        controller.channelsState.map { state ->
-            when (state) {
-                QueryChannelsController.ChannelsState.NoQueryActive,
-                QueryChannelsController.ChannelsState.Loading,
-                ->
-                    channelsState.copy(isLoading = true)
-                QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
-                    isLoading = false,
-                    channels = emptyList()
-                )
-                is QueryChannelsController.ChannelsState.Result -> {
-                    channelsState.copy(
+        controller.mutedChannelIds.combine(controller.channelsState) { mutedChannelIds, state -> mutedChannelIds to state }
+            .map { (mutedChannelIds, state) ->
+                when (state) {
+                    QueryChannelsController.ChannelsState.NoQueryActive,
+                    QueryChannelsController.ChannelsState.Loading,
+                    ->
+                        channelsState.copy(isLoading = true)
+                    QueryChannelsController.ChannelsState.OfflineNoResults -> channelsState.copy(
                         isLoading = false,
-                        channels = state.channels,
-                        isLoadingMore = false,
-                        endOfChannels = controller.endOfChannels.value
+                        channels = emptyList()
                     )
+                    is QueryChannelsController.ChannelsState.Result -> {
+                        channelsState.copy(
+                            isLoading = false,
+                            channels = state.channels,
+                            isLoadingMore = false,
+                            endOfChannels = controller.endOfChannels.value,
+                            mutedChannelIds = mutedChannelIds.toSet()
+                        )
+                    }
                 }
-            }
-        }.collectLatest { newState -> channelsState = newState }
+            }.collectLatest { newState -> channelsState = newState }
     }
 
     /**
