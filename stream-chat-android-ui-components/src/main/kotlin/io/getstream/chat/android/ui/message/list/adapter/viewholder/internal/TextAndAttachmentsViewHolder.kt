@@ -13,8 +13,8 @@ import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
+import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
@@ -64,6 +64,8 @@ internal class TextAndAttachmentsViewHolder(
         linkClickListener = listeners.linkClickListener::onLinkClick
     )
 
+    private val attachmentsAdapter = AttachmentsAdapter(attachmentViewHolderFactory)
+
     init {
         binding.run {
             root.setOnClickListener {
@@ -88,6 +90,10 @@ internal class TextAndAttachmentsViewHolder(
                 onLinkClicked = listeners.linkClickListener::onLinkClick
             )
         }
+
+        binding.attachmentsRecycler.adapter = attachmentsAdapter
+        binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+        binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
@@ -102,16 +108,7 @@ internal class TextAndAttachmentsViewHolder(
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
         val attachments = data.message.attachments
-
-        val adapter = AttachmentsAdapter(attachmentViewHolderFactory)
-
-        binding.attachmentsRecycler.adapter = adapter
-        binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context).apply {
-            // recycleChildrenOnDetach = true
-        }
-        binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
-
-        adapter.setItems(listOf(attachments))
+        attachmentsAdapter.setItems(listOf(attachments))
     }
 
     private fun clearScope() {
