@@ -9,6 +9,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.experimental.channel.state.ChannelState
+import io.getstream.chat.android.offline.experimental.channel.state.toMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadMutableState
+import io.getstream.chat.android.offline.experimental.channel.thread.state.ThreadState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsMutableState
 import io.getstream.chat.android.offline.experimental.querychannels.state.QueryChannelsState
 import java.util.concurrent.ConcurrentHashMap
@@ -23,6 +26,7 @@ public class StateRegistry internal constructor(
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySort<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val threads: ConcurrentHashMap<Triple<String, String, String>, ThreadMutableState> = ConcurrentHashMap()
 
     public fun queryChannels(filter: FilterObject, sort: QuerySort<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
@@ -33,6 +37,13 @@ public class StateRegistry internal constructor(
     public fun channel(channelType: String, channelId: String): ChannelState {
         return channels.getOrPut(channelType to channelId) {
             ChannelMutableState(channelType, channelId, chatDomainImpl.scope, chatDomainImpl.user)
+        }
+    }
+
+    public fun thread(channelType: String, channelId: String, messageId: String): ThreadState {
+        return threads.getOrPut(Triple(channelType, channelId, messageId)) {
+            val channelsState = channel(channelType, channelId)
+            ThreadMutableState(messageId, channelsState.toMutableState(), chatDomainImpl.scope)
         }
     }
 
