@@ -80,6 +80,7 @@
 - Added localization support for the components related the channel list.
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 - Fixed channel options that are displayed in the `ChannelInfo` component.
+- Added `ChannelNameFormatter` option to the `ChatTheme`, to allow for channel name format customization across the app.
 
 ### 🐞 Fixed
 

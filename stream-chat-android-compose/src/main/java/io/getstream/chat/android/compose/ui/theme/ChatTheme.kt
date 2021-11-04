@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
+import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
@@ -42,6 +43,10 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
+private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter> {
+    error("No ChannelNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
@@ -66,6 +71,7 @@ public fun ChatTheme(
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
+    channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -80,6 +86,7 @@ public fun ChatTheme(
         LocalAttachmentFactories provides attachmentFactories,
         LocalReactionTypes provides reactionTypes,
         LocalDateFormatter provides dateFormatter,
+        LocalChannelNameFormatter provides channelNameFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current)
     ) {
         content()
@@ -126,4 +133,9 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalDateFormatter.current
+
+    public val channelNameFormatter: ChannelNameFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalChannelNameFormatter.current
 }
