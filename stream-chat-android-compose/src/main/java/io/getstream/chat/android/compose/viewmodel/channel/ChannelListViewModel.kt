@@ -16,6 +16,7 @@ import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channel.list.Cancel
 import io.getstream.chat.android.compose.state.channel.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channel.list.ChannelsState
+import io.getstream.chat.android.compose.ui.util.isMuted
 import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
@@ -122,7 +123,7 @@ public class ChannelListViewModel(
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [controller].
      */
     private suspend fun observeChannels(controller: QueryChannelsController) {
-        controller.mutedChannelIds.combine(controller.channelsState) { mutedChannelIds, state -> mutedChannelIds to state }
+        controller.mutedChannelIds.combine(controller.channelsState, ::Pair)
             .map { (mutedChannelIds, state) ->
                 when (state) {
                     QueryChannelsController.ChannelsState.NoQueryActive,
@@ -136,10 +137,9 @@ public class ChannelListViewModel(
                     is QueryChannelsController.ChannelsState.Result -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = state.channels,
+                            channels = state.channels.augmentWithMutes(mutedChannelIds),
                             isLoadingMore = false,
-                            endOfChannels = controller.endOfChannels.value,
-                            mutedChannelIds = mutedChannelIds.toSet()
+                            endOfChannels = controller.endOfChannels.value
                         )
                     }
                 }
@@ -254,5 +254,18 @@ public class ChannelListViewModel(
     public fun dismissChannelAction() {
         activeChannelAction = null
         selectedChannel = null
+    }
+
+    /**
+     * [Channel.extraData]
+     *
+     * @see Channel.isMuted
+     */
+    private fun List<Channel>.augmentWithMutes(mutedChannelIds: List<String>): List<Channel> {
+        val ids = mutedChannelIds.toSet()
+        forEach { channel ->
+            channel.isMuted = channel.id in ids
+        }
+        return this
     }
 }

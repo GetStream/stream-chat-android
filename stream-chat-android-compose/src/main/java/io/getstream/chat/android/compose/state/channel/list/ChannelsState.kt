@@ -15,5 +15,4 @@ public data class ChannelsState(
     val isLoadingMore: Boolean = false,
     val endOfChannels: Boolean = false,
     val channels: List<Channel> = emptyList(),
-    val mutedChannelIds: Set<String> = emptySet(),
 )

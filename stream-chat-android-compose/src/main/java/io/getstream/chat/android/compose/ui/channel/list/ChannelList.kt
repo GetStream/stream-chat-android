@@ -63,8 +63,7 @@ public fun ChannelList(
             channel = channel,
             currentUser = viewModel.user.value,
             onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-            mutedChannelIds = viewModel.channelsState.mutedChannelIds
+            onChannelLongClick = onChannelLongClick
         )
     },
 ) {
@@ -120,7 +119,6 @@ public fun ChannelList(
         DefaultChannelItem(
             channel = channel,
             currentUser = currentUser,
-            mutedChannelIds = channelsState.mutedChannelIds,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick
         )
