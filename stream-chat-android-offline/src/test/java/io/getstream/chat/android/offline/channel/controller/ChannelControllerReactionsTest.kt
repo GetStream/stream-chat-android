@@ -17,6 +17,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.channel.ChannelController
+import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
+import io.getstream.chat.android.offline.experimental.channel.state.ChannelMutableState
 import io.getstream.chat.android.offline.extensions.addMyReaction
 import io.getstream.chat.android.offline.repository.RepositoryFacade
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -244,13 +246,15 @@ internal class ChannelControllerReactionsTest {
         val chatDomainImpl: ChatDomainImpl = mock()
 
         init {
-            whenever(chatDomainImpl.user) doReturn MutableStateFlow(user)
+            val userFlow = MutableStateFlow(user)
+            whenever(chatDomainImpl.user) doReturn userFlow
             whenever(chatDomainImpl.job) doReturn Job()
             whenever(chatDomainImpl.scope) doReturn scope
             whenever(chatDomainImpl.repos) doReturn repos
+            val mutableState = ChannelMutableState("channelType", "channelId", scope, userFlow)
             channelControllerImpl = ChannelController(
-                "channelType",
-                "channelId",
+                mutableState,
+                ChannelLogic(mutableState, chatDomainImpl),
                 chatClient,
                 chatDomainImpl,
                 messageSendingServiceFactory = mock(),

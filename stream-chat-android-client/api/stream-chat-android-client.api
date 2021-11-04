@@ -416,15 +416,21 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun getWatch ()Z
 	public final fun getWatchers ()Ljava/util/Map;
 	public final fun isFilteringNewerMessages ()Z
+	public final fun membersLimit ()I
+	public final fun membersOffset ()I
+	public final fun messagesLimit ()I
 	public synthetic fun noPresence ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noPresence ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public synthetic fun noState ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noState ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public synthetic fun noWatch ()Lio/getstream/chat/android/client/api/models/ChannelRequest;
 	public fun noWatch ()Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
+	public final fun pagination ()Lkotlin/Pair;
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
+	public final fun watchersLimit ()I
+	public final fun watchersOffset ()I
 	public fun withData (Ljava/util/Map;)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withMembers (II)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withMessages (I)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
@@ -1784,6 +1790,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 public final class io/getstream/chat/android/client/experimental/plugin/Plugin$DefaultImpls {
 	public static fun onMessageSendRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public static fun onMessageSendResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onQueryChannelPrecondition (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/experimental/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1796,6 +1803,7 @@ public abstract interface class io/getstream/chat/android/client/experimental/pl
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade$DefaultImpls {
 	public static fun onMessageSendRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public static fun onMessageSendResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onQueryChannelPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/OperationListenersFacade;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1803,11 +1811,13 @@ public final class io/getstream/chat/android/client/experimental/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener {
+	public abstract fun onQueryChannelPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener$DefaultImpls {
+	public static fun onQueryChannelPrecondition (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/experimental/plugin/listeners/QueryChannelListener;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

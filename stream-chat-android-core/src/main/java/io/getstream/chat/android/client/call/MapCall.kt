@@ -8,7 +8,7 @@ internal class MapCall<T : Any, K : Any>(
     private val mapper: (T) -> K,
 ) : Call<K> {
 
-    protected var canceled = AtomicBoolean(false)
+    private var canceled = AtomicBoolean(false)
 
     override fun cancel() {
         canceled.set(true)

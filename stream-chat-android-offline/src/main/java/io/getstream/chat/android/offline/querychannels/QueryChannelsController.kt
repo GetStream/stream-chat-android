@@ -70,12 +70,12 @@ public class QueryChannelsController internal constructor(
     public val channels: StateFlow<List<Channel>> = mutableState.channels
     public val mutedChannelIds: StateFlow<List<String>> = mutableState.mutedChannelIds
 
-    public val channelsState: StateFlow<ChannelsState> = mutableState.channelsState.map { state ->
+    public val channelsState: StateFlow<ChannelsState> = mutableState.channelsStateData.map { state ->
         when (state) {
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Loading -> ChannelsState.Loading
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.NoQueryActive -> ChannelsState.NoQueryActive
-            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.OfflineNoResults -> ChannelsState.OfflineNoResults
-            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsState.Result -> ChannelsState.Result(
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Loading -> ChannelsState.Loading
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.NoQueryActive -> ChannelsState.NoQueryActive
+            io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.OfflineNoResults -> ChannelsState.OfflineNoResults
+            is io.getstream.chat.android.offline.experimental.querychannels.state.ChannelsStateData.Result -> ChannelsState.Result(
                 state.channels
             )
         }
