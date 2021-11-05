@@ -22,7 +22,6 @@ public interface NotificationHandler {
      * @return False if notification should be handled internally.
      */
     public fun onChatEvent(event: NewMessageEvent): Boolean {
-        ChatClient
         return true
     }
 
