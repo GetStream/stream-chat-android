@@ -42,20 +42,37 @@ public open class MessageListFragment : Fragment() {
 
     private val lazyThreadMode: LazyThreadSafetyMode = LazyThreadSafetyMode.NONE
 
+    /** A specific channel cid to be connected with the Stream channel. */
     protected val cid: String by lazy(lazyThreadMode) {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
-    protected val themeResId: Int by lazy(lazyThreadMode) { requireArguments().getInt(ARG_THEME_RES_ID) }
-    protected val messageId: String? by lazy(lazyThreadMode) { requireArguments().getString(ARG_MESSAGE_ID) }
-    protected val showHeader: Boolean by lazy(lazyThreadMode) { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
 
+    /** A custom theme resource for the screen. */
+    protected val themeResId: Int by lazy(lazyThreadMode) { requireArguments().getInt(ARG_THEME_RES_ID) }
+
+    /** A specific message Id to move on the message list. */
+    protected val messageId: String? by lazy(lazyThreadMode) { requireArguments().getString(ARG_MESSAGE_ID) }
+
+    /** A flag for visibility of the header. */
+    protected val showHeader: Boolean by lazy(lazyThreadMode) {
+        requireArguments().getBoolean(ARG_SHOW_HEADER, false)
+    }
+
+    /** A ViewModel factory for creating message list relevant ViewModels. */
     protected val factory: MessageListViewModelFactory by lazy(lazyThreadMode) {
         MessageListViewModelFactory(cid, messageId)
     }
-    protected val messageListViewModel: MessageListViewModel by viewModels { factory }
+
+    /** A message list header ViewModel for binding [MessageListHeaderView]. */
     protected val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+
+    /** A message list ViewModel for binding [MessageListView]. */
+    protected val messageListViewModel: MessageListViewModel by viewModels { factory }
+
+    /** A message input ViewModel for binding [MessageInputView]. */
     protected val messageInputViewModel: MessageInputViewModel by viewModels { factory }
 
+    /** A click listener for the navigation button in the header. */
     protected var backPressListener: BackPressListener? = null
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
@@ -222,6 +239,11 @@ public open class MessageListFragment : Fragment() {
             this.fragment = fragment
         }
 
+        /**
+         * Builds a custom message list Fragment.
+         *
+         * @return A customized [MessageListFragment].
+         */
         public fun build(): MessageListFragment {
             return (fragment ?: MessageListFragment()).apply {
                 arguments = bundleOf(
