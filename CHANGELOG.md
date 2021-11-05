@@ -86,9 +86,12 @@
 
 ### ⬆️ Improved
 - Improved the icon set and polished the UI for various Messages features
+- Improved the set of customization options for the `DefaultChannelItem`
+- Updated documentation for Channels set of features
 
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
+- Added the `leadingContent`, `detailsContent`, `trailingContent` and `divider` Slot APIs for the `DefaultChannelItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
