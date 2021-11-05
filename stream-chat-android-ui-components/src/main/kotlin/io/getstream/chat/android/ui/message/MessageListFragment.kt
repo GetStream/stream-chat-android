@@ -40,14 +40,18 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 @Suppress("MemberVisibilityCanBePrivate")
 public open class MessageListFragment : Fragment() {
 
-    protected val cid: String by lazy {
+    private val lazyThreadMode: LazyThreadSafetyMode = LazyThreadSafetyMode.NONE
+
+    protected val cid: String by lazy(lazyThreadMode) {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
-    protected val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
-    protected val messageId: String? by lazy { requireArguments().getString(ARG_MESSAGE_ID) }
-    protected val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
+    protected val themeResId: Int by lazy(lazyThreadMode) { requireArguments().getInt(ARG_THEME_RES_ID) }
+    protected val messageId: String? by lazy(lazyThreadMode) { requireArguments().getString(ARG_MESSAGE_ID) }
+    protected val showHeader: Boolean by lazy(lazyThreadMode) { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
 
-    protected val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid, messageId) }
+    protected val factory: MessageListViewModelFactory by lazy(lazyThreadMode) {
+        MessageListViewModelFactory(cid, messageId)
+    }
     protected val messageListViewModel: MessageListViewModel by viewModels { factory }
     protected val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
     protected val messageInputViewModel: MessageInputViewModel by viewModels { factory }
