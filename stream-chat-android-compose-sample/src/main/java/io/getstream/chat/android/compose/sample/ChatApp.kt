@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.sample
 
 import android.app.Application
-import android.content.Intent
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -66,9 +65,11 @@ class ChatApp : Application() {
     private fun createNotificationHandler(): NotificationHandler {
         return NotificationHandlerFactory.createNotificationHandler(
             context = this,
-            newMessageIntent = { messageId: String, channelType: String, channelId: String ->
-                MessagesActivity.getIntent(this, messageId, "$channelType:$channelId")
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            newMessageIntent = { _: String, channelType: String, channelId: String ->
+                PushHandlerActivity.getIntent(
+                    context = this,
+                    channelId = "$channelType:$channelId"
+                )
             }
         )
     }

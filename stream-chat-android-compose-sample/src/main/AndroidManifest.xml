@@ -27,6 +27,8 @@
             android:name="io.getstream.chat.android.compose.sample.MessagesActivity"
             android:windowSoftInputMode="adjustResize"
             />
+
+        <activity android:name=".PushHandlerActivity" />
     </application>
 
 </manifest>

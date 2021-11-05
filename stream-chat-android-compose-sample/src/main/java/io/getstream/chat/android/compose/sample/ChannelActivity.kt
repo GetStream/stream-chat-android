@@ -1,5 +1,7 @@
 package io.getstream.chat.android.compose.sample
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -210,5 +212,11 @@ class ChannelActivity : AppCompatActivity() {
 
     private fun openMessages(channel: Channel) {
         startActivity(MessagesActivity.getIntent(this, channel.cid))
+    }
+
+    companion object {
+        fun getIntent(context: Context): Intent {
+            return Intent(context, ChannelActivity::class.java)
+        }
     }
 }
