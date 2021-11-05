@@ -40,26 +40,24 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 @Suppress("MemberVisibilityCanBePrivate")
 public open class MessageListFragment : Fragment() {
 
-    private val lazyThreadMode: LazyThreadSafetyMode = LazyThreadSafetyMode.NONE
-
     /** A specific channel cid to be connected with the Stream channel. */
-    protected val cid: String by lazy(lazyThreadMode) {
+    protected val cid: String by lazy(LazyThreadSafetyMode.NONE) {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
 
     /** A custom theme resource for the screen. */
-    protected val themeResId: Int by lazy(lazyThreadMode) { requireArguments().getInt(ARG_THEME_RES_ID) }
+    protected val themeResId: Int by lazy(LazyThreadSafetyMode.NONE) { requireArguments().getInt(ARG_THEME_RES_ID) }
 
     /** A specific message Id to move on the message list. */
-    protected val messageId: String? by lazy(lazyThreadMode) { requireArguments().getString(ARG_MESSAGE_ID) }
+    protected val messageId: String? by lazy(LazyThreadSafetyMode.NONE) { requireArguments().getString(ARG_MESSAGE_ID) }
 
     /** A flag for visibility of the header. */
-    protected val showHeader: Boolean by lazy(lazyThreadMode) {
+    protected val showHeader: Boolean by lazy(LazyThreadSafetyMode.NONE) {
         requireArguments().getBoolean(ARG_SHOW_HEADER, false)
     }
 
     /** A ViewModel factory for creating message list relevant ViewModels. */
-    protected val factory: MessageListViewModelFactory by lazy(lazyThreadMode) {
+    protected val factory: MessageListViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
         MessageListViewModelFactory(cid, messageId)
     }
 
