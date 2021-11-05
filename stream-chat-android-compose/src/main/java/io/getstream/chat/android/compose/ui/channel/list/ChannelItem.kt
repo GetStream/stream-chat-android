@@ -42,7 +42,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
@@ -163,7 +162,7 @@ public fun ChannelDetails(
     ) {
         val channelName: (@Composable () -> Unit) = @Composable {
             Text(
-                text = channel.getDisplayName(),
+                text = ChatTheme.channelNameFormatter.format(channel),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,

@@ -42,7 +42,6 @@ import io.getstream.chat.android.compose.ui.channel.list.ChannelList
 import io.getstream.chat.android.compose.ui.channel.list.DefaultChannelItem
 import io.getstream.chat.android.compose.ui.common.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
@@ -140,7 +139,7 @@ class ChannelActivity : AppCompatActivity() {
             },
             detailsContent = {
                 Text(
-                    text = it.getDisplayName(),
+                    text = ChatTheme.channelNameFormatter.format(channel),
                     style = ChatTheme.typography.bodyBold,
                     color = ChatTheme.colors.textHighEmphasis
                 )
