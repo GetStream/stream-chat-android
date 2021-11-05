@@ -206,7 +206,7 @@ public class QueryChannelsController internal constructor(
 
     private suspend fun addChannel(channel: Channel) = queryChannelsLogic.addChannel(channel)
 
-    internal suspend fun removeChannel(cid: String) = queryChannelsLogic.removeChannel(cid)
+    private suspend fun removeChannel(cid: String) = queryChannelsLogic.removeChannel(cid)
 
     internal suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val request = pagination.toQueryChannelsRequest(filter, domainImpl.userPresence)

@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.recover
+import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomainImpl
 import io.getstream.chat.android.offline.experimental.channel.logic.ChannelLogic
@@ -278,33 +279,13 @@ public class ChannelController internal constructor(
         }
 
         return if (result?.isSuccess == true) {
-            // Remove from query controllers
-            for (activeQuery in domainImpl.getActiveQueries()) {
-                activeQuery.removeChannel(cid)
-            }
             Result(Unit)
         } else {
             Result(result?.error() ?: ChatError("Current user null"))
         }
     }
 
-    internal suspend fun delete(): Result<Unit> {
-        val result = channelClient.delete().await()
-
-        return if (result.isSuccess) {
-            // Remove from query controllers
-            for (activeQuery in domainImpl.getActiveQueries()) {
-                activeQuery.removeChannel(cid)
-            }
-            // Remove messages from repository
-            val now = Date()
-            domainImpl.repos.deleteChannelMessagesBefore(cid, now)
-            Result(Unit)
-        } else {
-            logger.logE("Could not delete message. Error message: ${result.error().message}")
-            Result(result.error())
-        }
-    }
+    internal suspend fun delete(): Result<Unit> = channelClient.delete().await().toUnitResult()
 
     internal suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
@@ -730,10 +711,6 @@ public class ChannelController internal constructor(
         for (event in events) {
             handleEvent(event)
         }
-    }
-
-    internal fun isHidden(): Boolean {
-        return mutableState._hidden.value
     }
 
     internal fun handleEvent(event: ChatEvent) {
