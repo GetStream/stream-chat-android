@@ -155,16 +155,16 @@ dependencies {
     implementation Dependencies.navigationUIKTX
 
     implementation Dependencies.firebaseAnalytics
-    implementation Dependencies.firebaseCrashlytics
+    implementation Dependencies .firebaseCrashlytics
 
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.shimmer
 
-//    debugImplementation Dependencies.flipper
-//    debugImplementation Dependencies.flipperNetwork
-//    debugImplementation Dependencies.flipperLoader
-//    debugImplementation Dependencies.fragmentTest
+    debugImplementation Dependencies.flipper
+    debugImplementation Dependencies.flipperNetwork
+    debugImplementation Dependencies.flipperLoader
+    debugImplementation Dependencies.fragmentTest
 
     // Instrumentation tests
     androidTestImplementation Dependencies.junit4

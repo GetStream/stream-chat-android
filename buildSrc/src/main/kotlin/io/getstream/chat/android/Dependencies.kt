@@ -35,7 +35,7 @@ object Versions {
     internal const val DOTENV = "5.2.2"
     internal const val ESPRESSO = "3.3.0"
     internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
-    internal const val FRAGMENT_TESTING = "1.3.6"
+    internal const val FRAGMENT_TESTING = "1.4.0-beta01"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.7.1"
