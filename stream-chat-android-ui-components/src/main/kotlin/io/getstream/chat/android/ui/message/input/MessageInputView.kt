@@ -22,9 +22,11 @@ import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.Debouncer
@@ -34,10 +36,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView.MaxMessageLengthHandler
+import io.getstream.chat.android.ui.message.input.MessageInputView.MessageInputViewModeListener
 import io.getstream.chat.android.ui.message.input.MessageInputView.SelectedAttachmentsCountListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.input.internal.MessageInputFieldView
 import io.getstream.chat.android.ui.message.input.mention.searchUsers
 import io.getstream.chat.android.ui.message.input.transliteration.DefaultStreamTransliterator
@@ -101,13 +105,19 @@ public class MessageInputView : ConstraintLayout {
                     binding.messageInputFieldView.mode =
                         MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                 }
-                AttachmentSource.FILE -> {
+                else -> {
                     binding.messageInputFieldView.mode =
                         MessageInputFieldView.Mode.FileAttachmentMode(attachments.toList())
                 }
             }
         }
     }
+
+    private val customAttachmentsSelectionListener =
+        { attachments: Collection<Attachment>, viewHolderFactory: SelectedCustomAttachmentViewHolderFactory ->
+            binding.messageInputFieldView.mode =
+                MessageInputFieldView.Mode.CustomAttachmentMode(attachments.toList(), viewHolderFactory)
+        }
 
     /**
      * The default implementation of [MaxMessageLengthHandler] which uses the default [EditText] error
@@ -605,6 +615,10 @@ public class MessageInputView : ConstraintLayout {
                 override fun onModeChanged(mode: MessageInputFieldView.Mode) {
                     refreshControlsState()
                 }
+
+                override fun onSelectedCustomAttachmentsChanged(selectedCustomAttachments: List<Attachment>) {
+                    refreshControlsState()
+                }
             }
         )
 
@@ -764,6 +778,19 @@ public class MessageInputView : ConstraintLayout {
      */
     public fun submitAttachments(attachments: Collection<AttachmentMetaData>, attachmentSource: AttachmentSource) {
         attachmentSelectionListener.onAttachmentsSelected(attachments.toSet(), attachmentSource)
+    }
+
+    /**
+     * Set a collection of custom attachments in [MessageInputView].
+     *
+     * @param attachments Collection of [Attachment] that you are going to send with a message.
+     */
+    @ExperimentalStreamChatApi
+    public fun submitCustomAttachments(
+        attachments: Collection<Attachment>,
+        viewHolderFactory: SelectedCustomAttachmentViewHolderFactory,
+    ) {
+        customAttachmentsSelectionListener(attachments, viewHolderFactory)
     }
 
     private companion object {
