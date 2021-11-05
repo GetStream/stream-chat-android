@@ -141,7 +141,7 @@ public class ChannelListViewModel(
                     is QueryChannelsController.ChannelsState.Result -> {
                         channelsState.copy(
                             isLoading = false,
-                            channels = state.channels.combine(mutedChannelIds),
+                            channels = enrichMutedChannels(state.channels, mutedChannelIds),
                             isLoadingMore = false,
                             endOfChannels = controller.endOfChannels.value,
                             searchQuery = searchQuery
@@ -265,16 +265,17 @@ public class ChannelListViewModel(
      * Uses [Channel.isMuted] property to store additional flag for each channel if the channel is muted
      * for the current user.
      *
+     * @param channels The list of channels channels without the information about channel mutes.
      * @param mutedChannelIds The list of channel IDs that represent channels muted for the current user.
-     * @return The list of augmented channels.
+     * @return The list of channels enriched with the information about channel mutes.
      *
      * @see [Channel.isMuted]
      */
-    private fun List<Channel>.combine(mutedChannelIds: List<String>): List<Channel> {
+    private fun enrichMutedChannels(channels: List<Channel>, mutedChannelIds: List<String>): List<Channel> {
         val mutedChannelIdsSet = mutedChannelIds.toSet()
-        forEach { channel ->
+        channels.forEach { channel ->
             channel.isMuted = channel.id in mutedChannelIdsSet
         }
-        return this
+        return channels
     }
 }
