@@ -59,6 +59,7 @@ private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter>
  * @param attachmentFactories Attachment factories that we provide.
  * @param reactionTypes The reaction types supported in the Messaging screen.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
+ * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
