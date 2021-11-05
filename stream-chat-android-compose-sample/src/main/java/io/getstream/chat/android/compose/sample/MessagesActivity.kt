@@ -199,10 +199,19 @@ class MessagesActivity : AppCompatActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
+        private const val KEY_MESSAGE_ID = "messageId"
 
-        fun getIntent(context: Context, channelId: String): Intent {
+        /**
+         * Used to build an [Intent] to start the [MessagesActivity] with the required data.
+         *
+         * @param context The context to start the activity with.
+         * @param channelId The CID of the channel.
+         * @param messageId The ID of the message to highlight.
+         */
+        fun getIntent(context: Context, channelId: String, messageId: String? = null): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
+                putExtra(KEY_MESSAGE_ID, messageId)
             }
         }
     }
