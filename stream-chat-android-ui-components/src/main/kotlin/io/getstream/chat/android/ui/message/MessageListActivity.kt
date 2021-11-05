@@ -47,6 +47,8 @@ public open class MessageListActivity : AppCompatActivity() {
         private const val EXTRA_CID: String = "extra_cid"
         private const val EXTRA_MESSAGE_ID: String = "extra_message_id"
 
+        @JvmStatic
+        @JvmOverloads
         public fun createIntent(context: Context, cid: String, messageId: String? = null): Intent {
             return Intent(context, MessageListActivity::class.java).apply {
                 putExtra(EXTRA_CID, cid)

@@ -266,6 +266,8 @@ public open class MessageListFragment : Fragment() {
          * @param cid The full channel id. ie messaging:123.
          * @param initializer The initializer to customize builder params.
          */
+        @JvmStatic
+        @JvmOverloads
         public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
             val builder = Builder(cid)
             initializer?.invoke(builder)
