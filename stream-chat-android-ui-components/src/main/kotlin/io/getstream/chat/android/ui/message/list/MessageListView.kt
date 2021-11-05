@@ -292,6 +292,7 @@ public class MessageListView : ConstraintLayout {
                             suppressThreads = adapter.isThread || message.isInThread(),
                         ),
                         requireStyle(),
+                        messageListItemViewHolderFactory,
                         backgroundFactory()
                     )
                     .apply {
@@ -393,6 +394,7 @@ public class MessageListView : ConstraintLayout {
                         suppressThreads = false, // No effect when displaying reactions
                     ),
                     requireStyle(),
+                    messageListItemViewHolderFactory,
                     backgroundFactory()
                 ).apply {
                     setReactionClickHandler { message, reactionType ->

@@ -28,7 +28,6 @@ import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHold
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.TextAndAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
@@ -45,11 +44,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         requireArguments().getSerializable(ARG_OPTIONS_MODE) as OptionsMode
     }
 
-    private val messageBackgroundFactory: MessageBackgroundFactory by lazy {
-        requireArguments().getSerializable(ARG_OPTIONS_BACKGROUND_FACTORY) as MessageBackgroundFactory
-    }
-
     private val style by lazy { messageListViewStyle!! }
+
+    private val viewHolderFactory by lazy { messageViewHolderFactory!! }
 
     private val configuration by lazy {
         requireArguments().getSerializable(ARG_OPTIONS_CONFIG) as MessageOptionsView.Configuration
@@ -100,6 +97,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         messageListViewStyle = null
+        messageViewHolderFactory = null
         _binding = null
     }
 
@@ -169,18 +167,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     private fun setupMessageView() {
-        viewHolder = MessageListItemViewHolderFactory()
-            .apply {
-                decoratorProvider =
-                    MessageOptionsDecoratorProvider(
-                        style.itemStyle,
-                        style.replyMessageStyle,
-                        messageBackgroundFactory
-                    )
-                setListenerContainer(MessageListListenerContainerImpl())
-                setAttachmentViewFactory(AttachmentViewFactory())
-                setMessageListItemStyle(style.itemStyle)
-            }
+        viewHolder = viewHolderFactory
             .createViewHolder(
                 binding.messageContainer,
                 MessageListItemViewTypeMapper.getViewTypeValue(messageItem)
@@ -392,23 +379,36 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         internal var messageListViewStyle: MessageListViewStyle? = null
 
         var messageArg: Message? = null
+        var messageViewHolderFactory: MessageListItemViewHolderFactory? = null
 
         fun newReactionOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.REACTION_OPTIONS, message, configuration, style, messageBackgroundFactory)
+            return newInstance(OptionsMode.REACTION_OPTIONS,
+                message,
+                configuration,
+                style,
+                messageViewHolderFactory,
+                messageBackgroundFactory)
         }
 
         fun newMessageOptionsInstance(
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
-            return newInstance(OptionsMode.MESSAGE_OPTIONS, message, configuration, style, messageBackgroundFactory)
+            return newInstance(OptionsMode.MESSAGE_OPTIONS,
+                message,
+                configuration,
+                style,
+                messageViewHolderFactory,
+                messageBackgroundFactory)
         }
 
         private fun newInstance(
@@ -416,9 +416,23 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             message: Message,
             configuration: MessageOptionsView.Configuration,
             style: MessageListViewStyle,
+            messageViewHolderFactory: MessageListItemViewHolderFactory,
             messageBackgroundFactory: MessageBackgroundFactory,
         ): MessageOptionsDialogFragment {
             messageListViewStyle = style
+            this.messageViewHolderFactory =
+                messageViewHolderFactory.clone()
+                    .apply {
+                        /* Default listener. We don't want the message of this dialog to listen for clicks just like it was
+                        * a normal message inside MessageListView
+                        */
+                        setListenerContainer(MessageListListenerContainerImpl())
+                        decoratorProvider = MessageOptionsDecoratorProvider(
+                            style.itemStyle,
+                            style.replyMessageStyle,
+                            messageBackgroundFactory
+                        )
+                    }
             return MessageOptionsDialogFragment().apply {
                 arguments = bundleOf(
                     ARG_OPTIONS_MODE to optionsMode,

@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 - Bumping SDKs target api to 31
 ### ✅ Added
+- Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
 
 ### ⚠️ Changed
@@ -68,6 +69,8 @@
 - You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
 - Added `streamUiEditInputModeIcon` and `streamUiReplyInputModeIcon` attributes to `MessageInputView`.
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
+- Added `setMessageInputModeListener`, `setSendMessageButtonEnabledDrawable` and `setSendMessageButtonDisabledDrawable` method to `MessageInputView`.
+  They can be used together for changing send button icon based on current input mode. See [docs](https://getstream.io/chat/docs/sdk/android/ui/components/message-input#changing-send-message-button) for more details.
 
 ### ⚠️ Changed
 
@@ -77,14 +80,18 @@
 - Added `StreamDimens` option to the `ChatTheme`, to allow for dimension customization across the app.
 - Added localization support for the components related the channel list.
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
+- Fixed channel options that are displayed in the `ChannelInfo` component.
 
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 - Improved the icon set and polished the UI for various Messages features
+- Improved the set of customization options for the `DefaultChannelItem`
+- Updated documentation for Channels set of features
 
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
+- Added the `leadingContent`, `detailsContent`, `trailingContent` and `divider` Slot APIs for the `DefaultChannelItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
