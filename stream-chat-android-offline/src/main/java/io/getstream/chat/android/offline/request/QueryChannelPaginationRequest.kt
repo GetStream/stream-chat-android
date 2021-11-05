@@ -36,15 +36,15 @@ internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : Query
         }
     }
 
-    fun toQueryChannelRequest(userPresence: Boolean): WatchChannelRequest {
-        var request = WatchChannelRequest().withMessages(messageLimit)
+    fun toWatchChannelRequest(userPresence: Boolean): WatchChannelRequest = WatchChannelRequest().apply {
+        withMessages(messageLimit)
         if (userPresence) {
-            // TODO: clean up once LLC is fixed
-            request = request.withPresence() as WatchChannelRequest
+            withPresence()
         }
         if (hasFilter()) {
-            request.withMessages(messageFilterDirection!!, messageFilterValue, messageLimit)
+            withMessages(messageFilterDirection!!, messageFilterValue, messageLimit)
         }
-        return request
+        withMembers(memberLimit, memberOffset)
+        withWatchers(watcherLimit, watcherOffset)
     }
 }

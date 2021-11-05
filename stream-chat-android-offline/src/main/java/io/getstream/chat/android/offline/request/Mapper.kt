@@ -1,6 +1,7 @@
 package io.getstream.chat.android.offline.request
 
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
@@ -19,4 +20,19 @@ internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(filter: Filte
         request = request.withPresence()
     }
     return request.withWatch()
+}
+
+internal fun QueryChannelRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
+    val originalRequest = this
+    val paginationAndValue = pagination()
+    return AnyChannelPaginationRequest().apply {
+        this.messageLimit = originalRequest.messagesLimit()
+        this.messageFilterDirection = paginationAndValue?.first
+        this.messageFilterValue = paginationAndValue?.second ?: ""
+        this.memberLimit = originalRequest.membersLimit()
+        this.memberOffset = originalRequest.membersOffset()
+        this.watcherLimit = originalRequest.watchersLimit()
+        this.watcherOffset = originalRequest.watchersOffset()
+        this.channelLimit = 1
+    }
 }

@@ -144,8 +144,7 @@ fun DefaultChannelItem(
 * `trailingContent`: Customizable composable function that allows you to override the content that appears at the end of the list item. By default, it represents the `ChannelLastMessageInfo` that shows the unread message indicator if there are unread messages and the last message read state.
 * `divider`: Customizable composable function that allows you to override the content that appears at the bottom of the list item, as a divider.
 
-Here's a simple example for building your own channel item, by overriding the `mentioned` parameters:
-
+Here's a simple example for building your own channel item, by overriding the mentioned parameters:
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -179,7 +178,7 @@ fun CustomChannelListItem(channel: Channel, user: User?) {
                     .background(color = ChatTheme.colors.textLowEmphasis)
             )
         },
-        trailingContent = { // Replace the last message content with a spacer
+        trailingContent = { // Replace the trailing content with a spacer
             Spacer(modifier = Modifier.width(8.dp))
         },
         detailsContent = { // Replace the details content with a simple Text
