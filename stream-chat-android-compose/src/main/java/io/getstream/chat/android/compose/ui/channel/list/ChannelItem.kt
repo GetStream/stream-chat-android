@@ -42,10 +42,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.getDisplayName
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
+import io.getstream.chat.android.compose.ui.util.isMuted
 
 private const val UNREAD_COUNT_MANY = "99+"
 
@@ -160,14 +160,30 @@ public fun ChannelDetails(
         modifier = modifier,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = channel.getDisplayName(),
-            style = ChatTheme.typography.bodyBold,
-            fontSize = 16.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
-        )
+        val channelName: (@Composable () -> Unit) = @Composable {
+            Text(
+                text = ChatTheme.channelNameFormatter.format(channel),
+                style = ChatTheme.typography.bodyBold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        }
+
+        if (channel.isMuted) {
+            Row(verticalAlignment = CenterVertically) {
+                channelName()
+
+                Icon(
+                    modifier = Modifier.padding(start = 8.dp),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_mute),
+                    contentDescription = null,
+                )
+            }
+        } else {
+            channelName()
+        }
 
         val lastMessageText = channel.getLastMessagePreviewText(currentUser)
 
