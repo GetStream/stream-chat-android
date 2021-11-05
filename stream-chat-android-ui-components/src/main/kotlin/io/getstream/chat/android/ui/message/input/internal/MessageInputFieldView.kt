@@ -13,9 +13,11 @@ import androidx.core.widget.doAfterTextChanged
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.StorageHelper
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
@@ -26,6 +28,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageInputFieldBinding
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentAdapter
+import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,9 +45,11 @@ internal class MessageInputFieldView : FrameLayout {
     private var normalModeHint: CharSequence? = context.getText(R.string.stream_ui_message_input_hint)
     private val selectedFileAttachmentAdapter: SelectedFileAttachmentAdapter = SelectedFileAttachmentAdapter()
     private val selectedMediaAttachmentAdapter: SelectedMediaAttachmentAdapter = SelectedMediaAttachmentAdapter()
+    private val selectedCustomAttachmentsAdapter: SelectedCustomAttachmentAdapter = SelectedCustomAttachmentAdapter()
     private val storageHelper = StorageHelper()
 
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
+    private var selectedCustomAttachments: List<Attachment> = emptyList()
     private var contentChangeListener: ContentChangeListener? = null
     private var attachmentMaxFileSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
     internal var maxAttachmentsCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
@@ -102,6 +108,8 @@ internal class MessageInputFieldView : FrameLayout {
             selectedFileAttachmentsRecyclerView.adapter = selectedFileAttachmentAdapter
             selectedMediaAttachmentAdapter.onAttachmentCancelled = ::cancelAttachment
             selectedMediaAttachmentsRecyclerView.adapter = selectedMediaAttachmentAdapter
+            selectedCustomAttachmentsAdapter.onAttachmentCancelled = ::cancelCustomAttachment
+            selectedCustomAttachmentsRecyclerView.adapter = selectedCustomAttachmentsAdapter
             messageEditText.doAfterTextChanged {
                 onMessageTextChanged()
             }
@@ -225,22 +233,40 @@ internal class MessageInputFieldView : FrameLayout {
         selectedAttachmentsChanged()
     }
 
+    private fun cancelCustomAttachment(attachment: Attachment) {
+        selectedCustomAttachments = selectedCustomAttachments - attachment
+        selectedCustomAttachmentsAdapter.removeItem(attachment)
+
+        if (selectedCustomAttachments.isEmpty()) {
+            clearSelectedAttachments()
+        }
+
+        selectedAttachmentsChanged()
+    }
+
     private fun notifyBigAttachments() {
         _hasBigAttachment.value = selectedAttachments.hasBigAttachment()
     }
 
     private fun notifySelectedAttachmentsCountChanged() {
-        _selectedAttachmentsCount.value = selectedAttachments.size
+        _selectedAttachmentsCount.value = if (selectedAttachments.isNotEmpty()) {
+            selectedAttachments.size
+        } else {
+            selectedCustomAttachments.size
+        }
     }
 
     private fun clearSelectedAttachments() {
         selectedAttachments = emptyList()
+        selectedCustomAttachments = emptyList()
         notifyBigAttachments()
         notifySelectedAttachmentsCountChanged()
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
+        binding.selectedCustomAttachmentsRecyclerView.isVisible = false
+        selectedCustomAttachmentsAdapter.clear()
     }
 
     private fun onModeChanged(currentMode: Mode) {
@@ -251,6 +277,7 @@ internal class MessageInputFieldView : FrameLayout {
             is Mode.EditMessageMode -> switchToEditMode(currentMode)
             is Mode.CommandMode -> switchToCommandMode(currentMode)
             is Mode.ReplyMessageMode -> switchToReplyMessageMode(currentMode)
+            is Mode.CustomAttachmentMode -> switchToCustomAttachmentsMode(currentMode)
         }
         contentChangeListener?.onModeChanged(currentMode)
     }
@@ -267,26 +294,38 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun switchToFileAttachmentMode(mode: Mode.FileAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
-
         selectedAttachments = mode.attachments.toList()
-
         binding.selectedMediaAttachmentsRecyclerView.isVisible = false
         selectedMediaAttachmentAdapter.clear()
+        binding.selectedCustomAttachmentsRecyclerView.isVisible = false
+        selectedCustomAttachmentsAdapter.clear()
         binding.selectedFileAttachmentsRecyclerView.isVisible = true
         selectedFileAttachmentAdapter.setItems(selectedAttachments)
-
         selectedAttachmentsChanged()
     }
 
     private fun switchToMediaAttachmentMode(mode: Mode.MediaAttachmentMode) {
         binding.messageEditText.hint = attachmentModeHint
-
         selectedAttachments += mode.attachments.toList()
         binding.selectedFileAttachmentsRecyclerView.isVisible = false
         selectedFileAttachmentAdapter.clear()
+        binding.selectedCustomAttachmentsRecyclerView.isVisible = false
+        selectedCustomAttachmentsAdapter.clear()
         binding.selectedMediaAttachmentsRecyclerView.isVisible = true
         selectedMediaAttachmentAdapter.setItems(selectedAttachments)
+        selectedAttachmentsChanged()
+    }
 
+    private fun switchToCustomAttachmentsMode(mode: Mode.CustomAttachmentMode) {
+        binding.messageEditText.hint = attachmentModeHint
+        selectedCustomAttachments += mode.attachments
+        binding.selectedFileAttachmentsRecyclerView.isVisible = false
+        selectedFileAttachmentAdapter.clear()
+        binding.selectedMediaAttachmentsRecyclerView.isVisible = false
+        selectedMediaAttachmentAdapter.clear()
+        binding.selectedCustomAttachmentsRecyclerView.isVisible = true
+        selectedCustomAttachmentsAdapter.viewHolderFactory = mode.viewHolderFactory
+        selectedCustomAttachmentsAdapter.setAttachments(selectedCustomAttachments)
         selectedAttachmentsChanged()
     }
 
@@ -324,7 +363,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private fun hasText(): Boolean = messageText.isNotBlank()
 
-    fun hasContent(): Boolean = hasText() || selectedAttachments.isNotEmpty()
+    fun hasContent(): Boolean = hasText() || selectedAttachments.isNotEmpty() || selectedCustomAttachments.isNotEmpty()
 
     private fun onMessageTextChanged() {
         resetModeIfNecessary()
@@ -336,6 +375,7 @@ internal class MessageInputFieldView : FrameLayout {
         notifySelectedAttachmentsCountChanged()
         resetModeIfNecessary()
         contentChangeListener?.onSelectedAttachmentsChanged(selectedAttachments)
+        contentChangeListener?.onSelectedCustomAttachmentsChanged(selectedCustomAttachments)
     }
 
     private fun resetModeIfNecessary() {
@@ -351,6 +391,7 @@ internal class MessageInputFieldView : FrameLayout {
     interface ContentChangeListener {
         fun onMessageTextChanged(messageText: String)
         fun onSelectedAttachmentsChanged(selectedAttachments: List<AttachmentMetaData>)
+        fun onSelectedCustomAttachmentsChanged(selectedCustomAttachments: List<Attachment>)
         fun onModeChanged(mode: Mode)
     }
 
@@ -360,6 +401,13 @@ internal class MessageInputFieldView : FrameLayout {
         data class CommandMode(val command: Command) : Mode()
         data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
         data class MediaAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()
+
+        @ExperimentalStreamChatApi
+        data class CustomAttachmentMode(
+            val attachments: List<Attachment>,
+            val viewHolderFactory: SelectedCustomAttachmentViewHolderFactory,
+        ) : Mode()
+
         data class ReplyMessageMode(val repliedMessage: Message) : Mode()
     }
 

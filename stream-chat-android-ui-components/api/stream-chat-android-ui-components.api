@@ -1088,6 +1088,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView :
 	public final fun setTypingListener (Lio/getstream/chat/android/ui/message/input/MessageInputView$TypingListener;)V
 	public final fun setUserLookupHandler (Lio/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler;)V
 	public final fun submitAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;)V
+	public final fun submitCustomAttachments (Ljava/util/Collection;Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$AttachmentButtonClickListener {
@@ -1376,6 +1377,16 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public static final field MEDIA Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
 	public static fun values ()[Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSource;
+}
+
+public abstract class io/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public abstract fun bind (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract class io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
+	public fun <init> ()V
+	public abstract fun createAttachmentViewHolder (Ljava/util/List;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandlerKt {
