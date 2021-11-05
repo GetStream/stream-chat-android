@@ -7,14 +7,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -23,7 +24,6 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -56,15 +56,58 @@ private const val UNREAD_COUNT_MANY = "99+"
  * @param onChannelClick Handler for a single tap on an item.
  * @param onChannelLongClick Handler for a long tap on an item.
  * @param modifier Modifier for styling.
+ * @param leadingContent Customizable composable function that represents the leading content of a channel item, usually
+ * the avatar that holds an image of the channel or its members.
+ * @param detailsContent Customizable composable function that represents the center content of a channel item, usually
+ * holding information about its name and the last message.
+ * @param trailingContent Customizable composable function that represents the trailing content of the a channel item,
+ * usually information about the last message and the number of unread messages.
+ * @param divider Customizable composable function that represents the divider that's shown at the end of each item.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun DefaultChannelItem(
+public fun DefaultChannelItem(
     channel: Channel,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
+    leadingContent: @Composable RowScope.(Channel) -> Unit = {
+        ChannelAvatar(
+            modifier = Modifier
+                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
+                .size(ChatTheme.dimens.channelAvatarSize),
+            channel = it,
+            currentUser = currentUser
+        )
+    },
+    detailsContent: @Composable RowScope.(Channel) -> Unit = {
+        ChannelDetails(
+            channel = it,
+            currentUser = currentUser,
+            modifier = Modifier
+                .weight(1f)
+                .wrapContentHeight()
+        )
+    },
+    trailingContent: @Composable RowScope.(Channel) -> Unit = {
+        ChannelLastMessageInfo(
+            channel = it,
+            currentUser = currentUser,
+            modifier = Modifier
+                .padding(horizontal = ChatTheme.dimens.channelItemHorizontalPadding)
+                .wrapContentHeight()
+                .align(Alignment.Bottom)
+        )
+    },
+    divider: @Composable ColumnScope.() -> Unit = {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(color = ChatTheme.colors.borders)
+        )
+    },
 ) {
     Column(
         modifier = modifier
@@ -87,80 +130,98 @@ internal fun DefaultChannelItem(
                 ),
             verticalAlignment = CenterVertically,
         ) {
-            ChannelAvatar(
-                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
-                channel = channel,
-                currentUser = currentUser
-            )
+            leadingContent(channel)
 
-            Spacer(Modifier.width(8.dp))
+            detailsContent(channel)
 
-            val lastMessage = channel.getLastMessage(currentUser)
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = ChatTheme.channelNameFormatter.format(channel),
-                    style = ChatTheme.typography.bodyBold,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis,
-                )
-
-                val lastMessageText = channel.getLastMessagePreviewText(currentUser)
-
-                if (lastMessageText.isNotEmpty()) {
-                    Text(
-                        text = lastMessageText,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = ChatTheme.typography.body,
-                        color = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
-            }
-
-            if (lastMessage != null) {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .wrapContentHeight()
-                        .align(Bottom),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    val unreadCount = channel.unreadCount
-
-                    if (unreadCount != null && unreadCount > 0) {
-                        UnreadCountIndicator(unreadCount = unreadCount)
-                    }
-
-                    Row(verticalAlignment = CenterVertically) {
-                        MessageReadStatusIcon(
-                            channel = channel,
-                            lastMessage = lastMessage,
-                            currentUser = currentUser,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .size(12.dp)
-                        )
-
-                        Timestamp(date = channel.lastUpdated)
-                    }
-                }
-            }
+            trailingContent(channel)
         }
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
+        divider()
+    }
+}
+
+/**
+ * Represents the details portion of the channel item, that shows the channel display name and the last message text
+ * preview.
+ *
+ * @param channel The channel to show the info for.
+ * @param currentUser The currently logged in user, used for data handling.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun ChannelDetails(
+    channel: Channel,
+    currentUser: User?,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = ChatTheme.channelNameFormatter.format(channel),
+            style = ChatTheme.typography.bodyBold,
+            fontSize = 16.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textHighEmphasis,
         )
+
+        val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+
+        if (lastMessageText.isNotEmpty()) {
+            Text(
+                text = lastMessageText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
+    }
+}
+
+/**
+ * Represents the information about the last message for the channel item, such as its read state and how many unread
+ * messages the user has.
+ *
+ * @param channel The channel to show the info for.
+ * @param currentUser The currently logged in user, used for data handling.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun ChannelLastMessageInfo(
+    channel: Channel,
+    currentUser: User?,
+    modifier: Modifier = Modifier,
+) {
+    val lastMessage = channel.getLastMessage(currentUser)
+
+    if (lastMessage != null) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.End
+        ) {
+            val unreadCount = channel.unreadCount
+
+            if (unreadCount != null && unreadCount > 0) {
+                UnreadCountIndicator(unreadCount = unreadCount)
+            }
+
+            Row(verticalAlignment = CenterVertically) {
+                MessageReadStatusIcon(
+                    channel = channel,
+                    lastMessage = lastMessage,
+                    currentUser = currentUser,
+                    modifier = Modifier
+                        .padding(end = ChatTheme.dimens.channelItemHorizontalPadding)
+                        .size(12.dp)
+                )
+
+                Timestamp(date = channel.lastUpdated)
+            }
+        }
     }
 }
 
