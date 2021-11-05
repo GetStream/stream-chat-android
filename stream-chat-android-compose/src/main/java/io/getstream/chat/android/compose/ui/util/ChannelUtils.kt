@@ -14,7 +14,21 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import java.util.Date
+
+private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
+
+/**
+ * Allows storing additional information if the channel is muted for the current user.
+ *
+ * @see [ChannelListViewModel.combine]
+ */
+public var Channel.isMuted: Boolean
+    get() = extraData[EXTRA_CHANNEL_MUTED] as Boolean? ?: false
+    set(value) {
+        extraData[EXTRA_CHANNEL_MUTED] = value
+    }
 
 /**
  * Generates the display name for a channel based on its data.

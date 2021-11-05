@@ -897,6 +897,8 @@ public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getLastMessagePreviewText (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
 	public static final fun getReadStatuses (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Ljava/util/List;
 	public static final fun isDistinct (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun isMuted (Lio/getstream/chat/android/client/models/Channel;)Z
+	public static final fun setMuted (Lio/getstream/chat/android/client/models/Channel;Z)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/DefaultReactionTypes {
