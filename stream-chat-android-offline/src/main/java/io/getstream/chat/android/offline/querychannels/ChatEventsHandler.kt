@@ -16,11 +16,11 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
  * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
  * Events handler computes which kind of action [EventHandlingResult] should be applied to this set.
  */
-public fun interface ChannelEventsHandler {
+public fun interface ChatEventsHandler {
     /**
      * Function that computes result of handling event. It runs in background.
      *
-     * @param event ChatEvent that may contain updates for the set of channels. See more [HasChannel]
+     * @param event ChatEvent that may contain updates for the set of channels. See more [ChatEvent]
      * @param filter [FilterObject] that can be used to define result of handling.
      *
      * @return [EventHandlingResult] Result of handling.
@@ -49,12 +49,12 @@ public enum class EventHandlingResult {
 }
 
 /**
- * Basic implementation of [ChannelEventsHandler]. It handles basic channel events like [NotificationAddedToChannelEvent],
+ * Basic implementation of [ChatEventsHandler]. It handles basic channel events like [NotificationAddedToChannelEvent],
  * [ChannelDeletedEvent], [NotificationChannelDeletedEvent], [ChannelUpdatedByUserEvent], [ChannelUpdatedEvent].
  * It skips other type of events, mark as remove result [EventHandlingResult.REMOVE] for deleted events, other logic
  * you're free to implement.
  */
-public abstract class BaseChannelEventsHandler : ChannelEventsHandler {
+public abstract class BaseChatEventsHandler : ChatEventsHandler {
     /**
      * Handles [NotificationAddedToChannelEvent] event. It runs in background.
      */

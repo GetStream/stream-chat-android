@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventsHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsSpec
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -33,7 +33,7 @@ internal class QueryChannelsControllerImpl(private val queryChannels: QueryChann
     override var recoveryNeeded: Boolean by queryChannels.recoveryNeeded::value
     val queryChannelsSpec: QueryChannelsSpec by queryChannels::queryChannelsSpec
 
-    override var channelEventsHandler: ChannelEventsHandler? by queryChannels::channelEventsHandler
+    override var chatEventsHandler: ChatEventsHandler? by queryChannels::chatEventsHandler
 
     override val endOfChannels: LiveData<Boolean> = queryChannels.endOfChannels.asLiveData()
 

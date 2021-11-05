@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.offline.querychannels.ChannelEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventsHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 
 /**
@@ -44,9 +44,9 @@ public sealed interface QueryChannelsController {
     public var checkFilterOnChannelUpdatedEvent: Boolean
 
     /**
-     * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     * Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler?
+    public var chatEventsHandler: ChatEventsHandler?
 
     /**
      * If the API call failed and we need to rerun this query

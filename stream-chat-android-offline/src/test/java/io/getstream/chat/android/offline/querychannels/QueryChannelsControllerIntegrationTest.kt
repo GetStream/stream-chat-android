@@ -80,7 +80,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
     @Test
     fun `Given channel events handler When handle channel events Should invoke channel events handler`(): Unit =
         runBlocking {
-            val channelEventsHandler = object : ChannelEventsHandler {
+            val channelEventsHandler = object : ChatEventsHandler {
                 var didHandle = false
                 override fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
                     didHandle = true
@@ -88,7 +88,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
                 }
             }
             val sut = Fixture(chatDomainImpl, data.filter1).givenChannelsInOfflineStorage(data.channel1).get()
-            sut.channelEventsHandler = channelEventsHandler
+            sut.chatEventsHandler = channelEventsHandler
 
             sut.handleEvent(
                 ChannelUpdatedByUserEvent(
@@ -158,7 +158,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1, data.channel2)
-                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .givenChannelEventsHandler(DefaultChatEventsHandler(client, queryControllerImpl.channels))
                 .get()
             sut.query()
             reset(client)
@@ -178,7 +178,7 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
         runBlocking {
             val sut = Fixture(chatDomainImpl, data.filter1)
                 .givenChannelsInOfflineStorage(data.channel1)
-                .givenChannelEventsHandler(DefaultChannelEventsHandler(client, queryControllerImpl.channels))
+                .givenChannelEventsHandler(DefaultChatEventsHandler(client, queryControllerImpl.channels))
                 .get()
             sut.query()
             reset(client)
@@ -232,8 +232,8 @@ internal class QueryChannelsControllerIntegrationTest : BaseConnectedMockedTest(
             return this
         }
 
-        fun givenChannelEventsHandler(eventsHandler: ChannelEventsHandler) = apply {
-            queryChannelsControllerImpl.channelEventsHandler = eventsHandler
+        fun givenChannelEventsHandler(eventsHandler: ChatEventsHandler) = apply {
+            queryChannelsControllerImpl.chatEventsHandler = eventsHandler
         }
 
         fun get(): QueryChannelsController = queryChannelsControllerImpl

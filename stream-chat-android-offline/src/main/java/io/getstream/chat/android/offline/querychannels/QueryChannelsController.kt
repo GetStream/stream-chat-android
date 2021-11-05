@@ -48,9 +48,9 @@ public class QueryChannelsController internal constructor(
     public val sort: QuerySort<Channel> by mutableState::sort
 
     /**
-     * Instance of [ChannelEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     * Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var channelEventsHandler: ChannelEventsHandler? by mutableState::channelEventsHandler
+    public var chatEventsHandler: ChatEventsHandler? by mutableState::chatEventsHandler
 
     @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
     public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter

@@ -15,10 +15,10 @@ import io.getstream.chat.android.client.utils.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
-internal class DefaultChannelEventsHandler(
+internal class DefaultChatEventsHandler(
     private val client: ChatClient,
     private val channels: StateFlow<List<Channel>>,
-) : BaseChannelEventsHandler() {
+) : BaseChatEventsHandler() {
     internal var checkFilterOnChannelUpdatedEvent: Boolean = false
 
     internal var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filter ->
