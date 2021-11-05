@@ -161,23 +161,21 @@ public open class MessageListFragment : Fragment() {
      * @param messageInputView The message inout that is being configured.
      */
     protected open fun setupMessageInput(messageInputView: MessageInputView) {
-        messageInputViewModel.apply {
-            messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+        messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
 
-            messageListViewModel.mode.observe(viewLifecycleOwner) {
-                when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
-                        messageListHeaderViewModel.setActiveThread(it.parentMessage)
-                        messageInputViewModel.setActiveThread(it.parentMessage)
-                    }
-                    is MessageListViewModel.Mode.Normal -> {
-                        messageListHeaderViewModel.resetThread()
-                        messageInputViewModel.resetThread()
-                    }
+        messageListViewModel.mode.observe(viewLifecycleOwner) {
+            when (it) {
+                is MessageListViewModel.Mode.Thread -> {
+                    messageListHeaderViewModel.setActiveThread(it.parentMessage)
+                    messageInputViewModel.setActiveThread(it.parentMessage)
+                }
+                is MessageListViewModel.Mode.Normal -> {
+                    messageListHeaderViewModel.resetThread()
+                    messageInputViewModel.resetThread()
                 }
             }
-            binding.messageListView.setMessageEditHandler(::postMessageToEdit)
         }
+        binding.messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
     }
 
     override fun onDestroyView() {
