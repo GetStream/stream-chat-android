@@ -81,6 +81,7 @@
 - Added localization support for the components related the channel list.
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 - Fixed channel options that are displayed in the `ChannelInfo` component.
+- Added support for the muted channel indicator in the message list.
 
 ### 🐞 Fixed
 
