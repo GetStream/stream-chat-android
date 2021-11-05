@@ -105,8 +105,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 28
-          profile: Nexus 6
           script: | 
             adb shell settings put global hidden_api_policy 1
-            ./gradlew stream-chat-android-ui-components-sample:demoDebugExecuteScreenshotTests          
+            ./gradlew :stream-chat-android-ui-components-sample:connectedDemoDebugAndroidTest
       
