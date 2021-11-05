@@ -104,7 +104,7 @@ jobs:
       - name: Snapshot tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 28
           profile: Nexus 6
           script: | 
             adb shell settings put global hidden_api_policy 1
