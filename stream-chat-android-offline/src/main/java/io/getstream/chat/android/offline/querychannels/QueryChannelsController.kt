@@ -52,12 +52,6 @@ public class QueryChannelsController internal constructor(
      */
     public var chatEventsHandler: ChatEventsHandler? by mutableState::chatEventsHandler
 
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by mutableState::newChannelEventFilter
-
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var checkFilterOnChannelUpdatedEvent: Boolean by mutableState::checkFilterOnChannelUpdatedEvent
-
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
     private val _channels = mutableState._channels

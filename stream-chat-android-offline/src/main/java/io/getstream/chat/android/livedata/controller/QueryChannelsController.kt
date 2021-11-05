@@ -28,22 +28,6 @@ public sealed interface QueryChannelsController {
     public val sort: QuerySort<Channel>
 
     /**
-     * When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
-     * determines if the channel should be added to the query or not.
-     * Return true to add the channel, return false to ignore it.
-     * By default it will simply add every channel for which this event is received
-     */
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var newChannelEventFilter: (Channel, FilterObject) -> Boolean
-
-    /**
-     * When ChannelUpdatedEvent is triggered, if it is true a new query to the server is done to check if the update
-     * on the channel match the filter to be added or deleted from the list of channels
-     */
-    @Deprecated(message = "Use channelEventsHandler instead of", level = DeprecationLevel.WARNING)
-    public var checkFilterOnChannelUpdatedEvent: Boolean
-
-    /**
      * Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsController].
      */
     public var chatEventsHandler: ChatEventsHandler?

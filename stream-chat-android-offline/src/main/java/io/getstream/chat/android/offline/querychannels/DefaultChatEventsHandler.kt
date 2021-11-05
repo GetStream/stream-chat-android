@@ -19,9 +19,7 @@ internal class DefaultChatEventsHandler(
     private val client: ChatClient,
     private val channels: StateFlow<List<Channel>>,
 ) : BaseChatEventsHandler() {
-    internal var checkFilterOnChannelUpdatedEvent: Boolean = false
-
-    internal var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filter ->
+    internal val newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean = { channel, filter ->
         client.queryChannels(
             QueryChannelsRequest(
                 filter = Filters.and(
@@ -47,11 +45,10 @@ internal class DefaultChatEventsHandler(
     override fun onChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult =
-        handleCidEventByRequestIfNeeded(event, filter)
+    ): EventHandlingResult = EventHandlingResult.SKIP
 
     override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
-        handleCidEventByRequestIfNeeded(event, filter)
+        EventHandlingResult.SKIP
 
     /**
      * Handles [NotificationMessageNewEvent]. If the current channel list contains the channel from this event then it
@@ -68,14 +65,6 @@ internal class DefaultChatEventsHandler(
             EventHandlingResult.SKIP
         } else {
             handleCidEventByRequest(event, filter)
-        }
-    }
-
-    private fun handleCidEventByRequestIfNeeded(event: HasChannel, filter: FilterObject): EventHandlingResult {
-        return if (checkFilterOnChannelUpdatedEvent) {
-            handleCidEventByRequest(event, filter)
-        } else {
-            EventHandlingResult.SKIP
         }
     }
 

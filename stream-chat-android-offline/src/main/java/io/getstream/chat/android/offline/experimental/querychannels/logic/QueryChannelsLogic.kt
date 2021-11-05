@@ -119,7 +119,7 @@ internal class QueryChannelsLogic(
     ) {
         if (isFirstPage) {
             (mutableState._channels.value - channels.map { it.cid }).values
-                .filterNot { mutableState.newChannelEventFilter(it, mutableState.filter) }
+                .filterNot { mutableState.defaultChannelEventsHandler.newChannelEventFilter(it, mutableState.filter) }
                 .map { it.cid }
                 .let { removeChannels(it) }
         }

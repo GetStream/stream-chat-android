@@ -39,8 +39,6 @@ internal class QueryChannelsMutableState(
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
     internal var defaultChannelEventsHandler: DefaultChatEventsHandler = DefaultChatEventsHandler(client, _sortedChannels)
-    override var checkFilterOnChannelUpdatedEvent: Boolean by defaultChannelEventsHandler::checkFilterOnChannelUpdatedEvent
-    override var newChannelEventFilter: suspend (Channel, FilterObject) -> Boolean by defaultChannelEventsHandler::newChannelEventFilter
 
     override var chatEventsHandler: ChatEventsHandler? = null
 
