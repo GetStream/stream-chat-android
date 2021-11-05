@@ -130,3 +130,14 @@ public fun Channel.getReadStatuses(userToIgnore: User?): List<Date> {
     return read.filter { it.user.id != userToIgnore?.id }
         .mapNotNull { it.lastRead }
 }
+
+/**
+ * Checks if the channel is distinct.
+ *
+ * A distinct channel is a channel created without ID based on members. Internally
+ * the server creates a CID which starts with "!members" prefix and is unique for
+ * this particular group of users.
+ *
+ * @return True if the channel is distinct.
+ */
+public fun Channel.isDistinct(): Boolean = cid.contains("!members")

@@ -58,7 +58,6 @@ internal class MessagePlainTextViewHolder(
         if (diff?.text == false) return
 
         with(binding) {
-
             markdown.setText(messageText, data.message.text)
             messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 horizontalBias = if (data.isTheirs) 0f else 1f

@@ -10,46 +10,41 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * The view that's shown when there's no data available.
+ * The view that's shown when there's no data available. Consists of an icon and a caption below it.
  *
+ * @param text The text to be displayed.
+ * @param painter The painter for the icon.
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun EmptyView(modifier: Modifier = Modifier) {
+public fun EmptyView(
+    text: String,
+    painter: Painter,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.background(color = ChatTheme.colors.appBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Icon(
-            painter = painterResource(id = R.drawable.stream_compose_empty_state_bubble),
+            painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis
+            tint = ChatTheme.colors.disabled,
+            modifier = Modifier.size(96.dp),
         )
 
         Spacer(Modifier.size(16.dp))
 
         Text(
-            text = stringResource(id = R.string.stream_compose_channel_list_empty_title),
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(Modifier.size(8.dp))
-
-        Text(
-            text = stringResource(id = R.string.stream_compose_channel_list_empty_message),
-            style = ChatTheme.typography.body,
+            text = text,
+            style = ChatTheme.typography.title3,
             color = ChatTheme.colors.textLowEmphasis,
             textAlign = TextAlign.Center
         )
