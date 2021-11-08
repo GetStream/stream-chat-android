@@ -79,7 +79,7 @@ public open class MessageListItemViewHolderFactory {
 
         if (::decoratorProvider.isInitialized) { newFactory.decoratorProvider = decoratorProvider }
         if (::listenerContainer.isInitialized) { newFactory.listenerContainer = listenerContainer }
-        if (::attachmentViewFactory.isInitialized) { newFactory.attachmentViewFactory = attachmentViewFactory }
+        if (::attachmentViewHolderFactory.isInitialized) { newFactory.attachmentViewHolderFactory = attachmentViewHolderFactory }
         if (::style.isInitialized) { newFactory.style = style }
         if (::messageReplyStyle.isInitialized) { newFactory.messageReplyStyle = messageReplyStyle }
         if (::giphyViewHolderStyle.isInitialized) { newFactory.giphyViewHolderStyle = giphyViewHolderStyle }
