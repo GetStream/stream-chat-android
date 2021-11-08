@@ -12,7 +12,7 @@ import io.getstream.chat.android.offline.ChatDomain
 
 /**
  * Default implementation of [ChatEventHandler] for the messaging type use-case. It is based on assumption when the
- * current user becomes a member this channel should be added, otherwise deleted.
+ * current user becomes a member of a channel this channel should be added to the channel list, otherwise deleted.
  */
 public class MessagingChatEventHandler : BaseChatEventHandler() {
     private val currentUser: User?

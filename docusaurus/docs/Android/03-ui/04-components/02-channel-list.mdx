@@ -40,11 +40,13 @@ val viewModel: ChannelListViewModel by viewModels {
         ),
         sort = ChannelListViewModel.DEFAULT_SORT,
         limit = 30,
+        chatEventHandler = DefaultChatEventHandler(),
     )
 }
 // Bind the ViewModel with ChannelListView
 viewModel.bindView(channelListView, viewLifecycleOwner)
 ```
+Here you see to instantiate `ChannelListViewModel` you need to pass an instance of the `ChatEventHandler` interface. See [this point](##ChatEventHandler) to read more.
 
 All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
 
@@ -402,3 +404,46 @@ channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PAREN
 These changes should have the following results:
 
 ![Light mode](../../assets/channel_list_shimmer.png)
+
+
+## ChatEventHandler
+
+When `ChannelListViewModel` is instantiated it makes a query channels request. It gets data and shows in the `ChannelListView`. With time the list gets outdated and to keep it sync we have websocket events. But when handle event our SDK locally can't always decide what we should do with the list. For example, in a messaging app it's common to add a channel to the list if the current user became a channel member and to remove this channel otherwise. But the same cannot be applied in the use case of the livestream app. To define desired behaviour there is `ChatEventHandler` which has a following interface:
+
+```kotlin
+public fun interface ChatEventHandler {
+    /**
+     * Function that computes result of handling event. It runs in background.
+     *
+     * @param event ChatEvent that may contain updates for the set of channels. See more [ChatEvent]
+     * @param filter [FilterObject] that can be used to define result of handling.
+     *
+     * @return [EventHandlingResult] Result of handling.
+     */
+    public fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
+}
+
+public enum class EventHandlingResult {
+    /**
+     * Add a channel to a query channels collection.
+     */
+    ADD,
+
+    /**
+     * Remove a channel from a query channels collection.
+     */
+    REMOVE,
+
+    /**
+     * Skip handling of this event.
+     */
+    SKIP
+}
+```
+
+We also provide the following implementation of this interface:
+
+1. `MessagingChatEventHandler`. It is based on assumption when the current user becomes a member of a channel this channel should be added to the channel list, otherwise deleted.
+2. `DefaultChatEventHandler`. More generic version, it skips events with update payload and makes an api request everytime when receives `NotificationAddedToChannelEvent`, `NotificationMessageNewEvent`, `NotificationRemovedFromChannelEvent` events. It can cause additional expenses on your plan, be sure when use this implementation.
+3. `BaseChatEventHandler`. It's abstract not complete implementation that covers most generic cases and force to implement you required ones. You can inherit it and define behaviour for your custom use-case.
+
