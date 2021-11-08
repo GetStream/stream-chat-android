@@ -24,11 +24,11 @@ internal abstract class MessageDao {
 
     @Transaction
     open fun deleteAttachments(messageIds: List<String>) {
-        messageIds.forEach(::deleteAttachment)
+        messageIds.chunked(SQLITE_MAX_VARIABLE_NUMBER).forEach(::deleteAttachmentsChunked)
     }
 
-    @Query("DELETE FROM attachment_inner_entity WHERE messageId = :messageId")
-    abstract fun deleteAttachment(messageId: String)
+    @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
+    protected abstract fun deleteAttachmentsChunked(messageIds: List<String>)
 
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
@@ -109,8 +109,12 @@ internal abstract class MessageDao {
 
     @Transaction
     open suspend fun select(ids: List<String>): List<MessageEntity> {
-        return ids.mapNotNull { id -> select(id) }
+        return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
     }
+
+    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:ids)")
+    @Transaction
+    protected abstract suspend fun selectChunked(ids: List<String>): List<MessageEntity>
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:id)")
     @Transaction
@@ -129,4 +133,8 @@ internal abstract class MessageDao {
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC")
     @Transaction
     protected abstract suspend fun selectBySyncStatus(syncStatus: SyncStatus): List<MessageEntity>
+
+    private companion object {
+        private const val SQLITE_MAX_VARIABLE_NUMBER = 999
+    }
 }
