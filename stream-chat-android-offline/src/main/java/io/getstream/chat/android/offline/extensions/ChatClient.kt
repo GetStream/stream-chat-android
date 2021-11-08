@@ -1,3 +1,5 @@
+@file:JvmName("ChatClientExtensions")
+
 package io.getstream.chat.android.offline.extensions
 
 import androidx.annotation.CheckResult

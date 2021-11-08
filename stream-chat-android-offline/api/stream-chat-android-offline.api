@@ -475,7 +475,7 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/offline/extensions/ChatClientKt {
+public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public static final fun requestMembers (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
