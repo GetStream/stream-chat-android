@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
 
 ### ⚠️ Changed
@@ -80,14 +81,19 @@
 - Added localization support for the components related the channel list.
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 - Fixed channel options that are displayed in the `ChannelInfo` component.
+- Added support for the muted channel indicator in the message list.
+- Added `ChannelNameFormatter` option to the `ChatTheme`, to allow for channel name format customization across the app.
 
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 - Improved the icon set and polished the UI for various Messages features
+- Improved the set of customization options for the `DefaultChannelItem`
+- Updated documentation for Channels set of features
 
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
+- Added the `leadingContent`, `detailsContent`, `trailingContent` and `divider` Slot APIs for the `DefaultChannelItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
