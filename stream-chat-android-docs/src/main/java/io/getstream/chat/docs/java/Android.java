@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java;
 
-import android.content.res.ColorStateList;
+import static java.util.Collections.singletonList;
+
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import io.getstream.chat.android.livedata.utils.RetryPolicy;
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory;
@@ -92,8 +94,6 @@ import io.getstream.chat.android.ui.suggestion.list.adapter.viewholder.BaseSugge
 import io.getstream.chat.docs.R;
 import kotlin.coroutines.Continuation;
 
-import static java.util.Collections.singletonList;
-
 public class Android {
 
     /**
@@ -125,7 +125,7 @@ public class Android {
             );
             int limit = 30;
 
-            ChannelListViewModelFactory factory = new ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT, limit);
+            ChannelListViewModelFactory factory = new ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT, limit, new DefaultChatEventHandler());
             ChannelListViewModel viewModel = new ViewModelProvider(this, factory)
                     .get(ChannelListViewModel.class);
 
@@ -870,53 +870,53 @@ public class Android {
 
             TransformStyle.INSTANCE.setMessageInputStyleTransformer(
                     viewStyle ->
-                        new MessageInputViewStyle(
-                                true,
-                                genericDrawable,
-                                true,
-                                genericDrawable,
-                                requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
-                                colorBlack,
-                                colorBlack,
-                                textStyleGeneric,
-                                true,
-                                true,
-                                true,
-                                genericDrawable,
-                                genericDrawable,
-                                true,
-                                genericDrawable,
-                                "Send also to channel custom label",
-                                "Send also to chat custom label",
-                                textStyleGeneric,
-                                true,
-                                true,
-                                colorBlack,
-                                genericDrawable,
-                                genericDrawable,
-                                20,
-                                genericDrawable,
-                                attachmentSelectionDialogStyle,
-                                genericDrawable,
-                                genericDrawable,
-                                genericDrawable,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                genericDrawable,
-                                genericDrawable,
-                                colorBlack,
-                                textStyleGeneric,
-                                textStyleGeneric,
-                                "Empty state text",
-                                "Empty state text",
-                                genericDrawable,
-                                textStyleGeneric,
-                                genericDrawable,
-                                10,
-                                genericDrawable,
-                                genericDrawable
-                        )
+                            new MessageInputViewStyle(
+                                    true,
+                                    genericDrawable,
+                                    true,
+                                    genericDrawable,
+                                    requireContext().getResources().getDimension(R.dimen.stream_ui_text_medium),
+                                    colorBlack,
+                                    colorBlack,
+                                    textStyleGeneric,
+                                    true,
+                                    true,
+                                    true,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    true,
+                                    genericDrawable,
+                                    "Send also to channel custom label",
+                                    "Send also to chat custom label",
+                                    textStyleGeneric,
+                                    true,
+                                    true,
+                                    colorBlack,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    20,
+                                    genericDrawable,
+                                    attachmentSelectionDialogStyle,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    genericDrawable,
+                                    genericDrawable,
+                                    colorBlack,
+                                    textStyleGeneric,
+                                    textStyleGeneric,
+                                    "Empty state text",
+                                    "Empty state text",
+                                    genericDrawable,
+                                    textStyleGeneric,
+                                    genericDrawable,
+                                    10,
+                                    genericDrawable,
+                                    genericDrawable
+                            )
 
             );
         }

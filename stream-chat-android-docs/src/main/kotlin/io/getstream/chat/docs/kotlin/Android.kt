@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
@@ -109,6 +110,7 @@ class Android {
                     ),
                     sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,
+                    chatEventHandler = DefaultChatEventHandler(),
                 )
             }
             // Bind it with ChannelListView

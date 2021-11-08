@@ -27,7 +27,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val sort: QuerySort<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
-    private val chatEventHandler: ChatEventHandler? = null,
+    private val chatEventHandler: ChatEventHandler,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChannelListViewModel::class.java) {

@@ -18,6 +18,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
+import io.getstream.chat.android.offline.querychannels.MessagingChatEventHandler
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
@@ -203,7 +206,7 @@ public open class ChannelListFragment : Fragment() {
     }
 
     protected open fun createChannelListViewModelFactory(): ChannelListViewModelFactory {
-        return ChannelListViewModelFactory(filter = getFilter(), sort = getSort())
+        return ChannelListViewModelFactory(filter = getFilter(), sort = getSort(), chatEventHandler = getChatEventHandler())
     }
 
     /**
@@ -221,6 +224,13 @@ public open class ChannelListFragment : Fragment() {
      */
     protected open fun getSort(): QuerySort<Channel> {
         return ChannelListViewModel.DEFAULT_SORT
+    }
+
+    /**
+     * Default [ChatEventHandler] for this channel list. Override the method to provide custom one.
+     */
+    protected open fun getChatEventHandler(): ChatEventHandler {
+        return DefaultChatEventHandler()
     }
 
     /**

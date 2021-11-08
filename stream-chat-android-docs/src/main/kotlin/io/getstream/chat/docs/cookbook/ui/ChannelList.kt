@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.querychannels.DefaultChatEventHandler
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -46,7 +47,8 @@ class ChannelList : Fragment() {
                 Filters.`in`("members", ChatDomain.instance().user.value!!.id),
             ),
             sort = QuerySort.desc(Channel::lastUpdated),
-            limit = 30
+            limit = 30,
+            chatEventHandler = DefaultChatEventHandler(),
         )
         val channelListViewModel: ChannelListViewModel by viewModels { channelListFactory }
 

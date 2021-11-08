@@ -82,6 +82,7 @@
 - Added static methods `createIntent` and `newInstance` those doesn't have default parameters on `MessageListActivity` and `MessageListFragment` for supporting Java side.
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Now you have to pass an instance of `ChatEventHandler` to `ChannelListViewModelFactory` that will be user to instantiate `MessageListViewModel`.
 
 ### ❌ Removed
 

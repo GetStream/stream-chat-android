@@ -520,7 +520,7 @@ public abstract interface class io/getstream/chat/android/offline/querychannels/
 }
 
 public class io/getstream/chat/android/offline/querychannels/DefaultChatEventHandler : io/getstream/chat/android/offline/querychannels/BaseChatEventHandler {
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/StateFlow;)V
+	public fun <init> ()V
 	public fun onChannelUpdatedByUserEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedByUserEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun onChannelUpdatedEvent (Lio/getstream/chat/android/client/events/ChannelUpdatedEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 	public fun onNotificationAddedToChannelEvent (Lio/getstream/chat/android/client/events/NotificationAddedToChannelEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;

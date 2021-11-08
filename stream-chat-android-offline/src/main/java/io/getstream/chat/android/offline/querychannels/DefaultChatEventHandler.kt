@@ -9,20 +9,20 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
 /**
- * Default implementation of [ChatEventHandler] which is more generic than [MessagingChatEventHandler]. It handles the
- * most obvious events
+ * Default implementation of [ChatEventHandler] which is more generic than [MessagingChatEventHandler]. It skips updates
+ * and makes an API request when receives [NotificationAddedToChannelEvent], [NotificationMessageNewEvent],
+ * [NotificationRemovedFromChannelEvent].
  */
-public open class DefaultChatEventHandler(
-    private val client: ChatClient,
-    private val channels: StateFlow<List<Channel>>,
-) : BaseChatEventHandler() {
+public open class DefaultChatEventHandler : BaseChatEventHandler() {
+
+    private val client: ChatClient
+        get() = ChatClient.instance()
+
     internal val newChannelEventFilter: suspend (String, FilterObject) -> Boolean = { cid, filter ->
         client.queryChannels(
             QueryChannelsRequest(
@@ -55,8 +55,7 @@ public open class DefaultChatEventHandler(
         EventHandlingResult.SKIP
 
     /**
-     * Handles [NotificationMessageNewEvent]. If the current channel list contains the channel from this event then it
-     * returns [EventHandlingResult.SKIP] otherwise it makes a request to API to define outcome of handling.
+     * Handles [NotificationMessageNewEvent]. It makes a request to API to define outcome of handling.
      *
      * @param event Instance of [NotificationMessageNewEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
@@ -64,17 +63,10 @@ public open class DefaultChatEventHandler(
     override fun onNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return if (channels.value.any { it.cid == event.cid }) {
-            EventHandlingResult.SKIP
-        } else {
-            handleCidEventByRequest(event.cid, filter)
-        }
-    }
+    ): EventHandlingResult = handleCidEventByRequest(event.cid, filter)
 
     /**
-     * Handles [NotificationRemovedFromChannelEvent]. If the current channel list doesn't contain a channel from the
-     * event this handler returns the skip result, otherwise it makes a request to API to define outcome of handling.
+     * Handles [NotificationRemovedFromChannelEvent]. It makes a request to API to define outcome of handling.
      *
      * @param event Instance of [NotificationRemovedFromChannelEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
@@ -82,13 +74,7 @@ public open class DefaultChatEventHandler(
     override fun onNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult {
-        return if (channels.value.any { it.cid == event.cid }.not()) {
-            EventHandlingResult.SKIP
-        } else {
-            handleCidEventByRequest(event.cid, filter)
-        }
-    }
+    ): EventHandlingResult = handleCidEventByRequest(event.cid, filter)
 
     private fun handleCidEventByRequest(cid: String, filter: FilterObject): EventHandlingResult {
         return runBlocking {

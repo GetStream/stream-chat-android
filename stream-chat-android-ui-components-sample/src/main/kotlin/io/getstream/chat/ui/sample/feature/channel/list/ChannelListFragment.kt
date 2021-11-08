@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.querychannels.MessagingChatEventHandler
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
@@ -37,6 +38,7 @@ class ChannelListFragment : Fragment() {
                 Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: "")),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
             ),
+            chatEventHandler = MessagingChatEventHandler(),
         )
     }
     private val searchViewModel: SearchViewModel by viewModels()
