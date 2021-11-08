@@ -60,7 +60,6 @@ public abstract interface class io/getstream/chat/android/livedata/ChatDomain {
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
-	public abstract fun setRetryPolicy (Lio/getstream/chat/android/livedata/utils/RetryPolicy;)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -83,6 +82,7 @@ public final class io/getstream/chat/android/livedata/ChatDomain$Builder {
 	public final fun offlineEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
+	public final fun retryPolicy (Lio/getstream/chat/android/livedata/utils/RetryPolicy;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
 	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/livedata/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/livedata/ChatDomain$Builder;
@@ -280,7 +280,6 @@ public abstract interface class io/getstream/chat/android/offline/ChatDomain {
 	public abstract fun sendReaction (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setMessageForReply (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun setOfflineEnabled (Z)V
-	public abstract fun setRetryPolicy (Lio/getstream/chat/android/offline/utils/RetryPolicy;)V
 	public abstract fun setUserPresence (Z)V
 	public abstract fun showChannel (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public abstract fun shuffleGiphy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
@@ -303,6 +302,7 @@ public final class io/getstream/chat/android/offline/ChatDomain$Builder {
 	public final fun offlineEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun recoveryEnabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
+	public final fun retryPolicy (Lio/getstream/chat/android/offline/utils/RetryPolicy;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public fun toString ()Ljava/lang/String;
 	public final fun uploadAttachmentsWorkerNetworkType (Lio/getstream/chat/android/offline/message/attachment/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/offline/ChatDomain$Builder;
 	public final fun userPresenceDisabled ()Lio/getstream/chat/android/offline/ChatDomain$Builder;
