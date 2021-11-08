@@ -1386,7 +1386,7 @@ public abstract class io/getstream/chat/android/ui/message/input/attachment/sele
 
 public abstract class io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
 	public fun <init> ()V
-	public abstract fun createAttachmentViewHolder (Ljava/util/List;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
+	public abstract fun createAttachmentViewHolder (Ljava/util/List;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/message/input/mention/DefaultUserLookupHandlerKt {

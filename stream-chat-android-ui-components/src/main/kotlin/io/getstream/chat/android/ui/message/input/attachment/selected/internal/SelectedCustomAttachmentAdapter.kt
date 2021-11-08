@@ -27,7 +27,7 @@ internal class SelectedCustomAttachmentAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseSelectedCustomAttachmentViewHolder {
-        return viewHolderFactory.createAttachmentViewHolder(attachments)
+        return viewHolderFactory.createAttachmentViewHolder(attachments, parent)
     }
 
     override fun onBindViewHolder(holder: BaseSelectedCustomAttachmentViewHolder, position: Int) {
@@ -45,7 +45,7 @@ internal class SelectedCustomAttachmentAdapter(
 
 @ExperimentalStreamChatApi
 public abstract class SelectedCustomAttachmentViewHolderFactory {
-    public abstract fun createAttachmentViewHolder(attachments: List<Attachment>): BaseSelectedCustomAttachmentViewHolder
+    public abstract fun createAttachmentViewHolder(attachments: List<Attachment>, parent: ViewGroup): BaseSelectedCustomAttachmentViewHolder
 }
 
 @ExperimentalStreamChatApi
