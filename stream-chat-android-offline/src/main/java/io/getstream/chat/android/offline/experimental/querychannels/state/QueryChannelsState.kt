@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.querychannels.ChatEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
@@ -32,6 +32,6 @@ public interface QueryChannelsState {
     public val mutedChannelIds: StateFlow<List<String>>
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
-    /** Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsState]. */
-    public var chatEventsHandler: ChatEventsHandler?
+    /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
+    public var chatEventHandler: ChatEventHandler?
 }

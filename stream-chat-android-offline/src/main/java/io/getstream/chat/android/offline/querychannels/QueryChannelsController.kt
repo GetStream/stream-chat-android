@@ -48,9 +48,9 @@ public class QueryChannelsController internal constructor(
     public val sort: QuerySort<Channel> by mutableState::sort
 
     /**
-     * Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     * Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var chatEventsHandler: ChatEventsHandler? by mutableState::chatEventsHandler
+    public var chatEventHandler: ChatEventHandler? by mutableState::chatEventHandler
 
     internal val queryChannelsSpec: QueryChannelsSpec = mutableState.queryChannelsSpec
 
@@ -91,7 +91,7 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun updateQueryChannelSpec(channel: Channel) {
-        if (mutableState.defaultChannelEventsHandler.newChannelEventFilter(channel, filter)) {
+        if (mutableState.defaultChannelEventsHandler.newChannelEventFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
             removeChannel(channel.cid)
@@ -110,7 +110,7 @@ public class QueryChannelsController internal constructor(
 
     internal suspend fun handleEvent(event: ChatEvent) {
         if (event is HasChannel) {
-            when (mutableState.eventsHandler.onChatEvent(event, filter)) {
+            when (mutableState.eventHandler.onChatEvent(event, filter)) {
                 EventHandlingResult.ADD -> addChannel(event.channel)
                 EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
                 EventHandlingResult.SKIP -> Unit

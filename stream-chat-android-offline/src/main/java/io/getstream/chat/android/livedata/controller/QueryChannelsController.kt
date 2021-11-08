@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.offline.querychannels.ChatEventsHandler
+import io.getstream.chat.android.offline.querychannels.ChatEventHandler
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 
 /**
@@ -28,9 +28,9 @@ public sealed interface QueryChannelsController {
     public val sort: QuerySort<Channel>
 
     /**
-     * Instance of [ChatEventsHandler] that handles logic of event handling for this [QueryChannelsController].
+     * Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsController].
      */
-    public var chatEventsHandler: ChatEventsHandler?
+    public var chatEventHandler: ChatEventHandler?
 
     /**
      * If the API call failed and we need to rerun this query

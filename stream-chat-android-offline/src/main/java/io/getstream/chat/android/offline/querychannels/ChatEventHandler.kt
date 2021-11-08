@@ -11,12 +11,13 @@ import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 
 /**
  * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
  * Events handler computes which kind of action [EventHandlingResult] should be applied to this set.
  */
-public fun interface ChatEventsHandler {
+public fun interface ChatEventHandler {
     /**
      * Function that computes result of handling event. It runs in background.
      *
@@ -49,12 +50,12 @@ public enum class EventHandlingResult {
 }
 
 /**
- * Basic implementation of [ChatEventsHandler]. It handles basic channel events like [NotificationAddedToChannelEvent],
+ * Basic implementation of [ChatEventHandler]. It handles basic channel events like [NotificationAddedToChannelEvent],
  * [ChannelDeletedEvent], [NotificationChannelDeletedEvent], [ChannelUpdatedByUserEvent], [ChannelUpdatedEvent].
  * It skips other type of events, mark as remove result [EventHandlingResult.REMOVE] for deleted events, other logic
  * you're free to implement.
  */
-public abstract class BaseChatEventsHandler : ChatEventsHandler {
+public abstract class BaseChatEventHandler : ChatEventHandler {
     /**
      * Handles [NotificationAddedToChannelEvent] event. It runs in background.
      */
@@ -76,11 +77,14 @@ public abstract class BaseChatEventsHandler : ChatEventsHandler {
      */
     public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
 
-    /**
-     * Handles [NotificationMessageNewEvent] event. It runs in background.
-     */
+    /** Handles [NotificationMessageNewEvent] event. It runs in background. */
     public open fun onNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
+        filter: FilterObject,
+    ): EventHandlingResult = EventHandlingResult.SKIP
+
+    public open fun onNotificationRemovedFromChannelEvent(
+        event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
@@ -97,10 +101,10 @@ public abstract class BaseChatEventsHandler : ChatEventsHandler {
     }
 
     public open fun onCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
-        return if (event is ChannelHiddenEvent) {
-            EventHandlingResult.REMOVE
-        } else {
-            EventHandlingResult.SKIP
+        return when (event) {
+            is NotificationRemovedFromChannelEvent -> onNotificationRemovedFromChannelEvent(event, filter)
+            is ChannelHiddenEvent -> EventHandlingResult.REMOVE
+            else -> EventHandlingResult.SKIP
         }
     }
 
