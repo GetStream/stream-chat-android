@@ -22,8 +22,13 @@ internal abstract class MessageDao {
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
-    @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
-    abstract fun deleteAttachments(messageIds: List<String>)
+    @Transaction
+    open fun deleteAttachments(messageIds: List<String>) {
+        messageIds.forEach(::deleteAttachment)
+    }
+
+    @Query("DELETE FROM attachment_inner_entity WHERE messageId = :messageId")
+    abstract fun deleteAttachment(messageId: String)
 
     @Transaction
     open suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
@@ -102,9 +107,10 @@ internal abstract class MessageDao {
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND id = :messageId")
     abstract suspend fun deleteMessage(cid: String, messageId: String)
 
-    @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:ids)")
     @Transaction
-    abstract suspend fun select(ids: List<String>): List<MessageEntity>
+    open suspend fun select(ids: List<String>): List<MessageEntity> {
+        return ids.mapNotNull { id -> select(id) }
+    }
 
     @Query("SELECT * FROM stream_chat_message WHERE stream_chat_message.id IN (:id)")
     @Transaction
