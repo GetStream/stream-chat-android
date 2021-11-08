@@ -475,6 +475,10 @@ public final class io/getstream/chat/android/offline/experimental/querychannels/
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
+	public static final fun searchUsersByName (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IIZ)Lio/getstream/chat/android/client/call/Call;
+}
+
 public final class io/getstream/chat/android/offline/extensions/ChatErrorKt {
 	public static final fun isPermanent (Lio/getstream/chat/android/client/errors/ChatError;)Z
 }

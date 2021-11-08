@@ -40,6 +40,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new extension function `ChatCliet::searchUsersByName`.
 
 ### ⚠️ Changed
 
