@@ -100,7 +100,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
 
     init {
-        if (ToggleService.instance().isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
+        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             initWithOfflinePlugin()
         } else {
             initWithChatDomain()
