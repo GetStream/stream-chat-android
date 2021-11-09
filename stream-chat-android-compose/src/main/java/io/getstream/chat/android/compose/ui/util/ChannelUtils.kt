@@ -3,33 +3,29 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
-import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelListViewModel
 import java.util.Date
 
+private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
+
 /**
- * Generates the display name for a channel based on its data.
+ * Allows storing additional information if the channel is muted for the current user.
  *
- * @return The display name of the channel.
+ * @see [ChannelListViewModel.combine]
  */
-@Composable
-@ReadOnlyComposable
-public fun Channel.getDisplayName(): String {
-    return name.takeIf { it.isNotEmpty() }
-        ?: getUsersExcludingCurrent()
-            .joinToString { it.name }
-            .takeIf { it.isNotEmpty() }
-        ?: stringResource(id = R.string.stream_compose_untitled_channel)
-}
+public var Channel.isMuted: Boolean
+    get() = extraData[EXTRA_CHANNEL_MUTED] as Boolean? ?: false
+    set(value) {
+        extraData[EXTRA_CHANNEL_MUTED] = value
+    }
 
 /**
  * Returns channel's last regular or system message if exists.

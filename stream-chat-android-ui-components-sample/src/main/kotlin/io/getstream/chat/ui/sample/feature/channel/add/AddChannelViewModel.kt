@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.offline.extensions.searchUsersByName
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ class AddChannelViewModel : ViewModel() {
             _state.value = State.Loading
         }
         latestSearchCall?.cancel()
-        latestSearchCall = chatDomain.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
+        latestSearchCall = chatClient.searchUsersByName(searchQuery, offset, USERS_LIMIT, true)
         latestSearchCall?.enqueue { result ->
             if (result.isSuccess) {
                 val users = result.data()

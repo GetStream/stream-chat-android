@@ -588,20 +588,22 @@ public class Android {
             chatClient.disconnect();
         }
 
-        public void customizeRetryPolicy() {
-            ChatDomain chatDomain = ChatDomain.instance();
+        public void initializeChatDomainWithCustomRetryPolicy() {
+            ChatClient chatClient =
+                    new ChatClient.Builder("apiKey", requireContext()).build();
+            ChatDomain chatDomain = new ChatDomain.Builder(chatClient, requireContext())
+                    .retryPolicy(new RetryPolicy() {
+                        @Override
+                        public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+                            return attempt < 3;
+                        }
 
-            chatDomain.setRetryPolicy(new RetryPolicy() {
-                @Override
-                public boolean shouldRetry(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                    return attempt < 3;
-                }
-
-                @Override
-                public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
-                    return 1000 * attempt;
-                }
-            });
+                        @Override
+                        public int retryTimeout(@NotNull ChatClient client, int attempt, @NotNull ChatError error) {
+                            return 1000 * attempt;
+                        }
+                    })
+                    .build();
         }
 
         public void watchChannel() {
