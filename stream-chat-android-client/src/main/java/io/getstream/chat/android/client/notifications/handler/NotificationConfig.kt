@@ -72,4 +72,9 @@ public data class NotificationConfig(
     @StringRes val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
     val pushNotificationsEnabled: Boolean = true,
     val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
+
+    /**
+     * Allows enabling/disabling showing notification after receiving a push message.
+     */
+    val shouldShowNotificationOnPush: () -> Boolean = { true },
 )

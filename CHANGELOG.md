@@ -29,6 +29,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `NotificationConfig::shouldShowNotificationOnPush` that allows enabling/disabling showing notification after receiving a push message
 
 ### ⚠️ Changed
 
