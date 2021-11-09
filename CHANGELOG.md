@@ -4,6 +4,7 @@
 
 ### ⬆️ Improved
 - Bumped the SDKs target API to 31
+- Updated WorkManager to version 2.7.0, which fixes compatibility issues with SDK 31
 ### ✅ Added
 - Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
