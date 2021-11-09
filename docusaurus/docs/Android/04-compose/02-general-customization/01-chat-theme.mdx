@@ -8,6 +8,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **AttachmentFactories**: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
 * **ReactionTypes**: Used to define the supported message reactions in the app. You can use the default-provided reactions, or customize them to your app's needs.
 * **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
+* **ChannelNameFormatter**: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
