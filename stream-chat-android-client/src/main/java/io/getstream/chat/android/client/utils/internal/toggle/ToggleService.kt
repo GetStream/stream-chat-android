@@ -49,5 +49,10 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
 
             return ToggleService(sp).also { instance = it }
         }
+
+        @InternalStreamChatApi
+        public fun isEnabled(featureKey: String): Boolean {
+            return instance?.isEnabled(featureKey) ?: false
+        }
     }
 }
