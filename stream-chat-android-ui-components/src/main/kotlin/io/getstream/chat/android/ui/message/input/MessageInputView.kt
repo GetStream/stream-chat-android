@@ -105,7 +105,7 @@ public class MessageInputView : ConstraintLayout {
                     binding.messageInputFieldView.mode =
                         MessageInputFieldView.Mode.MediaAttachmentMode(attachments.toList())
                 }
-                else -> {
+                AttachmentSource.FILE -> {
                     binding.messageInputFieldView.mode =
                         MessageInputFieldView.Mode.FileAttachmentMode(attachments.toList())
                 }
@@ -725,17 +725,18 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun sendMessage(messageReplyTo: Message? = null) {
+        val messageText = binding.messageInputFieldView.messageText
+
         doSend(
             { attachments ->
                 sendMessageHandler.sendMessageWithAttachments(
-                    binding.messageInputFieldView.messageText,
+                    messageText,
                     attachments,
                     messageReplyTo
                 )
             },
-            { sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo) },
+            { sendMessageHandler.sendMessage(messageText, messageReplyTo) },
             { customAttachments ->
-                val messageText = binding.messageInputFieldView.messageText
                 sendMessageHandler.sendMessageWithCustomAttachments(messageText, customAttachments, messageReplyTo)
             }
         )
@@ -743,22 +744,22 @@ public class MessageInputView : ConstraintLayout {
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
+        val messageText = binding.messageInputFieldView.messageText
         doSend(
             { attachments ->
                 sendMessageHandler.sendToThreadWithAttachments(
                     parentMessage,
-                    binding.messageInputFieldView.messageText,
+                    messageText,
                     sendAlsoToChannel,
                     attachments
                 )
             },
             {
                 sendMessageHandler.sendToThread(parentMessage,
-                    binding.messageInputFieldView.messageText,
+                    messageText,
                     sendAlsoToChannel)
             },
             { customAttachments ->
-                val messageText = binding.messageInputFieldView.messageText
                 sendMessageHandler.sendToThreadWithCustomAttachments(
                     parentMessage,
                     messageText,
