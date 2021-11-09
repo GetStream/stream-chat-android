@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.di.networkFlipper
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 
 @OptIn(ExperimentalStreamChatApi::class)
 object ApplicationConfigurator {
@@ -30,6 +29,6 @@ object ApplicationConfigurator {
             }.start()
         }
 
-        ToggleService.init(application, mapOf(OfflinePlugin.TOGGLE_KEY_OFFLINE to true))
+        ToggleService.init(application, mapOf(ToggleService.TOGGLE_KEY_OFFLINE to true))
     }
 }
