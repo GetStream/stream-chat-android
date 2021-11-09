@@ -149,6 +149,7 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context,
     private val offlinePlugin: OfflinePlugin,
     internal val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    override val retryPolicy: RetryPolicy = DefaultRetryPolicy()
 ) : ChatDomain {
     internal constructor(
         client: ChatClient,
@@ -256,9 +257,6 @@ internal class ChatDomainImpl internal constructor(
     }
     private val syncStateFlow: MutableStateFlow<SyncState?> = MutableStateFlow(null)
     internal var initJob: Deferred<SyncState?>? = null
-
-    /** The retry policy for retrying failed requests */
-    override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     private val offlineSyncFirebaseMessagingHandler = OfflineSyncFirebaseMessagingHandler()
 

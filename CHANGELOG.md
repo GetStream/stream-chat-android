@@ -44,6 +44,7 @@
 - Added new extension function `ChatCliet::searchUsersByName`.
 
 ### ⚠️ Changed
+- 🚨 Breaking change: `RetryPolicy` in `ChatDomain` is now immutable and can only be set with Builder before creating an instance of it.
 
 ### ❌ Removed
 
