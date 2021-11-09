@@ -32,6 +32,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- `NotificationConfig::pushNotificationsEnabled` is now disabled by default if you don't provide custom `NotificationConfig` - our SDK won't create a `NotificationChannel` if push notifications are not configured
 
 ### ❌ Removed
 

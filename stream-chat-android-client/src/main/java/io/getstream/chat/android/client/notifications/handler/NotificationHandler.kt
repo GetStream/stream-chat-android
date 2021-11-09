@@ -1,10 +1,18 @@
 package io.getstream.chat.android.client.notifications.handler
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 
+/**
+ * Handler responsible for showing and dismissing notification.
+ * Implement this interface and use [ChatClient.Builder.notifications] if you want to customize default behavior
+ *
+ * @see [MessagingStyleNotificationHandler]
+ * @see [ChatNotificationHandler]
+ */
 public interface NotificationHandler {
 
     /**

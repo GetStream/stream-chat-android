@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
+/**
+ * Factory for default [NotificationHandler].
+ * Use it to customize an intent the user triggers when clicking on a notification.
+ */
 public object NotificationHandlerFactory {
 
     /**
