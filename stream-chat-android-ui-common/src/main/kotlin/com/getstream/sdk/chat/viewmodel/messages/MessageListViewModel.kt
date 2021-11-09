@@ -29,7 +29,6 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
-import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import kotlinx.coroutines.flow.map
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -101,7 +100,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         }
 
     init {
-        if (ToggleService.instance().isEnabled(OfflinePlugin.TOGGLE_KEY_OFFLINE)) {
+        if (ToggleService.instance().isEnabled(ToggleService.TOGGLE_KEY_OFFLINE)) {
             initWithOfflinePlugin()
         } else {
             initWithChatDomain()

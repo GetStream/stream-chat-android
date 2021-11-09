@@ -78,6 +78,5 @@ public class OfflinePlugin(private val config: Config) : Plugin {
 
     public companion object {
         public const val MODULE_NAME: String = "Offline"
-        public const val TOGGLE_KEY_OFFLINE: String = "offline plugin toggle"
     }
 }
