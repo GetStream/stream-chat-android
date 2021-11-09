@@ -3,7 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Bumping SDKs target api to 31
+- Bumped the SDKs target API to 31
 ### ✅ Added
 - Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
