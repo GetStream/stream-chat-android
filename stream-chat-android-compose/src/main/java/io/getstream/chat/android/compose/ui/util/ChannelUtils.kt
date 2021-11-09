@@ -19,7 +19,7 @@ private const val EXTRA_CHANNEL_MUTED: String = "isMuted"
 /**
  * Allows storing additional information if the channel is muted for the current user.
  *
- * @see [ChannelListViewModel.combine]
+ * @see [ChannelListViewModel.enrichMutedChannels]
  */
 public var Channel.isMuted: Boolean
     get() = extraData[EXTRA_CHANNEL_MUTED] as Boolean? ?: false
@@ -91,12 +91,22 @@ public fun Channel.getLastMessagePreviewText(
                     )
                 }
 
-                val attachmentText = message.attachments
-                    .takeIf { it.isNotEmpty() }
-                    ?.mapNotNull { attachment ->
-                        attachment.title ?: attachment.name
-                    }
-                    ?.joinToString()
+                val attachmentText: String? = if (message.attachments.isNotEmpty()) {
+                    val textFormatter = ChatTheme.attachmentFactories
+                        .firstOrNull { it.canHandle(message.attachments) }
+                        ?.textFormatter
+
+                    message.attachments
+                        .takeIf { it.isNotEmpty() }
+                        ?.mapNotNull { attachment ->
+                            textFormatter?.invoke(attachment)
+                                ?.let { previewText ->
+                                    if (previewText.isNotEmpty()) previewText else null
+                                }
+                        }?.joinToString()
+                } else {
+                    null
+                }
 
                 if (attachmentText != null) {
                     val startIndex = this.length
