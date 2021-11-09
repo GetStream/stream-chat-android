@@ -32,6 +32,7 @@ import io.getstream.chat.android.offline.model.ConnectionState
 import io.getstream.chat.android.offline.querychannels.QueryChannelsController
 import io.getstream.chat.android.offline.repository.database.ChatDatabase
 import io.getstream.chat.android.offline.thread.ThreadController
+import io.getstream.chat.android.offline.utils.DefaultRetryPolicy
 import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.RetryPolicy
 import kotlinx.coroutines.flow.StateFlow
@@ -97,7 +98,7 @@ public sealed interface ChatDomain {
     public val banned: StateFlow<Boolean>
 
     /** The retry policy for retrying failed requests */
-    public var retryPolicy: RetryPolicy
+    public val retryPolicy: RetryPolicy
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -608,6 +609,8 @@ public sealed interface ChatDomain {
         private var backgroundSyncEnabled: Boolean = true
         private var uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
 
+        private var retryPolicy: RetryPolicy = DefaultRetryPolicy()
+
         @VisibleForTesting
         internal fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -664,6 +667,11 @@ public sealed interface ChatDomain {
             return this
         }
 
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder {
+            this.retryPolicy = retryPolicy
+            return this
+        }
+
         public fun build(): ChatDomain {
             instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             instance = buildImpl()
@@ -696,6 +704,7 @@ public sealed interface ChatDomain {
                 appContext,
                 offlinePlugin = plugin,
                 uploadAttachmentsNetworkType = uploadAttachmentsNetworkType,
+                retryPolicy
             ).also { domainImpl ->
                 // TODO remove when plugin becomes stateless
                 plugin.initState(domainImpl, client)

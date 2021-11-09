@@ -49,7 +49,7 @@ fun SearchInput(
 * `onValueChange`: Handler when the value changes.
 * `onSearchStarted`: Handler when the search starts, by focusing the input field. 
 
-You can use the `ChannelListViewModel` to search for channels by name. To do so, simply pass the search query from `onValueChange` callback to the `ChannelListViewModel`. The results can be displayed using the `ChannelList`.
+You can use the `ChannelListViewModel` to search for named channels by name and distinct channels by member name. To do so, simply pass the search query from `onValueChange` callback to the `ChannelListViewModel`. The results can be displayed using the `ChannelList`.
 
 ```kotlin
 var searchQuery by rememberSaveable { mutableStateOf("") }

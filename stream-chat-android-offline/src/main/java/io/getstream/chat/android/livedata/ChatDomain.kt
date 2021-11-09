@@ -91,7 +91,7 @@ public sealed interface ChatDomain {
     public val banned: LiveData<Boolean>
 
     /** The retry policy for retrying failed requests */
-    public var retryPolicy: RetryPolicy
+    public val retryPolicy: RetryPolicy
 
     /**
      * Updates about currently typing users in active channels. See [TypingEvent].
@@ -635,11 +635,15 @@ public sealed interface ChatDomain {
             offlineChatDomainBuilder.uploadAttachmentsWorkerNetworkType(networkType)
         }
 
+        public fun retryPolicy(retryPolicy: RetryPolicy): Builder = apply {
+            offlineChatDomainBuilder.retryPolicy(retryPolicy)
+        }
+
         public fun build(): ChatDomain {
-            ChatDomain.instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
+            instance?.run { Log.e("Chat", "[ERROR] You have just re-initialized ChatDomain, old configuration has been overridden [ERROR]") }
             val offlineChatDomain = offlineChatDomainBuilder.build()
-            ChatDomain.instance = buildImpl(offlineChatDomain)
-            return ChatDomain.instance()
+            instance = buildImpl(offlineChatDomain)
+            return instance()
         }
 
         internal fun buildImpl(offlineChatDomainBuilder: OfflineChatDomain): ChatDomainImpl {

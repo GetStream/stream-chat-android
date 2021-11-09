@@ -79,7 +79,7 @@ internal class QueryChannelsLogic(
             .also { onQueryChannelsResult(it, request) }
     }
 
-    internal suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         if (result.isSuccess) {
             mutableState.recoveryNeeded.value = false
 
