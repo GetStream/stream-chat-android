@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.ChatDomain
 import java.io.File
 
@@ -105,6 +106,17 @@ public class MessageInputViewModel @JvmOverloads constructor(
         }.toMutableList()
 
         val message = Message(cid = cid, text = messageText, attachments = attachments).apply(messageTransformer)
+        chatDomain.sendMessage(message).enqueue()
+    }
+
+    @ExperimentalStreamChatApi
+    public fun sendMessageWithCustomAttachments(
+        messageText: String,
+        customAttachments: List<Attachment>,
+        messageTransformer: Message.() -> Unit = { },
+    ) {
+        val message = Message(cid = cid, text = messageText, attachments = customAttachments.toMutableList())
+            .apply(messageTransformer)
         chatDomain.sendMessage(message).enqueue()
     }
 

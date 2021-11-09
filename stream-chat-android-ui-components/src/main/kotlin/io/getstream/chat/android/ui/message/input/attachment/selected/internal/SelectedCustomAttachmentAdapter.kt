@@ -43,11 +43,23 @@ internal class SelectedCustomAttachmentAdapter(
     }
 }
 
+/**
+ * An interface of factory responsible for providing instance of [BaseSelectedCustomAttachmentViewHolder].
+ * It's used to provide support for displaying custom attachments previews in [io.getstream.chat.android.ui.message.input.MessageInputView] using
+ * [io.getstream.chat.android.ui.message.input.MessageInputView.submitCustomAttachments] function.
+ */
 @ExperimentalStreamChatApi
-public abstract class SelectedCustomAttachmentViewHolderFactory {
-    public abstract fun createAttachmentViewHolder(attachments: List<Attachment>, parent: ViewGroup): BaseSelectedCustomAttachmentViewHolder
+public interface SelectedCustomAttachmentViewHolderFactory {
+    /**
+     * Implementation of this function should return instance of [BaseSelectedCustomAttachmentViewHolder] class.
+     */
+    public fun createAttachmentViewHolder(attachments: List<Attachment>, parent: ViewGroup): BaseSelectedCustomAttachmentViewHolder
 }
 
+/**
+ * [RecyclerView.ViewHolder] instance. It can be extended in order to provide custom attachment ViewHolder in MessageInputView.
+ * Its instance is provided by [SelectedCustomAttachmentViewHolderFactory].
+ */
 @ExperimentalStreamChatApi
 public abstract class BaseSelectedCustomAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     public abstract fun bind(attachment: Attachment, onAttachmentCancelled: (Attachment) -> Unit)

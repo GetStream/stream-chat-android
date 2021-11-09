@@ -733,35 +733,59 @@ public class MessageInputView : ConstraintLayout {
                     messageReplyTo
                 )
             },
-            { sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo) }
+            { sendMessageHandler.sendMessage(binding.messageInputFieldView.messageText, messageReplyTo) },
+            { customAttachments ->
+                val messageText = binding.messageInputFieldView.messageText
+                sendMessageHandler.sendMessageWithCustomAttachments(messageText, customAttachments, messageReplyTo)
+            }
         )
     }
 
     private fun sendThreadMessage(parentMessage: Message) {
         val sendAlsoToChannel = binding.sendAlsoToChannel.isChecked
-        doSend({ attachments ->
-            sendMessageHandler.sendToThreadWithAttachments(
-                parentMessage,
-                binding.messageInputFieldView.messageText,
-                sendAlsoToChannel,
-                attachments
-            )
-        },
+        doSend(
+            { attachments ->
+                sendMessageHandler.sendToThreadWithAttachments(
+                    parentMessage,
+                    binding.messageInputFieldView.messageText,
+                    sendAlsoToChannel,
+                    attachments
+                )
+            },
             {
                 sendMessageHandler.sendToThread(parentMessage,
                     binding.messageInputFieldView.messageText,
                     sendAlsoToChannel)
+            },
+            { customAttachments ->
+                val messageText = binding.messageInputFieldView.messageText
+                sendMessageHandler.sendToThreadWithCustomAttachments(
+                    parentMessage,
+                    messageText,
+                    sendAlsoToChannel,
+                    customAttachments)
             }
         )
     }
 
-    private fun doSend(attachmentSender: (List<Pair<File, String?>>) -> Unit, simpleSender: () -> Unit) {
+    private fun doSend(
+        attachmentSender: (List<Pair<File, String?>>) -> Unit,
+        simpleSender: () -> Unit,
+        customAttachmentsSender: (List<Attachment>) -> Unit,
+    ) {
         val attachments = binding.messageInputFieldView.getAttachedFiles()
+        val customAttachments = binding.messageInputFieldView.getCustomAttachments()
 
-        if (attachments.isNotEmpty()) {
-            attachmentSender(attachments)
-        } else {
-            simpleSender()
+        when {
+            attachments.isNotEmpty() -> {
+                attachmentSender(attachments)
+            }
+            customAttachments.isNotEmpty() -> {
+                customAttachmentsSender(customAttachments)
+            }
+            else -> {
+                simpleSender()
+            }
         }
     }
 
@@ -809,6 +833,14 @@ public class MessageInputView : ConstraintLayout {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
             }
 
+            override fun sendMessageWithCustomAttachments(
+                message: String,
+                attachments: List<Attachment>,
+                messageReplyTo: Message?,
+            ) {
+                throw IllegalStateException("MessageInputView#sendMessageWithCustomAttachments needs to be configured to send messages")
+            }
+
             override fun sendToThread(
                 parentMessage: Message,
                 messageText: String,
@@ -824,6 +856,15 @@ public class MessageInputView : ConstraintLayout {
                 attachmentsWithMimeTypes: List<Pair<File, String?>>,
             ) {
                 throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+            }
+
+            override fun sendToThreadWithCustomAttachments(
+                parentMessage: Message,
+                message: String,
+                alsoSendToChannel: Boolean,
+                attachments: List<Attachment>,
+            ) {
+                throw IllegalStateException("MessageInputView#sendToThreadWithCustomAttachments needs to be configured to send messages")
             }
 
             override fun editMessage(oldMessage: Message, newMessageText: String) {
@@ -878,6 +919,12 @@ public class MessageInputView : ConstraintLayout {
             messageReplyTo: Message? = null,
         )
 
+        public fun sendMessageWithCustomAttachments(
+            message: String,
+            attachments: List<Attachment>,
+            messageReplyTo: Message? = null,
+        )
+
         public fun sendToThread(
             parentMessage: Message,
             messageText: String,
@@ -889,6 +936,13 @@ public class MessageInputView : ConstraintLayout {
             message: String,
             alsoSendToChannel: Boolean,
             attachmentsWithMimeTypes: List<Pair<File, String?>>,
+        )
+
+        public fun sendToThreadWithCustomAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsWithMimeTypes: List<Attachment>,
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)

@@ -200,6 +200,8 @@ internal class MessageInputFieldView : FrameLayout {
         }
     }
 
+    fun getCustomAttachments() = selectedCustomAttachments
+
     fun onReply(replyMessage: Message) {
         mode = Mode.ReplyMessageMode(replyMessage)
     }

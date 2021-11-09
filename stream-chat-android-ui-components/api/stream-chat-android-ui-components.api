@@ -1167,13 +1167,16 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 	public abstract fun editMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
 	public abstract fun sendMessage (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendMessageWithAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun sendMessageWithCustomAttachments (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)V
 	public abstract fun sendToThread (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Z)V
 	public abstract fun sendToThreadWithAttachments (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/List;)V
+	public abstract fun sendToThreadWithCustomAttachments (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;ZLjava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler$DefaultImpls {
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
 	public static synthetic fun sendMessageWithAttachments$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
+	public static synthetic fun sendMessageWithCustomAttachments$default (Lio/getstream/chat/android/ui/message/input/MessageInputView$MessageSendHandler;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/input/MessageInputView$OnMessageSendButtonClickListener {
@@ -1384,8 +1387,7 @@ public abstract class io/getstream/chat/android/ui/message/input/attachment/sele
 	public abstract fun bind (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)V
 }
 
-public abstract class io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
-	public fun <init> ()V
+public abstract interface class io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
 	public abstract fun createAttachmentViewHolder (Ljava/util/List;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
 }
 
