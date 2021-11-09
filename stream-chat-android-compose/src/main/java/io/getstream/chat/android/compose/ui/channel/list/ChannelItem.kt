@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,6 @@ import io.getstream.chat.android.compose.ui.common.Timestamp
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
-import io.getstream.chat.android.compose.ui.util.getLastMessagePreviewText
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
 import io.getstream.chat.android.compose.ui.util.isMuted
 
@@ -185,7 +185,9 @@ public fun ChannelDetails(
             channelName()
         }
 
-        val lastMessageText = channel.getLastMessagePreviewText(currentUser)
+        val lastMessageText = channel.getLastMessage(currentUser)?.let { lastMessage ->
+            ChatTheme.messagePreviewFormatter.format(lastMessage, currentUser)
+        } ?: AnnotatedString("")
 
         if (lastMessageText.isNotEmpty()) {
             Text(
