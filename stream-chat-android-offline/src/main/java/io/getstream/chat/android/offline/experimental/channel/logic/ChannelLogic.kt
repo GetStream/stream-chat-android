@@ -153,6 +153,7 @@ internal class ChannelLogic(
         setWatchers(c.watchers)
         upsertMessages(c.messages)
         mutableState.lastMessageAt.value = c.lastMessageAt
+        mutableState.channelConfig.value = c.config
     }
 
     internal fun upsertMessages(messages: List<Message>) {

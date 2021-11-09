@@ -62,6 +62,7 @@ dependencies {
     implementation Dependencies.androidxStartup
     implementation Dependencies.constraintLayout
     implementation Dependencies.materialComponents
+    implementation Dependencies.androidxLifecycleLiveDataKtx
 
     api Dependencies.threeTenAbp
 
