@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
@@ -261,6 +262,14 @@ class Android {
                         // Handle message with attachments
                     }
 
+                    override fun sendMessageWithCustomAttachments(
+                        message: String,
+                        attachments: List<Attachment>,
+                        messageReplyTo: Message?,
+                    ) {
+                        // Handle message with custom attachments
+                    }
+
                     override fun sendToThreadWithAttachments(
                         parentMessage: Message,
                         message: String,
@@ -268,6 +277,15 @@ class Android {
                         attachmentsWithMimeTypes: List<Pair<File, String?>>,
                     ) {
                         // Handle message to thread with attachments
+                    }
+
+                    override fun sendToThreadWithCustomAttachments(
+                        parentMessage: Message,
+                        message: String,
+                        alsoSendToChannel: Boolean,
+                        attachmentsWithMimeTypes: List<Attachment>,
+                    ) {
+                        // Handle message to thread with custom attachments
                     }
 
                     override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
