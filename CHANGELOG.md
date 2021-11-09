@@ -54,11 +54,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageInputView::submitCustomAttachments` function allowing setting custom attachments in `MessageInputView`.
-- Added `SelectedCustomAttachmentViewHolderFactory` interface and `BaseSelectedCustomAttachmentViewHolder`class allowing defining how previews of custom attachments in `MessageInputView` should be rendered.
 
 ### ⚠️ Changed
-- Added `MessageSendHandler::sendMessageWithCustomAttachments` and `MessageSendHandler::sendToThreadWithCustomAttachments` allowing to intercept sending custom attachments actions.
 
 ### ❌ Removed
 
@@ -77,8 +74,12 @@
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
 - Added `setMessageInputModeListener`, `setSendMessageButtonEnabledDrawable` and `setSendMessageButtonDisabledDrawable` method to `MessageInputView`.
   They can be used together for changing send button icon based on current input mode. See [docs](https://getstream.io/chat/docs/sdk/android/ui/components/message-input#changing-send-message-button) for more details.
+- Added `MessageInputViewModel::sendMessageWithCustomAttachments` function allowing to send message with custom attachments list.
+- Added `MessageInputView::submitCustomAttachments` function allowing setting custom attachments in `MessageInputView`.
+- Added `SelectedCustomAttachmentViewHolderFactory` interface and `BaseSelectedCustomAttachmentViewHolder`class allowing defining how previews of custom attachments in `MessageInputView` should be rendered.
 
 ### ⚠️ Changed
+- Added `MessageSendHandler::sendMessageWithCustomAttachments` and `MessageSendHandler::sendToThreadWithCustomAttachments` allowing to intercept sending custom attachments actions.
 
 ### ❌ Removed
 
