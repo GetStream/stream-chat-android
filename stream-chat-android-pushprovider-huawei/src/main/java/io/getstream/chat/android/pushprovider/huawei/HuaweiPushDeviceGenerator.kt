@@ -12,6 +12,9 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * Generator responsible for providing information needed to register Huawei push notifications provider
+ */
 public class HuaweiPushDeviceGenerator(context: Context, private val appId: String) :
     PushDeviceGenerator {
     private val hmsInstanceId: HmsInstanceId = HmsInstanceId.getInstance(context)

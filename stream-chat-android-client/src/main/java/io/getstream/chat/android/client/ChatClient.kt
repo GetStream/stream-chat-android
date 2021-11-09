@@ -1618,7 +1618,7 @@ public class ChatClient internal constructor(
         private var callbackExecutor: Executor? = null
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: NotificationHandler? = null
-        private var notificationConfig: NotificationConfig = NotificationConfig()
+        private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var plugins: List<Plugin> = emptyList()
