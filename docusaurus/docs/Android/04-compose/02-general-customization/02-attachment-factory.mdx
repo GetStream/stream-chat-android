@@ -14,12 +14,14 @@ public open class AttachmentFactory @ExperimentalStreamChatApi constructor(
         modifier: Modifier,
         attachmentState: AttachmentState,
     ) -> Unit,
+    public val textFormatter: (attachments: Attachment) -> String = Attachment::previewText
 )
 ```
 
 * `canHandle`: Lambda function that accepts a list of attachments in a message and returns `true` if a given factory can consume the attachments and show some UI.
 * `previewContent`: Lambda function that accepts a `Modifier`, `List` of `Attachment`s  and an `onAttachmentRemoved` handler. It's used to render selected attachments in the `MessageComposer` or the `MessageInput` before sending the message.
 * `content`: Defines the composable function that accepts a `Modifier` and an `AttachmentState` and shows a given attachment component in the message list.
+* `textFormatter`: Lambda function that accepts an attachment and returns a string representation for it.
 
 There are a few examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamAttachmentFactories.kt):
 

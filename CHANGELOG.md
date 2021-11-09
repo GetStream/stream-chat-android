@@ -94,6 +94,7 @@
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
 - Added the `leadingContent`, `detailsContent`, `trailingContent` and `divider` Slot APIs for the `DefaultChannelItem`
+- Added the `textFormatter` field to `AttachmentFactory`, to allow for attachment text format customization.
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
