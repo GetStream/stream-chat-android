@@ -186,7 +186,7 @@ public fun ChannelDetails(
         }
 
         val lastMessageText = channel.getLastMessage(currentUser)?.let { lastMessage ->
-            ChatTheme.messagePreviewFormatter.format(lastMessage, currentUser)
+            ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
         } ?: AnnotatedString("")
 
         if (lastMessageText.isNotEmpty()) {

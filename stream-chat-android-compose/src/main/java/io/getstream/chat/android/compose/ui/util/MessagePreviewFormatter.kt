@@ -23,7 +23,7 @@ public interface MessagePreviewFormatter {
      * @return The formatted text representation for the given message.
      */
     @Composable
-    public fun format(message: Message, currentUser: User?): AnnotatedString
+    public fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString
 
     public companion object {
         /**
@@ -58,7 +58,7 @@ private class DefaultMessagePreviewFormatter(
      * @return The formatted text representation for the given message.
      */
     @Composable
-    override fun format(message: Message, currentUser: User?): AnnotatedString {
+    override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
         return buildAnnotatedString {
             message.let { message ->
                 val messageText = message.text.trim()
@@ -66,19 +66,19 @@ private class DefaultMessagePreviewFormatter(
                 if (message.isSystem()) {
                     append(messageText)
                 } else {
-                    appendSenderNameSpan(message, currentUser)
-                    appendMessageTextSpan(messageText)
-                    appendAttachmentTextSpan(message.attachments)
+                    appendSenderName(message, currentUser)
+                    appendMessageText(messageText)
+                    appendAttachmentText(message.attachments)
                 }
             }
         }
     }
 
     /**
-     * Appends a span with a sender name to the [AnnotatedString].
+     * Appends the sender name to the [AnnotatedString].
      */
     @Composable
-    private fun AnnotatedString.Builder.appendSenderNameSpan(message: Message, currentUser: User?) {
+    private fun AnnotatedString.Builder.appendSenderName(message: Message, currentUser: User?) {
         val sender = message.getSenderDisplayName(context, currentUser)
 
         if (sender != null) {
@@ -95,10 +95,10 @@ private class DefaultMessagePreviewFormatter(
     }
 
     /**
-     * Appends a span with a message text to the [AnnotatedString].
+     * Appends the message text to the [AnnotatedString].
      */
     @Composable
-    private fun AnnotatedString.Builder.appendMessageTextSpan(messageText: String) {
+    private fun AnnotatedString.Builder.appendMessageText(messageText: String) {
         if (messageText.isNotEmpty()) {
             val startIndex = this.length
             append("$messageText ")
@@ -114,36 +114,33 @@ private class DefaultMessagePreviewFormatter(
     }
 
     /**
-     * Appends a span with a string representations of [attachments] to the [AnnotatedString].
+     * Appends a string representations of [attachments] to the [AnnotatedString].
      */
     @Composable
-    private fun AnnotatedString.Builder.appendAttachmentTextSpan(attachments: List<Attachment>) {
-        val attachmentText: String? = if (attachments.isNotEmpty()) {
-            val textFormatter = ChatTheme.attachmentFactories
+    private fun AnnotatedString.Builder.appendAttachmentText(attachments: List<Attachment>) {
+        if (attachments.isNotEmpty()) {
+            ChatTheme.attachmentFactories
                 .firstOrNull { it.canHandle(attachments) }
                 ?.textFormatter
+                ?.let { textFormatter ->
+                    attachments.mapNotNull { attachment ->
+                        textFormatter.invoke(attachment)
+                            .let { previewText ->
+                                previewText.ifEmpty { null }
+                            }
+                    }.joinToString()
+                }?.let { attachmentText ->
+                    val startIndex = this.length
+                    append(attachmentText)
 
-            attachments.mapNotNull { attachment ->
-                textFormatter?.invoke(attachment)
-                    ?.let { previewText ->
-                        previewText.ifEmpty { null }
-                    }
-            }.joinToString()
-        } else {
-            null
-        }
-
-        if (attachmentText != null) {
-            val startIndex = this.length
-            append(attachmentText)
-
-            addStyle(
-                SpanStyle(
-                    fontStyle = ChatTheme.typography.bodyItalic.fontStyle
-                ),
-                start = startIndex,
-                end = startIndex + attachmentText.length
-            )
+                    addStyle(
+                        SpanStyle(
+                            fontStyle = ChatTheme.typography.bodyItalic.fontStyle
+                        ),
+                        start = startIndex,
+                        end = startIndex + attachmentText.length
+                    )
+                }
         }
     }
 }
