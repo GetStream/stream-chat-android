@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
 
 /**
@@ -33,3 +34,22 @@ public fun ChatClient.requestMembers(
     sort: QuerySort<Member> = QuerySort.desc(Member::createdAt),
     members: List<Member> = emptyList(),
 ): Call<List<Member>> = ChatDomain.instance().queryMembers(cid, offset, limit, filter, sort, members)
+
+/**
+ * Perform api request with a search string as autocomplete if in online state. Otherwise performs search by name
+ * in local database.
+ *
+ * @param querySearch Search string used as autocomplete.
+ * @param offset Offset for paginated requests.
+ * @param userLimit The page size in the request.
+ * @param userPresence Presence flag to obtain additional info such as last active date.
+ *
+ * @return Executable async [Call] querying users.
+ */
+@CheckResult
+public fun ChatClient.searchUsersByName(
+    querySearch: String,
+    offset: Int,
+    userLimit: Int,
+    userPresence: Boolean,
+): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
