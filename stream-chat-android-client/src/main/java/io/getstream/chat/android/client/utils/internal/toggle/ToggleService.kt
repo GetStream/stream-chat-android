@@ -27,6 +27,11 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
 
         private var instance: ToggleService? = null
 
+        /**
+         * Internal check used to avoid NPE in cases when SDK users don't initialize it.
+         */
+        internal fun isInitialized() = instance == null
+
         @InternalStreamChatApi
         public fun instance(): ToggleService = requireNotNull(instance) {
             "Toggle service must be initialized via the init method!"
