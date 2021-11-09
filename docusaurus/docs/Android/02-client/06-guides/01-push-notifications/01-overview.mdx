@@ -36,7 +36,7 @@ ChatClient.Builder("api-key", context)
 ```
 
 :::note
-You can disable push notifications client-side by providing custom `NotificationConfig` with `pushNotificationsEnabled` set to `false`.
+Push notifications are disabled by default on the client side. You can enable it by setting the `NotificationConfig::pushNotificationEnabled` property to `true`.
 Keep in mind that the SDK creates a `NotificationChannel` during its initialization if push notifications are enabled client-side.
 :::
 
