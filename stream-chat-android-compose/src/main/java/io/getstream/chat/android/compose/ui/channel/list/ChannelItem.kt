@@ -162,7 +162,7 @@ public fun ChannelDetails(
     ) {
         val channelName: (@Composable () -> Unit) = @Composable {
             Text(
-                text = ChatTheme.channelNameFormatter.format(channel),
+                text = ChatTheme.channelNameFormatter.formatChannelName(channel),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,

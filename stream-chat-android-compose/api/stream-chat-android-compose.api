@@ -901,7 +901,7 @@ public final class io/getstream/chat/android/compose/ui/util/AttachmentsUtilsKt 
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/ChannelNameFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/ChannelNameFormatter$Companion;
-	public abstract fun format (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
+	public abstract fun formatChannelName (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelNameFormatter$Companion {
