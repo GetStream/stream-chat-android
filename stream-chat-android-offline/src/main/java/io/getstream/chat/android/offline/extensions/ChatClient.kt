@@ -8,10 +8,14 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.utils.validateCid
 
 /**
  * Query members of a channel.
@@ -64,5 +68,13 @@ public fun ChatClient.searchUsersByName(
  * @return Executable async [Call].
  */
 @CheckResult
-public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> =
-    ChatDomain.instance().setMessageForReply(cid, message)
+public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
+    validateCid(cid)
+
+    val chatDomain = ChatDomain.instance() as ChatDomainImpl
+    val channelController = chatDomain.channel(cid)
+    return CoroutineCall(chatDomain.scope) {
+        channelController.replyMessage(message)
+        Result(Unit)
+    }
+}

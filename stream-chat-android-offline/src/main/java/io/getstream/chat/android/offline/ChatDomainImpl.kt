@@ -41,6 +41,7 @@ import io.getstream.chat.android.offline.experimental.plugin.OfflinePlugin
 import io.getstream.chat.android.offline.experimental.querychannels.state.toMutableState
 import io.getstream.chat.android.offline.extensions.applyPagination
 import io.getstream.chat.android.offline.extensions.isPermanent
+import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.users
 import io.getstream.chat.android.offline.message.attachment.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.message.users
@@ -81,7 +82,6 @@ import io.getstream.chat.android.offline.usecase.SearchUsersByName
 import io.getstream.chat.android.offline.usecase.SendGiphy
 import io.getstream.chat.android.offline.usecase.SendMessage
 import io.getstream.chat.android.offline.usecase.SendReaction
-import io.getstream.chat.android.offline.usecase.SetMessageForReply
 import io.getstream.chat.android.offline.usecase.ShowChannel
 import io.getstream.chat.android.offline.usecase.ShuffleGiphy
 import io.getstream.chat.android.offline.usecase.StopTyping
@@ -987,8 +987,7 @@ internal class ChatDomainImpl internal constructor(
 
     override fun deleteChannel(cid: String): Call<Unit> = DeleteChannel(this).invoke(cid)
 
-    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> =
-        SetMessageForReply(this).invoke(cid, message)
+    override fun setMessageForReply(cid: String, message: Message?): Call<Unit> = client.setMessageForReply(cid, message)
 
     override fun downloadAttachment(attachment: Attachment): Call<Unit> = DownloadAttachment(this).invoke(attachment)
 
