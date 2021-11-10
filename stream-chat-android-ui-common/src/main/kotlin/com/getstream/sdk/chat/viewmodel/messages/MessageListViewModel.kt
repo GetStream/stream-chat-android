@@ -29,6 +29,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.offline.experimental.channel.state.MessagesState
 import io.getstream.chat.android.offline.experimental.extensions.asReferenced
+import io.getstream.chat.android.offline.extensions.downloadAttachment
 import kotlinx.coroutines.flow.map
 import kotlin.properties.Delegates
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -320,7 +321,7 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
             is Event.DownloadAttachment -> {
-                domain.downloadAttachment(event.attachment).enqueue()
+                client.downloadAttachment(event.attachment).enqueue()
             }
             is Event.ShowMessage -> {
                 domain.loadMessageById(
