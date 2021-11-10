@@ -323,9 +323,11 @@ public class MessageListViewModel @JvmOverloads constructor(
                 domain.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
             is Event.DownloadAttachment -> {
-                domain.downloadAttachment(event.attachment).enqueue(onError = { chatError ->
-                    logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
-                })
+                domain.downloadAttachment(event.attachment).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
             }
             is Event.ShowMessage -> {
                 domain.loadMessageById(
