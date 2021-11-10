@@ -2,7 +2,9 @@ package io.getstream.chat.android.offline.experimental.channel.state
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
@@ -79,12 +81,23 @@ internal class ChannelMutableState(
                 .toList()
         }.stateIn(scope, SharingStarted.Eagerly, emptyList())
     }
+
     internal var lastMarkReadEvent: Date? = null
     internal var lastKeystrokeAt: Date? = null
     internal var lastStartTypingEvent: Date? = null
 
+    internal val sortedMessages: StateFlow<List<Message>> = _messages.map { it.values }
+        .map {
+            it.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
+                .filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+        }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+
+    /** Channel configuration data. */
+    internal val channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
+
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
+
     override val messagesState: StateFlow<MessagesState> = _messagesState
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages)
     override val watcherCount: StateFlow<Int> = _watcherCount
@@ -134,6 +147,25 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
     override var recoveryNeeded: Boolean = false
+
+    override fun toChannel(): Channel {
+        // recreate a channel object from the various observables.
+        val channelData = _channelData.value ?: ChannelData(channelType, channelId)
+
+        val messages = sortedMessages.value
+        val members = _members.value.values.toList()
+        val watchers = _watchers.value.values.toList()
+        val reads = _reads.value.values.toList()
+        val watcherCount = _watcherCount.value
+
+        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
+        channel.config = channelConfig.value
+        channel.unreadCount = _unreadCount.value
+        channel.lastMessageAt = lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.hidden = _hidden.value
+
+        return channel
+    }
 }
 
 @ExperimentalStreamChatApi

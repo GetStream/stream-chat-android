@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -167,12 +166,8 @@ public class ChannelController internal constructor(
             .also { domainImpl.scope.launch { it.loadOlderMessages() } }
     }
 
-    private fun getConfig(): Config {
-        return domainImpl.getChannelConfig(channelType)
-    }
-
     internal suspend fun keystroke(parentId: String?): Result<Boolean> {
-        if (!getConfig().typingEventsEnabled) return Result(false)
+        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
@@ -189,7 +184,7 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun stopTyping(parentId: String?): Result<Boolean> {
-        if (!getConfig().typingEventsEnabled) return Result(false)
+        if (!mutableState.channelConfig.value.typingEventsEnabled) return Result(false)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
@@ -212,12 +207,12 @@ public class ChannelController internal constructor(
      * @return whether the channel was marked as read or not
      */
     internal fun markRead(): Boolean {
-        if (!getConfig().readEventsEnabled) {
+        if (!mutableState.channelConfig.value.readEventsEnabled) {
             return false
         }
 
         // throttle the mark read
-        val messages = sortedMessages()
+        val messages = mutableState.sortedMessages.value
 
         if (messages.isEmpty()) {
             logger.logI("No messages; nothing to mark read.")
@@ -245,17 +240,6 @@ public class ChannelController internal constructor(
 
                 shouldUpdate
             }
-    }
-
-    private fun sortedMessages(): List<Message> {
-        // sorted ascending order, so the oldest messages are at the beginning of the list
-        var messages = emptyList<Message>()
-        mutableState._messages.value.let { mapOfMessages ->
-            messages = mapOfMessages.values
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .filter { mutableState.hideMessagesBefore == null || it.wasCreatedAfter(mutableState.hideMessagesBefore) }
-        }
-        return messages
     }
 
     private fun removeMessagesBefore(date: Date) {
@@ -332,7 +316,7 @@ public class ChannelController internal constructor(
     }
 
     private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
-        val messages = sortedMessages()
+        val messages = mutableState.sortedMessages.value
         return if (messages.isNotEmpty()) {
             when (direction) {
                 Pagination.GREATER_THAN_OR_EQUAL,
@@ -1059,14 +1043,14 @@ public class ChannelController internal constructor(
         // recreate a channel object from the various observables.
         val channelData = mutableState._channelData.value ?: ChannelData(channelType, channelId)
 
-        val messages = sortedMessages()
+        val messages = mutableState.sortedMessages.value
         val members = mutableState._members.value.values.toList()
         val watchers = mutableState._watchers.value.values.toList()
         val reads = mutableState._reads.value.values.toList()
         val watcherCount = mutableState._watcherCount.value
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
-        channel.config = getConfig()
+        channel.config = mutableState.channelConfig.value
         channel.unreadCount = mutableState._unreadCount.value
         channel.lastMessageAt =
             mutableState.lastMessageAt.value ?: messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
