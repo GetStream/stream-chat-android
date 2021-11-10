@@ -22,6 +22,8 @@ public open class AttachmentDestination(
     context: Context,
 ) : ChatDestination(context) {
 
+    private val logger = ChatLogger.get("AttachmentDestination")
+
     override fun navigate() {
         showAttachment(message, attachment)
     }
@@ -29,6 +31,7 @@ public open class AttachmentDestination(
     public fun showAttachment(message: Message, attachment: Attachment) {
         if (attachment.type == ModelType.attach_file ||
             attachment.type == ModelType.attach_video ||
+            attachment.type == ModelType.attach_audio ||
             attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true
         ) {
             loadFile(attachment)
@@ -60,8 +63,12 @@ public open class AttachmentDestination(
         }
 
         if (url.isNullOrEmpty()) {
-            Toast.makeText(context, context.getString(R.string.stream_ui_message_list_attachment_invalid_url), Toast.LENGTH_SHORT)
-                .show()
+            logger.logE("Wrong URL for attachment. Attachment: $attachment")
+            Toast.makeText(
+                context,
+                context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -115,16 +122,17 @@ public open class AttachmentDestination(
         }
     }
 
-    private fun playableContent(mimeType: String?, type: String?) : Boolean {
+    private fun playableContent(mimeType: String?, type: String?): Boolean {
         return mimeType?.contains("audio") == true ||
             mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true ||
             mimeType?.contains(MP4_MIME_TYPE) == true ||
+            mimeType?.contains(MPEG_MIME_TYPE) == true ||
             mimeType?.contains(QUICKTIME_MIME_TYPE) == true ||
             type == AUDIO_TYPE ||
             type == VIDEO_TYPE
     }
 
-    private fun docMimeType(mimeType: String?, type: String?) : Boolean {
+    private fun docMimeType(mimeType: String?, type: String?): Boolean {
         return mimeType == ModelType.attach_mime_doc ||
             mimeType == ModelType.attach_mime_txt ||
             mimeType == ModelType.attach_mime_pdf ||
@@ -160,6 +168,7 @@ public open class AttachmentDestination(
     private companion object {
         private const val VIDEO_MIME_TYPE_PREFIX = "video"
         private const val MP4_MIME_TYPE = "mp4"
+        private const val MPEG_MIME_TYPE = "audio/mpeg"
         private const val QUICKTIME_MIME_TYPE = "quicktime"
         private const val VIDEO_TYPE = "video"
         private const val AUDIO_TYPE = "audio"
