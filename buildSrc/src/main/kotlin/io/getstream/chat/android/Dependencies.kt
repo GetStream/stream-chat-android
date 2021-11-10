@@ -11,7 +11,7 @@ object Versions {
     internal const val ANDROIDX_APPCOMPAT = "1.3.1"
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
     internal const val ANDROIDX_FRAGMENT_KTX = "1.3.6"
-    internal const val ANDROIDX_KTX = "1.6.0"
+    internal const val ANDROIDX_KTX = "1.7.0"
     internal const val ANDROIDX_LIFECYCLE_EXTENSIONS = "2.2.0"
     internal const val ANDROIDX_LIFECYCLE_LIVEDATA_KTX = "2.3.1"
     internal const val ANDROIDX_LIFECYCLE_VIEWMODEL_KTX = "2.3.1"
@@ -35,12 +35,12 @@ object Versions {
     internal const val DOTENV = "5.2.2"
     internal const val ESPRESSO = "3.3.0"
     internal const val EXOMEDIA = "743fa9757c" // TODO fix when proper release is available
-    internal const val FRAGMENT_TESTING = "1.3.6"
+    internal const val FRAGMENT_TESTING = "1.4.0-beta01"
     internal const val FIREBASE_ANALYTICS = "19.0.0"
     internal const val FIREBASE_CRASHLYTICS = "18.2.1"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.7.1"
     internal const val FIREBASE_MESSAGING = "22.0.0"
-    internal const val FLIPPER = "0.102.0"
+    internal const val FLIPPER = "0.117.0"
     internal const val FLIPPER_SO_LOADER = "0.10.1"
     internal const val GITVERSIONER = "0.5.0"
     internal const val GOOGLE_PLAY_SERVICES_BASE = "17.6.0"
@@ -79,7 +79,7 @@ object Versions {
     internal const val THREETENBP = "1.5.1"
     internal const val THREETENABP = "1.3.1"
     internal const val TIMBER = "5.0.0"
-    internal const val WORK = "2.5.0"
+    internal const val WORK = "2.7.0"
 }
 
 object Dependencies {
