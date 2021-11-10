@@ -105,6 +105,7 @@
 - Added `ChannelNameFormatter` option to the `ChatTheme`, to allow for channel name format customization across the app.
 - Added the `textFormatter` field to `AttachmentFactory`, to allow for attachment text format customization.
 - Added `MessagePreviewFormatter` option to the `ChatTheme`, to allow for message preview text format customization across the app.
+- Added the `leadingContent`, `headerContent`, `footerContent`, `trailingContent` and `content` Slot APIs for the `DefaultMessageItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
