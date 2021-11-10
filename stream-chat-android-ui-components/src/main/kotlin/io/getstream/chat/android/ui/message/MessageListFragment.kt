@@ -40,18 +40,37 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
 @Suppress("MemberVisibilityCanBePrivate")
 public open class MessageListFragment : Fragment() {
 
-    protected val cid: String by lazy {
+    /** A specific channel cid to be connected with the Stream channel. */
+    protected val cid: String by lazy(LazyThreadSafetyMode.NONE) {
         requireNotNull(requireArguments().getString(ARG_CHANNEL_ID)) { "Channel cid must not be null" }
     }
-    protected val themeResId: Int by lazy { requireArguments().getInt(ARG_THEME_RES_ID) }
-    protected val messageId: String? by lazy { requireArguments().getString(ARG_MESSAGE_ID) }
-    protected val showHeader: Boolean by lazy { requireArguments().getBoolean(ARG_SHOW_HEADER, false) }
 
-    protected val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid, messageId) }
-    protected val messageListViewModel: MessageListViewModel by viewModels { factory }
+    /** A custom theme resource for the screen. */
+    protected val themeResId: Int by lazy(LazyThreadSafetyMode.NONE) { requireArguments().getInt(ARG_THEME_RES_ID) }
+
+    /** A specific message Id to move on the message list. */
+    protected val messageId: String? by lazy(LazyThreadSafetyMode.NONE) { requireArguments().getString(ARG_MESSAGE_ID) }
+
+    /** A flag for visibility of the header. */
+    protected val showHeader: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+        requireArguments().getBoolean(ARG_SHOW_HEADER, false)
+    }
+
+    /** A ViewModel factory for creating message list relevant ViewModels. */
+    protected val factory: MessageListViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
+        MessageListViewModelFactory(cid, messageId)
+    }
+
+    /** A message list header ViewModel for binding [MessageListHeaderView]. */
     protected val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
+
+    /** A message list ViewModel for binding [MessageListView]. */
+    protected val messageListViewModel: MessageListViewModel by viewModels { factory }
+
+    /** A message input ViewModel for binding [MessageInputView]. */
     protected val messageInputViewModel: MessageInputViewModel by viewModels { factory }
 
+    /** A click listener for the navigation button in the header. */
     protected var backPressListener: BackPressListener? = null
 
     private var _binding: StreamUiFragmentMessageListBinding? = null
@@ -140,23 +159,21 @@ public open class MessageListFragment : Fragment() {
      * @param messageInputView The message inout that is being configured.
      */
     protected open fun setupMessageInput(messageInputView: MessageInputView) {
-        messageInputViewModel.apply {
-            messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+        messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
 
-            messageListViewModel.mode.observe(viewLifecycleOwner) {
-                when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
-                        messageListHeaderViewModel.setActiveThread(it.parentMessage)
-                        messageInputViewModel.setActiveThread(it.parentMessage)
-                    }
-                    is MessageListViewModel.Mode.Normal -> {
-                        messageListHeaderViewModel.resetThread()
-                        messageInputViewModel.resetThread()
-                    }
+        messageListViewModel.mode.observe(viewLifecycleOwner) {
+            when (it) {
+                is MessageListViewModel.Mode.Thread -> {
+                    messageListHeaderViewModel.setActiveThread(it.parentMessage)
+                    messageInputViewModel.setActiveThread(it.parentMessage)
+                }
+                is MessageListViewModel.Mode.Normal -> {
+                    messageListHeaderViewModel.resetThread()
+                    messageInputViewModel.resetThread()
                 }
             }
-            binding.messageListView.setMessageEditHandler(::postMessageToEdit)
         }
+        binding.messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
     }
 
     override fun onDestroyView() {
@@ -218,6 +235,11 @@ public open class MessageListFragment : Fragment() {
             this.fragment = fragment
         }
 
+        /**
+         * Builds a custom message list Fragment.
+         *
+         * @return A customized [MessageListFragment].
+         */
         public fun build(): MessageListFragment {
             return (fragment ?: MessageListFragment()).apply {
                 arguments = bundleOf(
@@ -242,6 +264,8 @@ public open class MessageListFragment : Fragment() {
          * @param cid The full channel id. ie messaging:123.
          * @param initializer The initializer to customize builder params.
          */
+        @JvmStatic
+        @JvmOverloads
         public fun newInstance(cid: String, initializer: (Builder.() -> Unit)? = null): MessageListFragment {
             val builder = Builder(cid)
             initializer?.invoke(builder)
