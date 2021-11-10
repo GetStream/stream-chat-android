@@ -41,7 +41,7 @@ public class ChannelListViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
-    private val chatEventHandler: ChatEventHandler,
+    private val chatEventHandler: ChatEventHandler? = null,
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -70,7 +70,11 @@ public class ChannelListViewModel(
         chatDomain.queryChannels(filterObject, sort, limit, messageLimit).enqueue { queryChannelsControllerResult ->
             if (queryChannelsControllerResult.isSuccess) {
                 val queryChannelsController = queryChannelsControllerResult.data()
-                    .apply { this.chatEventHandler = this@ChannelListViewModel.chatEventHandler }
+
+                chatEventHandler?.let { eventsHandler ->
+                    queryChannelsController.chatEventHandler = eventsHandler
+                }
+
                 val channelState = queryChannelsController.channelsState.map { channelState ->
                     handleChannelState(channelState, queryChannelsController.mutedChannelIds.value)
                 }.asLiveData()

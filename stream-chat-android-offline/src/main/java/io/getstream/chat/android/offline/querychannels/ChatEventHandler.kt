@@ -56,25 +56,19 @@ public enum class EventHandlingResult {
  * you're free to implement.
  */
 public abstract class BaseChatEventHandler : ChatEventHandler {
-    /**
-     * Handles [NotificationAddedToChannelEvent] event. It runs in background.
-     */
+    /** Handles [NotificationAddedToChannelEvent] event. It runs in background. */
     public abstract fun onNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
-    /**
-     * Handles [ChannelUpdatedByUserEvent] event. It runs in background.
-     */
+    /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
     public abstract fun onChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
-    /**
-     * Handles [ChannelUpdatedEvent] event. It runs in background.
-     */
+    /** Handles [ChannelUpdatedEvent] event. It runs in background. */
     public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
 
     /** Handles [NotificationMessageNewEvent] event. It runs in background. */
@@ -83,6 +77,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
+    /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
     public open fun onNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,

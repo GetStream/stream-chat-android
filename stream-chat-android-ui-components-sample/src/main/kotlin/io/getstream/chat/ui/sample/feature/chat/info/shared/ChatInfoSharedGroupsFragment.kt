@@ -10,7 +10,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.offline.querychannels.MessagingChatEventHandler
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
@@ -36,7 +35,6 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
                 Filters.greaterThan("member_count", 2),
             ),
-            chatEventHandler = MessagingChatEventHandler(),
         )
     }
 

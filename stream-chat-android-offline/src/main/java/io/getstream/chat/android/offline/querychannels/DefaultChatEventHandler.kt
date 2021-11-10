@@ -9,19 +9,19 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.map
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 
 /**
  * Default implementation of [ChatEventHandler] which is more generic than [MessagingChatEventHandler]. It skips updates
- * and makes an API request when receives [NotificationAddedToChannelEvent], [NotificationMessageNewEvent],
- * [NotificationRemovedFromChannelEvent].
+ * and makes an API request if a channel wasn't yet handled before when receives [NotificationAddedToChannelEvent],
+ * [NotificationMessageNewEvent], [NotificationRemovedFromChannelEvent].
  */
-public open class DefaultChatEventHandler : BaseChatEventHandler() {
-
-    private val client: ChatClient
-        get() = ChatClient.instance()
+internal class DefaultChatEventHandler(private val client: ChatClient, private val channels: StateFlow<List<Channel>>) :
+    BaseChatEventHandler() {
 
     internal val newChannelEventFilter: suspend (String, FilterObject) -> Boolean = { cid, filter ->
         client.queryChannels(
@@ -43,8 +43,7 @@ public open class DefaultChatEventHandler : BaseChatEventHandler() {
     override fun onNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult =
-        handleCidEventByRequest(event.cid, filter)
+    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
 
     override fun onChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
@@ -63,7 +62,15 @@ public open class DefaultChatEventHandler : BaseChatEventHandler() {
     override fun onNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = handleCidEventByRequest(event.cid, filter)
+    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
+
+    private fun fireRequestIfChannelIsAbsent(cid: String, filter: FilterObject): EventHandlingResult {
+        return if (channels.value.any { it.cid == cid }) {
+            EventHandlingResult.SKIP
+        } else {
+            handleCidEventByRequest(cid, filter)
+        }
+    }
 
     /**
      * Handles [NotificationRemovedFromChannelEvent]. It makes a request to API to define outcome of handling.
@@ -74,7 +81,13 @@ public open class DefaultChatEventHandler : BaseChatEventHandler() {
     override fun onNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = handleCidEventByRequest(event.cid, filter)
+    ): EventHandlingResult {
+        return if (channels.value.any { it.cid == event.cid }.not()) {
+            EventHandlingResult.SKIP
+        } else {
+            handleCidEventByRequest(event.cid, filter)
+        }
+    }
 
     private fun handleCidEventByRequest(cid: String, filter: FilterObject): EventHandlingResult {
         return runBlocking {

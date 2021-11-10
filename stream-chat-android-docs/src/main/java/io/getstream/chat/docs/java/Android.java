@@ -125,7 +125,7 @@ public class Android {
             );
             int limit = 30;
 
-            ChannelListViewModelFactory factory = new ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT, limit, new DefaultChatEventHandler());
+            ChannelListViewModelFactory factory = new ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT, limit);
             ChannelListViewModel viewModel = new ViewModelProvider(this, factory)
                     .get(ChannelListViewModel.class);
 
