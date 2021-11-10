@@ -3,7 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-
+- Bumped the SDKs target API to 31
+- Updated WorkManager to version 2.7.0, which fixes compatibility issues with SDK 31
 ### ✅ Added
 - Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
@@ -69,6 +70,7 @@
 ### ⬆️ Improved
 - Improved Korean 🇰🇷 translation related to the flagging.
 - 🚨 Breaking change: Now the button for sending message in MessageInputView sizes itself accordingly with the drawable used, instead of having a predefined size (32dp)
+- Improved KDocs for `MessageListFragment`.
 
 ### ✅ Added
 - You can now use MessageListView.backgroundDrawable to have more flexibility to customize your message items background. Be aware that setting backgroundDrawable will override the background configurations of xml.
@@ -76,6 +78,7 @@
   Use them to customize icon in the `MessageInputView's` top left corner displayed when user edits or replies to the message.
 - Added `setMessageInputModeListener`, `setSendMessageButtonEnabledDrawable` and `setSendMessageButtonDisabledDrawable` method to `MessageInputView`.
   They can be used together for changing send button icon based on current input mode. See [docs](https://getstream.io/chat/docs/sdk/android/ui/components/message-input#changing-send-message-button) for more details.
+- Added static methods `createIntent` and `newInstance` those doesn't have default parameters on `MessageListActivity` and `MessageListFragment` for supporting Java side.
 
 ### ⚠️ Changed
 
