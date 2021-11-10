@@ -88,6 +88,7 @@ import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -1822,6 +1823,10 @@ public class ChatClient internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLogger.Config(logLevel, loggerHandler),
             )
+
+            if (ToggleService.isInitialized().not()) {
+                ToggleService.init(appContext, emptyMap())
+            }
 
             val module =
                 ChatModule(

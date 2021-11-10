@@ -24,7 +24,7 @@ To use `ChannelListHeaderView`, include it in your XML layout as shown below:
 // Instantiate the ViewModel
 val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 // Bind the ViewModel with ChannelListView 
-channelListHeaderViewModel.bindView(chanelHeaderView, viewLifecycleOwner)
+channelListHeaderViewModel.bindView(channelHeaderView, viewLifecycleOwner)
 ```
 
 The `ChannelListHeaderViewModel::bindView` function provides all the logic of subscribing to data emitted by the ViewModel. By default, the ViewModel will make the View display the avatar of the currently logged-in user as well as the "Searching for network" state when needed.
