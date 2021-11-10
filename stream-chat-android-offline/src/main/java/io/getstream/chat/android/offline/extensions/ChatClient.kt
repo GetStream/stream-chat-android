@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
 
@@ -53,3 +54,15 @@ public fun ChatClient.searchUsersByName(
     userLimit: Int,
     userPresence: Boolean,
 ): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
+
+/**
+ * Set the reply state for the channel.
+ *
+ * @param cid CID of the channel where reply state is being set.
+ * @param message The message we want reply to. The null value means dismiss reply state.
+ *
+ * @return Executable async [Call].
+ */
+@CheckResult
+public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> =
+    ChatDomain.instance().setMessageForReply(cid, message)
