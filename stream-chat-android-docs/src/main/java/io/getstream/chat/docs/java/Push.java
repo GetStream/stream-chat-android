@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate;
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
 import io.getstream.chat.docs.MainActivity;
-import io.getstream.chat.docs.R;
 
 public class Push {
     private Context context;
