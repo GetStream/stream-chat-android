@@ -407,7 +407,7 @@ These changes should have the following results:
 
 ## ChatEventHandler
 
-When `ChannelListViewModel` is instantiated it makes a query channels request. It gets data and shows in the `ChannelListView`. With time the list gets outdated and to keep it sync we have websocket events. But when handling events locally, our SDK can't always decide what we should do with the list. For example, in a messaging app it's common to add a channel to the list if the current user became a channel member and to remove this channel otherwise. But the same cannot be applied in the use case of the livestream app. To define desired behaviour there is `ChatEventHandler` which has a following interface:
+When `ChannelListViewModel` is instantiated it makes a query channels request to get the list of channels. Starting from this point, the list is being synced through WebSocket events. The SDK includes a `ChatEventHandler` that decides whether to include or exclude the channel from the list after receiving some events. Sometimes desired behavior differs from the default one and you can notice that for example - the channel doesn't disappear from the list after removing a member. In that case, you should provide a custom `ChatEventHandler` implementation, which has the following interface:
 
 ```kotlin
 public fun interface ChatEventHandler {
