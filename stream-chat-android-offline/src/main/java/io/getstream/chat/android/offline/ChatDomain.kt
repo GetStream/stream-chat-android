@@ -151,6 +151,11 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] responsible for obtaining list of historical [ChatEvent] objects.
      */
     @CheckResult
+    @Deprecated(
+        message = "replayEventsForActiveChannels is deprecated. Use extension function ChatClient::replayEventsForActiveChannels instead",
+        replaceWith = ReplaceWith("ChatClient.replayEventsForActiveChannels()"),
+        level = DeprecationLevel.WARNING
+    )
     public fun replayEventsForActiveChannels(cid: String): Call<List<ChatEvent>>
 
     /**
