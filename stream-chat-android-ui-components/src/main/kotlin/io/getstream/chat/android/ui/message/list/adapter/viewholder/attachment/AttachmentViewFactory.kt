@@ -172,8 +172,6 @@ public open class AttachmentViewFactory {
     }
 
     private companion object {
-        private fun Collection<Attachment>.isMedia(): Boolean = isNotEmpty() && all(Attachment::isMedia)
-
         private val MEDIA_ATTACHMENT_VIEW_PADDING = 1.dpToPx()
         private val LINK_VIEW_PADDING = 8.dpToPx()
 

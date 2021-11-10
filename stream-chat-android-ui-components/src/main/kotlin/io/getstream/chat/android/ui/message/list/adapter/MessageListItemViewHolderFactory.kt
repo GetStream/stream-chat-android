@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.DateDividerViewHolder
@@ -38,18 +39,31 @@ public open class MessageListItemViewHolderFactory {
     protected lateinit var listenerContainer: MessageListListenerContainer
         private set
 
+    protected var attachmentViewFactory: AttachmentViewFactory? = null
+        private set
+
+    // TODO change to lateinit when AttachmentViewFactory is removed
+    protected var attachmentViewHolderFactory: AttachmentViewHolderFactory? = null
+        private set
+
     private lateinit var style: MessageListItemStyle
 
     private lateinit var messageReplyStyle: MessageReplyStyle
 
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
-    private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
-
     private val attachmentsRecycledViewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
 
     internal fun setListenerContainer(listenerContainer: MessageListListenerContainer) {
         this.listenerContainer = listenerContainer
+    }
+
+    internal fun setAttachmentViewFactory(attachmentViewFactory: AttachmentViewFactory) {
+        this.attachmentViewFactory = attachmentViewFactory
+    }
+
+    internal fun setAttachmentViewHolderFactory(attachmentAdapterFactory: AttachmentViewHolderFactory) {
+        this.attachmentViewHolderFactory = attachmentAdapterFactory
     }
 
     internal fun setMessageListItemStyle(style: MessageListItemStyle) {
@@ -64,10 +78,6 @@ public open class MessageListItemViewHolderFactory {
         this.giphyViewHolderStyle = style
     }
 
-    internal fun setAttachmentViewHolderFactory(attachmentAdapterFactory: AttachmentViewHolderFactory) {
-        this.attachmentViewHolderFactory = attachmentAdapterFactory
-    }
-
     private val markdown: ChatMarkdown by lazy { ChatUI.markdown }
 
     /*
@@ -79,7 +89,8 @@ public open class MessageListItemViewHolderFactory {
 
         if (::decoratorProvider.isInitialized) { newFactory.decoratorProvider = decoratorProvider }
         if (::listenerContainer.isInitialized) { newFactory.listenerContainer = listenerContainer }
-        if (::attachmentViewHolderFactory.isInitialized) { newFactory.attachmentViewHolderFactory = attachmentViewHolderFactory }
+        if (attachmentViewFactory != null) { newFactory.attachmentViewFactory = attachmentViewFactory }
+        if (attachmentViewHolderFactory != null) { newFactory.attachmentViewHolderFactory = attachmentViewHolderFactory }
         if (::style.isInitialized) { newFactory.style = style }
         if (::messageReplyStyle.isInitialized) { newFactory.messageReplyStyle = messageReplyStyle }
         if (::giphyViewHolderStyle.isInitialized) { newFactory.giphyViewHolderStyle = giphyViewHolderStyle }
@@ -127,8 +138,10 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown,
+            attachmentViewFactory,
             attachmentViewHolderFactory,
-            attachmentsRecycledViewPool
+            attachmentsRecycledViewPool,
+            style,
         )
     }
 

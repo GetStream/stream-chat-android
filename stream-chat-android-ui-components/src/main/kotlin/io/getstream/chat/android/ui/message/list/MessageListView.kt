@@ -630,30 +630,20 @@ public class MessageListView : ConstraintLayout {
         )
     }
 
-    private fun defaultMessageListItemViewHolderFactory(): MessageListItemViewHolderFactory {
-        return MessageListItemViewHolderFactory().apply {
-            setAttachmentViewHolderFactory(attachmentViewHolderFactory)
-        }
-    }
-
     private fun initAdapter() {
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
             messageDateFormatter = DateFormatter.from(context)
         }
 
-        if (::attachmentViewFactory.isInitialized.not()) {
-            attachmentViewFactory = AttachmentViewFactory()
-        }
-
-        if (::attachmentViewHolderFactory.isInitialized.not()) {
+        if (::attachmentViewFactory.isInitialized.not() && ::attachmentViewHolderFactory.isInitialized.not()) {
             attachmentViewHolderFactory =
                 AttachmentViewHolderFactory({}, {}, {}, requireStyle().itemStyle.fileAttachmentStyle)
         }
 
         // Create default ViewHolderFactory if needed
         if (::messageListItemViewHolderFactory.isInitialized.not()) {
-            messageListItemViewHolderFactory = defaultMessageListItemViewHolderFactory()
+            messageListItemViewHolderFactory = MessageListItemViewHolderFactory()
         }
 
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
@@ -667,6 +657,14 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
+
+        if (::attachmentViewFactory.isInitialized) {
+            // Use legacy AttachmentViewFactory if one was set
+            messageListItemViewHolderFactory.setAttachmentViewFactory(attachmentViewFactory)
+        } else {
+            // Use the new attachment impl otherwise
+            messageListItemViewHolderFactory.setAttachmentViewHolderFactory(attachmentViewHolderFactory)
+        }
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
         adapter.setHasStableIds(true)

@@ -11,11 +11,13 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.common.markdown.ChatMarkdown
 import io.getstream.chat.android.ui.databinding.StreamUiItemTextAndAttachmentsBinding
+import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.attachments.AttachmentsAdapter
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +28,10 @@ internal class TextAndAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer,
     private val markdown: ChatMarkdown,
-    private val attachmentViewHolderFactory: AttachmentViewHolderFactory,
-    private val recycledViewPool: RecyclerView.RecycledViewPool,
+    private val attachmentViewFactory: AttachmentViewFactory?,
+    attachmentViewHolderFactory: AttachmentViewHolderFactory?, // TODO make non-nullable when AttachmentViewFactory is removed
+    recycledViewPool: RecyclerView.RecycledViewPool,
+    private val style: MessageListItemStyle,
     internal val binding: StreamUiItemTextAndAttachmentsBinding = StreamUiItemTextAndAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -65,7 +69,10 @@ internal class TextAndAttachmentsViewHolder(
         linkClickListener = listeners.linkClickListener::onLinkClick
     )
 
-    private val attachmentsAdapter = AttachmentsAdapter(attachmentViewHolderFactory)
+    // TODO make non-nullable when AttachmentViewFactory is removed
+    private val attachmentsAdapter: AttachmentsAdapter? = attachmentViewHolderFactory?.let { factory ->
+        AttachmentsAdapter(factory)
+    }
 
     init {
         binding.run {
@@ -92,9 +99,12 @@ internal class TextAndAttachmentsViewHolder(
             )
         }
 
-        binding.attachmentsRecycler.adapter = attachmentsAdapter
-        binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context)
-        binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
+        // TODO remove this null check when AttachmentViewFactory is removed
+        if (attachmentsAdapter != null) {
+            binding.attachmentsRecycler.adapter = attachmentsAdapter
+            binding.attachmentsRecycler.layoutManager = LinearLayoutManager(context)
+            binding.attachmentsRecycler.setRecycledViewPool(recycledViewPool)
+        }
     }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
@@ -108,8 +118,17 @@ internal class TextAndAttachmentsViewHolder(
     }
 
     private fun setupAttachment(data: MessageListItem.MessageItem) {
-        val attachments = data.message.attachments
-        attachmentsAdapter.submitList(listOf(attachments))
+        if (attachmentViewFactory != null) {
+            // Use legacy factory if set
+            with(binding.attachmentsContainer) {
+                removeAllViews()
+                addView(attachmentViewFactory.createAttachmentView(data, modifiedListeners, style, binding.root))
+            }
+        } else {
+            val attachments = data.message.attachments
+            // TODO remove this safe call when AttachmentViewFactory is removed
+            attachmentsAdapter?.submitList(listOf(attachments))
+        }
     }
 
     private fun clearScope() {
