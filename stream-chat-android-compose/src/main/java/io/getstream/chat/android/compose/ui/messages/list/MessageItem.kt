@@ -95,12 +95,12 @@ public const val HIGHLIGHT_FADE_OUT_DURATION_MILLIS: Int = 1000
  * current user.
  * @param headerContent The content shown at the top of a message list item. By default, we provide
  * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
- * @param content The content shown at the center of a message list item. By default, we provide
- * [DefaultMessageItemContent], which shows the message bubble with message text and attachments.
  * @param footerContent The content shown at the bottom of a message list item. By default, we provide
  * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
  * @param trailingContent The content shown at the end of a message list item. By default, we provide
  * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
+ * @param content The content shown at the center of a message list item. By default, we provide
+ * [DefaultMessageItemContent], which shows the message bubble with message text and attachments.
  */
 @Composable
 public fun DefaultMessageItem(
@@ -124,14 +124,6 @@ public fun DefaultMessageItem(
             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
-        DefaultMessageItemContent(
-            messageItem = it,
-            onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult,
-            modifier = Modifier.widthIn(max = 250.dp)
-        )
-    },
     footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
@@ -141,6 +133,14 @@ public fun DefaultMessageItem(
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
+        )
+    },
+    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemContent(
+            messageItem = it,
+            onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult,
+            modifier = Modifier.widthIn(max = 250.dp)
         )
     },
 ) {
@@ -154,9 +154,9 @@ public fun DefaultMessageItem(
             onImagePreviewResult = onImagePreviewResult,
             leadingContent = leadingContent,
             headerContent = headerContent,
-            content = content,
             footerContent = footerContent,
             trailingContent = trailingContent,
+            content = content,
         )
     }
 }
@@ -213,12 +213,12 @@ public fun MessageDateSeparator(
  * current user.
  * @param headerContent The content shown at the top of a message list item. By default, we provide
  * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
- * @param content The content shown at the center of a message list item. By default, we provide
- * [DefaultMessageItemContent], which shows the message bubble with text and attachments.
  * @param footerContent The content shown at the bottom of a message list item. By default, we provide
  * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
  * @param trailingContent The content shown at the end of a message list item. By default, we provide
  * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
+ * @param content The content shown at the center of a message list item. By default, we provide
+ * [DefaultMessageItemContent], which shows the message bubble with text and attachments.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -243,14 +243,6 @@ public fun DefaultMessageContainer(
             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 2.dp)
         )
     },
-    content: @Composable ColumnScope.(MessageItem) -> Unit = {
-        DefaultMessageItemContent(
-            messageItem = it,
-            onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult,
-            modifier = Modifier.widthIn(max = 250.dp)
-        )
-    },
     footerContent: @Composable ColumnScope.(MessageItem) -> Unit = {
         DefaultMessageItemFooterContent(
             messageItem = it,
@@ -260,6 +252,14 @@ public fun DefaultMessageContainer(
         DefaultMessageItemTrailingContent(
             messageItem = it,
             modifier = Modifier.width(8.dp)
+        )
+    },
+    content: @Composable ColumnScope.(MessageItem) -> Unit = {
+        DefaultMessageItemContent(
+            messageItem = it,
+            onLongItemClick = onLongItemClick,
+            onImagePreviewResult = onImagePreviewResult,
+            modifier = Modifier.widthIn(max = 250.dp)
         )
     },
 ) {
@@ -379,60 +379,6 @@ public fun DefaultMessageItemHeaderContent(
 }
 
 /**
- * Represents the default content shown at the center of the message list item.
- *
- * By default, we show a message bubble with attachments.
- *
- * @param messageItem The message item to show the content for.
- * @param modifier Modifier for styling.
- */
-@Composable
-public fun DefaultMessageItemContent(
-    messageItem: MessageItem,
-    modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit = {},
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-) {
-    val (message, position, parentMessageId, ownsMessage, _) = messageItem
-
-    val bubbleShape = if (message.id == parentMessageId) {
-        ChatTheme.shapes.myMessageBubble
-    } else {
-        when (position) {
-            Top, Middle -> RoundedCornerShape(16.dp)
-            else -> {
-                if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-            }
-        }
-    }
-
-    val messageCardColor = if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
-
-    MessageBubble(
-        modifier = modifier,
-        shape = bubbleShape,
-        color = messageCardColor,
-        content = {
-            if (message.isDeleted()) {
-                DeletedMessageContent()
-            } else {
-                Column {
-                    MessageAttachmentsContent(
-                        message = messageItem.message,
-                        onLongItemClick = onLongItemClick,
-                        onImagePreviewResult = onImagePreviewResult,
-                    )
-
-                    if (message.text.isNotEmpty()) {
-                        DefaultMessageContent(message = message)
-                    }
-                }
-            }
-        }
-    )
-}
-
-/**
  * Represents the default content shown at the bottom of the message list item.
  *
  * By default, the following can be shown in the footer:
@@ -492,6 +438,60 @@ public fun DefaultMessageItemTrailingContent(
     if (messageItem.isMine) {
         Spacer(modifier = modifier)
     }
+}
+
+/**
+ * Represents the default content shown at the center of the message list item.
+ *
+ * By default, we show a message bubble with attachments.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun DefaultMessageItemContent(
+    messageItem: MessageItem,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+) {
+    val (message, position, parentMessageId, ownsMessage, _) = messageItem
+
+    val bubbleShape = if (message.id == parentMessageId) {
+        ChatTheme.shapes.myMessageBubble
+    } else {
+        when (position) {
+            Top, Middle -> RoundedCornerShape(16.dp)
+            else -> {
+                if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+            }
+        }
+    }
+
+    val messageCardColor = if (ownsMessage) ChatTheme.colors.borders else ChatTheme.colors.barsBackground
+
+    MessageBubble(
+        modifier = modifier,
+        shape = bubbleShape,
+        color = messageCardColor,
+        content = {
+            if (message.isDeleted()) {
+                DeletedMessageContent()
+            } else {
+                Column {
+                    MessageAttachmentsContent(
+                        message = messageItem.message,
+                        onLongItemClick = onLongItemClick,
+                        onImagePreviewResult = onImagePreviewResult,
+                    )
+
+                    if (message.text.isNotEmpty()) {
+                        DefaultMessageContent(message = message)
+                    }
+                }
+            }
+        }
+    )
 }
 
 /**

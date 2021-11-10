@@ -101,6 +101,7 @@
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 - Added support for the muted channel indicator in the message list.
 - Added `ChannelNameFormatter` option to the `ChatTheme`, to allow for channel name format customization across the app.
+- Added the `leadingContent`, `headerContent`, `footerContent` and `trailingContent` and `content` Slot APIs for the `DefaultMessageItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
