@@ -31,6 +31,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `NotificationConfig::shouldShowNotificationOnPush` that allows enabling/disabling showing notification after receiving a push message
 
 ### ⚠️ Changed
 - `NotificationConfig::pushNotificationsEnabled` is now disabled by default if you don't provide custom `NotificationConfig` - our SDK won't create a `NotificationChannel` if push notifications are not configured
