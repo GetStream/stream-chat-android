@@ -19,6 +19,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelListItemAdapter::getChannels()` for getting a list of channels 
 
 ### ⚠️ Changed
 
