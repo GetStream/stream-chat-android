@@ -26,26 +26,18 @@ public fun interface ChatEventHandler {
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    public fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
+    public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
 }
 
-/**
- * Enum representing possible outcome of channels event handling.
- */
+/** Enum representing possible outcome of channels event handling. */
 public enum class EventHandlingResult {
-    /**
-     * Add a channel to a query channels collection.
-     */
+    /** Add a channel to a query channels collection.*/
     ADD,
 
-    /**
-     * Remove a channel from a query channels collection.
-     */
+    /** Remove a channel from a query channels collection. */
     REMOVE,
 
-    /**
-     * Skip handling of this event.
-     */
+    /** Skip handling of this event. */
     SKIP
 }
 
@@ -57,56 +49,56 @@ public enum class EventHandlingResult {
  */
 public abstract class BaseChatEventHandler : ChatEventHandler {
     /** Handles [NotificationAddedToChannelEvent] event. It runs in background. */
-    public abstract fun onNotificationAddedToChannelEvent(
+    public abstract fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
     /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
-    public abstract fun onChannelUpdatedByUserEvent(
+    public abstract fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
     ): EventHandlingResult
 
     /** Handles [ChannelUpdatedEvent] event. It runs in background. */
-    public abstract fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
+    public abstract fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
 
     /** Handles [NotificationMessageNewEvent] event. It runs in background. */
-    public open fun onNotificationMessageNewEvent(
+    public open fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
     /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
-    public open fun onNotificationRemovedFromChannelEvent(
+    public open fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
-    public open fun onChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+    public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is NotificationAddedToChannelEvent -> onNotificationAddedToChannelEvent(event, filter)
+            is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
             is ChannelDeletedEvent -> EventHandlingResult.REMOVE
             is NotificationChannelDeletedEvent -> EventHandlingResult.REMOVE
-            is ChannelUpdatedByUserEvent -> onChannelUpdatedByUserEvent(event, filter)
-            is ChannelUpdatedEvent -> onChannelUpdatedEvent(event, filter)
-            is NotificationMessageNewEvent -> onNotificationMessageNewEvent(event, filter)
+            is ChannelUpdatedByUserEvent -> handleChannelUpdatedByUserEvent(event, filter)
+            is ChannelUpdatedEvent -> handleChannelUpdatedEvent(event, filter)
+            is NotificationMessageNewEvent -> handleNotificationMessageNewEvent(event, filter)
             else -> EventHandlingResult.SKIP
         }
     }
 
-    public open fun onCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
+    public open fun handleCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is NotificationRemovedFromChannelEvent -> onNotificationRemovedFromChannelEvent(event, filter)
+            is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
             is ChannelHiddenEvent -> EventHandlingResult.REMOVE
             else -> EventHandlingResult.SKIP
         }
     }
 
-    override fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
+    override fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is HasChannel -> onChannelEvent(event, filter)
-            is CidEvent -> onCidEvent(event, filter)
+            is HasChannel -> handleChannelEvent(event, filter)
+            is CidEvent -> handleCidEvent(event, filter)
             else -> EventHandlingResult.SKIP
         }
     }

@@ -44,17 +44,17 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
             .let { it.isSuccess && it.data() }
     }
 
-    override fun onNotificationAddedToChannelEvent(
+    override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
 
-    override fun onChannelUpdatedByUserEvent(
+    override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
     ): EventHandlingResult = EventHandlingResult.SKIP
 
-    override fun onChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
+    override fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
         EventHandlingResult.SKIP
 
     /**
@@ -63,7 +63,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
      * @param event Instance of [NotificationMessageNewEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
      */
-    override fun onNotificationMessageNewEvent(
+    override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
     ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
@@ -82,7 +82,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
      * @param event Instance of [NotificationRemovedFromChannelEvent] that is being handled.
      * @param filter [FilterObject] which is used to define an outcome.
      */
-    override fun onNotificationRemovedFromChannelEvent(
+    override fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
     ): EventHandlingResult {

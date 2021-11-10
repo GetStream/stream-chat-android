@@ -110,7 +110,7 @@ public class QueryChannelsController internal constructor(
 
     internal suspend fun handleEvent(event: ChatEvent) {
         if (event is HasChannel) {
-            when (mutableState.eventHandler.onChatEvent(event, filter)) {
+            when (mutableState.eventHandler.handleChatEvent(event, filter)) {
                 EventHandlingResult.ADD -> addChannel(event.channel)
                 EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
                 EventHandlingResult.SKIP -> Unit
