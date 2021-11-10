@@ -480,11 +480,6 @@ internal class ChatDomainImpl internal constructor(
         _totalUnreadCount.value = newCount
     }
 
-    override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return client.removeMembers(channelType, channelId, userIds.toList())
-    }
-
     /**
      * Start listening to chat events and keep the room database in sync
      */
