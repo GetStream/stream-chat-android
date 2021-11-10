@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.state.messages
+package com.getstream.sdk.chat.state
 
 import io.getstream.chat.android.client.models.Message
 

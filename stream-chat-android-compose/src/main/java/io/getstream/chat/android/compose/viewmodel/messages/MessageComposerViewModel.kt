@@ -5,16 +5,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.getstream.sdk.chat.state.Edit
+import com.getstream.sdk.chat.state.MessageAction
+import com.getstream.sdk.chat.state.MessageMode
+import com.getstream.sdk.chat.state.Normal
+import com.getstream.sdk.chat.state.Reply
+import com.getstream.sdk.chat.state.Thread
+import com.getstream.sdk.chat.state.ThreadReply
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.messages.MessageMode
-import io.getstream.chat.android.compose.state.messages.Normal
-import io.getstream.chat.android.compose.state.messages.Thread
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
-import io.getstream.chat.android.compose.state.messages.list.Reply
-import io.getstream.chat.android.compose.state.messages.list.ThreadReply
 import io.getstream.chat.android.offline.ChatDomain
 import kotlinx.coroutines.launch
 

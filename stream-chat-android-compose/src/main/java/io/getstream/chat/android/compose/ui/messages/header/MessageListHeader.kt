@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.state.MessageMode
+import com.getstream.sdk.chat.state.Normal
+import com.getstream.sdk.chat.state.Thread
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.MessageMode
-import io.getstream.chat.android.compose.state.messages.Normal
-import io.getstream.chat.android.compose.state.messages.Thread
 import io.getstream.chat.android.compose.ui.common.BackButton
 import io.getstream.chat.android.compose.ui.common.NetworkLoadingView
 import io.getstream.chat.android.compose.ui.common.avatar.ChannelAvatar

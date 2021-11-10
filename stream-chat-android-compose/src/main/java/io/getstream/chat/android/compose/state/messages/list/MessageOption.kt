@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.getstream.sdk.chat.state.MessageAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**

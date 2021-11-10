@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.state.Edit
+import com.getstream.sdk.chat.state.MessageAction
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.Edit
-import io.getstream.chat.android.compose.state.messages.list.MessageAction
 import io.getstream.chat.android.compose.ui.messages.composer.components.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
