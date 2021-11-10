@@ -101,7 +101,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun removeShadowBan (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun searchMessages (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;)Lio/getstream/chat/android/client/call/Call;
-	public final fun searchMessages (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QuerySort;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendAction (Lio/getstream/chat/android/client/api/models/SendActionRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendEvent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;

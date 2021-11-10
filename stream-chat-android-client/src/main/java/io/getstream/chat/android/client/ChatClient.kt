@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.await
@@ -721,16 +720,6 @@ public class ChatClient internal constructor(
     @CheckResult
     public fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
-    }
-
-    @Deprecated(
-        message = "Use the searchMessages method with unwrapped parameters instead",
-        replaceWith = ReplaceWith("searchMessages(channelFilter, messageFilter, offset, limit)"),
-        level = DeprecationLevel.ERROR,
-    )
-    @CheckResult
-    public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
-        return api.searchMessages(request)
     }
 
     /**
