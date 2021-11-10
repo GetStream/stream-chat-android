@@ -540,6 +540,11 @@ public sealed interface ChatDomain {
      * @return Executable async [Call].
      */
     @CheckResult
+    @Deprecated(
+        message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
+        replaceWith = ReplaceWith("ChatClient.setMessageForReply()"),
+        level = DeprecationLevel.WARNING
+    )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
 
     /**
