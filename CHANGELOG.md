@@ -43,6 +43,7 @@
 ### ✅ Added
 - Added new extension function `ChatCliet::requestMembers` to query members without `ChatDomain`.
 - Added new extension function `ChatCliet::searchUsersByName`.
+- Added new extension function `ChatClient::downloadAttachment` to download attachments without `ChatDomain`.
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `RetryPolicy` in `ChatDomain` is now immutable and can only be set with Builder before creating an instance of it.

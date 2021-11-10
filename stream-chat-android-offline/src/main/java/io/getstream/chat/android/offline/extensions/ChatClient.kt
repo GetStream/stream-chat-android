@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
@@ -53,3 +54,14 @@ public fun ChatClient.searchUsersByName(
     userLimit: Int,
     userPresence: Boolean,
 ): Call<List<User>> = ChatDomain.instance().searchUsersByName(querySearch, offset, userLimit, userPresence)
+
+/**
+ * Downloads the selected attachment to the "Download" folder in the public external storage directory.
+ *
+ * @param attachment The attachment to download.
+ *
+ * @return Executable async [Call] downloading attachment.
+ */
+@CheckResult
+public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
+    ChatDomain.instance().downloadAttachment(attachment)
