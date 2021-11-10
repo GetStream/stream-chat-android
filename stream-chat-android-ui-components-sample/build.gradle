@@ -155,7 +155,7 @@ dependencies {
     implementation Dependencies.navigationUIKTX
 
     implementation Dependencies.firebaseAnalytics
-    implementation Dependencies .firebaseCrashlytics
+    implementation Dependencies.firebaseCrashlytics
 
     implementation Dependencies.coil
     implementation Dependencies.coilGif
