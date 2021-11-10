@@ -54,7 +54,7 @@ internal class QueryChannelsControllerTest {
                 .givenNewChannelControllerForChannel(channelController)
                 .get()
 
-            sut.updateQueryChannelSpec(newChannel)
+            sut.updateQueryChannelCollection(newChannel)
 
             verify(channelController).updateDataFromChannel(eq(newChannel))
         }
@@ -76,7 +76,7 @@ internal class QueryChannelsControllerTest {
                 .givenNewChannelControllerForChannel()
                 .get()
 
-            sut.updateQueryChannelSpec(newChannel)
+            sut.updateQueryChannelCollection(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -100,8 +100,8 @@ internal class QueryChannelsControllerTest {
                 .givenNewChannelControllerForChannel()
                 .get()
 
-            sut.updateQueryChannelSpec(newChannel)
-            sut.updateQueryChannelSpec(newChannel)
+            sut.updateQueryChannelCollection(newChannel)
+            sut.updateQueryChannelCollection(newChannel)
 
             val result = sut.channels.value
             result.size shouldBeEqualTo 1
@@ -120,7 +120,7 @@ internal class QueryChannelsControllerTest {
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(type = channelType, members = emptyList())
-            sut.updateQueryChannelSpec(channel)
+            sut.updateQueryChannelCollection(channel)
 
             sut.refreshChannel(channel.cid)
 
@@ -138,7 +138,7 @@ internal class QueryChannelsControllerTest {
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(cid = cid, members = emptyList())
-            sut.updateQueryChannelSpec(channel)
+            sut.updateQueryChannelCollection(channel)
 
             sut.refreshChannel(channel.cid)
 
@@ -155,7 +155,7 @@ internal class QueryChannelsControllerTest {
                 .setupChatRepositories()
                 .get()
             val channel = randomChannel(cid = "ChannelType:ChannelID", members = listOf(randomMember(user = user)))
-            sut.updateQueryChannelSpec(channel)
+            sut.updateQueryChannelCollection(channel)
 
             sut.refreshChannel("ChannelType:ChannelID")
 

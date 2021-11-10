@@ -421,7 +421,7 @@ internal class ChatDomainImpl internal constructor(
 
             // Add to query controllers
             for (query in activeQueryMapImpl.values) {
-                query.updateQueryChannelSpec(c)
+                query.updateQueryChannelCollection(c)
             }
 
             // make the API call and follow retry policy

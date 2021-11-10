@@ -41,7 +41,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
             )
         ).await()
             .map { channels -> channels.any { it.cid == cid } }
-            .let { it.isSuccess && it.data() }
+            .let { filteringResult -> filteringResult.isSuccess && filteringResult.data() }
     }
 
     override fun handleNotificationAddedToChannelEvent(
@@ -72,7 +72,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         return if (channels.value.any { it.cid == cid }) {
             EventHandlingResult.SKIP
         } else {
-            handleCidEventByRequest(cid, filter)
+            checkCidByChannelFilter(cid, filter)
         }
     }
 
@@ -89,11 +89,11 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         return if (channels.value.any { it.cid == event.cid }.not()) {
             EventHandlingResult.SKIP
         } else {
-            handleCidEventByRequest(event.cid, filter)
+            checkCidByChannelFilter(event.cid, filter)
         }
     }
 
-    private fun handleCidEventByRequest(cid: String, filter: FilterObject): EventHandlingResult {
+    private fun checkCidByChannelFilter(cid: String, filter: FilterObject): EventHandlingResult {
         return runBlocking {
             if (channelFilter(cid, filter)) {
                 EventHandlingResult.ADD

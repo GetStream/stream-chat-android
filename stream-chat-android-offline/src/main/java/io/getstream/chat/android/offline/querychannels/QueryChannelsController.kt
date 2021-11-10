@@ -90,8 +90,12 @@ public class QueryChannelsController internal constructor(
         )
     }
 
-    internal suspend fun updateQueryChannelSpec(channel: Channel) {
-        if (mutableState.defaultChannelEventsHandler.channelFilter(channel.cid, filter)) {
+    /**
+     * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
+     * otherwise it gets removed.
+     */
+    internal suspend fun updateQueryChannelCollection(channel: Channel) {
+        if (mutableState.defaultChatEventHandler.channelFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
             removeChannel(channel.cid)
@@ -108,6 +112,7 @@ public class QueryChannelsController internal constructor(
         }
     }
 
+    /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */
     internal suspend fun handleEvent(event: ChatEvent) {
         if (event is HasChannel) {
             when (mutableState.eventHandler.handleChatEvent(event, filter)) {
