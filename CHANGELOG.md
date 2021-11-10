@@ -49,7 +49,7 @@
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `RetryPolicy` in `ChatDomain` is now immutable and can only be set with Builder before creating an instance of it.
-- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, also it's function is renamed from `onChannelEvent` to `handleChatEvent`
+- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, also it's function is renamed from `onChannelEvent` to `handleChatEvent`. To get more details read [our docs](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#chateventhandler)
 
 ### ❌ Removed
 
