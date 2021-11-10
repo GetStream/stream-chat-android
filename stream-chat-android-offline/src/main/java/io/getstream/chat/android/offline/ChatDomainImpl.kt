@@ -1002,12 +1002,6 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Member>,
         members: List<Member>,
     ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
-
-    override fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> = client.createChannel(channelType, members, extraData)
 // end region
 
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {

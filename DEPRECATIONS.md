@@ -18,7 +18,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `NotificationConfig` attributes <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | Some attributes are not needed anymore |
 | `NotificationLoadDataListener` <br/>*client* | 2021.09.28<br/>4.19.0 | 2021.09.28<br/>4.19.0 | 2021.10.12<br/>4.20.0 | This class is not used anymore, you will be asked to build your notification |
 | `ChatClient#searchMessages` <br/>*client* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.15 ⌛ | Use the `ChatClient#searchMessages` method with unwrapped parameters instead |
-| `ChatDomain#createDistinctChannel` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.15 ⌛ | Use ChatClient::createChannel directly |
+| `ChatDomain#createDistinctChannel` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | Use ChatClient::createChannel directly |
 | `ChatDomain#removeMembers` <br/>*offline* | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0 | 2021.11.10<br/>4.22.0 | Use ChatClient::removeMembers directly |
 | `User#name` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
 | `User#image` extension<br/>*client* | 2021.09.15<br/>4.18.0 | 2021.09.15<br/>4.18.0 | 2021.10.12<br/>4.20.0  | Use class member instead |
