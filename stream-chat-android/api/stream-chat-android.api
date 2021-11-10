@@ -133,6 +133,7 @@ public class com/getstream/sdk/chat/adapter/ChannelListItemAdapter : androidx/re
 	public fun <init> (Ljava/util/List;)V
 	public fun getChannelClickListener ()Lcom/getstream/sdk/chat/view/channels/ChannelListView$ChannelClickListener;
 	public fun getChannelLongClickListener ()Lcom/getstream/sdk/chat/view/channels/ChannelListView$ChannelClickListener;
+	public fun getChannels ()Ljava/util/List;
 	public fun getItemCount ()I
 	public fun getItemViewType (I)I
 	public fun getStyle ()Lcom/getstream/sdk/chat/view/channels/ChannelListViewStyle;
