@@ -3,7 +3,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-
+- Bumped the SDKs target API to 31
+- Updated WorkManager to version 2.7.0, which fixes compatibility issues with SDK 31
 ### ✅ Added
 - Added Indonesian :indonesia: translations.
 - Added `onErrorSuspend` extension for `Result` to allow executing suspending lambda function for handing error response.
@@ -18,6 +19,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelListItemAdapter::getChannels()` for getting a list of channels 
 
 ### ⚠️ Changed
 
@@ -29,6 +31,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `NotificationConfig::shouldShowNotificationOnPush` that allows enabling/disabling showing notification after receiving a push message
 
 ### ⚠️ Changed
 - `NotificationConfig::pushNotificationsEnabled` is now disabled by default if you don't provide custom `NotificationConfig` - our SDK won't create a `NotificationChannel` if push notifications are not configured
@@ -62,7 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed bug when showing messages with pending attachements that cause loading state to be not shown in some cases.
+- Fixed bug when showing messages with pending attachments that cause loading state to be not shown in some cases.
 - Fixed clearing `MessageInputView` after dismissing message to edit
 
 ### ⬆️ Improved
@@ -100,6 +103,9 @@
 - Added the `emptySearchContent` parameter to `ChannelList` component that allows to customize the empty placeholder, when there are no channels matching the search query.
 - Added support for the muted channel indicator in the message list.
 - Added `ChannelNameFormatter` option to the `ChatTheme`, to allow for channel name format customization across the app.
+- Added the `textFormatter` field to `AttachmentFactory`, to allow for attachment text format customization.
+- Added `MessagePreviewFormatter` option to the `ChatTheme`, to allow for message preview text format customization across the app.
+- Added the `leadingContent`, `headerContent`, `footerContent`, `trailingContent` and `content` Slot APIs for the `DefaultMessageItem`
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
@@ -167,7 +173,7 @@
 
 ### ⬆️ Improved
 - Better position for icon of failed message
-- Small improvment for information update in messages. The ViewHolders only update the information that had a change.
+- Small improvement for information update in messages. The ViewHolders only update the information that had a change.
 
 ### ✅ Added
 - Added `streamUiMaxAttachmentsCount` attribute to `MessageInputView` to allow customizing the maximum number of attachments in the single message.
@@ -333,7 +339,7 @@ The maximum attachments count cannot be greater than 10. Default value: 10.
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed bug with light mode.
-- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your applcation theme instead.
+- Removed `streamUiValidTheme`, as we don't support extending our base theme any longer. Please don't extend our base theme and set the `streamUiTheme` in your application theme instead.
 
 ## stream-chat-android-ui-components
 ### ✅ Added
@@ -961,8 +967,8 @@ in your Manifest file:
 - Fixed the alignment of the titles in `MessageListHeaderView` when the avatar is hidden.
 
 ### ✅ Added
-- Added `streamUiMessagesStart` that allows to controll if the stack of messages starts at the bottom or the top.
-- Added `streamUiThreadMessagesStart` that allows to controll if the stack of thread messages starts at the bottom or the top.
+- Added `streamUiMessagesStart` that allows to control if the stack of messages starts at the bottom or the top.
+- Added `streamUiThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top.
 - Added `streamUiSuggestionListViewStyle` that allows to customize `SuggestionListView` with a theme
 - Added `streamUiChannelListHeaderStyle` that allows to customize ChannelListHeaderView.
 - `MentionListView` can be customisable with XML parameters and with a theme.
@@ -1443,7 +1449,7 @@ It is possible to customize the color and the drawable of the icon.
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed not perfectly rounded avatars
-- `MessageInputView::UserLookupHandler` is not overrided everytime that members livedata is updated
+- `MessageInputView::UserLookupHandler` is not overridden everytime that members livedata is updated
 - Fixed doubled command prefix when the command contains user mention
 - Fixed handling user mute state in default `MessageListViewOptions` dialog
 - Fixed incorrect "last seen" text
@@ -2373,7 +2379,7 @@ We recommend using one of these alternatives:
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.10.0
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.7
 - Refactor ChannelHeaderView
-- Refactor MesageInputView
+- Refactor MessageInputView
 - Refactor Permission Checker Behavior
 - Refactor MessageListVIew
 - Fix Send Attachment Behavior
@@ -2739,7 +2745,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 ## December 9th, 2019 - 3.5.0 (stream-chat-android)
 - Fix set typeFace without custom font
 - Fix channel.watch (data payload was not sent)
-- Fix API 23 compatiblity
+- Fix API 23 compatibility
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
 - Add custom api endpoint config to sample app and SDK

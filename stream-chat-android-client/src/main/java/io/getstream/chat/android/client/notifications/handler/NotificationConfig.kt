@@ -15,4 +15,9 @@ public data class NotificationConfig(
      * @see [PushDeviceGenerator]
      */
     val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
+
+    /**
+     * Allows enabling/disabling showing notification after receiving a push message.
+     */
+    val shouldShowNotificationOnPush: () -> Boolean = { true },
 )

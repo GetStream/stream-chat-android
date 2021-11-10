@@ -57,13 +57,16 @@ public class Push {
         public void setupNotifications() {
             boolean pushNotificationsEnabled = true;
             List<PushDeviceGenerator> pushDeviceGenerators = new ArrayList<PushDeviceGenerator>() {{
-                    add(new FirebasePushDeviceGenerator());
-                }};
+                add(new FirebasePushDeviceGenerator());
+            }};
 
 
             NotificationConfig notificationsConfig = new NotificationConfig(
                     pushNotificationsEnabled,
-                    pushDeviceGenerators
+                    pushDeviceGenerators,
+                    () -> {
+                        return true;
+                    }
             );
 
             MyNotificationHandler notificationHandler = new MyNotificationHandler(context);
@@ -105,7 +108,7 @@ public class Push {
             }
 
             @Override
-            public void onMessageReceived(@NotNull  RemoteMessage message) {
+            public void onMessageReceived(@NotNull RemoteMessage message) {
                 try {
                     if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
                         // RemoteMessage was from Stream and it is already processed
