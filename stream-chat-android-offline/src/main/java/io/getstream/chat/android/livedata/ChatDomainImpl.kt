@@ -111,11 +111,7 @@ internal class ChatDomainImpl internal constructor(internal val chatDomainStateF
     override val typingUpdates: LiveData<TypingEvent> = chatDomainStateFlow.typingUpdates.asLiveData()
 
     /** The retry policy for retrying failed requests */
-    override var retryPolicy: RetryPolicy
-        get() = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
-        set(value) {
-            chatDomainStateFlow.retryPolicy = value
-        }
+    override val retryPolicy: RetryPolicy = chatDomainStateFlow.retryPolicy.toLiveDataRetryPolicy()
 
     override fun getVersion(): String = chatDomainStateFlow.getVersion()
 

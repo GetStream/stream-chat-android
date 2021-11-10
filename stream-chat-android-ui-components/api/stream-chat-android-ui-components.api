@@ -1007,11 +1007,14 @@ public final class io/getstream/chat/android/ui/mention/list/viewmodel/MentionLi
 public class io/getstream/chat/android/ui/message/MessageListActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/message/MessageListActivity$Companion;
 	public fun <init> ()V
+	public static final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+	public static final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	protected fun createMessageListFragment (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
 
 public final class io/getstream/chat/android/ui/message/MessageListActivity$Companion {
+	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/message/MessageListActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
 }
@@ -1030,6 +1033,8 @@ public class io/getstream/chat/android/ui/message/MessageListFragment : androidx
 	protected final fun getShowHeader ()Z
 	protected fun getTheme ()I
 	protected final fun getThemeResId ()I
+	public static final fun newInstance (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment;
+	public static final fun newInstance (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 	public fun onAttach (Landroid/content/Context;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
@@ -1055,6 +1060,7 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Buil
 }
 
 public final class io/getstream/chat/android/ui/message/MessageListFragment$Companion {
+	public final fun newInstance (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 	public final fun newInstance (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/MessageListFragment$Companion;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/MessageListFragment;
 }

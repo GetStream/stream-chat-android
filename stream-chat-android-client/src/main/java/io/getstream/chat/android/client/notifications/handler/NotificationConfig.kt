@@ -4,6 +4,9 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.R
 
+/**
+ * Push notifications configuration class
+ */
 public data class NotificationConfig(
     @Deprecated(
         message = "You need to override this value in your string.xml resources using the key `stream_chat_notification_channel_id`",
@@ -70,6 +73,16 @@ public data class NotificationConfig(
         level = DeprecationLevel.ERROR,
     )
     @StringRes val errorNotificationGroupSummaryContentText: Int = R.string.stream_chat_error_notification_group_summary_content_text,
+
+    /**
+     * Enables/disables push notifications on the device.
+     * Device's token won't be registered if push notifications are disabled.
+     */
     val pushNotificationsEnabled: Boolean = true,
+
+    /**
+     * A list of generators responsible for providing the information needed to register a device
+     * @see [PushDeviceGenerator]
+     */
     val pushDeviceGenerators: List<PushDeviceGenerator> = listOf(),
 )

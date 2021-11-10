@@ -129,7 +129,7 @@ public fun DefaultMessageHeaderTitle(
 ) {
 
     val title = when (messageMode) {
-        Normal -> ChatTheme.channelNameFormatter.format(channel)
+        Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel)
         is Thread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 
@@ -142,7 +142,7 @@ public fun DefaultMessageHeaderTitle(
         )
         is Thread -> stringResource(
             R.string.stream_compose_thread_subtitle,
-            ChatTheme.channelNameFormatter.format(channel)
+            ChatTheme.channelNameFormatter.formatChannelName(channel)
         )
     }
 

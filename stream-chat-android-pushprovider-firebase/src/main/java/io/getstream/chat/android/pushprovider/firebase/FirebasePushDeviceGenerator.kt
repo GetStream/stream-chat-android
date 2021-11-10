@@ -9,6 +9,9 @@ import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 
+/**
+ * Generator responsible for providing information needed to register Firebase push notifications provider
+ */
 public class FirebasePushDeviceGenerator(private val firebaseMessaging: FirebaseMessaging = FirebaseMessaging.getInstance()) :
     PushDeviceGenerator {
     private val logger = ChatLogger.get("ChatNotifications")

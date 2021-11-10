@@ -28,7 +28,9 @@ internal class ToggleAdapter(context: Context) :
         val itemView =
             convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.stream_toggle_list_item, parent, false)
         val label: TextView = itemView.findViewById(R.id.label)
-        val switch: SwitchCompat = itemView.findViewById(R.id.switcher)
+        val switch: SwitchCompat = itemView.findViewById<SwitchCompat>(R.id.switcher).also {
+            it.setOnCheckedChangeListener(null)
+        }
         val toggle = getItem(position)
         label.text = toggle.first
         switch.isChecked = toggle.second
