@@ -40,13 +40,12 @@ val viewModel: ChannelListViewModel by viewModels {
         ),
         sort = ChannelListViewModel.DEFAULT_SORT,
         limit = 30,
-        chatEventHandler = DefaultChatEventHandler(),
     )
 }
 // Bind the ViewModel with ChannelListView
 viewModel.bindView(channelListView, viewLifecycleOwner)
 ```
-Here you see to instantiate `ChannelListViewModel` you need to pass an instance of the `ChatEventHandler` interface. See [this point](##ChatEventHandler) to read more.
+To instantiate `ChannelListViewModel` you may want to pass an instance of the `ChatEventHandler` interface. See [this point](##ChatEventHandler) to read more.
 
 All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
 
@@ -441,5 +440,5 @@ public enum class EventHandlingResult {
 }
 ```
 
-We also provide the `BaseChatEventHandler` implementation. It's an abstract incomplete implementation that covers the most generic cases and forces you to implement the required ones.
+You can also use `BaseChatEventHandler` - a more detailed implementation that covers the most generic cases and forces you to implement the required ones.
 

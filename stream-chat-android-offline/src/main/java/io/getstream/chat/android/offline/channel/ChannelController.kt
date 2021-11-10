@@ -273,6 +273,7 @@ public class ChannelController internal constructor(
         return result
     }
 
+    /** Leave the channel action. Fires an API request. */
     internal suspend fun leave(): Result<Unit> {
         val result = domainImpl.user.value?.let { currentUser ->
             channelClient.removeMembers(currentUser.id).await()
@@ -285,6 +286,7 @@ public class ChannelController internal constructor(
         }
     }
 
+    /** Delete the channel action. Fires an API request. */
     internal suspend fun delete(): Result<Unit> = channelClient.delete().await().toUnitResult()
 
     internal suspend fun watch(limit: Int = 30) {

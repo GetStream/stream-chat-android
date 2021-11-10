@@ -40,8 +40,13 @@ internal class QueryChannelsMutableState(
 
     internal val defaultChannelEventsHandler: DefaultChatEventHandler = DefaultChatEventHandler(client, _sortedChannels)
 
+    /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
     override var chatEventHandler: ChatEventHandler? = null
 
+    /**
+     * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
+     * handler set by user or default one if there is no.
+     */
     internal val eventHandler: ChatEventHandler
         get() = chatEventHandler ?: defaultChannelEventsHandler
 
