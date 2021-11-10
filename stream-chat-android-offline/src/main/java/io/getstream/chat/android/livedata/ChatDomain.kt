@@ -545,6 +545,11 @@ public sealed interface ChatDomain {
      * @return Executable async [Call] downloading attachment.
      */
     @CheckResult
+    @Deprecated(
+        message = "downloadAttachment is deprecated. Use extension function ChatClient::downloadAttachment instead",
+        replaceWith = ReplaceWith("ChatClient.downloadAttachment()"),
+        level = DeprecationLevel.WARNING
+    )
     public fun downloadAttachment(attachment: Attachment): Call<Unit>
 
     /**

@@ -12,6 +12,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.ChatDomainImpl
+import io.getstream.chat.android.offline.usecase.DownloadAttachment
 
 /**
  * Query members of a channel.
@@ -64,4 +66,4 @@ public fun ChatClient.searchUsersByName(
  */
 @CheckResult
 public fun ChatClient.downloadAttachment(attachment: Attachment): Call<Unit> =
-    ChatDomain.instance().downloadAttachment(attachment)
+    DownloadAttachment(ChatDomain.instance() as ChatDomainImpl).invoke(attachment)

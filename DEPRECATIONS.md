@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `ChatDomain#downloadAttachment` | 2021.11.10<br/>4.21.0 | 2021.11.10<br/>⌛ | 2021.11.10 ⌛ | Use `ChatClient#downloadAttachment` instead |
 | `ChatDomain#online` | 2021.10.26<br/>4.21.0 | 2021.12.26<br/>⌛ | 2021.12.26 ⌛ | Use ChatDomain#connectionState instead |
 | `QueryChannelsController#newChannelEventFilter` | 2021.10.12<br/>4.20.0 | 2021.11.12<br/>⌛ | 2021.12.12 ⌛ | Use QueryChannelsController::channelEventsHandler instead of |
 | `QueryChannelsController#checkFilterOnChannelUpdatedEvent` | 2021.10.12<br/>4.20.0 | 2021.11.12<br/>⌛ | 2021.12.12 ⌛ | Use QueryChannelsController::channelEventsHandler instead of |
