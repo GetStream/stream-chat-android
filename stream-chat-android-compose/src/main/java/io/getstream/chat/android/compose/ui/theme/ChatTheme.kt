@@ -15,6 +15,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
+import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoader
 
 /**
@@ -47,6 +48,10 @@ private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter>
     error("No ChannelNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
+private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewFormatter> {
+    error("No MessagePreviewFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
@@ -60,6 +65,7 @@ private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter>
  * @param reactionTypes The reaction types supported in the Messaging screen.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
+ * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -73,6 +79,7 @@ public fun ChatTheme(
     reactionTypes: Map<String, Int> = DefaultReactionTypes.defaultReactionTypes(),
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
+    messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -88,6 +95,7 @@ public fun ChatTheme(
         LocalReactionTypes provides reactionTypes,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
+        LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalImageLoader provides StreamCoilImageLoader.imageLoader(LocalContext.current)
     ) {
         content()
@@ -139,4 +147,9 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalChannelNameFormatter.current
+
+    public val messagePreviewFormatter: MessagePreviewFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessagePreviewFormatter.current
 }
