@@ -408,7 +408,7 @@ These changes should have the following results:
 
 ## ChatEventHandler
 
-When `ChannelListViewModel` is instantiated it makes a query channels request. It gets data and shows in the `ChannelListView`. With time the list gets outdated and to keep it sync we have websocket events. But when handle event our SDK locally can't always decide what we should do with the list. For example, in a messaging app it's common to add a channel to the list if the current user became a channel member and to remove this channel otherwise. But the same cannot be applied in the use case of the livestream app. To define desired behaviour there is `ChatEventHandler` which has a following interface:
+When `ChannelListViewModel` is instantiated it makes a query channels request. It gets data and shows in the `ChannelListView`. With time the list gets outdated and to keep it sync we have websocket events. But when handling events locally, our SDK can't always decide what we should do with the list. For example, in a messaging app it's common to add a channel to the list if the current user became a channel member and to remove this channel otherwise. But the same cannot be applied in the use case of the livestream app. To define desired behaviour there is `ChatEventHandler` which has a following interface:
 
 ```kotlin
 public fun interface ChatEventHandler {
@@ -441,9 +441,5 @@ public enum class EventHandlingResult {
 }
 ```
 
-We also provide the following implementation of this interface:
-
-1. `MessagingChatEventHandler`. It is based on assumption when the current user becomes a member of a channel this channel should be added to the channel list, otherwise deleted.
-2. `DefaultChatEventHandler`. More generic version, it skips events with update payload and makes an api request everytime when receives `NotificationAddedToChannelEvent`, `NotificationMessageNewEvent`, `NotificationRemovedFromChannelEvent` events. It can cause additional expenses on your plan, be sure when use this implementation.
-3. `BaseChatEventHandler`. It's abstract not complete implementation that covers most generic cases and force to implement you required ones. You can inherit it and define behaviour for your custom use-case.
+We also provide the `BaseChatEventHandler` implementation. It's an abstract incomplete implementation that covers the most generic cases and forces you to implement the required ones.
 

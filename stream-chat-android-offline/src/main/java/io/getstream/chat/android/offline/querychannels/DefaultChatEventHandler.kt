@@ -23,7 +23,11 @@ import kotlinx.coroutines.runBlocking
 internal class DefaultChatEventHandler(private val client: ChatClient, private val channels: StateFlow<List<Channel>>) :
     BaseChatEventHandler() {
 
-    internal val newChannelEventFilter: suspend (String, FilterObject) -> Boolean = { cid, filter ->
+    /**
+     * Channel filter function. It makes an API query channel request based on cid of a channel and a filter object to
+     * define should be the channel with such cid be in the list of channels or not.
+     */
+    internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
         client.queryChannels(
             QueryChannelsRequest(
                 filter = Filters.and(
@@ -91,7 +95,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
 
     private fun handleCidEventByRequest(cid: String, filter: FilterObject): EventHandlingResult {
         return runBlocking {
-            if (newChannelEventFilter(cid, filter)) {
+            if (channelFilter(cid, filter)) {
                 EventHandlingResult.ADD
             } else {
                 EventHandlingResult.REMOVE

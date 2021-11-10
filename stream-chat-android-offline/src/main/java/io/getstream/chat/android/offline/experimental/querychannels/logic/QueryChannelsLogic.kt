@@ -121,7 +121,7 @@ internal class QueryChannelsLogic(
             (mutableState._channels.value - channels.map { it.cid }).values
                 .map(Channel::cid)
                 .filterNot { cid ->
-                    mutableState.defaultChannelEventsHandler.newChannelEventFilter(cid, mutableState.filter)
+                    mutableState.defaultChannelEventsHandler.channelFilter(cid, mutableState.filter)
                 }
                 .let { removeChannels(it) }
         }

@@ -47,8 +47,7 @@ class ChannelList : Fragment() {
                 Filters.`in`("members", ChatDomain.instance().user.value!!.id),
             ),
             sort = QuerySort.desc(Channel::lastUpdated),
-            limit = 30,
-            chatEventHandler = DefaultChatEventHandler(),
+            limit = 30
         )
         val channelListViewModel: ChannelListViewModel by viewModels { channelListFactory }
 

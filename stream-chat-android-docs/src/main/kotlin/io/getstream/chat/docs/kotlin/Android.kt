@@ -110,7 +110,6 @@ class Android {
                     ),
                     sort = ChannelListViewModel.DEFAULT_SORT,
                     limit = 30,
-                    chatEventHandler = DefaultChatEventHandler(),
                 )
             }
             // Bind it with ChannelListView

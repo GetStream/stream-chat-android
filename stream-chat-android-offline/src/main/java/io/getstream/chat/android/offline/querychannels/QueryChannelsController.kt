@@ -91,7 +91,7 @@ public class QueryChannelsController internal constructor(
     }
 
     internal suspend fun updateQueryChannelSpec(channel: Channel) {
-        if (mutableState.defaultChannelEventsHandler.newChannelEventFilter(channel.cid, filter)) {
+        if (mutableState.defaultChannelEventsHandler.channelFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
             removeChannel(channel.cid)
