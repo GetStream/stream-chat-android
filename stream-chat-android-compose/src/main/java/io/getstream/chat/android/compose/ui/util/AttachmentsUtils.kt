@@ -5,6 +5,12 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 
 /**
+ * Returns a string representation for the given attachment.
+ */
+public val Attachment.previewText: String
+    get() = title ?: name ?: ""
+
+/**
  * Attachment types that represent media content.
  */
 private val MEDIA_ATTACHMENT_TYPES: Collection<String> = listOf(ModelType.attach_image, ModelType.attach_giphy)
