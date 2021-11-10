@@ -419,23 +419,18 @@ public fun interface ChatEventHandler {
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    public fun onChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
+    public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
 }
 
+/** Enum representing possible outcome of channels event handling. */
 public enum class EventHandlingResult {
-    /**
-     * Add a channel to a query channels collection.
-     */
+    /** Add a channel to a query channels collection.*/
     ADD,
 
-    /**
-     * Remove a channel from a query channels collection.
-     */
+    /** Remove a channel from a query channels collection. */
     REMOVE,
 
-    /**
-     * Skip handling of this event.
-     */
+    /** Skip handling of this event. */
     SKIP
 }
 ```
