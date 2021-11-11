@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSepara
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -67,6 +68,8 @@ public class MessageListViewModel @JvmOverloads constructor(
     private val _mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
     private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
     public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
+
+    private val logger = ChatLogger.get("MessageListViewModel")
 
     /**
      * Whether the user is viewing a thread.
@@ -321,7 +324,11 @@ public class MessageListViewModel @JvmOverloads constructor(
                 client.setMessageForReply(event.cid, event.repliedMessage).enqueue()
             }
             is Event.DownloadAttachment -> {
-                domain.downloadAttachment(event.attachment).enqueue()
+                domain.downloadAttachment(event.attachment).enqueue(
+                    onError = { chatError ->
+                        logger.logE("Attachment download error: ${chatError.message}. Cause: ${chatError.cause?.message}")
+                    }
+                )
             }
             is Event.ShowMessage -> {
                 domain.loadMessageById(
