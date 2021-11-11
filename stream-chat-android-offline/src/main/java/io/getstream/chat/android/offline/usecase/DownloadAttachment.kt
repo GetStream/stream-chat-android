@@ -31,7 +31,7 @@ internal class DownloadAttachment(private val domainImpl: ChatDomainImpl) {
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title
 
-            logger.logD("Downloading attachment. Name: $, Url: $url")
+            logger.logD("Downloading attachment. Name: $subPath, Url: $url")
 
             downloadManager.enqueue(
                 DownloadManager.Request(Uri.parse(url))
