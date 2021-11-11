@@ -22,8 +22,7 @@ public data class StreamDimens(
     public val channelInfoUserItemWidth: Dp,
     public val channelInfoUserItemHorizontalPadding: Dp,
     public val channelInfoUserItemAvatarSize: Dp,
-
-    ) {
+) {
     public companion object {
         public fun defaultDimens(): StreamDimens = StreamDimens(
             channelItemVerticalPadding = 12.dp,
