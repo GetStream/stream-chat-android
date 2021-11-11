@@ -30,6 +30,9 @@
     <string name="stream_compose_cancel">キャンセル</string>
     <string name="stream_compose_waiting_for_network">ネットワークを検索中</string>
     <string name="stream_compose_untitled_channel">名前のないチャンネル</string>
+    <string name="stream_compose_user_status_online">オンライン</string>
+    <string name="stream_compose_user_status_last_seen">%s見ました</string>
+    <string name="stream_compose_user_status_last_seen_just_now">今見ました</string>
 
     <!-- Message List -->
     <string name="stream_compose_message_list_empty_messages">メッセージはありません</string>

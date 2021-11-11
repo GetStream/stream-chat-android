@@ -96,6 +96,7 @@
 - Improved the set of customization options for the `DefaultChannelItem`
 - Updated documentation for Channels set of features
 - Now it is possible to search for distinct channels by member names using `ChannelListViewModel`.
+- Improved the design of `ChannelInfo` bottom sheet dialog.
 
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput
@@ -108,9 +109,12 @@
 - Added the `textFormatter` field to `AttachmentFactory`, to allow for attachment text format customization.
 - Added `MessagePreviewFormatter` option to the `ChatTheme`, to allow for message preview text format customization across the app.
 - Added the `leadingContent`, `headerContent`, `footerContent`, `trailingContent` and `content` Slot APIs for the `DefaultMessageItem`
+- Added `channelInfoUserItemWidth`, `channelInfoUserItemHorizontalPadding` and `channelInfoUserItemAvatarSize` options to `StreamDimens`, to make it possible to customize the dimensions inside the `ChannelInfo` component via `ChatTheme`. 
 
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
+- Renamed `ChannelOption.icon` property to `ChannelOption.iconPainter` and changed the property type from `ImageVector` to `Painter`.
+- Changed the type of the `ChannelListViewModel.selectedChannel` field to `MutableState<Channel?>`.
 
 ### ❌ Removed
 
