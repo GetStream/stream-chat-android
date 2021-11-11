@@ -16,12 +16,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNul
 import io.getstream.chat.android.ui.common.extensions.internal.use
 
 public data class ViewReactionsViewStyle(
-    @Deprecated(
-        message  = "Use bubbleBorderColorMine instead",
-        replaceWith = ReplaceWith("bubbleBorderColorMine"),
-        level = DeprecationLevel.ERROR,
-    )
-    @ColorInt public val bubbleBorderColor: Int?,
     @ColorInt public val bubbleBorderColorMine: Int,
     @ColorInt public val bubbleBorderColorTheirs: Int?,
     @ColorInt public val bubbleColorMine: Int,
@@ -131,7 +125,6 @@ public data class ViewReactionsViewStyle(
                     context.getDimension(R.dimen.stream_ui_view_reactions_small_tail_bubble_offset)
 
                 return ViewReactionsViewStyle(
-                    bubbleBorderColor = null,
                     bubbleBorderColorMine = bubbleBorderColorMine,
                     bubbleBorderColorTheirs = bubbleBorderColorTheirs,
                     bubbleBorderWidthMine = bubbleBorderWidthMine,
