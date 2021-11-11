@@ -197,11 +197,11 @@ internal open class BaseDomainTest {
             .userPresenceEnabled()
             .recoveryDisabled()
             .disableBackgroundSync()
+            .retryPolicy(NoRetryPolicy())
             .build()
         chatDomainImpl = chatDomain as ChatDomainImpl
 
         chatDomainImpl.scope = testCoroutines.scope
-        chatDomainImpl.retryPolicy = NoRetryPolicy()
 
         chatDomainImpl.scope.launch {
             chatDomainImpl.errorEvents.collect {
