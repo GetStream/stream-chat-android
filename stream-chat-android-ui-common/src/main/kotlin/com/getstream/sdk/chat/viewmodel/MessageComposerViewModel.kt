@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.state.ThreadReply
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +21,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  */
-
-public open class MessageComposerViewModel @InternalStreamChatApi constructor(
+public class MessageComposerViewModel constructor(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val channelId: String,

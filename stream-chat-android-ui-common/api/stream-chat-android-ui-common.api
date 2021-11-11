@@ -428,7 +428,8 @@ public abstract class com/getstream/sdk/chat/viewmodel/BaseMessageListHeaderView
 	public final fun setActiveThread (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public class com/getstream/sdk/chat/viewmodel/MessageComposerViewModel : androidx/lifecycle/ViewModel {
+public final class com/getstream/sdk/chat/viewmodel/MessageComposerViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
 	public final fun addSelectedAttachments (Ljava/util/List;)V
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
 	public static synthetic fun buildNewMessage$default (Lcom/getstream/sdk/chat/viewmodel/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
