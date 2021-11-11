@@ -24,7 +24,7 @@ public interface ProgressCallback {
      */
     @Deprecated(
         message = "onProgress with percentage progress is deprecated. Use onProgress(bytesUploaded: Long, totalLength: Long) instead.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun onProgress(progress: Long) { }
 
