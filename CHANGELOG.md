@@ -40,6 +40,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed inserting messages with empty `Message::cid`
 
 ### ⬆️ Improved
 
