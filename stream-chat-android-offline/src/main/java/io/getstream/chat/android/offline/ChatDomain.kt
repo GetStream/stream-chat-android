@@ -116,35 +116,6 @@ public sealed interface ChatDomain {
     public fun getChannelConfig(channelType: String): Config
     public fun getVersion(): String
 
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::removeMembers directly",
-        replaceWith = ReplaceWith("ChatClient::removeMembers"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun removeMembers(cid: String, vararg userIds: String): Call<Channel>
-
-    /**
-     * Returns a distinct channel based on its' members. If such channel exists returns existing one, otherwise creates a new.
-     *
-     * @param channelType String represents channel type.
-     * @param members List of members' id.
-     * @param extraData Map object with custom fields and additional data.
-     *
-     * @return [Call] instance with [Channel].
-     */
-    @CheckResult
-    @Deprecated(
-        message = "Use ChatClient::createChannel directly",
-        replaceWith = ReplaceWith("ChatClient::createChannel"),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel>
-
     /**
      * Adds the provided channel to the active channels and replays events for all active channels.
      *

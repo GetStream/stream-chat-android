@@ -480,11 +480,6 @@ internal class ChatDomainImpl internal constructor(
         _totalUnreadCount.value = newCount
     }
 
-    override fun removeMembers(cid: String, vararg userIds: String): Call<Channel> {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return client.removeMembers(channelType, channelId, userIds.toList())
-    }
-
     /**
      * Start listening to chat events and keep the room database in sync
      */
@@ -1006,12 +1001,6 @@ internal class ChatDomainImpl internal constructor(
         sort: QuerySort<Member>,
         members: List<Member>,
     ): Call<List<Member>> = QueryMembers(this).invoke(cid, offset, limit, filter, sort, members)
-
-    override fun createDistinctChannel(
-        channelType: String,
-        members: List<String>,
-        extraData: Map<String, Any>,
-    ): Call<Channel> = client.createChannel(channelType, members, extraData)
 // end region
 
     private fun createNoOpRepos(): RepositoryFacade = RepositoryFacadeBuilder {
