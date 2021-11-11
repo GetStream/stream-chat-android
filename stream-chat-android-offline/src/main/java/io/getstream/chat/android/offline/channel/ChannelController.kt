@@ -450,7 +450,8 @@ public class ChannelController internal constructor(
     }
 
     internal suspend fun handleSendMessageSuccess(processedMessage: Message): Message {
-        return processedMessage.apply { enrichWithCid(this.cid) }
+        return processedMessage
+            .let { message -> message.enrichWithCid(cid) }
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also { domainImpl.repos.insertMessage(it) }
             .also { upsertMessage(it) }
