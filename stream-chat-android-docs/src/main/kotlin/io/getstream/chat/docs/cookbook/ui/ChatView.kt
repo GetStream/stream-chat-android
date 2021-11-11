@@ -151,7 +151,7 @@ class CustomMessageListItemViewHolderFactory : MessageListItemViewHolderFactory(
         viewType: Int,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return if (viewType == MessageListItemViewType.PLAIN_TEXT) {
-            CustomMessagePlainTextViewHolder(parentView, listenerContainer)
+            CustomMessagePlainTextViewHolder(parentView, listenerContainer!!)
         } else {
             super.createViewHolder(parentView, viewType)
         }
@@ -161,7 +161,7 @@ class CustomMessageListItemViewHolderFactory : MessageListItemViewHolderFactory(
 class CustomMessagePlainTextViewHolder(
     parent: ViewGroup,
     listeners: MessageListListenerContainer,
-    val binding: CustomPlainTextItemBinding =
+    private val binding: CustomPlainTextItemBinding =
         CustomPlainTextItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
