@@ -94,6 +94,7 @@
 - Improved the set of customization options for the `DefaultChannelItem`
 - Updated documentation for Channels set of features
 - Now it is possible to search for distinct channels by member names using `ChannelListViewModel`.
+- Improved the design of `ChannelInfo` bottom sheet dialog.
 
 ### ✅ Added
 - Added a new parameter to the `AttachmentFactory` called `previewContent` that represents attachments within the MessageInput

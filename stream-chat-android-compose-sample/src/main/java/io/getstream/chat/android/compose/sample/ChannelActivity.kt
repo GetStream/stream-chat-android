@@ -201,7 +201,7 @@ class ChannelActivity : AppCompatActivity() {
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
                     selectedChannel = selectedChannel,
-                    user = user,
+                    currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) }
                 )
             }

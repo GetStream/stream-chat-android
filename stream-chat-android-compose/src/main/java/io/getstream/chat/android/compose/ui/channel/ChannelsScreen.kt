@@ -137,7 +137,7 @@ public fun ChannelsScreen(
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
                 selectedChannel = selectedChannel,
-                user = user,
+                currentUser = user,
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)
