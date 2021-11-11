@@ -542,7 +542,10 @@ public sealed interface ChatDomain {
     @CheckResult
     @Deprecated(
         message = "setMessageForReply is deprecated. Use extension function ChatClient::setMessageForReply instead",
-        replaceWith = ReplaceWith("ChatClient.setMessageForReply()"),
+        replaceWith = ReplaceWith(
+            expression = "ChatClient.instance().setMessageForReply(attachment)",
+            imports = arrayOf("io.getstream.chat.android.client.ChatClient")
+        ),
         level = DeprecationLevel.WARNING
     )
     public fun setMessageForReply(cid: String, message: Message?): Call<Unit>
