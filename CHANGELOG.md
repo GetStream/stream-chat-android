@@ -112,6 +112,7 @@
 ### ⚠️ Changed
 - The `AttachmentFactory` now requires an additional parameter - `previewContent` that's used to preview the attachment within the MessageInput, so please be aware of this!
 - Renamed `ChannelOption.icon` property to `ChannelOption.iconPainter` and changed the property type from `ImageVector` to `Painter`.
+- Changed the type of the `ChannelListViewModel.selectedChannel` field to `MutableState<Channel?>`.
 
 ### ❌ Removed
 

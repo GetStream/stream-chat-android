@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.viewmodel.channel
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -64,7 +65,7 @@ public class ChannelListViewModel(
      * Currently selected channel, if any. Used to show the bottom drawer information when long
      * tapping on a list item.
      */
-    public var selectedChannel: Channel? by mutableStateOf(null)
+    public var selectedChannel: MutableState<Channel?> = mutableStateOf(null)
         private set
 
     /**
@@ -180,7 +181,7 @@ public class ChannelListViewModel(
      * the state change.
      */
     public fun selectChannel(channel: Channel?) {
-        this.selectedChannel = channel
+        this.selectedChannel.value = channel
     }
 
     /**
@@ -243,7 +244,7 @@ public class ChannelListViewModel(
      */
     public fun performChannelAction(channelListAction: ChannelListAction) {
         if (channelListAction is Cancel) {
-            selectedChannel = null
+            selectedChannel.value = null
         }
 
         activeChannelAction = if (channelListAction == Cancel) {
@@ -282,7 +283,7 @@ public class ChannelListViewModel(
      */
     public fun dismissChannelAction() {
         activeChannelAction = null
-        selectedChannel = null
+        selectedChannel.value = null
     }
 
     /**

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -78,7 +79,7 @@ public fun ChannelsScreen(
         )
     )
 
-    val selectedChannel = listViewModel.selectedChannel
+    val selectedChannel by remember { listViewModel.selectedChannel }
     val user by listViewModel.user.collectAsState()
     val connectionState by listViewModel.connectionState.collectAsState()
 
@@ -136,7 +137,7 @@ public fun ChannelsScreen(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                selectedChannel = selectedChannel,
+                selectedChannel = selectedChannel!!,
                 currentUser = user,
                 onChannelOptionClick = { action ->
                     when (action) {
