@@ -57,10 +57,10 @@ public abstract class io/getstream/chat/android/compose/state/channel/list/Chann
 
 public final class io/getstream/chat/android/compose/state/channel/list/ChannelOption {
 	public static final field $stable I
-	public synthetic fun <init> (Ljava/lang/String;JLandroidx/compose/ui/graphics/vector/ImageVector;JLio/getstream/chat/android/compose/state/channel/list/ChannelListAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;JLandroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/compose/state/channel/list/ChannelListAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAction ()Lio/getstream/chat/android/compose/state/channel/list/ChannelListAction;
-	public final fun getIcon ()Landroidx/compose/ui/graphics/vector/ImageVector;
 	public final fun getIconColor-0d7_KjU ()J
+	public final fun getIconPainter ()Landroidx/compose/ui/graphics/painter/Painter;
 	public final fun getTitle ()Ljava/lang/String;
 	public final fun getTitleColor-0d7_KjU ()J
 }

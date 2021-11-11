@@ -29,10 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
@@ -95,7 +94,7 @@ public fun ChannelInfo(
         ChannelOption(
             title = stringResource(id = R.string.stream_compose_channel_info_view_info),
             titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_person),
+            iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = ViewInfo(selectedChannel)
         ),
@@ -103,7 +102,7 @@ public fun ChannelInfo(
             ChannelOption(
                 title = stringResource(id = R.string.stream_compose_channel_info_leave_group),
                 titleColor = ChatTheme.colors.textHighEmphasis,
-                icon = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_person_remove),
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
                 iconColor = ChatTheme.colors.textLowEmphasis,
                 action = LeaveGroup(selectedChannel)
             )
@@ -112,7 +111,7 @@ public fun ChannelInfo(
             ChannelOption(
                 title = stringResource(id = R.string.stream_compose_channel_info_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
-                icon = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_delete),
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                 iconColor = ChatTheme.colors.errorAccent,
                 action = DeleteConversation(selectedChannel)
             )
@@ -120,7 +119,7 @@ public fun ChannelInfo(
         ChannelOption(
             title = stringResource(id = R.string.stream_compose_channel_info_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
-            icon = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_clear),
+            iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = Cancel,
         )
@@ -275,7 +274,7 @@ private fun ChannelOptions(
                         modifier = Modifier
                             .size(56.dp)
                             .padding(16.dp),
-                        imageVector = option.icon,
+                        painter = option.iconPainter,
                         tint = option.iconColor,
                         contentDescription = null
                     )
