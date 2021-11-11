@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.models.Channel
 
 /**
  * Interface that handles events related to the particular set of channels. These channels correspond to particular [FilterObject].
@@ -29,16 +30,25 @@ public fun interface ChatEventHandler {
     public fun handleChatEvent(event: ChatEvent, filter: FilterObject): EventHandlingResult
 }
 
-/** Enum representing possible outcome of channels event handling. */
-public enum class EventHandlingResult {
-    /** Add a channel to a query channels collection.*/
-    ADD,
+/** Class representing possible outcome of chat event handling. */
+public sealed class EventHandlingResult {
+    /**
+     * Add a channel to a query channels collection.
+     *
+     * @param channel Channel to be added.
+     */
+    public class Add(public val channel: Channel) : EventHandlingResult()
 
-    /** Remove a channel from a query channels collection. */
-    REMOVE,
+    /**
+     * Remove a channel from a query channels collection.
+     *
+     * @param cid cid of channel to remove.
+     *
+     */
+    public class Remove(public val cid: String) : EventHandlingResult()
 
     /** Skip handling of this event. */
-    SKIP
+    public object Skip : EventHandlingResult()
 }
 
 /**
@@ -67,31 +77,31 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     public open fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.SKIP
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
     public open fun handleNotificationRemovedFromChannelEvent(
         event: NotificationRemovedFromChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.SKIP
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
-            is ChannelDeletedEvent -> EventHandlingResult.REMOVE
-            is NotificationChannelDeletedEvent -> EventHandlingResult.REMOVE
+            is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+            is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is ChannelUpdatedByUserEvent -> handleChannelUpdatedByUserEvent(event, filter)
             is ChannelUpdatedEvent -> handleChannelUpdatedEvent(event, filter)
             is NotificationMessageNewEvent -> handleNotificationMessageNewEvent(event, filter)
-            else -> EventHandlingResult.SKIP
+            else -> EventHandlingResult.Skip
         }
     }
 
     public open fun handleCidEvent(event: CidEvent, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
-            is ChannelHiddenEvent -> EventHandlingResult.REMOVE
-            else -> EventHandlingResult.SKIP
+            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
+            else -> EventHandlingResult.Skip
         }
     }
 
@@ -99,7 +109,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         return when (event) {
             is HasChannel -> handleChannelEvent(event, filter)
             is CidEvent -> handleCidEvent(event, filter)
-            else -> EventHandlingResult.SKIP
+            else -> EventHandlingResult.Skip
         }
     }
 }

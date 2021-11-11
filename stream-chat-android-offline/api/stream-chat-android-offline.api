@@ -515,12 +515,21 @@ public abstract interface class io/getstream/chat/android/offline/querychannels/
 	public abstract fun handleChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
 }
 
-public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult : java/lang/Enum {
-	public static final field ADD Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
-	public static final field REMOVE Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
-	public static final field SKIP Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
-	public static fun values ()[Lio/getstream/chat/android/offline/querychannels/EventHandlingResult;
+public abstract class io/getstream/chat/android/offline/querychannels/EventHandlingResult {
+}
+
+public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Add : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Remove : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getCid ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/offline/querychannels/EventHandlingResult$Skip : io/getstream/chat/android/offline/querychannels/EventHandlingResult {
+	public static final field INSTANCE Lio/getstream/chat/android/offline/querychannels/EventHandlingResult$Skip;
 }
 
 public final class io/getstream/chat/android/offline/querychannels/QueryChannelsController {

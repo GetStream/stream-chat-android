@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -94,7 +93,7 @@ public class QueryChannelsController internal constructor(
      * Updates the collection of channels by some channel. If the channels passes filter it's added to collection,
      * otherwise it gets removed.
      */
-    internal suspend fun updateQueryChannelCollection(channel: Channel) {
+    internal suspend fun updateQueryChannelCollectionByNewChannel(channel: Channel) {
         if (mutableState.defaultChatEventHandler.channelFilter(channel.cid, filter)) {
             addChannel(channel)
         } else {
@@ -114,13 +113,11 @@ public class QueryChannelsController internal constructor(
 
     /** Handles updates by WS events. Keeps synchronized data of [QueryChannelsMutableState]. */
     internal suspend fun handleEvent(event: ChatEvent) {
-        if (event is HasChannel) {
-            when (mutableState.eventHandler.handleChatEvent(event, filter)) {
-                EventHandlingResult.ADD -> addChannel(event.channel)
-                EventHandlingResult.REMOVE -> removeChannel(event.channel.cid)
-                EventHandlingResult.SKIP -> Unit
-            }.exhaustive
-        }
+        when (val handlingResult = mutableState.eventHandler.handleChatEvent(event, filter)) {
+            is EventHandlingResult.Add -> addChannel(handlingResult.channel)
+            is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
+            is EventHandlingResult.Skip -> Unit
+        }.exhaustive
 
         if (event is MarkAllReadEvent) {
             refreshAllChannels()

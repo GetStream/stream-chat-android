@@ -787,11 +787,7 @@ public class ChannelController internal constructor(
             }
             is ChannelDeletedEvent -> {
                 removeMessagesBefore(event.createdAt)
-                val channelData = mutableState._channelData.value
-                channelData?.let {
-                    it.deletedAt = event.createdAt
-                    mutableState._channelData.value = it
-                }
+                mutableState._channelData.value = mutableState.channelData.value.copy(deletedAt = event.createdAt)
             }
             is ChannelTruncatedEvent,
             is NotificationChannelTruncatedEvent,

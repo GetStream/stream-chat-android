@@ -28,7 +28,7 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
      * define should be the channel with such cid be in the list of channels or not.
      */
     internal val channelFilter: suspend (cid: String, FilterObject) -> Boolean = { cid, filter ->
-        client.queryChannels(
+        client.queryChannelsInternal(
             QueryChannelsRequest(
                 filter = Filters.and(
                     filter,
@@ -47,15 +47,15 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
     override fun handleNotificationAddedToChannelEvent(
         event: NotificationAddedToChannelEvent,
         filter: FilterObject,
-    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
+    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.channel, filter)
 
     override fun handleChannelUpdatedByUserEvent(
         event: ChannelUpdatedByUserEvent,
         filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.SKIP
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     override fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult =
-        EventHandlingResult.SKIP
+        EventHandlingResult.Skip
 
     /**
      * Handles [NotificationMessageNewEvent]. It makes a request to API to define outcome of handling.
@@ -66,13 +66,17 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
     override fun handleNotificationMessageNewEvent(
         event: NotificationMessageNewEvent,
         filter: FilterObject,
-    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.cid, filter)
+    ): EventHandlingResult = fireRequestIfChannelIsAbsent(event.channel, filter)
 
-    private fun fireRequestIfChannelIsAbsent(cid: String, filter: FilterObject): EventHandlingResult {
-        return if (channels.value.any { it.cid == cid }) {
-            EventHandlingResult.SKIP
+    /**
+     * Checks if the channel collection contains a channel, if yes then it returns skip handling result, otherwise it
+     * fires request by [channelFilter] to define outcome of handling.
+     */
+    private fun fireRequestIfChannelIsAbsent(channel: Channel, filter: FilterObject): EventHandlingResult {
+        return if (channels.value.any { it.cid == channel.cid }) {
+            EventHandlingResult.Skip
         } else {
-            checkCidByChannelFilter(cid, filter)
+            checkCidByChannelFilter(channel.cid, filter, EventHandlingResult.Add(channel))
         }
     }
 
@@ -87,18 +91,21 @@ internal class DefaultChatEventHandler(private val client: ChatClient, private v
         filter: FilterObject,
     ): EventHandlingResult {
         return if (channels.value.any { it.cid == event.cid }.not()) {
-            EventHandlingResult.SKIP
+            EventHandlingResult.Skip
         } else {
-            checkCidByChannelFilter(event.cid, filter)
+            checkCidByChannelFilter(event.cid, filter, EventHandlingResult.Skip)
         }
     }
 
-    private fun checkCidByChannelFilter(cid: String, filter: FilterObject): EventHandlingResult {
+    /**
+     * Run filter request. If filter is passed then it returns [filterPositiveResult], otherwise it returns [EventHandlingResult.Skip].
+     */
+    private fun checkCidByChannelFilter(cid: String, filter: FilterObject, filterPositiveResult: EventHandlingResult): EventHandlingResult {
         return runBlocking {
             if (channelFilter(cid, filter)) {
-                EventHandlingResult.ADD
+                filterPositiveResult
             } else {
-                EventHandlingResult.REMOVE
+                EventHandlingResult.Remove(cid)
             }
         }
     }
