@@ -103,7 +103,7 @@ public open class AttachmentDestination(
                 }
                 start(intent)
             }
-            docMimeType(mimeType, type) -> {
+            docMimeType(mimeType) -> {
                 val intent = Intent(context, AttachmentDocumentActivity::class.java).apply {
                     putExtra("url", url)
                 }
@@ -132,7 +132,7 @@ public open class AttachmentDestination(
             type == VIDEO_TYPE
     }
 
-    private fun docMimeType(mimeType: String?, type: String?): Boolean {
+    private fun docMimeType(mimeType: String?): Boolean {
         return mimeType == ModelType.attach_mime_doc ||
             mimeType == ModelType.attach_mime_txt ||
             mimeType == ModelType.attach_mime_pdf ||
