@@ -30,6 +30,7 @@ internal open class BaseChannelControllerTests {
     protected lateinit var channelClient: ChannelClient
     protected lateinit var repos: RepositoryFacade
     protected lateinit var messageSendingService: MessageSendingService
+    protected lateinit var mutableState: ChannelMutableState
 
     @OptIn(ExperimentalStreamChatApi::class)
     @ExperimentalCoroutinesApi
@@ -48,7 +49,7 @@ internal open class BaseChannelControllerTests {
             on { scope } doReturn TestCoroutineScope()
             on { repos } doReturn repos
         }
-        val mutableState =
+        mutableState =
             ChannelMutableState(channelType, channelId, chatDomainImpl.scope, MutableStateFlow(randomUser()))
         sut = ChannelController(
             mutableState,
