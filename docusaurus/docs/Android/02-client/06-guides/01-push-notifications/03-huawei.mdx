@@ -89,7 +89,7 @@ class CustomHuaweiMessagingService : HuaweiMessagingService() {
             } else {
                 // RemoteMessage wasn't sent from Stream and it needs to be handled by you
             }
-        } catch (IllegalStateException exception) {
+        } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
     }

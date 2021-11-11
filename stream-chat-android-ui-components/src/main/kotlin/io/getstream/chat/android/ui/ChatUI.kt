@@ -81,7 +81,7 @@ public object ChatUI {
     @Deprecated(
         message = "This property is not used anymore. The SDK already provide a Day/Night theme",
         replaceWith = ReplaceWith("AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO|AppCompatDelegate.MODE_NIGHT_YES)"),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     public var uiMode: UiMode = UiMode.SYSTEM
         set(value) {
