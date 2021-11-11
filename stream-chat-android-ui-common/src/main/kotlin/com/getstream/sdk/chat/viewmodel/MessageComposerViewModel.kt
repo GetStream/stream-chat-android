@@ -14,14 +14,16 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.ChatDomain
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
  */
-@InternalStreamChatApi
-public open class MessageComposerViewModel(
+
+public open class MessageComposerViewModel @InternalStreamChatApi constructor(
     private val chatClient: ChatClient,
     private val chatDomain: ChatDomain,
     private val channelId: String,
@@ -30,14 +32,12 @@ public open class MessageComposerViewModel(
     /**
      * UI state of the current composer input.
      */
-    public var input: MutableStateFlow<String> = MutableStateFlow("")
-        private set
+    public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
      * Represents the currently selected attachments, that are shown within the composer UI.
      */
-    public var selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
-        private set
+    public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
 
     /**
      * Current message mode, either [Normal] or [Thread]. Used to determine if we're sending a thread
@@ -49,12 +49,18 @@ public open class MessageComposerViewModel(
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
      */
-    private var messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
+    private val messageActions = MutableStateFlow<Set<MessageAction>>(mutableSetOf())
+
+    /**
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
+     */
+    public val lastActiveAction: Flow<MessageAction?>
+        get() = messageActions.map { actions -> actions.lastOrNull { it is Edit || it is Reply } }
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
      */
-    public val activeAction: MessageAction?
+    private val activeAction: MessageAction?
         get() = messageActions.value.lastOrNull { it is Edit || it is Reply }
 
     /**

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.state.Reply
 import com.getstream.sdk.chat.state.Thread
+import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
@@ -41,7 +42,6 @@ import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOver
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
@@ -164,15 +164,15 @@ class MessagesActivity : AppCompatActivity() {
                 .wrapContentHeight(),
             viewModel = composerViewModel,
             integrations = {},
-            input = {
+            input = { value, attachments, action ->
                 MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(7f)
                         .padding(start = 8.dp),
-                    value = composerViewModel.input,
-                    attachments = composerViewModel.selectedAttachments,
-                    activeAction = composerViewModel.activeAction,
+                    value = value,
+                    attachments = attachments,
+                    activeAction = action,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     label = {

@@ -12,6 +12,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.state.Edit
 import com.getstream.sdk.chat.state.MessageAction
+import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
@@ -26,7 +29,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.components.Default
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.components.MessageInputOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -60,20 +62,24 @@ public fun MessageComposer(
         DefaultComposerIntegrations(onAttachmentsClick)
     },
     label: @Composable () -> Unit = { DefaultComposerLabel() },
-    input: @Composable RowScope.() -> Unit = {
+    input: @Composable RowScope.(String, List<Attachment>, MessageAction?) -> Unit = { value, attachments, action ->
         MessageInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             label = label,
-            value = viewModel.input,
-            attachments = viewModel.selectedAttachments,
-            activeAction = viewModel.activeAction,
+            value = value,
+            attachments = attachments,
+            activeAction = action,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved
         )
     },
 ) {
+    val value by viewModel.input.collectAsState()
+    val selectedAttachments by viewModel.selectedAttachments.collectAsState()
+    val activeAction by viewModel.lastActiveAction.collectAsState(null)
+
     MessageComposer(
         modifier = modifier,
         onSendMessage = { text, attachments ->
@@ -83,9 +89,9 @@ public fun MessageComposer(
         },
         integrations = integrations,
         input = input,
-        value = viewModel.input,
-        attachments = viewModel.selectedAttachments,
-        activeAction = viewModel.activeAction,
+        value = value,
+        attachments = selectedAttachments,
+        activeAction = activeAction,
         shouldShowIntegrations = true,
         onCancelAction = onCancelAction
     )
@@ -115,7 +121,7 @@ public fun MessageComposer(
     modifier: Modifier = Modifier,
     shouldShowIntegrations: Boolean = true,
     integrations: @Composable RowScope.() -> Unit,
-    input: @Composable RowScope.() -> Unit,
+    input: @Composable RowScope.(String, List<Attachment>, MessageAction?) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -152,7 +158,7 @@ public fun MessageComposer(
                     )
                 }
 
-                input()
+                input(value, attachments, activeAction)
 
                 val isInputValid = value.isNotEmpty() || attachments.isNotEmpty()
 

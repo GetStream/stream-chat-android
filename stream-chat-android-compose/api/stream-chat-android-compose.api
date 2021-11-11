@@ -612,8 +612,8 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/MessageComposerKt {
-	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lcom/getstream/sdk/chat/state/MessageAction;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Lcom/getstream/sdk/chat/viewmodel/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function6;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageComposer (Ljava/lang/String;Ljava/util/List;Lcom/getstream/sdk/chat/state/MessageAction;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function6;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/components/ComposableSingletons$ComposerIntegrationsKt {
@@ -922,26 +922,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun loadData ()V
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setImages (Ljava/util/List;)V
-}
-
-public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/offline/ChatDomain;Ljava/lang/String;)V
-	public final fun addSelectedAttachments (Ljava/util/List;)V
-	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/models/Message;
-	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Message;
-	public final fun dismissMessageActions ()V
-	public final fun getActiveAction ()Lcom/getstream/sdk/chat/state/MessageAction;
-	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
-	public final fun getChatDomain ()Lio/getstream/chat/android/offline/ChatDomain;
-	public final fun getInput ()Ljava/lang/String;
-	public final fun getSelectedAttachments ()Ljava/util/List;
-	public final fun leaveThread ()V
-	public final fun performMessageAction (Lcom/getstream/sdk/chat/state/MessageAction;)V
-	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun setMessageInput (Ljava/lang/String;)V
-	public final fun setMessageMode (Lcom/getstream/sdk/chat/state/MessageMode;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {

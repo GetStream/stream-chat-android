@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.getstream.sdk.chat.state.Delete
 import com.getstream.sdk.chat.state.Reply
 import com.getstream.sdk.chat.state.Thread
+import com.getstream.sdk.chat.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.SystemBackPressedHandler
@@ -43,7 +44,6 @@ import io.getstream.chat.android.compose.ui.messages.overlay.SelectedMessageOver
 import io.getstream.chat.android.compose.ui.messages.overlay.defaultMessageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
